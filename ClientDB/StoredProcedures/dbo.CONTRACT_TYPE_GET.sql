@@ -1,0 +1,16 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[CONTRACT_TYPE_GET]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT ContractTypeName, ContractTypeRate
+	FROM dbo.ContractTypeTable
+	WHERE ContractTypeID = @ID
+END

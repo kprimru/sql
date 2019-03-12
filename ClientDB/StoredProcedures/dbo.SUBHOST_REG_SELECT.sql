@@ -1,0 +1,15 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SUBHOST_REG_SELECT]	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT DISTINCT SubhostName, CASE SubhostName WHEN '' THEN 'Владивосток' ELSE SubhostName END AS SubhostCaption
+	FROM Reg.RegNodeSearchView a WITH(NOEXPAND) 			
+	ORDER BY SubhostName
+END

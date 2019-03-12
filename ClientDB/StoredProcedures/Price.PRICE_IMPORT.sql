@@ -1,0 +1,54 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Price].[PRICE_IMPORT]
+	@DATA	NVARCHAR(MAX)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @XML XML
+	DECLARE @HDOC INT
+	
+	IF OBJECT_ID('tempdb..#price') IS NOT NULL
+		DROP TABLE #price
+
+	CREATE TABLE #price
+		(
+			SYS		NVARCHAR(64),
+			DATE	SMALLDATETIME,
+			PRICE	MONEY
+		)
+			
+	SET @XML = CAST(@DATA AS XML)
+
+	EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
+
+	INSERT INTO #price(SYS, DATE, PRICE)
+		SELECT
+			c.value('@SYS', 'NVARCHAR(64)'),
+			c.value('@DATE', 'SMALLDATETIME'),
+			c.value('@PRICE', 'MONEY')
+		FROM @XML.nodes('/ROOT/*') AS a(c)
+	
+	INSERT INTO Price.SystemPrice(ID_MONTH, ID_SYSTEM, PRICE)
+		SELECT c.ID, b.SystemID, a.PRICE
+		FROM
+			#price a
+			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemBaseName
+			INNER JOIN Common.Period c ON c.START = a.DATE AND c.TYPE = 2
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM Price.SystemPrice
+				WHERE ID_MONTH = c.ID AND ID_SYSTEM = b.SystemID
+			)
+	
+	EXEC sp_xml_removedocument @hdoc
+
+	IF OBJECT_ID('tempdb..#price') IS NOT NULL
+		DROP TABLE #price
+END

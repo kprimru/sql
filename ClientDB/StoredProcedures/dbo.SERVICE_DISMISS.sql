@@ -1,0 +1,17 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SERVICE_DISMISS]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.ServiceTable
+	SET ServiceDismiss = dbo.DateOf(GETDATE()),
+		ServiceLast = GETDATE()
+	WHERE ServiceID = @ID
+END

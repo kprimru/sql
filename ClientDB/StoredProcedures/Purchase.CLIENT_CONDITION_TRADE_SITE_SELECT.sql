@@ -1,0 +1,29 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_TRADE_SITE_SELECT]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		TS_ID, TS_NAME, TS_URL, TS_SHORT,
+		CONVERT(BIT, 
+			ISNULL(
+				(
+					SELECT COUNT(*)
+					FROM 
+						Purchase.ClientConditionCard
+						INNER JOIN Purchase.ClientConditionTradeSite ON CC_ID = CTS_ID_CC
+					WHERE CC_ID_CLIENT = @ID
+						AND CC_STATUS = 1
+						AND CTS_ID_TS = TS_ID
+				), 0)
+		) AS TS_CHECKED
+	FROM Purchase.TradeSite
+	ORDER BY TS_NAME
+END

@@ -1,0 +1,24 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Poll].[BLANK_QUESTION_SELECT]
+	@ID	UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		ID, NAME, ORD, ANS_MIN, ANS_MAX, TP, 
+		CASE TP
+			WHEN 0 THEN 'однозначный выбор'
+			WHEN 1 THEN 'многозначный выбор'
+			WHEN 2 THEN 'свободное поле для ввода'
+			WHEN 3 THEN 'число из диапазона'
+		END AS TP_STR
+	FROM Poll.Question
+	WHERE ID_BLANK = @ID
+	ORDER BY ORD
+END

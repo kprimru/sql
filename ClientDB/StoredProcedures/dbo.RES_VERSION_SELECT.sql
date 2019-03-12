@@ -1,0 +1,18 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[RES_VERSION_SELECT]
+	@FILTER	VARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT ResVersionID, ResVersionNumber, IsLatest, ResVersionBegin, ResVersionEnd
+	FROM dbo.ResVersionTable
+	WHERE @FILTER IS NULL
+		OR ResVersionNumber LIKE @FILTER
+	ORDER BY ResVersionNumber DESC
+END

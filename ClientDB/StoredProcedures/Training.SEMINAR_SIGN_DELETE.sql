@@ -1,0 +1,38 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Training].[SEMINAR_SIGN_DELETE]
+	@ID			UNIQUEIDENTIFIER,
+	@RESERVE	BIT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @RESERVE = 0
+	BEGIN
+		DECLARE @SIGN	UNIQUEIDENTIFIER
+
+		SELECT @SIGN = SSP_ID_SIGN
+		FROM Training.SeminarSignPersonal
+		WHERE SSP_ID = @ID
+
+		DELETE 
+		FROM Training.SeminarSignPersonal
+		WHERE SSP_ID = @ID
+
+		IF NOT EXISTS
+			(
+				SELECT * 
+				FROM Training.SeminarSignPersonal
+				WHERE SSP_ID_SIGN = @SIGN
+			)
+			DELETE FROM Training.SeminarSign WHERE SP_ID = @SIGN
+	END
+	ELSE
+		DELETE FROM Training.SeminarReserve WHERE SR_ID = @ID
+
+	DELETE FROM Training.SeminarSign WHERE NOT EXISTS (SELECT * FROM Training.SeminarSignPersonal WHERE SSP_ID_SIGN = SP_ID)
+END

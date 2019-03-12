@@ -1,0 +1,17 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[LETTER_SET_DATA]
+	@id INT,
+	@data VARBINARY(MAX)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.LetterTable
+	SET LetterData = @data
+	WHERE LetterID = @id
+END

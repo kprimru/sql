@@ -1,0 +1,21 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Report].[CALL_NOTE]
+	@PARAM	NVARCHAR(MAX) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		CC_DATE AS [Дата звонка], ClientFullName AS [Клиент], CC_PERSONAL AS [Сотрудник], 
+		CC_NOTE AS [Примечание], CC_USER AS [Кто звонил], CC_SERVICE AS [СИ]
+	FROM 
+		dbo.ClientCall a
+		INNER JOIN dbo.ClientView b ON a.CC_ID_CLIENT = b.ClientID
+	WHERE CC_NOTE <> ''
+	ORDER BY CC_DATE DESC
+END

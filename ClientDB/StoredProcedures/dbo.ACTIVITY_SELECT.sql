@@ -1,0 +1,24 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[ACTIVITY_SELECT]
+	@FILTER	VARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT AC_ID, AC_NAME, AC_CODE, AC_SHORT, AC_CODE + ' ' + ISNULL(AC_SHORT, AC_NAME) AS AC_SEARCH
+	FROM dbo.Activity
+	WHERE @FILTER IS NULL
+		OR AC_NAME LIKE @FILTER
+		OR AC_CODE LIKE @FILTER
+		OR AC_SHORT LIKE @FILTER
+	ORDER BY 
+		dbo.StringDelimiterPartInt(AC_CODE, '.', 1), 
+		dbo.StringDelimiterPartInt(AC_CODE, '.', 2), 
+		dbo.StringDelimiterPartInt(AC_CODE, '.', 3), 
+		dbo.StringDelimiterPartInt(AC_CODE, '.', 4)
+END

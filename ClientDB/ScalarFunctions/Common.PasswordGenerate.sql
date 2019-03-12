@@ -1,0 +1,28 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE FUNCTION [Common].[PasswordGenerate]
+(
+	-- кол-во симоволов
+	@LN	SMALLINT
+)
+RETURNS NVARCHAR(128)
+AS
+BEGIN
+	DECLARE @RES NVARCHAR(128)
+
+	DECLARE @KEY INT
+	SET @RES = ''
+	
+	WHILE LEN(@RES) < @LN
+	BEGIN
+		SET @KEY = CAST(Common.Rand_f()*255 AS INT)%127
+		IF PATINDEX('%[a-zA-Z0-9]%',CHAR(@KEY)) > 0 	 
+		SET @RES = @RES + CHAR(@KEY)	
+	END
+
+	RETURN @RES
+END

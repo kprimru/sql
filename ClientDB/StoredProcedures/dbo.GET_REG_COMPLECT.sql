@@ -1,0 +1,23 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[GET_REG_COMPLECT]
+	@COMPLECT_NAME VARCHAR(max),
+	@RESULT INT = NULL OUTPUT
+WITH EXECUTE AS OWNER
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT 
+        R.*, S.*
+	FROM [dbo].[RegNodeTable] R
+		LEFT JOIN [dbo].SystemTable S ON S.[SystemBaseName] = R.[SystemName]
+	WHERE R.[Complect] in ( @COMPLECT_NAME )
+	ORDER BY S.SystemOrder
+
+	SELECT @RESULT = @@ERROR
+END

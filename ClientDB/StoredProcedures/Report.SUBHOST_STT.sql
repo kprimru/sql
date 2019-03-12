@@ -1,0 +1,21 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Report].[SUBHOST_STT]
+	@PARAM	NVARCHAR(MAX) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		SH_NAME AS [Подхост], DATE AS [Дата загрузки], USR AS [Пользователь], 
+		dbo.FileByteSizeToStr(DATALENGTH(BIN)) AS [Размер], 
+		PROCESS AS [Дата обработки]
+	FROM 
+		Subhost.STTFiles a
+		INNER JOIN dbo.Subhost b ON SH_ID = ID_SUBHOST
+	ORDER BY DATE DESC
+END

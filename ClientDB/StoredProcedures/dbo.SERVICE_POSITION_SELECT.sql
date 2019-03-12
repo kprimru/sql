@@ -1,0 +1,18 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SERVICE_POSITION_SELECT]
+	@FILTER	VARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT ServicePositionID, ServicePositionName
+	FROM dbo.ServicePositionTable
+	WHERE @FILTER IS NULL
+		OR ServicePositionName LIKE @FILTER
+	ORDER BY ServicePositionName
+END

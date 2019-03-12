@@ -1,0 +1,25 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Contract].[TYPE_GET]
+	@ID		UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		NAME, PREFIX, FORM, CDAY, CMONTH,		
+		('<LIST>' + 
+			(
+				SELECT '{' + CONVERT(NVARCHAR(64), ID_FORM) + '}' AS ITEM
+				FROM Contract.TypeForms z
+				WHERE z.ID_TYPE = a.ID
+				FOR XML PATH('')
+			) 
+		+ '</LIST>') AS FORM_LIST
+	FROM Contract.Type a
+	WHERE ID = @ID
+END

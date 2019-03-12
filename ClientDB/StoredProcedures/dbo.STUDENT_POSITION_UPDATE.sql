@@ -1,0 +1,18 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[STUDENT_POSITION_UPDATE]
+	@ID	INT,
+	@NAME	VARCHAR(150)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.StudentPositionTable
+	SET StudentPositionName = @NAME,
+		StudentPositionLast = GETDATE()
+	WHERE StudentPositionID = @ID
+END

@@ -1,0 +1,22 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[MANAGER_UPDATE]
+	@ID	INT,
+	@NAME	VARCHAR(100),
+	@LOGIN	VARCHAR(100),
+	@FULL	VARCHAR(250)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.ManagerTable
+	SET ManagerName = @NAME,
+		ManagerLogin = @LOGIN,
+		ManagerFullName = @FULL,
+		ManagerLast = GETDATE()
+	WHERE ManagerID = @ID
+END

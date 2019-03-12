@@ -1,0 +1,20 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[CLIENT_TRUST_WARNING]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		b.ClientID, ClientFullName, ManagerName, CC_DATE, CT_CORRECT, ServiceName
+	FROM 
+		dbo.ClientView b WITH(NOEXPAND) 
+		INNER JOIN dbo.ClientWriteList() ON WCL_ID = b.ClientID
+		INNER JOIN dbo.ClientTrustView WITH(NOEXPAND) ON CC_ID_CLIENT = b.ClientID 
+	WHERE CT_TRUST = 0 AND CT_MAKE IS NULL
+	ORDER BY ClientFullName
+END

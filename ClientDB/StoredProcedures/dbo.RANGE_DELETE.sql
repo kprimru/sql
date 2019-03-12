@@ -1,0 +1,20 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[RANGE_DELETE]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.ClientTable
+	SET RangeID = (SELECT TOP 1 RangeID FROM dbo.RangeTable ORDER BY RangeValue)
+	WHERE RangeID = @ID
+
+	DELETE
+	FROM dbo.RangeTable
+	WHERE RangeID = @ID
+END

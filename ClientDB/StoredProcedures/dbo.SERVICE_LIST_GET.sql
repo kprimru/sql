@@ -1,0 +1,17 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SERVICE_LIST_GET]	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    SELECT ServiceID, ServiceName
+    FROM dbo.ServiceTable 
+	WHERE ServiceDismiss IS NULL
+    ORDER BY ServiceName
+
+END

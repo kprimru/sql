@@ -1,0 +1,16 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Security].[USER_GET]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT name AS US_NAME
+	FROM sys.database_principals
+	WHERE principal_id = @ID
+END

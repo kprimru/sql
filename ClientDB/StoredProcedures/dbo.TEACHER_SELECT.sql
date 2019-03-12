@@ -1,0 +1,19 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[TEACHER_SELECT]
+	@FILTER	VARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TeacherID, TeacherName, TeacherReport, TeacherNorma
+	FROM dbo.TeacherTable
+	WHERE @FILTER IS NULL
+		OR TeacherName LIKE @FILTER
+		OR TeacherLogin LIKE @FILTER
+	ORDER BY TeacherName
+END

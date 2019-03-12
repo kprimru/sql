@@ -1,0 +1,24 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Reg].[ONLINE_PASSWORD_DETAIL]
+	@HOST	INT,
+	@DISTR	INT,
+	@COMP	TINYINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		SystemShortName AS [Система], PASS AS [Пароль], 
+		CASE STATUS WHEN 1 THEN 'Действующий' WHEN 2 THEN 'Старый' WHEN 3 THEN 'Удален' ELSE '???' END AS [Статус], 
+		UPD_DATE AS [Дата установки пароля], UPD_USER AS [Пользователь]
+	FROM 
+		Reg.OnlinePassword a
+		INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
+	WHERE ID_HOST = @HOST AND DISTR = @DISTR AND COMP = @COMP 
+	ORDER BY UPD_DATE DESC
+END

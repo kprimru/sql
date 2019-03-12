@@ -1,0 +1,40 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Poll].[POLL_ANSWER_SELECT]
+	@ID_ANSWER	UNIQUEIDENTIFIER,
+	@BEGIN		SMALLDATETIME,
+	@END		SMALLDATETIME,
+	@ID_QUEST	UNIQUEIDENTIFIER = NULL,
+	@TXT		NVARCHAR(512) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @ID_ANSWER IS NOT NULL
+		SELECT x.ID, ClientFullName, ClientID, ServiceName, ManagerName, x.DATE
+		FROM 
+			Poll.ClientPollQuestion z
+			INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+			INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+			INNER JOIN dbo.ClientView t WITH(NOEXPAND) ON t.ClientID = x.ID_CLIENT
+		WHERE y.ID_ANSWER = @ID_ANSWER
+			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+			AND (DATE <= @END OR @END IS NULL)
+		ORDER BY x.DATE DESC, ClientFullName
+	ELSE
+		SELECT x.ID, ClientFullName, ClientID, ServiceName, ManagerName, x.DATE
+		FROM 
+			Poll.ClientPollQuestion z
+			INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+			INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+			INNER JOIN dbo.ClientView t WITH(NOEXPAND) ON t.ClientID = x.ID_CLIENT
+		WHERE z.ID_QUESTION = @ID_QUEST
+			AND y.TEXT_ANSWER = @TXT
+			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+			AND (DATE <= @END OR @END IS NULL)
+		ORDER BY x.DATE DESC, ClientFullName
+END

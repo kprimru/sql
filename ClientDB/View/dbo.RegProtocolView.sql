@@ -1,0 +1,14 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE VIEW [dbo].[RegProtocolView]
+WITH SCHEMABINDING
+AS
+	SELECT dbo.DateOf(RPR_DATE) AS RPR_DATE_S, RPR_USER, COUNT_BIG(*) AS CNT
+	FROM dbo.RegProtocol
+	WHERE RPR_TYPE = 'NET' 
+		AND RPR_OPER IN ('мнбюъ', 'онбрнп', 'оепемня')
+	GROUP BY dbo.DateOf(RPR_DATE), RPR_USER

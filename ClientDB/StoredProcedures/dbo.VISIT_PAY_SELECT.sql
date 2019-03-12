@@ -1,0 +1,16 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[VISIT_PAY_SELECT]
+	@FILTER	VARCHAR(100) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	SELECT VisitPayID, VisitPayBegin, VisitPayEnd, VisitPayValue
+	FROM dbo.VisitPayTable
+	ORDER BY VisitPayBegin DESC, VisitPayValue
+END

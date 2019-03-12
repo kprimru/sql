@@ -1,0 +1,24 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SERVICE_STATUS_INSERT]	
+	@NAME	VARCHAR(50),
+	@REG	SMALLINT,
+	@INDEX	INT,
+	@IMAGE	VARBINARY(MAX),
+	@DEF	INT,
+	@ID	INT = NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO dbo.ServiceStatusTable(
+				ServiceStatusName, ServiceStatusReg, ServiceStatusIndex,
+				ServiceImage, ServiceDefault)
+		VALUES(@NAME, @REG, @INDEX, @IMAGE, @DEF)
+		
+	SELECT @ID = SCOPE_IDENTITY()
+END

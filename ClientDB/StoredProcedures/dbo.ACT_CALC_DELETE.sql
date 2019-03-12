@@ -1,0 +1,24 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[ACT_CALC_DELETE]
+	@ID	UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF (SELECT STATUS FROM dbo.ActCalc WHERE ID = @ID) <> 1
+		RAISERROR('Уже нельзя удалить заявку', 16, 1)
+	ELSE
+	BEGIN
+		UPDATE dbo.ActCalc
+		SET STATUS = 3
+		WHERE ID = @ID AND STATUS = 1
+		
+		IF @@ROWCOUNT = 0
+			RAISERROR('Уже нельзя удалить заявку', 16, 1)
+	END
+END

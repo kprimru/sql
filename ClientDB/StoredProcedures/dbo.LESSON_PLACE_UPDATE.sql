@@ -1,0 +1,20 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[LESSON_PLACE_UPDATE]
+	@ID	INT,
+	@NAME	VARCHAR(100),
+	@REPORT	BIT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.LessonPlaceTable
+	SET LessonPlaceName = @NAME,
+		LessonPlaceReport = @REPORT,
+		LessonPlaceLast = GETDATE()
+	WHERE LessonPlaceID = @ID
+END

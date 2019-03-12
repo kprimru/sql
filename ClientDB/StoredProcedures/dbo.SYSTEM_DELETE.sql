@@ -1,0 +1,20 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SYSTEM_DELETE]
+	@ID	INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE 
+	FROM dbo.SystemBankTable
+	WHERE SystemID = @ID	
+	
+	DELETE
+	FROM dbo.SystemTable 
+	WHERE SystemID = @ID	
+END

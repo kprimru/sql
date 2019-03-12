@@ -1,0 +1,25 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[DISTR_TYPE_INSERT]	
+	@NAME	VARCHAR(50),
+	@SHORT	VARCHAR(10),
+	@ORDER	INT,
+	@FULL	NVARCHAR(50),
+	@CHECK	BIT,
+	@ID	INT = NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO dbo.DistrTypeTable(
+					DistrTypeName, DistrTypeShortName, DistrTypeOrder,
+					DistrTypeFull, DistrTypeBaseCheck
+					)
+		VALUES(@NAME, @SHORT, @ORDER, @FULL, @CHECK)
+		
+	SELECT @ID = SCOPE_IDENTITY()
+END

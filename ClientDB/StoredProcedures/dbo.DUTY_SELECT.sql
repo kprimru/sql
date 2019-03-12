@@ -1,0 +1,25 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[DUTY_SELECT]
+	@FILTER	VARCHAR(100) = NULL,
+	@ACTIVE BIT = 1
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT DutyID, DutyName, DutyLogin
+	FROM dbo.DutyTable
+	WHERE 
+		(@ACTIVE = 0 OR DutyActive = 1)
+		AND
+			(
+				@FILTER IS NULL
+				OR DutyName LIKE @FILTER
+				OR DutyLogin LIKE @FILTER
+			)
+	ORDER BY DutyName
+END

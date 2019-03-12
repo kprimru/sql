@@ -1,0 +1,23 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[STATISTIC_INSERT]
+	@IB_ID	INT,
+	@DATE	SMALLDATETIME,
+	@DOC	INT	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.StatisticTable
+	SET Docs = @DOC
+	WHERE InfoBankID = @IB_ID
+		AND StatisticDate = @DATE
+
+	IF @@ROWCOUNT = 0
+		INSERT INTO dbo.StatisticTable(InfoBankID, StatisticDate, Docs)
+		VALUES (@IB_ID, @DATE, @DOC)
+END

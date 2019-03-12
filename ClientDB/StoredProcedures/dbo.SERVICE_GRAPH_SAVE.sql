@@ -1,0 +1,23 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [dbo].[SERVICE_GRAPH_SAVE]
+	@CLIENT	INT,
+	@DAY	INT,
+	@START	DATETIME,
+	@LENGTH	SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;						
+			
+		UPDATE dbo.ClientTable
+		SET DayID					=	@DAY,
+			ServiceStart			=	@START,
+			ServiceTime				=	@LENGTH,
+			ClientLast				=	GETDATE(),
+			UPD_USER				=	ORIGINAL_LOGIN()
+		WHERE ClientID = @CLIENT
+END
