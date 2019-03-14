@@ -1,0 +1,57 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Salary].[PERSONAL_SALARY_BOOK_CALC_SELECT]
+	@PER_ID	UNIQUEIDENTIFIER,
+	@PR_ID	UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		IB_DATE, CL_NAME, IB_ID, IB_COUNT, (IB_PRICE * IB_EXIST) AS IB_PRICE, 
+		CAST(ISNULL((
+			SELECT TOP 1 BD_PRICE
+			FROM 
+				Income.BookResult,
+				Book.BookDeliveryDetail
+			WHERE IB_COUNT > BD_COUNT
+				AND IB_ID_PERSONAL = @PER_ID
+				AND Common.PeriodInHalf(@PR_ID, IB_ID_HALF) = 1				
+			ORDER BY BD_COUNT
+		), 0) * IB_COUNT AS MONEY) AS SL_DELIVERY, 
+		(BB_PERCENT * IB_EXIST) AS BB_PERCENT, (BP_PRICE * IB_EXIST) AS BP_PRICE, 
+		CONVERT(MONEY, (IB_EXIST *IB_PRICE * BB_PERCENT * IB_COUNT / 100)) AS SL_SUM
+	FROM 
+		(
+			SELECT 
+				IB_DATE, CL_NAME, IB_ID, IB_COUNT, IB_PRICE, 		
+				BB_PERCENT, BP_PRICE,				
+				CASE 
+					WHEN EXISTS
+						(
+							SELECT *
+							FROM Salary.PersonalSalaryBook
+							WHERE PSB_ID_IB = IB_ID
+						) THEN 0
+					ELSE 1
+				END AS IB_EXIST
+			FROM
+				Income.IncomeBookFullView a INNER JOIN
+				Personal.PersonalDetail b ON a.PER_ID_MASTER = b.PER_ID_MASTER INNER JOIN
+				Book.BookBonusDetail ON BB_ID_PT = PER_ID_TYPE INNER JOIN
+				Book.BookPriceDetail ON BP_ID_HALF = HLF_ID_MASTER
+			WHERE a.PER_ID_MASTER = @PER_ID AND NOT EXISTS
+				(
+					SELECT *
+					FROM 
+						Salary.PersonalSalaryBook a INNER JOIN
+						Salary.PersonalSalary b ON a.PSB_ID_MASTER = b.PS_ID
+					WHERE PSB_ID_IB = IB_ID			
+						AND PS_ID_PERIOD = @PR_ID
+				)
+		) AS o_O
+END

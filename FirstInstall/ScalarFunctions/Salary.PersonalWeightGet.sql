@@ -1,0 +1,37 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE FUNCTION [Salary].[PersonalWeightGet]
+(
+	@PER_ID	UNIQUEIDENTIFIER
+)
+RETURNS DECIMAL(8, 4)
+AS
+BEGIN	
+	DECLARE @RESULT DECIMAL(8, 4)
+
+	SET @RESULT = 0
+
+	SELECT @RESULT = @RESULT + WG_VALUE * NT_COEF * IP_PERCENT / 100
+	FROM
+		Income.IncomePersonalView a INNER JOIN
+		Income.IncomeDetailView b ON a.ID_ID = b.ID_ID INNER JOIN
+		Distr.WeightActive c ON WG_ID_SYSTEM = SYS_ID_MASTER INNER JOIN
+		Distr.NetTypeActive d ON d.NT_ID_MASTER = b.NT_ID_MASTER
+	WHERE PER_ID_MASTER = @PER_ID
+		AND ID_FULL_DATE IS NOT NULL
+		AND NOT EXISTS
+			(
+				SELECT *
+				FROM	
+					Salary.PersonalSalary INNER JOIN
+					Salary.PersonalSalaryDetail ON PS_ID = PSD_ID_MASTER
+				WHERE PS_ID_PERSONAL = @PER_ID	
+					AND PSD_ID_INCOME = a.ID_ID	
+		)
+
+	RETURN @RESULT
+END

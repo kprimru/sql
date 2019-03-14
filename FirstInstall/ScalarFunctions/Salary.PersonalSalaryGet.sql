@@ -1,0 +1,33 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+CREATE FUNCTION [Salary].[PersonalSalaryGet]
+(
+	@PER_ID	UNIQUEIDENTIFIER
+)
+RETURNS MONEY
+AS
+BEGIN	
+	DECLARE @RESULT MONEY
+
+	SET @RESULT = 0
+
+	SELECT TOP 1 @RESULT = SC_VALUE
+	FROM 
+		Salary.SalaryConditionActive
+	WHERE PT_ID_MASTER = 
+		(
+			SELECT PER_ID_TYPE
+			FROM 
+				Personal.PersonalActive
+			WHERE PER_ID_MASTER = @PER_ID
+		) AND
+		Salary.PersonalWeightGet(@PER_ID) >= SC_WEIGHT
+	ORDER BY SC_WEIGHT DESC
+
+	RETURN @RESULT
+END

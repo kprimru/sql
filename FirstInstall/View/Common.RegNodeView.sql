@@ -1,0 +1,31 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+		
+CREATE VIEW [Common].[RegNodeView]
+--WITH SCHEMABINDING
+AS
+	SELECT 
+		HST_ID_MASTER, RN_DISTR, RN_COMP,
+		SYS_ID_MASTER, DT_ID_MASTER, TT_ID_MASTER, NT_ID_MASTER,
+		RN_STATUS
+	FROM 
+		Common.RegNode INNER JOIN
+		Distr.SystemDetail ON SYS_REG = RN_SYSTEM INNER JOIN
+		Distr.HostDetail ON HST_ID_MASTER = SYS_ID_HOST INNER JOIN
+		Distr.DistrTypeDetail ON DT_REG = RN_TYPE INNER JOIN
+		Distr.TechTypeDetail ON TT_REG = RN_TECH INNER JOIN
+		Distr.NetTypeDetail ON NT_SHORT = 
+									CASE RN_NET_COUNT 
+										WHEN 0 THEN 'лок'
+										WHEN 1 THEN '1/с'
+										ELSE 'сеть'
+									END
+	WHERE HST_REF IN (1, 3) 
+		AND SYS_REF IN (1, 3) 
+		AND DT_REF IN (1, 3)
+		AND NT_REF IN (1, 3)
+		AND TT_REF IN (1, 3)

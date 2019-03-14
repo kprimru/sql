@@ -1,0 +1,23 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Personal].[PERSONAL_DELETED]
+	@RC INT = NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT 
+		[Personal].[PersonalDeleted].*,
+		PT_ID, PT_ID_MASTER, PT_NAME,
+		DP_ID, DP_ID_MASTER, DP_NAME
+	FROM 
+		[Personal].[PersonalDeleted]										INNER JOIN
+		[Personal].[PersonalTypeLast]	ON	PT_ID_MASTER	=	PER_ID_TYPE	INNER JOIN
+		[Personal].[DepartmentLast]		ON	DP_ID_MASTER	=	PER_ID_DEP
+	
+	SELECT @RC = @@ROWCOUNT
+END

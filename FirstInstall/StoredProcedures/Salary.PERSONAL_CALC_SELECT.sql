@@ -1,0 +1,30 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+CREATE PROCEDURE [Salary].[PERSONAL_CALC_SELECT]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    SELECT PER_ID_MASTER, PER_NAME, PER_ID_TYPE AS PT_ID_MASTER
+	FROM Personal.PersonalActive
+	/*
+	WHERE EXISTS
+		(
+			SELECT *
+			FROM Income.IncomePersonal
+			WHERE IP_ID_PERSONAL = PER_ID_MASTER
+				AND NOT EXISTS
+					(
+						SELECT *
+						FROM Salary.PersonalSalaryDetail
+						WHERE PSD_ID_INCOME = IP_ID_INCOME
+					)
+		) 
+	*/
+END
+

@@ -1,0 +1,31 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Salary].[SALARY_UNCALC_GROUP_SELECT]
+	@DT	SMALLDATETIME = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    SELECT DISTINCT
+		PER_ID_TYPE, PT_NAME
+	FROM
+		Income.IncomeFullView a INNER JOIN
+		Income.IncomePersonalView b ON a.ID_ID = b.ID_ID INNER JOIN
+		Personal.PersonalTypeActive ON PER_ID_TYPE = PT_ID_MASTER
+	WHERE
+		ID_CALC = 1 AND
+		(IN_DATE >= @DT OR @DT IS NULL) AND
+		NOT EXISTS
+			(
+				SELECT *
+				FROM 
+					Salary.PersonalSalary INNER JOIN
+					Salary.PersonalSalaryDetail ON PSD_ID_MASTER = PS_ID
+				WHERE PSD_ID_INCOME = a.ID_ID
+			)		
+	ORDER BY PT_NAME
+END

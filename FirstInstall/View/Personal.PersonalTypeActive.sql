@@ -1,0 +1,15 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE VIEW [Personal].[PersonalTypeActive] 
+--WITH SCHEMABINDING
+AS
+	SELECT 
+		PT_ID_MASTER, PT_ID, PT_NAME, 
+		PT_ALIAS, PT_DATE, PT_END
+	FROM 
+		Personal.PersonalTypeAll
+	WHERE PT_REF = 1

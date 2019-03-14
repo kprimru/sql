@@ -1,0 +1,45 @@
+USE [FirstInstall]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Claim].[CLAIM_DELETE]
+	@CLD_ID	UNIQUEIDENTIFIER,
+	@TYPE	VARCHAR(50)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @TYPE = 'CLIENT'
+	BEGIN
+		DELETE 
+		FROM Claim.ClaimDetail
+		WHERE CLD_ID_CLAIM =
+			(
+				SELECT CLD_ID_CLAIM
+				FROM Claim.ClaimDetail
+				WHERE CLD_ID = @CLD_ID
+			) AND CLD_ID_CLIENT = 
+			(
+				SELECT CLD_ID_CLIENT
+				FROM Claim.ClaimDetail
+				WHERE CLD_ID = @CLD_ID
+			)
+	END
+	ELSE IF @TYPE = 'ROW'
+	BEGIN
+		DELETE
+		FROM Claim.ClaimDetail
+		WHERE CLD_ID = @CLD_ID
+	END
+
+	DELETE 
+	FROM Claim.Claims
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM Claim.ClaimDetail
+			WHERE CLD_ID_CLAIM = CLM_ID
+		)
+END
