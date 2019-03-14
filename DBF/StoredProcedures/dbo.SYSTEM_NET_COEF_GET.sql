@@ -1,0 +1,35 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_GET] 
+	@ID INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT SNCC_ID, SN_ID, SN_NAME, PR_DATE, PR_ID, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE
+	FROM 
+		dbo.SystemNetCoef a INNER JOIN
+		dbo.SystemNetTable b ON a.SNCC_ID_SN = b.SN_ID INNER JOIN
+		dbo.PeriodTable c ON c.PR_ID = a.SNCC_ID_PERIOD
+	WHERE SNCC_ID = @ID
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+
+

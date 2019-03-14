@@ -1,0 +1,24 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+/*
+Автор:		  Денисов Алексей
+Дата создания: 25.08.2008
+Описание:	  Удалить улицу с указанным кодом 
+               из справочника
+*/
+
+CREATE PROCEDURE [dbo].[STREET_DELETE] 
+	@streetid INT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE FROM dbo.StreetTable WHERE ST_ID = @streetid
+
+	SET NOCOUNT OFF
+END

@@ -1,0 +1,38 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+
+/*
+Автор:			Денисов Алексей
+Дата:			2 July 2009
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_GET] 
+	@fatid SMALLINT
+
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT FAT_ID, FAT_ID_ADDR_TYPE, FAT_DOC, FAT_NOTE, FAT_TEXT, AT_NAME, FAT_ACTIVE
+		FROM	dbo.FinancingAddressTypeTable	A		LEFT OUTER JOIN
+				dbo.AddressTypeTable			B	ON	A.FAT_ID_ADDR_TYPE=B.AT_ID
+	WHERE
+		FAT_ID = @fatid
+	ORDER BY AT_NAME
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+

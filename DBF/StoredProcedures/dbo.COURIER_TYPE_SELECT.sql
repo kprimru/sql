@@ -1,0 +1,27 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[COURIER_TYPE_SELECT]   
+	@active BIT = NULL
+AS
+
+BEGIN
+	SET NOCOUNT ON
+	
+	SELECT COT_NAME, COT_ID 
+	FROM dbo.CourierTypeTable 
+	WHERE COT_ACTIVE = ISNULL(@active, COT_ACTIVE)
+	ORDER BY COT_NAME
+
+	SET NOCOUNT OFF
+END

@@ -1,0 +1,52 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+
+
+/*
+Автор:			Денисов Алексей
+Описание:		
+Дата:			15-July-2009
+*/
+
+CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]   
+	@active BIT = NULL
+AS
+
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT --ATL_ID, ATL_CAPTION
+		ATL_ID,
+		ATL_CAPTION,
+		ATL_INDEX,
+		ATL_COUNTRY,
+		ATL_REGION,
+		ATL_AREA,
+		ATL_CITY_PREFIX,
+		ATL_CITY,
+		ATL_STR_PREFIX,
+		ATL_STREET,
+		ATL_HOME
+	FROM dbo.AddressTemplateTable 
+	WHERE ATL_ACTIVE = ISNULL(@active, ATL_ACTIVE)
+	ORDER BY ATL_CAPTION
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+
+
+
+
+

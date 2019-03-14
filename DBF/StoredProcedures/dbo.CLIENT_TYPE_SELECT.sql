@@ -1,0 +1,27 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[CLIENT_TYPE_SELECT]   
+	@active BIT = NULL
+AS
+
+BEGIN
+	SET NOCOUNT ON
+	
+	SELECT CLT_NAME, CLT_ID 
+	FROM dbo.ClientTypeTable 
+	WHERE CLT_ACTIVE = ISNULL(@active, CLT_ACTIVE)
+	ORDER BY CLT_NAME
+
+	SET NOCOUNT OFF
+END

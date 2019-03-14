@@ -1,0 +1,21 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	/*
+Автор:			
+Дата создания:  	
+Описание:		
+*/
+
+CREATE PROCEDURE [dbo].[INVOICE_YEAR_SELECT]	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT DISTINCT INS_NUM_YEAR
+	FROM dbo.InvoiceSaleTable
+	ORDER BY INS_NUM_YEAR
+END

@@ -1,0 +1,27 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[PAY_COEF_SELECT]   
+	@active BIT = NULL
+AS
+
+BEGIN
+	SET NOCOUNT ON
+	
+	SELECT PC_START, PC_END, PC_VALUE, PC_ID 
+	FROM dbo.PayCoefTable 
+	WHERE PC_ACTIVE = ISNULL(@active, PC_ACTIVE)
+	ORDER BY PC_START
+
+	SET NOCOUNT OFF
+END

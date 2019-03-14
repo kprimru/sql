@@ -1,0 +1,31 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	/*
+Автор:			
+Дата создания:  	
+Описание:		
+*/
+CREATE PROCEDURE [dbo].[REG_NODE_VERIFY]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DIS_SERVICE
+	FROM
+		(
+			SELECT 
+				CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DSS_REPORT, DIS_SERVICE				
+			FROM 
+				dbo.ClientDistrTable INNER JOIN
+				dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
+				dbo.DistrServiceView ON DIS_ID = CD_ID_DISTR INNER JOIN
+				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
+				dbo.DistrStatusTable ON DS_ID = DSS_ID_STATUS
+			WHERE DS_REG <> RN_SERVICE
+		) AS CL	
+	ORDER BY CL_PSEDO, DIS_STR
+END

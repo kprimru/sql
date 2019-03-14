@@ -1,0 +1,37 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[DISTR_SELECT]    
+	@active BIT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT DIS_ID, DIS_STR, SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM
+	FROM dbo.DistrView
+	WHERE DIS_ACTIVE = ISNULL(@active, DIS_ACTIVE)
+	ORDER BY SYS_ORDER, DIS_NUM, DIS_COMP_NUM
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	/*
+Автор:			
+Дата создания:  	
+Описание:		
+*/
+
+CREATE PROCEDURE [dbo].[CLIENT_BILL_FACT_ROW_DELETE]
+	@ROWLIST VARCHAR(MAX)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @list TABLE (ROW_ID INT)
+
+	INSERT INTO @list 
+		SELECT *
+		FROM dbo.GET_TABLE_FROM_LIST(@ROWLIST, ',')
+
+	DELETE 
+	FROM dbo.BillFactDetailTable
+	WHERE BFD_ID IN
+		(
+			SELECT ROW_ID FROM @list
+		)	
+END

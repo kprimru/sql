@@ -1,0 +1,29 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	/*
+Автор:			Денисов Алексей/Богдан Владимир
+Дата создания:  	
+Описание:		
+*/
+CREATE PROCEDURE [dbo].[CLIENT_ACT_SELECT]
+	@clientid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		ACT_ID, ACT_DATE, ACT_PRICE, 
+		(CONVERT(VARCHAR, INS_NUM) + '/' + INS_NUM_YEAR) AS INS_NUM, 
+		ACT_PRINT, ACT_SIGN, ORG_PSEDO,
+		COUR_ID, COUR_NAME, ISNULL(CL_PSEDO, '') AS PAYER
+	FROM 
+		dbo.ActView LEFT OUTER JOIN
+		dbo.InvoiceSaleTable ON INS_ID = ACT_ID_INVOICE
+		LEFT OUTER JOIN dbo.ClientTable ON ACT_ID_PAYER = CL_ID
+	WHERE ACT_ID_CLIENT = @clientid
+	ORDER BY ACT_DATE DESC
+END

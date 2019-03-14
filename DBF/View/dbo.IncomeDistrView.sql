@@ -1,0 +1,15 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+CREATE VIEW [dbo].[IncomeDistrView]
+AS
+SELECT ID_ID, DIS_ID, DIS_STR, PR_DATE, ID_PRICE, PR_ID, IN_ID_CLIENT
+	FROM        
+		dbo.IncomeDistrTable INNER JOIN
+        dbo.DistrView ON ID_ID_DISTR = DIS_ID INNER JOIN
+		dbo.PeriodTable ON PR_ID = ID_ID_PERIOD INNER JOIN
+		dbo.IncomeTable	ON ID_ID_INCOME=IN_ID

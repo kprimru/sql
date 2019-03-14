@@ -1,0 +1,23 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+/*
+Автор:			
+Дата создания:  	
+Описание:		
+*/
+
+CREATE PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT REF_NAME, REF_ERROR
+	FROM dbo.AuditReferenceView
+	ORDER BY REF_NAME
+END
+

@@ -1,0 +1,28 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+/*
+Автор:		  Денисов Алексей
+Описание:	  
+*/
+
+CREATE PROCEDURE [dbo].[TAX_SELECT] 
+	@active BIT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT TX_ID, TX_NAME, TX_CAPTION, TX_PERCENT
+	FROM dbo.TaxTable 
+	WHERE TX_ACTIVE = ISNULL(@active, TX_ACTIVE)
+	ORDER BY TX_NAME
+
+	SET NOCOUNT OFF
+END
+
+
+

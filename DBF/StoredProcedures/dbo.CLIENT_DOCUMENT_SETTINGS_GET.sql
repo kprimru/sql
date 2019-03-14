@@ -1,0 +1,27 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	/*
+Автор:			
+Дата создания:  	
+Описание:		
+*/
+
+CREATE PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_GET]
+	@cdsid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		CDS_ID, 
+		CDS_ACT_CONTRACT, CDS_ACT_POS, CDS_ACT_POS_F, CDS_ACT_NAME, CDS_ACT_NAME_F, 
+		CDS_BILL_REST, 
+		CDS_INS_CONTRACT, CDS_INS_NAME
+	FROM 
+		dbo.ClientDocumentSettingsTable 
+	WHERE CDS_ID = @cdsid
+END

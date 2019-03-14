@@ -1,0 +1,38 @@
+USE [DBF]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	
+
+/*
+Автор:			Денисов Алексей/Богдан Владимир
+Описание:		
+*/
+
+CREATE PROCEDURE [dbo].[CLIENT_FACT_ACT_SELECT]
+	@clientid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	-- 23.06.2009
+	SELECT
+		AFM_DATE,
+		PR_MONTH AS PR_NAME,
+		ORG_SHORT_NAME,
+		CL_PSEDO, CL_FULL_NAME,
+		(SELECT SUM(AD_TOTAL_PRICE) FROM dbo.ActFactDetailTable WHERE AFD_ID_AFM = AFM_ID) AS AFM_TOTAL_PRICE
+	FROM dbo.ActFactMasterTable
+	WHERE CL_ID = @clientid
+	ORDER BY AFM_DATE DESC
+	--GROUP BY AF_DATE, PR_DATE
+
+
+	SET NOCOUNT OFF
+END
+
+
+
+
