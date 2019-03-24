@@ -40,16 +40,11 @@ BEGIN
 		)
 	IF @CLIENT_ID IS NOT NULL
 	INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
-		SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-		FROM 
-			Din.DinFiles a
-			INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
-		WHERE DF_DISTR IN
-					(
-						SELECT DISTR
-						FROM dbo.ClientDistrView WITH (NOEXPAND)
-						WHERE ID_CLIENT = @CLIENT_ID
-					)
+		SELECT DISTINCT DF_ID, b.HostID, DF_DISTR, DF_COMP
+		FROM Din.DinFiles a
+		INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
+		INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.DISTR=a.DF_DISTR AND c.COMP=a.DF_COMP AND c.HostID=b.HostID
+		WHERE ID_CLIENT=@CLIENT_ID
 
 	ELSE IF @CLIENT IS NOT NULL
 	INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
@@ -225,6 +220,7 @@ BEGIN
 			END 
 		ELSE CONVERT(BIT, 0) 
 		END AS CHECKED,
+		b.HostID,
 		Complect
 	INTO #distr
 	FROM 
@@ -273,7 +269,7 @@ IF @CLIENT_ID IS NOT NULL
 		(
 				SELECT TOP (1) Complect
 				FROM #distr
-				WHERE DS_INDEX=0
+				WHERE DS_INDEX=0 AND HostID=1
 		))
 		AND
 		(
