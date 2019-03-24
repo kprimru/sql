@@ -4,7 +4,7 @@ USE [ClientDB]
 	GO
 	SET QUOTED_IDENTIFIER ON
 	GO
-	CREATE PROCEDURE [dbo].[CLIENT_DBF_COMPARE]
+		CREATE PROCEDURE [dbo].[CLIENT_DBF_COMPARE]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@TYPE		NVARCHAR(MAX)
@@ -313,6 +313,10 @@ BEGIN
 			DIR_POS = CP_POS,
 			DIR_PHONE = CP_PHONE
 			,
+			DIR_FIO_LAST = L.ClientLast,
+			DIR_POS_LAST = L.ClientLast,
+			DIR_PHONE_LAST = L.ClientLast
+			/*
 			DIR_FIO_LAST = 
 					(
 						SELECT TOP 1 ClientLast
@@ -342,10 +346,29 @@ BEGIN
 							AND z.CP_PHONE <> b.CP_PHONE
 						ORDER BY ClientLast DESC
 					)
-			
+			*/
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalDirLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET DIR_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
@@ -380,7 +403,11 @@ BEGIN
 			BUH_PATRON = REPLACE(CP_PATRON, '¸', 'å'),
 			BUH_POS = CP_POS,
 			BUH_PHONE = CP_PHONE
-			,			
+			,	
+			BUH_FIO_LAST = L.ClientLast,
+			BUH_POS_LAST = L.ClientLast,
+			BUH_PHONE_LAST = L.ClientLast
+			/*		
 			BUH_FIO_LAST = 
 					(
 						SELECT TOP 1 ClientLast
@@ -410,10 +437,30 @@ BEGIN
 							AND z.CP_PHONE <> b.CP_PHONE
 						ORDER BY ClientLast DESC
 					)
+					*/
 			
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalBuhLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET BUH_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
@@ -449,6 +496,10 @@ BEGIN
 			RES_POS = CP_POS,
 			RES_PHONE = CP_PHONE
 			,
+			RES_FIO_LAST = L.ClientLast,
+			RES_POS_LAST = L.ClientLast,
+			RES_PHONE_LAST = L.ClientLast
+			/*
 			RES_FIO_LAST = 
 					(
 						SELECT TOP 1 ClientLast
@@ -478,10 +529,29 @@ BEGIN
 							AND z.CP_PHONE <> b.CP_PHONE
 						ORDER BY ClientLast DESC
 					)
-			
+			*/
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalResLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET RES_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
