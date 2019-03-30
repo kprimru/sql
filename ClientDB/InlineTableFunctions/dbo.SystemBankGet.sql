@@ -105,7 +105,7 @@ RETURN
 		AND B.SystemBaseName = 'BOVP'
 		
 	UNION ALL
-	
+	/*
 	SELECT
 		SB.InfoBankID, SB.InfoBankName, SB.InfoBankShortName, SB.InfoBankFullName, SB.InfoBankOrder, SB.InfoBankPath, SB.InfoBankActive,
 		S.SystemID, S.SystemFullName, S.SystemActive, S.SystemOrder, S.SystemShortName, S.SystemBaseName, SB.Required, S.HostID, SB.InfoBankStart
@@ -114,6 +114,26 @@ RETURN
 	CROSS APPLY dbo.[SystemBankGet(Internal)](B.SystemId) SB
 	WHERE S.SystemID = @System AND S.SystemBaseName = 'SKZO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 11)
 		AND B.SystemBaseName = 'MBP'
+	*/
+	SELECT
+		SB.InfoBankID, SB.InfoBankName, SB.InfoBankShortName, SB.InfoBankFullName, SB.InfoBankOrder, SB.InfoBankPath, SB.InfoBankActive,
+		S.SystemID, S.SystemFullName, S.SystemActive, S.SystemOrder, S.SystemShortName, S.SystemBaseName, SB.Required, S.HostID, SB.InfoBankStart
+	FROM dbo.SystemTable S
+	CROSS JOIN dbo.SystemTable B
+	CROSS APPLY dbo.[SystemBankGet(Internal)](B.SystemId) SB
+	WHERE S.SystemID = @System AND S.SystemBaseName = 'SKZO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 11)
+		AND B.SystemBaseName = 'MBP'
+		AND SB.InfoBankName != 'ROS'
+		
+	UNION ALL
+	
+	SELECT
+		SB.InfoBankID, SB.InfoBankName, SB.InfoBankShortName, SB.InfoBankFullName, SB.InfoBankOrder, SB.InfoBankPath, SB.InfoBankActive,
+		S.SystemID, S.SystemFullName, S.SystemActive, S.SystemOrder, S.SystemShortName, S.SystemBaseName, 1, S.HostID, SB.InfoBankStart
+	FROM dbo.SystemTable S
+	CROSS JOIN dbo.InfoBankTable SB
+	WHERE S.SystemID = @System AND S.SystemBaseName = 'SKZO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 11)
+		AND SB.InfoBankName = 'RZB'
 		
 	UNION ALL
 	
