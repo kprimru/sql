@@ -332,11 +332,10 @@ BEGIN
 				END 
 		END AS VISIT_CNT,
 		-- максимальное количество визитов (ограничить для категории C)
-		CASE
-			WHEN Category = 'C' AND @WEEK_CNT = 5 THEN VISIT_CNT5
-			WHEN Category = 'C' AND @WEEK_CNT = 4 THEN VISIT_CNT4
+		IsNull(CASE
+			WHEN Category = 'C' THEN 2
 			ELSE 5
-		END AS MAX_VISIT_CNT,
+		END, 5) AS MAX_VISIT_CNT,
 		--5 AS MAX_VISIT_CNT,
 		ClientBaseCount, ContractPayName, ServicedSystemCount1, ServicedSystemCount2, ServicedSystemCount3, ServicedSystemCount4, ServicedSystemCount5
 	FROM
