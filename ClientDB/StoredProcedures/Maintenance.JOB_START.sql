@@ -1,0 +1,18 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Maintenance].[JOB_START]
+	@Name	VarChar(100),
+	@Id		BigInt = NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO Maintenance.Jobs(NAME)
+	VALUES(@Name);
+	
+	SELECT @Id = Scope_Identity();
+END

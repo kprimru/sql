@@ -1,0 +1,16 @@
+USE [ClientDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE PROCEDURE [Maintenance].[JOB_FINISH]
+	@Id		BigInt
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE Maintenance.Jobs
+	SET FINISH = GetDate()
+	WHERE ID = @Id;
+END
