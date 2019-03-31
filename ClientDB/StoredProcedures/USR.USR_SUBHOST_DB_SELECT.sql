@@ -19,13 +19,15 @@ BEGIN
 					SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
 					FROM
 						[PC275-SQL\GAMMA].ClientArtDB.USR.USRFile a
-						INNER JOIN [PC275-SQL\GAMMA].ClientArtDB.USR.USRData ON UD_ID = UF_ID_COMPLECT
+						INNER JOIN [PC275-SQL\GAMMA].ClientArtDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 					WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 						AND NOT EXISTS
 							(
 								SELECT *
 								FROM USR.USRFile z
-								WHERE z.UF_DATA = a.UF_DATA
+								INNER JOIN USR.USRFileData y ON z.UF_ID = y.UF_ID
+								WHERE y.UF_DATA = b.UF_DATA
+									AND a.UF_MD5 = z.UF_MD5
 									AND z.UF_DATE = a.UF_DATE
 							)
 							
@@ -34,13 +36,15 @@ BEGIN
 					SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
 					FROM
 						[PC275-SQL\GAMMA].ClientNahDB.USR.USRFile a
-						INNER JOIN [PC275-SQL\GAMMA].ClientNahDB.USR.USRData ON UD_ID = UF_ID_COMPLECT
+						INNER JOIN [PC275-SQL\GAMMA].ClientNahDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 					WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 						AND NOT EXISTS
 							(
 								SELECT *
 								FROM USR.USRFile z
-								WHERE z.UF_DATA = a.UF_DATA
+								INNER JOIN USR.USRFileData y ON z.UF_ID = y.UF_ID
+								WHERE y.UF_DATA = b.UF_DATA
+									AND a.UF_MD5 = z.UF_MD5
 									AND z.UF_DATE = a.UF_DATE
 							)
 							
@@ -49,13 +53,15 @@ BEGIN
 					SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
 					FROM
 						[PC275-SQL\GAMMA].ClientSlavDB.USR.USRFile a
-						INNER JOIN [PC275-SQL\GAMMA].ClientSlavDB.USR.USRData ON UD_ID = UF_ID_COMPLECT
+						INNER JOIN [PC275-SQL\GAMMA].ClientSlavDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 					WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 						AND NOT EXISTS
 							(
 								SELECT *
 								FROM USR.USRFile z
-								WHERE z.UF_DATA = a.UF_DATA
+								INNER JOIN USR.USRFileData y ON z.UF_ID = y.UF_ID
+								WHERE y.UF_DATA = b.UF_DATA
+									AND a.UF_MD5 = z.UF_MD5
 									AND z.UF_DATE = a.UF_DATE
 							)
 							
@@ -64,13 +70,15 @@ BEGIN
 					SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
 					FROM
 						[PC275-SQL\GAMMA].ClientUSSDB.USR.USRFile a
-						INNER JOIN [PC275-SQL\GAMMA].ClientUSSDB.USR.USRData ON UD_ID = UF_ID_COMPLECT
+						INNER JOIN [PC275-SQL\GAMMA].ClientUSSDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 					WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 						AND NOT EXISTS
 							(
 								SELECT *
 								FROM USR.USRFile z
-								WHERE z.UF_DATA = a.UF_DATA
+								INNER JOIN USR.USRFileData y ON z.UF_ID = y.UF_ID
+								WHERE y.UF_DATA = b.UF_DATA
+									AND a.UF_MD5 = z.UF_MD5
 									AND z.UF_DATE = a.UF_DATE
 							)
 				) AS o_O
