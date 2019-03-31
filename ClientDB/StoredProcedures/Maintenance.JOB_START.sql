@@ -11,8 +11,21 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Maintenance.Jobs(NAME)
-	VALUES(@Name);
+	DECLARE @Type_Id	SmallInt;
+	
+	SELECT @Type_Id = Id
+	FROM Maintenance.JobType
+	WHERE Name = @Name;
+	
+	IF @Type_Id IS NULL BEGIN
+		INSERT INTO Maintenance.JobType(Name)
+		VALUES(@Name);
+		
+		SELECT @Type_Id = Scope_Identity();
+	END;
+
+	INSERT INTO Maintenance.Jobs([Type_Id], [NAME])
+	VALUES(@Type_Id, @Name);
 	
 	SELECT @Id = Scope_Identity();
 END
