@@ -24,8 +24,8 @@ BEGIN
 		SELECT @Type_Id = Scope_Identity();
 	END;
 
-	INSERT INTO Maintenance.Jobs([Type_Id], [NAME])
-	VALUES(@Type_Id, @Name);
+	INSERT INTO Maintenance.Jobs([Type_Id])
+	VALUES(@Type_Id);
 	
 	SELECT @Id = Scope_Identity();
 END
