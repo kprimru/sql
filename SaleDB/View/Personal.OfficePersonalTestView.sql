@@ -1,0 +1,11 @@
+USE [SaleDB]
+	GO
+	SET ANSI_NULLS ON
+	GO
+	SET QUOTED_IDENTIFIER ON
+	GO
+	CREATE VIEW [Personal].[OfficePersonalTestView]
+AS
+	SELECT SHORT, LOGIN
+	FROM Personal.OfficePersonal
+	WHERE END_DATE IS NULL
