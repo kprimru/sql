@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
 Описание:	  Изменить данные о типе прейскуранта

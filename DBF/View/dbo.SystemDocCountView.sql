@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW dbo.SystemDocCountView
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW dbo.SystemDocCountView
 AS
 SELECT     TOP (100) PERCENT dbo.PeriodTable.PR_DATE, dbo.PriceSystemHistoryTable.PSH_DOC_COUNT, dbo.SystemTable.SYS_SHORT_NAME
 FROM         dbo.SystemTable INNER JOIN

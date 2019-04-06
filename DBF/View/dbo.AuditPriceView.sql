@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE VIEW [dbo].[AuditPriceView]
 AS
 SELECT 'Система "' + SYS_SHORT_NAME + '" отсутствует в прейскуранте' AS ER_MSG

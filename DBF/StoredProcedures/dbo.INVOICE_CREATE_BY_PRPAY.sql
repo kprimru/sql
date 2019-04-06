@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 Автор:			Денисов Алексей/Богдан Владимир
 Дата создания:	26-06-2009
 Описание:		добавить счет-фактуру на первичную оплату (?)

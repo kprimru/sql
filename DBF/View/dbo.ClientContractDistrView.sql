@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE VIEW [dbo].[ClientContractDistrView]
 AS
 SELECT     dbo.ClientTable.CL_ID, dbo.ClientTable.CL_PSEDO, dbo.ClientTable.CL_FULL_NAME, dbo.ContractTypeTable.CTT_NAME, 

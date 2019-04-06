@@ -1,10 +1,10 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create proc dbo.dt_checkinobject_u
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create proc dbo.dt_checkinobject_u
     @chObjectType  char(4),
     @vchObjectName nvarchar(255),
     @vchComment    nvarchar(255)='',
