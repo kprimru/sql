@@ -1,10 +1,10 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 **	If the property already exists, reset the value; otherwise add property
 **		id -- the id in sysobjects of the object
 **		property -- the name of the property

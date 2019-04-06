@@ -1,10 +1,10 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 **	Retrieve properties by id's
 **
 **	dt_getproperties objid, null or '' -- retrieve all properties of the object itself

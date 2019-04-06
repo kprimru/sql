@@ -1,10 +1,10 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/* 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/* 
 **	Generate an ansi name that is unique in the dtproperties.value column 
 */ 
 create procedure dbo.dt_generateansiname(@name varchar(255) output) 

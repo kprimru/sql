@@ -1,10 +1,10 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create proc dbo.dt_whocheckedout
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create proc dbo.dt_whocheckedout
         @chObjectType  char(4),
         @vchObjectName varchar(255),
         @vchLoginName  varchar(255),

@@ -1,10 +1,10 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create procedure dbo.dt_getpropertiesbyid_vcs
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create procedure dbo.dt_getpropertiesbyid_vcs
     @id       int,
     @property varchar(64),
     @value    varchar(255) = NULL OUT
