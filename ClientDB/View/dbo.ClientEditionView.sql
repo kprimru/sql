@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientEditionView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[ClientEditionView]
 AS
 	SELECT 
 		ClientID, ID_MASTER, ClientFullName, ServiceName, ManagerName, ClientLast, UPD_USER,

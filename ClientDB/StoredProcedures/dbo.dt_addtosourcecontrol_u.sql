@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create proc dbo.dt_addtosourcecontrol_u
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create proc dbo.dt_addtosourcecontrol_u
     @vchSourceSafeINI nvarchar(255) = '',
     @vchProjectName   nvarchar(255) ='',
     @vchComment       nvarchar(255) ='',

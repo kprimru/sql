@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[DistrString]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[DistrString]
 (
 	@SysShort	VarChar(20),
 	@Distr		Int,

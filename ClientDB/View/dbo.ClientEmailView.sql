@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientEmailView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[ClientEmailView]
 AS	
 	SELECT ClientID, ClientEMail
 	FROM dbo.ClientTable

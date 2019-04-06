@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Subhost].[RolesView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Subhost].[RolesView]
 AS
 	SELECT 10 AS ORD, 'rl_user_admin' AS RL_NAME, 'Управление пользователями (создание/удаление/смена пароля)' AS RL_CAPTION	
 	UNION ALL

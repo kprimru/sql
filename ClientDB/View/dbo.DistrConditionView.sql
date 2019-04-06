@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[DistrConditionView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[DistrConditionView]
 AS
 	SELECT DISTINCT
 		SystemID, DistrNumber, CompNumber, InfoBankID, InfoBankOrder, SystemOrder, 

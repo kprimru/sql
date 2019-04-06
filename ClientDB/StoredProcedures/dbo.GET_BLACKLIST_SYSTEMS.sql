@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	-- Выборка всех систем клиента
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- Выборка всех систем клиента
 
 CREATE PROCEDURE [dbo].[GET_BLACKLIST_SYSTEMS]
 @DISTR INT = NULL,

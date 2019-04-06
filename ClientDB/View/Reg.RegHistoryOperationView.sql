@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Reg].[RegHistoryOperationView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Reg].[RegHistoryOperationView]
 AS
 	SELECT 
 		src.ID_DISTR, dst.ID, dst.DATE,

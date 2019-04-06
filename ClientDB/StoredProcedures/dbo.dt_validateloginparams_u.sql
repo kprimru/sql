@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create proc dbo.dt_validateloginparams_u
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create proc dbo.dt_validateloginparams_u
     @vchLoginName  nvarchar(255),
     @vchPassword   nvarchar(255)
 as

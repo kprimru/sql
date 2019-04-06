@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	create proc dbo.dt_whocheckedout_u
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create proc dbo.dt_whocheckedout_u
         @chObjectType  char(4),
         @vchObjectName nvarchar(255),
         @vchLoginName  nvarchar(255),

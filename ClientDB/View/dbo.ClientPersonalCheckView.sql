@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientPersonalCheckView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[ClientPersonalCheckView]
 AS
 	SELECT DISTINCT
 		ClientID, CLientFullName, ManagerName, ServiceName, CPT_NAME, CP_PHONE,

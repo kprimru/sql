@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientCheckView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[ClientCheckView]
 AS	
 	SELECT ClientID, ClientFullName, 'STATUS' AS TP, 'Неверный статус клиента (указано "пополняется", но нет сопровождаемых на РЦ систем)' AS ER
 	FROM 

@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	-- получение просроченных договоров
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- получение просроченных договоров
 
 CREATE PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE] 
 	@curdate VARCHAR(20),

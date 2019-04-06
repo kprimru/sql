@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[GetTableList] (@list varchar(max))
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[GetTableList] (@list varchar(max))
       RETURNS @tbl TABLE (Item varchar(100)) AS
    BEGIN
       DECLARE @pos      int,
