@@ -78,7 +78,7 @@ BEGIN
 	FROM
 		(
 			SELECT 
-				TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
+				TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, HostID, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
 				o_O.DistrTypeName, DS_NAME, o_O.DistrTypeID, DS_REG, DS_INDEX, SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE, o_O.STATUS,
 				TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE, 
 				w.NOTE, w.STATUS AS DISCONNECT_STATUS, 
@@ -92,7 +92,7 @@ BEGIN
 			FROM
 				(
 					SELECT 
-						'CLIENT' AS TP, a.ID, a.SystemID, SystemBaseName, DISTR, COMP,
+						'CLIENT' AS TP, a.ID, a.SystemID, SystemBaseName, DISTR, COMP, a.HostID,
 						a.SystemOrder, a.DistrStr, dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 						SystemTypeID, SystemTypeName, a.DistrTypeName, a.DS_NAME, a.DistrTypeID,
 						a.DS_REG, a.DS_INDEX,				
@@ -171,7 +171,7 @@ BEGIN
 					UNION ALL
 
 					SELECT 
-						DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, 
+						DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, c.HostID, 
 						c.SystemOrder, c.DistrStr, dbo.DistrString(NULL, c.DistrNumber, c.CompNumber) AS D_STR,
 						NULL, '', c.DistrTypeName, c.DS_NAME, c.DistrTypeID,
 						c.DS_REG, c.DS_INDEX,
@@ -209,7 +209,7 @@ BEGIN
 					UNION ALL
 					
 					SELECT 
-						'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP,
+						'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP, HostID,
 						SystemOrder, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 						SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
 						3 AS ERROR_TYPE,
@@ -228,7 +228,7 @@ BEGIN
 		) AS ds
 		--мой код
 
-		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND HostID=1
+		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND rn.HostID=ds.HostID AND rn.CompNumber=ds.COMP	
 		LEFT OUTER JOIN dbo.Weight wt ON	ds.SystemBaseName=wt.Sys AND 
 											rn.DistrType=wt.SysType AND 
 											ds.NetCount=wt.NetCount AND 
