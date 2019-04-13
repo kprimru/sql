@@ -1,0 +1,26 @@
+USE [VMIClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[TableIntFromXML]
+	(
+		@SOURCE NVARCHAR(MAX)
+	)
+RETURNS @TBL TABLE
+	(
+		ID INT
+	)
+AS
+BEGIN
+	DECLARE @XML XML
+
+	SET @XML = CAST(@SOURCE AS XML)
+
+	INSERT INTO @TBL(ID)
+		SELECT c.value('(@id)', 'INT')
+		FROM @xml.nodes('/root/item') AS a(c)
+
+	RETURN
+END
