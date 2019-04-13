@@ -31,27 +31,20 @@ BEGIN
 				INS_ID, INS_ID_ORG, 
 				CASE INT_PSEDO WHEN 'INCOME' THEN '02' ELSE '01' END, 
 				INS_NUM, INS_DATE, INS_CLIENT_NAME, INS_CLIENT_INN, INS_CLIENT_KPP, 
-				(
-					SELECT TOP 1 IN_PAY_NUM
-					FROM 
-						dbo.IncomeTable
-						INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
-						INNER JOIN dbo.InvoiceRowTable ON INR_ID_DISTR = ID_ID_DISTR
-					WHERE INR_ID_INVOICE = @insid AND IN_DATE <= @DT
-					ORDER BY IN_DATE DESC, IN_PAY_NUM DESC
-				),
-				(
-					SELECT TOP 1 IN_DATE
-					FROM 
-						dbo.IncomeTable
-						INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
-						INNER JOIN dbo.InvoiceRowTable ON INR_ID_DISTR = ID_ID_DISTR
-					WHERE INR_ID_INVOICE = @insid AND IN_DATE <= @DT
-					ORDER BY IN_DATE DESC, IN_PAY_NUM DESC
-				)
+				IN_PAY_NUM, IN_DATE
 			FROM
 				dbo.InvoiceSaleTable
 				INNER JOIN dbo.InvoiceTypeTable ON INS_ID_TYPE = INT_ID
+				OUTER APPLY
+				(
+					SELECT TOP (1)
+						IN_DATE, IN_PAY_NUM
+					FROM dbo.IncomeTable
+					INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
+					INNER JOIN dbo.InvoiceRowTable ON INR_ID_DISTR = ID_ID_DISTR AND INR_ID_PERIOD = ID_ID_PERIOD
+					WHERE INR_ID_INVOICE = @insid AND IN_DATE <= @DT
+					ORDER BY IN_DATE DESC, IN_PAY_NUM DESC
+				) AS I
 			WHERE INS_ID = @insid
 		
 		INSERT INTO dbo.BookSaleDetail(ID_SALE, ID_TAX, S_ALL, S_NDS, S_BEZ_NDS)
@@ -76,11 +69,23 @@ BEGIN
 			DATE	=	INS_DATE, 
 			NAME	=	INS_CLIENT_NAME, 
 			INN		=	INS_CLIENT_INN, 
-			KPP		=	INS_CLIENT_KPP
+			KPP		=	INS_CLIENT_KPP,
+			IN_NUM	=	IN_PAY_NUM,
+			IN_DATE	=	I.IN_DATE
 		FROM 
 			dbo.BookSale a
 			INNER JOIN dbo.InvoiceSaleTable b ON a.ID_INVOICE = b.INS_ID
 			INNER JOIN dbo.InvoiceTypeTable ON INS_ID_TYPE = INT_ID
+			OUTER APPLY
+			(
+				SELECT TOP (1)
+					IN_DATE, IN_PAY_NUM
+				FROM dbo.IncomeTable
+				INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
+				INNER JOIN dbo.InvoiceRowTable ON INR_ID_DISTR = ID_ID_DISTR AND INR_ID_PERIOD = ID_ID_PERIOD
+				WHERE INR_ID_INVOICE = @insid AND IN_DATE <= @DT
+				ORDER BY IN_DATE DESC, IN_PAY_NUM DESC
+			) AS I
 		WHERE INS_ID = @insid
 		
 		DELETE FROM dbo.BookSaleDetail WHERE ID_SALE IN (SELECT ID FROM dbo.BookSale WHERE ID_INVOICE = @insid)
