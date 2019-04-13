@@ -31,12 +31,13 @@ BEGIN
 	IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
 	BEGIN			
 		INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-			SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистриубтив', 0, 'Автомат'
+			SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
 			WHERE NOT EXISTS
 				(
 					SELECT *
 					FROM dbo.ClientStudyClaim a
 					WHERE ID_CLIENT = @CLIENT
+						AND ID_MASTER IS NULL
 						AND UPD_USER = 'Автомат'
 				)
 		

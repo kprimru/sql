@@ -619,6 +619,7 @@ BEGIN
 								SELECT *
 								FROM dbo.ClientStudyClaim a
 								WHERE ID_CLIENT = @CLIENT
+									AND ID_MASTER IS NULL
 									AND UPD_USER = 'Автомат'
 							)
 					
@@ -753,6 +754,7 @@ BEGIN
 								SELECT *
 								FROM dbo.ClientStudyClaim a
 								WHERE ID_CLIENT = @CLIENT
+									AND ID_MASTER IS NULL
 									AND UPD_USER = 'Автомат'
 							)
 					
