@@ -228,7 +228,21 @@ BEGIN
 		) AS ds
 		--мой код
 
-		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND rn.HostID=ds.HostID AND rn.CompNumber=ds.COMP	
+		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND rn.HostID=ds.HostID AND rn.CompNumber=ds.COMP
+		OUTER APPLY (
+					SELECT TOP(1) *
+					FROM dbo.Weight
+					WHERE	ds.SystemBaseName=Sys AND 
+							rn.DistrType=SysType AND 
+							ds.NetCount=NetCount AND 
+							ds.TechnolType=NetTech AND 
+							ds.ODOn=NetOdon AND 
+							ds.ODOff=NetOdoff
+					ORDER BY Date DESC
+					) wt
+
+
+/*	ВОТ СЮДА OUTER APPLY СДЕЛАТЬ
 		LEFT OUTER JOIN dbo.Weight wt ON	ds.SystemBaseName=wt.Sys AND 
 											rn.DistrType=wt.SysType AND 
 											ds.NetCount=wt.NetCount AND 
@@ -245,7 +259,7 @@ BEGIN
 															ds.ODOn=NetOdon AND 
 															ds.ODOff=NetOdoff
 													)
-		
+	*/	
 --конец моего кода
 	ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 END
