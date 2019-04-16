@@ -37,7 +37,8 @@ BEGIN
 			[Note] = c.value('(./Note)[1]', 'VarBinary(Max)'),
 			[Note_WTitle] = c.value('(./Note_WTitle)[1]', 'VarBinary(Max)')
 		FROM @Xml.nodes('/System') AS R(c)
-	) AS X;
+	) AS X
+	WHERE X.[Note] IS NOT NULL;
 	
 	UPDATE SN
 	SET NOTE = N.Note,

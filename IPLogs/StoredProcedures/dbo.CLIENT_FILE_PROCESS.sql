@@ -217,26 +217,37 @@ BEGIN
 	---------------------------------------------------------------------------
 	UPDATE b
 	SET
-		b.CSD_ID_CS=@STATID,
-		b.CSD_NUM=a.CSD_NUM,
-		b.CSD_IP=a.CSD_IP,
-		b.CSD_SESSION=a.CSD_SESSION,
-		b.CSD_START= a.CSD_START
+		b.CSD_START=a.CSD_START,
+		b.CSD_CODE_CLIENT=a.CSD_CODE_CLIENT,
+		b.CSD_CODE_CLIENT_NOTE=ISNULL((SELECT TOP 1 RC_TEXT
+                                FROM dbo.IPReturnCodeView
+                                WHERE RC_NUM = a.CSD_CODE_CLIENT 
+                                      AND RC_TYPE = 'CLIENT'
+                                ORDER BY RC_ID
+                                ), 'неизвестный код'),
+		b.CSD_USR=a.CSD_USR
 	FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
 		INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
 
-	INSERT INTO b (CSD_ID_CS, CSD_NUM, CSD_IP, CSD_SESSION, CSD_START)
+	INSERT INTO b (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR)
 	SELECT
-		@STATID,
-		CSD_NUM,
-		CSD_IP,
-		CSD_SESSION,
-		CSD_START
-	FROM  dbo.ClientStatDetail
+		a.CSD_SYS,
+		a.CSD_DISTR,
+		a.CSD_COMP,
+		a.CSD_START,
+		a.CSD_CODE_CLIENT,
+		ISNULL((SELECT TOP 1 RC_TEXT
+                                FROM dbo.IPReturnCodeView
+                                WHERE RC_NUM = a.CSD_CODE_CLIENT 
+                                      AND RC_TYPE = 'CLIENT'
+                                ORDER BY RC_ID
+                                ), 'неизвестный код'),
+		a.CSD_USR
+	FROM  dbo.ClientStatDetail a
 	WHERE NOT EXISTS(
 					SELECT *
 					FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
-						INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
+					WHERE b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
 					)
 	---------------------------------------------------------------------------
 

@@ -228,22 +228,15 @@ BEGIN
 		ORDER BY UD_NAME
 		
 	INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)		
-		SELECT 
+		SELECT
 			UD_NAME, 'Последняя сессия на ИП', 
 			(
-				SELECT TOP 1 
+				SELECT TOP 1
 					'Дата: ' + CONVERT(VARCHAR(20), CSD_START, 104) + ' ' + CONVERT(VARCHAR(20), CSD_START, 108) + ', ' + 
-					'Код возврата: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +
-								ISNULL(( 
-									SELECT TOP 1 RC_TEXT
-									FROM dbo.IPReturnCodeView
-									WHERE RC_NUM = CSD_CODE_CLIENT 
-										AND RC_TYPE = 'CLIENT'
-									ORDER BY RC_ID
-									), 'неизвестный код') + '), ' +
+					'Код возврата: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +CONVERT(VARCHAR(20), CSD_CODE_CLIENT_NOTE) + '), ' +
 					'Файл USR: ' + CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Есть' END
-				FROM 
-					dbo.IPClientDetailView b
+				FROM
+					IP.ClientStatDetailCache b
 					INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
 				WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
 				ORDER BY CSD_START DESC
@@ -253,7 +246,7 @@ BEGIN
 					(
 						SELECT TOP 1 CSD_CODE_CLIENT 
 						FROM 
-							dbo.IPClientDetailView b
+							IP.ClientStatDetailCache b
 							INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
 						WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
 						ORDER BY CSD_START DESC
