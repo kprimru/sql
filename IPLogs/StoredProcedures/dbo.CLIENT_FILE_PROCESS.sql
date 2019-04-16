@@ -211,7 +211,20 @@ BEGIN
 				AND a.CSD_NUM = b.CSD_NUM
 		)
 	ORDER BY CSD_NUM	
-
+	
+	--бнр ячдю онднамне рнлс врн ябепус, рнкэйн я гюлемни х б 275TS ClientDB
+	--еякх врн сдюкърэ бяе
+	---------------------------------------------------------------------------
+	UPDATE b
+	SET
+		b.CSD_ID_CS=@STATID,
+		b.CSD_NUM=a.CSD_NUM,
+		b.CSD_IP=a.CSD_IP,
+		b.CSD_SESSION=a.CSD_SESSION,
+		b.CSD_START= a.CSD_START
+	FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
+		INNER JOIN dvo.ClientStatDetail a ON b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
+	---------------------------------------------------------------------------
 
 	IF OBJECT_ID('tempdb..#csd') IS NOT NULL
 		DROP TABLE #csd 
