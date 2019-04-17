@@ -4,76 +4,198 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
+CREATE PROCEDURE dbo.WEIGHT_TREE_SELECT_NEW
 AS
-DECLARE @t TABLE
-		(
-			MasterID	UNIQUEIDENTIFIER NULL,
-			DetailID	UNIQUEIDENTIFIER,
-			Name		NVARCHAR(200)			
-		)
+DECLARE @Params Table
+(
+    [Sys]       VarChar(50)     NOT NULL,
+    [SysType]   VarChar(50)     NOT NULL,
+    [NetType]   VarChar(50)     NOT NULL,
+    [Date]      DateTime        NOT NULL,
+    [Weight]    Decimal(8,4)    NOT NULL,
+    Primary Key Clustered([Sys], [SysType], [NetType], [Date])
+);
 
+INSERT INTO @Params
+SELECT [SysName], [SysTypeName], [NetTypeName], GetDate(), [SysCoef] * [SysTypeCoef] * [NetTypeCoef]
+FROM
+(
+    SELECT 'LAW', 1
+	UNION ALL
+    SELECT 'BUDP', 1.1
+	UNION ALL
+    SELECT 'JURP', 1.1
+	UNION ALL
+    SELECT 'BVP', 1.1
+	UNION ALL
+    SELECT 'BUHL', 0.65
+	UNION ALL
+    SELECT 'BUHUL', 0.65
+	UNION ALL
+    SELECT 'MBP', 0.65
+	UNION ALL
+    SELECT 'BUD', 0.65
+) AS Systems([SysName], [SysCoef])
+CROSS JOIN
+(
+    SELECT 'USR', 1
+	UNION ALL
+    SELECT 'VIP', 1
+	UNION ALL
+    SELECT 'LLL', 1
+	UNION ALL
+    SELECT 'VVV', 1
+	UNION ALL
+    SELECT 'DSP', 0
+	UNION ALL
+    SELECT 'SSS', 0
+	UNION ALL
+    SELECT 'LSV', 0
+	UNION ALL
+    SELECT 'SPC', 0.1
+	UNION ALL
+    SELECT 'DD3', 1.2
+	UNION ALL
+    SELECT 'DZ3', 1.2
+) AS SystemTypes([SysTypeName], [SysTypeCoef])
+CROSS JOIN
+(
+    SELECT 'лок', 1
+	UNION ALL
+    SELECT 'флэш', 1
+	UNION ALL
+    SELECT 'ОВП', 1
+	UNION ALL
+    SELECT 'ОВК', 1
+	UNION ALL
+    SELECT 'ОВПИ', 1
+	UNION ALL
+    SELECT 'с/о', 1.25
+	UNION ALL
+    SELECT 'м/с', 2
+	UNION ALL
+    SELECT 'сеть 50', 2.1
+	UNION ALL
+    SELECT 'сеть 100', 2.1
+	UNION ALL
+    SELECT 'сеть 150', 2.1
+	UNION ALL
+    SELECT 'сеть 200', 2.1
+	UNION ALL
+    SELECT 'сеть 255', 2.1
+) AS NetTypes([NetTypeName], [NetTypeCoef]);
 
+DECLARE @Data Table
+(
+    [Systems]   VarChar(Max),
+    [Types]     VarChar(Max),
+    [Nets]      VarChar(Max),
+    [Weight]    Decimal(8,4)
+);
 
-INSERT INTO @t
-	SELECT
-		NULL,
-		newid(),
-		S.SystemName				
-	FROM
-		dbo.Weight W
-		INNER JOIN dbo.SystemTable S ON S.SystemBaseName=W.Sys
-	GROUP BY S.SystemName
+INSERT INTO @Data
+SELECT DISTINCT
+    [SystemGroups]      = SWT.[SystemGroups],
+    [SystemTypesGroups] = SWT.[SystemTypesGroups],
+    [NetTypeGroups]     = 
+                (
+                    REVERSE(STUFF(REVERSE(
+                        (
+                            SELECT [NetType] + ','
+                            FROM
+                            (
+                                SELECT DISTINCT S.[NetType]
+                                FROM @Params S
+                                WHERE S.[Weight] = SWT.[Weight]
+                                    AND SWT.[SystemGroups] LIKE '%'+S.[Sys]+'%'
+                                    AND SWT.[SystemTypesGroups] LIKE '%'+S.[SysType]+'%'
+                            ) AS X
+                            FOR XML PATH('')
+                        )), 1, 1, ''))
+                ),
+    [Weight]            = SWT.[Weight]
+FROM
+(
+    SELECT DISTINCT
+        [SystemGroups] = SW.[SystemGroups],
+        [SystemTypesGroups] = 
+                (
+                    REVERSE(STUFF(REVERSE(
+                        (
+                            SELECT [SysType] + ','
+                            FROM
+                            (
+                                SELECT DISTINCT S.[SysType]
+                                FROM @Params S
+                                WHERE S.[Weight] = SW.[Weight]
+                                    AND SW.[SystemGroups] LIKE '%'+S.[Sys]+'%'
+                            ) AS X
+                            FOR XML PATH('')
+                        )), 1, 1, ''))
+                ),
+        [Weight]       = SW.[Weight]
+    FROM
+    (
+        SELECT DISTINCT
+            [SystemGroups] =
+                (
+                    REVERSE(STUFF(REVERSE(
+                        (
+                            SELECT [Sys] + ','
+                            FROM
+                            (
+                                SELECT DISTINCT S.[Sys]
+                                FROM @Params S
+                                WHERE S.[Weight] = P.[Weight]
+                            ) AS X
+                            FOR XML PATH('')
+                        )), 1, 1, ''))
+                ),
+            [Weight] = P.[Weight]
+        FROM @Params P
+    ) SW
+) SWT
+-------------------------------------------------------------------------------------------
+DECLARE @Result Table
+(
+    [Id]        Int             Identity(1,1)   NOT NULL,
+    [Parent_Id] Int                                 NULL,
+    [Data]      NVarChar(256)                    NOT NULL,
+    [Weight]    Decimal(8,4)                        NULL,
+    PRIMARY KEY CLUSTERED ([Id])
+);
 
+-- заполняем системы
+INSERT INTO @Result([Data])
+SELECT DISTINCT
+    [Systems]
+FROM @Data;
 
+-- заполнем типы систем
+INSERT INTO @Result([Parent_Id], [Data])
+SELECT R.[Id], [Types]
+FROM
+(
+    SELECT DISTINCT [Systems], [Types]
+    FROM @Data
+) D
+INNER JOIN @Result R ON R.[Data] = D.[Systems] AND R.[Parent_Id] IS NULL;
 
-INSERT INTO @t
-	SELECT
-		T.DetailID,
-		newid(),
-		ST.SST_SHORT
-	FROM
-		dbo.Weight W
-		INNER JOIN dbo.SystemTable S ON S.SystemBaseName=W.Sys
-		INNER JOIN Din.SystemType ST ON ST.SST_REG=W.SysType
-		INNER JOIN @t T ON T.Name=S.SystemName
-	GROUP BY T.DetailID, ST.SST_SHORT
-
-
-
-INSERT INTO @t
-	SELECT
-		TT.DetailID,
-		newid(),
-		NT.NT_SHORT
-	FROM
-		dbo.Weight W
-		INNER JOIN dbo.SystemTable S ON S.SystemBaseName=W.Sys
-		INNER JOIN Din.SystemType ST ON ST.SST_REG=W.SysType
-		INNER JOIN Din.NetType NT ON NT.NT_NET=W.NetCount AND NT.NT_TECH=W.NetTech AND NT.NT_ODON=W.NetOdon AND NT.NT_ODOFF=W.NetOdoff
-		INNER JOIN @t T ON T.Name=S.SystemName
-		INNER JOIN @t TT ON TT.Name=ST.SST_SHORT AND TT.MasterID=T.DetailID
-		
-	GROUP BY TT.DetailID, NT.NT_SHORT
-
-
-
-INSERT INTO @t
-	SELECT
-		TTT.DetailID,
-		newid(),
-		'С '+CAST(W.Date AS NVARCHAR(11))+' - '+CAST(W.Weight AS NVARCHAR)
-	FROM
-		dbo.Weight W
-		INNER JOIN dbo.SystemTable S ON S.SystemBaseName=W.Sys
-		INNER JOIN Din.SystemType ST ON ST.SST_REG=W.SysType
-		INNER JOIN Din.NetType NT ON NT.NT_NET=W.NetCount AND NT.NT_TECH=W.NetTech AND NT.NT_ODON=W.NetOdon AND NT.NT_ODOFF=W.NetOdoff
-		INNER JOIN @t T ON T.Name=S.SystemName
-		INNER JOIN @t TT ON TT.Name=ST.SST_SHORT AND TT.MasterID=T.DetailID
-		INNER JOIN @t TTT ON TTT.Name=NT.NT_SHORT AND TTT.MasterID=TT.DetailID
-	GROUP BY TTT.DetailID, 'С '+CAST(W.Date AS NVARCHAR(11))+' - '+CAST(W.Weight AS NVARCHAR)
-
-
+-- заполняем сетевитость и вес для нее
+INSERT INTO @Result([Parent_Id], [Data], [Weight])
+SELECT
+    (
+        SELECT TOP (1) R.[Id]
+        FROM @Result R
+        WHERE R.[Data] = D.[Types]
+            AND R.[Parent_Id] = 
+                (
+                    SELECT TOP (1) [Id]
+                    FROM @Result S
+                    WHERE S.[Data] = D.[Systems]
+                )
+    ), D.[Nets], D.[Weight]
+FROM @Data D
 
 SELECT *
-FROM @t
+FROM @Result;
