@@ -15,6 +15,12 @@ BEGIN
 	DECLARE @FILEID	INT
 	DECLARE @RESULT	TINYINT
 
+	DECLARE @IDs Table 
+	(
+		[Id]	BigInt	NOT NULL,
+		Primary Key Clustered([Id])
+	);
+
 	EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 2, @FILEID OUTPUT, @RESULT OUTPUT
 
 	IF (@FILEID IS NULL) OR (@RESULT = 0)
@@ -135,6 +141,7 @@ BEGIN
 			CSD_IP_MODE, CSD_RES_VERSION, CSD_DOWNLOAD_SPEED,
 			CSD_STT_SEND, CSD_STT_RESULT, CSD_INET_EXT--, CSD_PROXY_METOD, CSD_PROXY_INTERFACE
 		)
+	OUTPUT inserted.CSD_ID INTO @IDs
 	SELECT 
 		@STATID,
 		CSD_NUM, CSD_SYS, CSD_DISTR,
@@ -216,20 +223,21 @@ BEGIN
 	--ЕСЛИ ЧТО УДАЛЯТЬ ВСЕ
 	---------------------------------------------------------------------------
 	UPDATE b
-	SET
-		b.CSD_START=a.CSD_START,
-		b.CSD_CODE_CLIENT=a.CSD_CODE_CLIENT,
-		b.CSD_CODE_CLIENT_NOTE=ISNULL((SELECT TOP 1 RC_TEXT
-                                FROM dbo.IPReturnCodeView
-                                WHERE RC_NUM = a.CSD_CODE_CLIENT 
-                                      AND RC_TYPE = 'CLIENT'
-                                ORDER BY RC_ID
-                                ), 'неизвестный код'),
-		b.CSD_USR=a.CSD_USR
+	SET	CSD_START				= a.CSD_START,
+		CSD_CODE_CLIENT			= a.CSD_CODE_CLIENT,
+		CSD_CODE_CLIENT_NOTE	= ISNULL((
+											SELECT TOP 1 RC_TEXT
+											FROM dbo.ReturnCode
+											WHERE RC_NUM = a.CSD_CODE_CLIENT 
+												AND RC_TYPE = 'CLIENT'
+											ORDER BY RC_ID
+										), 'неизвестный код'),
+		CSD_USR					= a.CSD_USR
 	FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
-		INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
+	INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS = a.CSD_SYS AND b.CSD_DISTR = a.CSD_DISTR AND b.CSD_COMP = a.CSD_COMP
+	INNER JOIN @IDs I ON a.CSD_ID = I.Id;
 
-	INSERT INTO b (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR)
+	INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR)
 	SELECT
 		a.CSD_SYS,
 		a.CSD_DISTR,
@@ -237,18 +245,20 @@ BEGIN
 		a.CSD_START,
 		a.CSD_CODE_CLIENT,
 		ISNULL((SELECT TOP 1 RC_TEXT
-                                FROM dbo.IPReturnCodeView
-                                WHERE RC_NUM = a.CSD_CODE_CLIENT 
-                                      AND RC_TYPE = 'CLIENT'
-                                ORDER BY RC_ID
-                                ), 'неизвестный код'),
+                FROM dbo.ReturnCode
+                WHERE RC_NUM = a.CSD_CODE_CLIENT 
+                      AND RC_TYPE = 'CLIENT'
+                ORDER BY RC_ID
+                ), 'неизвестный код'),
 		a.CSD_USR
 	FROM  dbo.ClientStatDetail a
-	WHERE NOT EXISTS(
-					SELECT *
-					FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
-					WHERE b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
-					)
+	INNER JOIN @IDs I ON a.CSD_ID = I.Id
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
+			WHERE b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
+		)
 	---------------------------------------------------------------------------
 
 	IF OBJECT_ID('tempdb..#csd') IS NOT NULL
