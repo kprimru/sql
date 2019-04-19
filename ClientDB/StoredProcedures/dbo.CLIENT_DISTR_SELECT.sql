@@ -36,11 +36,11 @@ BEGIN
 		
 	IF @SYS_LIST <> ''
 		SET @SYS_LIST = LEFT(@SYS_LIST, LEN(@SYS_LIST) - 1)
-
+		
 	SELECT 
 		STATUS,
-		TP, ID, SystemOrder, DistrStr, SystemTypeID, SystemTypeName, DistrTypeName, DistrTypeID, SystemID,
-		DS_NAME, DS_REG, DS_INDEX, D_STR,
+		TP, ID, SystemOrder, ds.DistrStr, SystemTypeID, SystemTypeName, DistrTypeName, DistrTypeID, SystemID,
+		ds.DS_NAME, DS_REG, DS_INDEX, D_STR,
 		SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE,
 		CASE WHEN DF_ID_PRICE = 6 THEN 'Прейскурант ДЕПО ' ELSE '' END +
 		CASE
@@ -64,35 +64,36 @@ BEGIN
 			ELSE CONVERT(VARCHAR(20), 0)
 		END + ' %' AS REAL_DISCOUNT,
 		NOTE, CASE WHEN DISCONNECT_STATUS = 1 AND DS_REG = 0 THEN 0 ELSE 1 END AS DISC_LIST,
-		TransferLeft, SystemShortName
---мой код
-/*		ds.SystemBaseName AS SystemBaseName,
-		st.SST_REG,
-		ds.NetCount AS NetCount,
-		ds.TechnolType AS TechnolType,
-		ds.ODOn AS ODOn,
-		ds.ODOff AS ODOff,
-		Weight AS Weight
-*/
---конец
+		TransferLeft, SystemShortName,
+		(
+			SELECT TOP(1) Weight
+			FROM dbo.Weight
+			WHERE	ds.SystemBaseName	= Sys 
+				AND rn.DistrType		= SysType
+				AND ds.NetCount			= NetCount
+				AND ds.TechnolType		= NetTech
+				AND ds.ODOn				= NetOdon
+				AND ds.ODOff			= NetOdoff
+			ORDER BY Date DESC
+		) AS Weight
 	FROM
 		(
 			SELECT 
-				TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
+				TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, HostID, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
 				o_O.DistrTypeName, DS_NAME, o_O.DistrTypeID, DS_REG, DS_INDEX, SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE, o_O.STATUS,
 				TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE, 
 				w.NOTE, w.STATUS AS DISCONNECT_STATUS, 
 				c.PRICE, 
 				dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF, 
-				dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND/*,
+				dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
 				NetCount AS NetCount,
 				TechnolType AS TechnolType,
 				ODOn AS ODOn,
-				ODOff AS ODOff*/
+				ODOff AS ODOff
 			FROM
 				(
 					SELECT 
-						'CLIENT' AS TP, a.ID, a.SystemID, SystemBaseName, DISTR, COMP,
+						'CLIENT' AS TP, a.ID, a.SystemID, SystemBaseName, DISTR, COMP, a.HostID,
 						a.SystemOrder, a.DistrStr, dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 						SystemTypeID, SystemTypeName, a.DistrTypeName, a.DS_NAME, a.DistrTypeID,
 						a.DS_REG, a.DS_INDEX,				
@@ -151,11 +152,11 @@ BEGIN
 						1 AS ERROR_TYPE,
 						1 AS STATUS,
 						d.TransferLeft,
-						a.SystemShortName/*,
+						a.SystemShortName,
 						d.NetCount AS NetCount,
 						d.TechnolType AS TechnolType,
 						d.ODOn AS ODOn,
-						d.ODOff AS ODOff*/
+						d.ODOff AS ODOff
 					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND) 
 						LEFT OUTER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
@@ -171,7 +172,7 @@ BEGIN
 					UNION ALL
 
 					SELECT 
-						DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, 
+						DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, c.HostID, 
 						c.SystemOrder, c.DistrStr, dbo.DistrString(NULL, c.DistrNumber, c.CompNumber) AS D_STR,
 						NULL, '', c.DistrTypeName, c.DS_NAME, c.DistrTypeID,
 						c.DS_REG, c.DS_INDEX,
@@ -182,11 +183,11 @@ BEGIN
 						2 AS ERROR_TYPE,
 						1 AS STATUS,
 						d.TransferLeft,
-						c.SystemShortName/*,
+						c.SystemShortName,
 						d.NetCount AS NetCount,
 						d.TechnolType AS TechnolType,
 						d.ODOn AS ODOn,
-						d.ODOff AS ODOff*/
+						d.ODOff AS ODOff
 					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND) 
 						INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
@@ -209,11 +210,11 @@ BEGIN
 					UNION ALL
 					
 					SELECT 
-						'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP,
+						'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP, HostID,
 						SystemOrder, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 						SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
 						3 AS ERROR_TYPE,
-						STATUS, NULL, ''--, '' AS NetCount, '' AS TechnolType, '' AS ODOn, '' AS ODOff
+						STATUS, NULL, '', '' AS NetCount, '' AS TechnolType, '' AS ODOn, '' AS ODOff
 					FROM 
 						dbo.ClientDistr
 						INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
@@ -227,10 +228,7 @@ BEGIN
 				LEFT OUTER JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
 		) AS ds
 		--мой код
-/*
-		LEFT OUTER JOIN Din.SystemType st ON SystemTypeID=st.SST_ID_MASTER 
-		LEFT OUTER JOIN dbo.Weight wt ON ds.SystemBaseName=wt.Sys AND st.SST_REG=wt.SysType AND ds.NetCount=wt.NetCount AND ds.TechnolType=wt.NetTech AND ds.ODOn=wt.NetOdon AND ds.ODOff=wt.NetOdoff
-*/		
---конец моего кода
+
+		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND rn.HostID=ds.HostID AND rn.CompNumber=ds.COMP
 	ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 END

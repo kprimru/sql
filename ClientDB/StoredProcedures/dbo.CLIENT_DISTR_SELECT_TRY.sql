@@ -36,7 +36,7 @@ BEGIN
 		
 	IF @SYS_LIST <> ''
 		SET @SYS_LIST = LEFT(@SYS_LIST, LEN(@SYS_LIST) - 1)
-
+		
 	SELECT 
 		STATUS,
 		TP, ID, SystemOrder, ds.DistrStr, SystemTypeID, SystemTypeName, DistrTypeName, DistrTypeID, SystemID,
@@ -65,16 +65,17 @@ BEGIN
 		END + ' %' AS REAL_DISCOUNT,
 		NOTE, CASE WHEN DISCONNECT_STATUS = 1 AND DS_REG = 0 THEN 0 ELSE 1 END AS DISC_LIST,
 		TransferLeft, SystemShortName,
---мой код
-		ds.SystemBaseName,
-		rn.DistrType,
-		ds.NetCount,
-		ds.TechnolType,
-		ds.ODOn,
-		ds.ODOff,
-		wt.Weight
-
---конец
+		(
+			SELECT TOP(1) Weight
+			FROM dbo.Weight
+			WHERE	ds.SystemBaseName	= Sys 
+				AND rn.DistrType		= SysType
+				AND ds.NetCount			= NetCount
+				AND ds.TechnolType		= NetTech
+				AND ds.ODOn				= NetOdon
+				AND ds.ODOff			= NetOdoff
+			ORDER BY Date DESC
+		) AS Weight
 	FROM
 		(
 			SELECT 
@@ -229,37 +230,5 @@ BEGIN
 		--мой код
 
 		LEFT OUTER JOIN dbo.RegNodeView rn WITH (NOEXPAND) ON rn.DistrNumber=ds.DISTR AND rn.HostID=ds.HostID AND rn.CompNumber=ds.COMP
-		OUTER APPLY (
-					SELECT TOP(1) *
-					FROM dbo.Weight
-					WHERE	ds.SystemBaseName=Sys AND 
-							rn.DistrType=SysType AND 
-							ds.NetCount=NetCount AND 
-							ds.TechnolType=NetTech AND 
-							ds.ODOn=NetOdon AND 
-							ds.ODOff=NetOdoff
-					ORDER BY Date DESC
-					) wt
-
-
-/*	ВОТ СЮДА OUTER APPLY СДЕЛАТЬ
-		LEFT OUTER JOIN dbo.Weight wt ON	ds.SystemBaseName=wt.Sys AND 
-											rn.DistrType=wt.SysType AND 
-											ds.NetCount=wt.NetCount AND 
-											ds.TechnolType=wt.NetTech AND 
-											ds.ODOn=wt.NetOdon AND 
-											ds.ODOff=wt.NetOdoff AND
-											wt.Date =(
-													SELECT MAX(Date)
-													FROM dbo.Weight
-													WHERE	Sys=ds.SystemBaseName AND 
-															rn.DistrType=SysType AND 
-															ds.NetCount=NetCount AND 
-															ds.TechnolType=NetTech AND 
-															ds.ODOn=NetOdon AND 
-															ds.ODOff=NetOdoff
-													)
-	*/	
---конец моего кода
 	ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 END

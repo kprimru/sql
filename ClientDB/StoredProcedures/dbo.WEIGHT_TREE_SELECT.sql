@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE dbo.WEIGHT_TREE_SELECT_NEW
+CREATE PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
 AS
 DECLARE @Params Table
 (
@@ -20,39 +20,39 @@ INSERT INTO @Params
 SELECT [SysName], [SysTypeName], [NetTypeName], GetDate(), [SysCoef] * [SysTypeCoef] * [NetTypeCoef]
 FROM
 (
-    SELECT 'LAW', 1
+    SELECT 'Ïðîô', 1
 	UNION ALL
-    SELECT 'BUDP', 1.1
+    SELECT 'ÁÎÂÏ', 1.1
 	UNION ALL
-    SELECT 'JURP', 1.1
+    SELECT 'ÞÂÏ', 1.1
 	UNION ALL
-    SELECT 'BVP', 1.1
+    SELECT 'ÁÂÏ', 1.1
 	UNION ALL
-    SELECT 'BUHL', 0.65
+    SELECT 'ÊÁ:Ïðîô', 0.65
 	UNION ALL
-    SELECT 'BUHUL', 0.65
+    SELECT 'ÊÁñ', 0.65
 	UNION ALL
-    SELECT 'MBP', 0.65
+    SELECT 'ÌÁÏ', 0.65
 	UNION ALL
-    SELECT 'BUD', 0.65
+    SELECT 'ÁÎ', 0.65
 ) AS Systems([SysName], [SysCoef])
 CROSS JOIN
 (
-    SELECT 'USR', 1
+    SELECT 'ÊÎÌ', 1
 	UNION ALL
     SELECT 'VIP', 1
 	UNION ALL
-    SELECT 'LLL', 1
+    SELECT 'Ñ.Ë', 1
 	UNION ALL
-    SELECT 'VVV', 1
+    SELECT 'Ñ.Â', 1
 	UNION ALL
-    SELECT 'DSP', 0
+    SELECT 'ÄÑÏ', 0
 	UNION ALL
-    SELECT 'SSS', 0
+    SELECT 'Ñ.Ñ', 0
 	UNION ALL
     SELECT 'LSV', 0
 	UNION ALL
-    SELECT 'SPC', 0.1
+    SELECT 'ÑÏÅÖ', 0.1
 	UNION ALL
     SELECT 'DD3', 1.2
 	UNION ALL
