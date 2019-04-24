@@ -138,7 +138,7 @@ BEGIN
 									SELECT TX_ID, TX_PERCENT
 									FROM dbo.TaxTable
 									WHERE TX_PERCENT = 18
-										AND DatePart(Year, AVANS_DATE) = 2018 AND DatePart(Year, @Date) = 2019
+										AND DatePart(Year, AVANS_DATE) IN (2017, 2018) AND DatePart(Year, @Date) = 2019
 								) p
 								INNER JOIN dbo.IncomeSaldoView e ON e.ID_ID = b.ID_ID
 							WHERE a.INR_ID_INVOICE = t.ID_INVOICE
