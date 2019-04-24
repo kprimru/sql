@@ -5,6 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
+@SYS		VARCHAR(20)	=	NULL,
+@SYS_TYPE	VARCHAR(20)	=	NULL,
+@NET_TYPE	VARCHAR(20)	=	NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -163,6 +166,103 @@ BEGIN
 		), D.[Nets], D.[Weight]
 	FROM @Data D
 
+-----------------------‘»À‹“–-----------------------------------------------------
+
+	IF @SYS IS NOT NULL
+	BEGIN
+		DELETE FROM @Result
+		WHERE	Id NOT IN
+		(
+			SELECT Id
+			FROM @Result
+			WHERE (Data LIKE '%,'+@SYS+',%')OR(Data LIKE '%,'+@SYS)OR(Data LIKE @SYS+',%')OR(Data LIKE @SYS)
+
+			UNION ALL
+
+			SELECT Id
+			FROM @Result
+			WHERE Parent_Id IN
+				(
+				SELECT Id
+				FROM @Result
+				WHERE (Data LIKE '%,'+@SYS+',%')OR(Data LIKE '%,'+@SYS)OR(Data LIKE @SYS+',%')OR(Data LIKE @SYS)
+				)
+
+			UNION ALL
+
+			SELECT Id
+			FROM @Result
+			WHERE Parent_ID IN
+				(
+				SELECT Id
+				FROM @Result
+				WHERE Parent_Id IN
+					(
+					SELECT Id
+					FROM @Result
+					WHERE (Data LIKE '%,'+@SYS+',%')OR(Data LIKE '%,'+@SYS)OR(Data LIKE @SYS+',%')OR(Data LIKE @SYS)
+					)
+				)
+		)
+	END
+
+	IF @SYS_TYPE IS NOT NULL
+	BEGIN
+		DELETE FROM @Result
+		WHERE	Id NOT IN
+		(
+			SELECT Parent_Id
+			FROM @Result
+			WHERE (Data LIKE '%,'+@SYS_TYPE+',%')OR(Data LIKE '%,'+@SYS_TYPE)OR(Data LIKE @SYS_TYPE+',%')OR(Data LIKE @SYS_TYPE)
+
+			UNION ALL
+
+			SELECT Id
+			FROM @Result
+			WHERE (Data LIKE '%,'+@SYS_TYPE+',%')OR(Data LIKE '%,'+@SYS_TYPE)OR(Data LIKE @SYS_TYPE+',%')OR(Data LIKE @SYS_TYPE)
+
+			UNION ALL
+
+			SELECT Id
+			FROM @Result
+			WHERE Parent_Id IN
+			(
+				SELECT Id
+				FROM @Result
+				WHERE (Data LIKE '%,'+@SYS_TYPE+',%')OR(Data LIKE '%,'+@SYS_TYPE)OR(Data LIKE @SYS_TYPE+',%')OR(Data LIKE @SYS_TYPE)
+			)
+		)
+	END
+	
+	IF @NET_TYPE IS NOT NULL
+	BEGIN
+		DELETE FROM @Result
+		WHERE Id NOT IN
+		(
+			SELECT Parent_Id
+			FROM @Result
+			WHERE Id IN
+				(
+				SELECT Parent_Id
+				FROM @Result
+				WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
+				)
+			
+			UNION ALL
+			
+			SELECT Parent_Id
+			FROM @Result
+			WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
+
+			UNION ALL
+
+			SELECT Id
+			FROM @Result
+			WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
+		)
+	END
+---------------------- ŒÕ≈÷ ‘»À‹“–¿---------------------------------------------
+
 	SELECT *
-	FROM @Result;
+	FROM @Result
 END;
