@@ -49,6 +49,7 @@ BEGIN
 				FROM dbo.BookPurchase z
 				WHERE z.ID_AVANS = e.INS_ID
 					AND z.ID_INVOICE = e.INS_ID
+					AND z.CODE = '22'
 			), TX_ID, SUM(-b.ID_PRICE), SUM(-b.ID_PRICE - (-b.ID_PRICE / ((100 + TX_PERCENT) / 100))), SUM((-b.ID_PRICE / ((100 + TX_PERCENT) / 100)))
 		FROM 
 			dbo.IncomeTable a
