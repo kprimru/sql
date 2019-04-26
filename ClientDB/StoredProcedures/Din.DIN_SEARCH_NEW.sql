@@ -251,8 +251,15 @@ WHERE DIS_STR IN
 			)
 	AND DIS_STR NOT IN
 			(
-				SELECT DistrStr
+				SELECT DIS_STR
 				FROM Reg.RegNodeSearchView
+			)
+	OR ID NOT IN
+			(
+				SELECT TOP 1 DF_ID
+				FROM Din.DinFiles DF
+				WHERE DF.DF_DISTR=DistrNumber
+				ORDER BY DF_CREATE DESC
 			)
 
 UPDATE v

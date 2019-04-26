@@ -7,11 +7,12 @@ GO
 CREATE PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
 @SYS		VARCHAR(20)	=	NULL,
 @SYS_TYPE	VARCHAR(20)	=	NULL,
-@NET_TYPE	VARCHAR(20)	=	NULL
+@NET_TYPE	VARCHAR(20)	=	NULL,
+@DATE		DATETIME
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE @Params Table
 	(
 		[Sys]       VarChar(50)     NOT NULL,
@@ -44,7 +45,7 @@ BEGIN
 	) AS NetTypes
 	CROSS APPLY
 	(
-		SELECT Date, Weight
+		SELECT TOP 1 Date, Weight
 		FROM dbo.Weight W
 		WHERE W.Sys = Systems.SystemBaseName
 			AND W.SysType = SystemTypes.SST_REG
@@ -52,6 +53,8 @@ BEGIN
 			AND W.NetTech = NetTypes.NT_TECH
 			AND W.NetOdon = NetTypes.NT_ODON
 			AND W.NetOdoff = NetTypes.NT_ODOFF
+			AND W.Date < ISNULL(@DATE, GETDATE())
+		ORDER BY Date DESC
 	) W;
 
 	DECLARE @Data Table
