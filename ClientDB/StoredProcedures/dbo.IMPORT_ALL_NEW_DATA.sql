@@ -498,4 +498,18 @@ BEGIN
 		V.value('@ODon[1]',		'SmallInt'),
 		V.value('@ODoff[1]',	'SmallInt')
 	FROM @Data.nodes('/DATA[1]/REG[1]/ITEM') N(V);
+	
+	DELETE FROM dbo.Weight;
+	
+	INSERT INTO dbo.Weight(Date, Sys, SysType, NetCount, NetTech, NetOdon, NetOdoff, Weight)
+	SELECT
+		V.value('@Date[1]',		'SmallDateTime'),
+		V.value('@Sys[1]',		'VarChar(100)'),
+		V.value('@SysType[1]',	'VarChar(100)'),
+		V.value('@NetCount[1]',	'SmallInt'),
+		V.value('@NetTech[1]',	'SmallInt'),
+		V.value('@NetOdon[1]',	'SmallInt'),
+		V.value('@NetOdoff[1]',	'SmallInt'),
+		V.value('@Weight[1]',	'Decimal(8,4)')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/WEIGHT[1]/ITEM') N(V);
 END

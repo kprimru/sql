@@ -38,6 +38,7 @@ BEGIN
 		@System		Xml,
 		@InfoBank	Xml,
 		@SystemBank	Xml,
+		@Weight		Xml,
 		@References	Xml;
 	
 	DECLARE @Distr Table
@@ -298,6 +299,23 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK')
 		);
 		
+	/*
+	SET @Weight = 
+		(
+			SELECT
+				[Date]		= W.[Date],
+				[Sys]		= W.[Sys],
+				[SysType]	= W.[SysType],
+				[NetCount]	= W.[NetCount],
+				[NetTech]	= W.[NetTech],
+				[NetOdon]	= W.[NetOdon],
+				[NetOdoff]	= W.[NetOdoff],
+				[Weight]	= W.[Weight]
+			FROM dbo.Weight W
+			FOR XML RAW('ITEM'), ROOT('WEIGHT')
+		);
+	*/
+		
 	SET @References = 
 		(
 			SELECT
@@ -310,7 +328,8 @@ BEGIN
 						@InfoBank,
 						@Host,
 						@System,
-						@SystemBank
+						@SystemBank,
+						@Weight
 					FOR XML PATH('REFERENCES')	
 				)
 			)
