@@ -7,6 +7,7 @@ GO
 CREATE PROCEDURE [dbo].[IMPORT_ALL_NEW_DATA]
 	@InData		NVarChar(MAX),
 	@OUT_DATA	NVarChar(512) = NULL OUTPUT
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -350,7 +351,7 @@ BEGIN
 	(
 		SELECT
 			[Host]	= V.value('@Host[1]',		'VarChar(100)'),
-			[Distr]	= V.value('@Distr[1]',	'Int'),
+			[Distr]	= V.value('@Distr[1]',		'Int'),
 			[Comp]	= V.value('@Comp[1]',		'TinyInt'),
 			[Date]	= V.value('@Date[1]',		'DateTime')
 		FROM @Data.nodes('/DATA[1]/EXPERT[1]/ITEM') N(V)
@@ -498,4 +499,18 @@ BEGIN
 		V.value('@ODon[1]',		'SmallInt'),
 		V.value('@ODoff[1]',	'SmallInt')
 	FROM @Data.nodes('/DATA[1]/REG[1]/ITEM') N(V);
+	
+	DELETE FROM dbo.Weight;
+	
+	INSERT INTO dbo.Weight(Date, Sys, SysType, NetCount, NetTech, NetOdon, NetOdoff, Weight)
+	SELECT
+		V.value('@Date[1]',		'SmallDateTime'),
+		V.value('@Sys[1]',		'VarChar(100)'),
+		V.value('@SysType[1]',	'VarChar(100)'),
+		V.value('@NetCount[1]',	'SmallInt'),
+		V.value('@NetTech[1]',	'SmallInt'),
+		V.value('@NetOdon[1]',	'SmallInt'),
+		V.value('@NetOdoff[1]',	'SmallInt'),
+		V.value('@Weight[1]',	'Decimal(8,4)')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/WEIGHT[1]/ITEM') N(V);
 END
