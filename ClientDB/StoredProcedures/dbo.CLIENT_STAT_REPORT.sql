@@ -53,7 +53,7 @@ BEGIN
 	SELECT 
 		ROW_NUMBER() OVER(ORDER BY c.ClientFullName, a.SystemOrder) AS RN,
 		c.ClientID, c.ClientFullName, 
-		a.SystemOrder, a.DistrStr AS UD_NAME, NT_SHORT AS NET_TYPE, 
+		a.SystemOrder, a.DistrStr AS UD_NAME, a.DistrStr AS UD_COMPLECT, NT_SHORT AS NET_TYPE, 
 		
 		STT_DATE AS LAST_DATE, 
 		CASE 
