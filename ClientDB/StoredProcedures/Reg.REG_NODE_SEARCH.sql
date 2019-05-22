@@ -285,7 +285,16 @@ BEGIN
 		*/
 		NULL AS BLACK_DATE, NULL AS BLACK_USER, NULL AS BLACK_REASON, 
 		NULL AS WHITE_DATE, NULL AS WHITE_USER, NULL AS WHITE_REASON,
-		ServiceName, ManagerName
+		ServiceName, ManagerName,
+		Weight =
+			(
+				SELECT TOP (1) WEIGHT
+				FROM dbo.WeightView W WITH(NOEXPAND)
+				WHERE W.SystemID = a.SystemID
+					AND W.SST_ID = a.SST_ID
+					AND W.NT_ID = a.NT_ID
+				ORDER BY W.Date DESC
+			)
 	FROM 
 		#temp z
 		INNER JOIN Reg.RegNodeSearchView a WITH(NOEXPAND) ON z.HST = a.HostID AND z.DISTR = a.DistrNumber AND z.COMP = a.CompNumber			
