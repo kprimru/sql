@@ -9,7 +9,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	TRUNCATE TABLE dbo.Weight;
+	DELETE FROM dbo.Weight;
 
 	INSERT INTO dbo.Weight
 	SELECT 
