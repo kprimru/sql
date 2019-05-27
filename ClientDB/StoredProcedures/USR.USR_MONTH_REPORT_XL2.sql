@@ -333,7 +333,11 @@ BEGIN
 		END AS VISIT_CNT,
 		-- максимальное количество визитов (ограничить для категории C)
 		IsNull(CASE
-			WHEN Category = 'C' THEN 2
+			WHEN Category = 'C' THEN
+				CASE 
+					WHEN @WEEK_CNT = 5 THEN 3
+					ELSE 2
+				END
 			ELSE 5
 		END, 5) AS MAX_VISIT_CNT,
 		--5 AS MAX_VISIT_CNT,
