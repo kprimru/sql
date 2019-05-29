@@ -306,7 +306,11 @@ BEGIN
 		-- количество визитов (когда было обновлено систем > 0
 		--IsOnline, @WEEK_CNT, VISIT_CNT4, VISIT_CNT5,
 		CASE
-			WHEN IsOnline = 1 AND Category = 'C' THEN 2
+			WHEN IsOnline = 1 AND Category = 'C' THEN
+				CASE 
+					WHEN @WEEK_CNT = 5 THEN 3
+					ELSE 2
+				END
 			WHEN IsOnline = 1 AND @WEEK_CNT = 5 THEN VISIT_CNT5
 			WHEN IsOnline = 1 AND @WEEK_CNT = 4 THEN VISIT_CNT4
 			ELSE
