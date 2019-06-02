@@ -30,18 +30,21 @@ BEGIN
 		SELECT DISTINCT SystemShortName, SystemBaseName
 		FROM dbo.SystemTable S
 		INNER JOIN dbo.Weight W ON S.SystemBaseName = W.Sys
+		WHERE @SYS IS NULL OR @SYS = SystemShortName
 	) AS Systems
 	CROSS JOIN
 	(
 		SELECT DISTINCT SST_SHORT, SST_REG
 		FROM Din.SystemType S
 		INNER JOIN dbo.Weight W ON S.SST_REG = W.SysType
+		WHERE @SYS_TYPE IS NULL OR SST_SHORT = @SYS_TYPE
 	) AS SystemTypes
 	CROSS JOIN
 	(
 		SELECT DISTINCT NT_SHORT, NT_TECH, NT_NET, NT_ODON, NT_ODOFF
 		FROM Din.NetType N
 		INNER JOIN dbo.Weight W ON N.NT_NET = W.NetCount AND N.NT_TECH = W.NetTech AND N.NT_ODON = W.NetOdon AND N.NT_ODOFF = W.NetOdoff
+		WHERE @NET_TYPE IS NULL OR NT_SHORT = @NET_TYPE
 	) AS NetTypes
 	CROSS APPLY
 	(
