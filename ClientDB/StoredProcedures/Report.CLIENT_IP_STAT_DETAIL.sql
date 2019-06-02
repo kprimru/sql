@@ -8,119 +8,121 @@ CREATE PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
-SET NOCOUNT ON;
+BEGIN
+	SET NOCOUNT ON;
 
-DECLARE @SQL NVARCHAR(MAX);
+	DECLARE @SQL NVARCHAR(MAX);
 
-SET @SQL = N'SELECT DISTINCT
-			ISNULL(ServiceName, SubhostName) AS [Си/подхост],
-			ISNULL(ClientFullName, Comment) AS [Клиент],
-			a.DistrStr AS [Дистрибутив],
-			CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Дата регистрации],
-			Net AS [Сеть], UserCount AS [Количество пользователей],
-			'
+	SET @SQL = N'SELECT DISTINCT
+				ISNULL(ServiceName, SubhostName) AS [Си/подхост],
+				ISNULL(ClientFullName, Comment) AS [Клиент],
+				a.DistrStr AS [Дистрибутив],
+				CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Дата регистрации],
+				Net AS [Сеть], UserCount AS [Количество пользователей],
+				'
 
 
-SELECT @SQL =  @SQL + N'
-			(
-			SELECT  SUM(EnterSum)
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Всего входов],
-			(
-			SELECT SUM([0Enter])
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 0 входов],
-			(
-			SELECT SUM([1Enter])
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 1 входом],
-			(
-			SELECT SUM([2Enter])
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 2 входомами],
-			(
-			SELECT SUM([3Enter])
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 3 и более входомами],
-			(
-			SELECT SUM(SessionTimeSum)
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Суммарное время всех сессий (мин)],
-			(LEFT((
-			SELECT SUM(SessionTimeAVG)
-			FROM IP.ClientStatDetail q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-					AND q.HostID = a.HostID
-					AND q.Distr = a.DistrNumber
-					AND q.Comp = a.CompNumber
-			GROUP BY HostID, Distr, Comp), CHARINDEX(''.'',(
-																SELECT SUM(SessionTimeAVG)
-																FROM IP.ClientStatDetail q
-																WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-																		AND q.HostID = a.HostID
-																		AND q.Distr = a.DistrNumber
-																		AND q.Comp = a.CompNumber
-																GROUP BY HostID, Distr, Comp))+1)--количество знаков после запятой
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)],
-	'
-FROM Common.Period
-WHERE TYPE = 1
-		AND START >= DATEADD(MONTH, -3, GETDATE())
-		AND START <= DATEADD(WEEK, -1, GETDATE())
-
-SET @SQL = @SQL +
-	N'
-		(
-			SELECT COUNT(*)
-			FROM 
+	SELECT @SQL =  @SQL + N'
 				(
-					SELECT DISTINCT WeekId, HostID, Distr, Comp
-					FROM
-						IP.ClientStatDetail z
-						INNER JOIN Common.Period y ON z.WeekId = y.ID				
-					WHERE z.HostID = a.HostID
-						AND z.Distr = a.DistrNumber
-						AND z.Comp = a.CompNumber
-						AND DATEADD(MONTH, 3, START) >= GETDATE()				
-				) AS o_O
-		) AS [Кол-во недель со входами]
-	FROM 	
-		Reg.RegNodeSearchView a WITH(NOEXPAND)
-		INNER JOIN IP.ClientStatDetail CSD ON CSD.HostID=a.HostID AND CSD.Distr=a.DistrNumber AND CSD.Comp=a.CompNumber
-		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
-		LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
-	'
---PRINT len(@SQL)
+				SELECT  SUM(EnterSum)
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Всего входов],
+				(
+				SELECT SUM([0Enter])
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 0 входов],
+				(
+				SELECT SUM([1Enter])
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 1 входом],
+				(
+				SELECT SUM([2Enter])
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 2 входомами],
+				(
+				SELECT SUM([3Enter])
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 3 и более входомами],
+				(
+				SELECT SUM(SessionTimeSum)
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Суммарное время всех сессий (мин)],
+				(LEFT((
+				SELECT SUM(SessionTimeAVG)
+				FROM dbo.ClientStatDetail q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+						AND q.HostID = a.HostID
+						AND q.Distr = a.DistrNumber
+						AND q.Comp = a.CompNumber
+				GROUP BY HostID, Distr, Comp), CHARINDEX(''.'',(
+																	SELECT SUM(SessionTimeAVG)
+																	FROM dbo.ClientStatDetail q
+																	WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+																			AND q.HostID = a.HostID
+																			AND q.Distr = a.DistrNumber
+																			AND q.Comp = a.CompNumber
+																	GROUP BY HostID, Distr, Comp))+1)--количество знаков после запятой
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)],
+		'
+	FROM Common.Period
+	WHERE TYPE = 1
+			AND START >= DATEADD(MONTH, -3, GETDATE())
+			AND START <= DATEADD(WEEK, -1, GETDATE())
 
---select (@SQL)
-EXEC (@SQL)
+	SET @SQL = @SQL +
+		N'
+			(
+				SELECT COUNT(*)
+				FROM 
+					(
+						SELECT DISTINCT WeekId, HostID, Distr, Comp
+						FROM
+							dbo.ClientStatDetail z
+							INNER JOIN Common.Period y ON z.WeekId = y.ID				
+						WHERE z.HostID = a.HostID
+							AND z.Distr = a.DistrNumber
+							AND z.Comp = a.CompNumber
+							AND DATEADD(MONTH, 3, START) >= GETDATE()				
+					) AS o_O
+			) AS [Кол-во недель со входами]
+		FROM 	
+			Reg.RegNodeSearchView a WITH(NOEXPAND)
+			INNER JOIN dbo.ClientStatDetail CSD ON CSD.HostID=a.HostID AND CSD.Distr=a.DistrNumber AND CSD.Comp=a.CompNumber
+			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
+			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
+		'
+	--PRINT len(@SQL)
+
+	--select (@SQL)
+	EXEC (@SQL)
+END;
