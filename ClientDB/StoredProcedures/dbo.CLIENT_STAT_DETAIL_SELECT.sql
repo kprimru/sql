@@ -12,7 +12,18 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT *
+	SELECT
+		P.NAME,
+		[UpDate],
+		Net,
+		UserCount,
+		EnterSum,
+		[0Enter],
+		[1Enter],
+		[2Enter],
+		[3Enter],
+		SessionTimeSum = dbo.TimeMinToStr(SessionTimeSum),
+		SessionTimeAVG = dbo.TimeSecToStr(Floor(SessionTimeAVG * 60))
 	FROM dbo.ClientStatDetail D
 	INNER JOIN Common.Period P ON D.WeekId = P.Id
 	WHERE	HostId = @HOST
