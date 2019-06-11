@@ -22,7 +22,7 @@ BEGIN
 				FROM 
 					Client.CompanyPersonalPhone z
 					LEFT OUTER JOIN Client.PhoneType y ON z.ID_TYPE = y.ID
-				WHERE z.ID_PERSONAL = a.ID
+				WHERE z.ID_PERSONAL = a.ID AND z.STATUS=1
 				ORDER BY y.NAME, PHONE FOR XML PATH('')
 			)), 1, 2, '')) AS PHONES, a.STATUS,			
 			(
