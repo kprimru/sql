@@ -299,7 +299,6 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK')
 		);
 		
-	/*
 	SET @Weight = 
 		(
 			SELECT
@@ -314,7 +313,6 @@ BEGIN
 			FROM dbo.Weight W
 			FOR XML RAW('ITEM'), ROOT('WEIGHT')
 		);
-	*/
 		
 	SET @References = 
 		(

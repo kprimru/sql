@@ -46,7 +46,16 @@ BEGIN
 	SELECT	
 		DATE,
 		ManagerName, ServiceName, ClientID, ClientFullName, DistrStr, DistrTypeName,
-		dbo.DistrWeight(SystemID, DistrTypeID, SystemTypeName, DATE) AS WEIGHT
+		(
+			SELECT TOP (1) WEIGHT
+			FROM dbo.WeightView W WITH(NOEXPAND)
+			INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON W.SystemID = R.SystemID
+																AND W.NT_ID = R.NT_ID
+																AND W.SST_ID = R.SST_ID
+			WHERE R.DistrNumber = b.DISTR AND R.CompNumber = b.COMP AND R.HostId = b.HostId
+				AND W.DATE <= a.DATE
+			ORDER BY a.DATE DESC
+		) AS WEIGHT
 	INTO #result
 	FROM 
 		#distr a

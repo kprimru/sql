@@ -27,6 +27,12 @@ BEGIN
 				FROM dbo.ClientStudyClaim z
 				WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
 				ORDER BY z.UPD_DATE
+			) AS AUTHOR_FILTER,
+			(
+				SELECT TOP 1 z.UPD_USER
+				FROM dbo.ClientStudyClaim z
+				WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
+				ORDER BY z.UPD_DATE
 			) + ' ' + ServiceName + ' (' + ManagerName + ')' AS AUTHOR,
 			CASE STATUS 
 				WHEN 1 THEN 'Активна'
@@ -78,6 +84,12 @@ BEGIN
 				FROM dbo.ClientStudyClaim z
 				WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
 				ORDER BY z.UPD_DATE
+			) AS AUTHOR_FILTER,
+			(
+				SELECT TOP 1 z.UPD_USER
+				FROM dbo.ClientStudyClaim z
+				WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
+				ORDER BY z.UPD_DATE
 			) + ' ' + ServiceName + ' (' + ManagerName + ')' AS AUTHOR,
 			CASE STATUS 
 				WHEN 1 THEN 'Активна'
@@ -124,6 +136,12 @@ BEGIN
 					FOR XML PATH('')
 				)
 			), 1, 2, '')) AS PERS_NOTE,
+			(
+				SELECT TOP 1 z.UPD_USER
+				FROM dbo.ClientStudyClaim z
+				WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
+				ORDER BY z.UPD_DATE
+			) AS AUTHOR_FILTER,
 			(
 				SELECT TOP 1 z.UPD_USER
 				FROM dbo.ClientStudyClaim z

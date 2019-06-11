@@ -8,125 +8,127 @@ CREATE PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL_AVG]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
-SET NOCOUNT ON;
+BEGIN
+	SET NOCOUNT ON;
 
-DECLARE @SQL NVARCHAR(MAX);
+	DECLARE @SQL NVARCHAR(MAX);
 
-SET @SQL = N'SELECT DISTINCT
-			Net AS [Сеть]
-			'
+	SET @SQL = N'SELECT DISTINCT
+				Net AS [Сеть]
+				'
 
 
-SELECT @SQL =  @SQL + N'
-			,
-			(
-			SELECT [ComplCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Кол-во комплектов],
-			(
-			SELECT [ComplNoEnt]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Комплектов без входов],
-			(
-			SELECT [ComplWithEnt]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Комплектов со входами],
-			(
-			SELECT [EntCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Всего входов],
-			(
-			SELECT [UserCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей во всех комплектах],
-			(
-			SELECT [0Enter]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 0 входов],
-			(
-			SELECT [1Enter]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 1 входом],
-			(
-			SELECT [2Enter]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 2 входомами],
-			(
-			SELECT [3Enter]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 3 и более входомами],
-			(
-			SELECT [AVGUserCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во пользователей в комплекте],
-			(
-			SELECT [AVGWorkUserCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во работавших пользователей в комплекте],
-			(
-			SELECT [AVGNWorkUserCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во НЕработавших пользователей в комплекте],
-			(
-			SELECT [AVGEntCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во входов в комплект],
-			(
-			SELECT [AVGWorkUserEntCount]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во входов работающего пользователя],
+	SELECT @SQL =  @SQL + N'
+				,
+				(
+				SELECT [ComplCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Кол-во комплектов],
+				(
+				SELECT [ComplNoEnt]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Комплектов без входов],
+				(
+				SELECT [ComplWithEnt]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Комплектов со входами],
+				(
+				SELECT [EntCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Всего входов],
+				(
+				SELECT [UserCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей во всех комплектах],
+				(
+				SELECT [0Enter]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 0 входов],
+				(
+				SELECT [1Enter]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 1 входом],
+				(
+				SELECT [2Enter]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 2 входомами],
+				(
+				SELECT [3Enter]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 3 и более входомами],
+				(
+				SELECT [AVGUserCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во пользователей в комплекте],
+				(
+				SELECT [AVGWorkUserCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во работавших пользователей в комплекте],
+				(
+				SELECT [AVGNWorkUserCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во НЕработавших пользователей в комплекте],
+				(
+				SELECT [AVGEntCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во входов в комплект],
+				(
+				SELECT [AVGWorkUserEntCount]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее кол-во входов работающего пользователя],
 
-			(LEFT((
-			SELECT [AVGSessionTime]
-			FROM IP.ClientStatDetailAVG q
-			WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-			AND q.Net=a.Net), CHARINDEX(''.'',(	SELECT [AVGSessionTime]
-												FROM IP.ClientStatDetailAVG q
-												WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
-												AND q.Net=a.Net))+1)--количество знаков после запятой
-			) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)]
-	
+				(LEFT((
+				SELECT [AVGSessionTime]
+				FROM dbo.ClientStatDetailAVG q
+				WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+				AND q.Net=a.Net), CHARINDEX(''.'',(	SELECT [AVGSessionTime]
+													FROM dbo.ClientStatDetailAVG q
+													WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
+													AND q.Net=a.Net))+1)--количество знаков после запятой
+				) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)]
+		
 
-	'
-FROM Common.Period
-WHERE TYPE = 1
-		AND START >= DATEADD(MONTH, -3, GETDATE())
-		AND START <= DATEADD(WEEK, -1, GETDATE())
+		'
+	FROM Common.Period
+	WHERE TYPE = 1
+			AND START >= DATEADD(MONTH, -3, GETDATE())
+			AND START <= DATEADD(WEEK, -1, GETDATE())
 
-SET @SQL = @SQL +
-	N'
-	FROM 	
-		IP.ClientStatDetailAVG a
-	'
---PRINT len(@SQL)
+	SET @SQL = @SQL +
+		N'
+		FROM 	
+			dbo.ClientStatDetailAVG a
+		'
+	--PRINT len(@SQL)
 
---select (@SQL)
-EXEC (@SQL)
+	--select (@SQL)
+	EXEC (@SQL)
+END;

@@ -81,7 +81,18 @@ BEGIN
 	SELECT 
 		ManagerName, ServiceName, ClientID, ClientFullName, DistrStr, DistrTypeName,
 		DATE AS CD_DATE, DR_NAME, CD_NOTE,
-		dbo.DistrWeight(SystemID, DistrTypeID, SystemTypeName, DATE) AS WEIGHT
+		--dbo.DistrWeight(SystemID, DistrTypeID, SystemTypeName, DATE) AS WEIGHT
+		(
+			SELECT TOP (1) WEIGHT
+			FROM dbo.WeightView W WITH(NOEXPAND)
+			INNER JOIN Din.SystemType S ON W.SST_ID = S.SST_ID
+			INNER JOIN Din.NetType N ON W.NT_ID = N.NT_ID
+			WHERE S.SST_ID_MASTER = b.SystemTypeID
+				AND N.NT_ID_MASTER = b.DistrTypeID
+				AND W.SystemID = b.SystemID
+				AND W.DATE <= a.DATE
+			ORDER BY W.DATE DESC
+		) AS WEIGHT
 	INTO #result
 	FROM 
 		#distr a

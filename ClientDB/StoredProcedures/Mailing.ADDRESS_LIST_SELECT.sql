@@ -28,7 +28,9 @@ BEGIN
 			CASE WHEN ((a.Email IS NULL) OR (a.Email='')) THEN a.OriginalEmail ELSE a.Email END	AS [EMail],
 			a.UpdateDate						,
 			CASE WHEN ((a.Email IS NULL) OR (a.Email='')) THEN 1 ELSE 0 END AS IsNew,
-			SendDate
+			SendDate,
+			Cast(CASE WHEN C.SubhostName != '' THEN 1 ELSE 0 END AS Bit) AS IsSubhost,
+			ConfirmDate
 
 	FROM	Mailing.Requests a
 			INNER JOIN			Reg.RegNodeSearchView c WITH(NOEXPAND)	ON a.Comp = c.CompNumber AND a.Distr = c.DistrNumber AND a.HostID = c.HostID
@@ -41,5 +43,5 @@ BEGIN
 		AND (a.OriginalEmail LIKE @EMAIL OR a.Email LIKE @EMAIL OR @EMAIL IS NULL)
 		AND (a.UpdateDate > @DATE_BEGIN OR @DATE_BEGIN IS NULL)
 		AND (a.UpdateDate < @DATE_END OR @DATE_END IS NULL)
-		AND ((a.Email IS NULL) OR (a.Email='') OR @ISNEW=0)
+		AND ((C.SubhostName = '' AND (a.Email IS NULL) OR (a.Email='')) OR (a.ConfirmDate IS NULL AND C.SubhostName != '') OR @ISNEW=0)
 END
