@@ -11,9 +11,16 @@ BEGIN
 	SET NOCOUNT ON;
 
 	BEGIN TRY
+		/*
 		DELETE
 		FROM Client.CompanyPersonalPhone
 		WHERE ID	=	@ID
+	 */
+		UPDATE Client.CompanyPersonalPhone
+		SET STATUS=3,
+			UPD_DATE=GETDATE(),
+			UPD_USER=ORIGINAL_LOGIN()
+		WHERE ID = @ID
 	END TRY
 	BEGIN CATCH
 		DECLARE	@SEV	INT
