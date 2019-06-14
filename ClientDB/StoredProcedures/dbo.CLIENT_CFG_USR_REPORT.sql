@@ -62,6 +62,15 @@ BEGIN
 		WHERE ServiceStatusID = 2
 			AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (a.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
+			AND EXISTS
+			(
+				SELECT *
+				FROM dbo.ClientDistrView D WITH(NOEXPAND)
+				WHERE D.ID_CLIENT = a.ClientID
+					AND DS_REG = 0
+					AND DistrTypeBaseCheck = 1
+					AND SystemBaseCheck = 1
+			)
 		ORDER BY ManagerName, ServiceName, ClientFullName
 	/*	
 	IF @HIDE = 1
