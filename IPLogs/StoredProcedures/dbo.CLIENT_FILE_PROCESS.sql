@@ -20,7 +20,7 @@ BEGIN
 		[Id]	BigInt	NOT NULL,
 		Primary Key Clustered([Id])
 	);
-
+		
 	EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 2, @FILEID OUTPUT, @RESULT OUTPUT
 
 	IF (@FILEID IS NULL) OR (@RESULT = 0)
