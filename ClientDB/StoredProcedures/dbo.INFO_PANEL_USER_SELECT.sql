@@ -39,5 +39,5 @@ BEGIN
 	WHERE @@VERSION LIKE '%Express Edition%' AND (
 		SELECT SUM(data + index_size)/1024.0/1024/1024
 		FROM Maintenance.DatabaseSize()		
-	) > 3.8 AND (IS_SRVROLEMEMBER('sysadmin') = 1 OR IS_MEMBER('db_owner') = 1)
+	) > 3.8 AND (IS_SRVROLEMEMBER('sysadmin') = 1 OR IS_MEMBER('db_owner') = 1 OR IS_MEMBER('DBChief') = 1)
 END
