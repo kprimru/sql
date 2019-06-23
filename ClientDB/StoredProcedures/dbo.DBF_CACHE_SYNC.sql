@@ -30,6 +30,8 @@ BEGIN
 			SET @Message = 'Произошла ошибка: "' + @Msg + '". Номер ошибки: ' + Cast(@Number AS NVarChar(Max));
 				
 			EXEC [Maintenance].[MAIL_SEND] @Message;
+			
+			RETURN;
 		END CATCH
 	END;
 END
