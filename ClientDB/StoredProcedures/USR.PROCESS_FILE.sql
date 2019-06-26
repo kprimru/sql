@@ -19,22 +19,24 @@ BEGIN
 	SET NOCOUNT ON;	
 
 	DECLARE
-		@Xml			Xml,
-		@Complect_Id	UniqueIdentifier,
-		@Usr_Id			UniqueIdentifier,
-		@SystemName		VarChar(20),
-		@SystemNumber	VarChar(10),
-		@DistrNumber	VarChar(10),
-		@CompNumber		VarChar(10),
-		@System_num		VarChar(10),
-		@DistrInt		Int,
-		@CompInt		TinyInt,
-		@ClientName		VarChar(250),
-		@Client_Id		Int,
-		@Manager_Id		Int,
-		@Service_Id		Int,
-		@ManagerName	VarCHar(100),
-		@ServiceName	VarCHar(100);
+		@Xml				Xml,
+		@Complect_Id		UniqueIdentifier,
+		@Complect_Active	Bit,
+		@Complect_Client	Int,
+		@Usr_Id				UniqueIdentifier,
+		@SystemName			VarChar(20),
+		@SystemNumber		VarChar(10),
+		@DistrNumber		VarChar(10),
+		@CompNumber			VarChar(10),
+		@System_num			VarChar(10),
+		@DistrInt			Int,
+		@CompInt			TinyInt,
+		@ClientName			VarChar(250),
+		@Client_Id			Int,
+		@Manager_Id			Int,
+		@Service_Id			Int,
+		@ManagerName		VarChar(100),
+		@ServiceName		VarChar(100);
 
 	DECLARE @IDs TABLE
 	(
@@ -209,7 +211,9 @@ BEGIN
 	SET @CompInt	= CONVERT(TinyInt,	@compnumber);
 	
 	SELECT TOP 1
-		@Complect_Id = UD_ID
+		@Complect_Id		= UD_ID,
+		@Complect_Active	= UD_ACTIVE,
+		@Complect_Client	= UD_ID_CLIENT
 	FROM USR.USRData			C
 	INNER JOIN dbo.SystemTable	S ON S.HostID = C.UD_ID_HOST
 	WHERE	UD_DISTR = @DistrInt
@@ -261,12 +265,9 @@ BEGIN
 
 	IF @Usr_Id IS NOT NULL
 	BEGIN
-		IF @Client_Id IS NULL OR
-		(
-			SELECT UD_ID_CLIENT
-			FROM USR.USRData
-			WHERE UD_ID = @Complect_Id
-		) = @Client_Id
+		IF	@Client_Id IS NULL
+			OR
+			@Complect_Client = @Client_Id
 		BEGIN
 			SET @res = 'Файл уже есть в базе. Пропущен. (' + ISNULL(CONVERT(VARCHAR(20), @Client_Id), 'NULL') + ')';
 			SET @resstatus = 1;
@@ -313,12 +314,16 @@ BEGIN
 		RETURN;
 	END;
 
-	IF (SELECT UD_ID_CLIENT FROM USR.USRData WHERE UD_ID = @Complect_Id) <> @Client_Id
+	IF @Complect_Client <> @Client_Id OR @Complect_Active = 0
 	BEGIN
-		SET @res = @res + 'Изменен клиент'
+		IF @Complect_Client <> @Client_Id
+			SET @res = @res + 'Изменен клиент'
+		IF @Complect_Active = 0
+			SET @res = @res + 'Изменен признак активности'
 
 		UPDATE USR.USRData
-		SET UD_ID_CLIENT = @Client_Id
+		SET UD_ID_CLIENT	= @Client_Id,
+			UD_ACTIVE		= 1
 		WHERE UD_ID = @Complect_Id;
 	END;
 
