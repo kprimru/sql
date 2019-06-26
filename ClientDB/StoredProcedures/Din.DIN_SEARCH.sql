@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[DIN_SEARCH] -- ИЖСИЖСИЖE
+CREATE PROCEDURE [Din].[DIN_SEARCH]
 	@CLIENT		NVARCHAR(MAX) = NULL,
 	@CLIENT_ID	NVARCHAR(MAX) = NULL,
 	@SYS		NVARCHAR(MAX) = NULL,
@@ -16,7 +16,8 @@ CREATE PROCEDURE [Din].[DIN_SEARCH] -- ИЖСИЖСИЖE
 	@BEGIN		SMALLDATETIME = NULL,
 	@END		SMALLDATETIME = NULL,
 	@COMPL_CHECK	NVARCHAR(MAX) = NULL,
-	@COMPLECT		NVARCHAR(MAX) = NULL
+	@COMPLECT		NVARCHAR(MAX) = NULL,
+	@CLR_CHECK		BIT	= 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -211,15 +212,7 @@ BEGIN
 					) AS o_O
 				ORDER BY SystemOrder, NT_TECH, NT_NET FOR XML PATH('')
 			))), 1, 1, '')) AS EXCHANGE,
-		CASE @COMPL_CHECK 
-		WHEN Complect 
-		THEN 
-			CASE DS_INDEX
-			WHEN 0
-			THEN CONVERT(BIT, 1)
-			END 
-		ELSE CONVERT(BIT, 0) 
-		END AS CHECKED,
+		CONVERT(BIT, 0) AS CHECKED,
 		b.HostID,
 		Complect
 	INTO #distr
@@ -230,6 +223,15 @@ BEGIN
 	WHERE (Comment LIKE @NAME OR @NAME IS NULL)AND(Complect LIKE '%'+@COMPLECT+'%' OR @COMPLECT IS NULL)
 	ORDER BY Complect, b.SystemOrder, a.DISTR, a.COMP ASC
 
+-----------------------------бшдекъел беяэ йнлокейр 
+IF (@COMPL_CHECK IS NOT NULL)AND(@CLR_CHECK=0)
+BEGIN
+	UPDATE #distr
+	SET
+		CHECKED=CONVERT(BIT, 1)
+	WHERE
+		Complect=@COMPL_CHECK
+END
 
 -----------------------------декюер ярюпше гюлемеммше дхярпхасрхбш меюйрхбмшлх х ямхлюер я мху цюкнвйс
 UPDATE #distr
@@ -269,7 +271,7 @@ FROM #distr v
 	INNER JOIN #distr f ON (v.DistrNumber=f.DistrNumber AND f.MASTER_ID IS NULL)
 WHERE v.MASTER_ID = 1
 -------------------------------бшанп оепбнцн оноюбьецняъ юйрхбмнцн йнлокейрю опх оепеунде хг йюпрнвйх----------------
-IF @CLIENT_ID IS NOT NULL
+IF ((@CLIENT_ID IS NOT NULL) AND ((@COMPL_CHECK IS NULL)AND(@CLR_CHECK=0)))
 	UPDATE #distr
 	SET CHECKED=1 
 	WHERE (Complect IN
