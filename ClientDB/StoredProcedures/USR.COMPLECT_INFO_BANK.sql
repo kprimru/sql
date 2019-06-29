@@ -43,8 +43,26 @@ BEGIN
 			STAT_DATE	SMALLDATETIME
 		)
 
+	DECLARE @USRPackage Table
+	(
+		UP_ID			UniqueIdentifier,
+		UP_ID_USR		UniqueIdentifier,
+		UP_ID_SYSTEM	SmallInt,
+		UP_DISTR		Int,
+		UP_COMP			TinyInt,
+		UP_RIC			SmallInt,
+		UP_NET			SmallInt,
+		UP_TECH			VarChar(20),
+		UP_TYPE			VarChar(20),
+		UP_FORMAT		SmallInt,
+		Primary Key Clustered(UP_ID_USR, UP_ID_SYSTEM)
+	);
 	
-
+	INSERT INTO @USRPackage
+	SELECT NewId(), UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, UP_RIC, UP_NET, UP_TECH, UP_TYPE, UP_FORMAT
+	FROM USR.USRPackage
+	WHERE UP_ID_USR = @UF_ID;
+	
 	SELECT @DAILY = ClientTypeDailyDay, @DAY = ClientTypeDay
 	FROM 
 		dbo.ClientTypeTable a 
@@ -187,7 +205,7 @@ BEGIN
 				ELSE 0 
 			END
 		FROM 
-			USR.USRPackage a
+			@USRPackage a
 			INNER JOIN Din.NetType n ON a.UP_TECH = n.NT_TECH_USR AND a.UP_NET = n.NT_NET AND UP_TECH = NT_TECH_USR
 			--INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.UP_ID_SYSTEM = b.SystemID
 			CROSS APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
@@ -198,7 +216,7 @@ BEGIN
 				(
 					SELECT *
 					FROM 
-						USR.USRPackage p
+						@USRPackage p
 						INNER JOIN Din.NetType t ON p.UP_TECH = t.NT_TECH_USR AND p.UP_NET = t.NT_NET
 						--INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON q.SystemID = p.UP_ID_SYSTEM						
 						CROSS APPLY dbo.SystemBankGet(p.UP_ID_SYSTEM, t.NT_ID_MASTER) q
@@ -237,7 +255,7 @@ BEGIN
 				ELSE 0 
 			END
 		FROM 
-			USR.USRPackage a 
+			@USRPackage a 
 			INNER JOIN dbo.SystemTable z ON z.SystemID = UP_ID_SYSTEM
 			INNER JOIN dbo.DistrConditionView b ON a.UP_ID_SYSTEM = b.SystemID 
 																AND a.UP_DISTR = b.DistrNumber 
@@ -255,7 +273,7 @@ BEGIN
 			NULL, NULL, NULL, NULL, 
 			SystemShortName, SystemBaseName, z.SystemOrder, NULL, HostID, 0
 		FROM 
-			USR.USRPackage a 
+			@USRPackage a 
 			INNER JOIN dbo.SystemTable z ON z.SystemID = UP_ID_SYSTEM
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID
@@ -345,7 +363,7 @@ BEGIN
 							AND f.CompNumber = UP_COMP
 		*/
 
-	UNION ALL
+	UNION
 
 	/*
 		Недостающие в USR системы
@@ -389,7 +407,7 @@ BEGIN
 		)
 
 	
-	UNION ALL
+	UNION
 
 	SELECT DISTINCT
 		UIU_ID AS ID,
@@ -431,7 +449,7 @@ BEGIN
 		dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP		
 	WHERE UIU_INDX = 1
 
-	UNION ALL
+	UNION
 
 	/*
 		Недостающие в USR ИБ
@@ -464,7 +482,7 @@ BEGIN
 					AND UIU_INDX = 1
 			)	
 
-	UNION ALL
+	UNION
 
 	SELECT
 		UIU_ID AS ID,
