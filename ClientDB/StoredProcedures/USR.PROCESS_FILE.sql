@@ -6,7 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [USR].[PROCESS_FILE]
 	@t				NVarChar(Max),	
-	@md5			VarCHar(100),
+	@md5			VarChar(100),
+	@hash			VarChar(100),
 	@filename		VarCHar(50),
 	@data			VarBinary(MAX),
 	@robot			TinyInt,
@@ -836,14 +837,14 @@ BEGIN
 	
 	INSERT INTO USR.USRFile		
 		(
-			UF_ID_COMPLECT, UF_PATH, UF_MD5, UF_NAME, UF_DATE, UF_ID_KIND, 
+			UF_ID_COMPLECT, UF_PATH, UF_MD5, UF_HASH, UF_NAME, UF_DATE, UF_ID_KIND, 
 			UF_UPTIME, UF_CREATE, UF_USER, UF_ACTIVE, UF_MIN_DATE, UF_MAX_DATE,
 			UF_COMPLIANCE, UF_ID_CLIENT, UF_ID_MANAGER, UF_ID_SERVICE, UF_SESSION,
 			UF_ID_SYSTEM, UF_DISTR, UF_COMP
 		)
 	OUTPUT INSERTED.UF_ID INTO @IDs(ID)	
 	SELECT 
-		@Complect_Id, @robot, @md5, @filename,
+		@Complect_Id, @robot, @md5, @hash, @filename,
 		CONVERT(DATETIME, 
 			LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, USRFileDate, 104), 121), 10) + ' ' + 
 			SUBSTRING(USRFileTime, 1, 2) + ':' + SUBSTRING(USRFileTime, 4, 2) + ':00.000',
