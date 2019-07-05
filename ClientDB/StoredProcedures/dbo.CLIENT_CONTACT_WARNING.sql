@@ -17,9 +17,11 @@ BEGIN
 				d.ContractTypeName,
 				dbo.Dateof((
 					SELECT MAX(DATE)
-					FROM dbo.ClientContact
+					FROM dbo.ClientContact cc
+						INNER JOIN dbo.ClientContactType cct ON cc.ID_TYPE = cct.ID
 					WHERE STATUS = 1
 						AND ID_CLIENT = b.ClientID
+						AND (cct.NAME='Визит плановый' OR cct.NAME='Визит срочный')
 				)) AS LAST_DATE
 			FROM 
 				dbo.ClientWriteList() a
@@ -34,3 +36,5 @@ BEGIN
 	WHERE (LAST_DATE IS NULL OR DATEDIFF(DAY, LAST_DATE, GETDATE()) > 180)
 	ORDER BY ISNULL(LAST_DATE, GETDATE()) DESC, LAST_DATE DESC, ManagerName, ServiceName
 END
+
+SELECT * FROM dbo.ClientContact WHERE NOTE='визит плановый'

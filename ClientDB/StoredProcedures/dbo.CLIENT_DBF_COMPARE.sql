@@ -152,7 +152,7 @@ BEGIN
 			FROM @TP
 			WHERE TP_NAME = '»ÕÕ'
 		)
-		SET @INN = 0
+		SET @INN = 1
 	ELSE
 		SET @INN = 0
 		
