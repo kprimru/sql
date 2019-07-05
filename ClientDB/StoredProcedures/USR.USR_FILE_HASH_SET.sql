@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 USE [ClientDB]
 GO
 SET ANSI_NULLS ON
@@ -23,6 +24,8 @@ BEGIN
 	--EXEC [PC275-SQL\OMEGA].[IPLogs].[dbo].[USR_FILE_HASH_SET] @ID, @HASH;
 END
 =======
+=======
+>>>>>>> Stashed changes
 USE [ClientDB]
 GO
 SET ANSI_NULLS ON
@@ -46,4 +49,7 @@ BEGIN
 	
 	--EXEC [PC275-SQL\OMEGA].[IPLogs].[dbo].[USR_FILE_HASH_SET] @ID, @HASH;
 END
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes

@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 USE [ClientDB]
 GO
 SET ANSI_NULLS ON
@@ -39,6 +40,8 @@ BEGIN
 	*/
 END
 =======
+=======
+>>>>>>> Stashed changes
 USE [ClientDB]
 GO
 SET ANSI_NULLS ON
@@ -78,4 +81,7 @@ BEGIN
 		AND UF_USR_NAME != '';
 	*/
 END
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
