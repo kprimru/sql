@@ -207,11 +207,14 @@ BEGIN
 		FROM 
 			@USRPackage a
 			INNER JOIN Din.NetType n ON a.UP_TECH = n.NT_TECH_USR AND a.UP_NET = n.NT_NET AND UP_TECH = NT_TECH_USR
+			INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeID = n.NT_ID_MASTER
 			--INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.UP_ID_SYSTEM = b.SystemID
 			CROSS APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
 			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = b.InfoBankID
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID /*AND Required IN (0, 1)*/
+			--AND SystemBaseCheck = 1
+			AND DistrTypeBaseCheck = 1
 			AND NOT EXISTS
 				(
 					SELECT *
@@ -278,7 +281,7 @@ BEGIN
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID
 
-		-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
+		-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ usr, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		INSERT INTO #package(
 					UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, 
 					UP_RIC, UP_TECH, UP_NET, UP_TYPE, UP_FORMAT,
@@ -322,20 +325,20 @@ BEGIN
 			ELSE '/' + CONVERT(VARCHAR(20), UP_RIC)
 		END + '/' + 
 		CASE
-			WHEN UP_TECH = 'FLS' THEN 'Флеш-версия'
-			WHEN UP_TECH = 'OVKF' THEN 'ОВК-Ф'
-			WHEN UP_TECH = 'OVMF' THEN 'ОВМ-Ф'
+			WHEN UP_TECH = 'FLS' THEN 'пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ'
+			WHEN UP_TECH = 'OVKF' THEN 'пїЅпїЅпїЅ-пїЅ'
+			WHEN UP_TECH = 'OVMF' THEN 'пїЅпїЅпїЅ-пїЅ'
 			ELSE
 				CASE UP_NET
-					WHEN 0 THEN 'лок'
-					WHEN 1 THEN '1/с'
-					ELSE 'сеть ' + CONVERT(VARCHAR(20), UP_NET)
+					WHEN 0 THEN 'пїЅпїЅпїЅ'
+					WHEN 1 THEN '1/пїЅ'
+					ELSE 'пїЅпїЅпїЅпїЅ ' + CONVERT(VARCHAR(20), UP_NET)
 				END
 		END + '/' + UP_TYPE + '/' + 
 		CASE Service
-			WHEN 0 THEN 'сопровождается'
-			WHEN 1 THEN 'не сопровождается'
-			ELSE 'не найден'
+			WHEN 0 THEN 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'
+			WHEN 1 THEN 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'
+			ELSE 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ'
 		END AS IB_NAME,
 		Service,		
 		NULL AS UIU_DAY,
@@ -366,7 +369,7 @@ BEGIN
 	UNION
 
 	/*
-		Недостающие в USR системы
+		пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ USR пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	*/
 	SELECT
 		NEWID() AS ID,
@@ -425,8 +428,8 @@ BEGIN
 	
 		STAT_DATE,
 		CASE 
-			WHEN InfoBankActual = 0 THEN 'Да'
-			WHEN STAT_DATE IS NULL THEN 'Нет'
+			WHEN InfoBankActual = 0 THEN 'пїЅпїЅ'
+			WHEN STAT_DATE IS NULL THEN 'пїЅпїЅпїЅ'
 			WHEN
 				CASE InfoBankActual
 					WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -435,8 +438,8 @@ BEGIN
 							WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY) 
 							ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY) 
 						END
-				END < UIU_DATE_S THEN 'Нет'
-			ELSE 'Да'
+				END < UIU_DATE_S THEN 'пїЅпїЅпїЅ'
+			ELSE 'пїЅпїЅ'
 		END,
 
 		NULL AS UP_FORMAT,
@@ -452,7 +455,7 @@ BEGIN
 	UNION
 
 	/*
-		Недостающие в USR ИБ
+		пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ USR пїЅпїЅ
 	*/
 	SELECT
 		NEWID() AS ID,
@@ -517,8 +520,8 @@ BEGIN
 
 		STAT_DATE,
 		CASE 
-			WHEN InfoBankActual = 0 THEN 'Да'
-			WHEN STAT_DATE IS NULL THEN 'Нет'
+			WHEN InfoBankActual = 0 THEN 'пїЅпїЅ'
+			WHEN STAT_DATE IS NULL THEN 'пїЅпїЅпїЅ'
 			WHEN
 				CASE InfoBankActual
 					WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -527,8 +530,8 @@ BEGIN
 							WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY) 
 							ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY) 
 						END
-				END < UIU_DATE_S THEN 'Нет'
-			ELSE 'Да'
+				END < UIU_DATE_S THEN 'пїЅпїЅпїЅ'
+			ELSE 'пїЅпїЅ'
 		END,
 			
 		NULL AS UP_FORMAT,

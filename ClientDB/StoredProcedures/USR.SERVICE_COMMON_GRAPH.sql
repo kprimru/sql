@@ -96,7 +96,7 @@ BEGIN
 			DistrTypeBaseCheck		TINYINT,
 			LastSTT			VARCHAR(20)
 		)
-		
+	
 	IF OBJECT_ID('tempdb..#ip') IS NOT NULL
 		DROP TABLE #ip
 
@@ -482,7 +482,7 @@ BEGIN
 										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID 
-										AND z.SystemBaseName NOT IN ('RGU', 'RGN', 'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')										
+										AND z.SystemBaseName NOT IN (/*'RGU', 'RGN', */'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
@@ -500,6 +500,7 @@ BEGIN
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 										AND InfoBankName NOT IN ('PKG', 'PSG', 'PPVS')
 										AND	InfoBankStart <= WBEGIN
 										
@@ -514,6 +515,7 @@ BEGIN
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 										AND InfoBankName NOT IN ('PKV')
 										AND	InfoBankStart <= WBEGIN
 										
@@ -528,6 +530,7 @@ BEGIN
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 										AND InfoBankName NOT IN ('BRB')
 										AND	InfoBankStart <= WBEGIN									
 										
@@ -542,6 +545,7 @@ BEGIN
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 										AND InfoBankName IN ('PKG', 'PSG', 'PPVS')
 										AND	InfoBankStart <= WBEGIN
 										AND NOT EXISTS
@@ -568,6 +572,7 @@ BEGIN
 										AND z.DS_REG = 0
 										AND InfoBankActive = 1
 										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 										AND InfoBankName IN ('PKV')
 										AND	InfoBankStart <= WBEGIN
 										AND NOT EXISTS
@@ -582,7 +587,7 @@ BEGIN
 													AND Required = 1
 													AND q.SystemBaseName = 'BUD'
 											)
-											
+									/*
 									UNION
 									
 									SELECT DISTINCT ID_CLIENT, NULL, DISTR, COMP, 'бтаху', 1000 AS InfoBankOrder, z.SystemOrder
@@ -635,6 +640,7 @@ BEGIN
 													AND Required = 1
 													AND q.SystemBaseName = 'RGN'
 											)*/
+									*/
 											
 									/*
 									UNION
