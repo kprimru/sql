@@ -84,11 +84,10 @@ RETURN
 			SystemBaseName = 'SKUEM' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
 			OR
 			SystemBaseName = 'SBOEM' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-			/*OR
+			OR
 			SystemBaseName = 'SKZB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
 			OR
 			SystemBaseName = 'SKZO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-			*/
 		)
 		
 	UNION ALL
@@ -311,8 +310,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKUO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'QSOV', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'KRS', 'BVV', 'BVS', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN')
-		--•	Добавлен массив обзоров «Важнейшая практика по статье» что это?
+		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'BVV', 'BVS', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN')
 
 	UNION ALL
 	
@@ -349,8 +347,32 @@ RETURN
 	FROM dbo.SystemTable S
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
-		AND S.SystemBaseName = 'SKJB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('ROS', 'ARB', 'CMBB', 'CJIB', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'QSOV', 'SIP', 'PPVS', 'RGSS', 'RBAS020', 'PBIB', 'QSA', 'PPN', 'PPS')
+		AND S.SystemBaseName = 'SKZB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
+		AND SB.InfoBankName IN ('ROS', 'ARB', 'CMBB', 'CJIB', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'SIP', 'PPVS', 'RGSS', 'RBAS020', 'PBIB', 'QSA', 'PPN', 'PPS')
+
+	UNION ALL
+
+	-- З(0)
+	SELECT
+		SB.InfoBankID, SB.InfoBankName, SB.InfoBankShortName, SB.InfoBankFullName, SB.InfoBankOrder, SB.InfoBankPath, SB.InfoBankActive,
+		S.SystemID, S.SystemFullName, S.SystemActive, S.SystemOrder, S.SystemShortName, S.SystemBaseName, 1, S.HostID, SB.InfoBankStart
+	FROM dbo.SystemTable S
+	CROSS JOIN dbo.InfoBankTable SB
+	WHERE S.SystemID = @System 
+		AND S.SystemBaseName = 'SKZO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
+		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'BVV', 'BVS', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN', 'MED')
+
+	UNION ALL
+
+	-- З(-1)
+	SELECT
+		SB.InfoBankID, SB.InfoBankName, SB.InfoBankShortName, SB.InfoBankFullName, SB.InfoBankOrder, SB.InfoBankPath, SB.InfoBankActive,
+		S.SystemID, S.SystemFullName, S.SystemActive, S.SystemOrder, S.SystemShortName, S.SystemBaseName, 1, S.HostID, SB.InfoBankStart
+	FROM dbo.SystemTable S
+	CROSS JOIN dbo.InfoBankTable SB
+	WHERE S.SystemID = @System 
+		AND S.SystemBaseName = 'SKUB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
+		AND SB.InfoBankName IN ('ROS', 'ARB', 'CMBB', 'CJIB', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'QSOV', 'SIP', 'PPVS', 'RGSS', 'RBAS020', 'PBIB', 'QSA', 'PPN', 'PPS', 'MED')
 
 	UNION ALL
 	
