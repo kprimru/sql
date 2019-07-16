@@ -299,10 +299,11 @@ BEGIN
 				(
 					SELECT DistrStr + ', '
 					FROM 
-						dbo.ClientDistrView b WITH(NOEXPAND)
-						INNER JOIN dbo.BLACK_LIST_REG c ON b.SystemID = c.ID_SYS AND b.DISTR = c.DISTR AND b.COMP = c.COMP
-					WHERE b.ID_CLIENT = @ID AND b.DS_REG = 0 AND c.P_DELETE = 0
-					ORDER BY SystemOrder, b.DISTR, b.COMP FOR XML PATH('')
+						dbo.ClientDistrView z WITH(NOEXPAND)
+						INNER JOIN dbo.SystemTable x ON x.HostID = z.HostID
+						INNER JOIN dbo.BLACK_LIST_REG y ON z.DISTR = y.DISTR AND z.COMP = y.COMP AND x.SystemID = y.ID_SYS
+					WHERE z.ID_CLIENT = @ID AND z.DS_REG = 0 AND y.P_DELETE = 0
+					ORDER BY x.SystemOrder, z.DISTR, z.COMP FOR XML PATH('')
 				)
 				), 1, 2, '')), 1
 		/*FROM #complect a*/
