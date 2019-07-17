@@ -281,7 +281,7 @@ BEGIN
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID
 
-		-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ usr, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
 		INSERT INTO #package(
 					UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, 
 					UP_RIC, UP_TECH, UP_NET, UP_TYPE, UP_FORMAT,
@@ -325,20 +325,20 @@ BEGIN
 			ELSE '/' + CONVERT(VARCHAR(20), UP_RIC)
 		END + '/' + 
 		CASE
-			WHEN UP_TECH = 'FLS' THEN 'пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ'
-			WHEN UP_TECH = 'OVKF' THEN 'пїЅпїЅпїЅ-пїЅ'
-			WHEN UP_TECH = 'OVMF' THEN 'пїЅпїЅпїЅ-пїЅ'
+			WHEN UP_TECH = 'FLS' THEN 'Флеш-версия'
+			WHEN UP_TECH = 'OVKF' THEN 'ОВК-Ф'
+			WHEN UP_TECH = 'OVMF' THEN 'ОВМ-Ф'
 			ELSE
 				CASE UP_NET
-					WHEN 0 THEN 'пїЅпїЅпїЅ'
-					WHEN 1 THEN '1/пїЅ'
-					ELSE 'пїЅпїЅпїЅпїЅ ' + CONVERT(VARCHAR(20), UP_NET)
+					WHEN 0 THEN 'лок'
+					WHEN 1 THEN '1/с'
+					ELSE 'сеть ' + CONVERT(VARCHAR(20), UP_NET)
 				END
 		END + '/' + UP_TYPE + '/' + 
 		CASE Service
-			WHEN 0 THEN 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'
-			WHEN 1 THEN 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'
-			ELSE 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ'
+			WHEN 0 THEN 'сопровождается'
+			WHEN 1 THEN 'не сопровождается'
+			ELSE 'не найден'
 		END AS IB_NAME,
 		Service,		
 		NULL AS UIU_DAY,
@@ -369,7 +369,7 @@ BEGIN
 	UNION
 
 	/*
-		пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ USR пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		Недостающие в USR системы
 	*/
 	SELECT
 		NEWID() AS ID,
@@ -428,8 +428,8 @@ BEGIN
 	
 		STAT_DATE,
 		CASE 
-			WHEN InfoBankActual = 0 THEN 'пїЅпїЅ'
-			WHEN STAT_DATE IS NULL THEN 'пїЅпїЅпїЅ'
+			WHEN InfoBankActual = 0 THEN 'Да'
+			WHEN STAT_DATE IS NULL THEN 'Нет'
 			WHEN
 				CASE InfoBankActual
 					WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -438,8 +438,8 @@ BEGIN
 							WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY) 
 							ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY) 
 						END
-				END < UIU_DATE_S THEN 'пїЅпїЅпїЅ'
-			ELSE 'пїЅпїЅ'
+				END < UIU_DATE_S THEN 'Нет'
+			ELSE 'Да'
 		END,
 
 		NULL AS UP_FORMAT,
@@ -455,7 +455,7 @@ BEGIN
 	UNION
 
 	/*
-		пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ USR пїЅпїЅ
+		Недостающие в USR ИБ
 	*/
 	SELECT
 		NEWID() AS ID,
@@ -520,8 +520,8 @@ BEGIN
 
 		STAT_DATE,
 		CASE 
-			WHEN InfoBankActual = 0 THEN 'пїЅпїЅ'
-			WHEN STAT_DATE IS NULL THEN 'пїЅпїЅпїЅ'
+			WHEN InfoBankActual = 0 THEN 'Да'
+			WHEN STAT_DATE IS NULL THEN 'Нет'
 			WHEN
 				CASE InfoBankActual
 					WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -530,8 +530,8 @@ BEGIN
 							WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY) 
 							ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY) 
 						END
-				END < UIU_DATE_S THEN 'пїЅпїЅпїЅ'
-			ELSE 'пїЅпїЅ'
+				END < UIU_DATE_S THEN 'Нет'
+			ELSE 'Да'
 		END,
 			
 		NULL AS UP_FORMAT,
