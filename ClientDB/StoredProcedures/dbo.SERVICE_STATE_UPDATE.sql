@@ -244,13 +244,15 @@ BEGIN
 
 	CREATE TABLE #update_check
 		(
-			ClientID	INT PRIMARY KEY,
-			ClientFullName VARCHAR(512),
+			ClientID		INT,
+			ClientFullName	VARCHAR(512),
+			UD_NAME			VARCHAR(100),
 			ServiceName		VARCHAR(100),
 			ManagerName		VARCHAR(100),
 			LAST_UPDATE		DATETIME,
-			EventComment	VARCHAR(MAX)
-		)	
+			EventComment	VARCHAR(MAX),
+			PRIMARY KEY CLUSTERED (ClientID, UD_NAME)
+		)	;
 
 	INSERT INTO #update_check
 		EXEC dbo.CLIENT_LAST_UPDATE_AUDIT @SERVICE, NULL, NULL

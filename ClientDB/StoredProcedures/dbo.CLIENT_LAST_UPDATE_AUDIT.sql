@@ -19,51 +19,75 @@ BEGIN
 
 	SET @LAST_DATE = dbo.DateOf(GETDATE())
 
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
+	DECLARE @Complect Table
+	(
+		UD_ID		UniqueIdentifier,
+		CL_ID		Int,
+		UD_DISTR	Int,
+		UD_COMP		TinyInt,
+		UD_NAME	VarChar(100),
+		Primary Key Clustered (UD_ID)
+	)
 
-	CREATE TABLE #client (CL_ID INT PRIMARY KEY)
+	INSERT INTO @Complect(UD_ID, CL_ID, UD_DISTR, UD_COMP)
+		SELECT UD_ID, ClientID, UD_DISTR, UD_COMP
+		FROM
+		(
+			SELECT ClientID
+			FROM dbo.ClientView WITH(NOEXPAND)
+			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
+				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+				AND (ServiceStatusID = 2)
+				AND EXISTS
+					(
+						SELECT *
+						FROM dbo.ClientDistrView WITH(NOEXPAND)
+						WHERE ID_CLIENT = ClientID 
+							AND DS_REG = 0
+							AND DistrTypeBaseCheck = 1
+							AND SystemBaseCheck = 1
+					)
+		) C
+		INNER JOIN USR.USRData D ON D.UD_ID_CLIENT = C.ClientID
+		WHERE UD_ACTIVE = 1
 
-	INSERT INTO #client(CL_ID)
-		SELECT ClientID
-		FROM dbo.ClientView WITH(NOEXPAND)
-		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND (ServiceStatusID = 2)
-			AND EXISTS
-				(
-					SELECT *
-					FROM dbo.ClientDistrView WITH(NOEXPAND)
-					WHERE ID_CLIENT = ClientID 
-						AND DS_REG = 0
-						AND DistrTypeBaseCheck = 1
-				)
-
-	DELETE
-	FROM #client
+	DELETE C
+	FROM @Complect C
 	WHERE EXISTS
 		(
 			SELECT *
-			FROM USR.USRIBDateView WITH(NOEXPAND)
-			WHERE CL_ID = UD_ID_CLIENT AND UIU_DATE_S BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
+			FROM USR.USRDateKindView U WITH(NOEXPAND)
+			WHERE C.UD_ID = U.UD_ID AND C.CL_ID = U.UD_ID_CLIENT AND UIU_DATE_S BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
 		) 
 		
 	IF @DATE IS NOT NULL
-		DELETE 
-		FROM #client
+		DELETE C
+		FROM @Complect C
 		WHERE NOT EXISTS		
 			(
 				SELECT *
-				FROM USR.USRIBDateView WITH(NOEXPAND)
-				WHERE CL_ID = UD_ID_CLIENT AND UIU_DATE_S >= @DATE
+				FROM USR.USRDateKindView U WITH(NOEXPAND)
+				WHERE C.UD_ID = U.UD_ID AND C.CL_ID = U.UD_ID_CLIENT AND UIU_DATE_S >= @DATE
 			)
 
+	UPDATE C
+	SET UD_NAME = dbo.DistrString(f.SystemShortName, c.UD_DISTR, c.UD_COMP)
+	FROM @Complect C
+	CROSS APPLY
+	(
+		SELECT TOP 1 SystemShortName
+		FROM USR.USRFile
+		INNER JOIN dbo.SystemTable ON SystemID = UF_ID_SYSTEM
+		WHERE UF_ID_COMPLECT = UD_ID AND UF_ACTIVE = 1
+		ORDER BY UF_DATE DESC, UF_CREATE DESC
+	) F;
+
 	SELECT 
-		ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, ServiceName, ManagerName, 
+		ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, ServiceName, ManagerName, 
 		(
-			SELECT MAX(UIU_DATE) 
-			FROM USR.USRIBDateView WITH(NOEXPAND)
-			WHERE CL_ID = UD_ID_CLIENT AND UIU_DATE_S < @LAST_DATE
+			SELECT MAX(UIU_DATE_S) 
+			FROM USR.USRDateKindView U WITH(NOEXPAND)
+			WHERE A.UD_ID = U.UD_ID AND A.CL_ID = U.UD_ID_CLIENT  AND UIU_DATE_S < @LAST_DATE
 		) AS LAST_UPDATE,
 		(
 			SELECT CONVERT(VARCHAR(20), EventDate, 104) + ' ' + EventComment + CHAR(10)
@@ -74,11 +98,9 @@ BEGIN
 			ORDER BY EventDate FOR XML PATH('')
 		) AS EventComment
 	FROM 
-		#client a
+		@Complect a
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON ClientID = CL_ID
 		INNER JOIN dbo.ServiceTypeTable c ON b.ServiceTypeID = c.ServiceTypeID
-	ORDER BY ManagerName, ServiceName, ClientFullName
-
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
+	WHERE UD_NAME IS NOT NULL
+	ORDER BY ManagerName, ServiceName, ClientFullName, UD_NAME
 END
