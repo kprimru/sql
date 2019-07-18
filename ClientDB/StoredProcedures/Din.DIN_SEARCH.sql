@@ -236,9 +236,9 @@ END
 -----------------------------ÄÅËÀÅÒ ÑÒÀÐÛÅ ÇÀÌÅÍÅÍÍÛÅ ÄÈÑÒÐÈÁÓÒÈÂÛ ÍÅÀÊÒÈÂÍÛÌÈ È ÑÍÈÌÀÅÒ Ñ ÍÈÕ ÃÀËÎ×ÊÓ
 UPDATE #distr
 SET 
-	CHECKED=0, 
-	DS_INDEX=1,
-	MASTER_ID =1
+	CHECKED = 0, 
+	DS_INDEX = 1,
+	MASTER_ID = 1
 WHERE DIS_STR IN 
 			(
 				SELECT DIS_STR
@@ -251,7 +251,7 @@ WHERE DIS_STR IN
 									HAVING COUNT(*)>1
 							)
 			)
-	AND DIS_STR NOT IN
+	AND (DIS_STR NOT IN
 			(
 				SELECT DIS_STR
 				FROM Reg.RegNodeSearchView
@@ -262,7 +262,7 @@ WHERE DIS_STR IN
 				FROM Din.DinFiles DF
 				WHERE DF.DF_DISTR=DistrNumber
 				ORDER BY DF_CREATE DESC
-			)
+			))
 
 UPDATE v
 SET
