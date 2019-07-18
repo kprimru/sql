@@ -33,7 +33,8 @@ CREATE PROCEDURE [dbo].[CLIENT_FULL_SEARCH]
 	@HIST			BIT = 0,
 	@PERSONAL_DEEP	BIT = 0,
 	@DISTR_TYPE		VARCHAR(30) = NULL,
-	@ISLARGE		INT = NULL
+	@ISLARGE		INT = NULL,
+	@ACTIVE_SYS		BIT = 0
 AS
 BEGIN
 	SET NOCOUNT ON;	
@@ -110,14 +111,27 @@ BEGIN
 	
 		IF (@SYS IS NOT NULL) OR (@DISTR IS NOT NULL)
 		BEGIN
-			DELETE FROM #client
-			WHERE CL_ID NOT IN
-				(
-					SELECT ID_CLIENT
-					FROM dbo.ClientDistrView WITH(NOEXPAND)
-					WHERE ((SystemID = @SYS) OR (@SYS IS NULL))
-						AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL))	
-				)
+			IF (@ACTIVE_SYS=1)
+				DELETE FROM #client
+				WHERE CL_ID NOT IN
+					(
+						SELECT ID_CLIENT
+						FROM dbo.ClientDistrView cdv WITH(NOEXPAND)
+						WHERE (((cdv.SystemID = @SYS)AND (cdv.DS_REG=0))
+								OR (@SYS IS NULL))
+								AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL))	
+					)
+			ELSE IF @ACTIVE_SYS=0
+
+				DELETE FROM #client
+				WHERE CL_ID NOT IN
+					(
+						SELECT ID_CLIENT
+						FROM dbo.ClientDistrView cdv WITH(NOEXPAND)
+						WHERE ((cdv.SystemID = @SYS) OR (@SYS IS NULL))
+								AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) 
+								OR (@DISTR IS NULL))
+					)	
 		END	
 
 		IF @DIR IS NOT NULL
