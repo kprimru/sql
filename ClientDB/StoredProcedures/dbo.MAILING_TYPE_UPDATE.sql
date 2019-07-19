@@ -1,0 +1,19 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MAILING_TYPE_UPDATE]
+	@NAME	NVARCHAR(50),
+	@ID		SMALLINT
+AS
+BEGIN
+	UPDATE
+		dbo.MailingType
+	SET
+		MailingTypeName = @NAME,
+		MailingTypeLast = GETDATE()
+	WHERE
+		MailingTypeId = @ID
+END
