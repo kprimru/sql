@@ -10,30 +10,61 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    SELECT DistrStr AS [Дистрибутив], SST_SHORT AS [Тип системы], NT_SHORT AS [Тип сети], Comment AS [Клиент], DATE AS [Дата регистрации], EXPIRE_DATE AS [Дата окончания скидки], EXIST AS [Осталось дней]--, DISCOUNT AS[Размер скидки]
+	DECLARE @MONTH UNIQUEIDENTIFIER
+
+	SELECT @MONTH = Common.PeriodCurrent(2)
+	
+	DECLARE @MONTH_DATE	SMALLDATETIME
+	
+	SELECT @MONTH_DATE = START
+	FROM Common.Period
+	WHERE ID = @MONTH
+
+	SELECT 
+		rnsv.DistrStr AS [Дистрибутив], SST_SHORT AS [Тип системы], NT_SHORT AS [Тип сети], Comment AS [Клиент], MIN(rpcv.DATE) AS [Дата регистрации], 
+		CONVERT(INT,
+			CASE
+				WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN 
+					CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
+				WHEN DF_ID_PRICE = 6 THEN 
+					CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
+				WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN 
+					DF_DISCOUNT
+				ELSE 0
+			END) AS [Размер скидки],
+		DATEADD(MONTH, 
+				CASE SST_SHORT
+					WHEN 'С.А' THEN 18
+					ELSE 24
+				END, DATE) AS [Скидка действует до],
+		DATEDIFF(DAY, GETDATE(),
+			DATEADD(MONTH, 
+				CASE SST_SHORT
+					WHEN 'С.А' THEN 18
+					ELSE 24
+				END, DATE)) AS [Осталось дней]
 	FROM
 		(
-			SELECT DistrStr, SST_SHORT, NT_SHORT, Comment, SystemOrder, DATE, EXPIRE_DATE, DATEDIFF(DAY, GETDATE(), EXPIRE_DATE) AS EXIST--, DISCOUNT
+			SELECT 
+				/*ClientID, ClientFullName, ManagerName, ServiceName,*/ DistrStr,/* SystemTypeName,*/ DF_DISCOUNT, DF_FIXED_PRICE,
+				DF_ID_PRICE, 
+				dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
+				dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
+				PRICE, DEPO_PRICE, DISTR, COMP
 			FROM
-				(
-					SELECT DistrStr, SST_SHORT, NT_SHORT, Comment, DATE, SystemOrder, DATEADD(MONTH, ADD_MONTH, DATE) AS EXPIRE_DATE--, DF_DISCOUNT AS DISCOUNT
-					FROM
-						(
-							SELECT 
-								DistrStr, SST_SHORT, NT_SHORT, Comment, SystemOrder, MIN(b.DATE) AS DATE, ---DF_DISCOUNT,
-								CASE SST_SHORT
-									WHEN 'С.А' THEN 18
-									ELSE 24
-								END AS ADD_MONTH
-							FROM 
-								Reg.RegNodeSearchView a WITH(NOEXPAND)
-								INNER JOIN Reg.RegProtocolConnectView b WITH(NOEXPAND) ON a.HostID = b.RPR_ID_HOST AND a.DistrNumber = b.RPR_DISTR AND a.CompNumber = b.RPR_COMP
-								--INNER JOIN dbo.DBFDistrFinancingView DFV ON a.DistrNumber = DFV.DIS_NUM AND a.CompNumber = DFV.DIS_COMP_NUM
-							WHERE /*DS_REG = 0
-								AND */SST_SHORT IN ('С.А', 'С.К2', 'С.К1'/*, 'С.И'*/)
-							GROUP BY DistrStr, SST_SHORT, NT_SHORT, Comment, SystemOrder--, DF_DISCOUNT
-						) AS o_O
-				) AS o_O
+				dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT	
+				INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName				
+																	AND DIS_NUM = b.DISTR 
+																	AND DIS_COMP_NUM = b.COMP
+				INNER JOIN Price.SystemPrice g ON ID_SYSTEM = SystemID
 		) AS o_O
-	ORDER BY EXIST, Comment, SystemOrder, DistrStr
+		INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP
+		INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP
+	WHERE 
+		SST_SHORT IN ('С.А', 'С.К2', 'С.К1', 'С.И') AND
+		DS_REG=0
+	
+	GROUP BY rnsv.DistrStr, SST_SHORT, NT_SHORT, Comment, rnsv.SystemOrder, DF_DISCOUNT, DF_FIXED_PRICE, PRICE, COEF, RND, DF_ID_PRICE, DEPO_PRICE, DATE
+	ORDER BY [Осталось дней], Comment/*, SystemOrder, DistrStr, EXIST*/
 END
