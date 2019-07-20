@@ -141,6 +141,7 @@ BEGIN
 	CREATE TABLE #ib_check
 		(
 			ClientID		INT,
+			Complect		VarChar(100),
 			Manager			VARCHAR(100),
 			Service			VARCHAR(100),
 			ClientFullname	VARCHAR(500),

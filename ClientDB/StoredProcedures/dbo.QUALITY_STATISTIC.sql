@@ -46,6 +46,7 @@ BEGIN
 	CREATE TABLE #uninstall
 		(
 			ClientID INT, 
+			Complect	VarCHAR(100),
 			ManagerName VARCHAR(100), 
 			ServiceName VARCHAR(100), 
 			ClientFullName VARCHAR(500), 
