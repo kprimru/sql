@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ServiceTypeID, ServiceTypeName, ServiceTypeShortName, ServiceTypeVisit, ServiceTypeDefault
+	SELECT ServiceTypeID, ServiceTypeName, ServiceTypeShortName, ServiceTypeVisit, ServiceTypeDefault, ServiceTypeActive
 	FROM dbo.ServiceTypeTable
 	WHERE 
 		ServiceTypeActive = 1

@@ -63,6 +63,7 @@ BEGIN
 	DECLARE @IB TABLE
 		(
 			ClientID			INT,
+			Complect			VarCHAr(100),
 			ManagerName			VARCHAR(50),
 			ServiceName			VARCHAR(50),
 			ClientFullName		VARCHAR(500),

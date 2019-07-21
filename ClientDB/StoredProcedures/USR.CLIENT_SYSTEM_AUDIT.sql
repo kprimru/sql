@@ -14,6 +14,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	EXEC [USR].[CLIENT_SYSTEM_AUDIT (NEW)]
+		@Manager	= @Manager,
+		@Service	= @Service,
+		@IB			= @IB,
+		@Date		= @Date,
+		@Client		= @Client;
+
+	RETURN;
+
 	IF OBJECT_ID('tempdb..#info_bank') IS NOT NULL
 		DROP TABLE #info_bank
 
