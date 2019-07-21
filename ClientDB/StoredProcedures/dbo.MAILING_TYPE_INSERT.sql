@@ -10,7 +10,7 @@ CREATE PROCEDURE [dbo].[MAILING_TYPE_INSERT]
 AS
 BEGIN
 	INSERT INTO
-		dbo.MailingType(MailingTypeName)
+		Common.MailingType(MailingTypeName)
 	VALUES
 		(@NAME)
 

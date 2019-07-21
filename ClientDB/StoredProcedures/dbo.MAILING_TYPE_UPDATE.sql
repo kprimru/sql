@@ -10,7 +10,7 @@ CREATE PROCEDURE [dbo].[MAILING_TYPE_UPDATE]
 AS
 BEGIN
 	UPDATE
-		dbo.MailingType
+		Common.MailingType
 	SET
 		MailingTypeName = @NAME,
 		MailingTypeLast = GETDATE()

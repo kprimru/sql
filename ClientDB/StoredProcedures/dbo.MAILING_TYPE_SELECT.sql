@@ -11,7 +11,7 @@ BEGIN
 	SELECT
 		MailingTypeID, MailingTypeName
 	FROM
-		dbo.MailingType
+		Common.MailingType
 	WHERE
 		@FILTER IS NULL OR MailingTypeName LIKE '%'+@FILTER+'%'
 END

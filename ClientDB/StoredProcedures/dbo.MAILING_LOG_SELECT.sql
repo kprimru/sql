@@ -20,7 +20,7 @@ BEGIN
 		Date, MailingTypeName, ml.address, ml.subject, ml.body, ml.status, ml.error
 	FROM
 		Common.MailingLog ml
-		INNER JOIN dbo.MailingType mt ON ml.TypeID=mt.MailingTypeId
+		INNER JOIN Common.MailingType mt ON ml.TypeID=mt.MailingTypeId
 	WHERE
 		(ISNULL(@TYPE, '') = '' OR @TYPE = mt.MailingTypeId)AND
 		(@ADDRESS = '' OR ml.address LIKE '%'+@ADDRESS+'%')AND
