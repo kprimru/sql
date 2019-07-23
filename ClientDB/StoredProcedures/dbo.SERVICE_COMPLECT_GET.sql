@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-SELECT DISTINCT R.COMPLECT, (SELECT SystemName+',' FROM RegNodeTable WHERE (COMPLECT = R.COMPLECT)AND(Service=0) FOR XML PATH('')) as SystemsList, C.ClientShortName, C.ClientFullName  
+SELECT DISTINCT R.COMPLECT, (SELECT SystemName+',' FROM RegNodeTable WHERE (COMPLECT = R.COMPLECT)AND(Service=0) FOR XML PATH('')) as SystemsList, C.ClientShortName, C.ClientFullName, R.TechNolType  
 FROM RegNodeTable R
 LEFT JOIN SystemTable SY On SY.SystemBaseName=R.SystemName
 LEFT JOIN ClientDistr CD On (CD.DISTR=R.DistrNumber)AND(CD.COMP=R.CompNumber)AND(CD.ID_SYSTEM = Sy.SystemID)and(CD.Status=1)
