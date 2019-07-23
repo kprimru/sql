@@ -250,7 +250,7 @@ BEGIN
 		UF_PATH				TINYINT,		
 		UpdateDateTime		DATETIME,
 		WD					CHAR(2),
-		Primary Key Clustered (ClientId, Complect, UpdateDateTime, UF_PATH)
+		Primary Key Clustered (ClientId, Complect, UpdateDateTime, WD, UF_PATH)
 	);
 
 	DECLARE @usrdata Table
@@ -279,7 +279,7 @@ BEGIN
 	OPTION (RECOMPILE);
 	
 	INSERT INTO @update(ClientID, Complect, UF_PATH, UpdateDateTime, WD)
-	SELECT 
+	SELECT DISTINCT
 		UD_ID_CLIENT, Complect, 1,
 		CONVERT(DATETIME, LEFT(CONVERT(VARCHAR(50), c.UIU_DATE_S, 121), 10) + ' ' +
 			(
@@ -299,17 +299,27 @@ BEGIN
 	OPTION (RECOMPILE)
 		
 	INSERT INTO @update(ClientID, Complect, UF_PATH, UpdateDateTime, WD)
-	SELECT 
+	SELECT DISTINCT
 		UD_ID_CLIENT, Complect, UF_PATH,
 		UF_DATE,
 		DayShort
 	FROM 
-		@client
+		@client c
 		-- вот это еще больший костыль. Надо перерабатывать структуру хранения данных, чтобы разбираться, что есть комплект
-		INNER JOIN USR.USRData ON UD_ID_CLIENT = CL_ID AND Complect LIKE '%' + Cast(UD_DISTR AS VarCHar(100)) + '%'
-		INNER JOIN USR.USRFile ON UF_ID_COMPLECT = UD_ID
-		INNER JOIN dbo.DayTable ON DayOrder = DATEPART(WEEKDAY, UF_DATE)
+		INNER JOIN USR.USRData d ON UD_ID_CLIENT = CL_ID AND Complect LIKE '%' + Cast(UD_DISTR AS VarCHar(100)) + '%'
+		INNER JOIN USR.USRFile f ON UF_ID_COMPLECT = UD_ID
+		INNER JOIN dbo.DayTable t ON DayOrder = DATEPART(WEEKDAY, UF_DATE)
 	WHERE UF_DATE >= @BEGIN AND UF_DATE < DATEADD(DAY, 1, @END) AND UF_PATH = 3
+		AND NOT EXISTS
+		(
+			SELECT *
+			FROM @Update z
+			WHERE z.ClientId = UD_ID_CLIENT
+				AND z.Complect = c.Complect
+				AND z.UF_PATH = f.UF_PATH
+				AND z.UpdateDateTime = f.UF_DATE
+				AND z.WD = t.DayShort
+		)
 	OPTION (RECOMPILE)
 	
 	DECLARE @compl Table
@@ -318,7 +328,7 @@ BEGIN
 		Complect	VarChar(100),
 		WeekID		INT,
 		Comp		VARCHAR(MAX),
-		Primary Key Clustered(ClientId, Complect)
+		Primary Key Clustered(ClientId, Complect, WeekID)
 	);
 		
 	-- ToDo. Пока что в списке несоответствующих эталону будут множиться по всем комплектам клиента

@@ -247,7 +247,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKBB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('DOCS', 'PBIB', 'QSA', 'PPN', 'PPS', 'KRS', 'RBAS020')
+		AND SB.InfoBankName IN ('DOCS', 'PBI', 'QSA', 'PPN', 'PPS', 'KRS', 'RBAS020')
 	
 	UNION ALL	
 
