@@ -12,8 +12,6 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	EXEC Security.EXECUTE_PROC @@PROCID
-
 	DECLARE @SQL NVARCHAR(MAX)
 
 	IF @SERVICE IS NOT NULL
@@ -36,6 +34,7 @@ BEGIN
 	DECLARE @RES_POS	BIT
 	DECLARE @RES_PHONE	BIT
 	DECLARE @SRVC		BIT		
+	DECLARE @INN		BIT
 		
 	IF EXISTS
 		(
@@ -147,6 +146,16 @@ BEGIN
 	ELSE
 		SET @SRVC = 0
 		
+	IF EXISTS
+		(
+			SELECT *
+			FROM @TP
+			WHERE TP_NAME = 'ИНН'
+		)
+		SET @INN = 1
+	ELSE
+		SET @INN = 0
+		
 	/*SELECT @ADDRESS, @DIR_FIO, @DIR_POS, @DIR_PHONE, @BUH_FIO, @BUH_POS, @BUH_PHONE, @RES_FIO, @RES_POS, @RES_PHONE, @SRVC*/
 		
 	IF OBJECT_ID('tempdb..#client') IS NOT NULL
@@ -189,7 +198,8 @@ BEGIN
 			STREET			VARCHAR(250),
 			HOME			VARCHAR(150),
 			OFFICE			VARCHAR(150),
-			ADDRESS_LAST	DATETIME
+			ADDRESS_LAST	DATETIME,
+			INN				VARCHAR(50)
 		)
 		
 	INSERT INTO #client(ClientID)
@@ -282,7 +292,8 @@ BEGIN
 			CITY			VARCHAR(250),
 			STREET			VARCHAR(250),
 			HOME			VARCHAR(150),
-			ADDRESS_LAST	DATETIME
+			ADDRESS_LAST	DATETIME,
+			INN				VARCHAR(50)
 		)
 		
 	INSERT INTO #dbf(TO_ID)
@@ -300,10 +311,15 @@ BEGIN
 			DIR_NAME = REPLACE(CP_NAME, 'ё', 'е'),
 			DIR_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
 			DIR_POS = CP_POS,
-			DIR_PHONE = CP_PHONE,
+			DIR_PHONE = CP_PHONE
+			,
+			DIR_FIO_LAST = L.ClientLast,
+			DIR_POS_LAST = L.ClientLast,
+			DIR_PHONE_LAST = L.ClientLast
+			/*
 			DIR_FIO_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalDirLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND 
@@ -312,24 +328,47 @@ BEGIN
 									OR z.CP_NAME <> b.CP_NAME
 									OR z.CP_PATRON <> b.CP_PATRON
 								)
+						ORDER BY ClientLast DESC
 					),
 			DIR_POS_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalDirLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_POS <> b.CP_POS
+						ORDER BY ClientLast DESC
 					),
 			DIR_PHONE_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalDirLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_PHONE <> b.CP_PHONE
+						ORDER BY ClientLast DESC
 					)
+			*/
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalDirLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET DIR_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
@@ -363,10 +402,15 @@ BEGIN
 			BUH_NAME = REPLACE(CP_NAME, 'ё', 'е'),
 			BUH_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
 			BUH_POS = CP_POS,
-			BUH_PHONE = CP_PHONE,
+			BUH_PHONE = CP_PHONE
+			,	
+			BUH_FIO_LAST = L.ClientLast,
+			BUH_POS_LAST = L.ClientLast,
+			BUH_PHONE_LAST = L.ClientLast
+			/*		
 			BUH_FIO_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalBuhLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND 
@@ -375,24 +419,48 @@ BEGIN
 									OR z.CP_NAME <> b.CP_NAME
 									OR z.CP_PATRON <> b.CP_PATRON
 								)
+						ORDER BY ClientLast DESC
 					),
 			BUH_POS_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalBuhLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_POS <> b.CP_POS
+						ORDER BY ClientLast DESC
 					),
 			BUH_PHONE_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalBuhLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_PHONE <> b.CP_PHONE
+						ORDER BY ClientLast DESC
 					)
+					*/
+			
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalBuhLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET BUH_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
@@ -426,10 +494,15 @@ BEGIN
 			RES_NAME = REPLACE(CP_NAME, 'ё', 'е'),
 			RES_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
 			RES_POS = CP_POS,
-			RES_PHONE = CP_PHONE,
+			RES_PHONE = CP_PHONE
+			,
+			RES_FIO_LAST = L.ClientLast,
+			RES_POS_LAST = L.ClientLast,
+			RES_PHONE_LAST = L.ClientLast
+			/*
 			RES_FIO_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalResLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND 
@@ -438,24 +511,47 @@ BEGIN
 									OR z.CP_NAME <> b.CP_NAME
 									OR z.CP_PATRON <> b.CP_PATRON
 								)
+						ORDER BY ClientLast DESC
 					),
 			RES_POS_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalResLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_POS <> b.CP_POS
+						ORDER BY ClientLast DESC
 					),
 			RES_PHONE_LAST = 
 					(
-						SELECT MAX(ClientLast)
+						SELECT TOP 1 ClientLast
 						FROM dbo.ClientPersonalResLastView z
 						WHERE a.ClientID = z.ID_MASTER
 							AND z.CP_PHONE <> b.CP_PHONE
+						ORDER BY ClientLast DESC
 					)
+			*/
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP 1 ClientLast
+				FROM dbo.ClientPersonalResLastView z
+				WHERE a.ClientID = z.ID_MASTER
+					AND 
+					(
+						z.CP_SURNAME <> b.CP_SURNAME
+						OR 
+						z.CP_NAME <> b.CP_NAME
+						OR 
+						z.CP_PATRON <> b.CP_PATRON
+						OR
+						z.CP_POS <> b.CP_POS
+						OR
+						z.CP_PHONE <> b.CP_PHONE
+					)
+				ORDER BY ClientLast DESC
+			) L
 			
 		UPDATE a
 		SET RES_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
@@ -531,6 +627,21 @@ BEGIN
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable n ON n.TO_ID = f.TA_ID_TO
 	END	
+		
+	IF @INN = 1
+	BEGIN
+		UPDATE a
+		SET INN = ClientINN
+		FROM 
+			#client a
+			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+			
+		UPDATE a
+		SET INN = TO_INN
+		FROM
+			#dbf a
+			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+	END
 		
 	IF OBJECT_ID('tempdb..#result') IS NOT NULL
 		DROP TABLE #result
@@ -820,6 +931,23 @@ BEGIN
 						END	
 					)
 					
+	IF @INN = 1
+		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
+			SELECT DISTINCT 
+				b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
+				a.INN AS IN_OIS, 
+				'ИНН' AS TP,
+				d.INN AS IN_DBF,
+				'Неправильно и все тут' AS ERROR,	
+				DISTR,
+				DISTR_DBF, NULL, NULL
+			FROM 
+				#client a
+				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
+				INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
+				INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
+			WHERE 	a.INN <> d.INN
+					
 	IF @ADDRESS = 1
 		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
 			SELECT DISTINCT 
@@ -933,7 +1061,7 @@ BEGIN
 				INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 				INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 			WHERE 	(
-						REPLACE(ISNULL(a.CITY_PARENT + ',', '') + a.CITY + ','+REPLACE(REPLACE(REPLACE(a.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', '') <> REPLACE(d.CITY + ',' +  REPLACE(REPLACE(REPLACE(d.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', '')
+						REPLACE(ISNULL(a.CITY_PARENT + ',', '') + a.CITY + ','+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '') <> REPLACE(d.CITY + ',' +  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(d.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '')
 						/*a.STREET <> d.STREET
 						OR a.CITY <> d.CITY*/
 						OR 
@@ -998,663 +1126,5 @@ BEGIN
 		DROP TABLE #dbf
 		
 	IF OBJECT_ID('tempdb..#client_dbf') IS NOT NULL
-		DROP TABLE #client_dbf
-	
-	/*
-	IF @SERVICE IS NOT NULL
-		SET @MANAGER = NULL
-
-	DECLARE @TP	TABLE (TP_NAME NVARCHAR(512))
-	
-	INSERT INTO @TP(TP_NAME)
-		SELECT ID
-		FROM dbo.TableStringFromXML(@TYPE)
-		
-	IF OBJECT_ID('tempdb..#result') IS NOT NULL
-		DROP TABLE #result
-
-	CREATE TABLE #result
-		(
-			ClientID		INT,
-			ClientFullName	VARCHAR(500),
-			ManagerName		VARCHAR(100),
-			ServiceName		VARCHAR(100),
-			TP				VARCHAR(100),
-			IN_OIS			VARCHAR(255),
-			IN_DBF			VARCHAR(255),
-			DISTR			VARCHAR(100),
-			DISTR_DBF		VARCHAR(100),
-			ERROR			VARCHAR(150)
-		)
-		
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'ФИО руководителя'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_FIO AS IN_OIS, 
-				'ФИО руководителя' AS TP,
-				ISNULL(f.TP_SURNAME + ' ', '') + ISNULL(f.TP_NAME + ' ', '') + ISNULL(f.TP_OTCH, '') AS IN_DBF,
-				CASE 
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверная фамилия (возможно, опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное имя (возможно опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное отчество (возможно опечатка)'
-					ELSE 'Совершенно другой сотрудник'
-				END AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е')
-						OR REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е')
-						OR REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'Должность руководителя'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_POS AS IN_OIS, 
-				'Должность руководителя' AS TP,
-				h.POS_NAME AS IN_DBF,
-				'Неправильно и все тут' AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PositionTable h ON h.POS_ID = f.TP_ID_POS
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_POS, 'ё', 'е') <> REPLACE(h.POS_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е')
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'ФИО гл.бух'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-				SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_FIO AS IN_OIS, 
-				'ФИО гл.бух' AS TP,
-				ISNULL(f.TP_SURNAME + ' ', '') + ISNULL(f.TP_NAME + ' ', '') + ISNULL(f.TP_OTCH, '') AS IN_DBF,
-				CASE 
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверная фамилия (возможно, опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное имя (возможно опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное отчество (возможно опечатка)'
-					ELSE 'Совершенно другой сотрудник'
-				END AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'BUH'
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е')
-						OR REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е')
-						OR REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'Должность гл.бух'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-				SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_POS AS IN_OIS, 
-				'Должность гл.бух' AS TP,
-				h.POS_NAME AS IN_DBF,
-				'Неправильно и все тут' AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'BUH'
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PositionTable h ON h.POS_ID = f.TP_ID_POS
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_POS, 'ё', 'е') <> REPLACE(h.POS_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е')
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'ФИО ответственного'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_FIO AS IN_OIS, 
-				'ФИО ответственного' AS TP,
-				ISNULL(f.TP_SURNAME + ' ', '') + ISNULL(f.TP_NAME + ' ', '') + ISNULL(f.TP_OTCH, '') AS IN_DBF,
-				CASE 
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверная фамилия (возможно, опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное имя (возможно опечатка)'
-					WHEN 
-						REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е') 
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е') 
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е') 
-						THEN 'Неверное отчество (возможно опечатка)'
-					ELSE 'Совершенно другой сотрудник'
-				END AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'RES'
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_SURNAME, 'ё', 'е') <> REPLACE(f.TP_SURNAME, 'ё', 'е')
-						OR REPLACE(b.CP_NAME, 'ё', 'е') <> REPLACE(f.TP_NAME, 'ё', 'е')
-						OR REPLACE(b.CP_PATRON, 'ё', 'е') <> REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'Должность ответственного'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CP_POS AS IN_OIS, 
-				'Должность ответственного' AS TP,
-				h.POS_NAME AS IN_DBF,
-				'Неправильно и все тут' AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOPersonalTable f ON f.TP_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = f.TP_ID_RP AND g.RP_PSEDO = 'RES'
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PositionTable h ON h.POS_ID = f.TP_ID_POS
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						REPLACE(b.CP_POS, 'ё', 'е') <> REPLACE(h.POS_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_SURNAME, 'ё', 'е') = REPLACE(f.TP_SURNAME, 'ё', 'е')
-						AND REPLACE(b.CP_NAME, 'ё', 'е') = REPLACE(f.TP_NAME, 'ё', 'е')
-						AND REPLACE(b.CP_PATRON, 'ё', 'е') = REPLACE(f.TP_OTCH, 'ё', 'е')
-					)
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'Сервис-инженер'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				a.ServiceName AS IN_OIS, 
-				'Сервис-инженер' AS TP,
-				g.COUR_NAME AS IN_DBF,
-				'Неправильно и все тут' AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)				
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable f ON f.TO_ID = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.CourierTable g ON g.COUR_ID = f.TO_ID_COUR
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						CASE 
-							WHEN CHARINDEX(' ', a.ServiceName) <> 0 THEN LEFT(a.ServiceName, CHARINDEX(' ', a.ServiceName) - 1)
-							WHEN CHARINDEX('_', a.ServiceName) <> 0 THEN LEFT(a.ServiceName, CHARINDEX('_', a.ServiceName) - 1)
-							ELSE a.ServiceName
-						END <> 
-						CASE 
-							WHEN CHARINDEX(' ', g.COUR_NAME) <> 0 THEN LEFT(g.COUR_NAME, CHARINDEX(' ', g.COUR_NAME) - 1)
-							ELSE g.COUR_NAME
-						END	
-					)
-					
-	IF EXISTS
-		(
-			SELECT *
-			FROM @TP
-			WHERE TP_NAME = 'Адрес'
-		)
-		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF)
-			SELECT DISTINCT 
-				a.ClientID, a.ClientFullName, a.ServiceName, a.ManagerName, 
-				b.CT_NAME + ',' + b.ST_NAME + ISNULL(',' + NULLIF(b.CA_HOME, ''), '') + CASE ISNULL(',' + NULLIF(b.CA_OFFICE, ''), '') WHEN '' THEN '' ELSE ',' + b.CA_OFFICE END AS IN_OIS, 
-				'Адрес' AS TP,
-				h.CT_NAME + ',' + g.ST_NAME + CASE ISNULL(TA_HOME, '') WHEN '' THEN '' ELSE ',' + TA_HOME END AS IN_DBF,
-				CASE 
-					WHEN b.ST_NAME <> g.ST_NAME 
-						AND b.CT_NAME = h.CT_NAME 
-						AND REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								ISNULL(b.CA_HOME, '') + ISNULL(CA_OFFICE, ''),
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								)
-								=
-							REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-									f.TA_HOME, 
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								) THEN 'Неверная улица (возможно, опечатка)'
-					WHEN b.ST_NAME = g.ST_NAME 
-						AND b.CT_NAME = h.CT_NAME 
-						AND REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								ISNULL(b.CA_HOME, '') + ISNULL(CA_OFFICE, ''),
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								)
-								<> 
-							REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-									f.TA_HOME, 
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								) THEN 'Неверный номер дома/офиса (возможно опечатка)'		
-					ELSE 'Совершенно другой адрес'
-				END AS ERROR,	
-				(
-					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView z WITH(NOEXPAND)
-					WHERE z.ID_CLIENT = a.ClientID
-						AND DS_REG = 0
-					ORDER BY SystemOrder
-				) AS DISTR,
-				(
-					SELECT TOP 1 DIS_STR
-					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
-					WHERE y.TD_ID_TO = e.TD_ID_TO AND DS_REG = 0
-					ORDER BY SYS_ORDER
-				) AS DISTR_DBF
-			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientAddressView b ON a.ClientID = b.CA_ID_CLIENT
-				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																	AND d.DIS_NUM = c.DISTR
-																	AND d.DIS_COMP_NUM = c.COMP
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOAddressTable f ON f.TA_ID_TO = e.TD_ID_TO
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.StreetTable g ON g.ST_ID = f.TA_ID_STREET
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
-			WHERE a.ServiceStatusID = 2
-				AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND DS_REG = 0
-				AND
-					(
-						b.ST_NAME <> g.ST_NAME
-						OR b.CT_NAME <> h.CT_NAME
-						OR 
-							REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								ISNULL(b.CA_HOME, '') + ISNULL(CA_OFFICE, ''),
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								)
-								<> 
-							REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-								REPLACE(
-									f.TA_HOME, 
-									' ', ''),
-									'д.', ''),
-									'этаж', ''),
-									'эт', ''),
-									'к.', ''),
-									'каб', ''),
-									'кв', ''),
-									'оф', ''),
-									'.', ''),
-									',', ''
-								)
-					)
-	
-	SELECT *
-	FROM #result
-	ORDER BY ManagerName, ServiceName, ClientFullName
-	
-	IF OBJECT_ID('tempdb..#result') IS NOT NULL
-		DROP TABLE #result
-		*/
+		DROP TABLE #client_dbf	
 END
