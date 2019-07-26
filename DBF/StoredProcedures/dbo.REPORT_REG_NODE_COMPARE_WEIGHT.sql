@@ -544,7 +544,7 @@ BEGIN
 								AND d.REG_COMP_NUM = a.REG_COMP_NUM
 								AND d.SYS_ID_HOST = a.SYS_ID_HOST
 				INNER JOIN dbo.SystemTable e ON d.REG_ID_SYSTEM = e.SYS_ID
-				INNER JOIN #system ON b.SYS_ID = TSYS_ID 
+				INNER JOIN #system ON e.SYS_ID = TSYS_ID 
 				INNER JOIN #subhost ON TSH_ID = a.REG_ID_HOST
 				INNER JOIN #system_type ON TSST_ID = a.REG_ID_TYPE
 				INNER JOIN dbo.DistrStatusTable k ON k.DS_ID = d.REG_ID_STATUS	
@@ -576,7 +576,7 @@ BEGIN
 								AND d.REG_COMP_NUM = c.NEW_COMP
 								AND d.SYS_ID_HOST = c.NEW_HOST
 				INNER JOIN dbo.SystemTable e ON d.REG_ID_SYSTEM = e.SYS_ID
-				INNER JOIN #system ON b.SYS_ID = TSYS_ID 
+				INNER JOIN #system ON e.SYS_ID = TSYS_ID 
 				INNER JOIN #subhost ON TSH_ID = a.REG_ID_HOST
 				INNER JOIN #system_type ON TSST_ID = a.REG_ID_TYPE
 				INNER JOIN dbo.DistrStatusTable k ON k.DS_ID = d.REG_ID_STATUS	
@@ -619,7 +619,7 @@ BEGIN
 								AND d.REG_COMP_NUM = a.REG_COMP_NUM
 								AND d.SYS_ID_HOST = a.SYS_ID_HOST
 				INNER JOIN dbo.SystemTable e ON d.REG_ID_SYSTEM = e.SYS_ID
-				INNER JOIN #system ON b.SYS_ID = TSYS_ID 
+				INNER JOIN #system ON e.SYS_ID = TSYS_ID 
 				INNER JOIN #subhost ON TSH_ID = a.REG_ID_HOST
 				INNER JOIN #system_type ON TSST_ID = a.REG_ID_TYPE
 				INNER JOIN dbo.DistrStatusTable k ON k.DS_ID = d.REG_ID_STATUS	
@@ -632,7 +632,7 @@ BEGIN
 						(a.REG_PROBLEM = d.REG_PROBLEM)
 						AND 
 						(a.REG_WEIGHT <> d.REG_WEIGHT)
-						AND (a.REG_PROBLEM = 1)
+						--AND (a.REG_PROBLEM = 1)
 						AND (a.REG_ID_NET = d.REG_ID_NET)
 					)
 				AND k.DS_REG = 0
@@ -712,34 +712,6 @@ BEGIN
 							AND p.OLD_COMP = a.REG_COMP_NUM
 							AND p.OLD_HOST = a.SYS_ID_HOST
 					)
-					
-			UNION ALL
-			
-			SELECT 
-				a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-				f.REG_ID_NET, f.REG_ID_HOST, 'Изменился коэффициент сети', 
-				'', f.REG_COMMENT,
-				f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT - a.REG_WEIGHT
-			FROM
-				#source a
-				INNER JOIN dbo.SystemNetCountTable d ON SNC_ID = REG_ID_NET 
-				INNER JOIN dbo.SystemNetTable e ON SN_ID = SNC_ID_SN 
-				INNER JOIN dbo.SystemNetCoef z ON z.SNCC_ID_SN = e.SN_ID AND z.SNCC_ID_PERIOD = @SRC_PR
-				INNER JOIN #dest f ON f.REG_DISTR_NUM = a.REG_DISTR_NUM 
-								AND f.REG_COMP_NUM = a.REG_COMP_NUM 
-								AND f.SYS_ID_HOST = a.SYS_ID_HOST
-				INNER JOIN dbo.SystemNetCountTable i ON i.SNC_ID = f.REG_ID_NET 
-				INNER JOIN dbo.SystemNetTable j ON j.SN_ID = i.SNC_ID_SN 
-				INNER JOIN dbo.SystemNetCoef y ON y.SNCC_ID_SN = j.SN_ID AND y.SNCC_ID_PERIOD = @DEST_PR
-				INNER JOIN #system ON TSYS_ID = a.REG_ID_SYSTEM
-				INNER JOIN #subhost ON TSH_ID = a.REG_ID_HOST
-				INNER JOIN #system_type ON TSST_ID = a.REG_ID_TYPE
-							
-			WHERE SYS_FILTER = 1
-				AND a.REG_UPDATE = 1
-				AND f.REG_UPDATE = 1
-				AND j.SN_ID = e.SN_ID
-				AND y.SNCC_WEIGHT <> z.SNCC_WEIGHT
 	END
 
 	--5. Включение системы
