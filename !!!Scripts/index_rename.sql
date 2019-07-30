@@ -292,12 +292,12 @@ BEGIN
 	END																								  -- ярнкажюлх оюпемр рюакхжш, рнцдю нрпефер ярнкажш оепбни рюакхжш х бяе врн дюкэье
 	IF LEN(@index_right)>100
 	BEGIN
-		SET @sym_pos = CHARINDEX(CHAR(95), @index_right)-1
 		SET @index_right = REVERSE (@index_right)
+		SET @sym_pos = CHARINDEX(CHAR(95), @index_right)-1
 		SET @index_right = SUBSTRING (@index_right, 1, @sym_pos)
 		SET @index_right = REVERSE (@index_right)
 	END
-	IF (LEN(@index_right)>100)
+	/*IF (LEN(@index_right)>100)
 	BEGIN
 		SET @sym_pos = CHARINDEX(CHAR(40), @index_right)-1
 		SET @index_right = REVERSE (@index_right)                                                     --пебепяш, врнаш сдюкъкяъ онякедмхи яхлбнк ю ме оепбши
@@ -310,7 +310,7 @@ BEGIN
 		SET @err = @err + 1
 		FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
 		CONTINUE
-	END
+	END*/
 	IF (NOT (@index LIKE @index_right+'%'))AND(@chngmode=1)														  -- Р
 	BEGIN TRY
 		EXEC sp_rename @index_name, @index_right, N'OBJECT'
@@ -319,11 +319,21 @@ BEGIN
 	BEGIN CATCH
 		IF ERROR_NUMBER() = 15335
 		BEGIN
-			IF SUBSTRING(@index_right, LEN(@index_right), 1) LIKE '%[^0123456789]%'
+			IF	SUBSTRING(@index_right, LEN(@index_right), 1) = '1' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '2' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '3' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '4' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '5' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '6' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '7' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '8' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '9' OR
+				SUBSTRING(@index_right, LEN(@index_right), 1) = '0'
 			BEGIN
-				SET @copy_num = CONVERT(INT, SUBSTRING(@index_right, LEN(@index_right), 1))
-				SET @index_right = SUBSTRING(@index_right, 1, LEN(@index_right)-1)+ @copy_num
-				CONTINUE			
+				SET @copy_num = CONVERT(INT, SUBSTRING(REVERSE(@index_right), 1, 1))
+				SET @index_right = SUBSTRING(@index_right, 1, LEN(@index_right)-1)+ CONVERT(NVARCHAR, @copy_num+1)
+				PRINT(@index_right)
+				CONTINUE
 			END
 			ELSE
 			BEGIN
@@ -334,6 +344,7 @@ BEGIN
 		SET @err = @err + 1 
 		PRINT @index
 		PRINT ERROR_MESSAGE()
+		PRINT ERROR_NUMBER()
 	END CATCH
 	ELSE IF (NOT (@index LIKE @index_right+'%'))AND(@chngmode=0)
 	BEGIN
