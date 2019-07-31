@@ -22,7 +22,7 @@ BEGIN
 
 	SELECT 
 		rnsv.DistrStr AS [Дистрибутив], SST_SHORT AS [Тип системы], NT_SHORT AS [Тип сети], Comment AS [Клиент], MIN(rpcv.DATE) AS [Дата регистрации], 
-		CONVERT(INT,
+		CONVERT(DECIMAL(8, 2),
 			CASE
 				WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN 
 					CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
@@ -57,10 +57,10 @@ BEGIN
 				INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName				
 																	AND DIS_NUM = b.DISTR 
 																	AND DIS_COMP_NUM = b.COMP
-				INNER JOIN Price.SystemPrice g ON ID_SYSTEM = SystemID
+				INNER JOIN  Price.SystemPrice g ON ID_SYSTEM = SystemID AND ID_MONTH = Common.PeriodCurrent(2)
 		) AS o_O
-		INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP
-		INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP
+		INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP 
+		INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP 
 	WHERE 
 		SST_SHORT IN ('С.А', 'С.К2', 'С.К1', 'С.И') AND
 		DS_REG=0
