@@ -88,6 +88,7 @@ BEGIN
 	WHERE d.DS_REG = 0;
 
 	-- убираем из отчета все комплекты, в которых нет ни одного дистрибутива, которын надо проверять
+	/*
 	DELETE c
 	FROM @Client c
 	WHERE NOT EXISTS
@@ -99,6 +100,7 @@ BEGIN
 				AND d.SYstemBaseCheck = 1
 				AND d.DistrTypeBaseCheck = 1
 		);
+	*/
 	
 	DECLARE @ip Table
 	(
