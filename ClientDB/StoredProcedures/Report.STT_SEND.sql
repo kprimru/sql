@@ -25,7 +25,7 @@ BEGIN
 		) AS a
 		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.CSD_DISTR = b.DISTR AND a.CSD_COMP = b.COMP
 		LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
-		LEFT OUTER JOIN dbo.RegNodeView d WITH(NOEXPAND) ON a.HostID = d.HostID AND a.CSD_DISTR = d.DistrNumber AND a.CSD_COMP = d.CompNumber
-	WHERE d.Service = 0
+		LEFT OUTER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON a.HostID = d.HostID AND a.CSD_DISTR = d.DistrNumber AND a.CSD_COMP = d.CompNumber
+	WHERE d.DS_REG = 0
 	ORDER BY ISNULL(ManagerName, ''), 2, 3, 1, 4
 END

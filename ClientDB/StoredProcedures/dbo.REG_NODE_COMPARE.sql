@@ -49,8 +49,8 @@ BEGIN
 				AND NOT EXISTS
 				(
 					SELECT *
-					FROM dbo.RegNodeView d WITH(NOEXPAND)
-					WHERE d.SystemName = b.SystemBaseName
+					FROM Reg.RegNodeSearchView d WITH(NOEXPAND)
+					WHERE d.SystemBaseName = b.SystemBaseName
 						AND d.DistrNumber = b.DISTR
 						AND d.CompNumber = b.COMP
 						AND (d.SubhostName = @SUBHOST_NAME OR @SUBHOST_NAME IS NULL)				
@@ -89,11 +89,11 @@ BEGIN
 					WHERE x.Complect = d.Complect
 					ORDER BY x.Service, y.SystemOrder
 				), 
-				dbo.DistrString(ISNULL(SystemShortName, d.SystemName), DistrNumber, CompNumber), 
+				d.DistrStr, 
 				'Система не найдена в базе', '', '', Comment, RegisterDate
 			FROM 
-				dbo.RegNodeView d WITH(NOEXPAND) LEFT OUTER JOIN
-				dbo.SystemTable e ON e.SystemBaseName = d.SystemName
+				Reg.RegNodeSearchView d WITH(NOEXPAND) LEFT OUTER JOIN
+				dbo.SystemTable e ON e.SystemBaseName = d.SystemBaseName
 			WHERE DistrNumber <> 20 AND DistrType NOT IN ('NEK', 'DSP')
 				AND NOT EXISTS
 				(
@@ -102,11 +102,11 @@ BEGIN
 						dbo.ClientTable a INNER JOIN
 						dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 					WHERE 
-						d.SystemName = b.SystemBaseName
+						d.SystemBaseName = b.SystemBaseName
 						AND d.DistrNumber = b.DISTR
 						AND d.CompNumber = b.COMP
 						AND STATUS = 1
-				) AND Subhost = 0 AND (Service = 0 OR @REG_ACTIVE = 0) 
+				) AND DS_REG = 0 AND (DS_REG = 0 OR @REG_ACTIVE = 0) 
 				AND 
 					SubhostName = 
 					CASE 
@@ -148,7 +148,7 @@ BEGIN
 				(
 					SELECT 
 						a.ClientID, ClientFullName, ManagerName, ServiceName, 
-						dbo.DistrString(SystemShortName, DISTR, b.COMP) AS DistrStr, 
+						b.DistrStr, 
 						'Несоответствие статуса' AS ErType, 
 						b.DS_NAME AS BaseValue, 
 						d.DS_NAME AS RegValue,
@@ -156,7 +156,7 @@ BEGIN
 					FROM 
 						dbo.ClientView a WITH(NOEXPAND) INNER JOIN
 						dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT INNER JOIN	
-						dbo.RegNodeView d WITH(NOEXPAND) ON d.SystemName = b.SystemBaseName
+						Reg.RegNodeSearchView d WITH(NOEXPAND) ON d.SystemBaseName = b.SystemBaseName
 									AND d.DistrNumber = b.DISTR
 									AND d.CompNumber = b.COMP
 					WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
