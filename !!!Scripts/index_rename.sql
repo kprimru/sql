@@ -61,7 +61,16 @@ SELECT
 	AS [right name]
 FROM
 	sys.indexes i
-	INNER JOIN sys.tables t ON i.object_id=t.object_id
+	INNER JOIN
+	(
+		SELECT schema_id, object_id, name
+		FROM sys.tables
+		
+		UNION
+		
+		SELECT schema_id, object_id, name
+		FROM sys.views
+	) t ON i.object_id=t.object_id
 	INNER JOIN sys.schemas sch ON sch.schema_id=t.schema_id
 WHERE
 	is_primary_key=0 AND is_unique_constraint=0 AND i.type_desc<>'HEAP'
