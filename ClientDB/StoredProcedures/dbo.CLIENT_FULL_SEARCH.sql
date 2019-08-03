@@ -40,102 +40,106 @@ BEGIN
 	SET NOCOUNT ON;	
 
 	IF @HIST IS NULL
-		SET @HIST = 0
+		SET @HIST = 0;
 
-	IF OBJECT_ID('tempdb..#rclient') IS NOT NULL
-		DROP TABLE #rclient
+	DECLARE @rclient Table
+	(
+		RCL_ID	INT PRIMARY KEY CLUSTERED
+	);
 
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
+	DECLARE @client Table
+	(
+		CL_ID	INT PRIMARY KEY CLUSTERED
+	);
 
-	CREATE TABLE #rclient
-		(
-			RCL_ID	INT PRIMARY KEY
-		)
+	DECLARE @search Table
+	(
+		WRD		VARCHAR(250) PRIMARY KEY CLUSTERED
+	);
 
-	INSERT INTO #rclient(RCL_ID)
-		SELECT RCL_ID
-		FROM dbo.ClientReadList()
+	DECLARE @names Table
+	(
+		CL_ID	INT PRIMARY KEY CLUSTERED,
+		NAMES	VARCHAR(MAX )
+	);
 
-	CREATE TABLE #client
-		(
-			CL_ID	INT PRIMARY KEY
-		)
+	INSERT INTO @rclient(RCL_ID)
+	SELECT RCL_ID
+	FROM dbo.ClientReadList();
 		
-	DECLARE @CUR_DATE SMALLDATETIME
+	DECLARE @CUR_DATE SMALLDATETIME;
 	
-	SET @CUR_DATE = dbo.DateOf(GETDATE())
+	SET @CUR_DATE = dbo.DateOf(GETDATE());
 		
 	IF @SIMPLE IS NULL
 	BEGIN
 		IF (@SYS IS NOT NULL) OR (@DISTR IS NOT NULL)
-			INSERT INTO #client(CL_ID)
-				SELECT DISTINCT ID_CLIENT
-				FROM dbo.ClientDistrView WITH(NOEXPAND)
-				WHERE ((SystemID = @SYS) OR (@SYS IS NULL))
-					AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL))			
+			INSERT INTO @client(CL_ID)
+			SELECT DISTINCT ID_CLIENT
+			FROM dbo.ClientDistrView WITH(NOEXPAND)
+			WHERE ((SystemID = @SYS) OR (@SYS IS NULL))
+				AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL));
 		ELSE IF @NAME IS NOT NULL AND @HIST = 0
-			INSERT INTO #client(CL_ID)							
-				SELECT ClientID
-				FROM dbo.ClientTable
-				WHERE ClientFullName LIKE @NAME
-					OR EXISTS
-						(
-							SELECT *
-							FROM dbo.ClientNames
-							WHERE ID_CLIENT = ClientID
-								AND NAME LIKE @NAME
-						)
-					OR ClientShortName LIKE @NAME
-					OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
+			INSERT INTO @client(CL_ID)							
+			SELECT ClientID
+			FROM dbo.ClientTable
+			WHERE ClientFullName LIKE @NAME
+				OR EXISTS
+					(
+						SELECT *
+						FROM dbo.ClientNames
+						WHERE ID_CLIENT = ClientID
+							AND NAME LIKE @NAME
+					)
+				OR ClientShortName LIKE @NAME
+				OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '');
 		ELSE IF @SERVICE IS NOT NULL
-			INSERT INTO #client(CL_ID)
-				SELECT ClientID
-				FROM dbo.ClientTable
-				WHERE ClientServiceID = @SERVICE
-					AND STATUS = 1
+			INSERT INTO @client(CL_ID)
+			SELECT ClientID
+			FROM dbo.ClientTable
+			WHERE ClientServiceID = @SERVICE
+				AND STATUS = 1;
 		ELSE		
-			INSERT INTO #client(CL_ID)
-				SELECT RCL_ID
-				FROM #rclient
+			INSERT INTO @client(CL_ID)
+			SELECT RCL_ID
+			FROM @rclient;
 
-				
 		DELETE
-		FROM #client
+		FROM @client
 		WHERE CL_ID NOT IN
 			(
 				SELECT RCL_ID
-				FROM #rclient
+				FROM @rclient
 			)
+		OPTION (RECOMPILE);
 		
 	
 		IF (@SYS IS NOT NULL) OR (@DISTR IS NOT NULL)
 		BEGIN
-			IF (@ACTIVE_SYS=1)
-				DELETE FROM #client
+			IF @ACTIVE_SYS = 1
+				DELETE FROM @client
 				WHERE CL_ID NOT IN
 					(
 						SELECT ID_CLIENT
 						FROM dbo.ClientDistrView cdv WITH(NOEXPAND)
-						WHERE (((cdv.SystemID = @SYS)AND (cdv.DS_REG=0))
-								OR (@SYS IS NULL))
-								AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL))	
+						WHERE	(cdv.SystemID = @SYS AND cdv.DS_REG = 0 OR @SYS IS NULL)
+							AND (CONVERT(VARCHAR(20), DISTR) LIKE @DISTR OR @DISTR IS NULL)
 					)
-			ELSE IF @ACTIVE_SYS=0
-
-				DELETE FROM #client
+				OPTION (RECOMPILE)
+			ELSE IF @ACTIVE_SYS = 0
+				DELETE FROM @client
 				WHERE CL_ID NOT IN
 					(
 						SELECT ID_CLIENT
 						FROM dbo.ClientDistrView cdv WITH(NOEXPAND)
-						WHERE ((cdv.SystemID = @SYS) OR (@SYS IS NULL))
-								AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) 
-								OR (@DISTR IS NULL))
-					)	
+						WHERE	(cdv.SystemID = @SYS OR @SYS IS NULL)
+							AND (CONVERT(VARCHAR(20), DISTR) LIKE @DISTR OR @DISTR IS NULL)
+					)
+				OPTION (RECOMPILE);
 		END	
 
 		IF @DIR IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT CP_ID_CLIENT
@@ -156,29 +160,31 @@ BEGIN
 								OR POS LIKE @DIR
 							)
 				)
+			OPTION (RECOMPILE);
 
-------------------------------------------¬Œ“ «ƒ≈—‹ Õ¿◊»Õ¿≈“—ﬂ ÃŒ…  Œƒ, ≈—À» Õ≈ –¿¡Œ“¿≈“ - «¿ ŒÃÃ≈Õ“»“‹------------------------------------------
 		IF @DISTR_TYPE IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
-				(SELECT ID_CLIENT						-- 
-				 FROM dbo.ClientDistr					--   
-				 WHERE ID_NET=@DISTR_TYPE
+				(
+					SELECT ID_CLIENT
+					FROM dbo.ClientDistrView WITH(NOEXPAND)
+					WHERE DistrTypeId = @DISTR_TYPE
 				)
----------------------------------------------------------«ƒ≈—‹ ÃŒ…  Œƒ  ŒÕ◊¿≈“—ﬂ------------------------------------------------------------------		
+			OPTION (RECOMPILE);
 
 		IF @ADDRESS IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT CA_ID_CLIENT
 					FROM dbo.ClientAddressView
 					WHERE CA_STR LIKE @ADDRESS
 						AND AT_REQUIRED = 1
-				)			
+				)
+			OPTION (RECOMPILE);
 
 		IF @NAME IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -202,39 +208,46 @@ BEGIN
 						OR ClientShortName LIKE @NAME)
 						AND @HIST = 1
 						AND STATUS <> 1
-				)		
-	
+				)
+			OPTION (RECOMPILE);
+
 		IF @CONTRACT IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE ClientContractTypeID = @CONTRACT
+						AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 
 	
 
 		IF @STATUS IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE StatusID = @STATUS
+						AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 
 		IF @SERVICE_TYPE IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE ServiceTypeID = @SERVICE_TYPE
+						AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 
 		IF @MANAGER IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -243,9 +256,10 @@ BEGIN
 						INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 					WHERE ManagerID = @MANAGER AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 
 		IF @SERVICE IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -253,9 +267,10 @@ BEGIN
 					WHERE ClientServiceID = @SERVICE
 						AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 
 		IF @TYPE IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -264,9 +279,10 @@ BEGIN
 						INNER JOIN dbo.ClientTypeTable b ON b.ClientTypeName = a.CATEGORY
 					WHERE ClientTypeID = @TYPE
 				)
+			OPTION (RECOMPILE);
 
 		IF @CONTROL = 1
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT CC_ID_CLIENT
@@ -274,35 +290,42 @@ BEGIN
 					WHERE CC_REMOVE_DATE IS NULL
 						AND (CC_BEGIN IS NULL OR CC_BEGIN <= @CUR_DATE)
 				)
+			OPTION (RECOMPILE);
 
 		IF @ORI = 1
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE OriClient = 1
+						AND STATUS = 1
 				)
-------------------------------------------------------------------------		
+			OPTION (RECOMPILE);
+
 		IF @ISLARGE = 0
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE IsLarge = 1
+						AND STATUS = 1
 				)
+			OPTION (RECOMPILE);
 		ELSE IF @ISLARGE = 1
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE IsLarge = 0
+						AND STATUS = 1
 				)
-------------------------------------------------------------------------
+			OPTION (RECOMPILE);
+
 		IF @DISCONNECT IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -314,9 +337,10 @@ BEGIN
 						) AS o_O
 					WHERE DisconnectDate >= @DISCONNECT
 				)
+			OPTION (RECOMPILE);
 
 		IF @DISC_BEGIN IS NOT NULL OR @DISC_END IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -328,37 +352,32 @@ BEGIN
 						) AS o_O
 					WHERE (DisconnectDate >= @DISC_BEGIN OR @DISC_BEGIN IS NULL)
 						AND (DisconnectDate <= @DISC_END OR @DISC_END IS NULL)
-				)		
+				)
+			OPTION (RECOMPILE);
 	END
 	ELSE
 	BEGIN
-		INSERT INTO #client(CL_ID)
+		INSERT INTO @client(CL_ID)
 			SELECT RCL_ID
-			FROM #rclient
+			FROM @rclient
 
-		IF OBJECT_ID('tempdb..#search') IS NOT NULL
-			DROP TABLE #search	
-
-		CREATE TABLE #search
-			(
-				WRD		VARCHAR(250) PRIMARY KEY
-			)		
-
-		INSERT INTO #search(WRD)
-			SELECT DISTINCT '%' + Word + '%'
-			FROM dbo.SplitString(@SIMPLE)		
+		INSERT INTO @search(WRD)
+		SELECT DISTINCT '%' + Word + '%'
+		FROM dbo.SplitString(@SIMPLE);
 		
 		IF @STATUS IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE StatusID = @STATUS
+						AND STATUS = 1
 				)
+			OPTION(RECOMPILE);
 
 		IF @SERVICE IS NOT NULL
-			DELETE FROM #client
+			DELETE FROM @client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
@@ -366,9 +385,10 @@ BEGIN
 					WHERE ClientServiceID = @SERVICE
 						AND STATUS = 1
 				)
+			OPTION(RECOMPILE);
 
 		DELETE 
-		FROM #client
+		FROM @client
 		WHERE CL_ID IN
 			(
 				SELECT ID_CLIENT
@@ -376,31 +396,24 @@ BEGIN
 				WHERE EXISTS
 					(
 						SELECT * 
-						FROM #search 
+						FROM @search
 						WHERE NOT (DATA LIKE WRD)
 					)
 			)
-	END
-
-	IF OBJECT_ID('tempdb..#names') IS NOT NULL
-		DROP TABLE #names
-
-	CREATE TABLE #names
-		(
-			CL_ID	INT PRIMARY KEY,
-			NAMES	VARCHAR(MAX)
-		)
+		OPTION(RECOMPILE);
+	END;
 		
-	INSERT INTO #names(CL_ID, NAMES)
-		SELECT t.CL_ID, 
-			REVERSE(STUFF(REVERSE(
-			(
-				SELECT NAME + '; '
-				FROM dbo.ClientNames
-				WHERE ID_CLIENT = t.CL_ID
-				ORDER BY NAME FOR XML PATH('')
-			)), 1, 2, ''))
-		FROM #client t
+	INSERT INTO @names(CL_ID, NAMES)
+	SELECT t.CL_ID, 
+		REVERSE(STUFF(REVERSE(
+		(
+			SELECT NAME + '; '
+			FROM dbo.ClientNames
+			WHERE ID_CLIENT = t.CL_ID
+			ORDER BY NAME FOR XML PATH('')
+		)), 1, 2, ''))
+	FROM @client t
+	OPTION(RECOMPILE);
 
 	SELECT 
 		a.ClientID, 
@@ -439,17 +452,7 @@ BEGIN
 				) THEN 1
 			ELSE 0
 		END) AS ClientRegError,
-		CONVERT(BIT, 0/*CASE 
-			WHEN EXISTS
-				(
-					SELECT *
-					FROM 
-						dbo.ClientDistrView z WITH(NOEXPAND)
-						INNER JOIN dbo.BLACK_LIST_REG y ON z.DISTR = y.DISTR AND z.COMP = y.COMP AND z.SystemID = y.ID_SYS
-					WHERE z.ID_CLIENT = t.CL_ID AND P_DELETE = 0 AND z.DS_REG = 0
-				) THEN 1
-			ELSE 0
-		END*/) AS IPLock,
+		CONVERT(BIT, 0) AS IPLock,
 		(
 			SELECT TOP 1 DATE
 			FROM 
@@ -488,33 +491,21 @@ BEGIN
 				) THEN 1
 			ELSE 0
 		END) AS ClientControlNew
-		--,h.CATEGORY
 	FROM 
-		#client t
+		@client t
 		INNER JOIN dbo.ClientTable a ON t.CL_ID = a.ClientID
 		INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 		INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID 
 		LEFT OUTER JOIN dbo.ClientAddressView e ON a.ClientID = e.CA_ID_CLIENT AND e.AT_REQUIRED = 1
-		LEFT OUTER JOIN #names f ON f.CL_ID = t.CL_ID
-		LEFT OUTER JOIN dbo.DayTable g ON g.DayID = a.DayID
-		--LEFT OUTER JOIN dbo.ClientTypeAllView h ON t.CL_ID = h.ClientID
+		LEFT OUTER JOIN @names f ON f.CL_ID = t.CL_ID
+		LEFT OUTER JOIN dbo.DayTable g ON g.DayID = a.DayID		
 	ORDER BY ClientFullName
-	
-	
-	--!!!œŒ—À≈ƒÕ»… —≈Ã»Õ¿–!!!!
+	OPTION (RECOMPILE);
 	
 	SELECT @COUNT = COUNT(*), @PCOUNT = SUM(ClientNewsPaper), @BCOUNT = SUM(ClientMainBook)
-	FROM #client INNER JOIN dbo.ClientTable ON CL_ID = ClientID
-	
-
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
-	IF OBJECT_ID('tempdb..#rclient') IS NOT NULL
-		DROP TABLE #rclient
-	IF OBJECT_ID('tempdb..#search') IS NOT NULL
-		DROP TABLE #search
-	IF OBJECT_ID('tempdb..#names') IS NOT NULL
-		DROP TABLE #names
+	FROM @client
+	INNER JOIN dbo.ClientTable ON CL_ID = ClientID
+	OPTION (RECOMPILE);
 END
 
