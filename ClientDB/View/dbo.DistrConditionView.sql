@@ -15,7 +15,7 @@ AS
 		AND EXISTS
 		(
 			SELECT *
-			FROM dbo.RegNodeCurrentView b WITH(NOEXPAND)
+			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 			WHERE DS_REG = 0 AND a.Complect = b.Complect AND b.SystemID = a.ID_SYSTEM
 		)
 		
@@ -31,11 +31,21 @@ AS
 		AND NOT EXISTS
 		(
 			SELECT *
-			FROM dbo.RegNodeCurrentView b WITH(NOEXPAND)
-			WHERE DS_REG = 0 AND a.Complect = b.Complect AND 
-            b.SystemID in (SELECT DISTINCT [ID_NOT_SYSTEM] from [dbo].[SystemBankRequired] 
-            WHERE ([ID_SB]in (SELECT [ID] from [dbo].[SystemBankTable] sb WHERE 
-             sb.InfoBankID =  InfoBankID AND sb.SystemID = SystemID AND sb.Required=[Required])))
+			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+			WHERE DS_REG = 0 AND a.Complect = b.Complect
+				AND b.SystemID IN 
+					(
+						SELECT DISTINCT [ID_NOT_SYSTEM] 
+						FROM [dbo].[SystemBankRequired] 
+						WHERE [ID_SB] IN 
+							(
+								SELECT [ID]
+								FROM [dbo].[SystemBankTable] sb
+								WHERE  sb.InfoBankID =  InfoBankID
+									AND sb.SystemID = SystemID
+									AND sb.Required=[Required]
+							)
+					)
 		 )
 
 		

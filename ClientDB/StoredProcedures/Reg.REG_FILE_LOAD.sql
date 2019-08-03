@@ -578,7 +578,7 @@ BEGIN
 				SELECT *
 				FROM 
 					dbo.ClientDistrView a WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																	AND a.DISTR = b.DistrNumber
 																	AND a.COMP = b.CompNumber
 					INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
@@ -596,7 +596,7 @@ BEGIN
 							SELECT a.ID
 							FROM 
 								dbo.ClientDistrView a WITH(NOEXPAND)
-								INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																				AND a.DISTR = b.DistrNumber
 																				AND a.COMP = b.CompNumber
 								INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
@@ -705,7 +705,7 @@ BEGIN
 				SELECT *
 				FROM 
 					dbo.ClientDistrView a WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																	AND a.DISTR = b.DistrNumber
 																	AND a.COMP = b.CompNumber
 				WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
@@ -719,7 +719,7 @@ BEGIN
 						SELECT a.ID
 						FROM 
 							dbo.ClientDistrView a WITH(NOEXPAND)
-							INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																			AND a.DISTR = b.DistrNumber
 																			AND a.COMP = b.CompNumber
 						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
@@ -735,7 +735,7 @@ BEGIN
 							SELECT a.ID
 							FROM 
 								dbo.ClientDistrView a WITH(NOEXPAND)
-								INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																				AND a.DISTR = b.DistrNumber
 																				AND a.COMP = b.CompNumber
 							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
@@ -789,7 +789,7 @@ BEGIN
 							END AS ID_SYSTEM
 						FROM 
 							dbo.ClientDistrView a WITH(NOEXPAND)
-							INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																			AND a.DISTR = b.DistrNumber
 																			AND a.COMP = b.CompNumber
 						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
@@ -799,7 +799,7 @@ BEGIN
 					SELECT a.ID
 					FROM 
 						dbo.ClientDistrView a WITH(NOEXPAND)
-						INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.HostID = b.HostID
+						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																		AND a.DISTR = b.DistrNumber
 																		AND a.COMP = b.CompNumber
 					WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID

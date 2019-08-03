@@ -93,7 +93,7 @@ BEGIN
 			FROM
 				(
 					SELECT 
-						'CLIENT' AS TP, a.ID, a.SystemID, SystemBaseName, DISTR, COMP, a.HostID,
+						'CLIENT' AS TP, a.ID, a.SystemID, a.SystemBaseName, DISTR, COMP, a.HostID,
 						a.SystemOrder, d.DistrType, a.DistrStr, dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 						SystemTypeID, SystemTypeName, a.DistrTypeName, a.DS_NAME, a.DistrTypeID,
 						a.DS_REG, a.DS_INDEX,				
@@ -159,10 +159,10 @@ BEGIN
 						d.ODOff AS ODOff
 					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND) 
-						LEFT OUTER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+						LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
 										AND b.DistrNumber = a.DISTR
 										AND b.CompNumber = a.COMP
-						LEFT OUTER JOIN dbo.RegNodeCurrentView c WITH(NOEXPAND) ON c.HostID = a.HostID
+						LEFT OUTER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = a.HostID
 										AND c.DistrNumber = a.DISTR
 										AND c.CompNumber = a.COMP
 						LEFT OUTER JOIN dbo.RegNodeTable d ON d.ID = c.ID
@@ -190,10 +190,10 @@ BEGIN
 						d.ODOff AS ODOff
 					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND) 
-						INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
 										AND b.DistrNumber = a.DISTR
 										AND b.CompNumber = a.COMP
-						INNER JOIN dbo.RegNodeCurrentView c WITH(NOEXPAND) ON c.Complect = b.Complect
+						INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
 						INNER JOIN dbo.RegNodeTable d ON d.ID = c.ID
 					WHERE  ID_CLIENT = @CLIENTID AND c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
 						AND c.SubhostName = Maintenance.GlobalSubhostName()

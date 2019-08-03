@@ -174,7 +174,7 @@ BEGIN
 				REVERSE(STUFF(REVERSE((
 					SELECT DISTINCT ResVersionShort + ', '
 					FROM 
-						#usr z INNER JOIN
+						@Clients z INNER JOIN
 						dbo.ResVersionTable ON ResVersionID = ResVersion 
 					WHERE z.ClientID = a.ClientID
 					FOR XML PATH(''))
@@ -184,7 +184,7 @@ BEGIN
 				REVERSE(STUFF(REVERSE((
 					SELECT DISTINCT ConsExeVersionName + ', '
 					FROM 
-						#usr z INNER JOIN
+						@Clients z INNER JOIN
 						dbo.ConsExeVersionTable ON ConsExeVersionID = ConsExeVersion
 					WHERE z.ClientID = a.ClientID
 					FOR XML PATH(''))
@@ -195,7 +195,7 @@ BEGIN
 					(
 						SELECT *
 						FROM 
-							#usr z INNER JOIN
+							@Clients z INNER JOIN
 							dbo.ConsExeVersionTable ON ConsExeVersionID = ConsExeVersion
 						WHERE z.ClientID = a.ClientID
 							AND ConsExeVersionActive = 0
@@ -207,7 +207,7 @@ BEGIN
 					(
 						SELECT *
 						FROM 
-							#usr z INNER JOIN
+							@Clients z INNER JOIN
 							dbo.ResVersionTable ON ResVersionID = ResVersion 
 						WHERE z.ClientID = a.ClientID
 							AND IsLatest = 0

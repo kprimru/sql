@@ -190,7 +190,7 @@ BEGIN
 		WHERE EXISTS
 			(
 				SELECT *
-				FROM dbo.RegNodeCurrentView WITH(NOEXPAND)
+				FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 				WHERE ID_HOST = HostID AND DistrNumber = DISTR AND CompNumber = COMP
 			)
 

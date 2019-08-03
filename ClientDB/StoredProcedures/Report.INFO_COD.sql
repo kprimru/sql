@@ -23,7 +23,7 @@ BEGIN
 					ELSE 1 
 				END AS TP, 
 				T.UF_INFO_COD, g.DistrStr, UD_DISTR, UD_COMP,
-				ISNULL(ClientFullName, h.Comment) AS Client, ServiceName, 
+				ISNULL(ClientFullName, g.Comment) AS Client, ServiceName, 
 				ISNULL(ManagerName, SubhostName) AS Manager, d.SystemOrder, a.UF_CREATE
 			FROM 
 				USR.USRActiveView a
@@ -32,11 +32,10 @@ BEGIN
 				INNER JOIN dbo.SystemTable d ON a.UF_ID_SYSTEM = d.SystemID
 				LEFT OUTER JOIN dbo.ClientDistrView e WITH(NOEXPAND) ON d.SystemID = e.SystemID AND DISTR = UD_DISTR AND COMP = UD_COMP
 				LEFT OUTER JOIN dbo.ClientView f WITH(NOEXPAND) ON ClientID = ID_CLIENT
-				LEFT OUTER JOIN dbo.RegNodeCurrentView g WITH(NOEXPAND) ON g.SystemID = d.SYstemID AND UD_DISTR = DistrNumber AND UD_COMP = CompNumber
-				LEFT OUTER JOIN dbo.RegNodeTable h ON h.ID = g.ID
+				LEFT OUTER JOIN Reg.RegNodeSearchView g WITH(NOEXPAND) ON g.SystemID = d.SYstemID AND UD_DISTR = DistrNumber AND UD_COMP = CompNumber
 			WHERE b.UF_CREATE >= DATEADD(MONTH, -2, GETDATE())
 				AND t.UF_INFO_COD IS NOT NULL
-				AND h.ID IS NOT NULL
+				AND g.ID IS NOT NULL
 		) AS o_O
 	ORDER BY 
 		TP, Manager, ServiceName, Client, SystemOrder, UD_DISTR, UD_COMP

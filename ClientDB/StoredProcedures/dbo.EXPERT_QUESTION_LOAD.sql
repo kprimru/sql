@@ -83,7 +83,7 @@ BEGIN
 				SELECT SubhostName 
 				FROM 
 					dbo.ClientDutyQuestion a
-					INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber
+					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber
 					INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS	
 				WHERE a.IMPORT IS NULL AND a.ID = @ID
 			) = 'Ë1'

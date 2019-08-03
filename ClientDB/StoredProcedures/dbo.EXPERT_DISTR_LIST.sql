@@ -19,7 +19,7 @@ BEGIN
 				REPLICATE('0', 6 - LEN(CONVERT(VARCHAR(20), DistrNumber))) + CONVERT(VARCHAR(20), DistrNumber) + 
 				CASE CompNumber WHEN 1 THEN '' ELSE '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(20), CompNumber))) + CONVERT(VARCHAR(20), CompNumber) END + ', '
 			FROM 
-				dbo.RegNodeCurrentView a WITH(NOEXPAND)
+				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN
 				(
 					SELECT DISTINCT ID_HOST, DISTR, COMP
