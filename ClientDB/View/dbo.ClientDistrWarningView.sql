@@ -39,10 +39,10 @@ AS
 				END AS REG_ERROR			
 			FROM
 				dbo.ClientDistrView a WITH(NOEXPAND) 
-				LEFT OUTER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+				LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
 								AND b.DistrNumber = a.DISTR
 								AND b.CompNumber = a.COMP
-				LEFT OUTER JOIN dbo.RegNodeCurrentView c WITH(NOEXPAND) ON c.HostID = a.HostID
+				LEFT OUTER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = a.HostID
 								AND c.DistrNumber = a.DISTR
 								AND c.CompNumber = a.COMP
 						
@@ -52,10 +52,10 @@ AS
 			SELECT ID_CLIENT AS ClientID, 'Дистрибутив установлен в комплекте с системами клиента'
 			FROM
 				dbo.ClientDistrView a WITH(NOEXPAND) 
-				INNER JOIN dbo.RegNodeCurrentView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+				INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
 								AND b.DistrNumber = a.DISTR
 								AND b.CompNumber = a.COMP
-				INNER JOIN dbo.RegNodeCurrentView c WITH(NOEXPAND) ON c.Complect = b.Complect						
+				INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect						
 			WHERE  c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
 				AND c.SubhostName = Maintenance.GlobalSubhostName()
 				AND NOT EXISTS
