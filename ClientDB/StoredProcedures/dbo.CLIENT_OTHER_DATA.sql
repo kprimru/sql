@@ -69,7 +69,7 @@ BEGIN
 				SELECT UD_NAME, 'Последнее пополнение' AS PARAM_NAME, MAX(UIU_DATE_S) AS DATE_S
 				FROM 
 					#complect a
-					INNER JOIN USR.USRDateKindView b WITH(NOEXPAND) ON a.UD_ID = b.UD_ID
+					INNER JOIN USR.USRIBDateView b WITH(NOEXPAND) ON a.UD_ID = b.UD_ID AND b.UD_ID_CLIENT = @ID
 				WHERE UIU_DATE_S <= @NOW
 				GROUP BY UD_NAME
 			) AS o_O
