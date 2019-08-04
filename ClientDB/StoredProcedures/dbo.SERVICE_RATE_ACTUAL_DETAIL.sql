@@ -64,7 +64,8 @@ BEGIN
 			MAX(StatisticDate) AS STAT_DATE
 		FROM			
 			#clientlist 
-			INNER JOIN USR.USRIBStatView c WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
+			INNER JOIN USR.USRIBDateView c WITH(NOEXPAND) ON CL_ID = UD_ID_CLIENT
+			INNER JOIN dbo.InfoBankTable i ON i.InfoBankId = c.UI_ID_BASE AND i.InfoBankActual = 1
 			/*INNER JOIN dbo.ClientTypeView d WITH(NOEXPAND) ON UD_ID_CLIENT = ClientID*/
 			INNER JOIN dbo.ClientTypeAllView d ON UD_ID_CLIENT = ClientID
 			INNER JOIN dbo.ClientTypeTable e ON e.ClientTypeName = d.CATEGORY

@@ -23,7 +23,6 @@ BEGIN
 			'USR.USRIB',
 			'USR.USRIBDateView',
 			'USR.USRPackage',
-			'USR.USRIBStatView',
 			'USR.USRComplianceView',
 			'USR.USRFileView',
 			'USR.USRIBComplianceView',
