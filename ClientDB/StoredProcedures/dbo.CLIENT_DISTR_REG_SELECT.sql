@@ -16,13 +16,13 @@ BEGIN
 	FROM
 		(
 			SELECT ID, SystemOrder, DistrStr, DistrTypeName, DS_NAME, DS_REG, DS_INDEX
-			FROM dbo.RegNodeCurrentView WITH(NOEXPAND)
-			WHERE COMPLECT = (SELECT COMPLECT FROM dbo.RegNodeCurrentView WITH(NOEXPAND) WHERE ID = @ID)
+			FROM Reg.RegNodeSearchView		r WITH(NOEXPAND)
+			WHERE COMPLECT = (SELECT COMPLECT FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE ID = @ID)
 			
 			UNION
 			
 			SELECT ID, SystemOrder, DistrStr, DistrTypeName, DS_NAME, DS_REG, DS_INDEX
-			FROM dbo.RegNodeCurrentView WITH(NOEXPAND)
+			FROM Reg.RegNodeSearchView		r WITH(NOEXPAND)
 			WHERE ID = @ID
 		) AS o_O
 	ORDER BY DS_REG, SystemOrder, DistrStr
