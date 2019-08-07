@@ -14,7 +14,7 @@ INTO @schema, @name
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	SET @SQL = '
-		CREATE TRIGGER [' + @schema + '.' + @name + '_LAST_UPDATE]
+		CREATE TRIGGER [' + @schema + '].[' + @name + '_LAST_UPDATE]
 		ON ' + @schema + '.' + @name + '
 		AFTER INSERT, UPDATE, DELETE
 		AS
