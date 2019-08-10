@@ -19,16 +19,13 @@ BEGIN
 	DECLARE @UD	TABLE(CPL UNIQUEIDENTIFIER)
 
 	INSERT INTO @UD
-		SELECT DISTINCT UF_ID_COMPLECT
+		SELECT DISTINCT UD_ID
 		FROM 			
-			dbo.RegNodeTable d 
-			INNER JOIN dbo.SystemTable c ON d.SystemName = c.SystemBaseName
-			INNER JOIN dbo.SystemTable z ON c.HostID = z.HostID
-			INNER JOIN USR.USRPackage b ON z.SystemID = b.UP_ID_SYSTEM
-										AND d.DistrNumber = UP_DISTR
-										AND d.CompNumber = UP_COMP
-			INNER JOIN USR.USRFile ON UP_ID_USR = UF_ID
-		WHERE d.ID = @CL_ID
+			Reg.RegNodeSearchView r WITH(NOEXPAND)
+			INNER JOIN USR.USRData d ON d.UD_ID_HOST = r.HostId
+									AND d.UD_DISTR = r.DistrNumber
+									AND d.UD_COMP = r.CompNumber
+		WHERE r.ID = @CL_ID
 
 	DECLARE @CPL TABLE
 		(
