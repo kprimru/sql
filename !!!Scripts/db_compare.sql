@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC275-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC275-SQL\GAMMA].[ClientUSSDB]';
+SET @Dst = '[PC275-SQL\GAMMA].[ClientSlavDB]';
 
 DECLARE @SrcSchemas Table
 (
@@ -54,7 +54,7 @@ DECLARE @DstColumns Table
     PRIMARY KEY CLUSTERED ([Schema], [Table], [Column])
 );
 
-DECLARE @SrcViews TABLE
+DECLARE @SrcViews Table
 (
     [Schema]        SysName,
     [Name]          SysName,
@@ -62,12 +62,38 @@ DECLARE @SrcViews TABLE
     PRIMARY KEY CLUSTERED([Schema], [Name])
 );
 
-DECLARE @DstViews TABLE
+DECLARE @DstViews Table
 (
     [Schema]        SysName,
     [Name]          SysName,
     [Definition]    NVarChar(Max),
     PRIMARY KEY CLUSTERED([Schema], [Name])
+);
+
+DECLARE @SrcIndexes Table
+(
+    [Schema]                SysName,
+    [Table]                 SysName,
+    [Name]                  SysName,
+    [Columns]               VarChar(Max),
+    [Included]              VarChar(Max),
+    [IsClustered]           Bit,
+    [IsPrimaryKey]          Bit,
+    [IsUnique]              Bit,
+    [IsUniqueConstraint]    Bit
+);
+
+DECLARE @DstIndexes Table
+(
+    [Schema]                SysName,
+    [Table]                 SysName,
+    [Name]                  SysName,
+    [Columns]               VarChar(Max),
+    [Included]              VarChar(Max),
+    [IsClustered]           Bit,
+    [IsPrimaryKey]          Bit,
+    [IsUnique]              Bit,
+    [IsUniqueConstraint]    Bit
 );
 
 DECLARE @SrcRouties Table
@@ -99,6 +125,7 @@ DECLARE @DstRoles Table
     [Name]          SysName,
     PRIMARY KEY CLUSTERED([Name])
 );
+
 
 INSERT INTO @SrcSchemas
 EXEC ('SELECT [name] FROM ' + @Src + '.[sys].[schemas]');
@@ -179,6 +206,91 @@ INSERT INTO @DstRoles
 EXEC('SELECT R.[name]
 FROM ' + @Dst + '.sys.database_principals R
 WHERE type = ''R'';');
+
+
+INSERT INTO @SrcIndexes
+EXEC ('SELECT
+    S.[name], O.[name], I.[name],
+    C.[Columns], IC.[IncludedColumns],
+    [IsClustered] = CASE WHEN I.[type] = 1 THEN 1 WHEN I.[type] = 2 THEN 0 ELSE NULL END,
+    I.[is_primary_key],
+    I.[is_unique],
+    I.[is_unique_constraint]
+FROM ' + @Src + '.[sys].[indexes]        I
+INNER JOIN ' + @Src + '.[sys].[objects]  O ON I.[object_id] = O.[object_id]
+INNER JOIN ' + @Src + '.[sys].[schemas]  S ON S.[schema_id] = O.[schema_id]
+OUTER APPLY
+(
+    SELECT [Columns] = REVERSE(STUFF(REVERSE(
+            (
+                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                FROM ' + @Src + '.[sys].[index_columns] IC
+                INNER JOIN ' + @Src + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
+                WHERE   IC.[object_id] = I.[object_id]
+                    AND IC.[index_id] = I.[index_id]
+                    AND IC.[is_included_column] = 0
+                    AND C.[object_id] = O.[object_id]
+                ORDER BY IC.[key_ordinal] FOR XML PATH('''')
+            )), 1, 2, ''''))
+) AS C
+OUTER APPLY
+(
+    SELECT
+        [IncludedColumns] = REVERSE(STUFF(REVERSE(
+            (
+                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                FROM ' + @Src + '.[sys].[index_columns] IC
+                INNER JOIN ' + @Src + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
+                WHERE   IC.[object_id] = I.[object_id]
+                    AND IC.[index_id] = I.[index_id]
+                    AND IC.[is_included_column] = 1
+                    AND C.[object_id] = O.[object_id]
+                ORDER BY IC.[key_ordinal] FOR XML PATH('''')
+            )), 1, 2, ''''))
+) AS IC
+WHERE I.[type] != 0');
+
+INSERT INTO @DstIndexes
+EXEC ('SELECT
+    S.[name], O.[name], I.[name],
+    C.[Columns], IC.[IncludedColumns],
+    [IsClustered] = CASE WHEN I.[type] = 1 THEN 1 WHEN I.[type] = 2 THEN 0 ELSE NULL END,
+    I.[is_primary_key],
+    I.[is_unique],
+    I.[is_unique_constraint]
+FROM ' + @Dst + '.[sys].[indexes]        I
+INNER JOIN ' + @Dst + '.[sys].[objects]  O ON I.[object_id] = O.[object_id]
+INNER JOIN ' + @Dst + '.[sys].[schemas]  S ON S.[schema_id] = O.[schema_id]
+OUTER APPLY
+(
+    SELECT [Columns] = REVERSE(STUFF(REVERSE(
+            (
+                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                FROM ' + @Dst + '.[sys].[index_columns] IC
+                INNER JOIN ' + @Dst + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
+                WHERE   IC.[object_id] = I.[object_id]
+                    AND IC.[index_id] = I.[index_id]
+                    AND IC.[is_included_column] = 0
+                    AND C.[object_id] = O.[object_id]
+                ORDER BY IC.[key_ordinal] FOR XML PATH('''')
+            )), 1, 2, ''''))
+) AS C
+OUTER APPLY
+(
+    SELECT
+        [IncludedColumns] = REVERSE(STUFF(REVERSE(
+            (
+                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                FROM ' + @Dst + '.[sys].[index_columns] IC
+                INNER JOIN ' + @Dst + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
+                WHERE   IC.[object_id] = I.[object_id]
+                    AND IC.[index_id] = I.[index_id]
+                    AND IC.[is_included_column] = 1
+                    AND C.[object_id] = O.[object_id]
+                ORDER BY IC.[key_ordinal] FOR XML PATH('''')
+            )), 1, 2, ''''))
+) AS IC
+WHERE I.[type] != 0');
 
 -- схемы
 --/*
@@ -308,11 +420,11 @@ IF EXISTS(SELECT * FROM @SrcRouties S FULL JOIN @DstRouties D ON S.[Schema] = D.
 SELECT
     [Routine]   = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Name], D.[Name]) + ']',
     [Type]      = IsNull(S.[Type], D.[Type]),
-    [ACTION]	=	CASE 
-						WHEN D.[Name] IS NULL THEN 3
-						WHEN S.[Name] IS NULL THEN 1
-						ELSE 2
-					END,
+    [ACTION]    =   CASE 
+                        WHEN D.[Name] IS NULL THEN 3
+                        WHEN S.[Name] IS NULL THEN 1
+                        ELSE 2
+                    END,
     [SQL]       =   CASE
                         WHEN D.[Name] IS NULL THEN S.[Definition]
                         WHEN S.[Name] IS NULL THEN 'DROP ' + T.[TypeFull] + ' [' + D.[Schema] + '].[' + D.[Name] + ']'
@@ -326,26 +438,26 @@ CROSS APPLY
     FROM
     (
         SELECT
-			[Type] = 'FN', [TypeFull] = 'FUNCTION'
-		---
-		UNION ALL
-		---
-		SELECT
+            [Type] = 'FN', [TypeFull] = 'FUNCTION'
+        ---
+        UNION ALL
+        ---
+        SELECT
             'TF', 'FUNCTION'
            ---
-		UNION ALL
-		---
-		SELECT
+        UNION ALL
+        ---
+        SELECT
             'P', 'PROCEDURE'
           ---
-		UNION ALL
-		---
-		SELECT
+        UNION ALL
+        ---
+        SELECT
             'TR', 'TRIGGER'
            ---
-		UNION ALL
-		---
-		SELECT
+        UNION ALL
+        ---
+        SELECT
             'IF', 'FUNCTION'
     ) V([Type], [TypeFull])
     WHERE V.[Type] = IsNull(S.[Type], D.[Type])
@@ -354,6 +466,7 @@ WHERE S.[Name] IS NULL OR D.[Name] IS NULL OR S.[Name] IS NOT NULL AND D.[Name] 
 ORDER BY [ACTION], IsNull(S.[Type], D.[Type]), IsNull(S.[Schema], D.[Schema]), IsNull(S.[Name], D.[Name]);
 --*/
 
+IF EXISTS(SELECT * FROM @SrcRoles S FULL JOIN @DstRoles D ON S.[Name] = D.[Name])
 SELECT
     [RoleName]  = IsNull(S.[Name], D.[Name]),
     [SQL]       =   CASE
@@ -364,3 +477,103 @@ FROM @SrcRoles S
 FULL JOIN @DstRoles D ON S.[Name] = D.[Name]
 WHERE S.[Name] IS NULL OR D.[Name] IS NULL
 ORDER BY IsNull(S.[Name], D.[Name]);
+
+
+DELETE I
+FROM @SrcIndexes I
+WHERE NOT EXISTS
+    (
+        SELECT *
+        FROM @DstTables T
+        WHERE T.[Schema] = I.[Schema]
+            AND T.[Table] = I.[Table]
+    )
+    AND NOT EXISTS
+    (
+        SELECT *
+        FROM @DstViews V
+        WHERE V.[Schema] = I.[Schema]
+            AND V.[Name] = I.[Table]
+    );
+
+DELETE I
+FROM @DstIndexes I
+WHERE NOT EXISTS
+    (
+        SELECT *
+        FROM @SrcTables T
+        WHERE T.[Schema] = I.[Schema]
+            AND T.[Table] = I.[Table]
+    )
+    AND NOT EXISTS
+    (
+        SELECT *
+        FROM @SrcViews V
+        WHERE V.[Schema] = I.[Schema]
+            AND V.[Name] = I.[Table]
+    );
+
+IF EXISTS (SELECT * FROM @SrcIndexes        S
+FULL JOIN @DstIndexes   D ON    S.[Schema] = D.[Schema]
+                            AND S.[Table] = D.[Table]
+                            --AND D.[Name] = S.[Name]
+                            AND D.[Columns] = S.[Columns]
+                            AND IsNull(D.[Included], '') = IsNull(S.[Included], '')
+                            AND D.[IsClustered] = S.[IsClustered]
+                            AND D.[IsPrimaryKey] = S.[IsPrimaryKey]
+                            AND D.[IsUnique] = S.[IsUnique]
+                            AND D.[IsUniqueConstraint] = S.[IsUniqueConstraint])
+SELECT
+    [Object]    = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Table], D.[Table]) + ']',
+    [Index]     = IsNull(S.[Name], D.[Name]),
+    [ACTION]    = CASE
+					WHEN S.[Name] IS NOT NULL AND D.[Name] IS NOT NULL AND S.[Name] != D.[Name] THEN 'R'
+					WHEN S.[Name] IS NULL THEN 'D' 
+					WHEN D.[Name] IS NULL THEN 'C' 
+					ELSE '?' 
+				  END,
+    [SQL]       = CASE
+					WHEN S.[Name] IS NOT NULL AND D.[Name] IS NOT NULL AND S.[Name] != D.[Name] THEN 'EXEC sp_rename ''[' + D.[Schema] + '].[' + D.[Table] + '].[' + D.[Name] + ']'', ''' + S.[Name] + ''', ' + CASE WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN '''OBJECT''' ELSE '''INDEX''' END + ';'
+                    WHEN S.[Name] IS NULL THEN
+                        -- DROP INDEX / CONSTRAINT
+                        CASE
+                            WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN 'ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
+                            ELSE 'DROP INDEX [' + D.[Name] + '] ON [' + D.[Schema] + '].[' + D.[Table] + '];'
+                        END
+                        ELSE
+                        CASE
+                            WHEN S.[IsPrimaryKey] = 1 OR S.[IsUniqueConstraint] = 1 THEN
+                                'ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] ' +
+                                CASE
+                                    WHEN S.[IsPrimaryKey] = 1 THEN 'PRIMARY KEY'
+                                    WHEN S.[IsUniqueConstraint] = 1 THEN 'UNIQUE'
+                                    ELSE ''
+                                END +
+                                CASE WHEN S.[IsClustered] = 1 THEN ' CLUSTERED' ELSE ' NONCLUSTERED' END +
+                                ' (' + S.[Columns] + ');'
+
+                            ELSE 'CREATE' +
+                                CASE WHEN S.[IsUnique] = 1 THEN ' UNIQUE' ELSE '' END +
+                                CASE WHEN S.[IsClustered] = 1 THEN ' CLUSTERED' ELSE ' NONCLUSTERED' END + 
+                                ' INDEX [' + S.[Name] + '] ON [' + S.[Schema] + '].[' + S.[Table] + '] (' + S.[Columns] + ')' +
+                                CASE WHEN S.[Included] IS NOT NULL THEN ' INCLUDE (' + S.[Included] ELSE '' END + ');'
+                        END
+                    END
+                    
+FROM @SrcIndexes        S
+FULL JOIN @DstIndexes   D ON    S.[Schema] = D.[Schema]
+                            AND S.[Table] = D.[Table]
+                            -- имя может не совпадать, тогда просто переименовываем индекс
+                            --AND D.[Name] = S.[Name]
+                            AND D.[Columns] = S.[Columns]
+                            AND IsNull(D.[Included], '') = IsNull(S.[Included], '')
+                            AND D.[IsClustered] = S.[IsClustered]
+                            AND D.[IsPrimaryKey] = S.[IsPrimaryKey]
+                            AND D.[IsUnique] = S.[IsUnique]
+                            AND D.[IsUniqueConstraint] = S.[IsUniqueConstraint]
+ORDER BY
+    [Object],
+    -- сначала дропать индексы, потом создавать
+    [ACTION] DESC,
+    IsNull(D.[IsPrimaryKey], S.[IsPrimaryKey]) DESC,
+    IsNull(D.[IsClustered], S.[IsClustered]) DESC

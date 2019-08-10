@@ -1,17 +1,12 @@
 DECLARE @chngmode BIT
+
 SET @chngmode = 0 --¬Œ“ “”“ Ã≈Õﬂ“‹, œ–Œ—“Œ —–¿¬Õ»“‹ ¬ “¿¡À»÷≈ - 0, œ≈–≈»Ã≈ÕŒ¬¿“‹ - 1
 
-IF @chngmode=0
-BEGIN
-	IF OBJECT_ID('tempdb..#diff') IS NOT NULL
-		DROP TABLE #diff
-	
-	CREATE TABLE #diff([oldname] VARCHAR(128), [newname] VARCHAR(128))
-END
-
-
-
-
+DECLARE @diff TABLE
+(
+	[oldname] VARCHAR(128),
+	[newname] VARCHAR(128)
+);
 
 
 ---------------------------------------------*************************»Õƒ≈ —€*************************---------------------------------------------
@@ -21,44 +16,14 @@ FOR
 SELECT
 	sch.name AS [schema], t.name AS [table], i.name AS [index],
 	CASE
-	WHEN i.type_desc = 'NONCLUSTERED'
-	THEN 'IX_'
-	WHEN i.type_desc = 'CLUSTERED'
-	THEN 'IC_'
-	ELSE NULL
-	END
-	+ sch.name + '.' + t.name + '(' +
-		STUFF((SELECT ','+c.name 
-		FROM sys.columns c
-		WHERE t.object_id=c.object_id
-			AND c.column_id IN
-				(SELECT column_id
-				FROM sys.index_columns ic
-				WHERE ic.index_id=i.index_id AND t.object_id=ic.object_id AND ic.is_included_column=0)
-		FOR XML PATH('')),1,1,'') + ')' + 
-		CASE	
-		WHEN(STUFF((SELECT ', '+c.name 
-					FROM sys.columns c
-					WHERE t.object_id=c.object_id
-					AND c.column_id IN
-							(SELECT column_id
-							FROM sys.index_columns ic
-							WHERE ic.index_id=i.index_id AND t.object_id=ic.object_id AND ic.is_included_column=1)
-		FOR XML PATH('')),1,1,'')) IS NOT NULL
-		THEN
-		'+(' +
-		STUFF((SELECT ','+c.name 
-				FROM sys.columns c
-				WHERE t.object_id=c.object_id
-					AND c.column_id IN
-						(SELECT column_id
-						FROM sys.index_columns ic
-						WHERE ic.index_id=i.index_id AND t.object_id=ic.object_id AND ic.is_included_column=1)
-		FOR XML PATH('')),1,1,'') + ')'
-		ELSE
-		''
-		END
-	AS [right name]
+		WHEN i.type_desc = 'NONCLUSTERED'	THEN 'IX_'
+		WHEN i.type_desc = 'CLUSTERED'		THEN 'IC_'
+		ELSE NULL
+	END + sch.name + '.' + t.name + '(' + mc.Columns + ')' + 
+	CASE	
+		WHEN ic.IncludedColumns IS NOT NULL THEN '+(' + ic.IncludedColumns + ')'
+		ELSE ''
+	END AS [right name]
 FROM
 	sys.indexes i
 	INNER JOIN
@@ -70,10 +35,39 @@ FROM
 		
 		SELECT schema_id, object_id, name
 		FROM sys.views
-	) t ON i.object_id=t.object_id
-	INNER JOIN sys.schemas sch ON sch.schema_id=t.schema_id
-WHERE
-	is_primary_key=0 AND is_unique_constraint=0 AND i.type_desc<>'HEAP'
+	) t ON i.object_id = t.object_id
+	INNER JOIN sys.schemas sch ON sch.schema_id = t.schema_id
+	OUTER APPLY
+	(
+		SELECT [Columns] = STUFF(
+			(
+				SELECT ',' + c.name 
+				FROM sys.columns				c
+				INNER JOIN sys.index_columns	ic ON c.column_id = ic.column_id
+				WHERE t.object_id = c.object_id
+					AND ic.index_id = i.index_id
+					AND t.object_id = ic.object_id
+					AND ic.is_included_column = 0
+				ORDER BY ic.key_ordinal FOR XML PATH('')
+			),1,1,'')
+	) AS mc
+	OUTER APPLY
+	(
+		SELECT [IncludedColumns] = STUFF(
+			(
+				SELECT ',' + c.name 
+				FROM sys.columns				c
+				INNER JOIN sys.index_columns	ic ON c.column_id = ic.column_id
+				WHERE t.object_id = c.object_id
+					AND ic.index_id = i.index_id
+					AND t.object_id = ic.object_id
+					AND ic.is_included_column = 1
+				ORDER BY ic.key_ordinal FOR XML PATH('')
+			),1,1,'')
+	) AS ic
+WHERE	is_primary_key = 0
+	AND is_unique_constraint = 0
+	AND i.type_desc <> 'HEAP'
 ORDER BY 
 	'schema', 'table', 'index'
 
@@ -95,7 +89,7 @@ FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SET @index_name = @schema+'.'+@table+'.'+@index
+	SET @index_name = '[' + @schema + '].[' + @table + '].[' + @index + ']';
 	IF LEN(@index_right)>100
 	BEGIN TRY
 		SET @index_right = SUBSTRING(@index_right, 1, CHARINDEX('+', @index_right)-1)+'+INCL'--≈—À» Õ¿«¬¿Õ»≈ —À»ÿ ŒÃ ƒÀ»ÕÕŒ≈, “Œ ”–≈«¿“‹ ◊¿—“‹ — INCLUDED
@@ -112,6 +106,7 @@ BEGIN
 	END
 	IF (@index <> @index_right)AND(@chngmode=1)
 	BEGIN TRY
+		--PRINT ('EXEC sp_rename ''' + @index_name + ''', ''' + @index_right + ''', N''INDEX'';');
 		EXEC sp_rename @index_name, @index_right, N'INDEX'
 	END TRY
 	BEGIN CATCH
@@ -121,7 +116,7 @@ BEGIN
 	END CATCH
 	ELSE IF (@index <> @index_right) AND(@chngmode=0)
 	BEGIN
-		INSERT INTO #diff([oldname],[newname]) VALUES(@index, @index_right)
+		INSERT INTO @diff([oldname],[newname]) VALUES(@index, @index_right)
 	END
 	SET @counter = @counter + 1
 	FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
@@ -183,7 +178,7 @@ BEGIN
 	END CATCH
 	ELSE IF ((@index <> @index_right)AND(@index<>'pk_dtproperties')AND(@chngmode=0))
 	BEGIN
-		INSERT INTO #diff([oldname],[newname]) VALUES(@index, @index_right)
+		INSERT INTO @diff([oldname],[newname]) VALUES(@index, @index_right)
 	END
 	SET @counter = @counter + 1
 	FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
@@ -240,7 +235,7 @@ BEGIN
 	END CATCH
 	ELSE IF (@index <> @index_right)AND(@index<>'UK_principal_name')AND(@chngmode=0)
 	BEGIN
-		INSERT INTO #diff([oldname],[newname]) VALUES(@index, @index_right)
+		INSERT INTO @diff([oldname],[newname]) VALUES(@index, @index_right)
 	END
 	SET @counter = @counter + 1
 	FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
@@ -357,7 +352,7 @@ BEGIN
 	END CATCH
 	ELSE IF (NOT (@index LIKE @index_right+'%'))AND(@chngmode=0)
 	BEGIN
-		INSERT INTO #diff([oldname],[newname]) VALUES(@index, @index_right)
+		INSERT INTO @diff([oldname],[newname]) VALUES(@index, @index_right)
 	END
 	SET @counter = @counter + 1
 	FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
@@ -365,8 +360,7 @@ END
 
 IF @chngmode=0
 BEGIN
-	SELECT * FROM #diff
-	DROP TABLE #diff
+	SELECT * FROM @diff
 END
 
 IF @err = 0
