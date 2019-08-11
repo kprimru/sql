@@ -32,25 +32,29 @@ DECLARE @DstTables Table
 
 DECLARE @SrcColumns Table
 (
-    [Schema]        SysName,
-    [Table]         SysName,
-    [Column]        SysName,
-    [ColumnIndex]   Int,
-    [Type]          VarChar(256),
-    [IsNull]        Bit,
-    [Collation]     SysName         NULL,
+    [Schema]        		SysName,
+    [Table]         		SysName,
+    [Column]        		SysName,
+    [ColumnIndex]   		Int,
+    [Type]          		VarChar(256),
+    [IsNull]        		Bit,
+    [Computed:Formula]		VarChar(Max),
+    [Computed:Persisted]	Bit,
+    [Collation]				SysName         NULL,
     PRIMARY KEY CLUSTERED ([Schema], [Table], [Column])
 );
 
 DECLARE @DstColumns Table
 (
-    [Schema]        SysName,
-    [Table]         SysName,
-    [Column]        SysName,
-    [ColumnIndex]   Int,
-    [Type]          VarChar(256),
-    [IsNull]        Bit,
-    [Collation]     SysName         NULL,
+    [Schema]        		SysName,
+    [Table]         		SysName,
+    [Column]        		SysName,
+    [ColumnIndex]   		Int,
+    [Type]          		VarChar(256),
+    [IsNull]        		Bit,
+    [Computed:Formula]		VarChar(Max),
+    [Computed:Persisted]	Bit,
+    [Collation]				SysName         NULL,
     PRIMARY KEY CLUSTERED ([Schema], [Table], [Column])
 );
 
@@ -151,11 +155,12 @@ SELECT
         WHEN ST.[name] IN (''VarChar'', ''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
         WHEN ST.[name] IN (''Decimal'', ''Numeric'') THEN ST.[name] + ''('' + Cast(C.[precision] As VarChar(10)) + '', '' + Cast(C.[scale] As VarChar(10)) + '')''
         ELSE ST.[name]
-    END, c.[is_nullable], c.[collation_name]
-FROM ' + @Src +'.[sys].[columns]        C
-INNER JOIN ' + @Src +'.[sys].[tables]   T   ON C.[object_id] = T.[object_id]
-INNER JOIN ' + @Src +'.[sys].[schemas]  S   ON S.[schema_id] = T.[schema_id]
-INNER JOIN ' + @Src +'.[sys].[types]    ST  ON ST.[user_type_id] = C.[system_type_id];');
+    END, c.[is_nullable], cc.[definition], cc.[is_persisted], c.[collation_name]
+FROM ' + @Src +'.[sys].[columns]        		C
+INNER JOIN ' + @Src +'.[sys].[tables]   		T   ON C.[object_id] = T.[object_id]
+INNER JOIN ' + @Src +'.[sys].[schemas]  		S   ON S.[schema_id] = T.[schema_id]
+INNER JOIN ' + @Src +'.[sys].[types]    		ST  ON ST.[user_type_id] = C.[system_type_id]
+LEFT JOIN ' + @Src + '.[sys].[computed_columns]	CC	ON CC.[object_id] = T.[object_id] AND CC.[name] = C.[name];');
 
 INSERT INTO @DstColumns
 EXEC ('
@@ -165,11 +170,12 @@ SELECT
         WHEN ST.[name] IN (''VarChar'', ''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
         WHEN ST.[name] IN (''Decimal'', ''Numeric'') THEN ST.[name] + ''('' + Cast(C.[precision] As VarChar(10)) + '', '' + Cast(C.[scale] As VarChar(10)) + '')''
         ELSE ST.[name]
-    END, c.[is_nullable], c.[collation_name]
+    END, c.[is_nullable], cc.[definition], cc.[is_persisted], c.[collation_name]
 FROM ' + @Dst +'.[sys].[columns]        C
-INNER JOIN ' + @Dst +'.[sys].[tables]   T   ON C.[object_id] = T.[object_id]
-INNER JOIN ' + @Dst +'.[sys].[schemas]  S   ON S.[schema_id] = T.[schema_id]
-INNER JOIN ' + @Dst +'.[sys].[types]    ST  ON ST.[user_type_id] = C.[system_type_id];');
+INNER JOIN ' + @Dst +'.[sys].[tables]   		T   ON C.[object_id] = T.[object_id]
+INNER JOIN ' + @Dst +'.[sys].[schemas]  		S   ON S.[schema_id] = T.[schema_id]
+INNER JOIN ' + @Dst +'.[sys].[types]    		ST  ON ST.[user_type_id] = C.[system_type_id]
+LEFT JOIN ' + @Dst + '.[sys].[computed_columns]	CC	ON CC.[object_id] = T.[object_id] AND CC.[name] = C.[name];');
 
 INSERT INTO @SrcViews
 EXEC ('SELECT S.[name], V.[name], M.[definition]
@@ -361,6 +367,8 @@ SELECT
     [ColumnIndex]   = CASE WHEN S.[ColumnIndex] != D.[ColumnIndex] THEN Cast(D.[ColumnIndex] AS VarChar(10)) + ' -> ' + Cast(S.[ColumnIndex] AS VarChar(10)) ELSE NULL END,
     [Type]          = CASE WHEN S.[Type] != D.[Type] THEN D.[Type] + ' -> ' + S.[Type] ELSE NULL END,
     [IsNull]        = CASE WHEN S.[IsNull] != D.[IsNull] THEN Cast(D.[IsNull] AS VarChar(10)) + ' -> ' + Cast(S.[IsNull] AS VarChar(10)) ELSE NULL END,
+    [Computed:Furmula] = CASE WHEN  IsNull(S.[Computed:Formula], '') != IsNull(D.[Computed:Formula], '') THEN IsNull(D.[Computed:Formula], '') + ' -> ' + IsNull(S.[Computed:Formula], '') ELSE NULL END,
+    [Computed:Persisted] = CASE WHEN IsNull(S.[Computed:Persisted], 0) != IsNull(D.[Computed:Persisted], 0) THEN Cast(IsNull(D.[Computed:Persisted], 0) AS VarChar(10)) + ' -> ' + Cast(IsNull(S.[Computed:Persisted], 0) AS VarChar(10)) ELSE NULL END,
     [Collation]     = CASE WHEN IsNull(S.[Collation], '') != IsNull(D.[Collation], '') THEN IsNull(D.[Collation], '') + ' -> ' + IsNull(S.[Collation], '') ELSE NULL END,
     [SQL]           =   CASE
                             -- Если новая колонка
@@ -380,6 +388,8 @@ WHERE S.[Column] IS NULL
     --OR S.[ColumnIndex] != D.[ColumnIndex]
     OR S.[Type] != D.[Type]
     OR S.[IsNull] != D.[IsNull]
+    OR IsNull(S.[Computed:Formula], '') != IsNull(D.[Computed:Formula], '')
+    OR IsNull(S.[Computed:Persisted], 0) != IsNull(D.[Computed:Persisted], 0)
     OR (IsNull(S.[Collation], '') != IsNull(D.[Collation], ''))
 ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Column], D.[Column]);
 --*/
