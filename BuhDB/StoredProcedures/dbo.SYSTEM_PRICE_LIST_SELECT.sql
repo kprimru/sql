@@ -7,7 +7,8 @@ GO
 CREATE PROCEDURE [dbo].[SYSTEM_PRICE_LIST_SELECT]
 	@PSEDO	VARCHAR(64),
 	@NOTE	BIT = 1,
-	@TYPE	VARCHAR(64) = '1'
+	@TYPE	VARCHAR(64) = '1',
+	@ShowExpired Bit = 1
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -269,7 +270,8 @@ BEGIN
 				INNER JOIN dbo.SystemDistrType c ON c.ID_SYSTEM = a.SystemID
 				INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = c.ID_TYPE
 				INNER JOIN dbo.SystemPrice e ON e.ID_SYSTEM = a.SystemID
-			WHERE c.ENABLE = 1			
+			WHERE c.ENABLE = 1
+				AND (a.IsExpired = 0 AND @ShowExpired = 0 OR @ShowExpired = 1)
 				AND (e.ENABLED = 1 OR @PSEDO = 'DEPO_ALL')
 				AND e.ID_PRICE = CONVERT(INT, @TYPE)
 					AND (
