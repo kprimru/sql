@@ -13,4 +13,3 @@ AS
 		INNER JOIN [PC275-SQL\GAMMA].ContractDB.dbo.ContractType b ON a.ID_TYPE = b.ID
 		INNER JOIN [PC275-SQL\GAMMA].ContractDB.dbo.Vendor c ON a.ID_VENDOR = c.ID
 	WHERE STATUS = 1 AND CLIENT_PLACE = 'OIS' 
-	
