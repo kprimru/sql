@@ -43,4 +43,4 @@ BEGIN
                        AND FINISH IS NULL
 				)
 	ORDER BY ManagerName, ServiceName, ClientFullName
-END;
+END

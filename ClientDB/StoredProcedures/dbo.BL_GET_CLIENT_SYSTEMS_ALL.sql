@@ -4,8 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
--- Выборка всех систем клиента
-
 CREATE PROCEDURE [dbo].[BL_GET_CLIENT_SYSTEMS_ALL]
      @clientid INT
 AS

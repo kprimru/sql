@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalClientPhosicalDelete]
+CREATE FUNCTION [Maintenance].[GlobalClientPhisicalDelete]
 ()
 RETURNS BIT
 AS
