@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC275-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC275-SQL\GAMMA].[ClientSlavDB]';
+SET @Dst = '[PC275-SQL\GAMMA].[ClientNahDB]';
 
 DECLARE @SrcSchemas Table
 (
@@ -121,12 +121,14 @@ DECLARE @DstRouties Table
 DECLARE @SrcRoles Table
 (
     [Name]          SysName,
+    [Members]		NVarCHar(Max)
     PRIMARY KEY CLUSTERED([Name])
 );
 
 DECLARE @DstRoles Table
 (
     [Name]          SysName,
+    [Members]		NVarCHar(Max)
     PRIMARY KEY CLUSTERED([Name])
 );
 
@@ -152,7 +154,8 @@ EXEC ('
 SELECT
     S.[name], T.[name], C.[name], C.[column_id],
     CASE
-        WHEN ST.[name] IN (''VarChar'', ''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
+        WHEN ST.[name] IN (''VarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
+        WHEN ST.[name] IN (''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] / 2 As VarChar(10)) END + '')''
         WHEN ST.[name] IN (''Decimal'', ''Numeric'') THEN ST.[name] + ''('' + Cast(C.[precision] As VarChar(10)) + '', '' + Cast(C.[scale] As VarChar(10)) + '')''
         ELSE ST.[name]
     END, c.[is_nullable], cc.[definition], cc.[is_persisted], c.[collation_name]
@@ -167,7 +170,8 @@ EXEC ('
 SELECT
     S.[name], T.[name], C.[name], C.[column_id],
     CASE
-        WHEN ST.[name] IN (''VarChar'', ''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
+        WHEN ST.[name] IN (''VarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] As VarChar(10)) END + '')''
+        WHEN ST.[name] IN (''NVarChar'') THEN ST.[name] + ''('' + CASE WHEN C.[max_length] = -1 THEN ''Max'' ELSE Cast(C.[max_length] / 2 As VarChar(10)) END + '')''
         WHEN ST.[name] IN (''Decimal'', ''Numeric'') THEN ST.[name] + ''('' + Cast(C.[precision] As VarChar(10)) + '', '' + Cast(C.[scale] As VarChar(10)) + '')''
         ELSE ST.[name]
     END, c.[is_nullable], cc.[definition], cc.[is_persisted], c.[collation_name]
@@ -204,15 +208,32 @@ INNER JOIN ' + @Dst + '.[sys].[sql_modules] M ON M.[object_id] = O.[object_id]
 WHERE O.[type] IN (''FN'', ''TF'', ''P'', ''TR'', ''IF'');');
 
 INSERT INTO @SrcRoles
-EXEC('SELECT R.[name]
+EXEC('SELECT R.[name],
+	REVERSE(STUFF(REVERSE(
+		(
+			SELECT ''EXEC sp_addrolemember '''''' + r.[name] + '''''', '''''' + u.[name] + '''''';''
+			FROM ' + @Src + '.sys.database_role_members rm
+			INNER JOIN ' + @Src + '.sys.database_principals u ON rm.member_principal_id = u.principal_id
+			WHERE r.principal_id = rm.role_principal_id
+			FOR XML PATH('''')
+		)
+		), 1, 1, ''''))
 FROM ' + @Src + '.sys.database_principals R
 WHERE type = ''R'';');
 
 INSERT INTO @DstRoles
-EXEC('SELECT R.[name]
+EXEC('SELECT R.[name],
+	REVERSE(STUFF(REVERSE(
+		(
+			SELECT ''EXEC sp_droprolemember '''''' + r.[name] + '''''', '''''' + u.[name] + '''''';''
+			FROM ' + @Dst + '.sys.database_role_members rm
+			INNER JOIN ' + @Dst + '.sys.database_principals u ON rm.member_principal_id = u.principal_id
+			WHERE r.principal_id = rm.role_principal_id
+			FOR XML PATH('''')
+		)
+		), 1, 1, ''''))
 FROM ' + @Dst + '.sys.database_principals R
 WHERE type = ''R'';');
-
 
 INSERT INTO @SrcIndexes
 EXEC ('SELECT
@@ -229,7 +250,7 @@ OUTER APPLY
 (
     SELECT [Columns] = REVERSE(STUFF(REVERSE(
             (
-                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                SELECT ''['' + C.[name] + '']'' + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
                 FROM ' + @Src + '.[sys].[index_columns] IC
                 INNER JOIN ' + @Src + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
                 WHERE   IC.[object_id] = I.[object_id]
@@ -244,7 +265,7 @@ OUTER APPLY
     SELECT
         [IncludedColumns] = REVERSE(STUFF(REVERSE(
             (
-                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                SELECT ''['' + C.[name] + ''], ''
                 FROM ' + @Src + '.[sys].[index_columns] IC
                 INNER JOIN ' + @Src + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
                 WHERE   IC.[object_id] = I.[object_id]
@@ -271,7 +292,7 @@ OUTER APPLY
 (
     SELECT [Columns] = REVERSE(STUFF(REVERSE(
             (
-                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                SELECT ''['' + C.[name] + '']'' + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
                 FROM ' + @Dst + '.[sys].[index_columns] IC
                 INNER JOIN ' + @Dst + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
                 WHERE   IC.[object_id] = I.[object_id]
@@ -286,7 +307,7 @@ OUTER APPLY
     SELECT
         [IncludedColumns] = REVERSE(STUFF(REVERSE(
             (
-                SELECT C.[name] + CASE WHEN IC.[is_descending_key] = 0 THEN '' ASC'' ELSE '' DESC'' END + '', ''
+                SELECT ''['' + C.[name] + ''], ''
                 FROM ' + @Dst + '.[sys].[index_columns] IC
                 INNER JOIN ' + @Dst + '.[sys].[columns] C ON C.[column_id] = IC.[column_id]
                 WHERE   IC.[object_id] = I.[object_id]
@@ -373,10 +394,10 @@ SELECT
     [SQL]           =   CASE
                             -- Если новая колонка
                             WHEN D.[Column] IS NULL THEN
-                                'IF COL_LENGTH(''[' + S.[Schema] + '].[' + S.[Table] + ']'', ''[' + S.[Column] + ''']) IS NULL THEN BEGIN ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD [' + S.[Column] + '] ' + S.[Type] + IsNull(' Collate ' + S.[Collation], '') + CASE WHEN S.[IsNull] = 1 THEN ' NULL' ELSE ' NOT NULL' END
+                                'IF COL_LENGTH(''[' + S.[Schema] + '].[' + S.[Table] + ']'', ''' + S.[Column] + ''') IS NULL BEGIN ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD [' + S.[Column] + '] ' + S.[Type] + IsNull(' Collate ' + S.[Collation], '') + CASE WHEN S.[IsNull] = 1 THEN ' NULL' ELSE ' NOT NULL' END + ' END'
                             -- удаленная колонка
                             WHEN S.[Column] IS NULL THEN
-                                'IF COL_LENGTH(''[' + D.[Schema] + '].[' + D.[Table] + ']'', ''[' + D.[Column] + ''']) IS NOT NULL THEN BEGIN ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP COLUMN [' + D.[Column] + ']'
+                                'IF COL_LENGTH(''[' + D.[Schema] + '].[' + D.[Table] + ']'', ''' + D.[Column] + ''') IS NOT NULL BEGIN ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP COLUMN [' + D.[Column] + '] END'
                             -- колонка та же самая, но что-то поменялось
                             ELSE
                                 'ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ALTER COLUMN [' + S.[Column] + '] ' + S.[Type] + IsNull(' Collate ' + S.[Collation], '') + CASE WHEN S.[IsNull] = 1 THEN ' NULL' ELSE ' NOT NULL' END
@@ -409,7 +430,7 @@ SELECT
     [SQL]   =   CASE
                     -- новое представление
                     WHEN D.[Name] IS NULL THEN S.[Definition]
-                    WHEN S.[Name] IS NULL THEN 'DROP VIEW [' + D.[Schema] + '].[' + D.[Name] + ']'
+                    WHEN S.[Name] IS NULL THEN 'IF Object_Id(''[' + D.[Schema] + '].[' + D.[Name] + ']'', ''V'') IS NOT NULL DROP VIEW [' + D.[Schema] + '].[' + D.[Name] + ']'
                     ELSE Replace(S.[Definition], 'CREATE VIEW', 'ALTER VIEW')
                 END
 FROM @SrcViews S
@@ -436,8 +457,9 @@ SELECT
                         ELSE 2
                     END,
     [SQL]       =   CASE
-                        WHEN D.[Name] IS NULL THEN S.[Definition]
-                        WHEN S.[Name] IS NULL THEN 'DROP ' + T.[TypeFull] + ' [' + D.[Schema] + '].[' + D.[Name] + ']'
+						--ToDo сделать чтобы созадвались заглушечные объекты, а потом ALTER
+                        WHEN D.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''' + S.[Type] + ''') IS NULL EXEC(''CREATE ' + T.[TypeFull] + ' [' + S.[Schema] + '].[' + S.[Name] + '] ' + CASE WHEN S.[Type] = 'TR' THEN ' ON [].[]' ELSE '' END + 'AS SELECT 1'')'
+                        WHEN S.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + D.[Schema] + '].[' + D.[Name] + ']'', ''' + D.[Type] + ''') IS NOT NULL DROP ' + T.[TypeFull] + ' [' + D.[Schema] + '].[' + D.[Name] + ']'
                         ELSE Replace(S.[Definition], 'CREATE ' + T.[TypeFull], 'ALTER ' + T.[TypeFull])
                     END
 FROM @SrcRouties        S
@@ -476,12 +498,12 @@ WHERE S.[Name] IS NULL OR D.[Name] IS NULL OR S.[Name] IS NOT NULL AND D.[Name] 
 ORDER BY [ACTION], IsNull(S.[Type], D.[Type]), IsNull(S.[Schema], D.[Schema]), IsNull(S.[Name], D.[Name]);
 --*/
 
-IF EXISTS(SELECT * FROM @SrcRoles S FULL JOIN @DstRoles D ON S.[Name] = D.[Name])
+IF EXISTS(SELECT * FROM @SrcRoles S FULL JOIN @DstRoles D ON S.[Name] = D.[Name] WHERE S.[Name] IS NULL OR D.[Name] IS NULL)
 SELECT
     [RoleName]  = IsNull(S.[Name], D.[Name]),
     [SQL]       =   CASE
-                        WHEN S.[Name] IS NULL THEN 'DROP ROLE [' + D.[Name] + '];'
-                        WHEN D.[Name] IS NULL THEN 'CREATE ROLE [' + S.[Name] + '];'
+                        WHEN S.[Name] IS NULL THEN 'IF EXISTS(SELECT * FROM sys.database_principals WHERE type=''R'' AND name=''' + D.[name] + ''') BEGIN ' + IsNull(D.[Members], '') + ' DROP ROLE [' + D.[Name] + ']; END;'
+                        WHEN D.[Name] IS NULL THEN 'IF NOT EXISTS(SELECT * FROM sys.database_principals WHERE type=''R'' AND name=''' + S.[name] + ''') BEGIN CREATE ROLE [' + S.[Name] + ']; ' + IsNull(S.[Members], '') + ' END;'
                     END
 FROM @SrcRoles S
 FULL JOIN @DstRoles D ON S.[Name] = D.[Name]
@@ -543,17 +565,17 @@ SELECT
 					ELSE '?' 
 				  END,
     [SQL]       = CASE
-					WHEN S.[Name] IS NOT NULL AND D.[Name] IS NOT NULL AND S.[Name] != D.[Name] THEN 'EXEC sp_rename ''[' + D.[Schema] + '].[' + D.[Table] + '].[' + D.[Name] + ']'', ''' + S.[Name] + ''', ' + CASE WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN '''OBJECT''' ELSE '''INDEX''' END + ';'
+					WHEN S.[Name] IS NOT NULL AND D.[Name] IS NOT NULL AND S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM sys.indexes WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + /*CASE WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN '' + D.[Name] + '' ELSE */'[' + D.[Schema] + '].[' + D.[Table] + '].[' + D.[Name] + ']' /*END */+ ''', ''' + S.[Name] + '''' + CASE WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN '' ELSE ', ''INDEX''' END + ';'
                     WHEN S.[Name] IS NULL THEN
                         -- DROP INDEX / CONSTRAINT
                         CASE
-                            WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN 'ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
-                            ELSE 'DROP INDEX [' + D.[Name] + '] ON [' + D.[Schema] + '].[' + D.[Table] + '];'
+                            WHEN D.[IsPrimaryKey] = 1 OR D.[IsUniqueConstraint] = 1 THEN 'IF EXISTS(SELECT * FROM sys.indexes WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
+                            ELSE 'IF EXISTS(SELECT * FROM sys.indexes WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) DROP INDEX [' + D.[Name] + '] ON [' + D.[Schema] + '].[' + D.[Table] + '];'
                         END
                         ELSE
                         CASE
                             WHEN S.[IsPrimaryKey] = 1 OR S.[IsUniqueConstraint] = 1 THEN
-                                'ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] ' +
+                                'IF NOT EXISTS(SELECT * FROM sys.indexes WHERE name = ''' + S.[Name] + ''' AND object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] ' +
                                 CASE
                                     WHEN S.[IsPrimaryKey] = 1 THEN 'PRIMARY KEY'
                                     WHEN S.[IsUniqueConstraint] = 1 THEN 'UNIQUE'
@@ -562,11 +584,11 @@ SELECT
                                 CASE WHEN S.[IsClustered] = 1 THEN ' CLUSTERED' ELSE ' NONCLUSTERED' END +
                                 ' (' + S.[Columns] + ');'
 
-                            ELSE 'CREATE' +
+                            ELSE 'IF NOT EXISTS(SELECT * FROM sys.indexes WHERE name = ''' + S.[Name] + ''' AND object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) CREATE' +
                                 CASE WHEN S.[IsUnique] = 1 THEN ' UNIQUE' ELSE '' END +
                                 CASE WHEN S.[IsClustered] = 1 THEN ' CLUSTERED' ELSE ' NONCLUSTERED' END + 
                                 ' INDEX [' + S.[Name] + '] ON [' + S.[Schema] + '].[' + S.[Table] + '] (' + S.[Columns] + ')' +
-                                CASE WHEN S.[Included] IS NOT NULL THEN ' INCLUDE (' + S.[Included] ELSE '' END + ');'
+                                CASE WHEN S.[Included] IS NOT NULL THEN ' INCLUDE (' + S.[Included] + ')' ELSE '' END + ';'
                         END
                     END
                     
@@ -581,6 +603,12 @@ FULL JOIN @DstIndexes   D ON    S.[Schema] = D.[Schema]
                             AND D.[IsPrimaryKey] = S.[IsPrimaryKey]
                             AND D.[IsUnique] = S.[IsUnique]
                             AND D.[IsUniqueConstraint] = S.[IsUniqueConstraint]
+WHERE CASE
+					WHEN S.[Name] IS NOT NULL AND D.[Name] IS NOT NULL AND S.[Name] != D.[Name] THEN 'R'
+					WHEN S.[Name] IS NULL THEN 'D' 
+					WHEN D.[Name] IS NULL THEN 'C' 
+					ELSE '?' 
+				  END != '?'
 ORDER BY
     [Object],
     -- сначала дропать индексы, потом создавать
