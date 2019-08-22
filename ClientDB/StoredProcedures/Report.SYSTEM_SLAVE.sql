@@ -215,6 +215,28 @@ BEGIN
 							AND b.Service = 0
 							AND b.SystemName IN ('LAW', 'ARB', 'CMT')
 					)
+					
+			UNION ALL
+			
+			SELECT 
+				SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+				REVERSE(STUFF(REVERSE(
+					(
+						SELECT 
+							dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
+						FROM 
+							dbo.RegNodeTable b
+							INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+						WHERE a.Complect = b.Complect
+							AND b.Service = 0
+							AND b.SystemName IN ('LAW', 'ARB', 'CMT', 'FIN')
+						ORDER BY SystemOrder FOR XML PATH('')
+				)), 1, 1, '')) AS Systems
+			FROM dbo.RegNodeTable a
+			WHERE Service = 0
+				AND Complect IS NULL
+				AND dbo.SubhostByComment(Comment, DistrNumber) != '490'
+				AND DistrType NOT IN ('HSS', 'NCT', 'DSP')
 			) AS a
 		INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemName
 		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
