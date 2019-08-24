@@ -23,23 +23,27 @@ BEGIN
 	SET @SH_REG_ADD = '(' + @SH_REG_ADD + ')%'
 
 	DECLARE
-		@Data		Xml,
-		@Stat		Xml,
-		@Reg		Xml,
-		@ProtTxt	Xml,
-		@Prot		Xml,
-		@Price		Xml,
-		@Black		Xml,
-		@Expert		Xml,
-		@Hotline	Xml,
-		@Net		Xml,
-		@Type		Xml,
-		@Host		Xml,
-		@System		Xml,
-		@InfoBank	Xml,
-		@SystemBank	Xml,
-		@Weight		Xml,
-		@References	Xml;
+		@Data			Xml,
+		@Stat			Xml,
+		@Reg			Xml,
+		@ProtTxt		Xml,
+		@Prot			Xml,
+		@Price			Xml,
+		@Black			Xml,
+		@Expert			Xml,
+		@Hotline		Xml,
+		@Net			Xml,
+		@Type			Xml,
+		@Host			Xml,
+		@System			Xml,
+		@InfoBank		Xml,
+		@SystemBank		Xml,
+		@Weight			Xml,
+		@DistrStatus	Xml,
+		@Compliance		Xml,
+		@USRKind		Xml,
+		@PersonalType	Xml,
+		@References		Xml;
 	
 	DECLARE @Distr Table
 	(
@@ -314,6 +318,48 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('WEIGHT')
 		);
 		
+	SET @DistrStatus =
+		(
+			SELECT
+				[Name]	= DS_NAME,
+				[Reg]	= DS_REG,
+				[Index]	= DS_INDEX
+			FROM dbo.DistrStatus
+			FOR XML RAW('ITEM'), ROOT('DISTR_STATUS')
+		);
+	
+	SET @Compliance =
+		(
+			SELECT
+				[Name]	= ComplianceTypeName,
+				[Short]	= ComplianceTypeShortName,
+				[Order]	= ComplianceTypeOrder
+			FROM dbo.ComplianceTypeTable
+			FOR XML RAW('ITEM'), ROOT('COMPLIANCE')
+		);
+		
+	SET @USRKind =
+		(
+			SELECT
+				[Name]		= USRFileKindName,
+				[ShortName]	= USRFileKindShortName,
+				[Short]		= USRFileKindShortName
+			FROM dbo.USRFileKindTable
+			FOR XML RAW('ITEM'), ROOT('USR_KIND')
+		);
+		
+	SET @PersonalType =
+		(
+			SELECT
+				[Name]		= CPT_NAME,
+				[Short]		= CPT_SHORT,
+				[Psedo]		= CPT_PSEDO,
+				[Required]	= CPT_REQUIRED,
+				[Order]		= CPT_ORDER
+			FROM dbo.ClientPersonalType
+			FOR XML RAW('ITEM'), ROOT('PERSONAL_TYPE')
+		);
+		
 	SET @References = 
 		(
 			SELECT
@@ -327,7 +373,11 @@ BEGIN
 						@Host,
 						@System,
 						@SystemBank,
-						@Weight
+						@Weight,
+						@DistrStatus,
+						@Compliance,
+						@USRKind,
+						@PersonalType
 					FOR XML PATH('REFERENCES')	
 				)
 			)
