@@ -237,8 +237,12 @@ BEGIN
 	BEGIN
 		UPDATE #distr
 		SET CHECKED = CONVERT(BIT, 1)
+<<<<<<< HEAD
 		WHERE Complect=@COMPL_CHECK AND
 				DS_INDEX = 0
+=======
+		WHERE Complect=@COMPL_CHECK
+>>>>>>> master
 	END;
 
 	-----------------------------декюер ярюпше гюлемеммше дхярпхасрхбш меюйрхбмшлх х ямхлюер я мху цюкнвйс

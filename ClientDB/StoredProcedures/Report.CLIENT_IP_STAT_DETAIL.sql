@@ -125,4 +125,4 @@ BEGIN
 
 	--select (@SQL)
 	EXEC (@SQL)
-END;
+END

@@ -5,12 +5,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [Maintenance].[JOB_FINISH]
-	@Id		BigInt
+	@Id		BigInt,
+	@ERR	NVARCHAR(128) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE Maintenance.Jobs
-	SET FINISH = GetDate()
+	SET 
+		FINISH = GetDate(),
+		ERR = @ERR
 	WHERE ID = @Id;
 END

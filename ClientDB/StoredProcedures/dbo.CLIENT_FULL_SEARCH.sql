@@ -508,4 +508,3 @@ BEGIN
 	INNER JOIN dbo.ClientTable ON CL_ID = ClientID
 	OPTION (RECOMPILE);
 END
-

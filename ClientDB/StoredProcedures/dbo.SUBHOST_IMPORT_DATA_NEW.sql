@@ -86,6 +86,40 @@ BEGIN
 		Primary Key Clustered ([Tech], [NetCnt], [Odon], [Odoff])
 	);
 	
+	DECLARE @DistrStatus Table
+	(
+		[Name]		VarChar(64),
+		[Reg]		TinyInt,
+		[Index]		TinyInt,
+		Primary Key Clustered ([Reg])
+	);
+	
+	DECLARE @Compliance Table
+	(
+		[Name]		VarChar(50),
+		[Short]		VarChar(50),
+		[Order]		Int,
+		Primary Key Clustered ([Name])
+	);
+	
+	DECLARE @USRKind Table
+	(
+		[Name]		VarChar(20),
+		[ShortName]	VarChar(50),
+		[Short]		VarChar(100),
+		Primary Key Clustered ([Name])
+	);
+	
+	DECLARE @PersonalType Table
+	(
+		[Name]		VarChar(100),
+		[Short]		VarChar(20),
+		[Psedo]		VarChar(50),
+		[Required]	Bit,
+		[Order]		Int,
+		Primary Key Clustered ([Psedo])
+	);
+	
 	INSERT INTO @Hosts
 	SELECT
 		V.value('@Short[1]',	'VarChar(100)'),
@@ -152,6 +186,36 @@ BEGIN
 		V.value('@Odon[1]',		'Int'),
 		V.value('@Odoff[1]',	'Int')
 	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/NET[1]/ITEM') N(V)
+	
+	INSERT INTO @DistrStatus
+	SELECT
+		V.value('@Name[1]',		'VarChar(64)'),
+		V.value('@Reg[1]',		'TinyInt'),
+		V.value('@Index[1]',	'TinyInt')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/DISTR_STATUS[1]/ITEM') N(V)
+	
+	INSERT INTO @Compliance
+	SELECT
+		V.value('@Name[1]',		'VarChar(50)'),
+		V.value('@Short[1]',	'VarChar(50)'),
+		V.value('@Order[1]',	'Int')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/COMPLIANCE[1]/ITEM') N(V)
+	
+	INSERT INTO @USRKind
+	SELECT
+		V.value('@Name[1]',			'VarChar(20)'),
+		V.value('@ShortName[1]',	'VarChar(50)'),
+		V.value('@Short[1]',		'VarChar(100)')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/USR_KIND[1]/ITEM') N(V)
+	
+	INSERT INTO @PersonalType
+	SELECT
+		V.value('@Name[1]',		'VarChar(100)'),
+		V.value('@Short[1]',	'VarChar(20)'),
+		V.value('@Psedo[1]',	'VarChar(50)'),
+		V.value('@Required[1]',	'Bit'),
+		V.value('@Order[1]',	'Int')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/PERSONAL_TYPE[1]/ITEM') N(V)
 	
 	-- Обновляем справочник Хостов
 	INSERT INTO dbo.Hosts(HostShort, HostReg, HostOrder)
@@ -338,6 +402,93 @@ BEGIN
 			SELECT *
 			FROM Din.NetType N
 			WHERE N.NT_NET = D.NetCnt AND N.NT_TECH = D.Tech AND N.NT_ODON = D.Odon AND N.NT_ODOFF = D.Odoff
+		);
+	
+	-- обновляем справочник статусов дистрибутива
+	UPDATE S
+	SET DS_NAME		= D.[Name],
+		DS_INDEX	= D.[Index],
+		DS_LAST		= GetDate()
+	FROM dbo.DistrStatus S
+	INNER JOIN @DistrStatus D ON S.DS_REG = D.Reg
+	WHERE S.DS_NAME != D.[Name]
+		OR S.DS_INDEX != D.[Index];
+				
+	INSERT INTO dbo.DistrStatus(DS_NAME, DS_INDEX, DS_REG)
+	SELECT D.Name, D.[Index], D.Reg
+	FROM @DistrStatus D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.DistrStatus S
+			WHERE S.DS_REG = D.Reg
+		);
+		
+	-- обновляем справочник типов соответствия USR
+	
+	UPDATE S
+	SET ComplianceTypeShortName	= D.[Short],
+		ComplianceTypeOrder		= D.[Order],
+		ComplianceTypeLast		= GetDate()
+	FROM dbo.ComplianceTypeTable S
+	INNER JOIN @Compliance D ON S.ComplianceTypeName = D.Name
+	WHERE S.ComplianceTypeShortName != D.[Short]
+		OR S.ComplianceTypeOrder != D.[Order];
+				
+	INSERT INTO dbo.ComplianceTypeTable(ComplianceTypeName, ComplianceTypeShortName, ComplianceTypeOrder)
+	SELECT D.Name, D.Short, D.[Order]
+	FROM @Compliance D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.ComplianceTypeTable S
+			WHERE S.ComplianceTypeName = D.Name
+		);
+	
+	-- обновляем справочник типов формирования файлов USR
+	
+	UPDATE S
+	SET USRFileKindShortName	= D.[ShortName],
+		USRFileKindShort		= D.[Short],
+		USRFileKindLast			= GetDate()
+	FROM dbo.USRFileKindTable S
+	INNER JOIN @USRKind D ON S.USRFileKindName = D.Name
+	WHERE S.USRFileKindShortName != D.[ShortName]
+		OR S.USRFileKindShort != D.[Short];
+				
+	INSERT INTO dbo.USRFileKindTable(USRFileKindName, USRFileKindShortName, USRFileKindShort)
+	SELECT D.Name, D.ShortName, D.Short
+	FROM @USRKind D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.USRFileKindTable S
+			WHERE S.USRFileKindName = D.Name
+		);
+		
+	-- обновляем справочник типов сотрудников
+	
+	UPDATE S
+	SET CPT_NAME		= D.[Name],
+		CPT_SHORT		= D.[Short],
+		CPT_REQUIRED	= D.[Required],
+		CPT_ORDER		= D.[Order],
+		CPT_LAST		= GetDate()
+	FROM dbo.ClientPersonalType S
+	INNER JOIN @PersonalType D ON S.CPT_PSEDO = D.Psedo
+	WHERE S.CPT_NAME != D.[Name]
+		OR S.CPT_SHORT != D.[Short]
+		OR S.CPT_REQUIRED != D.[Required]
+		OR S.CPT_ORDER != D.[Order];
+				
+	INSERT INTO dbo.ClientPersonalType(CPT_NAME, CPT_SHORT, CPT_PSEDO, CPT_REQUIRED, CPT_ORDER)
+	SELECT D.[Name], D.[Short], D.[Psedo], D.[Required], D.[Order]
+	FROM @PersonalType D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.ClientPersonalType S
+			WHERE S.CPT_PSEDO = D.Psedo
 		);
 	
 	-- обновляем список дистрибутивов подключенных к ЗВЭ

@@ -19,32 +19,29 @@ BEGIN
 	SELECT 
 		a.ID, 
 		ClientFullName,
-		dbo.DistrString(c.SystemShortName, a.DISTR, a.COMP) AS DistrStr,
+		DistrStr,
 		CONVERT(BIT, CASE
 			WHEN EXISTS
 				(
 					SELECT *
-					FROM 
-						dbo.RegNodeTable z
-						INNER JOIN dbo.SystemTable y ON z.SystemName = y.SystemBaseName
-					WHERE z.DistrNumber = a.DISTR AND z.CompNumber = a.COMP
-						AND y.HostID = c.HostID
-						AND Service = 0
+					FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
+					WHERE z.DistrNumber = a.DISTR
+						AND z.CompNumber = a.COMP
+						AND z.HostID = a.HostID
+						AND z.DS_REG = 0
 				) THEN 1
 			ELSE 0
 		END) AS CONNECT,
 		(
 			SELECT TOP 1 COMPLECT 
-			FROM dbo.RegNodeTable z 
+			FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
 			WHERE a.DISTR = z.DistrNumber 
 				AND a.COMP = z.CompNumber 
-				AND c.SystemBaseName = z.SystemName
+				AND a.HostId = z.HostId
 		) AS COMPLECT
 	FROM 
-		dbo.ClientDistr a
+		dbo.ClientDistrView a WITH(NOEXPAND)
 		INNER JOIN dbo.TableIDFromXML(@CLIENT) b ON a.ID_CLIENT = b.ID
-		INNER JOIN dbo.SystemTable c ON c.SystemID = a.ID_SYSTEM
 		INNER JOIN dbo.ClientTable d ON d.ClientID = a.ID_CLIENT
-	WHERE a.STATUS = 1
 	ORDER BY ClientFullName, SystemOrder, DISTR, COMP
 END

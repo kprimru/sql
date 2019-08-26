@@ -589,7 +589,7 @@ BEGIN
 			IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
 			BEGIN			
 				DECLARE CL CURSOR LOCAL FOR 
-					SELECT ID_CLIENT
+					SELECT DISTINCT ID_CLIENT
 					FROM dbo.ClientDistr
 					WHERE ID IN
 						(

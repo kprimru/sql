@@ -222,7 +222,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKBO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('ROS', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'KRS', 'BRB', 'BVV', 'BVS', 'BDV', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN', 'RBAS020')
+		AND SB.InfoBankName IN ('BCN', 'BDV', 'BMS', 'BPV', 'BRB', 'BSK', 'BSZ', 'BUR', 'BVS', 'BVV', 'BZS', 'DOF', 'KRS', 'PBI', 'PKV', 'PPN', 'PPS', 'QSA', 'ROS')
 		
 	UNION ALL
 		
@@ -234,7 +234,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKBP' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('RZR', 'PBI', 'FIN', 'PPN', 'PKV', 'PPS', 'KRS', 'BRB', 'BVV', 'BVS', 'BDV', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN', 'RLAW020', 'RGSS')
+		AND SB.InfoBankName IN ('BCN', 'BDV', 'BMS', 'BPV', 'BRB', 'BSK', 'BSZ', 'BUR', 'BVS', 'BVV', 'BZS', 'DOF', 'KRS', 'PBI', 'PKV', 'PPN', 'PPS', 'QUEST', 'RGSS', 'RZR', 'RLAW020', 'REXP020')
 	
 	
 	UNION ALL
@@ -247,7 +247,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKBB' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('DOCS', 'PBI', 'QSA', 'PPN', 'PPS', 'KRS', 'RBAS020')
+		AND SB.InfoBankName IN ('DOCS', 'PBI', 'QSA', 'PPN', 'PPS', 'KRS', 'RBAS020', 'DOF')
 	
 	UNION ALL	
 
@@ -260,7 +260,7 @@ RETURN
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKJO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
 		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'QSOV', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020')
-		--•	Добавлен массив обзоров «Важнейшая практика по статье» что это?
+
 		
 	UNION ALL
 	
