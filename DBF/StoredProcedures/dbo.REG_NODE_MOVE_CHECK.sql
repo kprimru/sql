@@ -25,27 +25,28 @@ BEGIN
 
 	SELECT @ERR = 
 	(
-		SELECT 'Отсутствует вес системы "' + SYS_SHORT_NAME + ' (' + SST_CAPTION + ' :: ' + SNC_SHORT + '"' + CHAR(10)
+		SELECT 'Отсутствует вес системы "' + SYS_SHORT_NAME + ' :: ' + SST_CAPTION + ' :: ' + SNC_SHORT + '"' + CHAR(10)
 		FROM
 		(
-			SELECT DISTINCT REG_ID_SYSTEM, REG_ID_TYPE, REG_ID_NET
-			FROM dbo.PeriodRegView R
+			SELECT DISTINCT RN_ID_SYSTEM, RN_ID_TYPE, RN_ID_NET
+			FROM dbo.RegNodeFullTable R
+			INNER JOIN dbo.SystemTable S ON R.RN_ID_SYSTEM = S.SYS_ID
+			INNER JOIN dbo.DistrStatusTable D ON D.DS_ID = R.RN_ID_STATUS
 			WHERE NOT EXISTS
 				(
 					SELECT *
 					FROM dbo.WeightRules W
-					WHERE R.REG_ID_PERIOD = W.ID_PERIOD
-						AND R.REG_ID_SYSTEM = W.ID_SYSTEM
-						AND R.REG_ID_TYPE = W.ID_TYPE
-						AND R.REG_ID_NET = W.ID_NET
+					WHERE W.ID_PERIOD = @periodid
+						AND R.RN_ID_SYSTEM = W.ID_SYSTEM
+						AND R.RN_ID_TYPE = W.ID_TYPE
+						AND R.RN_ID_NET = W.ID_NET
 				)
-				AND REG_ID_PERIOD = @periodid
 				AND SYS_ID_HOST = @HOST
 				AND DS_REG = 0
 		) AS A
-		INNER JOIN dbo.SystemTable ON REG_ID_SYSTEM = SYS_ID
-		INNER JOIN dbo.SystemTypeTable ON REG_ID_TYPE = SST_ID
-		INNER JOIN dbo.SystemNetCountTable ON REG_ID_NET = SNC_ID
+		INNER JOIN dbo.SystemTable ON RN_ID_SYSTEM = SYS_ID
+		INNER JOIN dbo.SystemTypeTable ON RN_ID_TYPE = SST_ID
+		INNER JOIN dbo.SystemNetCountTable ON RN_ID_NET = SNC_ID
 		FOR XML PATH('')
 	) 
 	
