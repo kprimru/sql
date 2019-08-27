@@ -1,55 +1,34 @@
-/*
--- Не забудьте поправить сценарий создания индексов, 
--- убрав лишние запятые или пустую инструкцию INCLUDE
-SELECT 	[Рекомендуемый индекс]= 
-		'-- CREATE INDEX [IX_' + OBJECT_NAME(mid.object_id) + '_' + 
-		CAST(mid.index_handle AS nvarchar) + '] ON ' + 
-		mid.statement + ' (' + ISNULL(mid.equality_columns,'') + 
-		', ' + ISNULL(mid.inequality_columns,'') + 
-		') INCLUDE (' + ISNULL(mid.included_columns,'') + ');', 
-	[Число компиляций] = migs.unique_compiles,
-	[Количество операций поиска] = migs.user_seeks,
-	[Количество операций просмотра] = migs.user_scans,
-	[Средняя стоимость ] = CAST(migs.avg_total_user_cost AS int),
-	[Средний процент выигрыша] = CAST(migs.avg_user_impact AS int)
-FROM	sys.dm_db_missing_index_groups mig
-JOIN	sys.dm_db_missing_index_group_stats migs 
-ON	migs.group_handle = mig.index_group_handle
-JOIN	sys.dm_db_missing_index_details mid 
-ON	mig.index_handle = mid.index_handle
-AND	mid.database_id = DB_ID()
-*/
--- А тут уже правильно и запятые расставляются,
--- и название индекса внятное дается
-
-SELECT 	[Рекомендуемый индекс]= 
-		'-- CREATE INDEX [IX_' + OBJECT_NAME(mid.object_id) + '_' +
-		replace(replace(replace(ISNULL(mid.equality_columns,'')
-		+ ISNULL(', ' + mid.inequality_columns,''), '[', ''), ']', ''), ', ', '_')
---		+ CAST(mid.index_handle AS nvarchar)
+SELECT 
+	[Рекомендуемый индекс]= 
+			'CREATE INDEX [IX_' + OBJECT_SCHEMA_NAME(mid.object_id) + '.' + OBJECT_NAME(mid.object_id) + '(' +
+		replace(
+			replace(
+				replace(
+					ISNULL(mid.equality_columns,'')
+					+
+					ISNULL(CASE WHEN mid.equality_columns IS NULL THEN '' ELSE ', ' END + mid.inequality_columns, ''), 
+					'[', ''), 
+				']', ''), 
+			', ', ',')
 		+ '] ON '
-		+ mid.statement
+		+ Replace(mid.statement, '[' + DB_NAME() + '].', '')
 		+ ' (' + ISNULL(mid.equality_columns,'')
 		+ case when mid.equality_columns is not null
 					and mid.inequality_columns is not null then ', '
 				else ''
 				end
 		+ ISNULL(mid.inequality_columns,'') + 
-		') INCLUDE (' + ISNULL(mid.included_columns,'') + ');'
+		')' + ISNULL(' INCLUDE (' + mid.included_columns + ')','') + ';'
 	, [Число компиляций] = migs.unique_compiles
 	, [Количество операций поиска] = migs.user_seeks
 	, [Количество операций просмотра] = migs.user_scans
 	, [Средняя стоимость ] = CAST(migs.avg_total_user_cost AS int)
 	, [Средний процент выигрыша] = CAST(migs.avg_user_impact AS int)
-FROM	sys.dm_db_missing_index_groups mig
-JOIN	sys.dm_db_missing_index_group_stats migs 
-ON	migs.group_handle = mig.index_group_handle
-JOIN	sys.dm_db_missing_index_details mid 
-ON	mig.index_handle = mid.index_handle
-AND	mid.database_id = DB_ID()
-
-
-
+FROM sys.dm_db_missing_index_groups				mig
+INNER JOIN sys.dm_db_missing_index_group_stats	migs	ON	migs.group_handle = mig.index_group_handle
+INNER JOIN sys.dm_db_missing_index_details		mid		ON	mig.index_handle = mid.index_handle
+WHERE mid.database_id = DB_ID()
+ORDER BY OBJECT_SCHEMA_NAME(mid.object_id), OBJECT_NAME(mid.object_id), mid.equality_columns, mid.inequality_columns
 
 
 
@@ -90,5 +69,4 @@ AND      INDEXPROPERTY (i.[object_id], i.name, 'IsStatistics'    ) = 0
 AND      INDEXPROPERTY (i.[object_id], i.name, 'IsFulltextKey'   ) = 0
 AND      (i.index_id between 2 AND 250 OR (i.index_id=1 AND OBJECTPROPERTY(i.[object_id],'IsView')=1))
 AND      o.type <> 'IT'
-ORDER BY OBJECT_NAME(i.object_id)
-
+ORDER BY OBJECT_SCHEMA_NAME(i.object_id), OBJECT_NAME(i.object_id)
