@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 		CREATE TRIGGER [dbo].[QuestionTable_LAST_UPDATE]
-		ON dbo.QuestionTable
+		ON [dbo].[QuestionTable]
 		AFTER INSERT, UPDATE, DELETE
 		AS
 			UPDATE Common.Reference
 			SET ReferenceLast = GETDATE()
-			WHERE ReferenceName = 'QuestionTable' AND ReferenceSchema = 'dbo'
+			WHERE ReferenceName IN ('QuestionTableA', 'QuestionTableQ') AND ReferenceSchema = 'dbo'
