@@ -76,9 +76,31 @@ BEGIN
 		SELECT Item 
 		FROM dbo.GET_TABLE_FROM_LIST(@TYPE, ',')
 	) AS o_O ON a.ServiceTypeID = Item
+	OUTER APPLY
+	(
+		SELECT
+			[IsOnline] =
+					CASE
+						WHEN NOT EXISTS
+							(
+								SELECT *
+								FROM dbo.ClientDistrView d WITH(NOEXPAND)
+								INNER JOIN Reg.RegNodeSearchView r WITH(NOEXPAND) ON d.HostId = r.HostId
+																					AND d.DISTR = r.DistrNumber
+																					AND d.COMP = r.CompNumber
+								WHERE d.ID_CLIENT = a.ClientID
+									AND r.Complect = t.Complect
+									AND d.DS_REG = 0
+									AND d.DistrTypeBaseCheck = 1
+									AND d.SystemBaseCheck = 1
+							) THEN 1
+						ELSE 0
+					END
+	) O
 	WHERE ClientServiceID  = @SERVICE 
 		AND StatusID = 2
-		AND STATUS = 1;
+		AND STATUS = 1
+		AND O.[IsOnline] = 0;
 
 	INSERT INTO @Clientdistr
 	SELECT c.CL_ID, c.Complect, d.HostId, d.SystemId, d.DISTR, d.COMP, d.DistrTypeId, d.SystemBaseName, SystemBaseCheck, DistrTypeBaseCheck, d.SystemOrder, d.DistrStr, d.DistrTypeName
@@ -158,14 +180,15 @@ BEGIN
 		ResActual				INT,
 		ClientEvent				VARCHAR(MAX),
 		DistrTypeBaseCheck		TINYINT,
-		LastSTT					VARCHAR(20)
+		LastSTT					VARCHAR(20),
+		LastUpdate				DateTime,
 		PRIMARY KEY CLUSTERED(ClientId, Complect)
 	);
 		
 	/* формируем костяк для итоговой таблицы.*/
 	INSERT INTO @res(
 			ID, ClientID, Complect, ComplectStr, ClientFullName, SystemList, ClientTypeName, TypeDailyDays, TypeDays, ServiceType, 
-			DayOrder, ServiceDay, DayTime, ResVersion, ConsExe, ConsExeActual, ResActual, ClientEvent, DistrTypeBaseCheck, LastStt)
+			DayOrder, ServiceDay, DayTime, ResVersion, ConsExe, ConsExeActual, ResActual, ClientEvent, DistrTypeBaseCheck, LastStt, LastUpdate)
 		SELECT 
 			ROW_NUMBER() OVER(ORDER BY ClientFullName),
 			a.ClientID, t.Complect, t.ComplectStr, ClientFullName, 
@@ -226,7 +249,15 @@ BEGIN
 						INNER JOIN dbo.SystemTable x ON x.SystemID = y.SystemID AND x.SystemNumber = z.SYS
 					WHERE y.ClientId = a.ClientID
 						AND y.Complect = t.COmplect
-				)), 104) + ' (И)')
+				)), 104) + ' (И)'),
+				(
+					SELECT TOP (1) u.UIU_DATE
+					FROM @clientdistr z
+					INNER JOIN USR.USRIBDateView u WITH(NOEXPAND) ON UD_ID_CLIENT = t.CL_ID AND u.UI_DISTR = z.DISTR AND u.UI_COMP = z.COMP
+					WHERE t.CL_ID = z.ClientId AND t.Complect = z.Complect
+						AND UIU_DATE_S <= @END
+					ORDER BY UIU_DATE_S DESC
+				)
 		FROM @Client t
 		INNER JOIN dbo.ClientTable a ON t.CL_ID = a.ClientId
 		INNER JOIN dbo.ServiceTypeTable d ON d.ServiceTypeID = a.ServiceTypeID 
@@ -540,13 +571,13 @@ BEGIN
 			ELSE NULL 
 		END AS UpdatePeriod,
 		UF_PATH,
-		LastSTT
+		LastSTT, LastUpdate = Convert(VarChar(20), LastUpdate, 104)-- + ' ' + Convert(VarCHar(20), LastUpdate, 108)
 	INTO #total
 	FROM
 		(		
 			SELECT DISTINCT
 				ID, a.ClientID, a.Complect, a.ComplectStr, CLientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, DayOrder, DayTime,
-				ClientEvent, LastSTT,
+				ClientEvent, LastSTT, LastUpdate,
 					LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' + 
 					/*DATENAME(WEEKDAY, UpdateDateTime) + ' ' + */
 					WD + ' ' +
