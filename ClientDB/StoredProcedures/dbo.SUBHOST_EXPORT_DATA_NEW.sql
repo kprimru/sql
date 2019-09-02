@@ -43,7 +43,8 @@ BEGIN
 		@Compliance		Xml,
 		@USRKind		Xml,
 		@PersonalType	Xml,
-		@References		Xml;
+		@References		Xml,
+		@DistrCoef		Xml;
 	
 	DECLARE @Distr Table
 	(
@@ -51,6 +52,15 @@ BEGIN
 		Distr	Int			NOT NULL,
 		Comp	TinyInt		NOT NULL,
 		Primary Key Clustered(Distr, HostID, Comp)
+	);
+	
+	DECLARE @DistrTypeCoef Table
+	(
+		ID_NET	SmallInt			NOT NULL,
+		START	SmallDateTime		NOT NULL,
+		COEF	Decimal(8,4)		NOT NULL,
+		RND		SmallInt			NOT NULL,
+		Primary Key Clustered(ID_NET, START)
 	);
 	
 	INSERT INTO @Distr
@@ -360,6 +370,51 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('PERSONAL_TYPE')
 		);
 		
+	INSERT INTO @DistrTypeCoef
+	SELECT ID_NET, START, COEF, RND
+	FROM
+	(
+		SELECT ID_NET, COEF, RND, P.START, Row_Number() OVER(PARTITION BY ID_NET, COEF, RND ORDER BY P.START) AS RN
+		FROM dbo.DistrTypeCoef C
+		INNER JOIN Common.Period P ON C.ID_MONTH = P.ID
+	) AS A
+	WHERE RN = 1;
+		
+	SET @DistrCoef = 
+	(
+		SELECT
+			NT_NET,
+			NT_TECH,
+			NT_ODON,
+			NT_ODOFF,
+			PERIODIC = 
+			(
+				SELECT
+					COEF,
+					RND,
+					START,
+					FINISH
+				FROM @DistrTypeCoef P
+				OUTER APPLY
+				(
+					SELECT TOP (1) FINISH = DateAdd(Month, -1, N.START)
+					FROM @DistrTypeCoef N
+					WHERE P.ID_NET = N.ID_NET
+						AND N.START > P.START
+					ORDER BY N.START
+				) N
+				WHERE P.ID_NET = C.ID_NET
+				FOR XML RAW('PERIOD'), TYPE
+			)
+		FROM
+		(
+			SELECT DISTINCT ID_NET, NT_NET, NT_TECH, NT_ODON, NT_ODOFF
+			FROM @DistrTypeCoef		C
+			INNER JOIN Din.NetType	N ON C.ID_NET = N.NT_ID_MASTER
+		) C
+		FOR XML RAW ('ITEM'), ROOT('DISTR_TYPE_COEF')
+	);
+		
 	SET @References = 
 		(
 			SELECT
@@ -377,7 +432,8 @@ BEGIN
 						@DistrStatus,
 						@Compliance,
 						@USRKind,
-						@PersonalType
+						@PersonalType,
+						@DistrCoef
 					FOR XML PATH('REFERENCES')	
 				)
 			)
