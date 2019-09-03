@@ -19,12 +19,13 @@ BEGIN
 	
 	SET @REFRESH = 0
 	
-	INSERT INTO dbo.ClientStatDetail(WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
+	INSERT INTO dbo.ClientStatDetail([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
 		SELECT
-			WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [Enter0], [Enter1], [Enter2], [Enter3], SessionTimeSum, SessionTimeAVG
+			[UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [Enter0], [Enter1], [Enter2], [Enter3], SessionTimeSum, SessionTimeAVG
 		FROM
 			(
 				SELECT
+					F.[Update],
 					WeekId = P.[Id],
 					HostId = H.HostId,
 					F.[Distr],
@@ -41,6 +42,7 @@ BEGIN
 				FROM
 				(
 					SELECT
+						[UpDate] 			= c.value('@UpDate[1]', 'DateTime'),
 						[WeekStart] 		= c.value('@WeekStart[1]', 'SmallDateTime'),
 						[HostReg]			= c.value('@HostReg[1]', 'VarChar(50)'),
 						[Distr]				= c.value('@Distr[1]', 'Int'),

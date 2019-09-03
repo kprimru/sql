@@ -13,7 +13,8 @@ BEGIN
 
 	SELECT
 		ISNULL((
-			SELECT 
+			SELECT
+				[UpDate]			= a.[UpDate],
 				[WeekStart] 		= b.START,
 				[HostReg]			= d.HostReg,
 				[Distr]				= a.Distr,
