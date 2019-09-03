@@ -46,6 +46,7 @@ BEGIN
 			UpdatePeriod	NVARCHAR(128),
 			UF_PATH			INT,
 			LastSTT			NVARCHAR(32),
+			LastUpdate		DateTime,
 			ROW_CNT			INT
 		)
 
@@ -55,7 +56,7 @@ BEGIN
 	SELECT 
 		ID, ClientID, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, 
 		ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError, 
-		UpdateLost, UpdateLostError, UpdatePeriod, LastSTT, ClientEvent,
+		UpdateLost, UpdateLostError, UpdatePeriod, LastSTT, LastUpdate, ClientEvent,
 		REPLACE(REVERSE(STUFF(REVERSE(
 			(
 				SELECT CASE UF_PATH WHEN 1 THEN UpdateDayTime ELSE '' END + '|'
@@ -77,7 +78,7 @@ BEGIN
 			SELECT DISTINCT 
 				ID, ClientID, Complect, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, 
 				ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError, 
-				UpdateLost, UpdateLostError,UpdatePeriod, LastSTT, ClientEvent
+				UpdateLost, UpdateLostError,UpdatePeriod, LastSTT, LastUpdate, ClientEvent
 			FROM #utotal
 		) AS a
 	ORDER BY ID

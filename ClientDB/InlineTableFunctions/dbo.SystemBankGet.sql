@@ -15,11 +15,14 @@ RETURNS TABLE
 AS
 RETURN 
 (
+	--ToDo сделать чтобы те типы, которых не бывает - не получали списо ИБ
 	SELECT
 		InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
 		SystemID, SystemFullName, SystemActive, SystemOrder, SystemShortName, SystemBaseName, Required, HostID, InfoBankStart
 	FROM dbo.[SystemBankGet(Internal)](@System)
-	WHERE NOT
+	WHERE (SELECT SystemBaseCheck FROM dbo.SystemTable WHERE SystemId = @System) = 1
+		AND (SELECT DistrTypeBaseCheck FROM dbo.DistrTypeTable WHERE DistrTypeId = @DistrType) = 1
+		AND NOT
 		(
 			@DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 13)
 			OR

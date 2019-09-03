@@ -122,6 +122,16 @@ BEGIN
 		Primary Key Clustered ([Psedo])
 	);
 	
+	DECLARE @Coef Table
+	(
+		[ID_NET]	SmallInt			NOT NULL,
+		[COEF]		Decimal(8,4)		NOT NULL,
+		[RND]		SmallInt			NOT NULL,
+		[START]		SmallDateTime		NOT NULL,
+		[FINISH]	SmallDateTime			NULL,
+		Primary Key Clustered(ID_NET, START)
+	);
+	
 	INSERT INTO @Hosts
 	SELECT
 		V.value('@Short[1]',	'VarChar(100)'),
@@ -664,4 +674,80 @@ BEGIN
 		V.value('@NetOdoff[1]',	'SmallInt'),
 		V.value('@Weight[1]',	'Decimal(8,4)')
 	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/WEIGHT[1]/ITEM') N(V);
+	
+	INSERT INTO @Coef
+	SELECT DISTINCT
+		[ID_NET],
+		[COEF],
+		[RND],
+		[START],
+		[FINISH]
+	FROM
+	(
+		SELECT
+			ID_NET = N.NT_ID_MASTER,
+			P.PERIODS
+		FROM
+		(
+			SELECT
+				[NT_NET]	= C.value('@NT_NET[1]',		'SmallInt'),
+				[NT_TECH]	= C.value('@NT_TECH[1]',	'SmallInt'),
+				[NT_ODON]	= C.value('@NT_ODON[1]',	'SmallInt'),
+				[NT_ODOFF]	= C.value('@NT_ODOFF[1]',	'SmallInt'),
+				[PERIODS]	= C.query('./PERIODIC')
+			FROM @Data.nodes('/DATA[1]/REFERENCES[1]/DISTR_TYPE_COEF[1]/ITEM') N(C)
+		) P
+		INNER JOIN Din.NetType N ON N.NT_NET = P.NT_NET
+								AND N.NT_TECH = P.NT_TECH
+								AND N.NT_ODON = P.NT_ODON
+								AND N.NT_ODOFF = P.NT_ODOFF
+	) N
+	CROSS APPLY
+	(
+		SELECT
+			[COEF]		= C.value('@COEF[1]',	'Decimal(8,4)'),
+			[RND]		= C.value('@RND[1]',	'SmallInt'),
+			[START]		= C.value('@START[1]',	'SmallDateTime'),
+			[FINISH]	= C.value('@FINISH[1]',	'SmallDateTime')
+		FROM N.PERIODS.nodes('/PERIODIC/PERIOD') P(C)
+	) AS P;
+	
+	UPDATE C
+	SET COEF	= N.COEF,
+		RND		= N.RND
+	FROM dbo.DistrTypeCoef C
+	INNER JOIN
+	(
+		SELECT
+			C.ID_NET, C.COEF, C.RND, ID_MONTH = P.ID
+		FROM @Coef C
+		CROSS APPLY
+		(
+			SELECT P.ID
+			FROM Common.Period P
+			WHERE TYPE = 2
+				AND P.START >= C.START
+				AND (P.START <= C.FINISH OR C.FINISH IS NULL)
+		) AS P
+	) N ON C.ID_NET = N.ID_NET AND C.ID_MONTH = N.ID_MONTH
+	WHERE C.COEF != N.COEF OR C.RND != N.RND;
+	
+	INSERT INTO dbo.DistrTypeCoef(ID_NET, ID_MONTH, COEF, RND)
+	SELECT C.ID_NET, P.ID, C.COEF, C.RND
+	FROM @Coef C
+	CROSS APPLY
+	(
+		SELECT P.ID
+		FROM Common.Period P
+		WHERE TYPE = 2
+			AND P.START >= C.START
+			AND (P.START <= C.FINISH OR C.FINISH IS NULL)
+	) AS P
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.DistrTypeCoef Q
+			WHERE	Q.ID_NET = C.ID_NET
+				AND Q.ID_MONTH = P.ID
+		);
 END

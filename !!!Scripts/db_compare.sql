@@ -118,6 +118,28 @@ DECLARE @DstRouties Table
     PRIMARY KEY CLUSTERED([Schema], [Name])
 );
 
+DECLARE @SrcForeignKeys Table
+(
+	[Schema]		SysName,
+	[Table]			SysName,
+	[Columns]		SysName,
+	[RefSchema]		SysName,
+	[RefTable]		SysName,
+	[RefColumns]	SysName,
+	[Name]			SysName
+);
+
+DECLARE @DstForeignKeys Table
+(
+	[Schema]		SysName,
+	[Table]			SysName,
+	[Columns]		SysName,
+	[RefSchema]		SysName,
+	[RefTable]		SysName,
+	[RefColumns]	SysName,
+	[Name]			SysName
+);
+
 DECLARE @SrcRoles Table
 (
     [Name]          SysName,
@@ -318,6 +340,88 @@ OUTER APPLY
             )), 1, 2, ''''))
 ) AS IC
 WHERE I.[type] != 0');
+
+INSERT INTO @SrcForeignKeys
+EXEC('SELECT
+	[Schema]		= S.[name],
+	[Table]			= T.[name],
+	[Columns]		= C.[Columns],
+	[RefSchema] 	= RS.[name],
+	[RefTable]		= RT.[name],
+	[RefColumns]	= RC.[RefColumns],
+	[Name]			= FK.[name]
+FROM ' + @Src + '.[sys].[foreign_keys] FK
+INNER JOIN ' + @Src + '.[sys].[tables] T ON FK.[parent_object_id] = T.[object_id]
+INNER JOIN ' + @Src + '.[sys].[schemas] S ON S.[schema_id] = T.[schema_id]
+INNER JOIN ' + @Src + '.[sys].[tables] RT ON FK.[referenced_object_id] = RT.[object_id]
+INNER JOIN ' + @Src + '.[sys].[schemas] RS ON RS.[schema_id] = RT.[schema_id]
+CROSS APPLY
+(
+	SELECT
+		[Columns] =
+			Reverse(Stuff(Reverse(
+				(
+					SELECT c.[name] + '',''
+					FROM ' + @Src + '.[sys].[foreign_key_columns] FKC
+					INNER JOIN ' + @Src + '.[sys].[columns] C ON C.[column_id] = FKC.[parent_column_id] AND T.[object_id] = C.[object_id]
+					WHERE FKC.[constraint_object_id] = FK.[object_id]
+					ORDER BY FKC.[constraint_column_id] FOR XML PATH('''')
+				)), 1, 1, ''''))
+) AS C
+CROSS APPLY
+(
+	SELECT
+		[RefColumns] =
+			Reverse(Stuff(Reverse(
+				(
+					SELECT RC.[name] + '',''
+					FROM ' + @Src + '.[sys].[foreign_key_columns] FKC
+					INNER JOIN ' + @Src + '.[sys].[columns] RC ON RC.[column_id] = FKC.[referenced_column_id] AND RT.[object_id] = RC.[object_id]
+					WHERE FKC.[constraint_object_id] = FK.[object_id]
+					ORDER BY FKC.[constraint_column_id] FOR XML PATH('''')
+				)), 1, 1, ''''))
+) AS RC;');
+
+INSERT INTO @DstForeignKeys
+EXEC('SELECT
+	[Schema]		= S.[name],
+	[Table]			= T.[name],
+	[Columns]		= C.[Columns],
+	[RefSchema] 	= RS.[name],
+	[RefTable]		= RT.[name],
+	[RefColumns]	= RC.[RefColumns],
+	[Name]			= FK.[name]
+FROM ' + @Dst + '.[sys].[foreign_keys] FK
+INNER JOIN ' + @Dst + '.[sys].[tables] T ON FK.[parent_object_id] = T.[object_id]
+INNER JOIN ' + @Dst + '.[sys].[schemas] S ON S.[schema_id] = T.[schema_id]
+INNER JOIN ' + @Dst + '.[sys].[tables] RT ON FK.[referenced_object_id] = RT.[object_id]
+INNER JOIN ' + @Dst + '.[sys].[schemas] RS ON RS.[schema_id] = RT.[schema_id]
+CROSS APPLY
+(
+	SELECT
+		[Columns] =
+			Reverse(Stuff(Reverse(
+				(
+					SELECT c.[name] + '',''
+					FROM ' + @Dst + '.[sys].[foreign_key_columns] FKC
+					INNER JOIN ' + @Dst + '.[sys].[columns] C ON C.[column_id] = FKC.[parent_column_id] AND T.[object_id] = C.[object_id]
+					WHERE FKC.[constraint_object_id] = FK.[object_id]
+					ORDER BY FKC.[constraint_column_id] FOR XML PATH('''')
+				)), 1, 1, ''''))
+) AS C
+CROSS APPLY
+(
+	SELECT
+		[RefColumns] =
+			Reverse(Stuff(Reverse(
+				(
+					SELECT RC.[name] + '',''
+					FROM ' + @Dst + '.[sys].[foreign_key_columns] FKC
+					INNER JOIN ' + @Dst + '.[sys].[columns] RC ON RC.[column_id] = FKC.[referenced_column_id] AND RT.[object_id] = RC.[object_id]
+					WHERE FKC.[constraint_object_id] = FK.[object_id]
+					ORDER BY FKC.[constraint_column_id] FOR XML PATH('''')
+				)), 1, 1, ''''))
+) AS RC;');
 
 -- схемы
 --/*
@@ -614,4 +718,25 @@ ORDER BY
     -- сначала дропать индексы, потом создавать
     [ACTION] DESC,
     IsNull(D.[IsPrimaryKey], S.[IsPrimaryKey]) DESC,
-    IsNull(D.[IsClustered], S.[IsClustered]) DESC
+    IsNull(D.[IsClustered], S.[IsClustered]) DESC;
+    
+--IF EXISTS (SELECT * FROM )
+SELECT
+	[Object] = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Table], D.[Table]) + '].[' + IsNull(S.[Columns], D.[Columns]) + ']',
+	[RefObject] = '[' + IsNull(S.[RefSchema], D.[RefSchema]) + '].[' + IsNull(S.[RefTable], D.[RefTable]) + '].[' + IsNull(S.[RefColumns], D.[RefColumns]) + ']',
+	[Name] = CASE WHEN S.[Name] IS NULL OR D.[Name] IS NULL THEN IsNull(S.[Name], D.[Name]) ELSE D.[Name] + ' -> ' + S.[Name] END,
+	[Action] = CASE WHEN S.[Name] IS NULL THEN 'D' WHEN D.[Name] IS NULL THEN 'C' WHEN S.[Name] != D.[Name] THEN 'R' END,
+	[SQL] = CASE
+				WHEN S.[Name] IS NULL THEN 'DROP CONSTRAINT'
+				WHEN D.[Name] IS NULL THEN 'CREATE CONSTRAINT'
+				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM [sys].[foreign_keys] WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' ';'
+			END
+FROM @SrcForeignKeys S
+FULL JOIN @DstForeignKeys D ON S.[Schema] = D.[Schema]
+							AND S.[Table] = D.[Table]
+							AND S.[Columns] = D.[Columns]
+							AND S.[RefSchema] = D.[RefSchema]
+							AND S.[RefTable] = D.[RefTable]
+							AND S.[RefColumns] = D.[RefColumns]
+WHERE S.[Name] IS NULL OR D.[Name] IS NULL OR S.[Name] != D.[Name]
+ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Columns], D.[Columns])

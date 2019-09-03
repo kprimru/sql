@@ -175,7 +175,12 @@ BEGIN
 										TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, PR_ID,
 										CLT_ID, CLT_NAME, KGS, CL_TERR,
 										TO_COUNT, SYS_COUNT,
-										CLIENT_TOTAL_PRICE,
+										CASE
+                                            -- ToDo очень грязный хардкод - общая стоимость одной ТО по Мировым судьям
+                                            WHEN CL_ID = 10321 THEN 125973.5
+                                            ELSE CLIENT_TOTAL_PRICE
+                                        END AS CLIENT_TOTAL_PRICE,
+										--CLIENT_TOTAL_PRICE,
 										CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, CPS_ACT,
 										CONVERT(BIT, ISNULL(PAY, 0)) AS PAY,
 										CONVERT(BIT, 
@@ -188,7 +193,13 @@ BEGIN
 												ELSE 1
 											END*/
 										) AS CALC,
+										/*CASE
+											WHEN TO_COUNT IS NULL OR TO_COUNT = 0 THEN CLIENT_TOTAL_PRICE
+											ELSE CLIENT_TOTAL_PRICE / TO_COUNT
+										END AS TO_PRICE,*/
 										CASE
+                                            -- ToDo очень грязный хардкод - общая стоимость одной ТО по Мировым судьям
+                                            WHEN CL_ID = 10321 THEN 1085.98
 											WHEN TO_COUNT IS NULL OR TO_COUNT = 0 THEN CLIENT_TOTAL_PRICE
 											ELSE CLIENT_TOTAL_PRICE / TO_COUNT
 										END AS TO_PRICE,				

@@ -16,4 +16,5 @@ BEGIN
 	WHERE
 		(@REF = ReferenceSchema+'.'+ReferenceName OR @REF IS NULL) AND
 		(@DATE < ReferenceLast OR @DATE IS NULL)
+	ORDER BY ReferenceSchema, ReferenceName
 END
