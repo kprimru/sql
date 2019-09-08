@@ -16,8 +16,10 @@ FOR
 SELECT
 	sch.name AS [schema], t.name AS [table], i.name AS [index],
 	CASE
-		WHEN i.type_desc = 'NONCLUSTERED'	THEN 'IX_'
-		WHEN i.type_desc = 'CLUSTERED'		THEN 'IC_'
+		WHEN i.type_desc = 'NONCLUSTERED'	AND i.is_unique = 0	THEN 'IX_'
+		WHEN i.type_desc = 'NONCLUSTERED'	AND i.is_unique = 1	THEN 'UX_'
+		WHEN i.type_desc = 'CLUSTERED'		AND i.is_unique = 0	THEN 'IC_'
+		WHEN i.type_desc = 'CLUSTERED'		AND i.is_unique = 1	THEN 'UC_'
 		ELSE NULL
 	END + sch.name + '.' + t.name + '(' + mc.Columns + ')' + 
 	CASE	
