@@ -42,7 +42,12 @@ BEGIN
 				CASE SST_SHORT
 					WHEN 'С.А' THEN 18
 					ELSE 24
-				END, DATE)) AS [Осталось дней]
+				END, DATE)) AS [Осталось дней],
+		CASE SST_SHORT
+			WHEN ('С.К2') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
+			WHEN ('С.И') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
+			ELSE NULL
+		END AS [Скидка РИЦ]
 	FROM
 		(
 			SELECT 
