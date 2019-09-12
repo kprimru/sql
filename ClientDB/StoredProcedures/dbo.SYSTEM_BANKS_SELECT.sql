@@ -10,7 +10,7 @@ CREATE PROCEDURE [dbo].[SYSTEM_BANKS_SELECT]
 	@DTYPEID	INT
 AS
 BEGIN
-	SELECT InfoBank_ID, InfoBankName 
-	FROM dbo.SystemInfoBanksView --WITH(NOEXPAND)
+	SELECT InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder
+	FROM dbo.SystemInfoBanksView WITH(NOEXPAND)
 	WHERE System_Id = @SYSID AND DistrType_Id = @DTYPEID
 END

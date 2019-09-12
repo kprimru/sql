@@ -5,13 +5,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SYSTEM_BANKS_GET]
-	@SYS_LIST			NVARCHAR(128),
-	@DISTR_TYPE_LIST	NVARCHAR(128)
+	@SYS_LIST			NVARCHAR(MAX),
+	@DISTR_TYPE_LIST	NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @t	TABLE (InfoBank_ID	SMALLINT, InfoBankName	VARCHAR(20))
+	DECLARE @t	TABLE (InfoBank_ID	SMALLINT, InfoBankName	VARCHAR(20), InfoBankShortName	VARCHAR(20), Required	BIT, InfoBankOrder	INT)
 
 	DECLARE @SYS_END				BIT
 	SET @SYS_END = 0
@@ -51,14 +51,14 @@ BEGIN
 				SET @DISTR_TYPE_END = 1
 			END
 			
-			INSERT INTO @t(InfoBank_ID, InfoBankName)
+			INSERT INTO @t(InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder)
 			EXEC [dbo].[SYSTEM_BANKS_SELECT] @TEMP_S, @TEMP_D
 		END
 	END
 
-	SELECT t.*, ibt.InfoBankShortName 
-	FROM @t t
-	INNER JOIN dbo.InfoBankTable ibt ON ibt.InfoBankID = t.InfoBank_ID
-	GROUP BY InfoBank_ID, t.InfoBankName, InfoBankShortName
+	SELECT * 
+	FROM @t
+	GROUP BY InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder
+	ORDER BY InfoBankOrder
 	
 END

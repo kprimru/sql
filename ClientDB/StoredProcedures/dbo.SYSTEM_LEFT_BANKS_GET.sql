@@ -11,7 +11,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @t	TABLE (InfoBank_ID	SMALLINT, InfoBankName	VARCHAR(20))
+	DECLARE @t	TABLE (InfoBank_ID	SMALLINT, InfoBankName	VARCHAR(20), InfoBankShortName	VARCHAR(20), Required	BIT, InfoBankOrder	INT)
 
 	DECLARE @SYS_END				BIT
 	SET @SYS_END = 0
@@ -51,18 +51,20 @@ BEGIN
 				SET @DISTR_TYPE_END = 1
 			END
 			
-			INSERT INTO @t(InfoBank_ID, InfoBankName)
+			INSERT INTO @t(InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder)
 			EXEC [dbo].[SYSTEM_BANKS_SELECT] @TEMP_S, @TEMP_D
 		END
 	END
 	
-	SELECT InfoBankID, InfoBankName, InfoBankShortName
+	DECLARE @res_t	TABLE (InfoBank_ID	SMALLINT, InfoBankName	VARCHAR(20), InfoBankShortName	VARCHAR(20), InfoBankOrder	INT)
+
+	INSERT INTO @res_t(InfoBank_ID, InfoBankName, InfoBankShortName, InfoBankOrder)
+	SELECT InfoBankID, InfoBankName, InfoBankShortName, InfoBankOrder
 	FROM InfoBankTable
 	WHERE InfoBankID NOT IN (SELECT InfoBank_ID FROM @t)
-	/*
-	SELECT t.*, ibt.InfoBankShortName 
-	FROM @t t
-	INNER JOIN dbo.InfoBankTable ibt ON ibt.InfoBankID = t.InfoBank_ID
-	GROUP BY InfoBank_ID, t.InfoBankName, InfoBankShortName
-	*/
+
+	SELECT * 
+	FROM @res_t
+	ORDER BY InfoBankOrder 
+
 END
