@@ -721,15 +721,16 @@ ORDER BY
     IsNull(D.[IsClustered], S.[IsClustered]) DESC;
     
 --IF EXISTS (SELECT * FROM )
+
 SELECT
 	[Object] = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Table], D.[Table]) + '].[' + IsNull(S.[Columns], D.[Columns]) + ']',
 	[RefObject] = '[' + IsNull(S.[RefSchema], D.[RefSchema]) + '].[' + IsNull(S.[RefTable], D.[RefTable]) + '].[' + IsNull(S.[RefColumns], D.[RefColumns]) + ']',
 	[Name] = CASE WHEN S.[Name] IS NULL OR D.[Name] IS NULL THEN IsNull(S.[Name], D.[Name]) ELSE D.[Name] + ' -> ' + S.[Name] END,
 	[Action] = CASE WHEN S.[Name] IS NULL THEN 'D' WHEN D.[Name] IS NULL THEN 'C' WHEN S.[Name] != D.[Name] THEN 'R' END,
 	[SQL] = CASE
-				WHEN S.[Name] IS NULL THEN 'DROP CONSTRAINT'
-				WHEN D.[Name] IS NULL THEN 'CREATE CONSTRAINT'
-				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM [sys].[foreign_keys] WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' ';'
+				WHEN S.[Name] IS NULL THEN 'IF EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + D.[Name] + ''' AND parent_object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
+				WHEN D.[Name] IS NULL THEN 'IF NOT EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + S.[Name] + ''' AND parent_object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) BEGIN ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] FOREIGN KEY (' + S.[Columns] + ') REFERENCES [' + S.[RefSchema] + '].[' + S.[RefTable] + '] (' + S.[RefColumns] + ') ON UPDATE  NO ACTION ON DELETE  NO ACTION;'
+				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM [sys].[foreign_keys] WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' + ';'
 			END
 FROM @SrcForeignKeys S
 FULL JOIN @DstForeignKeys D ON S.[Schema] = D.[Schema]
