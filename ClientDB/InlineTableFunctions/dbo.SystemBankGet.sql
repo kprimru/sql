@@ -225,7 +225,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKBO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('BCN', 'BDV', 'BMS', 'BPV', 'BRB', 'BSK', 'BSZ', 'BUR', 'BVS', 'BVV', 'BZS', 'DOF', 'KRS', 'PBI', 'PKV', 'PPN', 'PPS', 'QSA', 'ROS')
+		AND SB.InfoBankName IN ('BCN', 'BDV', 'BMS', 'BPV', 'BRB', 'BSK', 'BSZ', 'BUR', 'BVS', 'BVV', 'BZS', 'DOF', 'KRS', 'PBI', 'PKV', 'PPN', 'PPS', 'QSA', 'ROS', 'RBAS020')
 		
 	UNION ALL
 		
@@ -313,7 +313,7 @@ RETURN
 	CROSS JOIN dbo.InfoBankTable SB
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SKUO' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
-		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'BVV', 'BVS', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN')
+		AND SB.InfoBankName IN ('RZR', 'ARB', 'CMB', 'CJI', 'PKS', 'PSP', 'PDR', 'PKP', 'PKG', 'PGU', 'PTS', 'PSG', 'DOF', 'SIP', 'PPVS', 'RGSS', 'ADV', 'RBAS020', 'PBI', 'QSA', 'PPN', 'PKV', 'PPS', 'BVV', 'BVS', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN', 'BDV', 'KOR')
 
 	UNION ALL
 	
