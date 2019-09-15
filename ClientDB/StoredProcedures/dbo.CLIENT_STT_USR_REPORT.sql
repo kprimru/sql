@@ -103,11 +103,12 @@ BEGIN
 						WHERE a.ServiceName = b.ServiceName
 							AND USR_COUNT <> 0 AND STT_COUNT = 0
 					) AS ERROR_COUNT,
-					dbo.DateOf((
-						SELECT MAX(UIU_DATE) 
+					(
+						SELECT TOP 1 UIU_DATE_S
 						FROM USR.USRIBDateView WITH(NOEXPAND)
 						WHERE UD_ID_CLIENT = ClientID
-					)) AS LAST_UPDATE
+						ORDER BY UIU_DATE_S DESC
+					) AS LAST_UPDATE
 				FROM #result a
 				WHERE ((USR_COUNT <> 0 AND @HIDE = 1) OR (@HIDE = 0))
 					AND (USR_COUNT <> 0 AND STT_COUNT = 0 AND @UNGET = 1 OR @UNGET = 0)

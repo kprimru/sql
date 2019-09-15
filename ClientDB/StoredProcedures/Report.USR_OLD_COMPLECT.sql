@@ -25,7 +25,7 @@ BEGIN
 				(
 					SELECT 
 						b.SystemShortName AS Sys1, c.SystemShortName AS Sys2, a.UD_DISTR, a.UD_COMP,
-						e.UD_ID			
+						e.UD_ID		
 					FROM 
 						USR.USRComplectNumberView a WITH(NOEXPAND)
 						INNER JOIN dbo.SystemTable b ON a.UD_SYS = b.SystemNumber

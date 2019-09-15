@@ -194,7 +194,7 @@ BEGIN
 
 	DECLARE @usr Table
 	(
-		UF_ID		UniqueIdentifier,
+		UF_ID		Int,
 		UF_DATE		DateTime,
 		Primary Key Clustered(UF_ID)
 	);
@@ -229,9 +229,10 @@ BEGIN
 				ORDER BY UF_DATE DESC
 			) AS LAST_DATE,
 			(
-				SELECT MAX(UF_DATE)
+				SELECT TOP 1 UF_DATE
 				FROM USR.USRActiveView
 				WHERE UD_ID_CLIENT = ClientID
+				ORDER BY UF_DATE DESC
 			) AS UF_DATE
 		FROM @info_bank a
 		WHERE NOT EXISTS

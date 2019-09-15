@@ -31,7 +31,7 @@ BEGIN
 						INNER JOIN dbo.DistrConditionView y ON UP_ID_SYSTEM = y.SystemID 
 															AND UP_DISTR = DistrNumber 
 															AND UP_COMP = CompNumber										
-					WHERE UP_ID_USR = UF_ID	
+					WHERE UP_ID_USR = UF_ID
 				) AS t
 				LEFT OUTER JOIN USR.USRIB ON UI_ID_BASE = InfoBankID AND UI_DISTR = UP_DISTR AND UI_COMP = UP_COMP
 			WHERE UI_ID_USR = UF_ID

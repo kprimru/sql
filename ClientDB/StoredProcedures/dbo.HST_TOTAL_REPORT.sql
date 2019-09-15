@@ -17,35 +17,42 @@ BEGIN
 	IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 		DROP TABLE #cl
 
-	CREATE TABLE #cl(ClientID INT, Service VARCHAR(250), Manager VARCHAR(150), HST_COUNT INT, USR_COUNT INT)
+	CREATE TABLE #cl
+	(
+		ClientID INT PRIMARY KEY CLUSTERED,
+		Service VARCHAR(250),
+		Manager VARCHAR(150),
+		HST_COUNT INT,
+		USR_COUNT INT
+	);
 	
 	INSERT INTO #cl(ClientID, Service, Manager, HST_COUNT, USR_COUNT)	
-			SELECT 
-				a.ClientID, ServiceName, ManagerName, 
-				(
-					SELECT COUNT(DISTINCT SearchGet)
-					FROM 
-						dbo.ClientSearchTable z
-					WHERE z.ClientID = a.ClientID
-						AND SearchGetDay >= @BEGIN 
-						AND SearchGetDay < @END
-				) AS HST_COUNT,
-				(
-					SELECT COUNT(*)
-					FROM 
-						USR.USRData z
-						INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
-					WHERE UD_ACTIVE = 1
-						AND UF_ACTIVE = 1
-						AND (UF_PATH = 0 OR UF_PATH = 3)
-						AND	UF_DATE BETWEEN @BEGIN AND @END
-						AND z.UD_ID_CLIENT = a.CLientID
-				) AS USR_COUNT
+	SELECT 
+		a.ClientID, ServiceName, ManagerName, 
+		(
+			SELECT COUNT(DISTINCT SearchGet)
 			FROM 
-				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientContractTypeID
-			WHERE b.StatusID = 2						
+				dbo.ClientSearchTable z
+			WHERE z.ClientID = a.ClientID
+				AND SearchGetDay >= @BEGIN 
+				AND SearchGetDay < @END
+		) AS HST_COUNT,
+		(
+			SELECT COUNT(*)
+			FROM 
+				USR.USRData z
+				INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
+			WHERE UD_ACTIVE = 1
+				AND UF_ACTIVE = 1
+				AND (UF_PATH = 0 OR UF_PATH = 3)
+				AND	UF_DATE BETWEEN @BEGIN AND @END
+				AND z.UD_ID_CLIENT = a.CLientID
+		) AS USR_COUNT
+	FROM 
+		dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+		INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientContractTypeID
+	WHERE b.StatusID = 2						
 
 		SELECT 
 			Service, Manager, CL_COUNT, HST_COUNT, CL_KORR_COUNT, HST_KORR_COUNT,

@@ -41,11 +41,12 @@ BEGIN
 							AND d.PR_DATE = e.PR_DATE
 					), ID_PRICE + 1)
 		) AS LAST_MON,
-		dbo.DateOf((
-			SELECT MAX(UIU_DATE)
+		(
+			SELECT TOP 1 UIU_DATE_S
 			FROM USR.USRIBDateView WITH(NOEXPAND)
 			WHERE UD_ID_CLIENT = ClientID
-		)) AS LAST_UPDATE
+			ORDER BY UIU_DATE_S DESC
+		) AS LAST_UPDATE
 	FROM 
 		dbo.DistrDisconnect a
 		INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID_DISTR = b.ID

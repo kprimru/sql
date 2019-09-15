@@ -24,7 +24,7 @@ BEGIN
 			SystemOrder		INT,
 			SystemDistrNumber	INT,
 			CompNumber	TINYINT,
-			UP_ID_USR	UNIQUEIDENTIFIER,
+			UP_ID_USR	INT,
 			Service		INT,
 			UF_CREATE	DATETIME,
 			UF_DATE		DATETIME,

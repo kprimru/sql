@@ -21,7 +21,7 @@ BEGIN
 
 	DECLARE @Complect Table
 	(
-		UD_ID		UniqueIdentifier,
+		UD_ID		Int,
 		CL_ID		Int,
 		UD_DISTR	Int,
 		UD_COMP		TinyInt,
@@ -30,27 +30,27 @@ BEGIN
 	)
 
 	INSERT INTO @Complect(UD_ID, CL_ID, UD_DISTR, UD_COMP)
-		SELECT D.UD_ID, ClientID, D.UD_DISTR, D.UD_COMP
-		FROM
-		(
-			SELECT ClientID
-			FROM dbo.ClientView WITH(NOEXPAND)
-			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND (ServiceStatusID = 2)
-				AND EXISTS
-					(
-						SELECT *
-						FROM dbo.ClientDistrView WITH(NOEXPAND)
-						WHERE ID_CLIENT = ClientID 
-							AND DS_REG = 0
-							AND DistrTypeBaseCheck = 1
-							AND SystemBaseCheck = 1
-					)
-		) C
-		INNER JOIN USR.USRData D ON D.UD_ID_CLIENT = C.ClientID
-		INNER JOIN USR.USRComplectCurrentStatusView S WITH(NOEXPAND) ON D.UD_ID = S.UD_ID
-		WHERE UD_ACTIVE = 1 AND S.UD_SERVICE = 0;
+	SELECT D.UD_ID, ClientID, D.UD_DISTR, D.UD_COMP
+	FROM
+	(
+		SELECT ClientID
+		FROM dbo.ClientView WITH(NOEXPAND)
+		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
+			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+			AND (ServiceStatusID = 2)
+			AND EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientDistrView WITH(NOEXPAND)
+					WHERE ID_CLIENT = ClientID 
+						AND DS_REG = 0
+						AND DistrTypeBaseCheck = 1
+						AND SystemBaseCheck = 1
+				)
+	) C
+	INNER JOIN USR.USRData D ON D.UD_ID_CLIENT = C.ClientID
+	INNER JOIN USR.USRComplectCurrentStatusView S WITH(NOEXPAND) ON D.UD_ID = S.UD_ID
+	WHERE UD_ACTIVE = 1 AND S.UD_SERVICE = 0;
 
 	DELETE C
 	FROM @Complect C
@@ -58,8 +58,10 @@ BEGIN
 		(
 			SELECT *
 			FROM USR.USRIBDateView U WITH(NOEXPAND)
-			WHERE C.UD_ID = U.UD_ID AND C.CL_ID = U.UD_ID_CLIENT AND UIU_DATE_S BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
-		) 
+			WHERE C.UD_ID = U.UD_ID
+				AND C.CL_ID = U.UD_ID_CLIENT
+				AND UIU_DATE_S BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
+		);
 		
 	IF @DATE IS NOT NULL
 		DELETE C
@@ -68,8 +70,10 @@ BEGIN
 			(
 				SELECT *
 				FROM USR.USRIBDateView U WITH(NOEXPAND)
-				WHERE C.UD_ID = U.UD_ID AND C.CL_ID = U.UD_ID_CLIENT AND UIU_DATE_S >= @DATE
-			)
+				WHERE C.UD_ID = U.UD_ID
+					AND C.CL_ID = U.UD_ID_CLIENT
+					AND UIU_DATE_S >= @DATE
+			);
 
 	UPDATE C
 	SET UD_NAME = dbo.DistrString(f.SystemShortName, c.UD_DISTR, c.UD_COMP)
@@ -86,9 +90,12 @@ BEGIN
 	SELECT 
 		ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, ServiceName, ManagerName, 
 		(
-			SELECT MAX(UIU_DATE_S) 
+			SELECT TOP 1 UIU_DATE_S
 			FROM USR.USRIBDateView U WITH(NOEXPAND)
-			WHERE A.UD_ID = U.UD_ID AND A.CL_ID = U.UD_ID_CLIENT  AND UIU_DATE_S < @LAST_DATE
+			WHERE A.UD_ID = U.UD_ID
+				AND A.CL_ID = U.UD_ID_CLIENT
+				AND UIU_DATE_S < @LAST_DATE
+			ORDER BY UIU_DATE_S DESC
 		) AS LAST_UPDATE,
 		(
 			SELECT CONVERT(VARCHAR(20), EventDate, 104) + ' ' + EventComment + CHAR(10)

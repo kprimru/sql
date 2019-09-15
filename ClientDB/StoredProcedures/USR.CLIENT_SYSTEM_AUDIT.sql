@@ -28,19 +28,19 @@ BEGIN
 
 	CREATE TABLE #info_bank
 		(
-			CLientID	INT,
-			ManagerName	VARCHAR(100),
-			ServiceName	VARCHAR(100),
-			ClientFullName	VARCHAR(250),
-			DisStr		VARCHAR(50),
+			CLientID			INT,
+			ManagerName			VARCHAR(100),
+			ServiceName			VARCHAR(100),
+			ClientFullName		VARCHAR(250),
+			DisStr				VARCHAR(50),
 			InfoBankShortName	VARCHAR(50),
 			SystemDistrNumber	INT,
-			CompNumber		TINYINT,
-			InfoBankName	VARCHAR(50),
-			InfoBankOrder	INT,
-			SystemOrder		INT,
-			InfoBankID		INT,
-			InfoBankStart	SMALLDATETIME
+			CompNumber			TINYINT,
+			InfoBankName		VARCHAR(50),
+			InfoBankOrder		INT,
+			SystemOrder			INT,
+			InfoBankID			INT,
+			InfoBankStart		SMALLDATETIME
 		)
 
 	INSERT INTO #info_bank(CLientID, ManagerName, ServiceName, ClientFullName,
@@ -202,8 +202,9 @@ BEGIN
 	
 	CREATE TABLE #usr
 		(
-			UF_ID	UNIQUEIDENTIFIER,
-			UF_DATE	DATETIME
+			UF_ID	INT,
+			UF_DATE	DATETIME,
+			PRIMARY KEY CLUSTERED (UF_ID)
 		)
 
 	INSERT INTO #usr(UF_ID, UF_DATE)
@@ -241,18 +242,19 @@ BEGIN
 					ORDER BY UF_DATE DESC
 				) AS LAST_DATE,
 				(
-					SELECT MAX(UF_DATE)
+					SELECT TOP 1 UF_DATE
 					FROM USR.USRActiveView
 					WHERE UD_ID_CLIENT = ClientID
+					ORDER BY UF_DATE DESC
 				) AS UF_DATE
 			FROM #info_bank a
 			WHERE NOT EXISTS
 					(
 						SELECT *
 						FROM 
-							#usr z INNER JOIN
-							USR.USRIB ON UI_ID_USR = UF_ID INNER JOIN
-							dbo.InfoBankTable y ON InfoBankID = UI_ID_BASE
+							#usr z
+							INNER JOIN USR.USRIB ON UI_ID_USR = UF_ID
+							INNER JOIN dbo.InfoBankTable y ON InfoBankID = UI_ID_BASE
 						WHERE y.InfoBankName = a.InfoBankName
 							AND UI_DISTR = SystemDistrNumber
 							AND UI_COMP = CompNumber

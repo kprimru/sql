@@ -15,13 +15,14 @@ BEGIN
 	IF @SERVICE IS NOT NULL
 		SET @MANAGER = NULL
 	
-	SELECT 
+	SELECT
 		ClientID, ManagerName, ServiceName, ClientFullName, c.NAME, c.START, c.FINISH,
-		dbo.DateOf((
-			SELECT MAX(UIU_DATE) 
+		(
+			SELECT TOP 1 UIU_DATE_S
 			FROM USR.USRIBDateView WITH(NOEXPAND)
 			WHERE UD_ID_CLIENT = ClientID
-		)) AS LAST_UPDATE
+			ORDER BY UIU_DATE_S DESC
+		) AS LAST_UPDATE
 	FROM 
 		dbo.ClientInnovation a
 		INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID

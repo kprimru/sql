@@ -12,14 +12,7 @@ BEGIN
 
 	SELECT 
 		ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
-		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]/*,
-		(
-			SELECT MAX(UIU_DATE_S)
-			FROM 
-				dbo.SystemBanksView z WITH(NOEXPAND)
-				INNER JOIN USR.USRIBDateView y WITH(NOEXPAND) ON y.UI_ID_BASE = z.InfoBankID
-			WHERE z.SystemID = a.SystemID AND y.UI_DISTR = a.DistrNumber AND y.UI_COMP = a.CompNumber
-		) AS [Последнее обновление]*/
+		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
 	FROM 
 		Reg.RegNodeSearchView a WITH(NOEXPAND)
 		LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
@@ -81,14 +74,7 @@ BEGIN
 	
 	SELECT 
 		ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
-		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]/*,
-		(
-			SELECT MAX(UIU_DATE_S)
-			FROM 
-				dbo.SystemBanksView z WITH(NOEXPAND)
-				INNER JOIN USR.USRIBDateView y WITH(NOEXPAND) ON y.UI_ID_BASE = z.InfoBankID
-			WHERE z.SystemID = a.SystemID AND y.UI_DISTR = a.DistrNumber AND y.UI_COMP = a.CompNumber
-		) AS [Последнее обновление]*/
+		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
 	FROM 
 		Reg.RegNodeSearchView a WITH(NOEXPAND)
 		LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
@@ -110,14 +96,7 @@ BEGIN
 	
 	SELECT 
 		ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
-		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]/*,
-		(
-			SELECT MAX(UIU_DATE_S)
-			FROM 
-				dbo.SystemBanksView z WITH(NOEXPAND)
-				INNER JOIN USR.USRIBDateView y WITH(NOEXPAND) ON y.UI_ID_BASE = z.InfoBankID
-			WHERE z.SystemID = a.SystemID AND y.UI_DISTR = a.DistrNumber AND y.UI_COMP = a.CompNumber
-		) AS [Последнее обновление]*/
+		ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
 	FROM 
 		Reg.RegNodeSearchView a WITH(NOEXPAND)
 		LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber

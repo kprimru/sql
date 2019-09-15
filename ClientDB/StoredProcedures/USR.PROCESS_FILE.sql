@@ -21,10 +21,10 @@ BEGIN
 
 	DECLARE
 		@Xml				Xml,
-		@Complect_Id		UniqueIdentifier,
+		@Complect_Id		Int,
 		@Complect_Active	Bit,
 		@Complect_Client	Int,
-		@Usr_Id				UniqueIdentifier,
+		@Usr_Id				Int,
 		@SystemName			VarChar(20),
 		@SystemNumber		VarChar(10),
 		@DistrNumber		VarChar(10),
@@ -41,7 +41,8 @@ BEGIN
 
 	DECLARE @IDs TABLE
 	(
-		ID	UniqueIdentifier Primary Key Clustered
+		ID	Int,
+		Primary Key Clustered (ID)
 	);
 	
 	
@@ -241,9 +242,9 @@ BEGIN
 											AND c.CompNumber = a.COMP
 		ORDER BY SystemNumber;
 
-	SELECT @Usr_Id = F.UF_ID
-	FROM 
-	USR.USRFile					F
+	SELECT
+		@Usr_Id		= F.UF_ID
+	FROM USR.USRFile			F
 	INNER JOIN USR.USRFileData	D ON F.UF_ID = D.UF_ID
 	WHERE	UF_MD5 = @md5 
 		AND UF_ID_COMPLECT = @Complect_Id
@@ -842,7 +843,7 @@ BEGIN
 			UF_COMPLIANCE, UF_ID_CLIENT, UF_ID_MANAGER, UF_ID_SERVICE, UF_SESSION,
 			UF_ID_SYSTEM, UF_DISTR, UF_COMP
 		)
-	OUTPUT INSERTED.UF_ID INTO @IDs(ID)	
+	OUTPUT INSERTED.UF_ID INTO @IDs(ID)
 	SELECT 
 		@Complect_Id, @robot, @md5, @hash, @filename,
 		CONVERT(DATETIME, 
@@ -1006,7 +1007,7 @@ BEGIN
 			UIU_ID_IB, UIU_DATE, UIU_SYS, UIU_DOCS, UIU_ID_KIND, UIU_INDX
 		)
 	SELECT 
-		UI_ID,
+		UI_ID, 
 		CONVERT(DATETIME, 
 				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, UpdateDate, 104), 121), 10) + ' ' + 
 				SUBSTRING(UpdateTime, 1, 2) + ':' + SUBSTRING(UpdateTime, 4, 2) + ':00.000',

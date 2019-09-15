@@ -107,14 +107,16 @@ BEGIN
 		SELECT 
 			WEEK_ID, CalendarDate, 
 			(
-				SELECT MIN(UIU_MIN_DATE)
+				SELECT TOP 1 UIU_MIN_DATE
 				FROM #update
 				WHERE CalendarDate = UIU_DATE_S
+				ORDER BY UIU_MIN_DATE
 			), 
 			(
-				SELECT MAX(UIU_MAX_DATE)
+				SELECT TOP 1 UIU_MAX_DATE
 				FROM #update
 				WHERE CalendarDate = UIU_DATE_S
+				ORDER BY UIU_MIN_DATE DESC
 			), 
 			(
 				SELECT SUM(REST)

@@ -89,4 +89,3 @@ BEGIN
 	IF OBJECT_ID('tempdb..#utotal') IS NOT NULL
 		DROP TABLE #utotal
 END
-GRANT EXECUTE ON [USR].[SERVICE_COMMON_GRAPH_PRINT] TO rl_report_graf_common

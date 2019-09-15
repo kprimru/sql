@@ -40,8 +40,8 @@ BEGIN
 		
 	CREATE TABLE #complect
 		(
-			UD_ID		UNIQUEIDENTIFIER PRIMARY KEY,
-			UF_ID		UNIQUEIDENTIFIER,
+			UD_ID		INT PRIMARY KEY,
+			UF_ID		INT,
 			UD_NAME		VARCHAR(50),
 			UF_DATE		DATETIME,
 			UF_RES		INT,
@@ -53,7 +53,7 @@ BEGIN
 		
 	INSERT INTO #complect(UD_ID, UF_ID, UD_NAME, UF_DATE, UF_RES, UF_CONS, UD_DISTR, UD_COMP, UD_HOST)
 		SELECT
-			a.UD_ID, a.UF_ID, 
+			a.UD_ID, a.UF_ID,
 			dbo.DistrString(c.SystemShortName, UD_DISTR, UD_COMP),
 			UF_DATE, T.UF_ID_RES, T.UF_ID_CONS, UD_DISTR, UD_COMP, HostID
 		FROM 
@@ -66,12 +66,18 @@ BEGIN
 		SELECT UD_NAME, PARAM_NAME, CONVERT(VARCHAR(20), DATE_S, 104), CASE WHEN DATEDIFF(DAY, DATE_S, @NOW) > 14 THEN 1 ELSE 0 END
 		FROM
 			(
-				SELECT UD_NAME, 'Последнее пополнение' AS PARAM_NAME, MAX(UIU_DATE_S) AS DATE_S
+				SELECT UD_NAME, 'Последнее пополнение' AS PARAM_NAME, UIU_DATE_S AS DATE_S
 				FROM 
 					#complect a
-					INNER JOIN USR.USRIBDateView b WITH(NOEXPAND) ON a.UD_ID = b.UD_ID AND b.UD_ID_CLIENT = @ID
-				WHERE UIU_DATE_S <= @NOW
-				GROUP BY UD_NAME
+					CROSS APPLY
+					(
+						SELECT TOP 1 UIU_DATE_S
+						FROM USR.USRIBDateView b WITH(NOEXPAND)
+						WHERE a.UD_ID = b.UD_ID
+							AND b.UD_ID_CLIENT = @ID
+							AND UIU_DATE_S <= @NOW
+						ORDER BY UIU_DATE_S DESC
+					) AS D
 			) AS o_O
 		ORDER BY UD_NAME
 
@@ -143,29 +149,7 @@ BEGIN
 							)
 					ORDER BY SystemOrder, DISTR, COMP FOR XML PATH('')
 				)
-			), 1, 2, '')), 500), 1
-		/*FROM #complect a*/
-		/*
-		WHERE EXISTS
-			(
-				SELECT *
-				FROM 
-					dbo.ClientDistrView b WITH(NOEXPAND)
-				WHERE ID_CLIENT = @ID
-					AND DS_REG = 0
-					AND SystemBaseCheck = 1
-					AND DistrTypeBaseCheck = 1
-					AND NOT EXISTS
-						(
-							SELECT *
-							FROM 
-								USR.USRPackage z
-								INNER JOIN #complect y ON z.UP_ID_USR = y.UF_ID
-							WHERE z.UP_ID_SYSTEM = b.SystemID
-								AND z.UP_DISTR = b.DISTR
-								AND z.UP_COMP = b.COMP
-						)
-			)*/
+			), 1, 2, '')), 500), 1;
 			
 	DECLARE @IB TABLE
 	(		
