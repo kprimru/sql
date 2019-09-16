@@ -210,7 +210,6 @@ BEGIN
 			@USRPackage a
 			INNER JOIN Din.NetType n ON a.UP_TECH = n.NT_TECH_USR AND a.UP_NET = n.NT_NET AND UP_TECH = NT_TECH_USR
 			INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeID = n.NT_ID_MASTER
-			--INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.UP_ID_SYSTEM = b.SystemID
 			CROSS APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
 			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = b.InfoBankID
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
@@ -223,7 +222,6 @@ BEGIN
 					FROM 
 						@USRPackage p
 						INNER JOIN Din.NetType t ON p.UP_TECH = t.NT_TECH_USR AND p.UP_NET = t.NT_NET
-						--INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON q.SystemID = p.UP_ID_SYSTEM						
 						CROSS APPLY dbo.SystemBankGet(p.UP_ID_SYSTEM, t.NT_ID_MASTER) q
 					WHERE p.UP_ID_USR = a.UP_ID_USR
 						AND 

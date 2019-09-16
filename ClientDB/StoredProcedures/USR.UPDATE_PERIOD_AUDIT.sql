@@ -78,7 +78,6 @@ BEGIN
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT			
-			--INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON c.SystemID = b.SystemID
 			CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DistrTypeId) c
 			CROSS JOIN @WEEK
 		WHERE InfoBankActive = 1 AND DS_REG = 0 AND Required = 1 AND c.SystemBaseName NOT IN ('RGN', 'RGU')
@@ -106,8 +105,7 @@ BEGIN
 			WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
 		FROM 
 			#client a
-			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT			
-			--INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON c.SystemID = b.SystemID
+			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 			CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DIstrTypeID) c
 			CROSS JOIN @WEEK
 		WHERE InfoBankActive = 1 AND DS_REG = 0 AND Required = 0 AND b.SystemBaseName NOT IN ('RGN', 'RGU')

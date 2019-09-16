@@ -61,8 +61,7 @@ BEGIN
 					c.InfoBankID, InfoBankStart, b.SystemBaseName
 				FROM
 					dbo.ClientView a WITH(NOEXPAND)
-					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT 
-					--INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON c.SystemID = b.SystemID			
+					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 					CROSS APPLY dbo.SystemBankGet(b.SystemId, b.DistrTypeId) c
 				WHERE ServiceStatusID = 2 
 					AND SystemBaseCheck = 1
@@ -111,7 +110,6 @@ BEGIN
 					SELECT *
 					FROM
 						dbo.ClientDistrView p WITH(NOEXPAND)
-						--INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON q.SystemID = p.SystemID						
 						CROSS APPLY dbo.SystemBankGet(p.SystemId, p.DistrTypeId) q --WITH(NOEXPAND) ON q.SystemID = p.SystemID						
 					WHERE p.ID_CLIENT = a.ClientID 
 						/*

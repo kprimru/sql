@@ -479,7 +479,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID 
 										AND z.SystemBaseName NOT IN (/*'RGU', 'RGN', */'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
@@ -494,7 +493,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'CMT'
 										AND z.DS_REG = 0
@@ -509,7 +507,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'QSA'
 										AND z.DS_REG = 0
@@ -524,7 +521,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName IN ('ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
 										AND z.DS_REG = 0
@@ -539,7 +535,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'CMT'
 										AND z.DS_REG = 0
@@ -553,8 +548,9 @@ BEGIN
 												SELECT *
 												FROM 
 													dbo.ClientDistrView t WITH(NOEXPAND)
-													INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
+													CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
 												WHERE t.ID_CLIENT = z.ID_CLIENT 
+													AND t.SystemID = q.SystemID
 													AND t.DS_REG = 0 
 													AND InfoBankActive = 1 
 													AND Required = 1
@@ -566,7 +562,6 @@ BEGIN
 									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
 									FROM 
 										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
 										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'QSA'
 										AND z.DS_REG = 0
@@ -580,81 +575,14 @@ BEGIN
 												SELECT *
 												FROM 
 													dbo.ClientDistrView t WITH(NOEXPAND)
-													INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
-												WHERE t.ID_CLIENT = z.ID_CLIENT 
-													AND t.DS_REG = 0 
-													AND InfoBankActive = 1 
+													CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
+												WHERE t.ID_CLIENT = z.ID_CLIENT
+													AND t.SystemID = q.SystemID
+													AND t.DS_REG = 0
+													AND InfoBankActive = 1
 													AND Required = 1
 													AND q.SystemBaseName = 'BUD'
 											)
-									/*
-									UNION
-									
-									SELECT DISTINCT ID_CLIENT, NULL, DISTR, COMP, 'бтаху', 1000 AS InfoBankOrder, z.SystemOrder
-									FROM 
-										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
-										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
-									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'RGN'
-										AND z.DS_REG = 0
-										AND InfoBankActive = 1
-										AND Required = 1
-										--AND InfoBankName IN ('PKV')
-										AND	InfoBankStart <= WBEGIN
-										/*AND NOT EXISTS
-											(
-												SELECT *
-												FROM 
-													dbo.ClientDistrView t WITH(NOEXPAND)
-													INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
-												WHERE t.ID_CLIENT = z.ID_CLIENT 
-													AND t.DS_REG = 0 
-													AND InfoBankActive = 1 
-													AND Required = 1
-													AND q.SystemBaseName = 'RGN'
-											)*/
-											
-											
-									UNION
-									
-									SELECT DISTINCT ID_CLIENT, NULL, DISTR, COMP, 'аху', 1000 AS InfoBankOrder, z.SystemOrder
-									FROM 
-										dbo.ClientDistrView z WITH(NOEXPAND)
-										--INNER JOIN dbo.SystemBanksView x WITH(NOEXPAND) ON z.SystemID = x.SystemID
-										CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
-									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'RGU'
-										AND z.DS_REG = 0
-										AND InfoBankActive = 1
-										AND Required = 1
-										--AND InfoBankName IN ('PKV')
-										AND	InfoBankStart <= WBEGIN
-										/*AND NOT EXISTS
-											(
-												SELECT *
-												FROM 
-													dbo.ClientDistrView t WITH(NOEXPAND)
-													INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
-												WHERE t.ID_CLIENT = z.ID_CLIENT 
-													AND t.DS_REG = 0 
-													AND InfoBankActive = 1 
-													AND Required = 1
-													AND q.SystemBaseName = 'RGN'
-											)*/
-									*/
-											
-									/*
-									UNION
-									
-									SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, x.SystemOrder
-									FROM 
-										dbo.ClientDistrView z WITH(NOEXPAND)
-										INNER JOIN dbo.DistrConditionView x ON z.SystemID = x.SystemID 
-																			AND DISTR = DistrNumber 
-																			AND COMP = CompNumber
-									
-									WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName NOT IN ('RGU', 'RGN')
-										AND z.DS_REG = 0
-									*/
 								) AS z
 							WHERE NOT EXISTS
 									(

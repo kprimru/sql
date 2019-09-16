@@ -501,8 +501,9 @@ BEGIN
 										(
 											SELECT *
 											FROM @ClientDIstr t
-											INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
+											CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
 											WHERE t.ClientId = z.ClientId
+												AND t.SystemID = q.SystemID
 												AND t.Complect = z.Complect
 												AND InfoBankActive = 1 
 												AND Required = 1
@@ -526,8 +527,9 @@ BEGIN
 										(
 											SELECT *
 											FROM @ClientDIstr t
-											INNER JOIN dbo.SystemBanksView q WITH(NOEXPAND) ON t.SystemID = q.SystemID
+											CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
 											WHERE t.ClientId = z.ClientId
+												AND t.SystemID = q.SystemID
 												AND t.Complect = z.Complect
 												AND InfoBankActive = 1 
 												AND Required = 1

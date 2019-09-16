@@ -49,7 +49,6 @@ BEGIN
 		FROM 
 			#client a 
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON b.ID_CLIENT = a.CL_ID
-			--INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON b.SystemID = c.SystemID
 			CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DistrTypeID) c
 		WHERE b.DS_REG = 0 AND InfoBankActive = 1
 		

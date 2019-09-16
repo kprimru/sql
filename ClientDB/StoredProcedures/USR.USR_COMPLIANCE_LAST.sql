@@ -52,6 +52,7 @@ BEGIN
 			INNER JOIN USR.USRIB c ON UF_ID = UI_ID_USR
 			INNER JOIN dbo.ClientTable d ON UD_ID_CLIENT = ClientID 
 			INNER JOIN dbo.ServiceTable e ON ServiceID = ClientServiceID
+			--ToDo избавиться от dbo.SystemBanksView
 			INNER JOIN dbo.SystemBanksView f WITH(NOEXPAND) ON f.InfoBankID = c.UI_ID_BASE
 			INNER JOIN dbo.ClientDistrView g WITH(NOEXPAND) ON f.SystemID = g.SystemID 
 															AND c.UI_DISTR = g.DISTR

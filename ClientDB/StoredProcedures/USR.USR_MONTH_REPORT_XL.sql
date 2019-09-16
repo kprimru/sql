@@ -138,6 +138,7 @@ BEGIN
 		FROM
 			#client a
 			INNER JOIN USR.USRIBDateView b WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
+			--ToDO избавиться от dbo.SystemBanksView
 			INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON c.InfoBankID = b.UI_ID_BASE
 			INNER JOIN dbo.SystemTable d ON d.SystemID = c.SystemID
 			INNER JOIN dbo.DistrExchange e ON e.OLD_HOST = d.HostID

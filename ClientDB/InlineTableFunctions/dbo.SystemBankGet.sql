@@ -15,7 +15,14 @@ RETURNS TABLE
 AS
 RETURN 
 (
+	SELECT 
+		InfoBankID = InfoBank_Id, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
+		SystemID = System_Id, SystemFullName, SystemActive, SystemOrder, SystemShortName, SystemBaseName, Required, HostID, InfoBankStart
+	FROM dbo.SystemInfoBanksView WITH(NOEXPAND)
+	WHERE System_Id = @System
+		AND DistrType_Id = @DistrType
 	--ToDo сделать чтобы те типы, которых не бывает - не получали списо ИБ
+	/*
 	SELECT
 		InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
 		SystemID, SystemFullName, SystemActive, SystemOrder, SystemShortName, SystemBaseName, Required, HostID, InfoBankStart
@@ -538,4 +545,5 @@ RETURN
 	WHERE S.SystemID = @System 
 		AND S.SystemBaseName = 'SBOEM' AND @DistrType IN (SELECT NT_ID_MASTER FROM Din.NetType WHERE NT_TECH = 1 OR NT_TECH = 0 AND NT_NET = 0)
 		AND SB.InfoBankName IN ('RZB', 'QSOV', 'QSBO', 'PBUN', 'PKBO', 'RLBR020', 'PBI', 'QUEST', 'BRB', 'BVV', 'BVS', 'BDV', 'BZS', 'BMS', 'BPV', 'BSZ', 'BSK', 'BUR', 'BCN')
+	*/
 )
