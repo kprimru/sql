@@ -13,6 +13,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	SET @NAME = Replace(Replace(@Name, Char(10), ''), Char(13), '');
+
 	IF @ID IS NULL
 	BEGIN
 		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
