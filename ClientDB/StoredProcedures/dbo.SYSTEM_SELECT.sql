@@ -5,13 +5,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SYSTEM_SELECT]
-	@FILTER	VARCHAR(100) = NULL
+	@FILTER			VARCHAR(100) = NULL,
+	@SYSTEM_ACTIVE	BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	SELECT 
-		SystemID, SystemShortName, SystemBaseName, SystemNumber, HostShort, a.HostID,
+		a.SystemID, SystemShortName, a.SystemBaseName, SystemNumber, HostShort, a.HostID,
 		dbo.FileByteSizeToStr(
 			(
 				SELECT SUM(IBS_SIZE)
@@ -26,15 +27,19 @@ BEGIN
 							WHERE t.IBF_ID_IB = y.IBF_ID_IB							
 						)
 			)
-		) AS IBS_SIZE
+		) AS IBS_SIZE,
+		sdv.Docs
 	FROM 
 		dbo.SystemTable a
 		LEFT OUTER JOIN dbo.Hosts b ON a.HostID = b.HostID
-	WHERE @FILTER IS NULL
+		LEFT OUTER JOIN dbo.SystemDocsView sdv ON a.SystemID = sdv.SystemID
+	WHERE (@FILTER IS NULL
 		OR SystemShortName LIKE @FILTER
 		OR SystemName LIKE @FILTER
 		OR SystemFullName LIKE @FILTER
-		OR SystemBaseName LIKE @FILTER
-		OR CONVERT(VARCHAR(20), SystemNumber) LIKE @FILTER
+		OR a.SystemBaseName LIKE @FILTER
+		OR CONVERT(VARCHAR(20), SystemNumber) LIKE @FILTER) AND
+		(@SYSTEM_ACTIVE IS NULL
+		OR SystemActive = @SYSTEM_ACTIVE)
 	ORDER BY SystemOrder
 END
