@@ -67,21 +67,6 @@ BEGIN
 			IBS_SIZE	BIGINT
 		)
 
-	/*
-	INSERT INTO #size (IBS_DATE, IBS_SIZE)
-		SELECT IBS_DATE, SUM(IBS_SIZE)
-		FROM 
-			(
-				SELECT DISTINCT InfoBankID
-				FROM
-					#system
-					INNER JOIN dbo.SystemBankTable ON SYS_ID = SystemID
-			) AS t
-			INNER JOIN dbo.InfoBankSizeView WITH(NOEXPAND) ON InfoBankID = IBF_ID_IB
-		WHERE IBS_DATE BETWEEN @BEGIN_DATE AND @END_DATE
-		GROUP BY IBS_DATE
-		ORDER BY IBS_DATE
-	*/
 	INSERT INTO #size (IBS_DATE, IBS_SIZE)
 		SELECT IBS_DATE, SUM(IBS_SIZE)
 		FROM
@@ -99,8 +84,9 @@ BEGIN
 							(
 								SELECT DISTINCT InfoBankID
 								FROM
-									dbo.SystemBankTable  
-									INNER JOIN #system ON SYS_ID = SystemID
+									#system
+									--ToDo убрать злостный хардкод
+									CROSS APPLY dbo.SystemBankGet(SYS_ID, 2)
 							) AS b
 					) AS t
 					CROSS APPLY

@@ -23,7 +23,7 @@ BEGIN
 	SELECT @IB_COUNT = COUNT(*)
 	FROM 
 		dbo.ClientDistrView a WITH(NOEXPAND) 
-		INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.SystemID = b.SystemID
+		CROSS APPLY dbo.SystemBankGet(a.SystemID, a.DistrTypeID) b
 		INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
 	WHERE a.DS_REG = 0 AND c.ServiceStatusID = 2
 		AND b.SystemActive = 1 AND b.InfoBankActive = 1 AND b.Required = 1

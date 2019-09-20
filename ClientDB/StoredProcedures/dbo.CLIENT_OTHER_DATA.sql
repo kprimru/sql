@@ -159,7 +159,7 @@ BEGIN
 		ServiceName			VARCHAR(100),
 		ClientFullName		VARCHAR(512), 
 		DisStr				VARCHAR(100),
-		InfoBankShortName	VARCHAR(50), 
+		InfoBankShortName	VARCHAR(MAX), 
 		LAST_DATE			DATETIME,
 		UF_DATE				DATETIME
 	)

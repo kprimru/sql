@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[SystemBanksView]
-WITH SCHEMABINDING
+WITH SCHEMABINDING 
 AS
 	SELECT 		
 		c.InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, 

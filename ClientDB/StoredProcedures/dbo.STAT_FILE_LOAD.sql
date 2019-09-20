@@ -20,16 +20,16 @@ BEGIN
 			(
 				SELECT DATEADD(DAY, 1, DT) AS DT, InfoBankID, DOC
 				FROM
-					(
-						SELECT 
-							CONVERT(SMALLDATETIME, c.value('(@date)', 'VARCHAR(20)'), 104) AS DT,
-							c.value('(@ib)', 'VARCHAR(50)') AS IB,					
-							c.value('(@docs)', 'INT') AS DOC
-						FROM 
-							@xml.nodes('/root/item') AS a(c)
-					) AS a
-					INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.IB = b.InfoBankName					
-				WHERE b.SystemBaseName IN ('RGN', 'MOS')
+				(
+					SELECT 
+						CONVERT(SMALLDATETIME, c.value('(@date)', 'VARCHAR(20)'), 104) AS DT,
+						c.value('(@ib)', 'VARCHAR(50)') AS IB,					
+						c.value('(@docs)', 'INT') AS DOC
+					FROM 
+						@xml.nodes('/root/item') AS a(c)
+				) AS a
+				INNER JOIN dbo.InfoBankTable ON InfoBankName = IB
+				WHERE (IB LIKE 'RLAW%' OR IB IN ('SPB')) AND IB != 'RLAW020'
 			) AS a
 		WHERE NOT EXISTS
 		(

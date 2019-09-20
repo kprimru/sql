@@ -113,8 +113,7 @@ BEGIN
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON CL_ID = ID_CLIENT
-			INNER JOIN dbo.SystemBankTable c ON c.SystemID = b.SystemID
-			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = c.InfoBankID
+			CROSS APPLY dbo.SystemBankGet(c.SystemID, c.DistrTypeID) c
 		WHERE DS_REG = 0 AND InfoBankActive = 1		
 
 	DECLARE @SQL NVARCHAR(MAX)
@@ -130,20 +129,6 @@ BEGIN
 		FROM
 			#client a 
 			INNER JOIN USR.USRIBDateView b WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
-		WHERE UIU_DATE_S >= @MINDATE AND UIU_DATE_S <= @MAXDATE
-
-		UNION 
-
-		SELECT DISTINCT UD_ID_CLIENT, UD_ID, InfoBankID, NEW_NUM, NEW_COMP, UIU_DATE_S
-		FROM
-			#client a
-			INNER JOIN USR.USRIBDateView b WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
-			--ToDO избавиться от dbo.SystemBanksView
-			INNER JOIN dbo.SystemBanksView c WITH(NOEXPAND) ON c.InfoBankID = b.UI_ID_BASE
-			INNER JOIN dbo.SystemTable d ON d.SystemID = c.SystemID
-			INNER JOIN dbo.DistrExchange e ON e.OLD_HOST = d.HostID
-										AND e.OLD_NUM = UI_DISTR
-										AND e.OLD_COMP = UI_COMP
 		WHERE UIU_DATE_S >= @MINDATE AND UIU_DATE_S <= @MAXDATE
 
 	SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #month (UD_ID_CLIENT, UI_ID_BASE) INCLUDE(UIU_DATE_S, UI_DISTR, UI_COMP)'

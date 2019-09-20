@@ -126,12 +126,15 @@ BEGIN
 							INNER JOIN dbo.SystemTable c ON b.SystemID = c.SystemID
 							INNER JOIN dbo.ControlDocument d ON d.SYS_NUM = c.SystemNumber AND d.DISTR = b.DISTR AND d.COMP = b.COMP
 							CROSS APPLY
-								(
-									SELECT TOP 1 SystemID, SystemShortName, SystemOrder
-									FROM dbo.SystemBanksView z WITH(NOEXPAND)
-									WHERE z.InfoBankName = d.IB AND z.SystemBaseName NOT IN ('BVP', 'JURP', 'BUDP', 'JUR', 'MBP')
-									ORDER BY SystemOrder 
-								) t
+							(
+								SELECT TOP 1 q.SystemID, q.SystemShortName, q.SystemOrder
+								FROM dbo.SystemTable q
+								--ToDo убрать злостный хардкод
+								CROSS APPLY dbo.SystemBankGet(q.SystemID, 2) z
+								WHERE z.InfoBankName = d.IB
+									AND z.SystemBaseName NOT IN ('BVP', 'JURP', 'BUDP', 'JUR', 'MBP')
+								ORDER BY q.SystemOrder
+							) t
 						WHERE (DATE >= @BEGIN OR @BEGIN IS NULL)
 							AND (DATE < @END OR @END IS NULL)
 						GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName, 

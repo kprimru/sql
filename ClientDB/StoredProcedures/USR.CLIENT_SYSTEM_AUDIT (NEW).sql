@@ -207,10 +207,31 @@ BEGIN
 		SELECT DISTINCT ClientID 
 		FROM @info_bank 
 	) AS o_O ON ClientID = UD_ID_CLIENT
-			
+	
+
+	DECLARE @ib_out Table
+	(
+		ID					INT IDENTITY(1,1),
+		ClientID			INT, 
+		ManagerName			NVARCHAR(450), 
+		ServiceName			NVARCHAR(450), 
+		ClientFullName		NVARCHAR(450), 
+		ComplectStr			NVARCHAR(450),
+		DisStr				NVARCHAR(450),
+		InfoBankName		NVARCHAR(200),
+		InfoBankShortName	NVARCHAR(200),
+		LAST_DATE			DATETIME,
+		UF_DATE				DATETIME
+		Primary Key Clustered(ID)
+	);
+
+
+	INSERT INTO @ib_out(ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, InfoBankName, InfoBankShortName, LAST_DATE, UF_DATE)
 	SELECT 
-		c.ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr,
-		DisStr = DistrStr, InfoBankShortName, 
+		c.ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
+		DisStr = DistrStr,
+		InfoBankName, 
+		InfoBankShortName, 
 		LAST_DATE, UF_DATE
 	FROM
 	(
@@ -261,4 +282,32 @@ BEGIN
 	WHERE @DATE IS NULL OR UF_DATE > @DATE
 	ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, InfoBankOrder
 	OPTION (RECOMPILE);
+
+
+
+	SELECT
+		ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
+		DisStr,
+		REVERSE(STUFF(REVERSE((
+			SELECT 
+				InfoBankShortName + ', '
+			FROM 
+				@ib_out b
+			WHERE 
+				a.ComplectStr = b.ComplectStr
+			FOR XML PATH('')
+		)), 1, 2, '')) AS InfoBankShortName,
+		/*REVERSE(STUFF(REVERSE((
+			SELECT 
+				InfoBankName + ', '
+			FROM 
+				@ib_out b
+			WHERE 
+				a.ComplectStr = b.ComplectStr
+			FOR XML PATH('')
+		)), 1, 2, '')) AS InfoBankName,  */
+		LAST_DATE, UF_DATE
+	FROM @ib_out a
+	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, LAST_DATE, UF_DATE
+
 END

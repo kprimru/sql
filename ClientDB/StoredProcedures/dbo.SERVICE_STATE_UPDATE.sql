@@ -146,7 +146,7 @@ BEGIN
 			ClientFullname	VARCHAR(500),
 			Complect		VarChar(100),
 			DisStr			VARCHAR(100),
-			InfoBankShortName	VARCHAR(50),
+			InfoBankShortName	VARCHAR(MAX),
 			LAST_DATE	DATETIME,
 			UF_DATE		DATETIME
 		)

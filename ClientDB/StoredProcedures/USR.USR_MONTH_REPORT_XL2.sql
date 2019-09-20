@@ -122,8 +122,7 @@ BEGIN
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON CL_ID = ID_CLIENT
-			INNER JOIN dbo.SystemBankTable c ON c.SystemID = b.SystemID
-			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = c.InfoBankID
+			CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DistrTypeID) c
 		WHERE DS_REG = 0 AND InfoBankActive = 1		
 
 	DECLARE @SQL NVARCHAR(MAX)

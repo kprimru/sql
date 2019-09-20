@@ -90,20 +90,19 @@ BEGIN
 		ClientFullName, CA_STR AS ClientAdress,
 		DistrStr AS DIS_STR,
 		IB_DATE, SUM(IB_DOCS) AS SYS_DOCS, MAX(IB_ETALON) AS ETALON,
-		e.SystemOrder
+		c.SystemOrder
 	FROM 
 		#client a
 		INNER JOIN dbo.ClientTable b ON b.ClientID = a.CL_ID
 		INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = b.ClientID
-		INNER JOIN dbo.SystemBankTable d ON d.SystemID = c.SystemID
-		INNER JOIN dbo.SystemTable e ON e.SystemID = c.SystemID
+		CROSS APPLY dbo.SystemBankGet(c.SystemID, c.DistrTypeId) d
 		INNER JOIN #usr ON UD_ID_CLIENT = CL_ID
 							AND InfoBankID = IB_ID
 							AND DISTR = IB_DISTR
 							AND COMP = IB_COMP
 		INNER JOIN dbo.ClientAddressView ON CA_ID_CLIENT = a.CL_ID
 	WHERE DS_REG = 0
-	GROUP BY CL_NUM, ClientFullName, CA_STR, SystemFullName, DistrStr, IB_DATE, e.SystemOrder
+	GROUP BY CL_NUM, ClientFullName, CA_STR, SystemFullName, DistrStr, IB_DATE, c.SystemOrder
 
 	UNION ALL
 
@@ -111,24 +110,21 @@ BEGIN
 		CL_NUM,
 		ClientFullName, CA_STR AS ClientAdress,
 		DistrStr AS DIS_STR,
-		NULL, NULL, NULL, e.SystemOrder
+		NULL, NULL, NULL, SystemOrder
 	FROM 
 		#client a
 		INNER JOIN dbo.ClientTable b ON b.ClientID = a.CL_ID
 		INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = b.ClientID
-		INNER JOIN dbo.SystemTable e ON e.SystemID = c.SystemID 
 		INNER JOIN dbo.ClientAddressView ON CA_ID_CLIENT = a.CL_ID
 	WHERE DS_REG = 0
 		AND NOT EXISTS
 		(
 			SELECT *
-			FROM
-				dbo.SystemBankTable d 
-				INNER JOIN #usr ON UD_ID_CLIENT = CL_ID
+			FROM dbo.SystemBankGet(c.SystemID, c.DistrTypeID) d 
+			INNER JOIN #usr ON UD_ID_CLIENT = CL_ID
 							AND InfoBankID = IB_ID
 							AND DISTR = IB_DISTR
 							AND COMP = IB_COMP
-			WHERE d.SystemID = c.SystemID
 		)		
 	ORDER BY ClientFullName, SystemOrder, IB_DATE
 
