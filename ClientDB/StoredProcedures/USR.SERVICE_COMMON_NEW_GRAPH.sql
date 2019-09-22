@@ -713,3 +713,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#total') IS NOT NULL
 		DROP TABLE #total
 END
+

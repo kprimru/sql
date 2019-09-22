@@ -649,3 +649,4 @@ BEGIN
 		V.value('@ODoff[1]',	'SmallInt')
 	FROM @Data.nodes('/DATA[1]/REG[1]/ITEM') N(V);
 END
+

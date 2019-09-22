@@ -311,3 +311,4 @@ BEGIN
 	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, LAST_DATE, UF_DATE
 
 END
+

@@ -24,3 +24,4 @@ BEGIN
 	GROUP BY SystemBaseName + ', ' + DistrTypeName, a.System_ID, a.DistrType_ID
 
 END
+

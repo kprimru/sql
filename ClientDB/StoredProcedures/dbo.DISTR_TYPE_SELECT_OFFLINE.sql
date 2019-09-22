@@ -18,3 +18,4 @@ BEGIN
 		AND (DistrTypeBaseCheck = 1)
 	ORDER BY DistrTypeOrder
 END
+

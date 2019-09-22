@@ -106,3 +106,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#usrdata') IS NOT NULL
 		DROP TABLE #usrdata
 END
+

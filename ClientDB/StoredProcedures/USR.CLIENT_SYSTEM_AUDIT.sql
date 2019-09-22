@@ -278,3 +278,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#info_bank') IS NOT NULL
 		DROP TABLE #info_bank
 END
+

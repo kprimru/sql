@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC275-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC275-SQL\GAMMA].[ClientNahDB]';
+SET @Dst = '[PC275-SQL\GAMMA].[ClientSlavDB]';
 
 DECLARE @SrcSchemas Table
 (
@@ -562,7 +562,7 @@ SELECT
                     END,
     [SQL]       =   CASE
 						--ToDo сделать чтобы созадвались заглушечные объекты, а потом ALTER
-                        WHEN D.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''' + S.[Type] + ''') IS NULL EXEC(''CREATE ' + T.[TypeFull] + ' [' + S.[Schema] + '].[' + S.[Name] + '] ' + CASE WHEN S.[Type] = 'TR' THEN ' ON [].[]' ELSE '' END + 'AS SELECT 1'')'
+                        WHEN D.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''' + S.[Type] + ''') IS NULL EXEC(''CREATE ' + T.[TypeFull] + ' [' + S.[Schema] + '].[' + S.[Name] + '] ' + CASE WHEN S.[Type] = 'TR' THEN ' ON [' + S.[Schema] + '].[' + Replace(S.[Name], '_LAST_UPDATE', '') + '] AFTER INSERT,UPDATE,DELETE ' ELSE '' END + ' AS SELECT 1'')'
                         WHEN S.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + D.[Schema] + '].[' + D.[Name] + ']'', ''' + D.[Type] + ''') IS NOT NULL DROP ' + T.[TypeFull] + ' [' + D.[Schema] + '].[' + D.[Name] + ']'
                         ELSE Replace(S.[Definition], 'CREATE ' + T.[TypeFull], 'ALTER ' + T.[TypeFull])
                     END
@@ -729,8 +729,8 @@ SELECT
 	[Action] = CASE WHEN S.[Name] IS NULL THEN 'D' WHEN D.[Name] IS NULL THEN 'C' WHEN S.[Name] != D.[Name] THEN 'R' END,
 	[SQL] = CASE
 				WHEN S.[Name] IS NULL THEN 'IF EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + D.[Name] + ''' AND parent_object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
-				WHEN D.[Name] IS NULL THEN 'IF NOT EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + S.[Name] + ''' AND parent_object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) BEGIN ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] FOREIGN KEY (' + S.[Columns] + ') REFERENCES [' + S.[RefSchema] + '].[' + S.[RefTable] + '] (' + S.[RefColumns] + ') ON UPDATE  NO ACTION ON DELETE  NO ACTION;'
-				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM [sys].[foreign_keys] WHERE name = ''' + D.[Name] + ''' AND object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' + ';'
+				WHEN D.[Name] IS NULL THEN 'IF NOT EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + S.[Name] + ''' AND parent_object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] FOREIGN KEY (' + S.[Columns] + ') REFERENCES [' + S.[RefSchema] + '].[' + S.[RefTable] + '] (' + S.[RefColumns] + ') ON UPDATE  NO ACTION ON DELETE  NO ACTION;'
+				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM sys.foreign_keys WHERE name = ''' + D.[Name] + ''' AND parent_object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Schema] + '.' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' + ';'
 			END
 FROM @SrcForeignKeys S
 FULL JOIN @DstForeignKeys D ON S.[Schema] = D.[Schema]

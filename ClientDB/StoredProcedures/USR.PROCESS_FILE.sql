@@ -1030,3 +1030,4 @@ BEGIN
 		)
 	WHERE UI_ID_USR = @Usr_Id;
 END
+

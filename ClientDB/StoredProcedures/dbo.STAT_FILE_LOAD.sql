@@ -39,3 +39,4 @@ BEGIN
 				AND z.StatisticDate = a.DT
 		)
 END
+
