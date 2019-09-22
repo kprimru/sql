@@ -38,6 +38,7 @@ BEGIN
 		@System			Xml,
 		@InfoBank		Xml,
 		@SystemBank		Xml,
+		@SystemBankNew	Xml,
 		@Weight			Xml,
 		@DistrStatus	Xml,
 		@Compliance		Xml,
@@ -313,6 +314,37 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK')
 		);
 		
+	-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable
+	SET @SystemBankNew = 
+		(
+			SELECT
+				SystemBaseName,
+				NT_NET,
+				NT_TECH,
+				NT_ODON,
+				NT_ODOFF,
+				[INFO_BANKS] =
+				(
+					SELECT
+						InfoBankName,
+						Required,
+						Start
+					FROM dbo.SystemsBanks SB
+					INNER JOIN dbo.InfoBankTable I ON SB.InfoBank_Id = I.InfoBankID
+					WHERE SB.System_Id = SD.System_Id
+						AND SB.DistrType_Id = SD.DIstrType_Id
+					FOR XML RAW('ITEM'), TYPE
+				)
+			FROM
+			(
+				SELECT DISTINCT SystemBaseName, NT_NET, NT_TECH, NT_ODON, NT_ODOFF, System_Id, DistrType_Id
+				FROM dbo.SystemsBanks SB
+				INNER JOIN dbo.SystemTable S ON SB.System_Id = S.SystemId
+				INNER JOIN Din.NetType N ON N.NT_ID_MASTER = SB.DIstrType_Id
+			) SD
+			FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK_NEW')
+		);
+		
 	SET @Weight = 
 		(
 			SELECT
@@ -369,7 +401,8 @@ BEGIN
 			FROM dbo.ClientPersonalType
 			FOR XML RAW('ITEM'), ROOT('PERSONAL_TYPE')
 		);
-		
+
+	-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable		
 	INSERT INTO @DistrTypeCoef
 	SELECT ID_NET, START, COEF, RND
 	FROM
@@ -428,6 +461,7 @@ BEGIN
 						@Host,
 						@System,
 						@SystemBank,
+						--@SystemBankNew,
 						@Weight,
 						@DistrStatus,
 						@Compliance,
@@ -459,3 +493,4 @@ BEGIN
 			
 	SELECT [DATA] = Cast(@Data AS NVarChar(Max))
 END
+

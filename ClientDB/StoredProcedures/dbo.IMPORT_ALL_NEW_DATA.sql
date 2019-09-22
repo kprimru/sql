@@ -66,6 +66,16 @@ BEGIN
 		Primary Key Clustered ([System], [InfoBank])
 	);
 	
+	DECLARE @SystemBanksNew Table
+	(
+		[System]	SmallInt,
+		[DistrType]	SmallInt,
+		[InfoBank]	SmallInt,
+		[Required]	Bit,
+		[Start]		SmallDateTime,
+		Primary Key Clustered ([System], [DistrType])
+	)
+	
 	DECLARE @SysType Table
 	(
 		[Name]		VarChar(100),
@@ -750,4 +760,78 @@ BEGIN
 			WHERE	Q.ID_NET = C.ID_NET
 				AND Q.ID_MONTH = P.ID
 		);
+		
+	INSERT INTO @SystemBanksNew
+	SELECT DISTINCT
+		[System],
+		[DistrType],
+		I.[InfoBankId],
+		[Required],
+		[START]
+	FROM
+	(
+		SELECT
+			[DistrType] = N.[NT_ID_MASTER],
+			[System]	= S.[SystemId],
+			P.INFO_BANKS
+		FROM
+		(
+			SELECT
+				[System]		= C.value('@SystemBaseName[1]',		'VarChar(100)'),
+				[NT_NET]		= C.value('@NT_NET[1]',				'SmallInt'),
+				[NT_TECH]		= C.value('@NT_TECH[1]',			'SmallInt'),
+				[NT_ODON]		= C.value('@NT_ODON[1]',			'SmallInt'),
+				[NT_ODOFF]		= C.value('@NT_ODOFF[1]',			'SmallInt'),
+				[INFO_BANKS]	= C.query('./INFO_BANKS')
+			FROM @Data.nodes('/DATA[1]/REFERENCES[1]/SYSTEM_BANK_NEW[1]/ITEM') N(C)
+		) P
+		INNER JOIN Din.NetType N ON N.NT_NET = P.NT_NET
+								AND N.NT_TECH = P.NT_TECH
+								AND N.NT_ODON = P.NT_ODON
+								AND N.NT_ODOFF = P.NT_ODOFF
+		INNER JOIN dbo.SystemTable S ON S.SystemBaseName = P.[System]
+	) N
+	CROSS APPLY
+	(
+		SELECT
+			[InfoBank]	= C.value('@InfoBankName[1]',	'VarChar(100)'),
+			[Required]	= C.value('@Required[1]',		'Bit'),
+			[START]		= C.value('Start[1]',			'SmallDateTime')
+		FROM N.INFO_BANKS.nodes('/INFO_BANKS/ITEM') P(C)
+	) AS P
+	INNER JOIN dbo.InfoBankTable I ON I.[InfoBankName] = P.[InfoBank];
+	
+	DELETE SB
+	FROM dbo.SystemsBanks SB
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM @SystemBanksNew Z
+			WHERE Z.[System] = SB.[System_Id]
+				AND Z.[DistrType] = SB.[DistrType_Id]
+				AND Z.[InfoBank] = SB.[InfoBank_Id]
+		);
+		
+	INSERT INTO dbo.SytemsBanks(System_Id, DistrType_Id, InfoBank_Id, Required, Start)
+	SELECT System, DistrType, InfoBank, Required, Start
+	FROM @SystemBanksNew Z
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.SystemsBanks SB
+			WHERE Z.[System] = SB.[System_Id]
+				AND Z.[DistrType] = SB.[DistrType_Id]
+				AND Z.[InfoBank] = SB.[InfoBank_Id]
+		);
+		
+	UPDATE SB
+	SET Required	= Z.Required,
+		Start		= Z.Start
+	FROM dbo.SystemsBanks SB
+	INNER JOIN @SystemBanksNew Z ON Z.[System] = SB.[System_Id]
+								AND Z.[DistrType] = SB.[DistrType_Id]
+								AND Z.[InfoBank] = SB.[InfoBank_Id]
+	WHERE Z.Required != SB.Required
+		OR IsNull(SB.Start, '20000101') != IsNull(Z.Start, '20000101');
 END
+
