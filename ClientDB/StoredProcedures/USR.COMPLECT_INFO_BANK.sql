@@ -210,7 +210,7 @@ BEGIN
 			@USRPackage a
 			INNER JOIN Din.NetType n ON a.UP_TECH = n.NT_TECH_USR AND a.UP_NET = n.NT_NET AND UP_TECH = NT_TECH_USR
 			INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeID = n.NT_ID_MASTER
-			CROSS APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
+			OUTER APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
 			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = b.InfoBankID
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID /*AND Required IN (0, 1)*/
@@ -279,8 +279,8 @@ BEGIN
 			@USRPackage a 
 			INNER JOIN dbo.SystemTable z ON z.SystemID = UP_ID_SYSTEM
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
-		WHERE UP_ID_USR = @UF_ID
-
+		WHERE UP_ID_USR = @UF_ID;
+		
 		-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
 		INSERT INTO #package(
 					UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, 
@@ -301,7 +301,8 @@ BEGIN
 		(
 			SELECT TOP 1 UP_ID, UP_ID_SYSTEM, UP_RIC, UP_TECH, UP_NET, UP_TYPE, UP_FORMAT, SystemShortName, SystemBaseName, SystemOrder, HostId
 			FROM #package 
-			WHERE UP_ID_SYSTEM IS NOT NULL ORDER BY SystemOrder
+			WHERE UP_ID_SYSTEM IS NOT NULL
+			ORDER BY CASE WHEN UI_DISTR = UP_DISTR THEN 1 ELSE 100 END, SystemOrder
 		) AS SYS
 		WHERE UI_ID_USR = @UF_ID
 			AND NOT EXISTS
