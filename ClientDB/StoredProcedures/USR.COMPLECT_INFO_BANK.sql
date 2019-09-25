@@ -29,20 +29,20 @@ BEGIN
 		DROP TABLE #tech_info
 
 	CREATE TABLE #tech_info
-		(
-			UIU_ID		INT PRIMARY KEY,
-			UIU_ID_IB	INT,
-			UIU_INDX	TINYINT,
-			UIU_DATE	SMALLDATETIME,
-			UIU_DATE_S	SMALLDATETIME,
-			UIU_DOCS	INT,			
-			UI_ID_BASE	INT,
-			UI_DISTR	INT,
-			UI_COMP		TINYINT,
-			UI_ID_COMP	INT,
-			USRFileKindShortName	VARCHAR(20),
-			STAT_DATE	SMALLDATETIME
-		)
+	(
+		UIU_ID					INT PRIMARY KEY,
+		UIU_ID_IB				INT,
+		UIU_INDX				TINYINT,
+		UIU_DATE				SMALLDATETIME,
+		UIU_DATE_S				SMALLDATETIME,
+		UIU_DOCS				INT,			
+		UI_ID_BASE				INT,
+		UI_DISTR				INT,
+		UI_COMP					TINYINT,
+		UI_ID_COMP				INT,
+		USRFileKindShortName	VARCHAR(20),
+		STAT_DATE				SMALLDATETIME
+	)
 
 	DECLARE @USRPackage Table
 	(
@@ -78,7 +78,7 @@ BEGIN
 			UI_ID_COMP, USRFileKindShortName, STAT_DATE
 			)
 		SELECT 
-			@MaxRn + Row_Number() OVER(ORDER BY UIU_ID_IB, UIU_INDX), UIU_ID_IB, UIU_INDX, UIU_DATE, UIU_DATE_S,
+			@MaxRn + Row_Number() OVER(ORDER BY UIU_ID_IB, UIU_INDX), UIU_ID_IB, IsNull(UIU_INDX, 1), UIU_DATE, UIU_DATE_S,
 			UIU_DOCS, UI_ID_BASE, UI_DISTR, UI_COMP, 
 			UI_ID_COMP, USRFileKindShortName, StatisticDate
 			/*(
@@ -90,21 +90,20 @@ BEGIN
 					/*AND StatisticDate <= UIU_DATE*/
 				ORDER BY StatisticDate DESC
 			)*/
-		FROM 
-			dbo.USRFileKindTable
-			INNER JOIN USR.USRUpdates ON UIU_ID_KIND = USRFileKindID
-			INNER JOIN USR.USRIB ON UI_ID = UIU_ID_IB
-			OUTER APPLY
-			(
-				SELECT TOP 1 StatisticDate
-				FROM 
-					dbo.StatisticTable a
-				WHERE Docs = UIU_DOCS
-					AND a.InfoBankID = UI_ID_BASE
-					/*AND StatisticDate <= UIU_DATE*/
-				ORDER BY StatisticDate DESC
-			) s
-		WHERE UI_ID_USR = @UF_ID
+		FROM USR.USRIB
+		LEFT JOIN USR.USRUpdates ON UI_ID = UIU_ID_IB
+		LEFT JOIN dbo.USRFileKindTable ON UIU_ID_KIND = USRFileKindID
+		OUTER APPLY
+		(
+			SELECT TOP 1 StatisticDate
+			FROM 
+				dbo.StatisticTable a
+			WHERE Docs = UIU_DOCS
+				AND a.InfoBankID = UI_ID_BASE
+				/*AND StatisticDate <= UIU_DATE*/
+			ORDER BY StatisticDate DESC
+		) s
+		WHERE UI_ID_USR = @UF_ID;
 
 	SELECT @MaxRn = Max(UIU_ID) FROM #tech_info;
 
@@ -447,10 +446,9 @@ BEGIN
 		SystemOrder, 
 		InfoBankOrder,
 		3 AS DATA_TYPE
-	FROM 
-		#tech_info INNER JOIN
-		#package ON UI_DISTR = UP_DISTR AND UI_COMP = UP_COMP AND UI_ID_BASE = InfoBankID INNER JOIN
-		dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP		
+	FROM #tech_info
+	INNER JOIN #package ON UI_DISTR = UP_DISTR AND UI_COMP = UP_COMP AND UI_ID_BASE = InfoBankID
+	LEFT JOIN dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP		
 	WHERE UIU_INDX = 1
 
 	UNION
