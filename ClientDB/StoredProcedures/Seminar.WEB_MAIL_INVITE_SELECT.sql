@@ -34,7 +34,7 @@ BEGIN
 				@ID IS NULL 
 				AND GETDATE() > b.INVITE_DATE
 				-- чтобы не отправлять уведомления по уже прошедшим семинарам
-				AND b.DATE < GETDATE()
+				AND b.DATE > GETDATE()
 				AND a.CONFIRM_STATUS = 1
 				AND NOT EXISTS
 					(

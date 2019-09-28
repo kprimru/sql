@@ -287,7 +287,7 @@ BEGIN
 
 	SELECT
 		ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
-		DisStr,
+		ComplectStr AS DisStr,
 		REVERSE(STUFF(REVERSE((
 			SELECT 
 				InfoBankShortName + ', '
@@ -308,7 +308,7 @@ BEGIN
 		)), 1, 2, '')) AS InfoBankName,  */
 		LAST_DATE, UF_DATE
 	FROM @ib_out a
-	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, LAST_DATE, UF_DATE
+	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, /*DisStr, */LAST_DATE, UF_DATE
 
 END
 

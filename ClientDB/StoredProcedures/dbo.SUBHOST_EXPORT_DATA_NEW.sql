@@ -461,7 +461,7 @@ BEGIN
 						@Host,
 						@System,
 						@SystemBank,
-						--@SystemBankNew,
+						@SystemBankNew,
 						@Weight,
 						@DistrStatus,
 						@Compliance,
