@@ -13,8 +13,10 @@ BEGIN
 	
 	DECLARE @cmd NVARCHAR(512)
 
+	DECLARE @ERROR	VARCHAR(MAX)
+
 	--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-	--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:14.11.2018 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
+	--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
     SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 
 	EXEC xp_cmdshell @cmd, no_output
@@ -81,6 +83,30 @@ BEGIN
 						),
 		PTL_REG_FMT = CONVERT(TINYINT, PTL_REG)
 
+	SELECT @ERROR = TP + ': ' + MSG + CHAR(10)
+	FROM 
+		(
+			SELECT DISTINCT 'Неизвестный хост' AS TP, PTL_HOST AS MSG
+			FROM #ptl
+			WHERE NOT EXISTS
+					(
+						SELECT *
+						FROM dbo.Hosts
+						WHERE PTL_HOST = HostReg
+					)
+		) AS o_O
+
+	IF @ERROR IS NOT NULL
+	BEGIN
+		PRINT @ERROR
+	
+		EXEC Maintenance.MAIL_SEND @ERROR
+	
+		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
+			DROP TABLE #reg
+
+		RETURN
+	END
 
 	INSERT INTO dbo.RegProtocol(
 			RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER,
