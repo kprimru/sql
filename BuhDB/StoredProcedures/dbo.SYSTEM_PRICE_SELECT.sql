@@ -36,6 +36,7 @@ BEGIN
 		SET @DCOEF = 1
 		SET @DROUND = 2
 	END
+	/*
 	ELSE IF @SYSTEM IN
 		(
 			SELECT SystemName
@@ -65,6 +66,7 @@ BEGIN
 		SET @DCOEF = 1.1
 		SET @DROUND = 2
 	END
+	*/
 	ELSE IF (@SYSTEM IN
 		(
 			SELECT SystemName
