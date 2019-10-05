@@ -73,8 +73,8 @@ BEGIN
 		[InfoBank]	SmallInt,
 		[Required]	Bit,
 		[Start]		SmallDateTime,
-		Primary Key Clustered ([System], [DistrType])
-	)
+		Primary Key Clustered ([System], [DistrType], [InfoBank])
+	);
 	
 	DECLARE @SysType Table
 	(
@@ -720,7 +720,8 @@ BEGIN
 			[START]		= C.value('@START[1]',	'SmallDateTime'),
 			[FINISH]	= C.value('@FINISH[1]',	'SmallDateTime')
 		FROM N.PERIODS.nodes('/PERIODIC/PERIOD') P(C)
-	) AS P;
+	) AS P
+	WHERE ID_NET IS NOT NULL;
 	
 	UPDATE C
 	SET COEF	= N.COEF,
@@ -741,9 +742,9 @@ BEGIN
 		) AS P
 	) N ON C.ID_NET = N.ID_NET AND C.ID_MONTH = N.ID_MONTH
 	WHERE C.COEF != N.COEF OR C.RND != N.RND;
-	
+		
 	INSERT INTO dbo.DistrTypeCoef(ID_NET, ID_MONTH, COEF, RND)
-	SELECT C.ID_NET, P.ID, C.COEF, C.RND
+	SELECT DISTINCT C.ID_NET, P.ID, C.COEF, C.RND
 	FROM @Coef C
 	CROSS APPLY
 	(
@@ -760,6 +761,7 @@ BEGIN
 			WHERE	Q.ID_NET = C.ID_NET
 				AND Q.ID_MONTH = P.ID
 		);
+	
 		
 	INSERT INTO @SystemBanksNew
 	SELECT DISTINCT
@@ -812,7 +814,7 @@ BEGIN
 				AND Z.[InfoBank] = SB.[InfoBank_Id]
 		);
 		
-	INSERT INTO dbo.SytemsBanks(System_Id, DistrType_Id, InfoBank_Id, Required, Start)
+	INSERT INTO dbo.SystemsBanks(System_Id, DistrType_Id, InfoBank_Id, Required, Start)
 	SELECT System, DistrType, InfoBank, Required, Start
 	FROM @SystemBanksNew Z
 	WHERE NOT EXISTS
