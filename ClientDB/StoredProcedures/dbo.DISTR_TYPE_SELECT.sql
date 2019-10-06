@@ -10,10 +10,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DistrTypeID, DistrTypeName, DistrTypeShortName
+	SELECT DistrTypeID, DistrTypeName, DistrTypeOrder, DistrTypeFull, DistrTypeCode, DistrTypeBaseCheck
 	FROM dbo.DistrTypeTable
 	WHERE @FILTER IS NULL
 		OR DistrTypeName LIKE @FILTER
-		OR DistrTypeShortName LIKE @FILTER
+		OR DistrTypeFull LIKE @FILTER
+		OR DistrTypeCode LIKE @FILTER
 	ORDER BY DistrTypeOrder
 END

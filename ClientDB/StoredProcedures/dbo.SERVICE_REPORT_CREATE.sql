@@ -260,7 +260,7 @@ BEGIN
 		#distr b ON a.CL_ID = b.CL_ID
 	ORDER BY NUM
 
-	SELECT DistrTypeID, DistrTypeShortName
+	SELECT DistrTypeID, DistrTypeName
 	FROM dbo.DistrTypeTable
 	ORDER BY DistrTypeOrder
 

@@ -38,8 +38,8 @@ BEGIN
 				END AS SYS_STR,
 				DISTR, NET_ID, NET_OLD_ID,
 				CASE 
-					WHEN NET_OLD_ID IS NOT NULL THEN 'с ' + y.DistrTypeShortName + ' на ' + c.DistrTypeShortName 
-					ELSE c.DistrTypeShortName 
+					WHEN NET_OLD_ID IS NOT NULL THEN 'с ' + y.DistrTypeName + ' на ' + c.DistrTypeName 
+					ELSE c.DistrTypeName 
 				END AS NET_STR,
 				SystemTypeID, SystemTypeName,
 				MON_ID, e.NAME AS MON_NAME, DISCOUNT, INFLATION,

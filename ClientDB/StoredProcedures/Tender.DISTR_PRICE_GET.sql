@@ -25,7 +25,7 @@ BEGIN
 			(
 				SELECT 
 					a.ID,
-					CONVERT(MONEY, ROUND(PRICE * DistrTypeCoef * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
+					CONVERT(MONEY, ROUND(PRICE * c.COEF * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
 				FROM 
 					(
 						SELECT 			
@@ -35,9 +35,9 @@ BEGIN
 						FROM @xml.nodes('/root/item') AS a(c)
 					) AS a
 					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
-					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
+					INNER JOIN dbo.DistrTypeCoef c ON c.ID_NET = a.NET_ID AND c.ID_MONTH = @MONTH
 					INNER JOIN Price.SystemPrice d ON ID_SYSTEM = SYS_ID
-				WHERE ID_MONTH = @MONTH
+				WHERE d.ID_MONTH = @MONTH
 			) AS o_O
 	ELSE
 		SELECT ID, PRICE

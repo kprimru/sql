@@ -35,5 +35,5 @@ BEGIN
 		LEFT OUTER JOIN dbo.SystemTable d ON a.ID_OLD_SYSTEM = d.SystemID
 		LEFT OUTER JOIN dbo.DistrTypeTable e ON a.ID_OLD_NET = e.DistrTypeID
 	WHERE a.ID_OFFER = @ID
-	ORDER BY CLIENT, ADDRESS, b.SystemOrder, c.DistrTypeCoef, DISTR
+	ORDER BY CLIENT, ADDRESS, b.SystemOrder, DISTR
 END

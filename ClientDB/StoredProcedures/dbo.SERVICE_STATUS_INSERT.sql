@@ -7,18 +7,16 @@ GO
 CREATE PROCEDURE [dbo].[SERVICE_STATUS_INSERT]	
 	@NAME	VARCHAR(50),
 	@REG	SMALLINT,
+	@Code	VarCHar(100),
 	@INDEX	INT,
-	@IMAGE	VARBINARY(MAX),
 	@DEF	INT,
 	@ID	INT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ServiceStatusTable(
-				ServiceStatusName, ServiceStatusReg, ServiceStatusIndex,
-				ServiceImage, ServiceDefault)
-		VALUES(@NAME, @REG, @INDEX, @IMAGE, @DEF)
+	INSERT INTO dbo.ServiceStatusTable(ServiceStatusName, ServiceStatusReg, ServiceStatusIndex, ServiceDefault, ServiceCode)
+	VALUES(@NAME, @REG, @INDEX, @DEF, @Code);
 		
 	SELECT @ID = SCOPE_IDENTITY()
 END

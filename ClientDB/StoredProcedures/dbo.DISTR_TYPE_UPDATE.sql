@@ -7,19 +7,19 @@ GO
 CREATE PROCEDURE [dbo].[DISTR_TYPE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
-	@SHORT	VARCHAR(10),
 	@ORDER	INT,
 	@FULL	NVARCHAR(50),
-	@CHECK	BIT
+	@CHECK	BIT,
+	@Code	VarChar(100)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.DistrTypeTable
 	SET DistrTypeName = @NAME,
-		DistrTypeShortName = @SHORT,
 		DistrTypeOrder = @ORDER,
 		DistrTypeFull = @FULL,
+		DistrTypeCode = @Code,
 		DistrTypeBaseCheck = @CHECK,
 		DistrTypeLast = GETDATE()
 	WHERE DistrTypeID = @ID

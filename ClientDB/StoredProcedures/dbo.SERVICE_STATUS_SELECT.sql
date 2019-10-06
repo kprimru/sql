@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ServiceStatusID, ServiceStatusName, ServiceImage, ServiceDefault, ServiceStatusReg
+	SELECT ServiceStatusID, ServiceStatusName, ServiceDefault, ServiceStatusReg, ServiceCode
 	FROM dbo.ServiceStatusTable
 	WHERE @FILTER IS NULL
 		OR ServiceStatusName LIKE @FILTER
