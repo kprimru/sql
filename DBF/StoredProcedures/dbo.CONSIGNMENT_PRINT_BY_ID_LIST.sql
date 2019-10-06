@@ -163,7 +163,7 @@ BEGIN
 	FROM 
 		dbo.ConsignmentDetailTable LEFT OUTER JOIN
 		dbo.ConsignmentTable ON CSD_ID_CONS = CSG_ID LEFT OUTER JOIN		
-		dbo.DistrView a ON DIS_ID = CSD_ID_DISTR LEFT OUTER JOIN
+		dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR LEFT OUTER JOIN
 		dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID LEFT OUTER JOIN
 		dbo.SaleObjectTable ON SYS_ID_SO = SO_ID LEFT OUTER JOIN
 		dbo.TaxTable ON TX_ID = CSD_ID_TAX 

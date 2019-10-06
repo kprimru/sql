@@ -54,7 +54,7 @@ BEGIN
 	FROM 
 		dbo.SaldoTable
 		INNER JOIN dbo.ClientTable ON CL_ID = SL_ID_CLIENT
-		INNER JOIN dbo.DistrView a ON DIS_ID = SL_ID_DISTR
+		INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR
 		INNER JOIN dbo.IncomeDistrTable ON ID_ID = SL_ID_IN_DIS
 		INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME
 		CROSS APPLY
@@ -119,7 +119,7 @@ BEGIN
 	FROM 
 		dbo.SaldoTable
 		INNER JOIN dbo.ClientTable ON CL_ID = SL_ID_CLIENT
-		INNER JOIN dbo.DistrView a ON DIS_ID = SL_ID_DISTR
+		INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR
 		INNER JOIN dbo.ActDistrTable ON AD_ID = SL_ID_ACT_DIS
 		INNER JOIN dbo.ActTable ON ACT_ID = AD_ID_ACT
 		INNER JOIN dbo.TaxTable ON TX_ID = AD_ID_TAX
@@ -149,7 +149,7 @@ BEGIN
 	FROM 
 		dbo.SaldoTable
 		INNER JOIN dbo.ClientTable ON CL_ID = SL_ID_CLIENT
-		INNER JOIN dbo.DistrView a ON DIS_ID = SL_ID_DISTR
+		INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR
 		INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID = SL_ID_CONSIG_DIS
 		INNER JOIN dbo.ConsignmentTable ON CSG_ID = CSD_ID_CONS
 		INNER JOIN dbo.TaxTable ON TX_ID = CSD_ID_TAX

@@ -107,7 +107,7 @@ BEGIN
 		dbo.ActDistrTable		A									LEFT JOIN
 		dbo.ActTable			B	ON A.AD_ID_ACT	  = B.ACT_ID	LEFT JOIN
 		dbo.PeriodTable			C	ON A.AD_ID_PERIOD = C.PR_ID		INNER JOIN
-		dbo.DistrView			D	ON A.AD_ID_DISTR  = D.DIS_ID	LEFT JOIN
+		dbo.DistrView			D WITH(NOEXPAND)	ON A.AD_ID_DISTR  = D.DIS_ID	LEFT JOIN
 		dbo.DistrDocumentView	Z	ON Z.DIS_ID		  = D.DIS_ID	INNER JOIN		
 		dbo.SaleObjectTable		E	ON D.SYS_ID_SO	  = E.SO_ID		LEFT JOIN
 		dbo.TaxTable			F	ON E.SO_ID_TAX	  = F.TX_ID		LEFT JOIN

@@ -16,7 +16,7 @@ BEGIN
 			':' + DIS_STR + ' - ' + dbo.MoneyFormat(AD_TOTAL_PRICE)
 	FROM 
 		dbo.ActDistrTable
-		INNER JOIN dbo.DistrView ON AD_ID_DISTR = DIS_ID
+		INNER JOIN dbo.DistrView WITH(NOEXPAND) ON AD_ID_DISTR = DIS_ID
 		INNER JOIN dbo.PeriodTable ON AD_ID_PERIOD = PR_ID		
 	WHERE AD_ID = @ID
 	

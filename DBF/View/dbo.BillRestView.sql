@@ -20,7 +20,7 @@ SELECT
 							dbo.IncomeTable ON ID_ID_INCOME = IN_ID LEFT OUTER JOIN
 							*/
 							dbo.IncomeIXView WITH(NOEXPAND) INNER JOIN
-							dbo.DistrView ON DIS_ID = ID_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 							dbo.SaleObjectTable a ON SO_ID = SYS_ID_SO
 						WHERE IN_ID_CLIENT = BL_ID_CLIENT 
 							AND ID_ID_DISTR = BD_ID_DISTR
@@ -31,6 +31,6 @@ SELECT
 	FROM 
 		dbo.BillTable INNER JOIN
 		dbo.BillDistrTable ON BL_ID = BD_ID_BILL LEFT OUTER JOIN
-		dbo.DistrView ON DIS_ID = BD_ID_DISTR INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 		dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
 		

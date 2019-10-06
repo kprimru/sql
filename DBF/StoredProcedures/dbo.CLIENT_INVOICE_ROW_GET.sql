@@ -25,7 +25,7 @@ BEGIN
 		PR_ID, PR_NAME
 	FROM 
 		dbo.InvoiceRowTable 
-		LEFT OUTER JOIN dbo.DistrView ON INR_ID_DISTR = DIS_ID 
+		LEFT OUTER JOIN dbo.DistrView WITH(NOEXPAND) ON INR_ID_DISTR = DIS_ID 
 		LEFT OUTER JOIN dbo.PeriodTable ON INR_ID_PERIOD = PR_ID
 	WHERE INR_ID = @rowid
 

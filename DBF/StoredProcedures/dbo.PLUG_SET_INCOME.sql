@@ -57,7 +57,7 @@ BEGIN
 			INNER JOIN dbo.IncomeDistrTable c ON c.ID_ID_DISTR = b.ID_ID_DISTR AND c.ID_ID_PERIOD = b.ID_ID_PERIOD
 			INNER JOIN dbo.IncomeTable d ON d.IN_ID = c.ID_ID_INCOME
 			INNER JOIN dbo.InvoiceSaleTable e ON e.INS_ID = d.IN_ID_INVOICE
-			INNER JOIN dbo.DistrView ON b.ID_ID_DISTR = DIS_ID
+			INNER JOIN dbo.DistrView WITH(NOEXPAND) ON b.ID_ID_DISTR = DIS_ID
 			INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
 			INNER JOIN dbo.TaxTable ON SO_ID_TAX = TX_ID
 		WHERE a.IN_ID = @incomeid

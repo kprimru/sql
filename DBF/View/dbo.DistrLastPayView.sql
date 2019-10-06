@@ -59,7 +59,7 @@ AS
 									)
 						) AS LAST_PAY_MON
 					FROM 
-						dbo.DistrView a
+						dbo.DistrView a WITH(NOEXPAND)
 						INNER JOIN dbo.ClientDistrTable b ON a.DIS_ID = b.CD_ID_DISTR
 						INNER JOIN dbo.ClientTable c ON c.CL_ID = CD_ID_CLIENT
 					WHERE SYS_REG_NAME <> '-'

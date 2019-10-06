@@ -20,7 +20,7 @@ SELECT
 FROM 
 	dbo.SaldoTable a INNER JOIN
 	dbo.ClientTable b ON a.SL_ID_CLIENT = b.CL_ID INNER JOIN
-	dbo.DistrView c ON a.SL_ID_DISTR = c.DIS_ID LEFT OUTER JOIN
+	dbo.DistrView c WITH(NOEXPAND) ON a.SL_ID_DISTR = c.DIS_ID LEFT OUTER JOIN
 	dbo.BillDistrTable d ON d.BD_ID = a.SL_ID_BILL_DIS LEFT OUTER JOIN
 	dbo.BillTable e ON e.BL_ID = d.BD_ID_BILL LEFT OUTER JOIN
 	dbo.IncomeDistrTable f ON f.ID_ID = a.SL_ID_IN_DIS LEFT OUTER JOIN

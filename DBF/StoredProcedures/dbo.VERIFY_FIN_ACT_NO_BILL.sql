@@ -20,7 +20,7 @@ BEGIN
 		dbo.ActTable a INNER JOIN
 		dbo.ActDistrTable b ON ACT_ID = AD_ID_ACT INNER JOIN
 		dbo.ClientTable ON CL_ID = ACT_ID_CLIENT INNER JOIN
-		dbo.DistrView ON DIS_ID = AD_ID_DISTR INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR INNER JOIN
 		dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
 	WHERE NOT EXISTS
 		(
@@ -40,7 +40,7 @@ BEGIN
 		dbo.ConsignmentTable a INNER JOIN
 		dbo.ConsignmentDetailTable b ON CSG_ID = CSD_ID_CONS INNER JOIN
 		dbo.ClientTable ON CL_ID = CSG_ID_CLIENT INNER JOIN
-		dbo.DistrView ON DIS_ID = CSD_ID_DISTR INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR INNER JOIN
 		dbo.PeriodTable ON PR_ID = CSD_ID_PERIOD
 	WHERE NOT EXISTS
 		(

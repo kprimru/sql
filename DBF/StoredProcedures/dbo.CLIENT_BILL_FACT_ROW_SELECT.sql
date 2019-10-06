@@ -4,24 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-/*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  19/10/2009	
-Описание:		get-процедура для формы редактирования счетов (бывш. фактич. счета)
-*/
-
 CREATE PROCEDURE [dbo].[CLIENT_BILL_FACT_ROW_SELECT]
 	@bfmid INT	
 AS
 BEGIN
 	SET NOCOUNT ON;
-	/*
-	DECLARE @d DATETIME
-	SET @d = CONVERT(DATETIME, @date, 121)
-	*/
 
 	SELECT 
 		BFD_ID, 
@@ -40,13 +27,8 @@ BEGIN
 		BD_UNPAY, 
 		BD_TAX_UNPAY, 
 		BD_TOTAL_UNPAY
-	FROM 
-		dbo.BillFactDetailTable a 
-		LEFT OUTER JOIN
-		dbo.DistrView b ON a.DIS_ID = b.DIS_ID
+	FROM dbo.BillFactDetailTable a 
+	LEFT JOIN dbo.DistrView b WITH(NOEXPAND) ON a.DIS_ID = b.DIS_ID
 	WHERE BFD_ID_BFM = @bfmid
-
+	ORDER BY SYS_ORDER;
 END
-
-
-

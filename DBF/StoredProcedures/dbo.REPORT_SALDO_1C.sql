@@ -153,7 +153,7 @@ BEGIN
 												)										
 									) AS a
 							) AS c
-							INNER JOIN dbo.DistrView d ON c.SL_ID_DISTR = d.DIS_ID
+							INNER JOIN dbo.DistrView d WITH(NOEXPAND) ON c.SL_ID_DISTR = d.DIS_ID
 							INNER JOIN dbo.SaleObjectTable ON SYS_ID_SO = SO_ID 
 							INNER JOIN dbo.TaxTable ON TX_ID = SO_ID_TAX
 					) AS e

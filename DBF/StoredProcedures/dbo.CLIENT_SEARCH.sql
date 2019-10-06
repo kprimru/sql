@@ -77,7 +77,7 @@ BEGIN
 	BEGIN
 		SET @sql = @sql + 'LEFT OUTER JOIN	
 				dbo.ClientDistrTable d ON d.CD_ID_CLIENT = b.CL_ID LEFT OUTER JOIN
-				dbo.DistrView e ON e.DIS_ID = d.CD_ID_DISTR '
+				dbo.DistrView e WITH(NOEXPAND) ON e.DIS_ID = d.CD_ID_DISTR '
 	END
 
 	IF (@conum IS NOT NULL) OR (@typeid IS NOT NULL) OR (@copay IS NOT NULL)

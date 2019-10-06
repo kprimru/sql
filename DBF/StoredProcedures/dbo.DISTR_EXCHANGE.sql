@@ -22,7 +22,7 @@ BEGIN
 			@distrid, 
 			(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid), 
 			(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid),
-			'Замена с ' + (SELECT SYS_SHORT_NAME FROM dbo.DistrView WHERE DIS_ID = @distrid) + ' на ' + (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @newsysid),
+			'Замена с ' + (SELECT SYS_SHORT_NAME FROM dbo.DistrView WITH(NOEXPAND) WHERE DIS_ID = @distrid) + ' на ' + (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @newsysid),
 			ORIGINAL_LOGIN(), GETDATE()
 
 	DECLARE @newid INT	

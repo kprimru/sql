@@ -64,7 +64,7 @@ BEGIN
 			SELECT COUNT(*)
 			FROM 
 				dbo.BillRestView INNER JOIN
-				dbo.DistrView ON DIS_ID = BD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 			WHERE BL_ID_CLIENT = CL_ID 
 				AND BL_ID_PERIOD = (SELECT PR_ID FROM dbo.PeriodTable WHERE PR_DATE = PAY_MONTH)
 				AND BD_REST = 0			
@@ -73,7 +73,7 @@ BEGIN
 			SELECT COUNT(*)
 			FROM 
 				dbo.BillRestView INNER JOIN
-				dbo.DistrView ON DIS_ID = BD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 			WHERE BL_ID_CLIENT = CL_ID 
 				AND BL_ID_PERIOD = (SELECT PR_ID FROM dbo.PeriodTable WHERE PR_DATE = PAY_MONTH)
 				AND BD_REST <> 0			
@@ -82,7 +82,7 @@ BEGIN
 			SELECT DIS_STR + ' (' + CONVERT(VARCHAR(20), BD_REST) + ')' + CHAR(10)
 			FROM 
 				dbo.BillRestView INNER JOIN
-				dbo.DistrView ON DIS_ID = BD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 			WHERE BL_ID_CLIENT = CL_ID 
 				AND BL_ID_PERIOD = (SELECT PR_ID FROM dbo.PeriodTable WHERE PR_DATE = PAY_MONTH)
 				AND BD_REST <> 0
@@ -106,7 +106,7 @@ BEGIN
 						@COUR ON CR_ID = COUR_ID INNER JOIN
 						dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN
 						dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
-						dbo.DistrView ON CD_ID_DISTR = DIS_ID INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON CD_ID_DISTR = DIS_ID INNER JOIN
 						dbo.DistrFinancingTable ON DF_ID_DISTR = CD_ID_DISTR LEFT OUTER JOIN
 						dbo.ContractPayTable ON DF_ID_PAY = COP_ID
 					WHERE SYS_ID_SO = 1 AND DSS_REPORT = 1

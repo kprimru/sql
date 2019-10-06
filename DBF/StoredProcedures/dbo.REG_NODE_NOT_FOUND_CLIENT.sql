@@ -29,7 +29,7 @@ BEGIN
 		NOT EXISTS 
 				(
 					SELECT * 
-					FROM dbo.DistrView b 
+					FROM dbo.DistrView b WITH(NOEXPAND)
 					WHERE 
 						DIS_NUM = RN_DISTR_NUM AND 
 						DIS_COMP_NUM = RN_COMP_NUM AND 

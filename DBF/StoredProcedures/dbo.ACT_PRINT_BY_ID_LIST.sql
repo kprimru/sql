@@ -395,7 +395,7 @@ BEGIN
 				#act				Y	ON	Y.ACT_ID		= A.ACT_ID	INNER JOIN
 				dbo.ActDistrTable		Z	ON	Z.AD_ID_ACT		= A.ACT_ID	INNER JOIN
 				dbo.PeriodTable			I	ON	Z.AD_ID_PERIOD	= I.PR_ID	INNER JOIN
-				dbo.DistrView			B	ON	Z.AD_ID_DISTR	= B.DIS_ID	INNER JOIN
+				dbo.DistrView			B WITH(NOEXPAND)	ON	Z.AD_ID_DISTR	= B.DIS_ID	INNER JOIN
 				dbo.SaleObjectTable		C	ON	B.SYS_ID_SO		= C.SO_ID	INNER JOIN
 				dbo.TaxTable			D	ON	D.TX_ID			= C.SO_ID_TAX	INNER JOIN
 				dbo.DistrDocumentView	E	ON	E.DIS_ID		= B.DIS_ID LEFT OUTER JOIN 

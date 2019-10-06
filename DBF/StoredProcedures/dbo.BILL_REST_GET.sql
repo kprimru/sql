@@ -31,7 +31,7 @@ BEGIN
 				FROM 
 					dbo.IncomeDistrTable INNER JOIN
 					dbo.IncomeTable ON ID_ID_INCOME = IN_ID INNER JOIN
-					dbo.DistrView ON DIS_ID = ID_ID_DISTR INNER JOIN
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 					dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
 				WHERE ID_ID_DISTR = DIS_ID 
 					AND ID_ID_PERIOD = PR_ID
@@ -44,7 +44,7 @@ BEGIN
 				FROM 
 					dbo.IncomeDistrTable INNER JOIN
 					dbo.IncomeTable ON ID_ID_INCOME = IN_ID INNER JOIN
-					dbo.DistrView ON DIS_ID = ID_ID_DISTR INNER JOIN
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 					dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
 				WHERE ID_ID_DISTR = DIS_ID 
 					AND ID_ID_PERIOD = PR_ID

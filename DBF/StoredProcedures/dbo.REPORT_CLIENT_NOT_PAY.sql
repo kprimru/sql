@@ -54,7 +54,7 @@ BEGIN
 		FROM 
 			dbo.ClientDistrTable
 			INNER JOIN dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
-			INNER JOIN dbo.DistrView ON DIS_ID = CD_ID_DISTR
+			INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR
 			INNER JOIN dbo.ClientTable ON CL_ID = CD_ID_CLIENT
 		WHERE DSS_REPORT = 1 
 

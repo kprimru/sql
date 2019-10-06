@@ -51,8 +51,8 @@ BEGIN
 
 			SELECT a.DIS_ID
 			FROM 
-				dbo.DistrView a INNER JOIN
-				dbo.DistrView b ON a.DIS_NUM = b.DIS_NUM
+				dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+				dbo.DistrView b WITH(NOEXPAND) ON a.DIS_NUM = b.DIS_NUM
 							AND a.DIS_COMP_NUM = b.DIS_COMP_NUM
 							AND a.HST_ID = b.HST_ID INNER JOIN
 				dbo.ClientDistrView c ON c.DIS_ID = b.DIS_ID
@@ -66,7 +66,7 @@ BEGIN
 	IF @soid IS NULL
 		SELECT TOP 1 @soid = SYS_ID_SO
 		FROM 
-			dbo.DistrView a INNER JOIN 
+			dbo.DistrView a WITH(NOEXPAND) INNER JOIN 
 			#distr b ON a.DIS_ID = b.DIS_ID		
 
 	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
@@ -124,7 +124,7 @@ BEGIN
 					FROM 
 						dbo.IncomeDistrTable b INNER JOIN
 						dbo.IncomeTable a ON IN_ID = ID_ID_INCOME INNER JOIN
-						dbo.DistrView c ON DIS_ID = ID_ID_DISTR INNER JOIN
+						dbo.DistrView c WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 						#distr d ON d.DIS_ID = c.DIS_ID
 					WHERE
 						IN_ID_CLIENT = @clientid
@@ -217,8 +217,8 @@ BEGIN
 
 			SELECT a.DIS_ID
 			FROM 
-				dbo.DistrView a INNER JOIN
-				dbo.DistrView b ON a.DIS_NUM = b.DIS_NUM
+				dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+				dbo.DistrView b WITH(NOEXPAND) ON a.DIS_NUM = b.DIS_NUM
 							AND a.DIS_COMP_NUM = b.DIS_COMP_NUM
 							AND a.HST_ID = b.HST_ID INNER JOIN
 				dbo.ClientDistrView c ON c.DIS_ID = b.DIS_ID
@@ -263,7 +263,7 @@ BEGIN
 					dbo.ActDistrTable INNER JOIN
 					dbo.ActTable ON ACT_ID = AD_ID_ACT INNER JOIN
 					dbo.PeriodTable ON PR_ID = AD_ID_PERIOD INNER JOIN
-					dbo.DistrView a ON DIS_ID = AD_ID_DISTR INNER JOIN
+					dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR INNER JOIN
 					#distr b ON a.DIS_ID = b.DIS_ID
 				WHERE AD_TOTAL_PRICE >
 					ISNULL(
@@ -336,7 +336,7 @@ BEGIN
 					dbo.ConsignmentDetailTable INNER JOIN
 					dbo.ConsignmentTable ON CSG_ID = CSD_ID_CONS INNER JOIN
 					dbo.PeriodTable ON PR_ID = CSD_ID_PERIOD INNER JOIN
-					dbo.DistrView a ON DIS_ID = CSD_ID_DISTR INNER JOIN
+					dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR INNER JOIN
 					#distr b ON a.DIS_ID = b.DIS_ID
 				WHERE CSD_TOTAL_PRICE >
 					ISNULL(
@@ -451,8 +451,8 @@ BEGIN
 
 			SELECT a.DIS_ID
 			FROM 
-				dbo.DistrView a INNER JOIN
-				dbo.DistrView b ON a.DIS_NUM = b.DIS_NUM
+				dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+				dbo.DistrView b WITH(NOEXPAND) ON a.DIS_NUM = b.DIS_NUM
 							AND a.DIS_COMP_NUM = b.DIS_COMP_NUM
 							AND a.HST_ID = b.HST_ID INNER JOIN
 				dbo.ClientDistrView c ON c.DIS_ID = b.DIS_ID
@@ -492,7 +492,7 @@ BEGIN
 			FROM 
 				dbo.BillRestView INNER JOIN
 				dbo.PeriodTable ON PR_ID = BL_ID_PERIOD INNER JOIN
-				dbo.DistrView a ON DIS_ID = BD_ID_DISTR INNER JOIN
+				dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 				#distr b ON a.DIS_ID = b.DIS_ID
 			WHERE BD_REST > 0 
 				AND BL_ID_CLIENT = @clientid 
@@ -585,7 +585,7 @@ BEGIN
 						FROM 
 							dbo.BillTable INNER JOIN
 							dbo.BillDistrTable ON BD_ID_BILL = BL_ID INNER JOIN
-							dbo.DistrView a ON a.DIS_ID = BD_ID_DISTR INNER JOIN
+							dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = BD_ID_DISTR INNER JOIN
 							#distr b ON b.DIS_ID = BD_ID_DISTR
 						WHERE SYS_ID_SO = @soid
 					) a INNER JOIN
@@ -601,7 +601,7 @@ BEGIN
 							FROM 
 								dbo.ActTable INNER JOIN
 								dbo.ActDistrTable ON AD_ID_ACT = ACT_ID INNER JOIN
-								dbo.DistrView a ON a.DIS_ID = AD_ID_DISTR INNER JOIN
+								dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = AD_ID_DISTR INNER JOIN
 								#distr b ON b.DIS_ID = AD_ID_DISTR 
 							WHERE SYS_ID_SO = @soid
 						) a INNER JOIN
@@ -617,7 +617,7 @@ BEGIN
 							FROM 
 								dbo.ConsignmentTable INNER JOIN
 								dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID INNER JOIN
-								dbo.DistrView a ON a.DIS_ID = CSD_ID_DISTR INNER JOIN
+								dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = CSD_ID_DISTR INNER JOIN
 								#distr b ON b.DIS_ID = CSD_ID_DISTR
 							WHERE SYS_ID_SO = @soid
 						) a INNER JOIN
@@ -676,7 +676,7 @@ BEGIN
 									FROM 
 										dbo.BillTable INNER JOIN
 										dbo.BillDistrTable ON BD_ID_BILL = BL_ID INNER JOIN
-										dbo.DistrView ON DIS_ID = BD_ID_DISTR
+										dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 									WHERE BL_ID_PERIOD = @prid 
 										AND BD_ID_DISTR = a.DIS_ID
 										AND SYS_ID_SO = @soid
@@ -798,7 +798,7 @@ BEGIN
 	FROM 
 		#temp a INNER JOIN
 		dbo.PeriodTable b ON ID_ID_PERIOD = PR_ID INNER JOIN
-		dbo.DistrView ON DIS_ID = ID_ID_DISTR
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 	WHERE ID_PRICE <> 0
 	ORDER BY a.PR_DATE, a.SYS_ORDER
 

@@ -25,7 +25,7 @@ BEGIN
 		dbo.IncomeTable INNER JOIN
 		dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID INNER JOIN
 		dbo.ClientTable ON CL_ID = IN_ID_CLIENT INNER JOIN
-		dbo.DistrView ON DIS_ID = ID_ID_DISTR
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 	WHERE IN_DATE = @date AND IN_ID_ORG = @orgid
 	ORDER BY CL_PSEDO, CL_ID, IN_ID
 END

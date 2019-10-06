@@ -27,7 +27,7 @@ BEGIN
 				SELECT *			
 				FROM 
 					dbo.ConsignmentDetailTable INNER JOIN
-					dbo.DistrView a ON DIS_ID = CSD_ID_DISTR INNER JOIN
+					dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR INNER JOIN
 					dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID
 				WHERE CSD_ID_CONS = @consignid 
 					AND DOC_PSEDO = 'INV_CONSIG' 
@@ -182,7 +182,7 @@ BEGIN
 			CSD_TAX_PRICE, CSD_TOTAL_PRICE, CSD_PAYED_PRICE, UN_NAME, CSD_COUNT
 		FROM 
 			dbo.ConsignmentDetailTable INNER JOIN
-			dbo.DistrView a ON DIS_ID = CSD_ID_DISTR INNER JOIN
+			dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR INNER JOIN
 			dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN
 			dbo.SaleObjectTable ON SO_ID = SYS_ID_SO INNER JOIN
 			dbo.TaxTable ON SO_ID_TAX = TX_ID LEFT OUTER JOIN
@@ -227,7 +227,7 @@ BEGIN
 		FROM 
 			dbo.InvoiceSaleTable z
 			INNER JOIN dbo.InvoiceRowTable a ON a.INR_ID_INVOICE = z.INS_ID
-			INNER JOIN dbo.DistrView b ON a.INR_ID_DISTR = DIS_ID
+			INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON a.INR_ID_DISTR = DIS_ID
 			INNER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD
 		WHERE INR_ID_INVOICE = @insid
 	

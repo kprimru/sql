@@ -177,7 +177,7 @@ BEGIN
 										TO_COUNT, SYS_COUNT,
 										CASE
                                             -- ToDo очень грязный хардкод - общая стоимость одной ТО по Мировым судьям
-                                            WHEN CL_ID = 10321 THEN 125973.5
+                                            WHEN (CL_ID = 10321 OR CL_ID = 10050 OR CL_ID = 10366) THEN 125973.5
                                             ELSE CLIENT_TOTAL_PRICE
                                         END AS CLIENT_TOTAL_PRICE,
 										--CLIENT_TOTAL_PRICE,
@@ -199,7 +199,7 @@ BEGIN
 										END AS TO_PRICE,*/
 										CASE
                                             -- ToDo очень грязный хардкод - общая стоимость одной ТО по Мировым судьям
-                                            WHEN CL_ID = 10321 THEN 1085.98
+                                            WHEN (CL_ID = 10321 OR CL_ID = 10050 OR CL_ID = 10366) THEN 1085.98
 											WHEN TO_COUNT IS NULL OR TO_COUNT = 0 THEN CLIENT_TOTAL_PRICE
 											ELSE CLIENT_TOTAL_PRICE / TO_COUNT
 										END AS TO_PRICE,				
@@ -224,7 +224,7 @@ BEGIN
 														SELECT COUNT(DISTINCT TD_ID_DISTR)
 														FROM 
 															dbo.TODistrTable z
-															INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+															INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 															INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 															INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																							AND REG_DISTR_NUM = DIS_NUM
@@ -246,7 +246,7 @@ BEGIN
 															SELECT COUNT(DISTINCT TD_ID_DISTR)
 															FROM 
 																dbo.TODistrTable z
-																INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+																INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 																INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 																INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																								AND REG_DISTR_NUM = DIS_NUM
@@ -283,7 +283,7 @@ BEGIN
 														FROM 
 															dbo.TOTable t INNER JOIN
 															dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-															dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+															dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 															dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 														WHERE t.TO_ID = a.TO_ID
 															AND BL_ID_PERIOD = PR_ID
@@ -362,7 +362,7 @@ BEGIN
 												SELECT COUNT(*)
 												FROM 
 													dbo.TODistrTable z
-													INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+													INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 													INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 													INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																					AND REG_DISTR_NUM = DIS_NUM
@@ -398,7 +398,7 @@ BEGIN
 														FROM 
 															dbo.TOTable INNER JOIN
 															dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-															dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+															dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 															dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 																		AND DIS_NUM = REG_DISTR_NUM
 																		AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -423,7 +423,7 @@ BEGIN
 														FROM 
 															dbo.TOTable INNER JOIN
 															dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-															dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+															dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 															dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 																		AND DIS_NUM = REG_DISTR_NUM
 																		AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -439,7 +439,7 @@ BEGIN
 														SELECT COUNT(DISTINCT TD_ID_DISTR)
 														FROM 
 															dbo.TODistrTable z
-															INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+															INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 															INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 															INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																							AND REG_DISTR_NUM = DIS_NUM
@@ -461,7 +461,7 @@ BEGIN
 														SELECT COUNT(DISTINCT TD_ID_DISTR)
 														FROM 
 															dbo.TODistrTable z
-															INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+															INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 															INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 															INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																							AND REG_DISTR_NUM = DIS_NUM
@@ -497,7 +497,7 @@ BEGIN
 														FROM 
 															dbo.TOTable t INNER JOIN
 															dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-															dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+															dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 															dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 														WHERE t.TO_ID = a.TO_ID
 															AND BL_ID_PERIOD = PR_ID
@@ -585,7 +585,7 @@ BEGIN
 												SELECT COUNT(*)
 												FROM 
 													dbo.TODistrTable z
-													INNER JOIN dbo.DistrView y ON z.TD_ID_DISTR = y.DIS_ID
+													INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
 													INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
 													INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
 																					AND REG_DISTR_NUM = DIS_NUM
@@ -604,7 +604,7 @@ BEGIN
 														FROM 
 															dbo.TOTable t INNER JOIN
 															dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-															dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+															dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 															dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 														WHERE t.TO_ID = a.TO_ID
 															AND BL_ID_PERIOD = PR_ID

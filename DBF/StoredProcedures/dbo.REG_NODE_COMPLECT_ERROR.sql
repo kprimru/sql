@@ -19,7 +19,7 @@ BEGIN
 		RN_COMPLECT, DIS_STR, TO_NAME, TO_NUM, CL_ID, CL_PSEDO, TO_ID, DS_NAME
 	FROM 
 		dbo.RegNodeTable a INNER JOIN
-		dbo.DistrView ON 
+		dbo.DistrView WITH(NOEXPAND) ON 
 					RN_SYS_NAME = SYS_REG_NAME AND
 					DIS_NUM = RN_DISTR_NUM AND
 					DIS_COMP_NUM = RN_COMP_NUM INNER JOIN
@@ -34,7 +34,7 @@ BEGIN
 				FROM 
 					dbo.TOTable INNER JOIN
 					dbo.TODistrTable ON TO_ID = TD_ID_TO INNER JOIN
-					dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 					dbo.RegNodeTable b ON 
 									RN_DISTR_NUM = DIS_NUM AND
 									RN_COMP_NUM = DIS_COMP_NUM AND
@@ -47,7 +47,7 @@ BEGIN
 				FROM 
 					dbo.TOTable INNER JOIN
 					dbo.TODistrTable ON TO_ID = TD_ID_TO INNER JOIN
-					dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 					dbo.RegNodeTable b ON 
 									RN_DISTR_NUM = DIS_NUM AND
 									RN_COMP_NUM = DIS_COMP_NUM AND

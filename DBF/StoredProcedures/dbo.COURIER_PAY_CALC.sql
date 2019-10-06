@@ -62,7 +62,7 @@ BEGIN
 			dbo.ClientTypeTable ON CLT_ID = CL_ID_TYPE INNER JOIN
 			dbo.TODistrTable oN TD_ID_TO = TO_ID INNER JOIN
 			--dbo.DIstrVIew ON DIS_ID = TD_ID_DISTR INNER JOIN
-			dboClientDistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+			dbo.ClientDistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
 			dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 						AND DIS_NUM = RN_DISTR_NUM
 						AND DIS_COMP_NUM = RN_COMP_NUM			
@@ -116,7 +116,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -140,7 +140,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -161,7 +161,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -186,7 +186,7 @@ BEGIN
 						FROM 
 							dbo.TOTable INNER JOIN
 							dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-							dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 							dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 										AND RN_DISTR_NUM = DIS_NUM
 										AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -206,7 +206,7 @@ BEGIN
 					SELECT SUM(AD_PRICE)
 					FROM 
 						dbo.ClientDistrTable INNER JOIN
-						dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -223,7 +223,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM
@@ -239,7 +239,7 @@ BEGIN
 					SELECT SUM(BD_PRICE)
 					FROM 
 						dbo.ClientDIstrTable INNER JOIN
-						dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -267,7 +267,7 @@ BEGIN
 						SELECT *
 						FROM 
 							dbo.ClientDistrTable INNER JOIN
-							dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 							dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 										AND RN_DISTR_NUM = DIS_NUM
 										AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -295,7 +295,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN
@@ -312,7 +312,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM
@@ -338,7 +338,7 @@ BEGIN
 						FROM 
 							dbo.TOTable INNER JOIN
 							dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-							dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN							
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN							
 							dbo.BillDistrTable ON BD_ID_DISTR = DIS_ID INNER JOIN
 							dbo.BillTable ON BL_ID = BD_ID_BILL
 						WHERE TOTable.TO_ID_CLIENT = t.CL_ID
@@ -369,7 +369,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME 
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN						
@@ -389,7 +389,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME 
 									AND RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM INNER JOIN						

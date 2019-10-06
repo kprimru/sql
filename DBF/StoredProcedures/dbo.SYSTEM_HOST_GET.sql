@@ -20,7 +20,7 @@ BEGIN
 	DECLARE @sysid INT
 
 	SELECT @sysid = SYS_ID
-	FROM dbo.DistrView
+	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE DIS_ID = @distrid
 
 	SELECT SYS_ID, SYS_SHORT_NAME

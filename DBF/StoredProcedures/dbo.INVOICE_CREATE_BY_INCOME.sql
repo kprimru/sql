@@ -55,7 +55,7 @@ BEGIN
 			FROM 
 				dbo.IncomeTable INNER JOIN
 				dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME INNER JOIN
-				dbo.DistrView a ON DIS_ID = ID_ID_DISTR INNER JOIN
+				dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN
 				dbo.SaleObjectTable ON SO_ID = SYS_ID_SO INNER JOIN
 				dbo.TaxTable ON SO_ID_TAX = TX_ID
@@ -250,7 +250,7 @@ BEGIN
 							FROM
 								dbo.IncomeTable
 								INNER JOIN dbo.IncomeDistrTable c ON IN_ID = ID_ID_INCOME 
-								INNER JOIN dbo.DistrView a ON DIS_ID = ID_ID_DISTR 
+								INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR 
 								INNER JOIN dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID 
 								INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO 
 								INNER JOIN dbo.TaxTable ON SO_ID_TAX = TX_ID
@@ -296,7 +296,7 @@ BEGIN
 							FROM
 								dbo.IncomeTable
 								INNER JOIN dbo.IncomeDistrTable c ON IN_ID = ID_ID_INCOME 
-								INNER JOIN dbo.DistrView a ON DIS_ID = ID_ID_DISTR 
+								INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR 
 								INNER JOIN dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID 
 								INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO 
 								INNER JOIN dbo.TaxTable ON SO_ID_TAX = TX_ID
@@ -352,7 +352,7 @@ BEGIN
 		FROM 
 			dbo.InvoiceSaleTable z
 			INNER JOIN dbo.InvoiceRowTable a ON a.INR_ID_INVOICE = z.INS_ID
-			INNER JOIN dbo.DistrView b ON a.INR_ID_DISTR = DIS_ID
+			INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON a.INR_ID_DISTR = DIS_ID
 			INNER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD
 		WHERE INR_ID_INVOICE = @insid
 

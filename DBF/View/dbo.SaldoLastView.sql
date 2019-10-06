@@ -30,4 +30,4 @@ AS
 			FROM dbo.SaldoTable z
 		) AS a INNER JOIN
 	    dbo.ClientTable ON CL_ID = SL_ID_CLIENT INNER JOIN
-    	dbo.DistrView ON DIS_ID = SL_ID_DISTR 
+    	dbo.DistrView WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR 

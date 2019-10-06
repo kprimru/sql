@@ -40,7 +40,7 @@ BEGIN
 					FROM
 						dbo.IncomeTable 
 						INNER JOIN dbo.IncomeDistrTable o ON IN_ID = ID_ID_INCOME 
-						INNER JOIN dbo.DistrView ON DIS_ID = ID_ID_DISTR 
+						INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR 
 						INNER JOIN dbo.ClientTable ON CL_ID = IN_ID_CLIENT	
 						INNER JOIN dbo.SaleObjectTable ON SYS_ID_SO = SO_ID 
 						INNER JOIN dbo.TaxTable ON SO_ID_TAX = TX_ID
@@ -63,7 +63,7 @@ BEGIN
 												FROM
 													dbo.IncomeTable
 													INNER JOIN dbo.IncomeDistrTable c ON IN_ID = ID_ID_INCOME 
-													INNER JOIN dbo.DistrView a ON DIS_ID = ID_ID_DISTR 
+													INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR 
 													INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO 
 													INNER JOIN dbo.TaxTable ON SO_ID_TAX = TX_ID
 													INNER JOIN dbo.IncomeSaldoView e ON c.ID_ID = e.ID_ID

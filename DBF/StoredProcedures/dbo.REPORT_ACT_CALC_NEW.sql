@@ -66,7 +66,7 @@ BEGIN
 			/*
 			dbo.BillDistrTable INNER JOIN
 			*/
-			dbo.DistrView a ON a.DIS_ID = BD_ID_DISTR INNER JOIN
+			dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = BD_ID_DISTR INNER JOIN
 			/*
 			dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
 			*/
@@ -152,7 +152,7 @@ BEGIN
 			/*
 			dbo.BillDistrTable INNER JOIN
 			*/
-			dbo.DistrView a ON a.DIS_ID = BD_ID_DISTR INNER JOIN
+			dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = BD_ID_DISTR INNER JOIN
 			/*
 			dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
 			*/

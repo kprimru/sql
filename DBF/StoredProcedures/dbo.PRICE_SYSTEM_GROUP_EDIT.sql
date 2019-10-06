@@ -67,14 +67,14 @@ BEGIN
 					WHERE PS_ID_PERIOD = @prid
 						AND ((PS_ID_SYSTEM BETWEEN 27 AND 35)OR(PS_ID_SYSTEM=17))
 						AND PS_ID_TYPE = @pt
-				/*
+				
 				ELSE IF (@sysid BETWEEN 36 AND 44)OR(@sysid BETWEEN 54 AND 61) OR (@sysid=52) OR (@sysid=88)
 					UPDATE dbo.PriceSystemTable
 					SET PS_PRICE = (SELECT PS_VAL FROM @price WHERE ID = @ps)
 					WHERE PS_ID_PERIOD = @prid
-						AND ((@sysid BETWEEN 36 AND 44)OR(@sysid BETWEEN 54 AND 61) OR (@sysid=52) OR (@sysid=88))
+						AND ((PS_ID_SYSTEM BETWEEN 36 AND 44)OR(PS_ID_SYSTEM BETWEEN 54 AND 61) OR (PS_ID_SYSTEM=52) OR (PS_ID_SYSTEM=88))
 						AND PS_ID_TYPE = @pt
-				*/
+				
 				ELSE
 ----------------------------------------------------------------------
 					UPDATE dbo.PriceSystemTable

@@ -25,7 +25,7 @@ BEGIN
 			--, TX_ID, TX_PERCENT, TX_NAME, TX_CAPTION
 	FROM 
 		dbo.PrimaryPayTable INNER JOIN
-		dbo.DistrView ON PRP_ID_DISTR = DIS_ID LEFT OUTER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON PRP_ID_DISTR = DIS_ID LEFT OUTER JOIN
 		dbo.OrganizationTable ON ORG_ID = PRP_ID_ORG
 	WHERE PRP_ID = @ppid
 

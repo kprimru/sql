@@ -16,7 +16,7 @@ AS
 			SELECT * 
 			FROM 
 				dbo.TODistrTable INNER JOIN
-				dbo.DistrView ON DIS_ID = TD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 			WHERE SYS_REPORT = 1 AND TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 		) AND
 		EXISTS
@@ -24,7 +24,7 @@ AS
 			SELECT * 
 			FROM 
 				dbo.TODistrTable INNER JOIN
-				dbo.DistrView ON DIS_ID = TD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 			WHERE TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 		)
 
@@ -39,7 +39,7 @@ AS
 			SELECT * 
 			FROM 
 				dbo.TODistrTable INNER JOIN
-				dbo.DistrView ON DIS_ID = TD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 			WHERE TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 		)
 
@@ -54,6 +54,6 @@ AS
 			SELECT * 
 			FROM 
 				dbo.TODistrTable INNER JOIN
-				dbo.DistrView ON DIS_ID = TD_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 			WHERE SYS_REPORT = 1 AND TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 		) AND TO_VMI_COMMENT <> ''

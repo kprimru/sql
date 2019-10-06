@@ -20,6 +20,6 @@ AS
 	FROM 
 		dbo.SaldoTable a INNER JOIN
 	    dbo.ClientTable ON CL_ID = SL_ID_CLIENT INNER JOIN
-    	dbo.DistrView ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
+    	dbo.DistrView DITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
         dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
         dbo.SystemNetTable ON SN_ID = DF_ID_NET
