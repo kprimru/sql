@@ -45,6 +45,8 @@ BEGIN
 		@USRKind		Xml,
 		@PersonalType	Xml,
 		@References		Xml,
+		@DistrType		Xml,
+		@ClientStatus	Xml,
 		@DistrCoef		Xml;
 	
 	DECLARE @Distr Table
@@ -402,6 +404,30 @@ BEGIN
 			FOR XML RAW('ITEM'), ROOT('PERSONAL_TYPE')
 		);
 
+	SET @ClientStatus =
+		(
+			SELECT
+				[Name]		= ServiceStatusName,
+				[Reg]		= ServiceStatusReg,
+				[Index]		= ServiceStatusIndex,
+				[Default]	= ServiceDefault,
+				[Code]		= ServiceCode
+			FROM dbo.ServiceStatusTable
+			FOR XML RAW('ITEM'), ROOT('CLIENT_STATUS')
+		);
+		
+	SET @DistrType = 
+		(
+			SELECT
+				[Name]		= DistrTypeName,
+				[Order]		= DistrTypeOrder,
+				[Full]		= DistrTypeFull,
+				[BaseCheck]	= DistrTypeBaseCheck,
+				[Code]		= DistrTypeCode
+			FROM dbo.DistrTypeTable
+			FOR XML RAW('ITEM'), ROOT('DISTR_TYPE')
+		);
+
 	-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable		
 	INSERT INTO @DistrTypeCoef
 	SELECT ID_NET, START, COEF, RND
@@ -467,6 +493,8 @@ BEGIN
 						@Compliance,
 						@USRKind,
 						@PersonalType,
+						@DistrType,
+						@ClientStatus,
 						@DistrCoef
 					FOR XML PATH('REFERENCES')	
 				)

@@ -98,6 +98,26 @@ BEGIN
 		Primary Key Clustered ([Tech], [NetCnt], [Odon], [Odoff])
 	);
 	
+	DECLARE @DistrType Table
+	(
+		[Name]		VarChar(50),
+		[Full]		VarChar(50),
+		[Code]		VarChar(100),
+		[BaseCheck]	Bit,
+		[Order]		Int,
+		Primary Key Clustered([Code])
+	);
+	
+	DECLARE @ClientStatus Table
+	(
+		[Name]		VarChar(50),
+		[Reg]		SmallInt,
+		[Index]		Int,
+		[Default]	Int,
+		[Code]		VarChar(100),
+		Primary Key Clustered([Code])
+	);
+	
 	DECLARE @DistrStatus Table
 	(
 		[Name]		VarChar(64),
@@ -238,6 +258,24 @@ BEGIN
 		V.value('@Required[1]',	'Bit'),
 		V.value('@Order[1]',	'Int')
 	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/PERSONAL_TYPE[1]/ITEM') N(V)
+	
+	INSERT INTO @DistrType
+	SELECT
+		V.value('@Name[1]',		'VarChar(50)'),
+		V.value('@Full[1]',		'VarChar(50)'),
+		V.value('@Code[1]',		'VarChar(100)'),
+		V.value('@BaseCheck[1]','Bit'),
+		V.value('@Order[1]',	'Int')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/DISTR_TYPE[1]/ITEM') N(V)
+	
+	INSERT INTO @ClientStatus
+	SELECT
+		V.value('@Name[1]',		'VarChar(100)'),
+		V.value('@Code[1]',		'VarChar(100)'),
+		V.value('@Index[1]',	'Int'),
+		V.value('@Reg[1]',		'Int'),
+		V.value('@Default[1]',	'Int')
+	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/CLIENT_STATUS[1]/ITEM') N(V)
 	
 	-- Обновляем справочник Хостов
 	INSERT INTO dbo.Hosts(HostShort, HostReg, HostOrder)
@@ -400,6 +438,54 @@ BEGIN
 			SELECT *
 			FROM Din.SystemType S
 			WHERE S.SST_REG = D.Reg
+		);
+		
+	-- статусы клиента
+	UPDATE S
+	SET [ServiceStatusName]		= D.[Name],
+		[ServiceStatusIndex]	= D.[Index],
+		[ServiceStatusReg]		= D.[Reg],
+		[ServiceDefault]		= D.[Default],
+		[ServiceStatusLast]		= GetDate()
+	FROM dbo.ServiceStatusTable S
+	INNER JOIN @ClientStatus D ON S.[ServiceCode] = D.[Code]
+	WHERE S.[ServiceStatusName] != D.[Name]
+		OR S.[ServiceStatusIndex] != D.[Index]
+		OR S.[ServiceStatusReg] != D.[Reg]
+		OR S.[ServiceDefault] != D.[Default];
+				
+	INSERT INTO dbo.ServiceStatusTable([ServiceStatusName], [ServiceStatusIndex], [ServiceStatusReg], [ServiceDefault], [ServiceCode])
+	SELECT D.[Name], D.[Index], D.[Reg], D.[Default], D.[Code]
+	FROM @ClientStatus D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.ServiceStatusTable S
+			WHERE S.[ServiceCode] = D.[Code]
+		);
+		
+	-- бизнес-справочник типов сети
+	UPDATE N
+	SET DistrTypeName		= D.Name,
+		DistrTypeOrder		= D.[Order],
+		DistrTypeFull		= D.[Full],
+		DistrTypeBaseCheck	= D.[BaseCheck],
+		DistrTypeLast		= GetDate()
+	FROM dbo.DistrTypeTable N
+	INNER JOIN @DistrType D ON N.DistrTypeCode = D.Code
+	WHERE N.DistrTypeName != D.Name
+		OR N.DistrTypeFull != D.[Full]
+		OR N.DistrTypeOrder != D.[Order]
+		OR N.DistrTypeBaseCheck != D.BaseCheck;
+		
+	INSERT INTO dbo.DistrTypeTable(DistrTypeName, DistrTypeOrder, DistrTypeFull, DistrTypeBaseCheck, DistrTypeCode)
+	SELECT Name, [Order], [Full], [BaseCheck], Code
+	FROM @DistrType D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.DistrTypeTable N
+			WHERE N.DistrTypeCode = D.Code
 		);
 		
 	-- Справочник типов сети
