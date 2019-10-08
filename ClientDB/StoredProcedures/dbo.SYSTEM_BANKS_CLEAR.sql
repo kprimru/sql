@@ -36,3 +36,4 @@ BEGIN
 	WHERE	System_Id IN (SELECT System_Id FROM @s) AND
 			DistrType_Id IN (SELECT DistrType_Id FROM @d) 
 END
+

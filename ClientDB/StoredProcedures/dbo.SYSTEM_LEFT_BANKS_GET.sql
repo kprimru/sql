@@ -28,3 +28,4 @@ BEGIN
 	WHERE InfoBankID NOT IN (SELECT InfoBank_ID FROM @t)
 
 END
+

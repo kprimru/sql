@@ -14,3 +14,4 @@ BEGIN
 	FROM dbo.SystemInfoBanksView WITH(NOEXPAND)
 	WHERE System_Id = @SYSID AND DistrType_Id = @DTYPEID
 END
+
