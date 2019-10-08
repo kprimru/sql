@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SYS_INFO_BANK_ALL]
+CREATE PROCEDURE [Report].[SYS_INFO_BANK_ALL_MAIN]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @t	TABLE(SysBaseName	NVARCHAR(MAX), DistrTypeName	NVARCHAR(MAX), Banks	NVARCHAR(MAX))
+	DECLARE @t	TABLE(SysBaseName	NVARCHAR(MAX), DistrTypeName	NVARCHAR(MAX), Banks	NVARCHAR(MAX), SystemOrder	INT)
 
 	INSERT INTO @t
 	SELECT 
@@ -21,10 +21,11 @@ BEGIN
 			WHERE b.System_ID = a.System_ID AND b.DistrType_ID = a.DistrType_ID
 			ORDER BY InfoBankName
 			FOR XML PATH('') 
-			)), 1, 2, '')) AS Banks
+			)), 1, 2, '')) AS Banks,
+			SystemOrder
 	FROM dbo.SystemInfoBanksView a
-	WHERE SystemActive = 1
-	GROUP BY SystemBaseName, DistrTypeName, a.System_ID, a.DistrType_ID
+	WHERE SystemActive = 1 AND HostID = 1
+	GROUP BY SystemBaseName, DistrTypeName, a.System_ID, a.DistrType_ID, SystemOrder
 
 	SELECT
 			SysBaseName + ' : ' +
@@ -35,8 +36,10 @@ BEGIN
 			ORDER BY DistrTypeName
 			FOR XML PATH('')
 			)), 1, 2, '')) AS Systems,
-			Banks
+			Banks,
+			SystemOrder
 	FROM @t t1
-	GROUP BY SysBaseName, Banks
+	GROUP BY SysBaseName, Banks, SystemOrder
+	ORDER BY SystemOrder
 END
 
