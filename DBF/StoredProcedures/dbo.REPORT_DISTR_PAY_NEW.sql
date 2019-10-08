@@ -107,7 +107,7 @@ BEGIN
 				FROM  
 					dbo.ClientDistrTable INNER JOIN
 					dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
-					dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN					
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN					
 					dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE LEFT OUTER JOIN
 					dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
 					dbo.PeriodTable ON PR_ID = DF_ID_PERIOD LEFT OUTER JOIN

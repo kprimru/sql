@@ -10,9 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		DistrTypeName, DistrTypeShortName, DistrTypeOrder,
-		DistrTypeFull, DIstrTypeBaseCheck
+	SELECT DistrTypeName, DistrTypeOrder, DistrTypeFull, DistrTypeBaseCheck, DIstrTypeCode
 	FROM dbo.DistrTypeTable
 	WHERE DistrTypeID = @ID
 END

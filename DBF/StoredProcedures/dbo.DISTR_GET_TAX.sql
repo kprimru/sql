@@ -21,7 +21,7 @@ BEGIN
 	FROM 
 		dbo.TaxTable a INNER JOIN
 		dbo.SaleObjectTable b ON a.TX_ID = b.SO_ID_TAX INNER JOIN
-		dbo.DistrView c ON c.SYS_ID_SO = b.SO_ID
+		dbo.DistrView c WITH(NOEXPAND) ON c.SYS_ID_SO = b.SO_ID
 	WHERE DIS_ID = @distrid
 END
 

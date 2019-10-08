@@ -100,7 +100,7 @@ BEGIN
 				dbo.ClientTable INNER JOIN
 				dbo.IncomeTable ON IN_ID_CLIENT = CL_ID INNER JOIN
 				dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID INNER JOIN
-				dbo.DistrView ON DIS_ID = ID_ID_DISTR
+				dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 			WHERE IN_DATE = @indate AND IN_ID_ORG = @orgid
 			GROUP BY CL_PSEDO, CL_FULL_NAME, DIS_STR, CL_ID, DIS_ID, SYS_ORDER
 		) AS a INNER JOIN

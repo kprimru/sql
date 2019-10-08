@@ -226,7 +226,7 @@ BEGIN
 					INR_ID_TAX, SYS_ORDER, DIS_NUM, INR_COUNT
 				FROM	dbo.InvoiceRowTable		A									INNER JOIN
 						#inv				B	ON	A.INR_ID_INVOICE = B.INV_ID	INNER JOIN
-						dbo.DistrView			C	ON	A.INR_ID_DISTR=C.DIS_ID		INNER JOIN
+						dbo.DistrView			C WITH(NOEXPAND)	ON	A.INR_ID_DISTR=C.DIS_ID		INNER JOIN
 						dbo.SaleObjectTable		D	ON	C.SYS_ID_SO=D.SO_ID		LEFT OUTER JOIN
 						dbo.UnitTable ON UN_NAME = INR_UNIT		
 	

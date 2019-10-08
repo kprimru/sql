@@ -24,7 +24,7 @@ AS
 						END + dbo.MoneyFormat(INR_SALL) + ', '
 					FROM 
 						dbo.InvoiceRowTable
-						LEFT OUTER JOIN dbo.DistrView ON INR_ID_DISTR = DIS_ID
+						LEFT OUTER JOIN dbo.DistrView WITH(NOEXPAND) ON INR_ID_DISTR = DIS_ID
 						LEFT OUTER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD
 					WHERE INR_ID_INVOICE = INS_ID
 					ORDER BY SYS_ORDER, DIS_NUM, DIS_COMP_NUM, INR_NAME FOR XML PATH('')

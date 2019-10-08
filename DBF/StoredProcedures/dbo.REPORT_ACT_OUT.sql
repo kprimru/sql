@@ -40,7 +40,7 @@ BEGIN
 			) AS COUR_NAME
 		FROM 
 			dbo.BillDistrTable INNER JOIN
-			dbo.DistrView a ON a.DIS_ID = BD_ID_DISTR INNER JOIN
+			dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = BD_ID_DISTR INNER JOIN
 			dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
 			dbo.PeriodTable ON PR_ID = BL_ID_PERIOD INNER JOIN
 			dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN

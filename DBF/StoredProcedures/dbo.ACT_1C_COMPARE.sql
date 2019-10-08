@@ -86,7 +86,7 @@ BEGIN
 				dbo.ClientTable 
 				INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID 
 				INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID 
-				INNER JOIN dbo.DistrView a ON DIS_ID = AD_ID_DISTR 			
+				INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR 			
 			WHERE ACT_DATE BETWEEN @begin AND @end
 				AND (ACT_ID_ORG = @org OR @org IS NULL)	
 			GROUP BY CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER
@@ -99,7 +99,7 @@ BEGIN
 				dbo.ClientTable 
 				INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID 
 				INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID 
-				INNER JOIN dbo.DistrView a ON DIS_ID = CSD_ID_DISTR 
+				INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR 
 			WHERE CSG_DATE BETWEEN @begin AND @end
 				AND (CSG_ID_ORG = @org OR @org IS NULL)	
 			GROUP BY CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER	

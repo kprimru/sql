@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ServiceStatusName, ServiceStatusReg, ServiceStatusIndex, ServiceImage, ServiceDefault
+	SELECT ServiceStatusName, ServiceStatusReg, ServiceStatusIndex, ServiceDefault, ServiceCode
 	FROM dbo.ServiceStatusTable
 	WHERE ServiceStatusID = @ID
 END

@@ -29,7 +29,7 @@ SELECT
 
 		FROM	dbo.InvoiceSaleTable	A									INNER JOIN
 				dbo.InvoiceRowTable		B	ON	A.INS_ID=B.INR_ID_INVOICE	LEFT JOIN
-				dbo.DistrView			C	ON	B.INR_ID_DISTR=C.DIS_ID		INNER JOIN
+				dbo.DistrView			C WITH(NOEXPAND)	ON	B.INR_ID_DISTR=C.DIS_ID		INNER JOIN
 				dbo.OrganizationView	D	ON	A.INS_ID_ORG=D.ORG_ID		LEFT JOIN
 				dbo.SaleObjectTable		E	ON	C.SYS_ID_SO=E.SO_ID			INNER JOIN
 				dbo.ClientTable			F	ON	A.INS_ID_CLIENT=F.CL_ID

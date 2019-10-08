@@ -211,7 +211,7 @@ BEGIN
 						FROM 
 							dbo.TOTable t INNER JOIN
 							dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-							dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 							dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 						WHERE t.TO_ID = @TO_ID
 							AND BL_ID_PERIOD = @PR_ID

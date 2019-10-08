@@ -32,8 +32,8 @@ BEGIN
 
 			SELECT a.DIS_ID, a.DIS_STR
 			FROM 
-				dbo.DistrView a INNER JOIN
-				dbo.DistrView b ON a.DIS_NUM = b.DIS_NUM
+				dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+				dbo.DistrView b WITH(NOEXPAND) ON a.DIS_NUM = b.DIS_NUM
 							AND a.DIS_COMP_NUM = b.DIS_COMP_NUM
 							AND a.HST_ID = b.HST_ID INNER JOIN
 				dbo.ClientDistrView c ON c.DIS_ID = b.DIS_ID

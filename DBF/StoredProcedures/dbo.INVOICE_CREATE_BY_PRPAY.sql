@@ -258,7 +258,7 @@ BEGIN
 		FROM 
 			dbo.InvoiceSaleTable z
 			INNER JOIN dbo.InvoiceRowTable a ON a.INR_ID_INVOICE = z.INS_ID
-			INNER JOIN dbo.DistrView b ON a.INR_ID_DISTR = DIS_ID
+			INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON a.INR_ID_DISTR = DIS_ID
 			INNER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD
 		WHERE INR_ID_INVOICE = @insid
 

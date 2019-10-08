@@ -181,7 +181,7 @@ BEGIN
 		FROM 
 			#verify INNER JOIN	
 			dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN
-			dbo.DistrView ON DIS_ID = VDIS_ID INNER JOIN
+			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = VDIS_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = VPR_ID
 		WHERE VI_PRICE <> VB_PRICE '
 	END
@@ -193,7 +193,7 @@ BEGIN
 		FROM 
 			#verify INNER JOIN	
 			dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN
-			dbo.DistrView ON DIS_ID = VDIS_ID INNER JOIN
+			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = VDIS_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = VPR_ID
 		WHERE VB_PRICE <> VA_PRICE '
 	END
@@ -205,7 +205,7 @@ BEGIN
 		FROM 
 			#verify INNER JOIN	
 			dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN
-			dbo.DistrView ON DIS_ID = VDIS_ID INNER JOIN
+			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = VDIS_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = VPR_ID
 		WHERE VA_PRICE <> VI_PRICE '
 	END

@@ -29,20 +29,20 @@ BEGIN
 		DROP TABLE #tech_info
 
 	CREATE TABLE #tech_info
-		(
-			UIU_ID		INT PRIMARY KEY,
-			UIU_ID_IB	INT,
-			UIU_INDX	TINYINT,
-			UIU_DATE	SMALLDATETIME,
-			UIU_DATE_S	SMALLDATETIME,
-			UIU_DOCS	INT,			
-			UI_ID_BASE	INT,
-			UI_DISTR	INT,
-			UI_COMP		TINYINT,
-			UI_ID_COMP	INT,
-			USRFileKindShortName	VARCHAR(20),
-			STAT_DATE	SMALLDATETIME
-		)
+	(
+		UIU_ID					INT PRIMARY KEY,
+		UIU_ID_IB				INT,
+		UIU_INDX				TINYINT,
+		UIU_DATE				SMALLDATETIME,
+		UIU_DATE_S				SMALLDATETIME,
+		UIU_DOCS				INT,			
+		UI_ID_BASE				INT,
+		UI_DISTR				INT,
+		UI_COMP					TINYINT,
+		UI_ID_COMP				INT,
+		USRFileKindShortName	VARCHAR(20),
+		STAT_DATE				SMALLDATETIME
+	)
 
 	DECLARE @USRPackage Table
 	(
@@ -78,7 +78,7 @@ BEGIN
 			UI_ID_COMP, USRFileKindShortName, STAT_DATE
 			)
 		SELECT 
-			@MaxRn + Row_Number() OVER(ORDER BY UIU_ID_IB, UIU_INDX), UIU_ID_IB, UIU_INDX, UIU_DATE, UIU_DATE_S,
+			@MaxRn + Row_Number() OVER(ORDER BY UIU_ID_IB, UIU_INDX), UIU_ID_IB, IsNull(UIU_INDX, 1), UIU_DATE, UIU_DATE_S,
 			UIU_DOCS, UI_ID_BASE, UI_DISTR, UI_COMP, 
 			UI_ID_COMP, USRFileKindShortName, StatisticDate
 			/*(
@@ -90,21 +90,20 @@ BEGIN
 					/*AND StatisticDate <= UIU_DATE*/
 				ORDER BY StatisticDate DESC
 			)*/
-		FROM 
-			dbo.USRFileKindTable
-			INNER JOIN USR.USRUpdates ON UIU_ID_KIND = USRFileKindID
-			INNER JOIN USR.USRIB ON UI_ID = UIU_ID_IB
-			OUTER APPLY
-			(
-				SELECT TOP 1 StatisticDate
-				FROM 
-					dbo.StatisticTable a
-				WHERE Docs = UIU_DOCS
-					AND a.InfoBankID = UI_ID_BASE
-					/*AND StatisticDate <= UIU_DATE*/
-				ORDER BY StatisticDate DESC
-			) s
-		WHERE UI_ID_USR = @UF_ID
+		FROM USR.USRIB
+		LEFT JOIN USR.USRUpdates ON UI_ID = UIU_ID_IB
+		LEFT JOIN dbo.USRFileKindTable ON UIU_ID_KIND = USRFileKindID
+		OUTER APPLY
+		(
+			SELECT TOP 1 StatisticDate
+			FROM 
+				dbo.StatisticTable a
+			WHERE Docs = UIU_DOCS
+				AND a.InfoBankID = UI_ID_BASE
+				/*AND StatisticDate <= UIU_DATE*/
+			ORDER BY StatisticDate DESC
+		) s
+		WHERE UI_ID_USR = @UF_ID;
 
 	SELECT @MaxRn = Max(UIU_ID) FROM #tech_info;
 
@@ -210,7 +209,7 @@ BEGIN
 			@USRPackage a
 			INNER JOIN Din.NetType n ON a.UP_TECH = n.NT_TECH_USR AND a.UP_NET = n.NT_NET AND UP_TECH = NT_TECH_USR
 			INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeID = n.NT_ID_MASTER
-			CROSS APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
+			OUTER APPLY dbo.SystemBankGet(a.UP_ID_SYSTEM, n.NT_ID_MASTER) b
 			INNER JOIN dbo.InfoBankTable d ON d.InfoBankID = b.InfoBankID
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID /*AND Required IN (0, 1)*/
@@ -279,8 +278,8 @@ BEGIN
 			@USRPackage a 
 			INNER JOIN dbo.SystemTable z ON z.SystemID = UP_ID_SYSTEM
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
-		WHERE UP_ID_USR = @UF_ID
-
+		WHERE UP_ID_USR = @UF_ID;
+		
 		-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
 		INSERT INTO #package(
 					UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, 
@@ -301,7 +300,8 @@ BEGIN
 		(
 			SELECT TOP 1 UP_ID, UP_ID_SYSTEM, UP_RIC, UP_TECH, UP_NET, UP_TYPE, UP_FORMAT, SystemShortName, SystemBaseName, SystemOrder, HostId
 			FROM #package 
-			WHERE UP_ID_SYSTEM IS NOT NULL ORDER BY SystemOrder
+			WHERE UP_ID_SYSTEM IS NOT NULL
+			ORDER BY CASE WHEN UI_DISTR = UP_DISTR THEN 1 ELSE 100 END, SystemOrder
 		) AS SYS
 		WHERE UI_ID_USR = @UF_ID
 			AND NOT EXISTS
@@ -446,10 +446,9 @@ BEGIN
 		SystemOrder, 
 		InfoBankOrder,
 		3 AS DATA_TYPE
-	FROM 
-		#tech_info INNER JOIN
-		#package ON UI_DISTR = UP_DISTR AND UI_COMP = UP_COMP AND UI_ID_BASE = InfoBankID INNER JOIN
-		dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP		
+	FROM #tech_info
+	INNER JOIN #package ON UI_DISTR = UP_DISTR AND UI_COMP = UP_COMP AND UI_ID_BASE = InfoBankID
+	LEFT JOIN dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP		
 	WHERE UIU_INDX = 1
 
 	UNION

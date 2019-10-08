@@ -53,7 +53,7 @@ BEGIN
 						SELECT DIS_STR + ' - ' + dbo.MoneyFormat(AD_TOTAL_PRICE) + ', '
 						FROM 
 							dbo.ActDistrTable
-							INNER JOIN dbo.DistrView ON AD_ID_DISTR = DIS_ID
+							INNER JOIN dbo.DistrView WITH(NOEXPAND) ON AD_ID_DISTR = DIS_ID
 						WHERE AD_ID_ACT = @ACT AND AD_ID_PERIOD = PR_ID
 						ORDER BY SYS_ORDER, DIS_NUM, DIS_COMP_NUM FOR XML PATH('')
 					)), 1, 2, ''))

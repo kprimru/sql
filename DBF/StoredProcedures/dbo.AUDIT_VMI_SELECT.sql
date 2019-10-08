@@ -34,7 +34,7 @@ BEGIN
 				(
 					SELECT *
 					FROM 
-						dbo.DistrView INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) INNER JOIN
 						dbo.TODistrTable ON TD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 								AND RN_DISTR_NUM = DIS_NUM
@@ -46,7 +46,7 @@ BEGIN
 			NOT EXISTS
 				(
 					SELECT *
-					FROM dbo.DistrView INNER JOIN
+					FROM dbo.DistrView WITH(NOEXPAND) INNER JOIN
 						dbo.TODistrTable ON TD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 								AND RN_DISTR_NUM = DIS_NUM
@@ -66,7 +66,7 @@ BEGIN
 				SELECT *
 				FROM 
 					dbo.TODistrTable INNER JOIN
-					dbo.DistrView ON DIS_ID = TD_ID_DISTR LEFT OUTER JOIN
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR LEFT OUTER JOIN
 					dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 								AND RN_DISTR_NUM = DIS_NUM
 								AND RN_COMP_NUM = DIS_COMP_NUM
@@ -82,7 +82,7 @@ BEGIN
 				SELECT *
 				FROM 
 					dbo.TODistrTable INNER JOIN
-					dbo.DistrView ON DIS_ID = TD_ID_DISTR
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 				WHERE DIS_ACTIVE = 1 AND TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 					AND SYS_REPORT = 1
 			) AND TO_REPORT = 1

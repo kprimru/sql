@@ -159,6 +159,10 @@ BEGIN
 							OR
 							(a.InfoBankName = 'BVV' AND a.SystemBaseName = 'FIN' AND q.InfoBankName = 'BVV' AND q.SystemBaseName = 'BUDP')
 							OR								
+							(a.InfoBankName = 'CJI' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'CJI' AND q.SystemBaseName = 'BUD')
+							OR								
+							(a.InfoBankName = 'CMB' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'CMB' AND q.SystemBaseName = 'BUD')
+							OR								
 							(a.InfoBankName = 'PSG' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'PSG' AND q.SystemBaseName = 'BUD')
 							OR
 							(a.InfoBankName = 'PKG' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'PKG' AND q.SystemBaseName = 'BUD')
@@ -283,11 +287,9 @@ BEGIN
 	ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, InfoBankOrder
 	OPTION (RECOMPILE);
 
-
-
 	SELECT
 		ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
-		DisStr,
+		ComplectStr AS DisStr,
 		REVERSE(STUFF(REVERSE((
 			SELECT 
 				InfoBankShortName + ', '
@@ -306,9 +308,9 @@ BEGIN
 				a.ComplectStr = b.ComplectStr
 			FOR XML PATH('')
 		)), 1, 2, '')) AS InfoBankName,  */
-		LAST_DATE, UF_DATE
+		Max(LAST_DATE) AS LAST_DATE, UF_DATE
 	FROM @ib_out a
-	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, LAST_DATE, UF_DATE
+	GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, /*DisStr, LAST_DATE, */UF_DATE
 
 END
 

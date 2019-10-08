@@ -51,7 +51,7 @@ BEGIN
 			dbo.ClientTable 
 			INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID 
 			INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID 
-			INNER JOIN dbo.DistrView a ON DIS_ID = AD_ID_DISTR 			
+			INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
 		WHERE ACT_DATE BETWEEN @begin AND @end
 			AND (ACT_ID_ORG = @org OR @org IS NULL)	
 		GROUP BY CL_ID, SYS_ID
@@ -64,7 +64,7 @@ BEGIN
 			dbo.ClientTable 
 			INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID 
 			INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID 
-			INNER JOIN dbo.DistrView a ON DIS_ID = CSD_ID_DISTR 
+			INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR 
 		WHERE CSG_DATE BETWEEN @begin AND @end
 			AND (CSG_ID_ORG = @org OR @org IS NULL)	
 		GROUP BY CL_ID, SYS_ID
@@ -75,7 +75,7 @@ BEGIN
 		FROM
 			dbo.IncomeTable INNER JOIN
 			dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME INNER JOIN
-			dbo.DistrView ON DIS_ID = ID_ID_DISTR INNER JOIN
+			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 			dbo.ClientTable ON CL_ID = IN_ID_CLIENT			
 		WHERE IN_DATE BETWEEN @BEGIN AND @END
 			AND IN_ID_ORG = @org
@@ -106,7 +106,7 @@ BEGIN
 								WHERE SL_DATE BETWEEN @BEGIN AND @END
 							) AS a
 					) AS c
-					INNER JOIN dbo.DistrView d ON c.SL_ID_DISTR = d.DIS_ID
+					INNER JOIN dbo.DistrView d WITH(NOEXPAND) ON c.SL_ID_DISTR = d.DIS_ID
 				GROUP BY SL_ID_CLIENT, SYS_ID
 			) AS e
 			

@@ -43,7 +43,7 @@ BEGIN
 	IF EXISTS
 		(
 			SELECT DIS_ID
-			FROM dbo.DistrView
+			FROM dbo.DistrView WITH(NOEXPAND)
 			WHERE DIS_NUM = @distrnum
 				AND DIS_COMP_NUM = @compnum
 				AND HST_ID = 
@@ -61,7 +61,7 @@ BEGIN
 				WHERE CD_ID_DISTR = 
 					(
 						SELECT DIS_ID
-						FROM dbo.DistrView
+						FROM dbo.DistrView WITH(NOEXPAND)
 						WHERE DIS_NUM = @distrnum
 							AND DIS_COMP_NUM = @compnum
 							AND HST_ID = 
@@ -79,7 +79,7 @@ BEGIN
 				WHERE TD_ID_DISTR IN
 					(
 						SELECT DIS_ID
-						FROM dbo.DistrView
+						FROM dbo.DistrView WITH(NOEXPAND)
 						WHERE DIS_NUM = @distrnum
 							AND DIS_COMP_NUM = @compnum
 							AND HST_ID = 
@@ -98,7 +98,7 @@ BEGIN
 			WHERE TD_ID_DISTR IN
 				(
 					SELECT DIS_ID
-					FROM dbo.DistrView
+					FROM dbo.DistrView WITH(NOEXPAND)
 					WHERE DIS_NUM = @distrnum
 						AND DIS_COMP_NUM = @compnum
 						AND HST_ID = 
@@ -116,7 +116,7 @@ BEGIN
 			WHERE CD_ID_DISTR IN
 				(
 					SELECT DIS_ID
-					FROM dbo.DistrView
+					FROM dbo.DistrView WITH(NOEXPAND)
 					WHERE DIS_NUM = @distrnum
 						AND DIS_COMP_NUM = @compnum
 						AND HST_ID = 

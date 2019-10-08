@@ -69,7 +69,7 @@ AS
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR, 
 		'Дистрибутив не распределен клиенту' AS CL_ERROR
-	FROM dbo.DistrView
+	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE NOT EXISTS
 		(
 			SELECT * 
@@ -86,7 +86,7 @@ AS
 		DIS_ID, DIS_STR, 
 		'Дистрибутив не распределен в ТО' AS CL_ERROR
 	FROM 
-		dbo.DistrView a INNER JOIN
+		dbo.DistrView a WITH(NOEXPAND) INNER JOIN
 		dbo.ClientDistrTable ON DIS_ID = CD_ID_DISTR INNER JOIN
 		dbo.ClientTable ON CL_ID = CD_ID_CLIENT
 	WHERE NOT EXISTS
@@ -111,7 +111,7 @@ AS
 		DIS_ID, DIS_STR, 
 		'Дистрибутив клиента разнесен в ТО не принадлежащую данному клиенту' AS CL_ERROR
 	FROM 
-		dbo.DistrView INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) INNER JOIN
 		dbo.TODistrTable ON TD_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
@@ -126,7 +126,7 @@ AS
 		DIS_ID, DIS_STR, 
 		'Дистрибутив не указан ни в одном действующем договоре' AS CL_ERROR
 	FROM
-		dbo.DistrView a LEFT OUTER JOIN
+		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
 		dbo.ClientDistrTable b ON CD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 		dbo.DistrServiceStatusTable c ON DSS_ID = CD_ID_SERVICE LEFT OUTER JOIN
 		dbo.ClientTable d ON CL_ID = CD_ID_CLIENT LEFT OUTER JOIN
@@ -148,7 +148,7 @@ AS
 		DIS_ID, DIS_STR, 
 		'Дистрибутив указан более чем в одном действующем договоре' AS CL_ERROR
 	FROM
-		dbo.DistrView a LEFT OUTER JOIN
+		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
 		dbo.ClientDistrTable b ON CD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 		dbo.DistrServiceStatusTable c ON DSS_ID = CD_ID_SERVICE LEFT OUTER JOIN
 		dbo.ClientTable d ON CL_ID = CD_ID_CLIENT LEFT OUTER JOIN

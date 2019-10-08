@@ -48,7 +48,7 @@ BEGIN
 			)
 		FROM 
 			dbo.SaldoView a INNER JOIN
-			dbo.DistrView ON DIS_ID = SL_ID_DISTR
+			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR
 		WHERE SL_ID_CLIENT = @clientid	
 
 	IF OBJECT_ID('tempdb..#detail') IS NOT NULL
@@ -72,7 +72,7 @@ BEGIN
 			SL_DATE, d.DIS_ID, DIS_STR, a.ID_PRICE, NULL, a.SL_REST, PR_DATE
 		FROM 
 			dbo.SaldoView a INNER JOIN
-			dbo.DistrView d ON DIS_ID = SL_ID_DISTR INNER JOIN
+			dbo.DistrView d WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR INNER JOIN
 			#master c ON d.DIS_ID = c.DIS_ID LEFT OUTER JOIN
 			dbo.IncomeDistrTable b ON b.ID_ID = a.ID_ID LEFT OUTER JOIN
 			dbo.PeriodTable ON ID_ID_PERIOD = PR_ID
@@ -86,7 +86,7 @@ BEGIN
 			SL_DATE, d.DIS_ID, DIS_STR, NULL, a.AD_TOTAL_PRICE, a.SL_REST, PR_DATE
 		FROM 
 			dbo.SaldoView a INNER JOIN
-			dbo.DistrView d ON DIS_ID = SL_ID_DISTR INNER JOIN
+			dbo.DistrView d WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR INNER JOIN
 			#master c ON d.DIS_ID = c.DIS_ID LEFT OUTER JOIN
 			dbo.ActDistrTable b ON a.AD_ID = b.AD_ID LEFT OUTER JOIN
 			dbo.PeriodTable ON AD_ID_PERIOD = PR_ID
@@ -100,7 +100,7 @@ BEGIN
 			SL_DATE, d.DIS_ID, DIS_STR, NULL, a.CSD_TOTAL_PRICE, a.SL_REST, PR_DATE
 		FROM 
 			dbo.SaldoView a INNER JOIN
-			dbo.DistrView d ON DIS_ID = SL_ID_DISTR INNER JOIN
+			dbo.DistrView d WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR INNER JOIN
 			#master c ON d.DIS_ID = c.DIS_ID LEFT OUTER JOIN
 			dbo.ConsignmentDetailTable b ON a.CSD_ID = b.CSD_ID LEFT OUTER JOIN
 			dbo.PeriodTable ON CSD_ID_PERIOD = PR_ID

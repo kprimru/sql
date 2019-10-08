@@ -14,4 +14,4 @@ SELECT
 	FROM 
 		dbo.TODistrTable a INNER JOIN
 		dbo.TOTable b ON a.TD_ID_TO = b.TO_ID INNER JOIN
-		dbo.DistrView c ON a.TD_ID_DISTR = c.DIS_ID
+		dbo.DistrView c WITH(NOEXPAND) ON a.TD_ID_DISTR = c.DIS_ID

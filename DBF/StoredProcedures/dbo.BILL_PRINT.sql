@@ -353,7 +353,7 @@ BEGIN
 				dbo.DistrFinancingTable p ON p.DF_ID_DISTR = a.BD_ID_DISTR
 		) AS t INNER JOIN
 		dbo.PeriodTable ON PR_ID = BL_ID_PERIOD INNER JOIN
-		dbo.DistrView a ON DIS_ID = BD_ID_DISTR INNER JOIN
+		dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 		dbo.DistrFinancingTable z ON z.DF_ID_DISTR = DIS_ID INNER JOIN
 		dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN
 		dbo.SaleObjectTable ON SYS_ID_SO = SO_ID INNER JOIN

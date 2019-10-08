@@ -92,7 +92,7 @@ BEGIN
 				SELECT DIS_STR + ', '
 				FROM 
 					dbo.TODistrTable
-					INNER JOIN dbo.DistrView ON DIS_ID = TD_ID_DISTR
+					INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 					INNER JOIN dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME 
 												AND RN_DISTR_NUM = DIS_NUM
 												AND RN_COMP_NUM = DIS_COMP_NUM

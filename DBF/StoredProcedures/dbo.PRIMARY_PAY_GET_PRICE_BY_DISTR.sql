@@ -29,7 +29,7 @@ BEGIN
 							SELECT RN_NET_COUNT 
 							FROM 
 								dbo.RegNodeTable e INNER JOIN
-								dbo.DistrView f ON 
+								dbo.DistrView f WITH(NOEXPAND) ON 
 											e.RN_SYS_NAME = f.SYS_REG_NAME AND
 											e.RN_DISTR_NUM = f.DIS_NUM AND
 											e.RN_COMP_NUM = f.DIS_COMP_NUM	
@@ -47,7 +47,7 @@ BEGIN
 	WHERE SYS_ID = 
 					(
 						SELECT SYS_ID
-						FROM dbo.DistrView
+						FROM dbo.DistrView WITH(NOEXPAND)
 						WHERE DIS_ID = @distrid
 					) AND
 		GETDATE() BETWEEN b.PR_DATE AND b.PR_END_DATE AND PP_ID = 2

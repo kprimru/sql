@@ -24,7 +24,7 @@ SELECT
 		dbo.ActDistrTable INNER JOIN
 		dbo.ActTable ON AD_ID_ACT = ACT_ID INNER JOIN
 		dbo.ClientTable ON CL_ID = ACT_ID_CLIENT INNER JOIN
-		dbo.DistrView ON DIS_ID = AD_ID_DISTR INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR INNER JOIN
 		dbo.PeriodTable ON PR_ID = AD_ID_PERIOD LEFT OUTER JOIN
 		dbo.OrganizationTable ON ORG_ID = CL_ID_ORG LEFT OUTER JOIN		
 		dbo.OrganizationCalc ON ORGC_ID = CL_ID_ORG_CALC LEFT OUTER JOIN		

@@ -20,7 +20,7 @@ BEGIN
 		DS_NAME
 	FROM 
 		dbo.TODistrTable a 
-		INNER JOIN	dbo.DistrView b ON a.TD_ID_DISTR = b.DIS_ID 
+		INNER JOIN	dbo.DistrView b WITH(NOEXPAND) ON a.TD_ID_DISTR = b.DIS_ID 
 		LEFT OUTER JOIN	dbo.RegNodeTable c ON 
 							c.RN_SYS_NAME = b.SYS_REG_NAME
 						AND	c.RN_DISTR_NUM = b.DIS_NUM

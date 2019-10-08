@@ -29,7 +29,7 @@ BEGIN
 		COP_ID, COP_NAME, DF_NAME
 	FROM 
 		dbo.DistrFinancingTable a LEFT OUTER JOIN
-		dbo.DistrView b ON a.DF_ID_DISTR = b.DIS_ID LEFT OUTER JOIN
+		dbo.DistrView b WITH(NOEXPAND) ON a.DF_ID_DISTR = b.DIS_ID LEFT OUTER JOIN
 		dbo.SystemNetTable c ON c.SN_ID = a.DF_ID_NET LEFT OUTER JOIN				
 		dbo.SystemTypeTable e ON e.SST_ID = a.DF_ID_TYPE LEFT OUTER JOIN
 		dbo.PriceTable f ON f.PP_ID = a.DF_ID_PRICE LEFT OUTER JOIN

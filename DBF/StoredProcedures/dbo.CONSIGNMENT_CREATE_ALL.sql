@@ -29,7 +29,7 @@ BEGIN
 					dbo.ClientDistrTable INNER JOIN
 					dbo.DistrFinancingTable ON DF_ID_DISTR = CD_ID_DISTR INNER JOIN
 					dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
-					dbo.DistrView a ON DIS_ID = CD_ID_DISTR INNER JOIN
+					dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 					dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID
 				WHERE CD_ID_CLIENT = CL_ID 
 					AND DSS_REPORT = 1 

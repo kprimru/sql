@@ -9,7 +9,7 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT DistrTypeID, DistrTypeName, DistrTypeShortName
+	SELECT DistrTypeID, DistrTypeName, DistrTypeName AS DistrTypeShortName
 	FROM dbo.DistrTypeTable
 	ORDER BY DistrTypeOrder
 END

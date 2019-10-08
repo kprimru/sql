@@ -92,7 +92,7 @@ BEGIN
 	FROM 		
 		#temp INNER JOIN
 	    dbo.ClientTable ON SL_ID_CLIENT = CL_ID INNER JOIN		
-    	dbo.DistrView ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
+    	dbo.DistrView WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
         dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
         dbo.SystemNetTable ON SN_ID = DF_ID_NET 	
 	WHERE SL_REST < 0        	

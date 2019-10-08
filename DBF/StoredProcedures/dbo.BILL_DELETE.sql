@@ -27,7 +27,7 @@ BEGIN
 				SELECT BD_ID 
 				FROM 
 					dbo.BillDistrTable INNER JOIN
-					dbo.DistrView ON DIS_ID = BD_ID_DISTR
+					dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 				WHERE BD_ID_BILL = @billid
 					AND SYS_ID_SO = @soid					
 			)
@@ -38,7 +38,7 @@ BEGIN
 		AND BD_ID_DISTR IN
 			(
 				SELECT DIS_ID
-				FROM dbo.DistrView
+				FROM dbo.DistrView WITH(NOEXPAND)
 				WHERE SYS_ID_SO = @soid
 			)
 

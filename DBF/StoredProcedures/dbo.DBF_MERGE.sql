@@ -719,7 +719,7 @@ BEGIN
 		SELECT 
 			(
 				SELECT DIS_ID
-				FROM DBF.dbo.DistrView c
+				FROM DBF.dbo.DistrView c WITH(NOEXPAND)
 				WHERE c.SYS_REG_NAME = b.SYS_REG_NAME
 					AND c.DIS_NUM = b.DIS_NUM
 					AND c.DIS_COMP_NUM = b.DIS_COMP_NUM
@@ -751,7 +751,7 @@ BEGIN
 					AND z.DDH_ID_DISTR = 
 							(
 								SELECT DIS_ID
-								FROM DBF.dbo.DistrView c
+								FROM DBF.dbo.DistrView c WITH(NOEXPAND)
 								WHERE c.SYS_REG_NAME = b.SYS_REG_NAME
 									AND c.DIS_NUM = b.DIS_NUM
 									AND c.DIS_COMP_NUM = b.DIS_COMP_NUM

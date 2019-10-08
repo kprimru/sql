@@ -17,5 +17,5 @@ SELECT
         dbo.BillDistrTable ON BL_ID = BD_ID_BILL INNER JOIN
 		dbo.PeriodTable ON PR_ID = BL_ID_PERIOD INNER JOIN
         dbo.TaxTable ON BD_ID_TAX = TX_ID INNER JOIN
-        dbo.DistrView ON DIS_ID = BD_ID_DISTR INNER JOIN
+        dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 		dbo.SaleObjectTable ON SYS_ID_SO = SO_ID

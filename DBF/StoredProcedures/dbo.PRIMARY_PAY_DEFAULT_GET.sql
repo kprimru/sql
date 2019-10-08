@@ -24,7 +24,7 @@ BEGIN
 										* PP_COEF_MUL * SN_COEF * (100 - DF_DISCOUNT) / 100) AS MONEY) AS PRP_PRICE
 	FROM 
 		dbo.TaxTable, 
-		dbo.DistrView a INNER JOIN  
+		dbo.DistrView a WITH(NOEXPAND) INNER JOIN  
 		dbo.DistrFinancingView z ON z.DIS_ID = a.DIS_ID INNER JOIN		
 		dbo.PriceSystemTable b ON b.PS_ID_SYSTEM = a.SYS_ID INNER JOIN 
 		dbo.ClientTable y ON CD_ID_CLIENT = CL_ID LEFT OUTER JOIN

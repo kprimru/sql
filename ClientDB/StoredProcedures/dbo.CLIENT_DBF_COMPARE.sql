@@ -23,6 +23,7 @@ BEGIN
 		SELECT ID
 		FROM dbo.TableStringFromXML(@TYPE)
 		
+	DECLARE @NAME		BIT
 	DECLARE @ADDRESS	BIT
 	DECLARE	@DIR_FIO	BIT
 	DECLARE @DIR_POS	BIT
@@ -140,6 +141,16 @@ BEGIN
 		(
 			SELECT *
 			FROM @TP
+			WHERE TP_NAME = 'Название'
+		)
+		SET @NAME = 1
+	ELSE
+		SET @NAME = 0
+		
+	IF EXISTS
+		(
+			SELECT *
+			FROM @TP
 			WHERE TP_NAME = 'Сервис-инженер'
 		)
 		SET @SRVC = 1
@@ -199,7 +210,8 @@ BEGIN
 			HOME			VARCHAR(150),
 			OFFICE			VARCHAR(150),
 			ADDRESS_LAST	DATETIME,
-			INN				VARCHAR(50)
+			INN				VARCHAR(50),
+			CLientFullName	VarCHar(500)
 		)
 		
 	INSERT INTO #client(ClientID)
@@ -293,7 +305,8 @@ BEGIN
 			STREET			VARCHAR(250),
 			HOME			VARCHAR(150),
 			ADDRESS_LAST	DATETIME,
-			INN				VARCHAR(50)
+			INN				VARCHAR(50),
+			TO_NAME			VarChar(500)
 		)
 		
 	INSERT INTO #dbf(TO_ID)
@@ -642,6 +655,21 @@ BEGIN
 			#dbf a
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
 	END
+	
+	IF @NAME = 1
+	BEGIN
+		UPDATE a
+		SET ClientFullName = b.ClientFullName
+		FROM 
+			#client a
+			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+			
+		UPDATE a
+		SET TO_NAME = b.TO_NAME
+		FROM
+			#dbf a
+			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+	END
 		
 	IF OBJECT_ID('tempdb..#result') IS NOT NULL
 		DROP TABLE #result
@@ -947,6 +975,23 @@ BEGIN
 				INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 				INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 			WHERE 	a.INN <> d.INN
+					
+	IF @NAME = 1
+		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
+			SELECT DISTINCT 
+				b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
+				a.ClientFullName AS IN_OIS, 
+				'Название' AS TP,
+				d.TO_NAME AS IN_DBF,
+				'Неправильно и все тут' AS ERROR,	
+				DISTR,
+				DISTR_DBF, NULL, NULL
+			FROM 
+				#client a
+				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
+				INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
+				INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
+			WHERE 	a.ClientFullname <> d.TO_NAME
 					
 	IF @ADDRESS = 1
 		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)

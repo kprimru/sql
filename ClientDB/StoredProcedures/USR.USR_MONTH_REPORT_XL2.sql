@@ -118,7 +118,7 @@ BEGIN
 		)
 
 	INSERT INTO #system(ClientID, SystemID, InfoBankID, SystemDistrNumber, CompNumber)
-		SELECT CL_ID, b.SystemID, d.InfoBankID, DISTR, COMP
+		SELECT CL_ID, b.SystemID, InfoBankID, DISTR, COMP
 		FROM 
 			#client a
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON CL_ID = ID_CLIENT
@@ -148,7 +148,7 @@ BEGIN
 
 	CREATE TABLE #inet
 		(
-			UD_ID		UNIQUEIDENTIFIER,
+			UD_ID		INT,
 			UF_PATH		TINYINT,
 			UF_DATE_S	DATETIME,
 			UF_KIND		VARCHAR(20)

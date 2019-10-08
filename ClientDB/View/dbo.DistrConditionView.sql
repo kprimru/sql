@@ -7,9 +7,9 @@ GO
 CREATE VIEW [dbo].[DistrConditionView]
 AS
 	SELECT DISTINCT
-		SystemID, DistrNumber, CompNumber, InfoBankID, InfoBankOrder, SystemOrder, 
+		SystemID, DistrNumber, CompNumber, InfoBankID, InfoBankOrder, SystemOrder,
 		InfoBankShortName, InfoBankStart, InfoBankName
-	FROM dbo.DistrRequiredView a WITH(NOEXPAND)
+	FROM dbo.DistrRequiredDofView a WITH(NOEXPAND)
 	WHERE InfoBankActive = 1 AND SystemActive = 1
 		AND EXISTS
 		(
@@ -17,3 +17,18 @@ AS
 			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 			WHERE DS_REG = 0 AND a.Complect = b.Complect AND b.SystemBaseName IN ('QSA', 'CMT', 'FIN', 'KOR', 'BORG')
 		)
+
+	UNION ALL
+
+	SELECT DISTINCT
+		SystemID, DistrNumber, CompNumber, InfoBankID, InfoBankOrder, SystemOrder,
+		InfoBankShortName, InfoBankStart, InfoBankName
+	FROM dbo.DistrRequiredQsovView a WITH(NOEXPAND)
+	WHERE InfoBankActive = 1 AND SystemActive = 1
+		AND NOT EXISTS
+		(
+			SELECT *
+			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+			WHERE DS_REG = 0 AND a.Complect = b.Complect
+				AND b.SystemBaseName IN ('FIN', 'QSA')
+		 )

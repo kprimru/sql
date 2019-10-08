@@ -56,7 +56,7 @@ BEGIN
 			dbo.SaldoTable WITH(UPDLOCK) 
 			INNER JOIN dbo.IncomeDistrTable ON ID_ID = SL_ID_IN_DIS 
 			INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME			
-			INNER JOIN dbo.DistrView ON DIS_ID = ID_ID_DISTR
+			INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 			INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
 			CROSS APPLY
 			(

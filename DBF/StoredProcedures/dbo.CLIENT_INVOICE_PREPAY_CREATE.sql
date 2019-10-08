@@ -110,7 +110,7 @@ BEGIN
 				SELECT *
 				FROM 
 					dbo.IncomeDistrView	A									INNER JOIN
-					dbo.DistrView		B	ON	A.DIS_ID=B.DIS_ID
+					dbo.DistrView		B WITH(NOEXPAND)	ON	A.DIS_ID=B.DIS_ID
 				WHERE PR_ID = @periodid	and
 					IN_ID_CLIENT =	@clientid	and
 					SYS_ID_SO	  =	@soid		and

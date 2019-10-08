@@ -13,6 +13,6 @@ SELECT
 		a.SYS_ORDER
 	FROM 
 		dbo.DistrPriceView a INNER JOIN
-		dbo.DistrView b ON a.DIS_ID = b.DIS_ID INNER JOIN
+		dbo.DistrView b WITH(NOEXPAND) ON a.DIS_ID = b.DIS_ID INNER JOIN
 		dbo.SaleObjectTable ON SO_ID = a.SYS_ID_SO INNER JOIN
 		dbo.TaxTable ON TX_ID = SO_ID_TAX

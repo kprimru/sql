@@ -8,8 +8,8 @@ CREATE PROCEDURE [dbo].[SERVICE_STATUS_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@REG	SMALLINT,
+	@Code	VarChar(100),
 	@INDEX	INT,
-	@IMAGE	VARBINARY(MAX),
 	@DEF	INT
 AS
 BEGIN
@@ -18,8 +18,8 @@ BEGIN
 	UPDATE dbo.ServiceStatusTable
 	SET ServiceStatusName = @NAME,
 		ServiceStatusReg = @REG,
+		ServiceCode	= @Code,
 		ServiceStatusIndex = @INDEX,
-		ServiceImage = @IMAGE,
 		ServiceDefault = @DEF,
 		ServiceStatusLast = GETDATE()
 	WHERE ServiceStatusID = @ID

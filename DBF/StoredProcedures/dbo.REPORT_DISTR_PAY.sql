@@ -110,7 +110,7 @@ BEGIN
 					dbo.DistrServiceStatusTable 
 					INNER JOIN dbo.ClientDistrTable ON DSS_ID = CD_ID_SERVICE
 					INNER JOIN dbo.ClientTable ON CL_ID = CD_ID_CLIENT 
-					INNER JOIN dbo.DistrView ON DIS_ID = CD_ID_DISTR
+					INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR
 					INNER JOIN dbo.BillIXView WITH(NOEXPAND) ON BL_ID_CLIENT = CL_ID AND BL_ID_PERIOD = @prid AND BD_ID_DISTR = DIS_ID
 					LEFT OUTER JOIN dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID 
 					LEFT OUTER JOIN dbo.PeriodTable ON PR_ID = DF_ID_PERIOD

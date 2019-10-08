@@ -41,7 +41,7 @@ BEGIN
 			dbo.ActTable a
 			INNER JOIN dbo.ActDistrTable b ON a.ACT_ID = b.AD_ID
 			INNER JOIN #act c ON aid = AD_ID
-			INNER JOIN dbo.DistrView ON DIS_ID = AD_ID_DISTR
+			INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
 			INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
 
 	DELETE 

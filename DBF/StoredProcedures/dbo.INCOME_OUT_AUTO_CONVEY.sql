@@ -47,7 +47,7 @@ BEGIN
 	IF @soid IS NULL
 		SELECT TOP 1 @soid = SYS_ID_SO
 		FROM 
-			dbo.DistrView a INNER JOIN 
+			dbo.DistrView a WITH(NOEXPAND) INNER JOIN 
 			#distr b ON a.DIS_ID = b.DIS_ID		
 
 	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
@@ -102,7 +102,7 @@ BEGIN
 			dbo.IncomeTable INNER JOIN
 			dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = ID_ID_PERIOD INNER JOIN
-			dbo.DistrView a ON DIS_ID = ID_ID_DISTR INNER JOIN
+			dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 			#distr b ON a.DIS_ID = b.DIS_ID
 		WHERE ID_PRICE > 0 
 			/*AND NOT EXISTS
@@ -169,7 +169,7 @@ BEGIN
 	FROM 
 		#temp a INNER JOIN
 		dbo.PeriodTable b ON ID_ID_PERIOD = PR_ID INNER JOIN
-		dbo.DistrView ON DIS_ID = ID_ID_DISTR
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 	WHERE ID_PRICE <> 0
 	GROUP BY DIS_ID, DIS_STR, PR_ID, b.PR_DATE, a.PR_DATE, a.SYS_ORDER, ID_PREPAY
 	ORDER BY a.PR_DATE, a.SYS_ORDER

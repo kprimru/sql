@@ -60,7 +60,7 @@ BEGIN
 	FROM 
 		dbo.DistrFinancingTable INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_DISTR = DF_ID_DISTR INNER JOIN
-		dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 		dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
 	WHERE CD_ID_CLIENT = @clientid AND SYS_ID_SO = @soid AND DSS_REPORT = 1
 

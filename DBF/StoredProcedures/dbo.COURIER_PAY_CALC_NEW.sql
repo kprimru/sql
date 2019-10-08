@@ -122,7 +122,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -149,7 +149,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -172,7 +172,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -199,7 +199,7 @@ BEGIN
 						FROM 
 							dbo.TOTable INNER JOIN
 							dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-							dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 							dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -222,7 +222,7 @@ BEGIN
 					SELECT SUM(AD_PRICE)
 					FROM 
 						dbo.ClientDistrTable INNER JOIN
-						dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -241,7 +241,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -259,7 +259,7 @@ BEGIN
 					SELECT SUM(BD_PRICE)
 					FROM 
 						dbo.ClientDIstrTable INNER JOIN
-						dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -289,7 +289,7 @@ BEGIN
 						SELECT *
 						FROM 
 							dbo.ClientDistrTable INNER JOIN
-							dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 							dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -321,7 +321,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -340,7 +340,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.PeriodRegExceptView ON REG_ID_SYSTEM = SYS_ID
 									AND DIS_NUM = REG_DISTR_NUM
 									AND DIS_COMP_NUM = REG_COMP_NUM INNER JOIN
@@ -368,7 +368,7 @@ BEGIN
 						FROM 
 							dbo.TOTable INNER JOIN
 							dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-							dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN							
+							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN							
 							dbo.BillDistrTable ON BD_ID_DISTR = DIS_ID INNER JOIN
 							dbo.BillTable ON BL_ID = BD_ID_BILL
 						WHERE TOTable.TO_ID_CLIENT = t.CL_ID
@@ -399,7 +399,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
 						dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 					WHERE TOTable.TO_ID = t.TO_ID
 						AND BL_ID_PERIOD = @PERIOD
@@ -416,7 +416,7 @@ BEGIN
 					FROM 
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
-						dbo.DistrView ON DIS_ID = TD_ID_DISTR INNER JOIN									
+						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN									
 						dbo.BillRestView ON BD_ID_DISTR = DIS_ID AND BL_ID_CLIENT = TO_ID_CLIENT
 					WHERE TOTable.TO_ID = t.TO_ID
 						AND BL_ID_PERIOD IN 
