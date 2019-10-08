@@ -16,7 +16,7 @@ AS
 		DS_ID, DS_INDEX, DS_REG, DS_NAME,
 		dbo.SubhostByComment(Comment, DistrNumber) AS SubhostName,
 		SystemBaseName,
-		DIstrTypeId, DistrTypeName
+		DIstrTypeId, DistrTypeName, a.Service
 	FROM
 		dbo.RegNodeTable a
 		INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
