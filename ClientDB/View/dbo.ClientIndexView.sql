@@ -10,7 +10,7 @@ AS
 		a.ClientID,
 		CONVERT(VARCHAR(20), ClientID) + ' ' +
 		ClientFullName + ' ' + 
-		ClientShortName + ' ' +
+		--ClientShortName + ' ' +
 		ISNULL(ClientOfficial, '') + ' ' + 
 		ISNULL(
 			(

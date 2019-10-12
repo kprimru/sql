@@ -77,7 +77,7 @@ BEGIN
 		(		
 			CL_ID	INT PRIMARY KEY,
 			NUM	INT,
-			CL_NAME	VARCHAR(100),
+			CL_NAME	VARCHAR(250),
 			CO_COND	VARCHAR(250),
 			CO_FIXED MONEY,
 			CO_TYPE	VARCHAR(100),
@@ -92,7 +92,7 @@ BEGIN
 
 	INSERT INTO #data(CL_ID, CL_NAME, CO_COND, CO_FIXED, CO_TYPE, PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, NET, CSTATUS)
 		SELECT 
-			ClientID, ClientShortName, 
+			ClientID, ClientFullName, 
 			(
 				SELECT TOP 1 ContractConditions
 				FROM dbo.ContractTable z

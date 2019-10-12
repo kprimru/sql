@@ -11,7 +11,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT 
-		ClientID, ClientFullName, ClientShortName
+		ClientID, ClientFullName, ClientFullName AS ClientShortName
 	FROM 
 		dbo.ClientTable a
 	WHERE a.ClientServiceID = @SERVICE 

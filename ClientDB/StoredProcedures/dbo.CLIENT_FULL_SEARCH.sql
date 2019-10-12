@@ -91,7 +91,7 @@ BEGIN
 						WHERE ID_CLIENT = ClientID
 							AND NAME LIKE @NAME
 					)
-				OR ClientShortName LIKE @NAME
+				--OR ClientShortName LIKE @NAME
 				OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '');
 		ELSE IF @SERVICE IS NOT NULL
 			INSERT INTO @client(CL_ID)
@@ -197,7 +197,7 @@ BEGIN
 							WHERE ID_CLIENT = ClientID
 								AND NAME LIKE @NAME
 						)
-						OR ClientShortName LIKE @NAME
+						--OR ClientShortName LIKE @NAME
 						OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
 						
 					UNION
@@ -205,7 +205,8 @@ BEGIN
 					SELECT ID_MASTER
 					FROM dbo.ClientTable
 					WHERE (ClientFullName LIKE @NAME
-						OR ClientShortName LIKE @NAME)
+							--OR ClientShortName LIKE @NAME
+						)
 						AND @HIST = 1
 						AND STATUS <> 1
 				)

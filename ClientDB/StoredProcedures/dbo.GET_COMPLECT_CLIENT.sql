@@ -16,7 +16,7 @@ BEGIN
 	EXECUTE AS USER = 'CLAIM_VIEW';
 	
 	SELECT TOP 1
-		@ClientShortName = C.ClientShortName,
+		@ClientShortName = C.[ClientFullName],
 		@ClientFullName = C.[ClientFullName]
 	FROM USR.USRActiveView U 
 	INNER JOIN dbo.ClientTable C ON C.ClientID = U.UD_ID_CLIENT

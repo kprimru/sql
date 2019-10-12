@@ -9,7 +9,7 @@ AS
 	SELECT 
 		a.ORD,
 		a.ClientID, ClientServiceID, ClientFullname,
-		ServiceStart, ServiceTime, DayOrder, ClientShortName,
+		ServiceStart, ServiceTime, DayOrder, ClientFullname AS ClientShortName,
 		CASE
 			WHEN ServiceTime < 10 THEN 'Неверная продолжительность работы (не может быть меньше 10 минут)'			
 			WHEN ORD > 1 AND

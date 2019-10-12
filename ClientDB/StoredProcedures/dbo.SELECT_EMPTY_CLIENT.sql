@@ -9,7 +9,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ClientID, ClientFullName, ClientShortName, ServiceStatusName
+	SELECT ClientID, ClientFullName, ClientFullName AS ClientShortName, ServiceStatusName
 	FROM 
 		dbo.ClientTable a INNER JOIN
 		dbo.ServiceStatusTable b ON b.ServiceStatusID = a.StatusID

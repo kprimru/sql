@@ -20,7 +20,7 @@ BEGIN
 				AND (Service = 0)
 			FOR XML PATH('')
 		) as SystemsList,
-		C.ClientShortName, C.ClientFullName, R.TechNolType
+		C.ClientFullName AS ClientShortName, C.ClientFullName, R.TechNolType
 	FROM RegNodeTable R
 	LEFT JOIN SystemTable SY ON SY.SystemBaseName = R.SystemName
 	LEFT JOIN ClientDistr CD ON (CD.DISTR = R.DistrNumber)
