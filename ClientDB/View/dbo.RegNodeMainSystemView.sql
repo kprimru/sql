@@ -25,6 +25,7 @@ AS
 					ELSE CONVERT(INT, SUBSTRING(Complect, CHARINDEX('#', Complect) + 1, 6))
 				END
 		END AS MainDistrNumber,
+		a.Service,
 		dbo.GET_HOST_BY_COMMENT(a.Comment) AS SubhostName
 	FROM
 		dbo.RegNodeTable a
