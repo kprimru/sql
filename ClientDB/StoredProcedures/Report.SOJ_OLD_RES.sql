@@ -23,7 +23,7 @@ BEGIN
 		LEFT OUTER JOIN dbo.ResVersionTable rvt ON rvt.ResVersionID = UF_ID_RES
 		INNER JOIN dbo.ClientView cv ON cv.ClientID = uav.UD_ID_CLIENT
 		LEFT OUTER JOIN USR.Os os ON os.OS_ID = uft.UF_ID_OS 
-	WHERE	DS_INDEX = 0 
+	WHERE	DS_REG = 0 
 		AND SystemBaseName = 'SOJ'
 		AND (	DistrTypeId BETWEEN 1 AND 4 
 				OR DistrTypeId = 8

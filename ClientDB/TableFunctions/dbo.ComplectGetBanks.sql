@@ -32,7 +32,7 @@ BEGIN
 		SELECT SystemID, SystemBaseName, DistrTypeID, DistrTypeName
 		FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 		WHERE	Complect = @COMPLECT AND
-				DS_INDEX = 0
+				DS_REG = 0
 
 --бнр ячдю бшцпсгйс рюакхжш б SYS хг XML	
 
@@ -128,27 +128,6 @@ BEGIN
 
 
 ---------------------------------------------бшрюяйхбюел аюмйх, йнрнпше яеивюя еярэ б яхяреле------------------------------------
-	/*IF NOT EXISTS
-
-						(
-							SELECT UD_ID
-							FROM USR.USRData
-							WHERE
-									UD_DISTR = @DISTR AND
-									UD_ID_HOST = @HOST AND
-									UD_COMP= @COMP
-						)
-			
-	BEGIN
-		DELETE FROM @t
-
-		INSERT INTO @t
-		VALUES(-1, 'нРЯСРЯРБСЕР USR', 'нРЯСРЯРБСЕР USR')
-
-		RETURN
-	END
-*/
-
 	DECLARE @rl_bnks	TABLE
 	(
 		InfoBankID	SMALLINT,
@@ -240,17 +219,5 @@ BEGIN
 			WHERE InfobankName IN (	'PBUN', 'PKBO', 'QSBO', 'RZB')
 	END
 ---------------------------------------------------------------------------------------------------------------
-
-
--------------------------------сдюкъел хг реу аюмйнб врн днкфмш ашрэ, ре, врн сфе еярэ-------------------------
-	DELETE
-	FROM @t
-	WHERE InfoBankID IN
-				(
-					SELECT InfoBankID
-					FROM @rl_bnks
-				)
----------------------------------------------------------------------------------------------------------
-
 	RETURN
 END
