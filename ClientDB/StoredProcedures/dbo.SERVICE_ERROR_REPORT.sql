@@ -56,9 +56,9 @@ BEGIN
 				WHERE UD_ID_CLIENT = ClientID
 				ORDER BY UF_DATE DESC
 			))
-		FROM 
-			dbo.ClientView a WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2 AND ServiceID = @SERVICE
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE ServiceID = @SERVICE;
 		
 	DECLARE @IB TABLE
 		(

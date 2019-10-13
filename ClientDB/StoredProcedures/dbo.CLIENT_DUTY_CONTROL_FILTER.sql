@@ -63,6 +63,7 @@ BEGIN
 			) AS CC_DATE, 
 			NULL AS CC_USER, NULL AS CDC_ANS, NULL AS CDC_SAT, NULL AS CDC_NOTE
 		FROM dbo.ClientView c WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 		WHERE NOT EXISTS
 			(
 				SELECT *
@@ -81,7 +82,6 @@ BEGIN
 					AND (ClientDutyDateTime >= @BEGIN OR @BEGIN IS NULL)
 					AND (ClientDutyDateTime < DATEADD(DAY, 1, @END) OR @END IS NULL)
 			)
-			AND ServiceStatusID = 2
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName

@@ -43,11 +43,11 @@ BEGIN
 		SELECT ClientID, ClientFullName + ' (' + ServiceTypeShortName + ')', ServiceName, ManagerName
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ServiceTypeID
 			INNER JOIN dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID
 		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND ServiceStatusID = 2 
 
 	IF OBJECT_ID('tempdb..#client_banks') IS NOT NULL
 		DROP TABLE #client_banks

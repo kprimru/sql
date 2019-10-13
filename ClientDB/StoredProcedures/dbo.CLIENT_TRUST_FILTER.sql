@@ -35,10 +35,10 @@ BEGIN
 				WHERE CC_ID_CLIENT = ClientID
 			) AS CC_DATE, NULL AS CC_USER, NULL AS CT_MAKE_DATA, NULL AS CT_TRUST_STR
 		FROM
-			dbo.ClientView WITH(NOEXPAND)
+			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			AND ServiceStatusID = 2
 			AND NOT EXISTS
 				(
 					SELECT *

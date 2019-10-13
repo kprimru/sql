@@ -56,10 +56,10 @@ BEGIN
 					SELECT *
 					FROM 
 						dbo.ClientTable a
+						INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 						INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientContractTypeID
 						INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
-					WHERE StatusID = 2
-						AND ClientServiceID = ServiceID
+					WHERE ClientServiceID = ServiceID
 						AND STATUS = 1
 				)
 
@@ -72,11 +72,12 @@ BEGIN
 		SELECT ClientID, ClientServiceID, DayOrder
 		FROM 
 			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN #service ON ClientServiceID = SR_ID
 			INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientContractTypeID
 			INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
 			LEFT OUTER JOIN dbo.DayTable d ON d.DayID = a.DayID
-		WHERE StatusID = 2 AND STATUS = 1
+		WHERE STATUS = 1
 	
 	IF OBJECT_ID('tempdb..#weekupdate') IS NOT NULL
 		DROP TABLE #weekupdate

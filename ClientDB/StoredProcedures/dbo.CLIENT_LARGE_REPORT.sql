@@ -101,7 +101,7 @@ BEGIN
 			CL_ROW, num.ID
 		FROM 
 			(
-				SELECT a.ClientID, ClientFullName, ServiceStatusID, ServiceID, ManagerID, ManagerName, ServiceName, ConnectDate,
+				SELECT a.ClientID, ClientFullName, a.ServiceStatusID, ServiceID, ManagerID, ManagerName, ServiceName, ConnectDate,
 					(
 						SELECT MAX(CL_ROW)
 						FROM
@@ -130,14 +130,14 @@ BEGIN
 					) AS CL_ROW
 				FROM 
 					dbo.ClientView a WITH(NOEXPAND)
+					INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 					LEFT OUTER JOIN
 						(
 							SELECT ClientID, MIN(ConnectDate) AS ConnectDate
 							FROM dbo.ClientConnectView WITH(NOEXPAND)
 							GROUP BY ClientID				
 						) AS b ON a.ClientID = b.ClientID
-				WHERE a.ServiceStatusID = 2
-					AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
+				WHERE	(a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 					AND (a.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 					AND (a.ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
 					

@@ -71,6 +71,7 @@ BEGIN
 		ISNULL(d.DayShort, '') + ' ' + ISNULL(LEFT(CONVERT(VARCHAR(20), ServiceStart, 108), 5), ''), ServiceStart,
 		0
 	FROM dbo.ClientTable c
+	INNER JOIN [dbo].[ServiceStatusConnected]() ss ON c.StatusId = ss.ServiceStatusId
 	INNER JOIN
 	(
 		SELECT Item 
@@ -86,9 +87,7 @@ BEGIN
 	LEFT JOIN dbo.ClientTypeAllView r ON r.ClientID = c.ClientId
 	LEFT JOIN dbo.ClientTypeTable	b ON r.CATEGORY = b.ClientTypeName
 	LEFT JOIN dbo.DayTable			d ON c.DayID = d.DayID
-	WHERE	c.ClientServiceID  = @SERVICE 
-		-- ToDo заменить на именованное множество
-		AND c.StatusID = 2
+	WHERE	c.ClientServiceID  = @SERVICE
 		AND c.STATUS = 1;
 
 	INSERT INTO @ClientsDistrs(ClientId, Complect, SystemId, Distr, Comp, SystemBaseName)
@@ -253,6 +252,7 @@ BEGIN
 					WHERE y.ID_CLIENT = a.ClientID
 				)), 104) + ' (»)')
 		FROM dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		CROSS APPLY
 		(
 			SELECT Complect
@@ -269,7 +269,7 @@ BEGIN
 		LEFT JOIN dbo.ClientTypeAllView r ON r.ClientID = a.ClientID
 		LEFT JOIN dbo.ClientTypeTable b ON r.CATEGORY = b.ClientTypeName
 		LEFT JOIN dbo.DayTable c ON a.DayID = c.DayID
-		WHERE ClientServiceID  = @SERVICE AND StatusID = 2 AND STATUS = 1
+		WHERE ClientServiceID  = @SERVICE AND STATUS = 1
 		ORDER BY ClientFullName;
 		
 	IF OBJECT_ID('tempdb..#update') IS NOT NULL

@@ -23,9 +23,9 @@ AS
 									z.ClientID, z.ServiceStart, z.ServiceTime, t.DayOrder, z.ClientServiceID
 								FROM 
 									dbo.ClientTable z
+									INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.StatusId = s.ServiceStatusId
 									INNER JOIN dbo.DayTable t ON t.DayID = z.DayID
-								WHERE z.StatusID = 2
-									AND z.STATUS = 1									
+								WHERE z.STATUS = 1									
 									AND z.ClientServiceID = a.ClientServiceID
 							) b
 						WHERE b.ORD = a.ORD - 1 AND a.DayOrder = b.DayOrder
@@ -41,9 +41,9 @@ AS
 				ClientFullName, ServiceStart, ServiceTime, DayOrder, ClientServiceID, ClientShortName
 			FROM 
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.DayTable e ON e.DayID = a.DayID
-			WHERE a.StatusID = 2
-				AND a.STATUS = 1
+			WHERE a.STATUS = 1
 				AND ServiceStart IS NOT NULL
 				AND ServiceTime IS NOT NULL
 		) AS a

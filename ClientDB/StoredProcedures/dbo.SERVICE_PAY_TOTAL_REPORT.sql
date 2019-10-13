@@ -48,6 +48,7 @@ BEGIN
 			END
 		FROM
 			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 			INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
 			OUTER APPLY
@@ -59,7 +60,7 @@ BEGIN
 					WHERE z.ClientID = a.ClientID
 					ORDER BY ContractEnd DESC
 				) AS o_O
-		WHERE (c.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL) AND StatusID = 2 AND STATUS = 1 --AND ID_HEAD IS NULL
+		WHERE (c.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL) AND STATUS = 1 --AND ID_HEAD IS NULL
 	
 		
 	IF OBJECT_ID('tempdb..#distr') IS NOT NULL

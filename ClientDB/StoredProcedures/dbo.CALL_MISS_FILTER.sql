@@ -59,8 +59,8 @@ BEGIN
 			WHERE z.ClientID = a.CLientID
 		) AS CONNECT_DATE
 	FROM dbo.ClientView a WITH(NOEXPAND)
-	WHERE ServiceStatusID = 2
-		AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+	WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 		AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 		AND	
 			(

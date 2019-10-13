@@ -216,9 +216,9 @@ BEGIN
 		
 	INSERT INTO #client(ClientID)
 		SELECT ClientID
-		FROM dbo.ClientView WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		
 	IF OBJECT_ID('tempdb..#client_dbf') IS NOT NULL

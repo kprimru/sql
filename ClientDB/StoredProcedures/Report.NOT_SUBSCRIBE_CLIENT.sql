@@ -19,6 +19,7 @@ BEGIN
 		[Дистрибутив]       = D.DistrStr,
 		[Дата регистрации]  = CC.ConnectDate
 	FROM dbo.ClientView C WITH(NOEXPAND)
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON C.ServiceStatusId = s.ServiceStatusId
 	OUTER APPLY
 	(
 		SELECT TOP 1 DistrTypeName, SystemTypeName, DistrStr
@@ -34,8 +35,7 @@ BEGIN
 		WHERE CC.ClientID = C.ClientID
 		ORDER BY ConnectDate
 	) CC
-	WHERE C.ServiceStatusID = 2
-		AND NOT EXISTS
+	WHERE NOT EXISTS
 				(
 					SELECT *
 					FROM dbo.ClientDelivery CD

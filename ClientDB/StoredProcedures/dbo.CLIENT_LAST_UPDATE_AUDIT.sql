@@ -25,7 +25,7 @@ BEGIN
 		CL_ID		Int,
 		UD_DISTR	Int,
 		UD_COMP		TinyInt,
-		UD_NAME	VarChar(100),
+		UD_NAME		VarChar(100),
 		Primary Key Clustered (UD_ID)
 	)
 
@@ -34,10 +34,10 @@ BEGIN
 	FROM
 	(
 		SELECT ClientID
-		FROM dbo.ClientView WITH(NOEXPAND)
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND (ServiceStatusID = 2)
 			AND EXISTS
 				(
 					SELECT *

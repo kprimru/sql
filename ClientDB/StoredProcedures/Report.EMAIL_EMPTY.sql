@@ -16,7 +16,8 @@ BEGIN
 		b.ManagerName AS [Руководитель]
 	FROM 
 		dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
-	WHERE a.StatusID = 2 AND ISNULL(RTRIM(LTRIM(ClientEMail)), '') = ''
+	WHERE ISNULL(RTRIM(LTRIM(ClientEMail)), '') = ''
 	ORDER BY ManagerName, ServiceName, a.ClientFullName
 END

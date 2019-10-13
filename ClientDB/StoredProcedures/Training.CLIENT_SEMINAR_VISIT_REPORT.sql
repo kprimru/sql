@@ -28,7 +28,8 @@ BEGIN
 			WHERE z.UD_ID_CLIENT = a.ClientID
 		) AS LAST_UPDATE
 	FROM 
-		dbo.ClientTable a 
+		dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID	
 		INNER JOIN dbo.ServiceTable b ON ClientServiceID = ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
@@ -38,8 +39,7 @@ BEGIN
 				FROM dbo.ClientConnectView WITH(NOEXPAND)
 				GROUP BY ClientID
 			) AS d ON d.ClientID = a.ClientID
-	WHERE StatusID = 2
-		AND STATUS = 1
+	WHERE STATUS = 1
 		AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		AND (c.ManagerID = @MANAGER OR @MANAGER IS NULL)
 		AND (ConnectDate <= @CONNECT OR @CONNECT IS NULL OR ConnectDate IS NULL)

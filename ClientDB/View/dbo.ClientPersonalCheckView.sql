@@ -14,6 +14,7 @@ AS
 		END AS ERR
 	FROM 
 		dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		INNER JOIN dbo.ClientPersonal b ON a.ClientID = b.CP_ID_CLIENT
 		INNER JOIN dbo.ClientPersonalType c ON c.CPT_ID = b.CP_ID_TYPE
 		CROSS APPLY
@@ -21,8 +22,7 @@ AS
 				SELECT ITEM AS PHN
 				FROM dbo.GET_STRING_TABLE_FROM_LIST(dbo.PhoneString(CP_PHONE), ',')
 			) d 
-	WHERE a.ServiceStatusID = 2 
-		AND 
+	WHERE 
 			(
 				LEN(PHN) <> 11
 				OR
@@ -36,7 +36,7 @@ AS
 		'Не указана должность сотрудника'
 	FROM 
 		dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		INNER JOIN dbo.ClientPersonal b ON a.ClientID = b.CP_ID_CLIENT
 		INNER JOIN dbo.ClientPersonalType c ON c.CPT_ID = b.CP_ID_TYPE
-	WHERE a.ServiceStatusID = 2 
-		AND (CP_POS = '' OR CP_POS = '-')
+	WHERE (CP_POS = '' OR CP_POS = '-')

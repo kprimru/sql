@@ -22,10 +22,10 @@ BEGIN
 				END AS Pers
 			FROM 
 				dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
 				INNER JOIN dbo.ClientPersonalBuhView c WITH(NOEXPAND) ON a.ClientID = c.CP_ID_CLIENT
 				INNER JOIN dbo.ClientPersonalResView d WITH(NOEXPAND) ON a.ClientID = d.CP_ID_CLIENT
-			WHERE ServiceStatusID = 2
 		) AS o_O
 	WHERE PERS IS NOT NULL
 	ORDER BY ManagerName, ServiceName, ClientFullName

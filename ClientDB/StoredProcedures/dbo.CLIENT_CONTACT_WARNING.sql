@@ -28,8 +28,8 @@ BEGIN
 				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = ClientID
 				INNER JOIN dbo.ClientTable c ON c.ClientID = b.ClientID
 				INNER JOIN dbo.ContractTypeTable d ON d.ContractTypeID = c.ClientContractTypeID
-			WHERE ServiceStatusID = 2
-				AND ManagerName NOT IN ('Тихомирова', 'Батенева', 'Чичиланова')
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+			WHERE	ManagerName NOT IN ('Тихомирова', 'Батенева', 'Чичиланова')
 				AND d.ContractTypeName IN ('коммерческий', 'коммерческий VIP', 'пакетное соглашение', 'рамочное соглашение', 'спецовый')
 		) AS o_O
 	LEFT JOIN dbo.ClientTypeAllView T ON t.ClientID = o_O.ClientId

@@ -109,7 +109,7 @@ BEGIN
 				WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
 			)
 		FROM dbo.ClientView a WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		
 		UNION ALL
 		

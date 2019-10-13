@@ -29,11 +29,10 @@ BEGIN
 		)
 
 	INSERT INTO #client(ClientID, ClientFullName, ServiceName, ManagerName)
-		SELECT 
-			ClientID, ClientFullName, ServiceName, ManagerName
-		FROM dbo.ClientView a WITH(NOEXPAND)		
-		WHERE ServiceStatusID = 2
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		SELECT ClientID, ClientFullName, ServiceName, ManagerName
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			
 	IF OBJECT_ID('tempdb..#duty') IS NOT NULL

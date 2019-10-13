@@ -52,9 +52,9 @@ BEGIN
 					WHERE ID_CLIENT = ClientID AND DS_REG = 0
 					ORDER BY SystemOrder, DISTR, COMP FOR XML PATH('')
 				)), 1, 2, ''))			
-		FROM dbo.ClientView WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 		
 	UPDATE a

@@ -14,12 +14,11 @@ BEGIN
 		ServiceName AS [СИ],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('лок', 'Флэш')
 				AND NOT EXISTS
 					(
@@ -33,12 +32,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|Лок-Флэш],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('1/С')
 				AND NOT EXISTS
 					(
@@ -52,12 +50,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|1/с],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('м/с')
 				AND NOT EXISTS
 					(
@@ -71,12 +68,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|м/с],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('СЕТЬ')
 				AND NOT EXISTS
 					(
@@ -90,12 +86,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|Сеть],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('ОВП')
 				AND NOT EXISTS
 					(
@@ -109,12 +104,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|ОВП],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('ОВПИ')
 				AND NOT EXISTS
 					(
@@ -128,12 +122,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|ОВПИ],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('ОВК')
 				AND NOT EXISTS
 					(
@@ -147,12 +140,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|ОВК],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('ОВМ1')
 				AND NOT EXISTS
 					(
@@ -166,12 +158,11 @@ BEGIN
 		) AS [Количество клиентов без фиксированной стоимости|ОВМ1],
 		(
 			SELECT COUNT(DISTINCT ClientID)
-			FROM 
-				dbo.ClientDistrView b WITH(NOEXPAND)
-				INNER JOIN dbo.ClientView c ON b.ID_CLIENT = c.CLientID
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.CLientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE a.ServiceID = c.ServiceID
 				AND b.DS_REG = 0
-				AND c.ServiceStatusID = 2
 				AND DistrTypeName IN ('ОВМ2')
 				AND NOT EXISTS
 					(
@@ -187,10 +178,10 @@ BEGIN
 	WHERE EXISTS
 		(
 			SELECT *
-			FROM dbo.ClientTable
+			FROM dbo.ClientTable z
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.StatusId = s.ServiceStatusId
 			WHERE ServiceID = ClientServiceID
 				AND STATUS = 1
-				AND StatusID = 2
 		)
 	ORDER BY ServiceName
 END

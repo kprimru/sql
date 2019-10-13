@@ -7,10 +7,9 @@ GO
 CREATE VIEW [dbo].[ClientContractWarningView]
 AS
 	SELECT ClientID
-	FROM 
-		dbo.ClientTable a
+	FROM dbo.ClientTable a
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 	WHERE STATUS = 1
-		AND StatusID = 2
 		AND NOT EXISTS
 			(
 				SELECT *

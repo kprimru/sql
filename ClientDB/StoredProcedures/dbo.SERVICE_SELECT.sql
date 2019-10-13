@@ -15,9 +15,9 @@ BEGIN
 		ServiceID, ServiceName, a.ServicePositionID, ServicePositionName, ManagerName, ServicePhone, ServiceLogin, ServiceFirst,
 		(
 			SELECT COUNT(*)
-			FROM dbo.ClientTable
+			FROM dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			WHERE ClientServiceID = ServiceID
-				AND StatusID = 2
 				AND STATUS = 1
 		) AS ServiceCount,
 		REVERSE(STUFF(REVERSE(

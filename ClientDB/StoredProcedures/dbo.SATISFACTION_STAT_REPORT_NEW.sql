@@ -21,9 +21,9 @@ BEGIN
 		(	
 			SELECT COUNT(*)
 			FROM
-				dbo.ClientTable				
+				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			WHERE ServiceID = ClientServiceID				
-				AND StatusID = 2
 				AND STATUS = 1
 		) AS ClientCount,
 		(

@@ -31,10 +31,10 @@ BEGIN
 				(
 					SELECT *
 					FROM 
-						dbo.ClientTable
+						dbo.ClientTable a
+						INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 						INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
-					WHERE StatusID = 2
-						AND ClientServiceID = ServiceID
+					WHERE ClientServiceID = ServiceID
 						AND STATUS = 1
 				)
 
@@ -50,10 +50,11 @@ BEGIN
 		)
 		SELECT ClientID, ClientServiceID
 		FROM 
-			dbo.ClientTable
+			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN #service ON ClientServiceID = SR_ID
 			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
-		WHERE StatusID = 2 AND STATUS = 1
+		WHERE STATUS = 1
 
 	IF OBJECT_ID('tempdb..#rate') IS NOT NULL
 		DROP TABLE #rate

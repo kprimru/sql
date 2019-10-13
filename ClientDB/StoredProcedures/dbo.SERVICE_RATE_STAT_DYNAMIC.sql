@@ -29,10 +29,10 @@ BEGIN
 	INSERT INTO #clientlist(CL_ID, SR_ID)
 		SELECT ClientID, ClientServiceID
 		FROM 
-			dbo.ClientTable a			
+			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
 		WHERE ClientServiceID = @SERVICE 
-			AND StatusID = 2 
 			AND STATUS = 1
 			AND EXISTS
 				(

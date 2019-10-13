@@ -28,8 +28,8 @@ BEGIN
 			SELECT ClientID
 			FROM 
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			WHERE a.ClientServiceID = @SERVICE 
-				AND a.StatusID = 2
 				AND a.STATUS = 1
 				AND 
 					(

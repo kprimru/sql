@@ -43,9 +43,9 @@ BEGIN
 
 	INSERT INTO #client(CL_ID)
 		SELECT ClientID
-		FROM dbo.ClientTable
-		WHERE ClientServiceID  = @SERVICE 
-			AND StatusID = 2
+		FROM dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+		WHERE ClientServiceID  = @SERVICE
 			AND STATUS = 1
 
 	SET @SQL = N'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #client (CL_ID)'
@@ -231,8 +231,9 @@ BEGIN
 					WHERE y.ID_CLIENT = a.ClientID
 				)), 104) + ' (È)')
 		FROM 
-			dbo.ClientTable a INNER JOIN
-			dbo.ServiceTypeTable d ON d.ServiceTypeID = a.ServiceTypeID INNER JOIN
+			dbo.ClientTable a 
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+			INNER JOIN dbo.ServiceTypeTable d ON d.ServiceTypeID = a.ServiceTypeID INNER JOIN
 			(
 				SELECT Item 
 				FROM dbo.GET_TABLE_FROM_LIST(@TYPE, ',')
@@ -240,7 +241,7 @@ BEGIN
 			dbo.ClientTypeAllView r ON r.ClientID = a.ClientID LEFT OUTER JOIN
 			dbo.ClientTypeTable b ON r.CATEGORY = b.ClientTypeName LEFT OUTER JOIN
 			dbo.DayTable c ON a.DayID = c.DayID
-		WHERE ClientServiceID  = @SERVICE AND StatusID = 2 AND STATUS = 1
+		WHERE ClientServiceID  = @SERVICE AND STATUS = 1
 		ORDER BY ClientFullName
 		
 	IF OBJECT_ID('tempdb..#update') IS NOT NULL

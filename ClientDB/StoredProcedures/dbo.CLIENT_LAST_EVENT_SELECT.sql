@@ -50,7 +50,8 @@ BEGIN
 					ORDER BY EventDate DESC, EventID DESC
 				), CATEGORY
 		FROM 
-			dbo.ClientView a WITH(NOEXPAND)  
+			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN 
 				(
@@ -64,8 +65,7 @@ BEGIN
 				) AS d ON b.ClientContractTypeID = d.ID
 			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.CLientID = a.ClientID
 			LEFT OUTER JOIN dbo.ClientTypeTable f ON f.ClientTypeName = CATEGORY
-		WHERE ServiceStatusID = 2 
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 			AND (@CATEGORY IS NULL OR f.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
 			
@@ -80,7 +80,8 @@ BEGIN
 					ORDER BY EventDate DESC, EventID DESC
 				), CATEGORY
 		FROM 
-			dbo.ClientView a WITH(NOEXPAND)  
+			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN 
 				(
@@ -94,8 +95,7 @@ BEGIN
 				) AS d ON b.ClientContractTypeID = d.ID
 			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.CLientID = a.ClientID
 			LEFT OUTER JOIN dbo.ClientTypeTable f ON f.ClientTypeName = CATEGORY
-		WHERE ServiceStatusID = 2 
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 			AND (@CATEGORY IS NULL OR f.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
 		

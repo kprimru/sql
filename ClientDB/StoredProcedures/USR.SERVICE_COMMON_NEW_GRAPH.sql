@@ -63,6 +63,7 @@ BEGIN
 	INSERT INTO @client
 	SELECT ClientID, Complect, ComplectStr
 	FROM dbo.ClientTable a
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 	CROSS APPLY
 	(
 		SELECT
@@ -98,7 +99,6 @@ BEGIN
 					END
 	) O
 	WHERE ClientServiceID  = @SERVICE 
-		AND StatusID = 2
 		AND STATUS = 1
 		AND O.[IsOnline] = 0;
 

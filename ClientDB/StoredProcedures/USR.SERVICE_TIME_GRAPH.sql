@@ -40,25 +40,25 @@ BEGIN
 		SELECT ClientID
 		FROM 
 			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID
 		WHERE ClientServiceID = @SERVICE
-			AND StatusID = 2
 			AND ServiceTypeVisit = 1
 			AND STATUS = 1
 		ORDER BY ClientID
 		
 	SELECT @CL_CNT = COUNT(*)
-	FROM dbo.ClientTable
+	FROM dbo.ClientTable a
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 	WHERE ClientServiceID = @SERVICE
-		AND StatusID = 2
 		AND STATUS = 1
 
 	SELECT @CL_UN_CNT = COUNT(*)
 	FROM 
 		dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		INNER JOIN dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID
 	WHERE ClientServiceID = @SERVICE
-		AND StatusID = 2
 		AND ServiceTypeVisit = 0
 		AND STATUS = 1
 			

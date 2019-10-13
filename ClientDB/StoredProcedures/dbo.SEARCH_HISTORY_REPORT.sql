@@ -37,10 +37,10 @@ BEGIN
 		SELECT a.ClientID
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN @TP ON TP = ClientContractTypeID
-		WHERE ServiceStatusID = 2
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 	
 	

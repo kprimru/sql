@@ -116,8 +116,8 @@ BEGIN
 		FROM 
 			dbo.ClientView AS a WITH(NOEXPAND)
 			INNER JOIN dbo.ClientTable AS b ON a.ClientID = b.ClientID
-		WHERE ServiceStatusID = 2
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			AND (b.ClientContractTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) OR @TYPE IS NULL)
 		

@@ -30,7 +30,8 @@ BEGIN
 		INSERT INTO #client(ID)
 			SELECT ClientID
 			FROM dbo.ClientTable a
-			WHERE STATUS = 1 AND StatusID = 2
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+			WHERE STATUS = 1
 				AND EXISTS
 					(
 						SELECT *
@@ -41,52 +42,12 @@ BEGIN
 							INNER JOIN dbo.TableIDFromXML(@TYPE_LIST) e ON e.ID = b.SystemTypeID
 						WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
 					)
-	/*
-	ELSE IF @SYS_LIST IS NOT NULL
-		INSERT INTO #client(ID)
-			SELECT ClientID
-			FROM dbo.ClientTable a
-			WHERE STATUS = 1 AND StatusID = 2
-				AND EXISTS
-					(
-						SELECT *
-						FROM 
-							dbo.ClientDistrView b WITH(NOEXPAND)
-							INNER JOIN dbo.TableIDFromXML(@SYS_LIST) c ON c.ID = b.SystemID
-						WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
-					)
-	ELSE IF @NET_LIST IS NOT NULL
-		INSERT INTO #client(ID)
-			SELECT ClientID
-			FROM dbo.ClientTable a
-			WHERE STATUS = 1 AND StatusID = 2
-				AND EXISTS
-					(
-						SELECT *
-						FROM 
-							dbo.ClientDistrView b WITH(NOEXPAND)
-							INNER JOIN dbo.TableIDFromXML(@NET_LIST) c ON c.ID = b.DistrTypeID
-						WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
-					)
-	ELSE IF @TYPE_LIST IS NOT NULL
-		INSERT INTO #client(ID)
-			SELECT ClientID
-			FROM dbo.ClientTable a
-			WHERE STATUS = 1 AND StatusID = 2
-				AND EXISTS
-					(
-						SELECT *
-						FROM 
-							dbo.ClientDistrView b WITH(NOEXPAND)
-							INNER JOIN dbo.TableIDFromXML(@TYPE_LIST) c ON c.ID = b.SystemTypeID
-						WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
-					)
-	*/
 	ELSE
 		INSERT INTO #client(ID)
 			SELECT ClientID
-			FROM dbo.ClientTable
-			WHERE STATUS = 1 AND StatusID = 2
+			FROM dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+			WHERE STATUS = 1
 		
 	INSERT INTO dbo.ClientInnovation(ID_CLIENT, ID_INNOVATION)
 		SELECT ID, @INNOVATION

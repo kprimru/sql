@@ -56,13 +56,13 @@ BEGIN
 			) AS USRIP
 		FROM 
 			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() t ON a.StatusId = t.ServiceStatusId
 			INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 			INNER JOIN USR.USRData b ON UD_ID_CLIENT = ClientID		
 			INNER JOIN USR.USRComplectCurrentStatusView c WITH(NOEXPAND) ON b.UD_ID = c.UD_ID
 			INNER JOIN USR.USRActiveView f ON f.UD_ID = b.UD_ID
 			INNER JOIN dbo.SystemTable s ON s.SystemID = f.UF_ID_SYSTEM
-		WHERE StatusID = 2
-			AND UD_SERVICE = 0
+		WHERE UD_SERVICE = 0
 			AND a.STATUS = 1
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ClientServiceID = @SERVICE OR @SERVICE IS NULL)

@@ -48,8 +48,7 @@ BEGIN
 			INNER JOIN dbo.GET_TABLE_FROM_LIST(@TYPE, ',') ON a.ServiceTypeID = Item			
 			LEFT OUTER JOIN dbo.ClientAddressView ON CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
 			LEFT OUTER JOIN dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID
-		WHERE ClientServiceID = @SERVICE
-			/*AND StatusID = 2	*/
+		WHERE ClientServiceID = @SERVICE;
 
 	IF OBJECT_ID('tempdb..#update') IS NOT NULL
 		DROP TABLE #update

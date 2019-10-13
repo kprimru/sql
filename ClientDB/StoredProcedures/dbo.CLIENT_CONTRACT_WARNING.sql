@@ -19,8 +19,8 @@ BEGIN
 		dbo.ClientWriteList()
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
 		INNER JOIN dbo.ContractTable a ON a.ClientID = b.ClientID
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 	WHERE ContractEnd <= @CONTROL_DATE
-		AND ServiceStatusID = 2
 		AND NOT EXISTS
 			(
 				SELECT *

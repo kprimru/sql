@@ -33,7 +33,8 @@ BEGIN
 		END AS 'Условия'
 	FROM 
 		dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		INNER JOIN dbo.ContractTypeTable b ON a.ClientContractTypeID = b.ContractTypeID	
-	WHERE a.STATUS = 1 AND a.StatusID = 2
+	WHERE a.STATUS = 1
 	ORDER BY ClientFullName
 END

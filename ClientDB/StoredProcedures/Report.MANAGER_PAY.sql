@@ -17,8 +17,8 @@ BEGIN
 			(
 				SELECT *
 				FROM dbo.ClientView z WITH(NOEXPAND)
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.ServiceStatusId = s.ServiceStatusId
 				WHERE z.ManagerID = a.ManagerID
-					AND ServiceStatusID = 2
 			)
 			
 	DECLARE @ID		INT

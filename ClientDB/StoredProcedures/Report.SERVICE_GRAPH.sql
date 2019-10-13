@@ -18,9 +18,10 @@ BEGIN
 			SELECT ManagerName, ServiceName, COUNT(*) AS CL_CNT, AVG(ServiceTime) AS AVG_TIME, SUM(ServiceTime) AS TOTAL_TIME
 			FROM 
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 				INNER JOIN dbo.ManagerTable c ON b.ManagerID = c.ManagerID
-			WHERE StatusID = 2 AND a.STATUS = 1
+			WHERE a.STATUS = 1
 			GROUP BY ManagerName, ServiceName
 		) AS o_O
 	ORDER BY ManagerName, ServiceName

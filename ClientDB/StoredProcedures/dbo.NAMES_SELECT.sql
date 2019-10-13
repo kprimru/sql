@@ -15,8 +15,9 @@ BEGIN
 			SELECT DISTINCT CP_NAME
 			FROM 
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientPersonal b ON a.ClientID = b.CP_ID_CLIENT
-			WHERE a.STATUS = 1 AND CP_NAME <> '' AND CP_NAME <> '-' AND StatusID = 2
+			WHERE a.STATUS = 1 AND CP_NAME <> '' AND CP_NAME <> '-'
 			/*
 			UNION 
 

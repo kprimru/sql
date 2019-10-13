@@ -49,10 +49,10 @@ BEGIN
 			SELECT a.ClientID, ClientFullName, MAX(SearchGetDay) AS SearchGet
 			FROM
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
 				LEFT OUTER JOIN dbo.ClientSearchTable b ON a.ClientID = b.ClientID 
 			WHERE ClientServiceID = @SERVICE 
-				AND StatusID = 2 
 				AND STATUS = 1
 				AND EXISTS
 					(

@@ -22,6 +22,7 @@ BEGIN
 					SystemBaseName, DISTR, COMP, DistrStr
 				FROM
 					dbo.ClientTable a
+					INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 					INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
 					INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
 					OUTER APPLY
@@ -40,7 +41,7 @@ BEGIN
 							WHERE ClientID = ID_CLIENT
 							ORDER BY SystemOrder, DISTR, COMP
 						) AS y
-				WHERE StatusID = 2 AND STATUS = 1 --AND ID_HEAD IS NULL
+				WHERE STATUS = 1 --AND ID_HEAD IS NULL
 			) AS CLIENT
 			LEFT OUTER JOIN
 			(

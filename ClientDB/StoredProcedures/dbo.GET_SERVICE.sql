@@ -11,9 +11,9 @@ BEGIN
 	SELECT ServiceID, ServiceName, 
 		(
 			SELECT COUNT(*)
-			FROM dbo.ClientTable
+			FROM dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			WHERE ClientServiceID = ServiceID
-				AND StatusID = 2
 				AND STATUS = 1
 		) AS ServiceCount, ManagerID
 	FROM dbo.ServiceTable

@@ -18,8 +18,8 @@ BEGIN
 				(
 					SELECT *
 					FROM dbo.ClientView b WITH(NOEXPAND)
+					INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 					WHERE a.ServiceID = b.ServiceID
-						AND b.ServiceStatusID = 2
 				)
 			AND ServiceName NOT LIKE 'самостоятельно%'
 			AND ManagerID NOT IN (22, 5, 23)

@@ -11,14 +11,15 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент]
-	FROM dbo.ClientView WITH(NOEXPAND)
-	WHERE ServiceStatusID = 2
-		AND NOT EXISTS
+	FROM dbo.ClientView a WITH(NOEXPAND)
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+	WHERE NOT EXISTS
 		(
 			SELECT *
 			FROM dbo.ClientTrustView WITH(NOEXPAND)
 			WHERE CC_ID_CLIENT = ClientID
-		) AND NOT EXISTS
+		) AND
+		NOT EXISTS
 		(
 			SELECT *
 			FROM 

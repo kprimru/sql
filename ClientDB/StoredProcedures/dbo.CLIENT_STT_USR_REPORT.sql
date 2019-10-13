@@ -59,8 +59,8 @@ BEGIN
 			) AS STT_COUNT
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2
-			AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (a.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName
 	/*	

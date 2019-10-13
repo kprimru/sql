@@ -15,9 +15,9 @@ BEGIN
 		USR_CHECK AS [Файлы USR], STT_CHECK AS [Файлы STT], HST_CHECK AS [Файлы HST], INET_CHECK AS [Нет Интернета]
 	FROM 
 		dbo.ClientTable a
-		INNER JOIN dbo.ClientView b ON a.ClientID = b.ClientID
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 	WHERE STATUS = 1
-		AND StatusID = 2
 		AND
 			(
 				HST_CHECK = 0

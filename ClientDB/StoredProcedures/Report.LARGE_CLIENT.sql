@@ -96,8 +96,8 @@ BEGIN
 			ORDER BY DATE DESC FOR XML PATH('')
 		) AS [Записи РГ]
 	FROM dbo.ClientView a WITH(NOEXPAND)
-	WHERE a.ServiceStatusID = 2
-		AND EXISTS
+	INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+	WHERE EXISTS
 			(
 				SELECT *
 				FROM dbo.ClientDistrView z WITH(NOEXPAND)

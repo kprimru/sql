@@ -33,13 +33,13 @@ BEGIN
 		SELECT 
 			ClientID, ClientFullName, ManagerName, ServiceName, ServiceTypeShortName
 		FROM 
-			dbo.ClientReadList() 
-			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON RCL_ID = ClientID			
+			dbo.ClientReadList()
+			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON RCL_ID = ClientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.GET_TABLE_FROM_LIST(@STYPE, ',') ON Item = ServiceTypeID
 			INNER JOIN dbo.ServiceTypeTable b ON b.ServiceTypeID = a.ServiceTypeID
-		WHERE ServiceStatusID = 2 
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND (ServiceID = @SERVICE	OR @SERVICE IS NULL)
+		WHERE	(ManagerID = @MANAGER OR @MANAGER IS NULL)
+			AND (ServiceID = @SERVICE	OR @SERVICE IS NULL);
 
 	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 		DROP TABLE #usr

@@ -13,9 +13,9 @@ AS
 			(
 				SELECT *
 				FROM dbo.ClientTable b
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.StatusId = s.ServiceStatusId
 				WHERE STATUS = 1 
 					AND ClientServiceID = ServiceID
-					AND StatusID = 2
 			)
 			
 	UNION ALL
@@ -27,8 +27,8 @@ AS
 				SELECT *
 				FROM 
 					dbo.ClientTable b
+					INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.StatusId = s.ServiceStatusId
 					INNER JOIN dbo.ServiceTable c ON ServiceID = ClientServiceID
 				WHERE STATUS = 1 
 					AND a.ManagerID = c.ManagerID
-					AND StatusID = 2
 			)	

@@ -56,11 +56,11 @@ BEGIN
 					)), 1, 2, '')) AS GraphErr
 			FROM
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientContractTypeID
 				INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
 				LEFT OUTER JOIN dbo.DayTable d ON a.DayID = d.DayID
 			WHERE ClientServiceID = @SERVICE 
-				AND StatusID = 2
 				AND STATUS = 1
 		) AS o_O
 	WHERE (@ERROR = 0 OR GraphErr IS NOT NULL)

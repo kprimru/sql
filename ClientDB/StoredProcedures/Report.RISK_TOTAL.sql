@@ -15,8 +15,8 @@ BEGIN
 
 	DECLARE S CURSOR LOCAL FOR
 		SELECT DISTINCT ServiceID
-		FROM dbo.ClientView WITH(NOEXPAND)
-		WHERE ServiceStatusID = 2
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId;
 		
 	OPEN S
 	

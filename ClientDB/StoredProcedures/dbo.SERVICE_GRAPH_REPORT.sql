@@ -25,13 +25,13 @@ BEGIN
 			CATEGORY AS ClientTypeName, DayName, SUBSTRING(CONVERT(VARCHAR(20), ServiceStart, 108), 1, 5) AS ServiceStartStr, 
 			ServiceTime, GR_ERROR
 		FROM 
-			dbo.ClientTable b 
+			dbo.ClientTable b
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.StatusId = s.ServiceStatusId
 			LEFT OUTER JOIN dbo.ClientAddressView c ON b.ClientID = c.CA_ID_CLIENT
 			LEFT OUTER JOIN dbo.DayTable d ON d.DayID = b.DayID 
 			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.ClientID = b.ClientID
 			LEFT OUTER JOIN dbo.ClientGraphView f ON f.ClientID = b.ClientID
 		WHERE b.ClientServiceID = @SERVICE 
-			AND b.StatusID = 2 
 			AND STATUS = 1
 		ORDER BY b.ClientFullName
 	ELSE
@@ -42,12 +42,12 @@ BEGIN
 			ServiceTime, GR_ERROR
 		FROM 
 			dbo.ClientTable b 
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.StatusId = s.ServiceStatusId
 			LEFT OUTER JOIN dbo.ClientAddressView c ON b.ClientID = c.CA_ID_CLIENT
 			LEFT OUTER JOIN dbo.DayTable d ON d.DayID = b.DayID 
 			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.ClientID = b.ClientID
 			LEFT OUTER JOIN dbo.ClientGraphView f ON f.ClientID = b.ClientID
 		WHERE b.ClientServiceID = @SERVICE 
-			AND b.StatusID = 2 
 			AND STATUS = 1
 		ORDER BY DayOrder, ServiceStart, ClientFullName
 END

@@ -23,7 +23,8 @@ BEGIN
 					FROM 
 						dbo.ServiceTable b
 						INNER JOIN dbo.ClientTable c ON c.ClientServiceID = b.ServiceID
-					WHERE b.ManagerID = a.ManagerID AND StatusID = 2 AND STATUS = 1
+						INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.StatusId = s.ServiceStatusId
+					WHERE b.ManagerID = a.ManagerID AND STATUS = 1
 				) AS ManagerCount
 			FROM dbo.ManagerTable a
 			WHERE @FILTER IS NULL

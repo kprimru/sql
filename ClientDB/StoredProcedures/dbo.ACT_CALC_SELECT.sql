@@ -38,6 +38,7 @@ BEGIN
 			PayTypeMonth
 		FROM
 			dbo.ClientTable a
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusID = s.ServiceStatusId
 			INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
 			INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
 			OUTER APPLY
@@ -50,7 +51,7 @@ BEGIN
 					ORDER BY ContractEnd DESC
 				) AS o_O
 		WHERE (ServiceID = @SERVICE) 
-			AND StatusID = 2 AND STATUS = 1 AND ID_HEAD IS NULL
+			AND STATUS = 1 AND ID_HEAD IS NULL
 			AND (@TYPE IS NULL OR b.PayTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
 	
 	IF OBJECT_ID('tempdb..#distr') IS NOT NULL

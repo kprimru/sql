@@ -14,8 +14,8 @@ BEGIN
 
 	INSERT INTO Salary.ServiceClient(ID_SALARY, ID_CLIENT)
 		SELECT @SALARY, ClientID
-		FROM dbo.ClientTable
+		FROM dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		WHERE ClientServiceID = @SERVICE
-			AND StatusID = 2
 			AND STATUS = 1
 END
