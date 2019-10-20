@@ -9,52 +9,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;	
 
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
+	DECLARE @Client Table
+	(
+		CL_ID INT PRIMARY KEY CLUSTERED
+	);
+	
+	DECLARE @RClient Table
+	(
+		RCL_ID INT PRIMARY KEY CLUSTERED
+	);
+	
+	DECLARE @WClient Table
+	(
+		WCL_ID INT PRIMARY KEY CLUSTERED
+	);
 
-	IF OBJECT_ID('tempdb..#rclient') IS NOT NULL
-		DROP TABLE #rclient
-	IF OBJECT_ID('tempdb..#wclient') IS NOT NULL
-		DROP TABLE #wclient
-
+	INSERT INTO @RClient
 	SELECT RCL_ID
-		INTO #rclient
 	FROM dbo.ClientReadList()
 
+	INSERT INTO @WClient
 	SELECT WCL_ID
-		INTO #wclient
 	FROM dbo.ClientWriteList()
 
-	CREATE TABLE #client
-		( 
-			CL_ID INT PRIMARY KEY
-		)
-			
-	INSERT INTO #client(CL_ID)
-		SELECT RCL_ID
-		FROM 
-			(
-				SELECT RCL_ID
-				FROM #rclient		
-			) AS o_O				
+	INSERT INTO @Client(CL_ID)
+	SELECT RCL_ID
+	FROM @RClient		
 		
 
 	SELECT 
-		ClientID, 
+		ClientID = CL_ID, 
 		CASE 
 			WHEN WCL_ID IS NULL THEN CONVERT(BIT, 0)
 			ELSE CONVERT(BIT, 1)
 		END AS ClientEdit
-	FROM 
-		#client
-		INNER JOIN dbo.ClientTable a ON a.ClientID = CL_ID
-		LEFT OUTER JOIN #wclient ON CL_ID = WCL_ID
-	ORDER BY ClientID	
-
-	IF OBJECT_ID('tempdb..#client') IS NOT NULL
-		DROP TABLE #client
-	IF OBJECT_ID('tempdb..#rclient') IS NOT NULL
-		DROP TABLE #rclient
-	IF OBJECT_ID('tempdb..#wclient') IS NOT NULL
-		DROP TABLE #wclient
+	FROM @Client
+	LEFT MERGE JOIN @WClient ON CL_ID = WCL_ID
+	ORDER BY CL_ID
 END
