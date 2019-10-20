@@ -33,9 +33,20 @@ BEGIN
 		FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 		WHERE	Complect = @COMPLECT AND
 				DS_REG = 0
-
+	ELSE
+		INSERT INTO @sys
+		SELECT SystemID, SystemBaseName, DistrTypeID, DistrTypeName
+		FROM
+		(
+			SELECT
+				Sys_Id = c.value('@Sys_Id[1]',	'SmallInt'),
+				Net_Id = c.value('@Net_Id[1]',	'SmallInt')
+			FROM @SYS_NET_XML.nodes('/ROOT/ITEM') A(C)
+		) X
+		INNER JOIN dbo.SystemTable ON Sys_Id = SystemId
+		INNER JOIN dbo.DistrTypeTable ON DistrTypeId = Net_Id
 --¬Œ“ —ﬁƒ¿ ¬€√–”« ” “¿¡À»÷€ ¬ SYS »« XML	
-
+	
 
 
  

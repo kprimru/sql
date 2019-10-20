@@ -20,6 +20,14 @@ BEGIN
 	DECLARE @CLIENT	INT
 	DECLARE @MaxRn	Int
 
+	DECLARE @SystemXML	Xml;
+	
+	DECLARE @IBs	Table
+	(
+		InfoBank_Id			SmallInt Primary Key Clustered,
+		InfoBankShortName	VarChar(100)
+	);
+
 	SELECT @UD_ID = UF_ID_COMPLECT, @MIN = UF_MIN_DATE, @MAX = UF_MAX_DATE, @CLIENT = UD_ID_CLIENT
 	FROM USR.USRFile
 	INNER JOIN USR.USRData ON UF_ID_COMPLECT = UD_ID
@@ -66,10 +74,32 @@ BEGIN
 	
 	SELECT @MaxRn = Max(UP_ID) FROM @USRPackage;
 	
+	SET @SystemXML =
+	(
+		SELECT
+			Sys_Id		= P.UP_ID_SYSTEM,
+			--Sys_Reg		= SystemBaseName,
+			Net_Id		= N.NT_ID_MASTER
+			--Net_Name	= DistrTypeName
+		FROM @USRPackage P
+		CROSS APPLY
+		(
+			SELECT TOP (1) NT_ID_MASTER
+			FROM Din.NetType
+			WHERE NT_TECH_USR = UP_TECH
+				AND NT_NET = UP_NET
+		) N
+		FOR XML RAW ('ITEM'), ROOT('ROOT')
+	);
+	
+	INSERT INTO @IBs
+	SELECT InfoBankId, InfoBankShortName
+	FROM dbo.ComplectGetBanks(NULL, @SystemXML)
+	
 	SELECT @DAILY = ClientTypeDailyDay, @DAY = ClientTypeDay
 	FROM 
 		dbo.ClientTypeTable a 
-		INNER JOIN dbo.ClientTypeAllView z ON CATEGORY = ClientTypeName
+		INNER JOIN dbo.ClientTable z ON a.ClientTypeID = z.CLientTypeID
 	WHERE z.ClientID = @CLIENT
 
 	INSERT INTO #tech_info(
@@ -280,6 +310,9 @@ BEGIN
 			LEFT OUTER JOIN Din.SystemType ON SST_REG = UP_TYPE
 		WHERE UP_ID_USR = @UF_ID;
 		
+		
+		--DELETE FROM #package WHERE InfoBankId NOT IN (SELECT InfoBankId FROM @IBs);
+		
 		-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
 		INSERT INTO #package(
 					UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, 
@@ -476,6 +509,7 @@ BEGIN
 	FROM 
 		#package 		
 	WHERE Required = 1
+		AND InfoBankId IN (SELECT InfoBankId FROM @IBs)
 		AND NOT EXISTS
 			(
 				SELECT *
