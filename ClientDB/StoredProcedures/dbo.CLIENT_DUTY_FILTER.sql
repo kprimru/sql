@@ -4,12 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-/*
-Автор:			
-Дата создания:  
-Описание:		
-*/
-
 CREATE PROCEDURE [dbo].[CLIENT_DUTY_FILTER]
 	@begin SMALLDATETIME,
 	@end SMALLDATETIME,
@@ -22,7 +16,7 @@ CREATE PROCEDURE [dbo].[CLIENT_DUTY_FILTER]
 	@npo	bit = null,
 	@direction	uniqueidentifier = null,
 	@noresult bit = null,
-	@category VARCHAR(1) = null,
+	@category TinyInt = null,
 	@link int = null
 AS
 BEGIN
@@ -73,7 +67,6 @@ BEGIN
 		INNER JOIN dbo.ManagerTable e ON e.ManagerID = d.ManagerID
 		LEFT OUTER JOIN dbo.CallTypeTable f ON f.CallTypeID = a.CallTypeID 
 		LEFT OUTER JOIN dbo.CallDirection g ON g.ID = a.ID_DIRECTION
-		LEFT OUTER JOIN dbo.ClientTypeAllView h ON h.ClientID = b.ClientID
 	WHERE 
 		a.STATUS = 1
 		AND (ClientDutyDateTime < @end or @end IS NULL) 
@@ -93,7 +86,7 @@ BEGIN
 			)
 		AND (@npo IS NULL OR ClientDutyNPO = @NPO)
 		AND (@noresult IS NULL OR @noresult = 0 OR @noresult = 1 AND NOT EXISTS(SELECT * FROM dbo.ClientDutyResult z WHERE z.STATUS = 1 AND z.ID_DUTY = a.ClientDutyID))
-		AND (h.CATEGORY = @category OR @category IS NULL)
+		AND (b.ClientTypeID = @category OR @category IS NULL)
 		AND (@link IS NULL OR @LINK = 0 OR @LINK = 1 AND LINK = 1 OR @LINK = 2 AND LINK = 0)
 	ORDER BY ClientDutyDateTime DESC, ClientFullName
 END

@@ -349,7 +349,7 @@ BEGIN
 		(
 			SELECT 
 				b.ClientID, ServiceFullName, ManagerFullName, ClientFullName, PayTypeName, RangeValue, 
-				Category, ServicePositionName, ContractTypeName, VISIT_CNT4, VISIT_CNT5, IsOnline,
+				Category = ClientTypeName, ServicePositionName, ContractTypeName, VISIT_CNT4, VISIT_CNT5, IsOnline,
 				(
 					SELECT TOP 1 DISTR
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
@@ -420,7 +420,7 @@ BEGIN
 				LEFT OUTER JOIN dbo.PayTypeTable f ON f.PayTypeID = b.PayTypeID
 				LEFT OUTER JOIN dbo.ServicePositionTable g ON d.ServicePositionID = g.ServicePositionID
 				LEFT OUTER JOIN dbo.ContractTypeTable h ON b.ClientContractTypeID = h.ContractTypeID
-				LEFT OUTER JOIN dbo.ClientTypeAllView i ON i.ClientID = b.ClientID
+				LEFT OUTER JOIN dbo.ClientTypeTable i ON i.ClientTypeID = b.ClientTypeID
 				LEFT OUTER JOIN dbo.ClientVisitCount  j ON j.ID = b.ClientVisitCountID
 		) AS o_O
 	ORDER BY ManagerFullName, ServiceFullName, DISTR, ClientFullName 

@@ -238,8 +238,7 @@ BEGIN
 				SELECT Item 
 				FROM dbo.GET_TABLE_FROM_LIST(@TYPE, ',')
 			) AS o_O ON d.ServiceTypeID = Item LEFT OUTER JOIN
-			dbo.ClientTypeAllView r ON r.ClientID = a.ClientID LEFT OUTER JOIN
-			dbo.ClientTypeTable b ON r.CATEGORY = b.ClientTypeName LEFT OUTER JOIN
+			dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeID LEFT OUTER JOIN
 			dbo.DayTable c ON a.DayID = c.DayID
 		WHERE ClientServiceID  = @SERVICE AND STATUS = 1
 		ORDER BY ClientFullName

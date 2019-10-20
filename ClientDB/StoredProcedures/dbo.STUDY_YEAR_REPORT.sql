@@ -26,7 +26,7 @@ BEGIN
 
 	SET @SQL = N'
 		SELECT 
-			ClientFullName AS [Клиент], ServiceName AS [СИ], ManagerName AS [Рук-ль], CATEGORY AS [Категория], ConnectDate AS [Подключен], '
+			ClientFullName AS [Клиент], ServiceName AS [СИ], ManagerName AS [Рук-ль], ClientTypeName AS [Категория], ConnectDate AS [Подключен], '
 
 	SELECT @SQL = @SQL + 'Teach' + CONVERT(VARCHAR(20), STUDY_YEAR) + ' AS [' + CONVERT(VARCHAR(20), STUDY_YEAR) + '], '
 	FROM @TBL
@@ -74,7 +74,7 @@ BEGIN
 		FROM
 			(
 				SELECT 
-					ClientFullName, ServiceName, ManagerName, CATEGORY, '
+					a.ClientFullName, ServiceName, ManagerName, ClientTypeName, '
 
 	SELECT @SQL = @SQL + '
 					(
@@ -97,7 +97,8 @@ BEGIN
 					) AS ConnectDate
 				FROM 
 					dbo.ClientView a WITH(NOEXPAND)
-					LEFT OUTER JOIN dbo.ClientTypeAllView b ON a.ClientID = b.ClientID
+					INNER JOIN dbo.CLientTable c ON a.ClientID = c.ClientID
+					LEFT JOIN dbo.ClientTypeTable b ON c.ClientTypeID = b.ClientTypeID
 				WHERE 1 = 1 '
 	IF @STATUS IS NOT NULL
 		SET @SQL = @SQL + ' AND ServiceStatusID = @STATUS '

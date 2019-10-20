@@ -23,10 +23,10 @@ BEGIN
 	IF OBJECT_ID('tempdb..#clientlist') IS NOT NULL
 		DROP TABLE #clientlist
 
-	CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY)
+	CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY, CLientTypeID TinyInt)
 		
-	INSERT INTO #clientlist(CL_ID)
-		SELECT ClientID
+	INSERT INTO #clientlist(CL_ID, ClientTypeID)
+		SELECT ClientID, a.ClientTypeID
 		FROM 
 			dbo.ClientTable a	
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId		
@@ -63,12 +63,10 @@ BEGIN
 			ClientTypeDailyDay, ClientTypeDay,
 			MAX(StatisticDate) AS STAT_DATE
 		FROM			
-			#clientlist 
+			#clientlist b
 			INNER JOIN USR.USRIBDateView c WITH(NOEXPAND) ON CL_ID = UD_ID_CLIENT
 			INNER JOIN dbo.InfoBankTable i ON i.InfoBankId = c.UI_ID_BASE AND i.InfoBankActual = 1
-			/*INNER JOIN dbo.ClientTypeView d WITH(NOEXPAND) ON UD_ID_CLIENT = ClientID*/
-			INNER JOIN dbo.ClientTypeAllView d ON UD_ID_CLIENT = ClientID
-			INNER JOIN dbo.ClientTypeTable e ON e.ClientTypeName = d.CATEGORY
+			INNER JOIN dbo.ClientTypeTable e ON e.ClientTypeID = b.ClientTypeID
 			INNER JOIN dbo.StatisticTable a ON Docs = UIU_DOCS AND a.InfoBankID = UI_ID_BASE AND StatisticDate <= UIU_DATE_S
 		WHERE UIU_DATE_S BETWEEN @BEGIN AND @END
 		GROUP BY UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily, ClientTypeDailyDay, ClientTypeDay

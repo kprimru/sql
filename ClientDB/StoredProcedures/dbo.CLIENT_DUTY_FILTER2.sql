@@ -10,20 +10,20 @@ GO
 Описание:		
 */
 CREATE PROCEDURE [dbo].[CLIENT_DUTY_FILTER2]
-	@START		SMALLDATETIME,
-	@FINISH		SMALLDATETIME,
-	@CALL_TYPE	NVARCHAR(MAX),
-	@DUTY		NVARCHAR(MAX),
-	@STATUS		TINYINT,
-	@COMMENT	NVARCHAR(512),
-	@SERVICE	INT,
-	@SYSTEM		INT,
-	@NPO		TINYINT,
-	@DIRECTION	NVARCHAR(MAX),
-	@RESULT		TINYINT,
-	@NOTIFY		TINYINT,
-	@CATEGORY	VARCHAR(1),
-	@LINK		TINYINT
+	@START		SMALLDATETIME 	= NULL,
+	@FINISH		SMALLDATETIME 	= NULL,
+	@CALL_TYPE	NVARCHAR(MAX)	= NULL,
+	@DUTY		NVARCHAR(MAX)	= NULL,
+	@STATUS		TINYINT			= NULL,
+	@COMMENT	NVARCHAR(512)	= NULL,
+	@SERVICE	INT				= NULL,
+	@SYSTEM		INT				= NULL,
+	@NPO		TINYINT			= NULL,
+	@DIRECTION	NVARCHAR(MAX)	= NULL,
+	@RESULT		TINYINT			= NULL,
+	@NOTIFY		TINYINT			= NULL,
+	@CATEGORY	TinyInt			= NULL,
+	@LINK		TINYINT			= NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -31,7 +31,7 @@ BEGIN
 	SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
 	SELECT 
-		a.ClientID, ClientFullName, 
+		a.ClientID, b.ClientFullName, 
 		CONVERT(NVARCHAR(32), dbo.DateOf(ClientDutyDateTime), 104) as ClientDutyDateStr,
 		DutyName, CallTypeName, ClientDutyDocs, ClientDutyQuest, ClientDutyComment,
 		ServiceName, ManagerName, ClientDutyGive,
@@ -65,28 +65,28 @@ BEGIN
 		CASE j.NOTIFY WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS NOTIFY,
 		CASE i.ANSWER WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS ANSWER,
 		CASE i.SATISF WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS SATISF,
-		ServiceStatusIndex
+		ServiceStatusIndex, a.ID_DIRECTION, a.CallTypeID, a.DutyID, a.ID_GRANT_TYPE
 	FROM
 		dbo.ClientReadList()
 		INNER JOIN dbo.ClientDutyTable a ON RCL_ID = ClientID 
-		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
+		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
+		INNER JOIN dbo.ClientTable h ON h.ClientID = b.ClientID
 		INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 
 		LEFT OUTER JOIN dbo.CallTypeTable f ON f.CallTypeID = a.CallTypeID 
 		LEFT OUTER JOIN dbo.CallDirection g ON g.ID = a.ID_DIRECTION
-		LEFT OUTER JOIN dbo.ClientTypeAllView h ON h.ClientID = b.ClientID
 		LEFT OUTER JOIN dbo.ClientDutyNotify j ON j.ID_DUTY = a.ClientDutyID
 		LEFT OUTER JOIN dbo.ClientDutyResult i ON i.ID_DUTY = a.ClientDutyID
 	WHERE 
 		a.STATUS = 1
 		AND (ClientDutyDateTime >= @START OR @START IS NULL)
 		AND (ClientDutyDateTime < @FINISH OR @FINISH IS NULL) 		
-		AND (c.DutyID IN (SELECT ID FROM dbo.TableIDFromXML(@DUTY)) OR @DUTY IS NULL)		
-		AND (f.CallTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@CALL_TYPE)) OR @CALL_TYPE IS NULL)
+		AND (a.DutyID IN (SELECT ID FROM dbo.TableIDFromXML(@DUTY)) OR @DUTY IS NULL)		
+		AND (a.CallTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@CALL_TYPE)) OR @CALL_TYPE IS NULL)
 		AND (ClientDutyComment LIKE @COMMENT OR ClientDutyQuest LIKE @COMMENT OR @COMMENT IS NULL)
 		AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		AND (ID_DIRECTION IN (SELECT ID FROM dbo.TableGUIDFromXML(@DIRECTION)) OR @DIRECTION IS NULL)				
 		AND (@LINK IS NULL OR @LINK = 0 OR @LINK = 1 AND LINK = 1 OR @LINK = 2 AND LINK = 0)
-		AND (h.CATEGORY = @CATEGORY OR @CATEGORY IS NULL)
+		AND (h.ClientTypeId = @CATEGORY OR @CATEGORY IS NULL)
 		AND	(
 				@SYSTEM IS NULL
 				OR

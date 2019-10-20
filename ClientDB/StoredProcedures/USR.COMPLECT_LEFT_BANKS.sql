@@ -14,86 +14,96 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @out_ib	TABLE
-			(
-				ID					INT,
-				Complect			VARCHAR(30),
-				InfoBankName		VARCHAR(MAX),
-				InfoBankShortName	VARCHAR(MAX),	
-				PRIMARY KEY CLUSTERED(ID, Complect)
-			)
-
-	DECLARE @res	TABLE
-			(
-				ClientFullName	VARCHAR(MAX), 
-				Complect		VARCHAR(MAX),
-				ServiceName		VARCHAR(MAX),
-				ManagerName		VARCHAR(MAX),
-				Banks			NVARCHAR(MAX),
-				RusBanks		NVARCHAR(MAX),
-				UF_DATE			DATETIME
-			)
-
-	INSERT INTO @out_ib
-	SELECT ID, Complect, ibt1.InfoBankName, InfoBankShortName
-	FROM dbo.ComplectInfoBankCache cib
-	INNER JOIN dbo.InfoBankTable ibt1 ON ibt1.InfoBankName = cib.InfoBankName 
-	WHERE NOT EXISTS
-		(
-			SELECT Complect, ibt.InfoBankID, InfoBankName
-			FROM USR.USRIB uib
-			INNER JOIN USR.USRActiveView uav ON uav.UF_ID = uib.UI_ID_USR
-			INNER JOIN USR.USRData ud ON ud.UD_ID = uav.UD_ID
-			INNER JOIN Reg.RegNodeSearchView rns WITH(NOEXPAND) ON rns.DistrNumber = ud.UD_DISTR AND rns.HostID = ud.UD_ID_HOST AND rns.CompNumber = ud.UD_COMP
-			INNER JOIN InfoBankTable ibt ON ibt.InfoBankID = uib.UI_ID_BASE
-			WHERE cib.Complect = rns.Complect AND cib.InfoBankID = ibt.InfoBankID AND DS_REG = 0 AND SubhostName NOT IN ('У1', 'Н1', 'М', 'Л1')
-		)
-			
-
-	INSERT INTO @res
-	SELECT
-		cv.ClientFullName, res.Complect, cv.ServiceName, cv.ManagerName,
-		REVERSE(STUFF(REVERSE((
-			SELECT InfoBankName + ', '
-			FROM @out_ib res2
-			WHERE res.Complect = Res2.Complect
-			FOR XML PATH('')	
-			)), 1, 2, '')) AS Banks,
-		REVERSE(STUFF(REVERSE((
-			SELECT InfoBankShortName + ', '
-			FROM @out_ib res2
-			WHERE res.Complect = Res2.Complect
-			FOR XML PATH('')	
-			)), 1, 2, '')) AS RusBanks,
-		av.UF_DATE
-	FROM
-		@out_ib res
-	INNER JOIN Reg.RegNodeSearchView rns WITH(NOEXPAND) ON rns.Complect = res.Complect
-	INNER JOIN dbo.ClientDistrView cdv WITH(NOEXPAND) ON rns.DistrNumber = cdv.DISTR AND rns.CompNumber = cdv.COMP AND rns.HostID = cdv.HostID
-	INNER JOIN dbo.ClientView cv WITH(NOEXPAND) ON cv.ClientID = cdv.ID_CLIENT
-	INNER JOIN USR.USRActiveView av ON av.UD_DISTR = rns.DistrNumber AND av.UD_COMP = rns.CompNumber
+	DECLARE @Clients Table
+	(
+		ClientId		Int				NOT NULL,
+		Primary Key Clustered(ClientId)
+	);
 	
-	WHERE 
-			(@MANAGER IS NULL OR cv.ManagerID = @MANAGER) AND
-			(@SERVICE IS NULL OR cv.ServiceID = @SERVICE) AND
-			(@DATE IS NULL OR av.UF_DATE >= @DATE) AND
-			(@CLIENT IS NULL OR cdv.ID_CLIENT = @CLIENT) 
-	GROUP BY cv.ClientFullName, res.Complect, cv.ServiceName, cv.ManagerName, av.UF_DATE
-	ORDER BY res.Complect
+	DECLARE @ClientsComplects Table
+	(
+		ClientId		Int				NOT NULL,
+		Complect		VarChar(100)	NOT NULL,
+		UF_ID			Int					NULL,
+		UF_DATE			SmallDateTime		NULL,
+		InfoBanks		VarChar(Max)		NULL,
+		Primary Key Clustered(ClientId, Complect)
+	);
 
+	DECLARE @IBOut Table
+	(
+		Complect		VarChar(100)	NOT NULL,
+		InfoBankId		SmallInt		NOT NULL,
+		Primary Key Clustered(Complect, InfoBankId)
+	);
 
-	DECLARE @IBNAME	VARCHAR(10)
+	DECLARE @InfoBanks Table
+	(
+		Id				SmallInt		NOT NULL PRIMARY KEY CLUSTERED
+	);
+	
 	IF @IB IS NOT NULL
-		SELECT @IBNAME = InfoBankName
-		FROM dbo.InfoBankTable
-		WHERE InfoBankID = @IB
+		INSERT INTO @InfoBanks
+		SELECT DISTINCT ID
+		FROM dbo.TableIDFromXML(@IB);
+
+	INSERT INTO @Clients
+	SELECT ClientId
+	FROM dbo.ClientView WITH(NOEXPAND)
+	WHERE	ServiceStatusId = 2 -- ToDo заменить на ИМ
+		AND (ServiceId = @SERVICE	OR @SERVICE IS NULL)
+		AND (ManagerId = @Manager	OR @MANAGER IS NULL)
+		AND (ClientId = @CLIENT		OR @CLIENT IS NULL);
 
 
-	print @IBNAME
+	INSERT INTO @ClientsComplects(ClientId, Complect, UF_ID, UF_DATE)
+	SELECT DISTINCT C.ClientId, R.Complect, U.UF_ID, U.UF_DATE
+	FROM @Clients							C
+	INNER JOIN dbo.ClientDistrView			D WITH(NOEXPAND)	ON	D.ID_CLIENT = C.ClientId
+	INNER JOIN dbo.RegNodeMainSystemView	R WITH(NOEXPAND)	ON	D.DISTR = R.DistrNumber
+																AND D.COMP = R.CompNumber
+	INNER JOIN dbo.SystemTable				S					ON	S.SystemBaseName = R.SystemBaseName
+																AND D.HostID = S.HostId
+	OUTER APPLY
+	(
+		SELECT TOP (1) UF_ID, UF_DATE
+		FROM USR.USRActiveView			U
+		WHERE	U.UD_DISTR = R.MainDistrNumber
+			AND	U.UD_COMP = R.MainCompNumber
+			AND U.UD_ID_HOST = R.MainHostID
+		ORDER BY UF_DATE DESC
+	) U
+	WHERE	R.Service = 0
+		AND	(U.UF_DATE >= @DATE OR @DATE IS NULL);
+		
+	UPDATE C
+	SET InfoBanks		= I.InfoBankName
+	FROM @ClientsComplects					C
+	CROSS APPLY
+	(
+		SELECT [InfoBankName] = REVERSE(STUFF(REVERSE(
+			(
+				SELECT
+					I.InfoBankName + ','
+				FROM dbo.ComplectInfoBankCache	CC
+				INNER JOIN dbo.InfoBankTable	I	ON I.InfoBankID = CC.InfoBankID
+				WHERE C.Complect = CC.Complect
+					AND (@IB IS NULL OR I.InfoBankId IN (SELECT Id FROM @InfoBanks))
+					AND NOT EXISTS
+						(
+							SELECT *
+							FROM USR.USRIB I
+							WHERE	I.UI_ID_USR = C.UF_ID
+								AND I.UI_ID_BASE = CC.InfoBankId
+						)
+				ORDER BY InfoBankOrder FOR XML PATH('')
+			)), 1, 1, ''))
+	) I
+	OPTION(RECOMPILE);
 
-	SELECT *
-	FROM @res
-	WHERE
-		@IB IS NULL OR (Banks LIKE '%, '+@IBNAME +', %') OR (Banks LIKE @IBNAME +', %') OR (Banks LIKE '%, '+@IBNAME)
-
+	SELECT C.ClientID, C.ClientFullName, C.ManagerName, C.ServiceName, CC.Complect, Banks = CC.InfoBanks, CC.UF_DATE
+	FROM @ClientsComplects		CC
+	INNER JOIN dbo.ClientView	C	WITH(NOEXPAND)	ON C.ClientID = CC.ClientID
+	WHERE CC.InfoBanks IS NOT NULL
+	ORDER BY ManagerName, ServiceName, ClientFullName, Complect
 END

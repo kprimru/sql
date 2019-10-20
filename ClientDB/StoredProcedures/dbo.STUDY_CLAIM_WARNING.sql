@@ -10,7 +10,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT 
-		ID, ID_CLIENT AS ClientID, DATE, STUDY_DATE, MEETING_DATE, ClientFullName + ISNULL(' (' + d.CATEGORY + ')', '') AS ClientFullName, STATUS,
+		ID, ID_CLIENT AS ClientID, DATE, STUDY_DATE, MEETING_DATE, b.ClientFullName + ISNULL(' (' + t.ClientTypeName + ')', '') AS ClientFullName, a.STATUS,
 		NOTE = Cast(NOTE AS VarChar(4000)), REPEAT, TeacherName, ServiceName + ' (' + ManagerName + ')' AS ServiceName, CALL_DATE, TEACHER_NOTE, 
 		REVERSE(STUFF(REVERSE(
 			(
@@ -33,7 +33,7 @@ BEGIN
 			WHERE z.ID = a.ID OR a.ID_MASTER = a.ID
 			ORDER BY z.UPD_DATE
 		) + ' ' + ServiceName + ' (' + ManagerName + ')' AS AUTHOR,
-		CASE STATUS 
+		CASE a.STATUS 
 			WHEN 1 THEN 'Активна'
 			WHEN 4 THEN 'Отменена'
 			WHEN 5 THEN 'Выполнена'
@@ -60,9 +60,10 @@ BEGIN
 			)), 1, 2, '')) AS ZVE_DISTR		
 	FROM 
 		dbo.ClientStudyClaim a
-		INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = ID_CLIENT
+		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON ClientID = ID_CLIENT
+		INNER JOIN dbo.CLientTable e ON e.ClientID = b.ClientID
+		LEFT JOIN dbo.ClientTypeTable t ON t.ClientTypeID = e.CLientTypeID
 		LEFT OUTER JOIN dbo.TeacherTable c ON c.TeacherID = a.ID_TEACHER
-		LEFT OUTER JOIN dbo.ClientTypeAllView d ON d.ClientID = a.ID_CLIENT
 	WHERE a.STATUS IN (1, 9)
 	ORDER BY DATE DESC
 END

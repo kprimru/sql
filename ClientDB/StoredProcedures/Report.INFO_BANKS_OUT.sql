@@ -14,12 +14,12 @@ BEGIN
 		C.Comment AS [Название клиента], C.Complect AS [Комплект], rnc.DistrNumber AS [Дистрибутив], cv.ServiceName AS [СИ], cv.ManagerName AS [Руководитель],
 		REVERSE(STUFF(REVERSE((
 			SELECT IB.InfoBankName + ', '
-			FROM dbo.ComplectGetBanks(C.Complect, NULL) IB
+			FROM dbo.ComplectGetLeftBanks(C.Complect, NULL) IB
 			FOR XML PATH('')
 		)), 1, 2, '')) AS [Отсутствующие банки],
 		REVERSE(STUFF(REVERSE((
 			SELECT IB.InfoBankShortName + ', '
-			FROM dbo.ComplectGetBanks(C.Complect, NULL) IB
+			FROM dbo.ComplectGetLeftBanks(C.Complect, NULL) IB
 			FOR XML PATH('')
 		)), 1, 2, '')) AS [Отсутствующие банки],
 		usr.UF_DATE AS [Дата файла USR]

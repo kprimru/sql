@@ -197,7 +197,8 @@ BEGIN
 							WHERE ID_CLIENT = ClientID
 								AND NAME LIKE @NAME
 						)
-						--OR ClientShortName LIKE @NAME
+						OR ClientShortName LIKE @NAME
+						OR ClientOfficial LIKE @NAME
 						OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
 						
 					UNION
@@ -275,9 +276,7 @@ BEGIN
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
-					FROM 
-						dbo.ClientTypeAllView a
-						INNER JOIN dbo.ClientTypeTable b ON b.ClientTypeName = a.CATEGORY
+					FROM dbo.ClientTable
 					WHERE ClientTypeID = @TYPE
 				)
 			OPTION (RECOMPILE);

@@ -33,9 +33,10 @@ BEGIN
 		
 		DECLARE @CAT CHAR(1)
 		
-		SELECT @CAT = CATEGORY 
-		FROM dbo.ClientTypeAllView
-		WHERE ClientID = @CLIENT
+		SELECT @CAT = T.ClientTypeName
+		FROM dbo.ClientTable C
+		INNER JOIN dbo.ClientTypeTable T ON C.ClientTypeId = T.ClientTypeId
+		WHERE C.ClientID = @CLIENT
 		
 		INSERT INTO dbo.ClientContact(ID_CLIENT, DATE, PERSONAL, SURNAME, NAME, PATRON, POSITION, ID_TYPE, CATEGORY, NOTE, PROBLEM)
 			OUTPUT inserted.ID INTO @TBL

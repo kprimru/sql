@@ -95,8 +95,7 @@ AS
 	FROM 
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
-		INNER JOIN dbo.ClientTypeAllView d ON d.ClientID = a.ClientID
-		INNER JOIN dbo.ClientTypeTable b ON d.CATEGORY = b.ClientTypeName
+		INNER JOIN dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeId
 	WHERE ServiceStatusReg = 0 AND ClientNewsPaper < ClientTypePapper AND STATUS = 1
 
 	UNION ALL

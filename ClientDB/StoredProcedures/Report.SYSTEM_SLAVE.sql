@@ -237,11 +237,73 @@ BEGIN
 				AND Complect IS NULL
 				AND dbo.SubhostByComment(Comment, DistrNumber) != '490'
 				AND DistrType NOT IN ('HSS', 'NCT', 'DSP')
+
+			UNION ALL
+
+			SELECT 
+				SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+				REVERSE(STUFF(REVERSE(
+					(
+						SELECT 
+							dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
+						FROM 
+							dbo.RegNodeTable b
+							INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+						WHERE a.Complect = b.Complect
+							AND b.Service = 0
+							AND b.SystemName = 'PAS'
+						ORDER BY SystemOrder FOR XML PATH('')
+				)), 1, 1, '')) AS Systems
+			FROM dbo.RegNodeTable a
+			WHERE
+				Service = 0 AND
+				SystemName IN ('BVP', 'BUDP', 'JURP')
+				AND EXISTS
+					(
+						SELECT *
+						FROM dbo.RegNodeTable b
+						WHERE a.Complect = b.Complect
+							AND b.Service = 0
+							AND b.SystemName IN ('PAS')
+					)
+
+			UNION ALL
+
+			SELECT 
+				SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+				REVERSE(STUFF(REVERSE(
+					(
+						SELECT 
+							dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
+						FROM 
+							dbo.RegNodeTable b
+							INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+						WHERE a.Complect = b.Complect
+							AND b.Service = 0
+							AND b.SystemName = 'FIN'
+						ORDER BY SystemOrder FOR XML PATH('')
+				)), 1, 1, '')) AS Systems
+			FROM dbo.RegNodeTable a
+			WHERE
+				Service = 0 AND
+				SystemName IN ('BUDP')
+				AND EXISTS
+					(
+						SELECT *
+						FROM dbo.RegNodeTable b
+						WHERE a.Complect = b.Complect
+							AND b.Service = 0
+							AND b.SystemName IN ('FIN')
+					)
+
 			) AS a
 		INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemName
 		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 		LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
 		
+
+			
+				
 			
 	ORDER BY ManagerName, DistrNumber
 END

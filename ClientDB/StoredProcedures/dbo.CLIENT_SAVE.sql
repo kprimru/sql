@@ -96,7 +96,7 @@ BEGIN
 				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
 				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
 				ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK, 
-				ClientVisitCountID, IsLarge, IsDebtor, ClientLast, UPD_USER)
+				ClientVisitCountID, IsLarge, IsDebtor, ClientTypeId, ClientLast, UPD_USER)
 			SELECT
 				@ID, 2,
 				ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
@@ -105,7 +105,7 @@ BEGIN
 				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
 				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
 				ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK, 
-				ClientVisitCountID, IsLarge, IsDebtor, ClientLast, UPD_USER
+				ClientVisitCountID, IsLarge, IsDebtor, ClientTypeId, ClientLast, UPD_USER
 			FROM dbo.ClientTable
 			WHERE ClientID = @ID
 			

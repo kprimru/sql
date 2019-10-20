@@ -69,6 +69,7 @@ BEGIN
 			Complect			VarCHAr(100),
 			DisStr				VARCHAR(50),
 			InfoBankShortName	VARCHAR(MAX),
+			InfoBankCode		VARCHAR(MAX),
 			LAST_DATE			DATETIME,
 			UF_DATE				DATETIME
 		)

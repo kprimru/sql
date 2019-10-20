@@ -33,8 +33,8 @@ BEGIN
 		FROM dbo.SplitString(@WORDS)
 		WHERE Word IS NOT NULL
 		
-	SELECT 
-		c.ClientID, EventDate, ClientFullName, ServiceName, ManagerName, ServiceStatusIndex, CATEGORY, EventTypeName, EventComment,
+	SELECT
+		c.ClientID, EventDate, c.ClientFullName, ServiceName, ManagerName, ServiceStatusIndex, CATEGORY = ClientTypeName, EventTypeName, EventComment,
 		EventCreateUser AS EventCreateData, 
 		CASE
 			WHEN EventLastUpdate <> EventCreate THEN EventLastUpdateUser 
@@ -44,17 +44,18 @@ BEGIN
 		dbo.ClientReadList() a
 		INNER JOIN dbo.EventTable b ON a.RCL_ID = b.CLientID
 		INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ClientID = c.ClientID
+		INNER JOIN dbo.ClientTable d ON c.ClientID = d.ClientID
 		INNER JOIN dbo.EventTypeTable e ON e.EventTypeID = b.EventTypeID
-		LEFT OUTER JOIN dbo.ClientTypeAllView d ON d.ClientID = c.ClientID
+		INNER JOIN dbo.ClientTypeTable t ON t.ClientTypeID = d.ClientTypeID
 	WHERE /*EventID = MasterID
 		AND */EventActive = 1
 		AND (EventDate >= @START OR @START IS NULL)
 		AND (EventDate <= @FINISH OR @FINISH IS NULL)
-		AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
+		AND (c.ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
 		AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		AND (@TYPE IS NULL OR b.EventTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
 		AND (@AUTHOR IS NULL OR b.EventCreateUser IN (SELECT ID FROM dbo.TableStringFromXML(@AUTHOR)))
-		AND (@CATEGORY IS NULL OR CATEGORY IN (SELECT ID FROM dbo.TableStringFromXML(@CATEGORY)))
+		AND (@CATEGORY IS NULL OR d.ClientTypeId IN (SELECT ID FROM dbo.TableIdFromXML(@CATEGORY)))
 		AND NOT EXISTS
 			(
 				SELECT *

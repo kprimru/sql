@@ -16,7 +16,7 @@ BEGIN
 		h.CP_FIO AS ClientDir, h.CP_POS AS CLientDirPosition, h.CP_PHONE AS ClientDirPhone,
 		i.CP_FIO AS ClientBuh, i.CP_POS AS ClientBuhPosition, i.CP_PHONE AS ClientBuhPhone,
 		j.CP_FIO AS ClientRes, j.CP_POS AS ClientResPosition, j.CP_PHONE AS ClientResPhone,
-		ISNULL(e.CATEGORY, '') AS ClientTypeName,
+		ISNULL(e.ClientTypeName, '') AS ClientTypeName,
 		ServiceName + ' / ' + ManagerName AS ClientService,
 		ClientMainBook, ClientNewspaper, ServiceStatusName,
 		LEFT(REVERSE(STUFF(REVERSE(
@@ -33,7 +33,7 @@ BEGIN
 		INNER JOIN dbo.ServiceTable c ON ServiceID = ClientServiceID
 		INNER JOIN dbo.ManagerTable d ON d.ManagerID = c.ManagerID		
 		INNER JOIN dbo.ServiceStatusTable f ON f.ServiceStatusID = b.StatusID
-		LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.ClientID = b.ClientID
+		LEFT OUTER JOIN dbo.ClientTypeTable e ON e.ClientTypeID = b.ClientTypeID
 		LEFT OUTER JOIN dbo.ClientAddressView g ON g.CA_ID_CLIENT = b.ClientID
 		LEFT OUTER JOIN dbo.ClientPersonalDirView h WITH(NOEXPAND) ON h.CP_ID_CLIENT = b.ClientID
 		LEFT OUTER JOIN dbo.ClientPersonalBuhView i WITH(NOEXPAND) ON i.CP_ID_CLIENT = b.ClientID

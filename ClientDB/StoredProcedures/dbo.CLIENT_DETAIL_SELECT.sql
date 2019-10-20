@@ -15,7 +15,7 @@ BEGIN
 		ClientFullName,
 		ClientOfficial,
 		ClientINN, 
-		c.ClientTypeID,		
+		ClientTypeID,		
 		ClientServiceID AS ServiceID, 
 		ClientDayBegin, 
 		ClientDayEnd, 
@@ -62,8 +62,6 @@ BEGIN
 	FROM
 		dbo.ClientTable a
 		LEFT OUTER JOIN dbo.ClientWriteList() ON WCL_ID = ClientID
-		LEFT OUTER JOIN dbo.ClientTypeAllView b ON a.ClientID = b.ClientID
-		LEFT OUTER JOIN dbo.ClientTypeTable c ON c.ClientTypeName = b.CATEGORY
 		LEFT OUTER JOIN dbo.ClientAddressView d ON d.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
 	WHERE a.ClientID = @CLIENTID
 END

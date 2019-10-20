@@ -160,6 +160,7 @@ BEGIN
 		ClientFullName		VARCHAR(512), 
 		DisStr				VARCHAR(100),
 		InfoBankShortName	VARCHAR(MAX), 
+		InfoBankCodes		VARCHAR(MAX), 
 		LAST_DATE			DATETIME,
 		UF_DATE				DATETIME
 	)

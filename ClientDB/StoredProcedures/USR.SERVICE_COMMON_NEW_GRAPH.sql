@@ -261,8 +261,7 @@ BEGIN
 		FROM @Client t
 		INNER JOIN dbo.ClientTable a ON t.CL_ID = a.ClientId
 		INNER JOIN dbo.ServiceTypeTable d ON d.ServiceTypeID = a.ServiceTypeID 
-		INNER JOIN dbo.ClientTypeAllView r ON r.ClientID = a.ClientID
-		LEFT JOIN dbo.ClientTypeTable b ON r.CATEGORY = b.ClientTypeName
+		LEFT JOIN dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeID
 		LEFT JOIN dbo.DayTable c ON a.DayID = c.DayID
 		OUTER APPLY
 		(

@@ -142,12 +142,13 @@ BEGIN
 	CREATE TABLE #ib_check
 		(
 			ClientID		INT,
+			Complect		VarChar(100),
 			Manager			VARCHAR(100),
 			Service			VARCHAR(100),
 			ClientFullname	VARCHAR(500),
-			Complect		VarChar(100),
 			DisStr			VARCHAR(100),
 			InfoBankShortName	VARCHAR(MAX),
+			InfoBankCodes		VARCHAR(MAX),
 			LAST_DATE	DATETIME,
 			UF_DATE		DATETIME
 		)

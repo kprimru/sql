@@ -84,8 +84,7 @@ BEGIN
 		WHERE c.ClientID = t.ClientId
 			AND DS_REG = 0
 	) t
-	LEFT JOIN dbo.ClientTypeAllView r ON r.ClientID = c.ClientId
-	LEFT JOIN dbo.ClientTypeTable	b ON r.CATEGORY = b.ClientTypeName
+	LEFT JOIN dbo.ClientTypeTable	b ON c.ClientTypeID = b.ClientTypeID
 	LEFT JOIN dbo.DayTable			d ON c.DayID = d.DayID
 	WHERE	c.ClientServiceID  = @SERVICE
 		AND c.STATUS = 1;
@@ -266,8 +265,7 @@ BEGIN
 			SELECT Item 
 			FROM dbo.GET_TABLE_FROM_LIST(@Types, ',')
 		) AS o_O ON d.ServiceTypeID = Item
-		LEFT JOIN dbo.ClientTypeAllView r ON r.ClientID = a.ClientID
-		LEFT JOIN dbo.ClientTypeTable b ON r.CATEGORY = b.ClientTypeName
+		LEFT JOIN dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeID
 		LEFT JOIN dbo.DayTable c ON a.DayID = c.DayID
 		WHERE ClientServiceID  = @SERVICE AND STATUS = 1
 		ORDER BY ClientFullName;

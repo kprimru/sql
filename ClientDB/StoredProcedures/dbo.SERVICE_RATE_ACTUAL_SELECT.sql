@@ -63,10 +63,10 @@ BEGIN
 	IF OBJECT_ID('tempdb..#clientlist') IS NOT NULL
 		DROP TABLE #clientlist
 
-	CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY, SR_ID INT)
+	CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY, SR_ID INT, ClientTypeID TinyInt)
 		
-	INSERT INTO #clientlist(CL_ID, SR_ID)
-		SELECT ClientID, ClientServiceID
+	INSERT INTO #clientlist(CL_ID, SR_ID, ClientTypeID)
+		SELECT ClientID, ClientServiceID, ClientTypeID
 		FROM 
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
@@ -103,22 +103,20 @@ BEGIN
 			ClientTypeDailyDay, ClientTypeDay,
 			STAT_DATE
 		FROM
-			dbo.ClientTypeAllView d
-			INNER JOIN dbo.ClientTypeTable e ON e.ClientTypeName = d.CATEGORY
-			/*dbo.ClientTypeView d WITH(NOEXPAND)*/
-			INNER JOIN 
-				(
-					SELECT UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily, MAX(StatisticDate) AS STAT_DATE
-					FROM	
-						#clientlist 
-						INNER JOIN USR.USRIBDateView c WITH(NOEXPAND) ON CL_ID = UD_ID_CLIENT
-						INNER JOIN dbo.InfoBankTable i ON i.InfoBankId = c.UI_ID_BASE AND i.InfoBankActual = 1
-						INNER JOIN dbo.StatisticTable a ON Docs = UIU_DOCS 
-														AND a.InfoBankID = UI_ID_BASE 
-														AND StatisticDate <= UIU_DATE_S
-					WHERE UIU_DATE_S BETWEEN @BEGIN AND @END
-					GROUP BY UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily
-				) AS o_O ON ClientID = UD_ID_CLIENT
+			#clientlist a
+			INNER JOIN dbo.ClientTypeTable e ON a.ClientTypeID = e.ClientTypeID
+			CROSS APPLY
+			(
+				SELECT UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily, MAX(StatisticDate) AS STAT_DATE
+				FROM USR.USRIBDateView c WITH(NOEXPAND)
+				INNER JOIN dbo.InfoBankTable i ON i.InfoBankId = c.UI_ID_BASE AND i.InfoBankActual = 1
+				INNER JOIN dbo.StatisticTable a ON Docs = UIU_DOCS 
+												AND a.InfoBankID = UI_ID_BASE 
+												AND StatisticDate <= UIU_DATE_S
+				WHERE CL_ID = UD_ID_CLIENT
+					AND UIU_DATE_S BETWEEN @BEGIN AND @END
+				GROUP BY UIU_DATE_S, InfoBankDaily
+			) AS o_O
 
 	UPDATE #updates
 	SET STAT_DAILY	=	
