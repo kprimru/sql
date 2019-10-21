@@ -20,7 +20,6 @@ BEGIN
 			FROM 
 				dbo.IPSttView
 				INNER JOIN dbo.SystemTable ON CSD_SYS = SystemNumber
-			--WHERE CSD_STT_SEND = 1 AND CSD_STT_RESULT = 1
 			GROUP BY HostID, CSD_DISTR, CSD_COMP
 		) AS a
 		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.CSD_DISTR = b.DISTR AND a.CSD_COMP = b.COMP
