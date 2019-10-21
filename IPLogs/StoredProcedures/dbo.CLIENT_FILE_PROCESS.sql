@@ -259,6 +259,27 @@ BEGIN
 			FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
 			WHERE b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
 		)
+		
+	INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatSTTCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_END)
+	SELECT
+		a.CSD_SYS,
+		a.CSD_DISTR,
+		a.CSD_COMP,
+		a.CSD_START,
+		a.CSD_END
+	FROM  dbo.ClientStatDetail a
+	INNER JOIN @IDs I ON a.CSD_ID = I.Id
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatSTTCache] b
+			WHERE	b.CSD_SYS = a.CSD_SYS
+				AND b.CSD_DISTR = a.CSD_DISTR
+				AND b.CSD_COMP = a.CSD_COMP
+				AND b.CSD_START = a.CSD_START
+		) AND CSD_START IS NOT NULL
+		AND CSD_STT_SEND = 1
+		AND CSD_STT_RESULT = 1
 	---------------------------------------------------------------------------
 
 	IF OBJECT_ID('tempdb..#csd') IS NOT NULL
