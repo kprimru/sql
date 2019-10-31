@@ -77,19 +77,32 @@ BEGIN
 	SET @SystemXML =
 	(
 		SELECT
-			Sys_Id		= P.UP_ID_SYSTEM,
-			--Sys_Reg		= SystemBaseName,
-			Net_Id		= N.NT_ID_MASTER
-			--Net_Name	= DistrTypeName
-		FROM @USRPackage P
-		CROSS APPLY
-		(
-			SELECT TOP (1) NT_ID_MASTER
-			FROM Din.NetType
-			WHERE NT_TECH_USR = UP_TECH
-				AND NT_NET = UP_NET
-		) N
-		FOR XML RAW ('ITEM'), ROOT('ROOT')
+			[SYSTEMS] = 
+				(
+					SELECT
+						Sys_Id		= P.UP_ID_SYSTEM,
+						--Sys_Reg		= SystemBaseName,
+						Net_Id		= N.NT_ID_MASTER
+						--Net_Name	= DistrTypeName
+					FROM @USRPackage P
+					CROSS APPLY
+					(
+						SELECT TOP (1) NT_ID_MASTER
+						FROM Din.NetType
+						WHERE NT_TECH_USR = UP_TECH
+							AND NT_NET = UP_NET
+					) N
+					FOR XML RAW ('ITEM')
+				),
+			[INFO_BANKS] = 
+				(
+					SELECT
+						InfoBank_Id		= UI_ID_BASE
+					FROM USR.USRIB
+					WHERE UI_ID_USR = @UF_ID
+					FOR XML RAW ('ITEM')
+				)
+		FOR XML PATH(''), ROOT('ROOT')
 	);
 	
 	INSERT INTO @IBs

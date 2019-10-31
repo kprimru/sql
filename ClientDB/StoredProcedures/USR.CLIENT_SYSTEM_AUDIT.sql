@@ -30,7 +30,7 @@ BEGIN
 		InfoBanksCodes	VarChar(Max)		NULL,
 		Primary Key Clustered(ClientId, Complect)
 	);
-
+	
 	DECLARE @IBOut Table
 	(
 		Complect		VarChar(100)	NOT NULL,
@@ -76,6 +76,7 @@ BEGIN
 	) U
 	WHERE	R.Service = 0
 		AND	(U.UF_DATE >= @DATE OR @DATE IS NULL);
+	
 	
 	-- ToDO убрать задвоение!!!	
 	UPDATE C
@@ -123,7 +124,7 @@ BEGIN
 			)), 1, 1, ''))
 	) IC
 	OPTION(RECOMPILE);
-
+	
 	SELECT
 		C.ClientID, CC.Complect, C.ManagerName, C.ServiceName, C.ClientFullName, CC.Complect, Banks = CC.InfoBanks, BanksEn = CC.InfoBanksCodes, LAST_DATE = NULL, CC.UF_DATE
 	FROM @ClientsComplects		CC

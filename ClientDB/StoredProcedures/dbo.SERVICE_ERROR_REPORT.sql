@@ -63,10 +63,10 @@ BEGIN
 	DECLARE @IB TABLE
 		(
 			ClientID			INT,
+			Complect			VarCHAr(100),
 			ManagerName			VARCHAR(50),
 			ServiceName			VARCHAR(50),
 			ClientFullName		VARCHAR(500),
-			Complect			VarCHAr(100),
 			DisStr				VARCHAR(50),
 			InfoBankShortName	VARCHAR(MAX),
 			InfoBankCode		VARCHAR(MAX),

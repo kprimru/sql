@@ -41,7 +41,7 @@ BEGIN
 			SELECT
 				Sys_Id = c.value('@Sys_Id[1]',	'SmallInt'),
 				Net_Id = c.value('@Net_Id[1]',	'SmallInt')
-			FROM @SYS_NET_XML.nodes('/ROOT/ITEM') A(C)
+			FROM @SYS_NET_XML.nodes('/ROOT/SYSTEM/ITEM') A(C)
 		) X
 		INNER JOIN dbo.SystemTable ON Sys_Id = SystemId
 		INNER JOIN dbo.DistrTypeTable ON DistrTypeId = Net_Id
@@ -132,7 +132,7 @@ BEGIN
 		@HOST = MainHostID,
 		@COMP = MainCompNumber
 	FROM
-		dbo.RegNodeMainSystemView
+		dbo.RegNodeMainSystemView WITH(NOEXPAND)
 	WHERE
 		Complect = @COMPLECT
 ------------------------------------------------------------------------------------------------------------------------------
@@ -145,23 +145,33 @@ BEGIN
 		PRIMARY KEY (InfoBankID)
 	) 
 
-	INSERT INTO @rl_bnks
-	SELECT UI_ID_BASE
-	FROM USR.USRIB
-	WHERE UI_ID_USR = 
-			(
-				SELECT UF_ID
-				FROM USR.USRActiveView 
-				WHERE UD_ID = 
-						(
-							SELECT UD_ID
-							FROM USR.USRData
-							WHERE
-									UD_DISTR = @DISTR AND
-									UD_ID_HOST = @HOST AND
-									UD_COMP= @COMP
-						)
-			)
+	IF @SYS_NET_XML IS NOT NULL
+		INSERT INTO @rl_bnks
+		SELECT UI_ID_BASE
+		FROM USR.USRIB
+		WHERE UI_ID_USR = 
+				(
+					SELECT UF_ID
+					FROM USR.USRActiveView 
+					WHERE UD_ID = 
+							(
+								SELECT UD_ID
+								FROM USR.USRData
+								WHERE
+										UD_DISTR = @DISTR AND
+										UD_ID_HOST = @HOST AND
+										UD_COMP= @COMP
+							)
+				)
+	ELSE
+		INSERT INTO @rl_bnks
+		SELECT InfoBank_Id
+		FROM
+		(
+			SELECT
+				InfoBank_Id = c.value('@InfoBank_Id[1]',	'SmallInt')
+			FROM @SYS_NET_XML.nodes('/ROOT/INFO_BANK/ITEM') A(C)
+		) X
 ----------------------------------------------------------------------------------------------------------------------------------
 
 

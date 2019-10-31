@@ -260,22 +260,10 @@ BEGIN
 					dbo.IPSttView b
 					INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
 				WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-					--AND CSD_STT_SEND = 1 AND CSD_STT_RESULT = 1
 				ORDER BY ISNULL(CSD_END, CSD_START) DESC
 			)
 			, 0
 		FROM #complect a
-		/*
-		WHERE EXISTS
-			(
-				SELECT *
-				FROM 
-					dbo.IPSttView b
-					INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
-				WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-					--AND CSD_STT_SEND = 1 AND CSD_STT_RESULT = 1	
-			)
-		*/
 		ORDER BY UD_NAME
 			
 	INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)		
