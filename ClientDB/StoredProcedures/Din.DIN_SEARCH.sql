@@ -17,7 +17,8 @@ CREATE PROCEDURE [Din].[DIN_SEARCH]
 	@END		SMALLDATETIME = NULL,
 	@COMPL_CHECK	NVARCHAR(MAX) = NULL,
 	@COMPLECT		NVARCHAR(MAX) = NULL,
-	@CLR_CHECK		BIT	= 0
+	@CLR_CHECK		BIT	= 0,
+	@DS_INDEX	SMALLINT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -71,7 +72,7 @@ BEGIN
 						(
 							SELECT ClientID
 							FROM dbo.ClientTable
-							WHERE /*(ClientFullName LIKE ('%'+@CLIENT+'%'))OR*/(ClientShortName LIKE ('%'+@CLIENT+'%'))
+							WHERE /*(ClientFullName LIKE ('%'+@CLIENT+'%'))OR*/(ClientFullName LIKE ('%'+@CLIENT+'%'))
 						)
 				);
 
@@ -135,7 +136,7 @@ BEGIN
 					(
 						SELECT ClientID
 						FROM dbo.ClientTable
-						WHERE /*(ClientFullName LIKE ('%'+@CLIENT+'%'))OR*/(ClientShortName LIKE ('%'+@CLIENT+'%'))
+						WHERE /*(ClientFullName LIKE ('%'+@CLIENT+'%'))OR*/(ClientFullName LIKE ('%'+@CLIENT+'%'))
 					)
 			);
 	
@@ -237,12 +238,8 @@ BEGIN
 	BEGIN
 		UPDATE #distr
 		SET CHECKED = CONVERT(BIT, 1)
-<<<<<<< HEAD
-		WHERE Complect=@COMPL_CHECK AND
-				DS_INDEX = 0
-=======
 		WHERE Complect=@COMPL_CHECK
->>>>>>> master
+
 	END;
 
 	-----------------------------ƒ≈À¿≈“ —“¿–€≈ «¿Ã≈Õ≈ÕÕ€≈ ƒ»—“–»¡”“»¬€ Õ≈¿ “»¬Õ€Ã» » —Õ»Ã¿≈“ — Õ»’ √¿ÀŒ◊ ”
@@ -299,7 +296,8 @@ BEGIN
 			AND DS_INDEX = 0;
 			
 	SELECT *
-	FROM #distr;
+	FROM #distr
+	WHERE DS_INDEX = @DS_INDEX OR @DS_INDEX IS NULL
 	
 	IF OBJECT_ID('tempdb..#din') IS NOT NULL
 		DROP TABLE #din
