@@ -92,7 +92,7 @@ BEGIN
 						WHERE NT_TECH_USR = UP_TECH
 							AND NT_NET = UP_NET
 					) N
-					FOR XML RAW ('ITEM')
+					FOR XML RAW ('ITEM'), TYPE
 				),
 			[INFO_BANKS] = 
 				(
@@ -100,7 +100,7 @@ BEGIN
 						InfoBank_Id		= UI_ID_BASE
 					FROM USR.USRIB
 					WHERE UI_ID_USR = @UF_ID
-					FOR XML RAW ('ITEM')
+					FOR XML RAW ('ITEM'), TYPE
 				)
 		FOR XML PATH(''), ROOT('ROOT')
 	);
