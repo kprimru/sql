@@ -54,8 +54,10 @@ BEGIN
 		(
 			SELECT 
 				ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
-				CONVERT(INT, DF_DISCOUNT) AS DISCOUNT,	DF_FIXED_PRICE,
+				CASE WHEN DSS_REPORT = 0 THEN NULL ELSE CONVERT(INT, DF_DISCOUNT) END AS DISCOUNT,
+				CASE WHEN DSS_REPORT = 0 THEN NULL ELSE DF_FIXED_PRICE END AS DF_FIXED_PRICE,
 				CASE
+					WHEN DSS_REPORT = 0 THEN 100
 					WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN 
 						CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
 					WHEN DF_ID_PRICE = 6 THEN CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
@@ -66,7 +68,7 @@ BEGIN
 				(
 					SELECT 
 						ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
-						DF_ID_PRICE, 
+						DF_ID_PRICE, DSS_REPORT,
 						dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
 						dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
 						PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
