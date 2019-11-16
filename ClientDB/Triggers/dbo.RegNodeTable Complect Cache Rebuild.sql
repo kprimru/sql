@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TRIGGER [dbo].[RegNodeTable Complect Cache Rebuild]
-   ON  dbo.RegNodeTable
+   ON  [dbo].[RegNodeTable]
    AFTER INSERT,DELETE,UPDATE
 AS 
 BEGIN
@@ -47,6 +47,6 @@ BEGIN
 		IF @@RowCount < 1
 			BREAK;
 			
-		EXEC USR.COMPLECT_INFO_BANK_CACHE_RESET @Complect = @Complect;
+		EXEC dbo.COMPLECT_INFO_BANK_CACHE_RESET @Complect = @Complect;
     END
 END
