@@ -520,9 +520,9 @@ BEGIN
 		InfoBankOrder,
 		4 AS DATA_TYPE
 	FROM 
-		#package 		
+		#package P
 	WHERE Required = 1
-		AND InfoBankId IN (SELECT InfoBankId FROM @IBs)
+		AND InfoBankId IN (SELECT I.InfoBank_Id FROM @IBs I)
 		AND NOT EXISTS
 			(
 				SELECT *
