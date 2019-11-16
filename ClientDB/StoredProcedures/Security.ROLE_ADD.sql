@@ -8,7 +8,8 @@ CREATE PROCEDURE [Security].[ROLE_ADD]
 	@RoleID			INT,
 	@RoleName		VARCHAR(50),
 	@RoleCaption	VARCHAR(50),
-	@RoleNote		VARCHAR(MAX)
+	@RoleNote		VARCHAR(MAX),
+	@Id				Int = NULL OUT
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -33,6 +34,8 @@ BEGIN
 	INSERT INTO Security.Roles (RoleMasterID, RoleName, RoleCaption, RoleNote)
 		VALUES(@RoleID, @RoleName, @RoleCaption, @RoleNote)
 
-	IF @RoleName IS NOT NULL
+	SET @Id = Scope_Identity();
+
+	IF @RoleName IS NOT NULL AND @RoleName != ''
 		EXEC ('CREATE ROLE ' + @RoleName)
 END

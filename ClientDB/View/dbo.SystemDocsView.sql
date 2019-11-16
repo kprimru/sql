@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[SystemDocsView]
 AS
-	SELECT SystemID, SystemBaseName, FLOOR(SUM(Docs) / 100.0) * 100 AS Docs
+	/*SELECT SystemID, SystemBaseName, FLOOR(SUM(Docs) / 100.0) * 100 AS Docs
 	FROM 	
 		dbo.SystemBanksView a WITH(NOEXPAND)
 		INNER JOIN 
@@ -20,4 +20,19 @@ AS
 						WHERE d.InfoBankID = c.InfoBankID
 					)
 			) b ON a.InfoBankID = b.InfoBankID
-	GROUP BY SystemID, SystemBaseName
+	GROUP BY SystemID, SystemBaseName*/
+	SELECT a.SystemID, a.SystemBaseName, SUM(Docs) AS Docs
+	FROM dbo.SystemTable a
+	CROSS APPLY dbo.SystemBankGet(a.SystemId, 2) b
+	INNER JOIN 
+			(
+				SELECT InfoBankID, Docs
+				FROM dbo.StatisticTable c
+				WHERE StatisticDate = 
+					(
+						SELECT MAX(StatisticDate) 
+						FROM dbo.StatisticTable d 
+						WHERE d.InfoBankID = c.InfoBankID
+					)
+			) c ON c.InfoBankID = b.InfoBankID
+	GROUP BY a.SystemID, a.SystemBaseName

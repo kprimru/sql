@@ -41,6 +41,6 @@ BEGIN
 	DELETE FROM Security.Roles
 	WHERE RoleID = @RoleID
 
-	IF @RoleName IS NOT NULL
+	IF @RoleName IS NOT NULL AND @RoleName != ''
 		EXEC('DROP ROLE [' + @RoleName + ']')
 END
