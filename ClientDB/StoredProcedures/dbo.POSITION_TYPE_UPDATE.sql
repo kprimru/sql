@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.PositionTypeTable
-	SET PositionTypeName = @NAME,
-		PositionTypeLast = GETDATE()
+	SET PositionTypeName = @NAME
 	WHERE PositionTypeID = @ID
 END

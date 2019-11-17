@@ -20,7 +20,6 @@ BEGIN
 		ServiceStatusReg = @REG,
 		ServiceCode	= @Code,
 		ServiceStatusIndex = @INDEX,
-		ServiceDefault = @DEF,
-		ServiceStatusLast = GETDATE()
+		ServiceDefault = @DEF
 	WHERE ServiceStatusID = @ID
 END

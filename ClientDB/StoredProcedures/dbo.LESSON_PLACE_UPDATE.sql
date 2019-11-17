@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE dbo.LessonPlaceTable
 	SET LessonPlaceName = @NAME,
-		LessonPlaceReport = @REPORT,
-		LessonPlaceLast = GETDATE()
+		LessonPlaceReport = @REPORT
 	WHERE LessonPlaceID = @ID
 END

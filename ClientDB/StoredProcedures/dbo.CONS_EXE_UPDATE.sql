@@ -18,7 +18,6 @@ BEGIN
 	SET ConsExeVersionName = @NAME,
 		ConsExeVersionActive = @ACTIVE,
 		ConsExeVersionBegin = @BEGIN,
-		ConsExeVersionEnd = @END,
-		ConsExeVersionLast = GETDATE()
+		ConsExeVersionEnd = @END
 	WHERE ConsExeVersionID = @ID	
 END

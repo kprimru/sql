@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.PersonalTable	
 	SET DepartmentName = @DEP,
 		PersonalShortName = @SHORT,
-		PersonalFullName = @FULL,
-		PersonalLast = GETDATE()
+		PersonalFullName = @FULL
 	WHERE PersonalID = @ID
 END

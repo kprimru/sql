@@ -20,7 +20,6 @@ BEGIN
 		DistrTypeOrder = @ORDER,
 		DistrTypeFull = @FULL,
 		DistrTypeCode = @Code,
-		DistrTypeBaseCheck = @CHECK,
-		DistrTypeLast = GETDATE()
+		DistrTypeBaseCheck = @CHECK
 	WHERE DistrTypeID = @ID
 END

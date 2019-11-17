@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.SystemTypeTable
-	SET SystemTypeName = @NAME,	
-		SystemTypeLast = GETDATE()
+	SET SystemTypeName = @NAME
 	WHERE SystemTypeID = @ID
 END

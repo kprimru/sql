@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.EventTypeTable
 	SET EventTypeName = @NAME,
 		EventTypeReport = @REPORT,
-		EventTypeHide = @HIDE,
-		EventTypeLast = GETDATE()
+		EventTypeHide = @HIDE
 	WHERE EventTypeID = @ID
 END

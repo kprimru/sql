@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.SertificatType
-	SET NAME = @NAME,
-		LAST = GETDATE()
+	SET NAME = @NAME
 	WHERE ID = @ID
 END

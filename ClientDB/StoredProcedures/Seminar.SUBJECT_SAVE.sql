@@ -30,8 +30,7 @@ BEGIN
 		UPDATE Seminar.Subject
 		SET NAME	=	@NAME,
 			NOTE	=	@NOTE,
-			READER	=	@READER,
-			LAST	=	GETDATE()
+			READER	=	@READER
 		WHERE ID = @ID
 	END
 END

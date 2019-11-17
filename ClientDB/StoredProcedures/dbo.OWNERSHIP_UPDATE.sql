@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.OwnershipTable
-	SET OwnershipName = @NAME,
-		OwnershipLast = GETDATE()
+	SET OwnershipName = @NAME
 	WHERE OwnershipID = @ID
 END

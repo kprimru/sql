@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.QuestionTable
 	SET QuestionName = @NAME,
 		QuestionDate = @DATE,
-		QuestionFreeAnswer = @FREE,
-		QuestionLast = GETDATE()
+		QuestionFreeAnswer = @FREE
 	WHERE QuestionID = @ID
 END

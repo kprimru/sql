@@ -16,7 +16,6 @@ BEGIN
 	UPDATE	dbo.Activity
 	SET		AC_NAME		=	@NAME,
 			AC_CODE		=	@CODE,
-			AC_SHORT	=	@SHORT,
-			AC_LAST		=	GETDATE()
+			AC_SHORT	=	@SHORT
 	WHERE	AC_ID		=	@ID
 END

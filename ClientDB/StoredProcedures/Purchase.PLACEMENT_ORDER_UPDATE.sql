@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.PlacementOrder
 	SET PO_NAME =	@NAME,
-		PO_NUM	=	@NUM,
-		PO_LAST =	GETDATE()
+		PO_NUM	=	@NUM
 	WHERE PO_ID = @ID
 END

@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.PartnerRequirement
 	SET PR_NAME		=	@NAME,
-		PR_SHORT	=	@SHORT,
-		PR_LAST		=	GETDATE()
+		PR_SHORT	=	@SHORT
 	WHERE PR_ID = @ID
 END

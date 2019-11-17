@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.ManagerTable
 	SET ManagerName = @NAME,
 		ManagerLogin = @LOGIN,
-		ManagerFullName = @FULL,
-		ManagerLast = GETDATE()
+		ManagerFullName = @FULL
 	WHERE ManagerID = @ID
 END

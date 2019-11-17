@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE dbo.CallTypeTable
 	SET CallTypeName = @NAME,
-		CallTypeShort = @SHORT,
-		CallTypeLast = GETDATE()
+		CallTypeShort = @SHORT
 	WHERE CallTypeID = @ID
 END

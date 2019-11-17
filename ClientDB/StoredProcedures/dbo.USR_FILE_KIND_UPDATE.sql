@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.USRFileKindTable
 	SET USRFileKindName = @NAME,
 		USRFileKindShortName = @SNAME,
-		USRFileKindShort = @SHORT,
-		USRFileKindLast = GETDATE()
+		USRFileKindShort = @SHORT
 	WHERE USRFileKindID = @ID
 END

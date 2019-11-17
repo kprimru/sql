@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.Document
 	SET DC_NAME		=	@NAME,
-		DC_SHORT	=	@SHORT,
-		DC_LAST		=	GETDATE()
+		DC_SHORT	=	@SHORT
 	WHERE DC_ID = @ID
 END

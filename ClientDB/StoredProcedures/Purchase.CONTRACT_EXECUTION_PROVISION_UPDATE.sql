@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.ContractExecutionProvision
 	SET CEP_NAME		=	@NAME,
-		CEP_SHORT	=	@SHORT,
-		CEP_LAST		=	GETDATE()
+		CEP_SHORT		=	@SHORT
 	WHERE CEP_ID = @ID
 END

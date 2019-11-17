@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE	dbo.StudyType
 	SET		NAME	=	@NAME,
-			PSEDO	=	@PSEDO,
-			LAST	=	GETDATE()
+			PSEDO	=	@PSEDO
 	WHERE	ID	=	@ID
 END

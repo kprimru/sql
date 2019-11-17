@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.ClaimCancelReason
 	SET CCR_NAME	=	@NAME,
-		CCR_SHORT	=	@SHORT,
-		CCR_LAST	=	GETDATE()
+		CCR_SHORT	=	@SHORT
 	WHERE CCR_ID = @ID
 END

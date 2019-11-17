@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.VisitPayTable
 	SET VisitPayBegin = @BEGIN,
 		VisitPayEnd = @END,
-		VisitPayValue = @VALUE,
-		VisitPayLast = GETDATE()
+		VisitPayValue = @VALUE
 	WHERE VisitPayID = @ID
 END

@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.RangeTable
-	SET RangeValue = @VALUE,
-		RangeLast = GETDATE()
+	SET RangeValue = @VALUE
 	WHERE RangeID = @ID
 END

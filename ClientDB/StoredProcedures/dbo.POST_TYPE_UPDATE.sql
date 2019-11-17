@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.PostTypeTable
-	SET PostTypeName = @NAME,
-		PostTypeLast = GETDATE()
+	SET PostTypeName = @NAME
 	WHERE PostTypeID = @ID
 END

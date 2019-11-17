@@ -18,7 +18,6 @@ BEGIN
 	SET TeacherName = @NAME,
 		TeacherLogin = @LOGIN,
 		TeacherReport = @REPORT,
-		TeacherNorma = @NORMA,
-		TeacherLast = GETDATE()
+		TeacherNorma = @NORMA
 	WHERE TeacherID = @ID
 END

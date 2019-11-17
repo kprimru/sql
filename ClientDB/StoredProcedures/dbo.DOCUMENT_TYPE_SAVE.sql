@@ -24,8 +24,7 @@ BEGIN
 	ELSE
 	BEGIN
 		UPDATE dbo.DocumentType
-		SET NAME = @NAME,
-			LAST = GETDATE()
+		SET NAME = @NAME
 		WHERE ID = @ID
 	END
 END

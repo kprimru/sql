@@ -77,8 +77,7 @@ BEGIN
 		SystemDemo	=	@DEMO,
 		SystemComplect	=	@COMPLECT,
 		SystemReg	=	@REG,
-		SystemSalaryWeight = @WEIGHT,
-		SystemLast = GETDATE()
+		SystemSalaryWeight = @WEIGHT
 	WHERE SystemID = @ID
 
 	DELETE FROM dbo.SystemBankTable

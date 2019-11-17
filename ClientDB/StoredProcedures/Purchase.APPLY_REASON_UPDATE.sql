@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.ApplyReason
 	SET AR_NAME		=	@NAME,
-		AR_SHORT	=	@SHORT,
-		AR_LAST		=	GETDATE()
+		AR_SHORT	=	@SHORT
 	WHERE AR_ID = @ID
 END

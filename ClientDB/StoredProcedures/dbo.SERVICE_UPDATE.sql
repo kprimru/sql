@@ -23,8 +23,7 @@ BEGIN
 		ManagerID = @MANAGER,
 		ServicePhone = @PHONE,
 		ServiceLogin = @LOGIN,
-		ServiceFullName = @FULL,
-		ServiceLast = GETDATE()
+		ServiceFullName = @FULL
 	WHERE ServiceID = @ID
 
 	UPDATE dbo.ClientTable

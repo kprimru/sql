@@ -11,7 +11,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.ServiceTable
-	SET ServiceDismiss = dbo.DateOf(GETDATE()),
-		ServiceLast = GETDATE()
+	SET ServiceDismiss = dbo.DateOf(GETDATE())
 	WHERE ServiceID = @ID
 END

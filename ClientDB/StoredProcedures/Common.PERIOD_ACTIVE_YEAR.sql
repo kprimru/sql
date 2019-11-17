@@ -20,7 +20,6 @@ BEGIN
 	WHERE	ID			=	@ID
 
 	UPDATE	Common.Period
-	SET		ACTIVE		=	CASE @Active WHEN 1 THEN 0 ELSE 1 END,
-			LAST		=	GETDATE()
+	SET		ACTIVE		=	CASE @Active WHEN 1 THEN 0 ELSE 1 END
 	WHERE	DatePart(Year, START) = @Year
 END

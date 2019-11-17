@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.ClaimProvision
 	SET CP_NAME		=	@NAME,
-		CP_SHORT	=	@SHORT,
-		CP_LAST		=	GETDATE()
+		CP_SHORT	=	@SHORT
 	WHERE CP_ID = @ID
 END

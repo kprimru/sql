@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.ServicePositionTable
-	SET ServicePositionName = @NAME,
-		ServicePositionLast = GETDATE()
+	SET ServicePositionName = @NAME
 	WHERE ServicePositionID = @ID
 END

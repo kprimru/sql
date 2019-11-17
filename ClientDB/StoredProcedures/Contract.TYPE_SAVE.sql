@@ -35,8 +35,7 @@ BEGIN
 			CDAY	=	@CDAY,
 			CMONTH	=	@CMONTH,
 			Type_Id =	@CTYPE,
-			PayType_Id = @PTYPE,
-			LAST	=	GETDATE()
+			PayType_Id = @PTYPE
 		WHERE ID = @ID
 		
 	DELETE 

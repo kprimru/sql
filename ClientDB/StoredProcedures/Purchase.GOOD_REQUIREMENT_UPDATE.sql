@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.GoodRequirement
 	SET GR_NAME		=	@NAME,
-		GR_SHORT	=	@SHORT,
-		GR_LAST		=	GETDATE()
+		GR_SHORT	=	@SHORT
 	WHERE GR_ID = @ID
 END

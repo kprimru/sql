@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.PurchaseReason
 	SET PR_NAME =	@NAME,
-		PR_NUM	=	@NUM,
-		PR_LAST =	GETDATE()
+		PR_NUM	=	@NUM
 	WHERE PR_ID = @ID
 END

@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.ComplianceTypeTable
 	SET ComplianceTypeName = @NAME,
 		ComplianceTypeShortName = @SHORT,
-		ComplianceTypeOrder = @ORDER,
-		ComplianceTypeLast = GETDATE()
+		ComplianceTypeOrder = @ORDER
 	WHERE ComplianceTypeID = @ID
 END

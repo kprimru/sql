@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.RivalTypeTable
-	SET RivalTypeName = @NAME,
-		RivalTypeLast = GETDATE()
+	SET RivalTypeName = @NAME
 	WHERE RivalTypeID = @ID
 END

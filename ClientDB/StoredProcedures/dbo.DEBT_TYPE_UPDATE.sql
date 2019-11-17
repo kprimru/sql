@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE dbo.DebtType
 	SET SHORT = @SHORT,
-		NAME = @NAME,
-		LAST = GETDATE()
+		NAME = @NAME
 	WHERE ID = @ID
 END

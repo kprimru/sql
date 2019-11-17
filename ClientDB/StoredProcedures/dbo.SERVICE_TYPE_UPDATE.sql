@@ -18,7 +18,6 @@ BEGIN
 	SET ServiceTypeName = @NAME,
 		ServiceTypeShortName = @SHORT,
 		ServiceTypeVisit = @VISIT,
-		ServiceTypeDefault = @DEFAULT,
-		ServiceTypeLast = GETDATE()
+		ServiceTypeDefault = @DEFAULT
 	WHERE ServiceTypeID = @ID
 END

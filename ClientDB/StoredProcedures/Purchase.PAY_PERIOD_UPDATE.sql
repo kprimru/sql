@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.PayPeriod
 	SET PP_NAME		=	@NAME,
-		PP_SHORT	=	@SHORT,
-		PP_LAST		=	GETDATE()
+		PP_SHORT	=	@SHORT
 	WHERE PP_ID = @ID
 END

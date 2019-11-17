@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.UseCondition
 	SET UC_NAME		=	@NAME,
-		UC_SHORT	=	@SHORT,
-		UC_LAST		=	GETDATE()
+		UC_SHORT	=	@SHORT
 	WHERE UC_ID = @ID
 END

@@ -18,7 +18,6 @@ BEGIN
 	SET ResVersionNumber = @NUMBER,
 		ResVersionBegin = @BEGIN,
 		ResVersionEnd = @END,
-		IsLatest = @LATEST,
-		ResVersionLast = GETDATE()
+		IsLatest = @LATEST
 	WHERE ResVersionID = @ID
 END

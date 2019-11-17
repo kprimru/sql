@@ -16,7 +16,6 @@ BEGIN
 	UPDATE Purchase.TradeSite
 	SET TS_NAME		=	@NAME,
 		TS_URL		=	@URL,
-		TS_SHORT	=	@SHORT,
-		TS_LAST		=	GETDATE()
+		TS_SHORT	=	@SHORT
 	WHERE TS_ID = @ID
 END

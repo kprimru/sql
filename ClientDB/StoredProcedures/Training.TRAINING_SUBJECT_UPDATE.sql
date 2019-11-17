@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE	Training.TrainingSubject
-	SET		TS_NAME	=	@NAME,
-			TS_LAST	=	GETDATE()
+	SET		TS_NAME	=	@NAME
 	WHERE	TS_ID	=	@ID
 END

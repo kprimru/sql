@@ -18,7 +18,6 @@ BEGIN
 	SET		NAME		=	@NAME,
 			TYPE		=	@TYPE,
 			START		=	@START,
-			FINISH		=	@FINISH,
-			LAST		=	GETDATE()
+			FINISH		=	@FINISH
 	WHERE	ID			=	@ID
 END

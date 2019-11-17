@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.PriceValidation
 	SET PV_NAME		=	@NAME,
-		PV_SHORT	=	@SHORT,
-		PV_LAST		=	GETDATE()
+		PV_SHORT	=	@SHORT
 	WHERE PV_ID = @ID
 END

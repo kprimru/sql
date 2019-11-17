@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.SignPeriod
 	SET SP_NAME		=	@NAME,
-		SP_SHORT	=	@SHORT,
-		SP_LAST		=	GETDATE()
+		SP_SHORT	=	@SHORT
 	WHERE SP_ID = @ID
 END

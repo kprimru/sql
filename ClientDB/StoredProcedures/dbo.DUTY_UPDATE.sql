@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.DutyTable
 	SET DutyName = @NAME,
 		DutyLogin = @LOGIN,
-		DutyActive	=	@ACTIVE,
-		DutyLast = GETDATE()
+		DutyActive	=	@ACTIVE
 	WHERE DutyID = @ID
 END

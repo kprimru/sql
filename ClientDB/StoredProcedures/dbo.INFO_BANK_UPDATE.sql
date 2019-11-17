@@ -28,7 +28,6 @@ BEGIN
 		InfoBankActive = @ACTIVE,
 		InfoBankDaily = @DAILY,
 		InfoBankActual = @ACTUAL,
-		InfoBankStart = ISNULL(@START, InfoBankStart),
-		InfoBankLast = GETDATE()
+		InfoBankStart = ISNULL(@START, InfoBankStart)
 	WHERE InfoBankID = @ID
 END

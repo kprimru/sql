@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.TenderName
 	SET TN_NAME		=	@NAME,
-		TN_SHORT	=	@SHORT,
-		TN_LAST		=	GETDATE()
+		TN_SHORT	=	@SHORT
 	WHERE TN_ID = @ID
 END

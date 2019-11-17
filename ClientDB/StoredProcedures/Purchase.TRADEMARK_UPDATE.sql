@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.Trademark
 	SET TM_NAME		=	@NAME,
-		TM_SHORT	=	@SHORT,
-		TM_LAST		=	GETDATE()
+		TM_SHORT	=	@SHORT
 	WHERE TM_ID = @ID
 END

@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.PayTypeTable
-	SET PayTypeName = @NAME,
-		PayTypeLast = GETDATE()
+	SET PayTypeName = @NAME
 	WHERE PayTypeID = @ID
 END

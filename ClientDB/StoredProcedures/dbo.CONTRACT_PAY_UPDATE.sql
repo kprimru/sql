@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.ContractPayTable
 	SET ContractPayName = @NAME,
 		ContractPayDay	=	@DAY,
-		ContractPayMonth	=	@MONTH,
-		ContractPayLast = GETDATE()
+		ContractPayMonth	=	@MONTH
 	WHERE ContractPayID = @ID
 END

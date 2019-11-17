@@ -19,7 +19,6 @@ BEGIN
 
 	UPDATE	dbo.CallDirection
 	SET		NAME	=	@NAME,
-			DEF		=	@DEF,
-			LAST	=	GETDATE()
+			DEF		=	@DEF
 	WHERE	ID		=	@ID
 END

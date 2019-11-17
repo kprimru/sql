@@ -18,7 +18,6 @@ BEGIN
 	SET ClientTypeName = @NAME,
 		ClientTypeDailyDay = @DAILY,
 		ClientTypeDay = @DAY,
-		ClientTypePapper = @PAPPER,
-		ClientTypeLast = GETDATE()
+		ClientTypePapper = @PAPPER
 	WHERE ClientTypeID = @ID
 END

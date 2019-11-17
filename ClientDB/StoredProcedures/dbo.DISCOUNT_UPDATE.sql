@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE dbo.DiscountTable
 	SET DiscountValue = @VALUE,
-		DiscountOrder = @ORDER,
-		DiscountLast = GETDATE()
+		DiscountOrder = @ORDER
 	WHERE DiscountID = @ID
 END

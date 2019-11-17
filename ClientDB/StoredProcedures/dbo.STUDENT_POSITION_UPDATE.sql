@@ -12,7 +12,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	UPDATE dbo.StudentPositionTable
-	SET StudentPositionName = @NAME,
-		StudentPositionLast = GETDATE()
+	SET StudentPositionName = @NAME
 	WHERE StudentPositionID = @ID
 END

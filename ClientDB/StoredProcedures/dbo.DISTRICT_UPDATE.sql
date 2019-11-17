@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE	dbo.District
 	SET		DS_ID_CITY	=	@CITY,
-			DS_NAME		=	@NAME,
-			DS_LAST		=	GETDATE()
+			DS_NAME		=	@NAME
 	WHERE DS_ID = @ID
 END

@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.Hosts
 	SET HostShort = @SHORT,
 		HostReg = @REG,
-		HostOrder = @ORDER,
-		HostLast = GETDATE()
+		HostOrder = @ORDER
 	WHERE HostID = @ID
 END

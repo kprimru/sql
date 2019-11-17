@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE Purchase.OtherProvision
 	SET OP_NAME		=	@NAME,
-		OP_SHORT	=	@SHORT,
-		OP_LAST		=	GETDATE()
+		OP_SHORT	=	@SHORT
 	WHERE OP_ID = @ID
 END

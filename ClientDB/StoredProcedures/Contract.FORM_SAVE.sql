@@ -28,8 +28,7 @@ BEGIN
 		UPDATE Contract.Forms
 		SET	NAME = @NAME,
 			NUM = @NUM,
-			FILE_PATH = @PATH,
-			LAST = GETDATE()
+			FILE_PATH = @PATH
 		WHERE ID = @ID
 	END	
 END

@@ -14,7 +14,6 @@ BEGIN
 
 	UPDATE dbo.ContractTypeTable
 	SET ContractTypeName = @NAME,
-		ContractTypeRate = @RATE,
-		ContractTypeLast = GETDATE()
+		ContractTypeRate = @RATE
 	WHERE ContractTypeID = @ID
 END

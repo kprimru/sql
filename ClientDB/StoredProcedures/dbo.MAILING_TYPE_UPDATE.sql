@@ -12,8 +12,7 @@ BEGIN
 	UPDATE
 		Common.MailingType
 	SET
-		MailingTypeName = @NAME,
-		MailingTypeLast = GETDATE()
+		MailingTypeName = @NAME
 	WHERE
 		MailingTypeId = @ID
 END

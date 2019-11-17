@@ -16,7 +16,6 @@ BEGIN
 	UPDATE dbo.RichCoefTable
 	SET RichCoefStart = @START,
 		RichCoefEnd = @END,
-		RichCoefVal = @VAL,
-		RichCoefLast = GETDATE()
+		RichCoefVal = @VAL
 	WHERE RichCoefID = @ID	
 END
