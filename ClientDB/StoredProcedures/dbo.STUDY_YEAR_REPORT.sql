@@ -107,7 +107,7 @@ BEGIN
 	IF @SERVICE IS NOT NULL
 		SET @SQL = @SQL + ' AND ServiceID = @SERVICE '
 	IF @TYPE IS NOT NULL
-		SET @SQL = @SQL + ' AND a.ClientID IN (SELECT ClientID FROM dbo.ClientTable WHERE STATUS = 1 AND ClientContractTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE))) '
+		SET @SQL = @SQL + ' AND a.ClientContractTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) '
 
 	SET @SQL = @SQL + '
 			) AS dt'

@@ -12,7 +12,7 @@ AS
 		ServiceID, ServiceName, ServiceLogin,
 		c.ManagerID, ManagerName, ManagerLogin,
 		ServiceStatusID, ServiceStatusName, ServiceStatusIndex,
-		ServiceTypeID
+		ServiceTypeID, ClientContractTypeID
 	FROM 
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID

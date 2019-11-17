@@ -43,8 +43,7 @@ BEGIN
 					FROM 
 						dbo.ClientStudyConnectView a
 						INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
-						INNER JOIN dbo.ClientTable c ON c.ClientID = b.ClientID
-						INNER JOIN dbo.TableIDFromXML(@TYPE) d ON d.ID = c.ClientContractTypeID
+						INNER JOIN dbo.TableIDFromXML(@TYPE) d ON d.ID = b.ClientContractTypeID
 					WHERE (DATE >= @BEGIN OR @BEGIN IS NULL)
 						AND (DATE <= @END OR @END IS NULL)
 						AND (b.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)

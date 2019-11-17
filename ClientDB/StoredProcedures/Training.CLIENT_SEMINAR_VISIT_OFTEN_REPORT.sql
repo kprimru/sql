@@ -41,11 +41,11 @@ BEGIN
 					WHERE z.UD_ID_CLIENT = a.ClientID
 				) AS LAST_UPDATE
 			FROM 
-				dbo.ClientTable a
-				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+				dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID	
-				INNER JOIN dbo.ServiceTable b ON ClientServiceID = ServiceID
-				INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
+				--INNER JOIN dbo.ServiceTable b ON ClientServiceID = ServiceID
+				--INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 				INNER JOIN dbo.ClientStudy z ON z.ID_CLIENT = a.ClientID
 												AND ID_PLACE = @LESSON
 												AND DATE BETWEEN @BEGIN AND @END
@@ -55,10 +55,9 @@ BEGIN
 						FROM dbo.ClientConnectView WITH(NOEXPAND)
 						GROUP BY ClientID
 					) AS d ON d.ClientID = a.ClientID
-			WHERE a.STATUS = 1
-				AND z.STATUS = 1
+			WHERE z.STATUS = 1
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND (c.ManagerID = @MANAGER OR @MANAGER IS NULL)
+				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ConnectDate <= @CONNECT OR @CONNECT IS NULL OR ConnectDate IS NULL)
 			GROUP BY a.ClientID, ClientFullName, ManagerName, ServiceName, ConnectDate
 		) AS o_O

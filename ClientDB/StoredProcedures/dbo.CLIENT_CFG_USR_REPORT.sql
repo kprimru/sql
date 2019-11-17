@@ -57,7 +57,6 @@ BEGIN
 			) AS CFG_COUNT
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE	(a.ServiceID = @SERVICE OR @SERVICE IS NULL)

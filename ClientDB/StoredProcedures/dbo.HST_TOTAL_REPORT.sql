@@ -50,7 +50,6 @@ BEGIN
 		) AS USR_COUNT
 	FROM 
 		dbo.ClientView a WITH(NOEXPAND)
-		INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientContractTypeID;
 

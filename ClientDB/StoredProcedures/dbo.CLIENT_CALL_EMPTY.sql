@@ -52,7 +52,6 @@ BEGIN
 		) AS CONNECT_DATE
 	FROM 
 		dbo.ClientView a WITH(NOEXPAND)
-		INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 	WHERE	(@TYPE IS NULL OR ClientContractTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
 		AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
