@@ -289,7 +289,7 @@ FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SET @index_name = @schema+'.'+@index
+	SET @index_name = '[' + @schema+'].['+@index + ']'
 	IF (LEN(@index_right)>100)AND((LEN(@index_right)-LEN(REPLACE(@index_right, CHAR(40), ''))) = 2)   -- брнпни сфюя - щрн йнкхвеярбн нрйпшбючыху яйнанй б ярпнйе (врнаш ме ашкн рнцн, врн нохяюмн мхфе)
 	BEGIN 
 		SET @index_right = REVERSE (@index_right)
