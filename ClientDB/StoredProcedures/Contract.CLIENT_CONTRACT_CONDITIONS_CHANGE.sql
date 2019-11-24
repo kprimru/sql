@@ -33,7 +33,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN;
 		
-		IF NOT EXISTS(SELECT * FROM [Contract].[Contracts] WHERE [ID] = @Contract_Id AND [DateTo] IS NULL)
+		IF NOT EXISTS(SELECT * FROM [Contract].[Contract] WHERE [ID] = @Contract_Id AND [DateTo] IS NULL)
 			RaisError('Ошибка! Договор закрыт!', 16, 1);
 		
 		IF EXISTS(SELECT * FROM [Contract].[ClientContractsDetails] WHERE [Contract_Id] = @Contract_Id AND [DATE] >= @Date)
