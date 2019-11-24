@@ -20,22 +20,22 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#contract') IS NOT NULL
-		DROP TABLE #contract
-		
-	CREATE TABLE #contract
-		(
-			ID		UNIQUEIDENTIFIER PRIMARY KEY
-		)
+	DECLARE @contract TABLE
+	(
+		ID		UNIQUEIDENTIFIER PRIMARY KEY
+	)
 		
 	DECLARE @ROWCOUNT INT
 	
+	/*
 	IF @START IS NULL AND @FINISH IS NULL AND @VENDOR IS NULL AND @TYPE IS NULL AND @SPECIFICATION IS NULL AND @NUM IS NULL AND @CLIENT IS NULL
 		SET @ROWCOUNT = 200
 	ELSE
 		SET @ROWCOUNT = 10000000
+	*/
+	SET @ROWCOUNT = 200
 		
-	INSERT INTO #contract(ID)
+	INSERT INTO @contract(ID)
 		SELECT TOP (@ROWCOUNT) ID
 		FROM Contract.Contract a
 		WHERE STATUS = 1
@@ -58,36 +58,31 @@ BEGIN
 				)
 		ORDER BY DATE DESC, NUM DESC
 			
-	SET @CNT = (SELECT COUNT(*) FROM #contract)
+	SET @CNT = (SELECT COUNT(*) FROM @contract)
 			
 	SELECT b.ID, NULL AS ID_MASTER, b.NUM, b.NUM_S, c.NAME, d.IND, DATE, b.NOTE, CLIENT, RETURN_DATE, UPD_DATE, UPD_USER, d.NAME AS ST_NAME, b.UPD_USER, LAW
-	FROM 
-		#contract a
-		INNER JOIN Contract.Contract b ON a.ID = b.ID
-		INNER JOIN Contract.Type c ON b.ID_TYPE = c.ID
-		INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
+	FROM @contract a
+	INNER JOIN Contract.Contract b ON a.ID = b.ID
+	INNER JOIN Contract.Type c ON b.ID_TYPE = c.ID
+	INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
 		
 	UNION ALL
 	
 	SELECT b.ID, a.ID, b.NUM, CONVERT(NVARCHAR(32), b.NUM), c.NAME, d.IND, DATE, b.NOTE, '', RETURN_DATE, NULL, b.UPD_USER, d.NAME AS ST_NAME, NULL, NULL
-	FROM 
-		#contract a
-		INNER JOIN Contract.ContractSpecification b ON a.ID = b.ID_CONTRACT
-		INNER JOIN Contract.Specification c ON b.ID_SPECIFICATION = c.ID
-		INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
+	FROM @contract a
+	INNER JOIN Contract.ContractSpecification b ON a.ID = b.ID_CONTRACT
+	INNER JOIN Contract.Specification c ON b.ID_SPECIFICATION = c.ID
+	INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
 	WHERE @SPEC_SHOW = 1
 		
 	UNION ALL
 	
 	SELECT b.ID, a.ID, b.NUM, CONVERT(NVARCHAR(32), b.NUM), 'Дополнительное соглашение', d.IND, REG_DATE, b.NOTE, '', RETURN_DATE, NULL, b.UPD_USER, d.NAME AS ST_NAME, NULL, NULL
-	FROM 
-		#contract a
-		INNER JOIN Contract.Additional b ON a.ID = b.ID_CONTRACT		
-		INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
+	FROM @contract a
+	INNER JOIN Contract.Additional b ON a.ID = b.ID_CONTRACT		
+	INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID
 	WHERE @ADD_SHOW = 1
 		
 	ORDER BY DATE DESC, NUM DESC
-		
-	IF OBJECT_ID('tempdb..#contract') IS NOT NULL
-		DROP TABLE #contract
+	OPTION(RECOMPILE)
 END
