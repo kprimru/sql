@@ -31,6 +31,7 @@ BEGIN
 			SELECT ClientID
 			FROM dbo.ClientTable
 			
+	DELETE FROM #client_list WHERE CL_ID NOT IN (SELECT CLientID FROM dbo.ClientTable WHERE STATUS = 1)
 	
 	UPDATE dbo.ClientIndex
 	SET DATA = ClientData
