@@ -93,8 +93,18 @@ BEGIN
 					FROM @IB b
 					WHERE a.CL_ID = b.ClientID
 						AND LAST_DATE IS NOT NULL
-				))
+				)),
+		DISTR = (
+					SELECT DisStr
+					FROM @IB b
+					WHERE a.CL_ID = b.ClientID 
+				)
 	FROM #check a
+	WHERE CL_ID IN 
+			(
+				SELECT ClientID
+				FROM @IB
+			)
 	
 	DECLARE @UNSERV TABLE
 		(
