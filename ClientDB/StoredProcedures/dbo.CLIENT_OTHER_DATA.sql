@@ -397,28 +397,60 @@ BEGIN
 			'', 'Дистрибутивы в списке "Задать вопрос эксперту"', 
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT DistrStr + ', '
+					SELECT DistrStr + ' (' + Convert(VarChar(20), a.SET_DATE, 104) +  '), '
 					FROM 
 						dbo.ExpDistr a
 						INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID_HOST = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
 					WHERE a.STATUS = 1
 						AND b.ID_CLIENT = @ID
 					ORDER BY SystemOrder, a.DISTR, a.COMP FOR XML PATH('')
-				)), 1, 2, '')), 0		
+				)), 1, 2, '')),
+				CASE
+					WHEN EXISTS
+						(
+							SELECT *
+							FROM #complect C
+							INNER JOIN USR.USRActiveView U ON C.UD_ID = U.UD_ID
+							INNER JOIN USR.USRFileTech T ON T.UF_ID = U.UF_ID
+							WHERE
+								(
+									T.UF_EXPCONS IS NULL AND T.UF_FORMAT >= 11
+									OR
+									T.UF_EXPCONS_KIND IN ('N')
+								)
+						) THEN 1
+						ELSE 0
+						END
 
 	INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 		SELECT 
 			'', 'Дистрибутивы в списке "Онлайн-диалог"', 
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT DistrStr + ', '
+					SELECT DistrStr + ' (' + Convert(VarChar(20), a.SET_DATE, 104) +  '), '
 					FROM 
 						dbo.HotlineDistr a
 						INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID_HOST = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
 					WHERE a.STATUS = 1
 						AND b.ID_CLIENT = @ID
 					ORDER BY SystemOrder, a.DISTR, a.COMP FOR XML PATH('')
-				)), 1, 2, '')), 0		
+				)), 1, 2, '')),
+				CASE
+					WHEN EXISTS
+						(
+							SELECT *
+							FROM #complect C
+							INNER JOIN USR.USRActiveView U ON C.UD_ID = U.UD_ID
+							INNER JOIN USR.USRFileTech T ON T.UF_ID = U.UF_ID
+							WHERE
+								(
+									T.UF_HOTLINE IS NULL AND T.UF_FORMAT >= 11
+									OR
+									T.UF_HOTLINE_KIND IN ('N')
+								)
+						) THEN 1
+						ELSE 0
+						END
 	
 
 	SELECT *
