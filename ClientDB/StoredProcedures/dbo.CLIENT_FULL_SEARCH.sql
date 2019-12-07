@@ -91,7 +91,8 @@ BEGIN
 						WHERE ID_CLIENT = ClientID
 							AND NAME LIKE @NAME
 					)
-				--OR ClientShortName LIKE @NAME
+				OR ClientShortName LIKE @NAME
+				OR ClientOfficial LIKE @NAME
 				OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '');
 		ELSE IF @SERVICE IS NOT NULL
 			INSERT INTO @client(CL_ID)
