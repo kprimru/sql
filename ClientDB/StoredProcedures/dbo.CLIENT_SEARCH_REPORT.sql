@@ -67,7 +67,6 @@ BEGIN
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN @TP ON TP = ClientContractTypeID
 		WHERE (ServiceID = @SERVICEID OR @SERVICEID IS NULL)
 			AND	(ManagerID = @MANAGERID OR @MANAGERID IS NULL)
