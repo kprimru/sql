@@ -213,6 +213,18 @@ BEGIN
 					WHERE c.value('@id[1]', 'UNIQUEIDENTIFIER') IS NULL
 				) AS o_O
 				
+		UPDATE A
+		SET NOTE = X.Note
+		FROM Contract.Additional A
+		INNER JOIN
+		(
+			SELECT 
+				[Id] = c.value('@id[1]', 'UNIQUEIDENTIFIER'),
+				[Note] = c.value('(.)[1]', 'NVARCHAR(MAX)')
+			FROM @xml.nodes('/root/item') AS a(c)
+			WHERE c.value('@id[1]', 'UNIQUEIDENTIFIER') IS NOT NULL
+		) AS X ON A.Id = X.Id
+				
 		INSERT INTO Contract.DocumentHistory(ID_DOCUMENT, ID_STATUS)
 			SELECT ID, @DEF_STATUS
 			FROM @TBL
