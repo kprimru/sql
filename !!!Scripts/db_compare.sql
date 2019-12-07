@@ -140,6 +140,20 @@ DECLARE @DstForeignKeys Table
 	[Name]			SysName
 );
 
+DECLARE @SrcDefaults Table
+(
+	[Schema]		SysName,
+	[Table]			SysName,
+	[Name]			SysName
+);
+
+DECLARE @DstDefaults Table
+(
+	[Schema]		SysName,
+	[Table]			SysName,
+	[Name]			SysName
+);
+
 DECLARE @SrcRoles Table
 (
     [Name]          SysName,
@@ -422,6 +436,24 @@ CROSS APPLY
 					ORDER BY FKC.[constraint_column_id] FOR XML PATH('''')
 				)), 1, 1, ''''))
 ) AS RC;');
+
+INSERT INTO @SrcDefaults
+EXEC('SELECT
+	[Schema]		= S.[name],
+	[Table]			= T.[name],
+	[Name]			= DC.[name]
+FROM ' + @Src + '.[sys].[default_constraints] DC
+INNER JOIN ' + @Src + '.[sys].[tables] T ON DC.[parent_object_id] = T.[object_id]
+INNER JOIN ' + @Src + '.[sys].[schemas] S ON S.[schema_id] = T.[schema_id]');
+
+INSERT INTO @DstDefaults
+EXEC('SELECT
+	[Schema]		= S.[name],
+	[Table]			= T.[name],
+	[Name]			= DC.[name]
+FROM ' + @Dst + '.[sys].[default_constraints] DC
+INNER JOIN ' + @Dst + '.[sys].[tables] T ON DC.[parent_object_id] = T.[object_id]
+INNER JOIN ' + @Dst + '.[sys].[schemas] S ON S.[schema_id] = T.[schema_id]');
 
 -- схемы
 --/*
@@ -741,3 +773,20 @@ FULL JOIN @DstForeignKeys D ON S.[Schema] = D.[Schema]
 							AND S.[RefColumns] = D.[RefColumns]
 WHERE S.[Name] IS NULL OR D.[Name] IS NULL OR S.[Name] != D.[Name]
 ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Columns], D.[Columns])
+
+
+SELECT
+	[Object] = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Table], D.[Table]) + '].[' + IsNull(S.[Name], D.[Name]) + ']',
+	[Name] = CASE WHEN S.[Name] IS NULL OR D.[Name] IS NULL THEN IsNull(S.[Name], D.[Name]) ELSE D.[Name] + ' -> ' + S.[Name] END,
+	[Action] = CASE WHEN S.[Name] IS NULL THEN 'D' WHEN D.[Name] IS NULL THEN 'C' WHEN S.[Name] != D.[Name] THEN 'R' END,
+	[SQL] = CASE
+				WHEN S.[Name] IS NULL THEN 'IF EXISTS(SELECT * FROM sys.default_constraints WHERE name = ''' + D.[Name] + ''' AND parent_object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) ALTER TABLE [' + D.[Schema] + '].[' + D.[Table] + '] DROP CONSTRAINT [' + D.[Name] + '];'
+				WHEN D.[Name] IS NULL THEN 'IF NOT EXISTS(SELECT * FROM sys.default_constraints WHERE name = ''' + S.[Name] + ''' AND parent_object_id = Object_id(''[' + S.[Schema] + '].[' + S.[Table] + ']'')) ALTER TABLE [' + S.[Schema] + '].[' + S.[Table] + '] ADD CONSTRAINT [' + S.[Name] + '] DEFAULT ...;'
+				WHEN S.[Name] != D.[Name] THEN 'IF EXISTS(SELECT * FROM sys.default_constraints WHERE name = ''' + D.[Name] + ''' AND parent_object_id = Object_id(''[' + D.[Schema] + '].[' + D.[Table] + ']'')) EXEC sp_rename ''' + D.[Schema] + '.' + D.[Name] + ''', ''' + S.[Name] + '''' + ', ''OBJECT''' + ';'
+			END
+FROM @SrcDefaults S
+FULL JOIN @DstDefaults D ON S.[Schema] = D.[Schema]
+							AND S.[Table] = D.[Table]
+							AND S.[Name] = D.[Name]
+WHERE S.[Name] IS NULL OR D.[Name] IS NULL
+ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Name], D.[Name])
