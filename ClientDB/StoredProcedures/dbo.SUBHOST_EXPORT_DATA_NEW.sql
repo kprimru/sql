@@ -23,31 +23,33 @@ BEGIN
 	SET @SH_REG_ADD = '(' + @SH_REG_ADD + ')%'
 
 	DECLARE
-		@Data			Xml,
-		@Stat			Xml,
-		@Reg			Xml,
-		@ProtTxt		Xml,
-		@Prot			Xml,
-		@Price			Xml,
-		@Black			Xml,
-		@Expert			Xml,
-		@Hotline		Xml,
-		@Net			Xml,
-		@Type			Xml,
-		@Host			Xml,
-		@System			Xml,
-		@InfoBank		Xml,
-		@SystemBank		Xml,
-		@SystemBankNew	Xml,
-		@Weight			Xml,
-		@DistrStatus	Xml,
-		@Compliance		Xml,
-		@USRKind		Xml,
-		@PersonalType	Xml,
-		@References		Xml,
-		@DistrType		Xml,
-		@ClientStatus	Xml,
-		@DistrCoef		Xml;
+		@Data					Xml,
+		@Stat					Xml,
+		@Reg					Xml,
+		@ProtTxt				Xml,
+		@Prot					Xml,
+		@Price					Xml,
+		@Black					Xml,
+		@Expert					Xml,
+		@Hotline				Xml,
+		@Net					Xml,
+		@Type					Xml,
+		@Host					Xml,
+		@System					Xml,
+		@InfoBank				Xml,
+		@SystemBank				Xml,
+		@SystemBankNew			Xml,
+		@Weight					Xml,
+		@DistrStatus			Xml,
+		@Compliance				Xml,
+		@USRKind				Xml,
+		@PersonalType			Xml,
+		@References				Xml,
+		@NamedSets				Xml,
+		@ServiceStatusNamedSet	Xml,
+		@DistrType				Xml,
+		@ClientStatus			Xml,
+		@DistrCoef				Xml;
 	
 	DECLARE @Distr Table
 	(
@@ -500,6 +502,33 @@ BEGIN
 				)
 			)
 		);
+
+	SET @ServiceStatusNamedSet =
+		(
+			SELECT
+				[SetId],
+				[RefName],
+				[SetName],
+				[ITEMS] = 
+					(
+						SELECT
+							[Code] = T.[ServiceCode]
+						FROM dbo.NamedSetsItems I
+						INNER JOIN dbo.ServiceStatusTable T ON Cast(I.SetItem AS SmallInt) = T.ServiceStatusId
+						WHERE I.SetId = S.SetId
+						FOR XML RAW('ITEM'), TYPE
+					)
+			FROM dbo.NamedSets S
+			WHERE RefName = 'dbo.ServiceStatusTable'
+			FOR XML RAW('SET'), ROOT('SERVCICE_STATUS_NAMED_SETS')
+		);
+
+	SET @NamedSets =
+	(
+		SELECT
+			@ServiceStatusNamedSet
+		FOR XML PATH('NAMED_SETS')
+	)
 	
 	SET @Data = 
 		(
@@ -514,7 +543,8 @@ BEGIN
 					@Black,
 					@Expert,
 					@Hotline,
-					@References
+					@References,
+					@NamedSets
 				FOR XML PATH('DATA')
 			)
 		);

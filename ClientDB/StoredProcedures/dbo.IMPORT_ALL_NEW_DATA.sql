@@ -15,6 +15,21 @@ BEGIN
 	DECLARE @Data Xml;
 	SET @Data = CAST(@InData AS Xml);
 	
+	DECLARE @NamedSets Table
+	(
+		SetId		UniqueIdentifier,
+		RefName		VarChar(256),
+		SetName		VarCHar(256),
+		Primary Key Clustered(SetId)
+	);
+	
+	DECLARE @NamedSetsItems Table
+	(
+		SetId		UniqueIdentifier,
+		ItemCode	VarChar(256),
+		Primary Key Clustered (SetId, ItemCode)
+	);
+	
 	DECLARE @Hosts Table
 	(
 		[Short]		VarChar(100),
@@ -271,10 +286,10 @@ BEGIN
 	INSERT INTO @ClientStatus
 	SELECT
 		V.value('@Name[1]',		'VarChar(100)'),
-		V.value('@Code[1]',		'VarChar(100)'),
-		V.value('@Index[1]',	'Int'),
 		V.value('@Reg[1]',		'Int'),
-		V.value('@Default[1]',	'Int')
+		V.value('@Index[1]',	'Int'),
+		V.value('@Default[1]',	'Int'),
+		V.value('@Code[1]',		'VarChar(100)')
 	FROM @Data.nodes('/DATA[1]/REFERENCES[1]/CLIENT_STATUS[1]/ITEM') N(V)
 	
 	-- ќбновл€ем справочник ’остов
@@ -290,8 +305,7 @@ BEGIN
 		
 	UPDATE H
 	SET HostShort = Short,
-		HostOrder = [Order],
-		HostLast = GetDate()
+		HostOrder = [Order]
 	FROM dbo.Hosts H
 	INNER JOIN @Hosts D	ON H.[HostReg] = D.[Reg]
 	WHERE H.HostShort != D.Short
@@ -331,8 +345,7 @@ BEGIN
 		SystemDemo		= D.[Demo],
 		SystemComplect	= D.[Complect],
 		SystemReg		= D.[Reg],
-		SystemBaseCheck	= D.[BaseCheck],
-		SystemLast		= GetDate()
+		SystemBaseCheck	= D.[BaseCheck]
 	FROM dbo.SystemTable S
 	INNER JOIN @Systems D ON S.SystemBaseName = D.RegName
 	INNER JOIN dbo.Hosts H ON D.Host = H.HostReg
@@ -372,8 +385,7 @@ BEGIN
 		InfoBankActive		= D.Active,
 		InfoBankDaily		= D.Daily,
 		InfoBankActual		= D.Actual,
-		InfoBankStart		= D.Start,
-		InfoBankLast		= GetDate()
+		InfoBankStart		= D.Start
 	FROM dbo.InfoBankTable I
 	INNER JOIN @InfoBanks D ON I.InfoBankName = D.Name
 	WHERE I.InfoBankShortName	!= D.[Short]
@@ -422,8 +434,7 @@ BEGIN
 	UPDATE S
 	SET SST_NAME = D.[Name],
 		SST_SHORT = D.[Short],
-		SST_NOTE = D.[Note],
-		SST_LAST = GetDate()
+		SST_NOTE = D.[Note]
 	FROM Din.SystemType S
 	INNER JOIN @SysType D ON S.SST_REG = D.Reg
 	WHERE S.SST_NAME != D.[Name]
@@ -445,8 +456,7 @@ BEGIN
 	SET [ServiceStatusName]		= D.[Name],
 		[ServiceStatusIndex]	= D.[Index],
 		[ServiceStatusReg]		= D.[Reg],
-		[ServiceDefault]		= D.[Default],
-		[ServiceStatusLast]		= GetDate()
+		[ServiceDefault]		= D.[Default]
 	FROM dbo.ServiceStatusTable S
 	INNER JOIN @ClientStatus D ON S.[ServiceCode] = D.[Code]
 	WHERE S.[ServiceStatusName] != D.[Name]
@@ -469,8 +479,7 @@ BEGIN
 	SET DistrTypeName		= D.Name,
 		DistrTypeOrder		= D.[Order],
 		DistrTypeFull		= D.[Full],
-		DistrTypeBaseCheck	= D.[BaseCheck],
-		DistrTypeLast		= GetDate()
+		DistrTypeBaseCheck	= D.[BaseCheck]
 	FROM dbo.DistrTypeTable N
 	INNER JOIN @DistrType D ON N.DistrTypeCode = D.Code
 	WHERE N.DistrTypeName != D.Name
@@ -493,8 +502,7 @@ BEGIN
 	SET NT_NAME = D.Name,
 		NT_SHORT = D.Short,
 		NT_NOTE = D.Note,
-		NT_TECH_USR = D.TechUsr,
-		NT_LAST = GetDate()
+		NT_TECH_USR = D.TechUsr
 	FROM Din.NetType N
 	INNER JOIN @NetType D ON N.NT_NET = D.NetCnt AND N.NT_TECH = D.Tech AND N.NT_ODON = D.Odon AND N.NT_ODOFF = D.Odoff
 	WHERE N.NT_NAME != D.Name
@@ -515,8 +523,7 @@ BEGIN
 	-- обновл€ем справочник статусов дистрибутива
 	UPDATE S
 	SET DS_NAME		= D.[Name],
-		DS_INDEX	= D.[Index],
-		DS_LAST		= GetDate()
+		DS_INDEX	= D.[Index]
 	FROM dbo.DistrStatus S
 	INNER JOIN @DistrStatus D ON S.DS_REG = D.Reg
 	WHERE S.DS_NAME != D.[Name]
@@ -536,8 +543,7 @@ BEGIN
 	
 	UPDATE S
 	SET ComplianceTypeShortName	= D.[Short],
-		ComplianceTypeOrder		= D.[Order],
-		ComplianceTypeLast		= GetDate()
+		ComplianceTypeOrder		= D.[Order]
 	FROM dbo.ComplianceTypeTable S
 	INNER JOIN @Compliance D ON S.ComplianceTypeName = D.Name
 	WHERE S.ComplianceTypeShortName != D.[Short]
@@ -557,8 +563,7 @@ BEGIN
 	
 	UPDATE S
 	SET USRFileKindShortName	= D.[ShortName],
-		USRFileKindShort		= D.[Short],
-		USRFileKindLast			= GetDate()
+		USRFileKindShort		= D.[Short]
 	FROM dbo.USRFileKindTable S
 	INNER JOIN @USRKind D ON S.USRFileKindName = D.Name
 	WHERE S.USRFileKindShortName != D.[ShortName]
@@ -580,8 +585,7 @@ BEGIN
 	SET CPT_NAME		= D.[Name],
 		CPT_SHORT		= D.[Short],
 		CPT_REQUIRED	= D.[Required],
-		CPT_ORDER		= D.[Order],
-		CPT_LAST		= GetDate()
+		CPT_ORDER		= D.[Order]
 	FROM dbo.ClientPersonalType S
 	INNER JOIN @PersonalType D ON S.CPT_PSEDO = D.Psedo
 	WHERE S.CPT_NAME != D.[Name]
@@ -847,7 +851,6 @@ BEGIN
 			WHERE	Q.ID_NET = C.ID_NET
 				AND Q.ID_MONTH = P.ID
 		);
-	
 		
 	INSERT INTO @SystemBanksNew
 	SELECT DISTINCT
@@ -921,5 +924,73 @@ BEGIN
 								AND Z.[InfoBank] = SB.[InfoBank_Id]
 	WHERE Z.Required != SB.Required
 		OR IsNull(SB.Start, '20000101') != IsNull(Z.Start, '20000101');
+		
+	INSERT INTO @NamedSets
+	SELECT
+		C.value('@SetId[1]',				'UniqueIdentifier'),
+		C.value('@RefName[1]',				'VarChar(256)'),
+		C.value('@SetName[1]',				'VarCHar(256)')
+	FROM @Data.nodes('/DATA[1]/NAMED_SETS[1]/SERVCICE_STATUS_NAMED_SETS[1]/SET') N(C);
+	
+	INSERT INTO @NamedSetsItems
+	SELECT
+		C.value('@SetId[1]',				'UniqueIdentifier'),
+		R.[Code]	
+	FROM @Data.nodes('/DATA[1]/NAMED_SETS[1]/SERVCICE_STATUS_NAMED_SETS[1]/SET') N(C)
+	CROSS APPLY
+	(
+		SELECT [Code] = R.value('@Code[1]',				'VarChar(200)')
+		FROM C.nodes('./ITEMS/ITEM') I(R)
+	) R
+	
+	INSERT INTO dbo.NamedSets
+	SELECT *
+	FROM @NamedSets S
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM dbo.NamedSets Z
+			WHERE S.SetId = Z.SetId
+		);
+		
+	DELETE Z FROM dbo.NamedSets Z
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM @NamedSets S
+			WHERE S.SetId = Z.SetId
+		);
+		
+	UPDATE S
+	SET RefName = Z.RefName,
+		SetName = Z.SetName
+	FROM dbo.NamedSets S
+	INNER JOIN @NamedSets Z ON S.SetId = Z.SetId;
+		
+	-- ToDo  ак сделать универсально, а не дл€ каждой таблицы?
+	INSERT INTO dbo.NamedSetsItems(SetId, SetItem)
+	SELECT S.SetId, C.ServiceStatusId
+	FROM @NamedSets S
+	INNER JOIN @NamedSetsItems I ON S.SetId = I.SetId
+	INNER JOIN dbo.ServiceStatusTable C ON C.ServiceCode = I.ItemCode
+	WHERE S.RefName = 'dbo.ServiceStatusTable'
+		AND NOT EXISTS
+			(
+				SELECT *
+				FROM dbo.NamedSetsItems Z
+				WHERE Z.SetId = S.SetId
+					AND Z.SetItem = C.ServiceStatusId
+			);
+			
+	DELETE Z FROM dbo.NamedSetsItems Z
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM @NamedSets S
+			INNER JOIN @NamedSetsItems I ON S.SetId = I.SetId
+			INNER JOIN dbo.ServiceStatusTable C ON C.ServiceCode = I.ItemCode
+			WHERE Z.SetId = S.SetId
+				AND Z.SetItem = C.ServiceStatusId
+		);
 END
 
