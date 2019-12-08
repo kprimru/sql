@@ -27,7 +27,7 @@ BEGIN
 		
 	CREATE TABLE #check
 		(
-			CL_ID		INT PRIMARY KEY,
+			CL_ID		INT,
 			CL_NAME		VARCHAR(500),
 			DISTR		VARCHAR(150),
 			LAST_USR	SMALLDATETIME,
@@ -41,29 +41,27 @@ BEGIN
 		)	
 		
 	INSERT INTO #check(CL_ID, CL_NAME, DISTR, LAST_USR)
-		SELECT 
-			ClientID, ClientFullName, 
-			(
-				SELECT TOP 1 DistrStr
-				FROM dbo.ClientDistrView WITH(NOEXPAND)
-				WHERE ID_CLIENT = ClientID
-					AND DS_REG = 0
-				ORDER BY SystemOrder, DISTR, COMP
-			),
+		SELECT DISTINCT
+			ClientID, ClientFullName, Complect,
 			dbo.DateOf((
 				SELECT TOP 1 UF_DATE
 				FROM USR.USRActiveView
 				WHERE UD_ID_CLIENT = ClientID
 				ORDER BY UF_DATE DESC
 			))
-		FROM dbo.ClientView a WITH(NOEXPAND)
-		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		FROM dbo.ClientView cv WITH(NOEXPAND)
+		INNER JOIN dbo.ClientDistrView cdv WITH(NOEXPAND) ON cdv.ID_CLIENT = cv.ClientID
+		INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON cdv.HostID = rnsw.HostID AND 
+																cdv.DISTR = rnsw.DistrNumber AND 
+                                                                cdv.COMP = rnsw.CompNumber AND
+																rnsw.DS_REG = 0
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON cv.ServiceStatusId = cv.ServiceStatusId
 		WHERE ServiceID = @SERVICE;
 		
 	DECLARE @IB TABLE
 		(
 			ClientID			INT,
-			Complect			VarCHAr(100),
+			Complect			VARCHAR(100),
 			ManagerName			VARCHAR(50),
 			ServiceName			VARCHAR(50),
 			ClientFullName		VARCHAR(500),
@@ -76,14 +74,15 @@ BEGIN
 		
 	INSERT INTO @IB
 		EXEC USR.CLIENT_SYSTEM_AUDIT NULL, @SERVICE, NULL, @DATE
-		
+
+	
 	UPDATE a
 	SET IB = 
 		REVERSE(STUFF(REVERSE(
 			(
 				SELECT InfoBankShortName + ','
 				FROM @IB b 
-				WHERE a.CL_ID = b.ClientID
+				WHERE b.Complect = a.DISTR
 				FOR XML PATH('')
 			)), 1, 1, '')),
 		IB_DATE = 
@@ -91,37 +90,24 @@ BEGIN
 				(
 					SELECT MIN(LAST_DATE)
 					FROM @IB b
-					WHERE a.CL_ID = b.ClientID
+					WHERE b.Complect = a.DISTR
 						AND LAST_DATE IS NOT NULL
-				)),
-		DISTR = (
-					SELECT DisStr
-					FROM @IB b
-					WHERE a.CL_ID = b.ClientID 
-				)
+				))
 	FROM #check a
-	WHERE CL_ID IN 
-			(
-				SELECT ClientID
-				FROM @IB
-			)
 	
 	DECLARE @UNSERV TABLE
 		(
-			ClientID			INT,
-			ManagerName			VARCHAR(50),
-			ServiceName			VARCHAR(50),			
-			ClientFullName		VARCHAR(500),
 			UD_NAME				VARCHAR(50),
 			UF_CREATE			DATETIME,
 			UF_DATE				DATETIME,
 			Serviced			VARCHAR(1024),
-			Unserviced			VARCHAR(1024)
+			Unserviced			VARCHAR(1024),
+			Complect			VARCHAR(50)
 		)		
-		
+
 		
 	INSERT INTO @UNSERV
-		EXEC USR.COMPLECT_UNSERVICE_SYSTEM NULL, @SERVICE, @DATE
+		EXEC USR.COMPLECT_UNSERVICE_SYSTEM NULL, @SERVICE, @DATE, 1 
 		
 		
 	UPDATE a
@@ -130,18 +116,18 @@ BEGIN
 			(
 				SELECT Unserviced + ','
 				FROM @UNSERV b 
-				WHERE a.CL_ID = b.ClientID
+				WHERE a.DISTR = b.Complect
 				FOR XML PATH('')
 			)), 1, 1, ''))
 	FROM #check a
-		
+	
 	DECLARE @RES TABLE
 		(
 			ClientID				INT,
 			ClientFullName			VARCHAR(500),
 			ManagerName				VARCHAR(50),
 			ServiceName				VARCHAR(50),
-			UD_NAME					VARCHAR(50),
+			Complect				VARCHAR(50),
 			ResVersionNumber		VARCHAR(50),
 			ConsExeVersionNumber	VARCHAR(50),
 			KDVersionName			VARCHAR(50),
@@ -161,7 +147,7 @@ BEGIN
 					CASE ConsExeVersionNumber WHEN '' THEN '' ELSE ' Cons.exe : ' + ConsExeVersionNumber + ',' END --+
 					--CASE KDVersionName WHEN '' THEN '' ELSE ' КД : ' + KDVersionName + ',' END
 				FROM @RES b
-				WHERE a.CL_ID = b.ClientID
+				WHERE a.DISTR = b.Complect
 				FOR XML PATH('')
 			)), 1, 1, ''))
 	FROM #check a
@@ -174,7 +160,7 @@ BEGIN
 			ServiceName			VARCHAR(50),
 			UD_NAME				VARCHAR(50),
 			InfoBankShortName	VARCHAR(50),
-			DistrNumber			VARCHAR(50),
+			Complect			VARCHAR(50),
 			FIRST_DATE			SMALLDATETIME,
 			UIU_DATE			SMALLDATETIME
 		)
@@ -188,7 +174,7 @@ BEGIN
 			(
 				SELECT InfoBankShortName + ','
 				FROM @COMPLIANCE b
-				WHERE a.CL_ID = b.ClientID
+				WHERE a.DISTR = b.Complect
 				FOR XML PATH('')
 			)
 		), 1, 1, '')),
@@ -222,7 +208,7 @@ BEGIN
 			WHEN COMPLIANCE_DATE IS NOT NULL THEN 'Статистика с ' + CONVERT(VARCHAR(20), COMPLIANCE_DATE, 104)
 			ELSE ''
 		END
-				
+		
 	SELECT 
 		CL_ID, CL_NAME, DISTR, LAST_USR, TECH_DATA, COMPLIANCE, IB, NOTE, UNSERVICE,
 		CASE
@@ -238,7 +224,7 @@ BEGIN
 	FROM 
 		#check
 	ORDER BY CL_NAME		
-		
+	
 	IF OBJECT_ID('tempdb..#check') IS NOT NULL
 		DROP TABLE #check
 END
