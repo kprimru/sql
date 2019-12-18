@@ -69,8 +69,14 @@ BEGIN
 	
 	INSERT INTO @USRPackage
 	SELECT Row_Number() OVER(ORDER BY UP_ID_SYSTEM), UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, UP_RIC, UP_NET, UP_TECH, UP_TYPE, UP_FORMAT
-	FROM USR.USRPackage
-	WHERE UP_ID_USR = @UF_ID;
+	FROM USR.USRPackage up
+	WHERE	UP_ID_USR = @UF_ID AND
+		(
+			SELECT DS_REG
+			FROM Reg.RegNodeSearchView rnsw
+			WHERE up.UP_DISTR = rnsw.DistrNumber AND up.UP_COMP = rnsw.CompNumber AND up.UP_ID_SYSTEM = rnsw.SystemID
+		) = 0
+;
 	
 	SELECT @MaxRn = Max(UP_ID) FROM @USRPackage;
 	
