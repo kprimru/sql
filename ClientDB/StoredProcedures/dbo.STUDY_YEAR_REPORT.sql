@@ -81,7 +81,7 @@ BEGIN
 						SELECT COUNT(*)
 						FROM dbo.ClientStudy d
 						WHERE d.ID_CLIENT = a.ClientID
-							AND d.ID_PLACE NOT IN (3, 5)
+							AND d.ID_PLACE NOT IN (3, 5, 6)
 							AND ISNULL(Teached, 1) = 1
 							AND STATUS = 1
 							AND DATEPART(YEAR, DATE) = ' + CONVERT(VARCHAR(20), STUDY_YEAR) + '
