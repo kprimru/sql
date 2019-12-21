@@ -20,7 +20,11 @@ CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT]
 	@pay SMALLINT,
 	@kind SMALLINT,	
 	@active BIT,
-	@ident	nvarchar(128)
+	@ident	nvarchar(128),
+	@key		NvarChar(256),
+	@num_from	NvarChar(256),
+	@num_to		NvarChar(256),
+	@email		NvarChar(256)
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -34,7 +38,11 @@ BEGIN
 		CO_ID_PAY = @pay,
 		CO_ID_KIND = @kind,
 		CO_ACTIVE	= @active,
-		CO_IDENT = @ident
+		CO_IDENT = @ident,
+		CO_KEY = @key,
+		CO_NUM_FROM = @num_from,
+		CO_NUM_TO = @num_to,
+		CO_EMAIL = @email
 	WHERE CO_ID = @contractid
 
 	SET NOCOUNT OFF
