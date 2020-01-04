@@ -17,6 +17,7 @@ BEGIN
 		[ID_VENDOR]			= C.[ID_VENDOR],
 		
 		[DateFrom]			= C.[DateFrom],
+		[SignDate]			= C.[SignDate],
 		
 		[DateTo]			= C.[DateTo],
 		

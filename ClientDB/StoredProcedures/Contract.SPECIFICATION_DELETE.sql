@@ -11,6 +11,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DELETE
-	FROM Contract.Specification
+	FROM Contract.ContractSpecification
 	WHERE ID = @ID
 END

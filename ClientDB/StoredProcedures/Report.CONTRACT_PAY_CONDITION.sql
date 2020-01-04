@@ -25,22 +25,14 @@ BEGIN
 					INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 					INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
 					INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
-					OUTER APPLY
-						(
-							SELECT TOP 1 ContractPayName, ContractPayDay, ContractPayMonth
-							FROM 
-								dbo.ContractTable z
-								INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-							WHERE z.ClientID = a.ClientID
-							ORDER BY ContractEnd DESC
-						) AS o_O
+					OUTER APPLY dbo.ClientContractPayGet(a.ClientID, NULL)
 					CROSS APPLY
-						(
-							SELECT TOP 1 SystemBaseName, DISTR, COMP, DIstrStr
-							FROM dbo.ClientDistrView WITH(NOEXPAND)							
-							WHERE ClientID = ID_CLIENT
-							ORDER BY SystemOrder, DISTR, COMP
-						) AS y
+					(
+						SELECT TOP 1 SystemBaseName, DISTR, COMP, DIstrStr
+						FROM dbo.ClientDistrView WITH(NOEXPAND)							
+						WHERE ClientID = ID_CLIENT
+						ORDER BY SystemOrder, DISTR, COMP
+					) AS y
 				WHERE STATUS = 1 --AND ID_HEAD IS NULL
 			) AS CLIENT
 			LEFT OUTER JOIN

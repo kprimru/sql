@@ -33,15 +33,7 @@ BEGIN
 				dbo.ClientView z WITH(NOEXPAND)
 				INNER JOIN dbo.ClientTable a ON a.ClientID = z.ClientID
 				INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
-				OUTER APPLY
-					(
-						SELECT TOP 1 ContractPayName, ContractPayDay, ContractPayMonth
-						FROM 
-							dbo.ContractTable z
-							INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-						WHERE z.ClientID = a.ClientID
-						ORDER BY ContractEnd DESC
-					) AS o_O
+				OUTER APPLY dbo.ClientContractPayGet(z.ClientID, NULL)
 		) AS z
 		INNER JOIN dbo.ClientDistrView a WITH(NOEXPAND) ON z.ClientID = a.ID_CLIENT
 		INNER JOIN dbo.DBFActView b ON a.SystemBaseName = b.SYS_REG_NAME AND a.DISTR = b.DIS_NUM AND a.COMP = b.DIS_COMP_NUM AND b.PR_DATE = MON_DATE AND b.PR_DATE = @PR_DATE

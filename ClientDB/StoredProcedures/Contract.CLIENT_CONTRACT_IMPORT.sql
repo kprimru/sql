@@ -8,6 +8,7 @@ CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_IMPORT]
 	@Client_Id			Int,
 	@Contract_Id		UniqueIdentifier,
 	@DateFrom			SmallDateTime,
+	@SignDate			SmallDateTime,
 	@ExpireDate			SmallDateTime,
 	@Type_Id			Int,
 	@PayType_Id			Int,
@@ -35,13 +36,11 @@ BEGIN
 		BEGIN
 			-- договора еще нет, это первое добавление - заполн€ем детализацию договора
 			UPDATE [Contract].[Contract]
-			SET [DateFrom] = @DateFrom
+			SET [DateFrom]	= @DateFrom,
+				[SignDate]	= @SignDate
 			WHERE [ID] = @Contract_Id
 				AND [DateFrom] IS NULL;
-				
-			IF @@RowCount != 1
-				RaisError('¬нутренн€€ ошибка! DateFrom IS NOT NULL', 16, 1);
-				
+					
 			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments])
 			VALUES (@Contract_Id, @DateFrom, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments);
 		END;

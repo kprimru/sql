@@ -16,6 +16,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;	
 
+	-- если регистрируем договор уже с заданным номером - то и делать ничего не нужно
+	IF @NUM_S IS NOT NULL
+		RETURN;
+
 	DECLARE @YEAR INT
 	
 	SELECT @YEAR = DATEPART(YEAR, START)

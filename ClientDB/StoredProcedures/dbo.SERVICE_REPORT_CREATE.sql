@@ -93,38 +93,8 @@ BEGIN
 	INSERT INTO #data(CL_ID, CL_NAME, CO_COND, CO_FIXED, CO_TYPE, PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, NET, CSTATUS)
 		SELECT 
 			ClientID, ClientFullName, 
-			(
-				SELECT TOP 1 ContractConditions
-				FROM dbo.ContractTable z
-				WHERE z.ClientID = a.ClientID
-					AND ContractBegin < GETDATE()
-				ORDER BY ContractBegin DESC
-			),
-			(
-				SELECT TOP 1 ContractFixed
-				FROM dbo.ContractTable z
-				WHERE z.ClientID = a.ClientID
-					AND ContractBegin < GETDATE()
-				ORDER BY ContractBegin DESC
-			),
-			(
-				SELECT TOP 1 ContractTypeName
-				FROM 
-					dbo.ContractTable z
-					INNER JOIN dbo.ContractTypeTable y ON z.ContractTypeID = y.ContractTypeID
-				WHERE z.ClientID = a.ClientID
-					AND ContractBegin < GETDATE()
-				ORDER BY ContractBegin DESC
-			),
-			(
-				SELECT TOP 1 ContractPayName
-				FROM 
-					dbo.ContractTable z
-					INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-				WHERE z.ClientID = a.ClientID
-					AND ContractBegin < GETDATE()
-				ORDER BY ContractBegin DESC
-			), PayTypeName, ClientNewspaper, ClientMainBook,
+			D.Note, D.ContractPrice, D.ContractTypeName, D.ContractPayName,
+			PayTypeName, ClientNewspaper, ClientMainBook,
 			(
 				SELECT TOP 1 NT_SHORT
 				FROM	
@@ -140,6 +110,23 @@ BEGIN
 			INNER JOIN dbo.ClientTable a ON a.ClientID = CL_ID
 			INNER JOIN dbo.ServiceStatusTable ON StatusID = ServiceStatusID
 			LEFT OUTER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
+			OUTER APPLY
+			(
+				SELECT TOP (1) D.Note, ContractPrice, ContractTypeName, ContractPayName
+				FROM Contract.ClientContracts CC
+				INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
+				CROSS APPLY
+				(
+					SELECT TOP (1) ContractPrice, Type_Id, PayType_Id, Note
+					FROM Contract.ClientContractsDetails D
+					WHERE D.Contract_Id = C.Id
+					ORDER BY D.DATE DESC
+				) D
+				INNER JOIN dbo.ContractTypeTable T ON D.Type_Id = T.ContractTypeID
+				INNER JOIN dbo.ContractPayTable P ON D.PayType_Id = P.ContractPayID
+				WHERE CC.Client_Id = a.ClientID
+					AND C.DateTo IS NULL
+			) D
 		
 	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 		DROP TABLE #distr

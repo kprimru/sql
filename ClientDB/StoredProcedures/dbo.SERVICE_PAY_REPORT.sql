@@ -66,15 +66,7 @@ BEGIN
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
 			INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
-			OUTER APPLY
-				(
-					SELECT TOP 1 ContractPayName, ContractPayDay, ContractPayMonth
-					FROM 
-						dbo.ContractTable z
-						INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-					WHERE z.ClientID = a.ClientID
-					ORDER BY ContractEnd DESC
-				) AS o_O
+			OUTER APPLY dbo.ClientContractPayGet(a.ClientID, NULL) AS o_O
 		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL) 
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND STATUS = 1 --AND ID_HEAD IS NULL
@@ -164,7 +156,7 @@ BEGIN
 			SELECT MAX(PR_DATE)
 			FROM dbo.DBFBillRestView
 			WHERE SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-				AND PR_DATE <= MON_DATE AND BD_REST = 0
+				/*AND PR_DATE <= MON_DATE*/ AND BD_REST = 0
 		),
 		LAST_ACT = 
 		(

@@ -377,12 +377,7 @@ BEGIN
 				) AS ClientBaseCount,
 				(
 					SELECT TOP 1 ContractPayName 
-					FROM 
-						dbo.ContractTable LEFT OUTER JOIN                     
-						dbo.ContractPayTable ON ContractTable.ContractPayID = ContractPayTable.ContractPayID
-					WHERE ContractTable.ClientID = b.ClientID 
-					ORDER BY ContractBegin DESC
-						
+					FROM dbo.ClientContractPayGet(b.ClientID, NULL)
 				) AS ContractPayName,
 				(
 					SELECT CNT

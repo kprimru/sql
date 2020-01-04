@@ -23,20 +23,87 @@ BEGIN
 	FROM 
 		@CLIENT a
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.CL_ID = b.ClientID
+		/*
 		INNER JOIN dbo.ContractTable z ON z.ClientID = a.CL_ID
 		INNER JOIN dbo.ContractTypeTable y ON y.ContractTypeID = z.ContractTypeID
 		INNER JOIN dbo.ContractPayTable x ON x.ContractPayID = z.ContractPayID			
-	WHERE ContractBegin <= GETDATE() AND ContractEnd >= GETDATE()
-		AND EXISTS
+		*/
+		CROSS APPLY
 		(
-			SELECT *
-			FROM dbo.ContractTable			
-			WHERE ClientID = CL_ID
-				AND ContractBegin <= GETDATE() AND ContractEnd >= GETDATE()
-		)
+			SELECT
+				[ContractNumber] = C.[NUM_S],
+				ContractTypeName,
+				ContractBegin = DateFrom,
+				ContractDate = SignDate,
+				ContractEnd = ExpireDate,
+				ContractConditions = D.Note,
+				ContractPayName,
+				ContractYear = DatePart(Year, Y.START),
+				ContractFixed = ContractPrice
+			FROM Contract.ClientContracts CC
+			INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
+			INNER JOIN Common.Period Y ON Y.ID = C.ID_YEAR
+			CROSS APPLY
+			(
+				SELECT TOP (1)
+					ContractTypeName, ExpireDate, Note, ContractPayName, ContractPrice
+				FROM Contract.ClientContractsDetails D
+				INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = D.Type_Id
+				INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id
+				WHERE D.[Contract_Id] = CC.[Contract_Id]
+				ORDER BY D.[Date] DESC
+			) D
+			WHERE	CC.Client_Id = a.CL_ID
+				AND DateFrom <= GetDate() AND (DateTo >= GetDate() OR DateTo IS NULL)
+		) D
 		
 	UNION ALL
 	
+	SELECT 
+		CL_ID, 
+		ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
+		ContractConditions, ContractPayName, ContractYear, ContractFixed
+	FROM 
+		@CLIENT a
+		CROSS APPLY
+		(
+			SELECT TOP (1)
+				[ContractNumber] = C.[NUM_S],
+				ContractTypeName,
+				ContractBegin = DateFrom,
+				ContractDate = SignDate,
+				ContractEnd = ExpireDate,
+				ContractConditions = D.Note,
+				ContractPayName,
+				ContractYear = DatePart(Year, Y.START),
+				ContractFixed = ContractPrice
+			FROM Contract.ClientContracts CC
+			INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
+			INNER JOIN Common.Period Y ON Y.ID = C.ID_YEAR
+			CROSS APPLY
+			(
+				SELECT TOP (1)
+					ContractTypeName, ExpireDate, Note, ContractPayName, ContractPrice
+				FROM Contract.ClientContractsDetails D
+				INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = D.Type_Id
+				INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id
+				WHERE D.[Contract_Id] = CC.[Contract_Id]
+				ORDER BY D.[Date] DESC
+			) D
+			WHERE	CC.Client_Id = a.CL_ID
+			ORDER BY [DateFrom] DESC
+		) D
+	WHERE NOT EXISTS
+		(
+			SELECT *
+			FROM Contract.ClientContracts CC
+			INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
+			WHERE	CC.Client_Id = a.CL_ID
+				AND DateFrom <= GetDate() AND (DateTo >= GetDate() OR DateTo IS NULL)
+		)
+		
+	UNION ALL
+		
 	SELECT 
 		CL_ID, 
 		ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
@@ -57,9 +124,9 @@ BEGIN
 	WHERE NOT EXISTS
 		(
 			SELECT *
-			FROM dbo.ContractTable			
-			WHERE ClientID = CL_ID
-				AND ContractBegin <= GETDATE() AND ContractEnd >= GETDATE()
+			FROM Contract.ClientContracts CC
+			INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
+			WHERE	CC.Client_Id = a.CL_ID
 		)
 		
 	ORDER BY CL_ID, ContractBegin

@@ -7,6 +7,7 @@ GO
 CREATE PROCEDURE [Contract].[CONTRACT_SAVE]
 	@ID				UNIQUEIDENTIFIER OUTPUT,
 	@NUM			INT,
+	@NUM_FIXED		NVARCHAR(64),
 	@COUNT			INT,
 	@TYPE			UNIQUEIDENTIFIER,
 	@VENDOR			UNIQUEIDENTIFIER,
@@ -40,21 +41,25 @@ BEGIN
 	
 	SELECT @DEF_STATUS
 
-	IF @NUM IS NULL
-		SELECT @NUM = ISNULL(
-								(
-									SELECT MAX(NUM) 
-									FROM 
-										Contract.Contract a
-										INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
-									WHERE ID_VENDOR = @VENDOR 
-										AND DATEPART(YEAR, START) = @YEAR
-								) + 1, 
-								1)		
-									
-	SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + CASE WHEN PREFIX = '' THEN '' ELSE PREFIX + ' ' END + REPLICATE('0', 4 - LEN(CONVERT(NVARCHAR(16), @NUM))) + CONVERT(NVARCHAR(16), @NUM)
-	FROM Contract.Type
-	WHERE ID = @TYPE
+	IF @NUM_FIXED IS NOT NULL
+		SET @NUM_S = @NUM_FIXED
+	ELSE BEGIN
+		IF @NUM IS NULL
+			SELECT @NUM = ISNULL(
+									(
+										SELECT MAX(NUM) 
+										FROM 
+											Contract.Contract a
+											INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
+										WHERE ID_VENDOR = @VENDOR 
+											AND DATEPART(YEAR, START) = @YEAR
+									) + 1, 
+									1)		
+										
+		SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + CASE WHEN PREFIX = '' THEN '' ELSE PREFIX + ' ' END + REPLICATE('0', 4 - LEN(CONVERT(NVARCHAR(16), @NUM))) + CONVERT(NVARCHAR(16), @NUM)
+		FROM Contract.Type
+		WHERE ID = @TYPE
+	END;
 
 	IF @ID IS NULL
 	BEGIN

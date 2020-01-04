@@ -51,15 +51,7 @@ BEGIN
 		FROM 
 			dbo.DBFIncomeView 
 			INNER JOIN #distr ON SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-			CROSS APPLY
-				(
-					SELECT TOP 1 ContractPayName, ContractPayDay, ContractPayMonth
-					FROM 
-						dbo.ContractTable z
-						INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-					WHERE z.ClientID = @CLIENT AND PR_DATE BETWEEN ContractBegin AND ContractEnd
-					ORDER BY ContractEnd DESC
-				) AS o_O
+			CROSS APPLY dbo.ClientContractPayGet(@CLIENT, PR_DATE) o_O
 		
 	
 	UPDATE #month

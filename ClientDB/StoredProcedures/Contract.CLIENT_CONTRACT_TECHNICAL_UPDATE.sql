@@ -14,6 +14,7 @@ CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]
 	@ContractPrice		Money,
 	@Comments			VarChar(Max),
 	@DateFrom			SmallDateTime,
+	@SignDate			SmallDateTime,
 	@DateTo				SmallDateTime
 AS
 BEGIN
@@ -24,6 +25,7 @@ BEGIN
 		
 		UPDATE [Contract].[Contract]
 		SET [DateFrom]	= @DateFrom,
+			[SignDate]	= @SignDate,
 			[DateTo]	= @DateTo
 		WHERE [Id] = @Contract_Id;
 		

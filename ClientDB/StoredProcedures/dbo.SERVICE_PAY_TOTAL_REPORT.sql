@@ -51,15 +51,7 @@ BEGIN
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 			INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
-			OUTER APPLY
-				(
-					SELECT TOP 1 ContractPayName, ContractPayDay, ContractPayMonth
-					FROM 
-						dbo.ContractTable z
-						INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-					WHERE z.ClientID = a.ClientID
-					ORDER BY ContractEnd DESC
-				) AS o_O
+			OUTER APPLY dbo.ClientContractPayGet(a.ClientId, NULL) o_O
 		WHERE (c.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL) AND STATUS = 1 --AND ID_HEAD IS NULL
 	
 		
