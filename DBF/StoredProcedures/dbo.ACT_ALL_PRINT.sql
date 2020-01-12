@@ -11,6 +11,7 @@ GO
 */
 CREATE PROCEDURE [dbo].[ACT_ALL_PRINT]
 	@actdate SMALLDATETIME,
+	@soid	SmallInt,
 	@cour VARCHAR(MAX),
 	@check BIT = 0
 AS
@@ -44,16 +45,17 @@ BEGIN
 		(
 			SELECT DISTINCT ACT_ID
 			FROM
-				dbo.ActTable INNER JOIN
-				dbo.ClientTable ON ACT_ID_CLIENT = CL_ID INNER JOIN
-				dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
-				#actcour ON COUR_ID = TO_ID_COUR
+				dbo.ActTable
+				INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID
+				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
+				INNER JOIN dbo.ClientTable ON ACT_ID_CLIENT = CL_ID
+				INNER JOIN dbo.TOTable ON TO_ID_CLIENT = CL_ID
+				INNER JOIN #actcour ON COUR_ID = TO_ID_COUR
 			WHERE ACT_DATE = @actdate
+				AND SYS_ID_SO = @soid
 				AND (ACT_PRINT IS NULL OR ACT_PRINT = 0)
 		) AS o_O
 		
-	
-
 	IF LEN(@actlist) > 2
 		SET @actlist = LEFT(@actlist, LEN(@actlist) - 1)
 

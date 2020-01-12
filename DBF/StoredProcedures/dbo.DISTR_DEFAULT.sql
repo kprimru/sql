@@ -17,7 +17,7 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	IF (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @sysid) IN ('ГК', 'Флэш', 'Yubikey', 'Лицензия')
+	IF (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @sysid) IN ('ГК', 'Флэш', 'Yubikey', 'Лицензия', 'ЭГК')
 		SELECT ISNULL(
 			(
 				SELECT MAX(DIS_NUM) + 1 AS DIS_NUM
