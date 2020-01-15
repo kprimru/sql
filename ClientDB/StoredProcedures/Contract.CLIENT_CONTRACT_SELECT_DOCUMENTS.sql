@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT Type_Id, Date, Note
+	SELECT RowIndex, Type_Id, Date, Note
 	FROM Contract.ClientContractsDocuments
 	WHERE Contract_Id = @Contract_Id
 	ORDER BY Date DESC;
