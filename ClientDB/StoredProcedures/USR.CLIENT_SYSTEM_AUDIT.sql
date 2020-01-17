@@ -61,7 +61,7 @@ BEGIN
 	SELECT DISTINCT C.ClientId, R.Complect, U.UF_ID, U.UF_DATE
 	FROM @Clients							C
 	INNER JOIN dbo.ClientDistrView			D WITH(NOEXPAND)	ON	D.ID_CLIENT = C.ClientId
-	INNER JOIN dbo.RegNodeMainSystemView	R WITH(NOEXPAND)	ON	D.DISTR = R.DistrNumber
+	INNER JOIN dbo.RegNodeMainSystemView	R					ON	D.DISTR = R.DistrNumber
 																AND D.COMP = R.CompNumber
 	INNER JOIN dbo.SystemTable				S					ON	S.SystemBaseName = R.SystemBaseName
 																AND D.HostID = S.HostId
