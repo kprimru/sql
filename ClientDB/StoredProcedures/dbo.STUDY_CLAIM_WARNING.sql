@@ -46,7 +46,7 @@ BEGIN
 					(
 						SELECT DISTINCT g.DistrStr, SystemOrder, DISTR, COMP
 						FROM 
-							dbo.RegNodeMainSystemView f WITH(NOEXPAND)
+							dbo.RegNodeMainSystemView f
 							INNER JOIN dbo.ClientDistrView g WITH(NOEXPAND) ON f.MainHostID = g.HostID AND f.MainDistrNumber = g.DISTR AND f.MainCompNumber = g.COMP
 						WHERE g.ID_CLIENT = a.ID_CLIENT
 							AND NOT EXISTS
