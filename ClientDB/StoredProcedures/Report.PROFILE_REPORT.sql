@@ -25,7 +25,7 @@ BEGIN
 		INNER JOIN 
 			(
 				SELECT DISTINCT MainHostID, MainDistrNumber, MainCompNumber
-				FROM dbo.RegNodeMainSystemView WITH(NOEXPAND)
+				FROM dbo.RegNodeMainSystemView
 			) AS q ON q.MainHostID = a.HostID AND q.MainDistrNumber = a.DistrNumber AND q.MainCompNumber = a.CompNumber
 		OUTER APPLY
 			(
@@ -43,7 +43,8 @@ BEGIN
 				FROM
 					USR.USRPackage b 
 					INNER JOIN USR.USRFile c ON b.UP_ID_USR = c.UF_ID
-					INNER JOIN dbo.ResVersionTable d ON c.UF_ID_RES = d.ResVersionID
+					INNER JOIN USR.USRFileTech t ON c.UF_ID = t.UF_ID
+					INNER JOIN dbo.ResVersionTable d ON t.UF_ID_RES = d.ResVersionID
 				WHERE a.SystemID = b.UP_ID_SYSTEM
 					AND a.DistrNumber = b.UP_DISTR
 					AND a.CompNumber = b.UP_COMP

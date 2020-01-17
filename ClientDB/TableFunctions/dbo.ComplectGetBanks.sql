@@ -66,7 +66,7 @@ BEGIN
 		@DISTR = MainDistrNumber,
 		@HOST = MainHostID,
 		@COMP = MainCompNumber
-	FROM dbo.RegNodeMainSystemView WITH(NOEXPAND)
+	FROM dbo.RegNodeMainSystemView
 	WHERE Complect = @COMPLECT;
 	------------------------------------------------------------------------------------------------------------------------------
 
