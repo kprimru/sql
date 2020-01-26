@@ -58,7 +58,7 @@ BEGIN
 		dbo.ClientDisconnect a
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.CD_ID_CLIENT = b.ClientID
 		INNER JOIN dbo.ClientTable d ON d.ClientID = b.ClientID AND d.STATUS = 1
-		INNER JOIN dbo.TableIDFromXML(@CL_TYPE) e ON e.ID = d.ClientContractTypeID
+		INNER JOIN dbo.TableIDFromXML(@CL_TYPE) e ON e.ID = d.ClientKind_Id
 		LEFT OUTER JOIN dbo.DisconnectReason c ON DR_ID = CD_ID_REASON		
 	WHERE (CD_DATE >= @BEGIN OR @BEGIN IS NULL)
 		AND (CD_DATE <= @END OR @END IS NULL)

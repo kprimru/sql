@@ -143,7 +143,7 @@ BEGIN
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 	WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 		AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
-		AND (a.ClientContractTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) OR @TYPE IS NULL)
+		AND (a.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) OR @TYPE IS NULL)
 	OPTION(RECOMPILE);
 		
 	UPDATE a

@@ -38,7 +38,7 @@ BEGIN
 				FROM 
 					dbo.ClientStudy z
 					INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
-					INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientContractTypeID
+					INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientKind_Id
 				WHERE z.STATUS = 1
 					AND TEACHED = 1
 					AND ID_TEACHER = TeacherID
@@ -49,7 +49,7 @@ BEGIN
 				FROM 
 					dbo.ClientStudy z
 					INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
-					INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientContractTypeID
+					INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientKind_Id
 				WHERE z.STATUS = 1
 					AND TEACHED = 1
 					AND ID_TEACHER = TeacherID
@@ -61,7 +61,7 @@ BEGIN
 					dbo.ClientStudy z
 					INNER JOIN dbo.ClientStudyPeople y ON z.ID = y.ID_STUDY
 					INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
-					INNER JOIN dbo.TableIDFromXML(@TYPE) x ON x.ID = ClientContractTypeID
+					INNER JOIN dbo.TableIDFromXML(@TYPE) x ON x.ID = ClientKind_Id
 				WHERE z.STATUS = 1
 					AND TEACHED = 1
 					AND ID_TEACHER = TeacherID

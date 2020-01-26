@@ -11,7 +11,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT 
-		ClientFullName AS 'Клиент', ContractTypeName AS 'Тип клиента', 
+		ClientFullName AS 'Клиент', b.Name AS 'Тип клиента', 
 		CASE
 			WHEN EXISTS
 				(
@@ -34,7 +34,7 @@ BEGIN
 	FROM 
 		dbo.ClientTable a
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-		INNER JOIN dbo.ContractTypeTable b ON a.ClientContractTypeID = b.ContractTypeID	
+		INNER JOIN dbo.ClientKind b ON a.ClientKind_Id = b.Id
 	WHERE a.STATUS = 1
 	ORDER BY ClientFullName
 END

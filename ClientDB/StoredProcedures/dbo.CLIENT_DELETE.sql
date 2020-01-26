@@ -13,7 +13,7 @@ BEGIN
 	INSERT INTO dbo.ClientTable(
 			ID_MASTER, STATUS,
 			ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-			StatusID, RangeID, PayTypeID, ServiceTypeID, ClientContractTypeID, 
+			StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
 			OriClient, ClientActivity, ClientPlace, ClientNote, 
 			ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
 			DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
@@ -21,7 +21,7 @@ BEGIN
 		SELECT
 			@ID, 2,
 			ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-			StatusID, RangeID, PayTypeID, ServiceTypeID, ClientContractTypeID, 
+			StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
 			OriClient, ClientActivity, ClientPlace, ClientNote, 
 			ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
 			DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 

@@ -47,8 +47,8 @@ BEGIN
 
 	IF @TYPE IS NULL
 		INSERT INTO @TP(TP)
-			SELECT ContractTypeID
-			FROM dbo.ContractTypeTable
+			SELECT Id
+			FROM dbo.ClientKind
 	ELSE
 		INSERT INTO @TP(TP)
 			SELECT *
@@ -67,87 +67,9 @@ BEGIN
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-			INNER JOIN @TP ON TP = ClientContractTypeID
+			INNER JOIN @TP ON TP = ClientKind_Id
 		WHERE (ServiceID = @SERVICEID OR @SERVICEID IS NULL)
-			AND	(ManagerID = @MANAGERID OR @MANAGERID IS NULL)
-
-	/*
-	INSERT INTO #searchcltable(ClientID, SearchMonth, MaxSearchDate, NumberSearchDay, NumberSearchText, MaxSearchGet)
-		SELECT 
-			CL_ID AS ClientID, SearchMonth, 
-			MaxSearchDate, 
-			NumberSearchDay, 
-			NumberSearchText, 
-			MaxSearchGet
-		FROM 
-			#client CT
-			LEFT JOIN 
-			(
-				SELECT 
-					ClientID, SearchMonth,
-					MAX(SearchDay) AS MaxSearchDate, 
-					COUNT(DISTINCT SearchDay) AS NumberSearchDay, 
-					COUNT(SearchText) AS NumberSearchText, 
-					MAX(SearchGet) AS MaxSearchGet
-				FROM 
-					#client a
-					INNER JOIN [dbo].[ClientSearchTable] b ON CL_ID = CLientID
-				GROUP BY ClientID, SearchMonth
-			) AS C ON CL_ID = ClientID	
-
-	INSERT INTO #searchcltable3(ROW, ClientID, SearchMonth, MaxSearchDate, NumberSearchDay, NumberSearchText, MaxSearchGet)
-		SELECT 
-			ROW_NUMBER() OVER(PARTITION BY H.ClientID ORDER BY H.[MaxSearchDate] DESC), 
-			H.*
-		FROM #searchcltable H
-
-	SELECT 
-		M.ManagerName, S.ServiceName, C.ClientFullName, /*H.ClientID,*/
-		CONVERT(VARCHAR(20), CONVERT(DATETIME, CONVERT(VARCHAR(20), MAX(H.MaxSearchGet), 112), 112), 104) as MaxDateHistoryGet, 
-		REVERSE(STUFF(REVERSE(
-			( 
-				SELECT RIGHT('0' + CONVERT(NVARCHAR(8), DATEPART(MONTH, MaxSearchDate)), 2) + '.' + DATENAME (Year,  MaxSearchDate ) +', '
-				FROM #searchcltable3 
-				WHERE ClientID = H.ClientID 
-					AND ROW<=@STATMONTH 
-					AND MaxSearchDate IS NOT NULL			
-				FOR XML PATH('')
-			)
-		), 1, 2, '')) AS DateSearchHistory,
-		SUM (H.NumberSearchDay) AS DistinctDaysSearch,
-		SUM (H.NumberSearchTEXT) AS DistinctTEXTSearch,
-		CASE
-			WHEN SUM (H.NumberSearchDay) = 0 THEN 0
-			ELSE
-				CAST(
-					(
-						CAST(SUM(H.NumberSearchTEXT) AS DECIMAL(10,2)) / 
-						CAST(SUM(H.NumberSearchDay) AS DECIMAL(10,2))
-					) AS DECIMAL(7,2)
-				)
-		END AS KoefSearchDay,
-		CONVERT(VARCHAR(20), 
-		(
-			SELECT MIN(ConnectDate)
-			FROM dbo.ClientConnectView z WITH(NOEXPAND)
-			WHERE z.ClientID = H.ClientID
-		), 104)  AS ClientConnectStr
-	FROM 
-		#searchcltable3 H
-		LEFT JOIN dbo.ClientTable C ON C.ClientID = H.ClientID
-		LEFT JOIN dbo.ServiceTable S ON S.ServiceID = C.ClientServiceID
-		LEFT JOIN dbo.ManagerTable M ON M.ManagerID = S.ManagerID
-	WHERE H.ROW <= @STATMONTH
-	GROUP BY M.ManagerName, S.ServiceName, C.ClientFullName, H.ClientID
-	ORDER BY M.ManagerName, S.ServiceName, C.ClientFullName
-
-	IF OBJECT_ID('tempdb..#searchcltable') IS NOT NULL
-		DROP TABLE #searchcltable
-
-	IF OBJECT_ID('tempdb..#searchcltable3') IS NOT NULL
-		DROP TABLE #searchcltable3
-	*/
-	
+			AND	(ManagerID = @MANAGERID OR @MANAGERID IS NULL)	
 	
 	SELECT 
 		ManagerName, ServiceName, ClientFullName, 		

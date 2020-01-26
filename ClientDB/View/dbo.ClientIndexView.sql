@@ -34,7 +34,7 @@ AS
 			WHERE a.ClientID = b.ID_CLIENT
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + ' ' +
-		ISNULL(ContractTypeName, '') + ' ' +
+		ISNULL(e.Name, '') + ' ' +
 		ISNULL(ServiceTypeName, '') + ' ' +
 		ISNULL(ServiceTypeShortName, '') + ' ' + 
 		ISNULL(ClientActivity, '') + ' ' +
@@ -75,4 +75,4 @@ AS
 		INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 		INNER JOIN dbo.ManagerTable d ON d.ManagerID = c.ManagerID
 		INNER JOIN dbo.ServiceTypeTable f ON f.ServiceTypeID = a.ServiceTypeID
-		LEFT OUTER JOIN dbo.ContractTypeTable e ON e.ContractTypeID = a.ClientContractTypeID
+		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_Id

@@ -43,7 +43,7 @@ BEGIN
 			FROM 
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID	
+				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id	
 				--INNER JOIN dbo.ServiceTable b ON ClientServiceID = ServiceID
 				--INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 				INNER JOIN dbo.ClientStudy z ON z.ID_CLIENT = a.ClientID

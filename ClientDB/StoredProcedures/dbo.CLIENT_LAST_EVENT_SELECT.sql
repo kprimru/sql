@@ -62,7 +62,7 @@ BEGIN
 				(
 					SELECT ID 
 					FROM dbo.TableIDFromXML(@CL_TYPE)
-				) AS d ON b.ClientContractTypeID = d.ID
+				) AS d ON b.ClientKind_Id = d.ID
 		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 			AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
@@ -90,7 +90,7 @@ BEGIN
 				(
 					SELECT ID 
 					FROM dbo.TableIDFromXML(@CL_TYPE)
-				) AS d ON b.ClientContractTypeID = d.ID
+				) AS d ON b.ClientKind_Id = d.ID
 		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 			AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))

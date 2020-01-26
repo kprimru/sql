@@ -18,8 +18,8 @@ BEGIN
 
 	IF @TYPE IS NULL
 		INSERT INTO @TP(TP)
-			SELECT ContractTypeID
-			FROM dbo.ContractTypeTable
+			SELECT Id
+			FROM dbo.ClientKind
 	ELSE
 		INSERT INTO @TP(TP)
 			SELECT *
@@ -38,7 +38,7 @@ BEGIN
 		FROM 
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-			INNER JOIN @TP ON TP = ClientContractTypeID
+			INNER JOIN @TP ON TP = ClientKind_Id
 		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 	

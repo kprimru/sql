@@ -49,11 +49,11 @@ BEGIN
 		)
 		
 	INSERT INTO #cl_list(ClientID, ClientName, ClientCom, ClientParent)
-		SELECT ClientID, ClientFullName, ContractTypeHst, ID_HEAD
+		SELECT ClientID, ClientFullName, 0, ID_HEAD
 		FROM 
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-			INNER JOIN dbo.ContractTypeTable ON ClientContractTypeID = ContractTypeID
+			INNER JOIN dbo.ClientKind k ON a.ClientKind_Id = k.Id
 		WHERE STATUS = 1 AND ClientServiceID = @SERVICE
 		
 	-- 1. Не сообветствующие эталону ИБ

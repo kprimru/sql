@@ -32,7 +32,7 @@ BEGIN
 		FROM 
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-			INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientContractTypeID
+			INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientKind_Id
 			INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
 			LEFT OUTER JOIN dbo.DayTable d ON d.DayID = a.DayID
 		WHERE ClientServiceID = @SERVICE AND STATUS = 1

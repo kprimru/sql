@@ -34,7 +34,7 @@ BEGIN
 		RangeID,
 		ServiceStart,
 		ServiceTime,
-		ClientContractTypeID,
+		ClientKind_Id,
 		ClientPlace,
 		PurchaseTypeID,
 		ID_HEAD,

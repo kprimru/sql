@@ -51,7 +51,7 @@ BEGIN
 	FROM 
 		dbo.ClientView a WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-		INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientContractTypeID;
+		INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientKind_Id;
 
 		SELECT 
 			Service, Manager, CL_COUNT, HST_COUNT, CL_KORR_COUNT, HST_KORR_COUNT,

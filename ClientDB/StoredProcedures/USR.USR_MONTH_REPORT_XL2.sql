@@ -297,9 +297,9 @@ BEGIN
 		END 
 		*
 		CASE
-			WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информационного обмена', 'КГС корпоративный') AND ClientBaseCount > 3 THEN 1.2
-			WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий VIP', 'пакетное соглашение', 'рамочное соглашение') THEN 1.4
-			WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий VIP', 'пакетное соглашение', 'рамочное соглашение') THEN 1.2
+			WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') AND ClientBaseCount > 3 THEN 1.2
+			WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
+			WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.2
 			ELSE 1
 		END AS COEF,
 		-- количество визитов (когда было обновлено систем > 0
@@ -349,7 +349,7 @@ BEGIN
 		(
 			SELECT 
 				b.ClientID, ServiceFullName, ManagerFullName, ClientFullName, PayTypeName, RangeValue, 
-				Category = ClientTypeName, ServicePositionName, ContractTypeName, VISIT_CNT4, VISIT_CNT5, IsOnline,
+				Category = ClientTypeName, ServicePositionName, ContractTypeName = h.Name, VISIT_CNT4, VISIT_CNT5, IsOnline,
 				(
 					SELECT TOP 1 DISTR
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
@@ -414,7 +414,7 @@ BEGIN
 				INNER JOIN dbo.ManagerTable e ON e.ManagerID = d.ManagerID 
 				LEFT OUTER JOIN dbo.PayTypeTable f ON f.PayTypeID = b.PayTypeID
 				LEFT OUTER JOIN dbo.ServicePositionTable g ON d.ServicePositionID = g.ServicePositionID
-				LEFT OUTER JOIN dbo.ContractTypeTable h ON b.ClientContractTypeID = h.ContractTypeID
+				LEFT OUTER JOIN dbo.ClientKind h ON b.ClientKind_Id = h.Id
 				LEFT OUTER JOIN dbo.ClientTypeTable i ON i.ClientTypeID = b.ClientTypeID
 				LEFT OUTER JOIN dbo.ClientVisitCount  j ON j.ID = b.ClientVisitCountID
 		) AS o_O

@@ -30,7 +30,7 @@ BEGIN
 		FROM 
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientContractTypeID
+			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
 		WHERE ClientServiceID = @SERVICE 
 			AND STATUS = 1
 			AND EXISTS
