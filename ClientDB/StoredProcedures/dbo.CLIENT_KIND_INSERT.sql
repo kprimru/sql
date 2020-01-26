@@ -1,0 +1,19 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[CLIENT_KIND_INSERT]
+	@Name		VarChar(100),
+	@SortIndex	SmallInt,
+	@Id			Int			= NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO dbo.ClientKind(Name, SortIndex)
+	VALUES(@Name, @SortIndex)
+	
+	SELECT @Id = SCOPE_IDENTITY()
+END
