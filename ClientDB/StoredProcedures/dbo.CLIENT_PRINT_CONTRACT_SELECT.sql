@@ -36,7 +36,7 @@ BEGIN
 				ContractBegin = DateFrom,
 				ContractDate = SignDate,
 				ContractEnd = ExpireDate,
-				ContractConditions = D.Note,
+				ContractConditions = D.Comments,
 				ContractPayName,
 				ContractYear = DatePart(Year, Y.START),
 				ContractFixed = ContractPrice
@@ -46,7 +46,7 @@ BEGIN
 			CROSS APPLY
 			(
 				SELECT TOP (1)
-					ContractTypeName, ExpireDate, Note, ContractPayName, ContractPrice
+					ContractTypeName, ExpireDate, Comments, ContractPayName, ContractPrice
 				FROM Contract.ClientContractsDetails D
 				INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = D.Type_Id
 				INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id
@@ -73,7 +73,7 @@ BEGIN
 				ContractBegin = DateFrom,
 				ContractDate = SignDate,
 				ContractEnd = ExpireDate,
-				ContractConditions = D.Note,
+				ContractConditions = D.Comments,
 				ContractPayName,
 				ContractYear = DatePart(Year, Y.START),
 				ContractFixed = ContractPrice
@@ -83,7 +83,7 @@ BEGIN
 			CROSS APPLY
 			(
 				SELECT TOP (1)
-					ContractTypeName, ExpireDate, Note, ContractPayName, ContractPrice
+					ContractTypeName, ExpireDate, Comments, ContractPayName, ContractPrice
 				FROM Contract.ClientContractsDetails D
 				INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = D.Type_Id
 				INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id

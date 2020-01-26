@@ -93,7 +93,7 @@ BEGIN
 	INSERT INTO #data(CL_ID, CL_NAME, CO_COND, CO_FIXED, CO_TYPE, PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, NET, CSTATUS)
 		SELECT 
 			ClientID, ClientFullName, 
-			D.Note, D.ContractPrice, D.ContractTypeName, D.ContractPayName,
+			D.Comments, D.ContractPrice, D.ContractTypeName, D.ContractPayName,
 			PayTypeName, ClientNewspaper, ClientMainBook,
 			(
 				SELECT TOP 1 NT_SHORT
@@ -112,12 +112,12 @@ BEGIN
 			LEFT OUTER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
 			OUTER APPLY
 			(
-				SELECT TOP (1) D.Note, ContractPrice, ContractTypeName, ContractPayName
+				SELECT TOP (1) D.Comments, ContractPrice, ContractTypeName, ContractPayName
 				FROM Contract.ClientContracts CC
 				INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
 				CROSS APPLY
 				(
-					SELECT TOP (1) ContractPrice, Type_Id, PayType_Id, Note
+					SELECT TOP (1) ContractPrice, Type_Id, PayType_Id, Comments
 					FROM Contract.ClientContractsDetails D
 					WHERE D.Contract_Id = C.Id
 					ORDER BY D.DATE DESC
