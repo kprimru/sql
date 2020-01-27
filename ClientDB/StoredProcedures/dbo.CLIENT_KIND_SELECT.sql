@@ -10,8 +10,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT Id, Name, SortIndex
-	FROM dbo.ClientKind
+	SELECT K.Id, K.Name, K.SortIndex, Checked = CAST(CASE WHEN C.SetItem IS NOT NULL THEN 1 ELSE 0 END AS Bit)
+	FROM dbo.ClientKind K
+	LEFT JOIN dbo.NamedSetItemsSelect('dbo.ClientKind', 'DefaultChecked') C ON K.Id = Cast(C.SetItem AS SmallInt)
 	WHERE	@FILTER IS NULL
 		OR	Name LIKE @FILTER
 	ORDER BY SortIndex
