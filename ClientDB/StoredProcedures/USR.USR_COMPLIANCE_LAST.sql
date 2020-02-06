@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_COMPLIANCE_LAST]
+CREATE PROCEDURE [USR].[USR_COMPLIANCE_LAST_NEW]
 	@DATE		SMALLDATETIME,
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL
@@ -191,8 +191,9 @@ BEGIN
 	EXEC (@SQL)
 
 	SELECT 
-		ClientID, ClientFullName, ManagerName, ServiceName, UD_NAME, InfoBankShortName, 
-		dbo.DistrString(NULL, UI_DISTR, UI_COMP) AS DistrNumber, 
+		ClientID, ClientFullName, ManagerName, ServiceName, UD_NAME, InfoBankShortName,
+		rnsw.Complect, 
+		--dbo.DistrString(NULL, UI_DISTR, UI_COMP) AS DistrNumber, 
 		CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), FIRST_DATE, 112), 112) AS FIRST_DATE, 
 		CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), UIU_DATE, 112), 112) AS UIU_DATE
 	FROM
@@ -235,6 +236,7 @@ BEGIN
 	INNER JOIN dbo.ClientTable ON ClientID = CL_ID
 	INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 	INNER JOIN dbo.ManagerTable ON ManagerTable.ManagerID = ServiceTable.ManagerID
+	INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON rnsw.DistrNumber = UI_DISTR AND rnsw.CompNumber = UI_COMP AND rnsw.DS_REG = 0
 	WHERE InfoBankActive = 1
 	ORDER BY ManagerName, ServiceName, ClientFullName, UI_DISTR, UI_COMP, InfoBankOrder
 

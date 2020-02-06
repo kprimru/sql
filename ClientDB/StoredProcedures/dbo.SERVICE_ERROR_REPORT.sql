@@ -45,8 +45,10 @@ BEGIN
 			ClientID, ClientFullName, Complect,
 			dbo.DateOf((
 				SELECT TOP 1 UF_DATE
-				FROM USR.USRActiveView
-				WHERE UD_ID_CLIENT = ClientID
+				FROM USR.USRActiveView av
+				INNER JOIN Reg.RegNodeSearchView rnsw2 WITH(NOEXPAND) ON rnsw2.DistrNumber = av.UD_DISTR
+				WHERE	UD_ID_CLIENT = ClientID AND
+						rnsw2.Complect = rnsw.Complect
 				ORDER BY UF_DATE DESC
 			))
 		FROM dbo.ClientView cv WITH(NOEXPAND)

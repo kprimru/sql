@@ -10,7 +10,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @t	TABLE(SysBaseName	NVARCHAR(MAX), DistrTypeName	NVARCHAR(MAX), Banks	NVARCHAR(MAX), SystemOrder	INT)
+	DECLARE @t	TABLE(SysBaseName	NVARCHAR(MAX), DistrTypeName	NVARCHAR(MAX), Banks	NVARCHAR(MAX), SystemOrder	INT, BanksCount	INT)
 
 	INSERT INTO @t
 	SELECT 
@@ -22,7 +22,10 @@ BEGIN
 			ORDER BY InfoBankName
 			FOR XML PATH('') 
 			)), 1, 2, '')) AS Banks,
-			SystemOrder
+			SystemOrder,
+			(SELECT COUNT(*)
+			FROM dbo.SystemInfoBanksView b
+			WHERE b.System_ID = a.System_ID AND b.DistrType_ID = a.DistrType_ID) AS BanksCount
 	FROM dbo.SystemInfoBanksView a
 	WHERE SystemActive = 1 AND HostID = 1
 	GROUP BY SystemBaseName, DistrTypeName, a.System_ID, a.DistrType_ID, SystemOrder
@@ -37,9 +40,10 @@ BEGIN
 			FOR XML PATH('')
 			)), 1, 2, '')) AS Systems,
 			Banks,
-			SystemOrder
+			SystemOrder,
+			BanksCount
 	FROM @t t1
-	GROUP BY SysBaseName, Banks, SystemOrder
+	GROUP BY SysBaseName, Banks, SystemOrder, BanksCount
 	ORDER BY SystemOrder
 END
 

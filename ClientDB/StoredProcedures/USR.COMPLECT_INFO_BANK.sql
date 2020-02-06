@@ -70,11 +70,11 @@ BEGIN
 	INSERT INTO @USRPackage
 	SELECT Row_Number() OVER(ORDER BY UP_ID_SYSTEM), UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP, UP_RIC, UP_NET, UP_TECH, UP_TYPE, UP_FORMAT
 	FROM USR.USRPackage up
-	INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON rnsw.DistrNumber = up.UP_DISTR AND up.UP_COMP = rnsw.CompNumber AND up.UP_ID_SYSTEM = rnsw.SystemID
-	WHERE	UP_ID_USR = @UF_ID AND
-			DS_REG = 0/*
+	--INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON rnsw.DistrNumber = up.UP_DISTR AND up.UP_COMP = rnsw.CompNumber AND up.UP_ID_SYSTEM = rnsw.SystemID
+	WHERE	UP_ID_USR = @UF_ID /*AND
+			DS_REG = 0
 		(
-			SELECT DS_REG
+			SELECT TOP(1) DS_REG
 			FROM Reg.RegNodeSearchView rnsw
 			WHERE up.UP_DISTR = rnsw.DistrNumber AND up.UP_COMP = rnsw.CompNumber AND up.UP_ID_SYSTEM = rnsw.SystemID
 		) = 0*/
@@ -93,6 +93,9 @@ BEGIN
 						Net_Id		= N.NT_ID_MASTER
 						--Net_Name	= DistrTypeName
 					FROM @USRPackage P
+					INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON rnsw.DistrNumber = p.UP_DISTR AND 
+																			p.UP_COMP = rnsw.CompNumber AND 
+																			p.UP_ID_SYSTEM = rnsw.SystemID
 					CROSS APPLY
 					(
 						SELECT TOP (1) NT_ID_MASTER
@@ -100,6 +103,7 @@ BEGIN
 						WHERE NT_TECH_USR = UP_TECH
 							AND NT_NET = UP_NET
 					) N
+					WHERE rnsw.DS_REG = 0
 					FOR XML RAW ('ITEM'), TYPE
 				),
 			[INFO_BANKS] = 
@@ -446,14 +450,11 @@ BEGIN
 			SELECT DISTINCT Reg.RegComplectGet(HostID, UP_DISTR, UP_COMP, @UF_DATE) AS COMPLECT
 			FROM #package
 		) b 
-		INNER JOIN 
-		(
-			SELECT COMPLECT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_NET
-			FROM Reg.ComplectStatusGet(@DS_ID, @UF_DATE)
-		) d ON b.COMPLECT = d.COMPLECT
+		CROSS APPLY Reg.Complect@Periodic(b.COMPLECT, @UF_DATE) d
 		INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
 		INNER JOIN Din.NetType ON ID_NET = NT_ID
 	WHERE SystemBaseName <> 'KDG'
+		AND D.ID_STATUS = @DS_ID
 		AND NOT EXISTS
 		(
 			SELECT *

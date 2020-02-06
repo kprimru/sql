@@ -18,7 +18,7 @@ BEGIN
 				SELECT InfoBankID
 				FROM dbo.SystemBankTable 
 				--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --ДОФ будем добавлять программно
-                WHERE  (SystemID = @SYSID) AND (Required =1)  
+                WHERE  (SystemID = @SYSID) AND  (Required IN (1, 2) )
 			)
 		AND InfoBankActive = 1
 END

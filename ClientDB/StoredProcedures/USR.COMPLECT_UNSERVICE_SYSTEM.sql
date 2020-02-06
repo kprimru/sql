@@ -4,10 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[COMPLECT_UNSERVICE_SYSTEM]
+CREATE PROCEDURE [USR].[COMPLECT_UNSERVICE_SYSTEM_NEW]
 	@MANAGER	INT,
 	@SERVICE	INT,
-	@LAST_DATE	SMALLDATETIME
+	@LAST_DATE	SMALLDATETIME,
+	@SHOW_COMPL	BIT	= 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,17 +29,18 @@ BEGIN
 			Service		INT,
 			UF_CREATE	DATETIME,
 			UF_DATE		DATETIME,
-			UD_NAME		VARCHAR(50)
+			UD_NAME		VARCHAR(50),
+			Complect	varchar(50)
 		)
 
 	INSERT INTO #usrdata
 		(
-			UD_ID_CLIENT, HostID, SystemShortName, SystemOrder, SystemDIstrNumber, CompNumber, UP_ID_USR, Service,
-			UF_CREATE, UF_DATE, UD_NAME
+			UD_ID_CLIENT, HostID, SystemShortName, SystemOrder, SystemDistrNumber, CompNumber, UP_ID_USR, Service,
+			UF_CREATE, UF_DATE, UD_NAME, Complect
 		)
 		SELECT DISTINCT
 			UD_ID_CLIENT, f.HostID, f.SystemShortName, f.SystemOrder, UP_DISTR, UP_COMP, UP_ID_USR, ISNULL(Service, 1),
-			UF_CREATE, UF_DATE, dbo.DistrString(s.SystemShortName, UP_DISTR, UP_COMP)
+			UF_CREATE, UF_DATE, dbo.DistrString(s.SystemShortName, UP_DISTR, UP_COMP), Complect
 		FROM
 			USR.USRActiveView d
 			INNER JOIN dbo.SystemTable s ON d.UF_ID_SYSTEM = s.SystemID
@@ -59,8 +61,7 @@ BEGIN
 	SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usrdata (UP_ID_USR, Service) INCLUDE (SystemShortName, SystemOrder)'
 	EXEC (@SQL)
 	
-	SELECT DISTINCT a.ClientID, 
-		ManagerName, ServiceName, ClientFullName, UD_NAME AS ComplectNumber, 
+	SELECT DISTINCT UD_ID_CLIENT, 
 		UF_CREATE AS CreateDate, 
 		UF_DATE AS USRFileDate,
 		REVERSE(STUFF(REVERSE(
@@ -84,10 +85,12 @@ BEGIN
 				WHERE z.UP_ID_USR = d.UP_ID_USR AND z.Service = 1
 				ORDER BY SystemOrder FOR XML PATH('')
 			)), 1, 2, '')
-		) AS UnservicesBase
+		) AS UnservicesBase,
+		CASE @SHOW_COMPL
+			WHEN 1 THEN Complect
+		END AS Complect
 	FROM
 		#usrdata d 
-		INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON d.UD_ID_CLIENT = a.ClientID 
 	WHERE 
 		EXISTS
 			(
@@ -101,7 +104,7 @@ BEGIN
 				FROM #usrdata z
 				WHERE z.UP_ID_USR = d.UP_ID_USR AND z.Service = 0
 			)
-	ORDER BY ManagerName, ServiceName, UD_NAME
+	/*ORDER BY ManagerName, ServiceName, UD_NAME*/
 
 	IF OBJECT_ID('tempdb..#usrdata') IS NOT NULL
 		DROP TABLE #usrdata

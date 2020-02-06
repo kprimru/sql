@@ -18,7 +18,7 @@ AS
 		POSITION, PHONE, NOTE, 
 		a.UPD_DATE, a.UPD_USER, 
 		a.ID_STATUS, c.NAME AS STAT_NAME, c.COLOR, c.INDX,
-		ServiceName,
+		ServiceName, ServiceID,
 		ServiceStatusIndex,
 		ID_SUBJECT, CONFIRM_DATE, CONFIRM_STATUS, INVITE_NUM
 	FROM 

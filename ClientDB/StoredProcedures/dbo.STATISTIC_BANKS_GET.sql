@@ -1,0 +1,16 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[STATISTIC_BANKS_GET]	
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    SELECT *
+    FROM dbo.InfoBankTable
+    WHERE InfoBankActive = 1
+		AND InfoBankPath <> ''
+END

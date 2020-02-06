@@ -22,7 +22,7 @@ BEGIN
 			WHEN 6 THEN p.PROTOCOL + 4
 			WHEN 7 THEN p.PROTOCOL + 3
 		END	AS [Срок оплаты],
-		TS_NAME AS [Эл. пл.],
+		TS_SHORT AS [Эл. пл.],
 		GK_SUM AS [НМЦК],
 		NOTICE_NUM AS [Номер извещения],
 		DATE AS [Дата извещения]
@@ -40,5 +40,24 @@ BEGIN
 		--	(DATEPART(m, p.GK_DATE) = DATEPART(m, GETDATE()))AND
 		--	(DATEPART(yy, p.GK_DATE) = DATEPART(yy, GETDATE())) AND
 		--	p.CLAIM_PRIVISION IS NOT NULL AND p.CLAIM_PRIVISION <> ''
-	ORDER BY DATE DESC
+	--ORDER BY DATE DESC
+
+	UNION ALL
+
+	SELECT
+		'Итого : ', NULL, SUM(p.PART_SUM), NULL, NULL, NULL, NULL, NULL
+	FROM 
+		Tender.Tender t
+		INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER
+		INNER JOIN dbo.Vendor v ON p.ID_VENDOR = v.ID
+		INNER JOIN Purchase.TradeSite TS on p.ID_TRADESITE = ts.TS_ID
+	WHERE	ID_STATUS = (
+					SELECT ID
+					FROM Tender.Status
+					WHERE PSEDO = 'TENDER'
+						) AND
+			p.PROTOCOL IS NOT NULL
+		--	(DATEPART(m, p.GK_DATE) = DATEPART(m, GETDATE()))AND
+		--	(DATEPART(yy, p.GK_DATE) = DATEPART(yy, GETDATE())) AND
+		--	p.CLAIM_PRIVISION IS NOT NULL AND p.CLAIM_PRIVISION <> ''
 END

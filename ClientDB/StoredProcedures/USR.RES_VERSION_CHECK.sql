@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[RES_VERSION_CHECK]
+CREATE PROCEDURE [USR].[RES_VERSION_CHECK_NEW]
 	@MANAGER	INT,
 	@SERVICE	INT,		
 	@DATE		SMALLDATETIME,
@@ -109,13 +109,14 @@ BEGIN
 	END
 
 	SELECT 
-		ClientID, ClientFullName, ManagerName, ServiceName, a.UD_NAME,
+		ClientID, ClientFullName, ManagerName, ServiceName, rnsw.Complect,
 		CASE WHEN RES_ID IS NULL THEN ResVersionShort ELSE '' END AS ResVersionNumber, 
 		CASE WHEN CONS_ID IS NULL THEN ConsExeVersionName ELSE '' END AS ConsExeVersionName, 
 		/*CASE WHEN KD_ID IS NULL THEN SHORT ELSE '' END */ '' AS KDVersionName, 
 		UF_DATE, UF_CREATE
 	FROM 
 		USR.USRComplectCurrentStatusView a WITH(NOEXPAND)
+		INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON a.UD_DISTR = rnsw.DistrNumber AND a.UD_COMP = rnsw.CompNumber AND a.UD_SYS = rnsw.SystemID AND rnsw.DS_REG = 0
 		INNER JOIN USR.USRActiveView b ON a.UD_ID = b.UD_ID
 		INNER JOIN USR.USRFileTech t ON b.UF_ID = t.UF_ID
 		INNER JOIN #client c ON c.CL_ID = b.UD_ID_CLIENT
