@@ -16,7 +16,7 @@ CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_INSERT]
 	@THREE_ENTER	INT,
 	@SES_TIME_SUM	INT,
 	@SES_TIME_AVG	FLOAT,
-	@WEEK_NUM		INT
+	@WEEK_ID		UniqueIdentifier
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,16 +24,7 @@ BEGIN
 	INSERT INTO dbo.ClientStatDetail ([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
 	SELECT
 		GETDATE(),
-		(
-		SELECT ID
-		FROM Common.Period
-		WHERE TYPE=1 AND START=(
-								SELECT TOP(1) START
-								FROM Common.Period
-								WHERE TYPE=1 AND DATEPART(yy, START)=DATEPART(yy, GETDATE()) AND DATEPART(ww, START)=@WEEK_NUM
-								ORDER BY START DESC
-								)
-		),
+		@WEEK_ID,
 		1,
 		@DISTR,
 		@COMP,

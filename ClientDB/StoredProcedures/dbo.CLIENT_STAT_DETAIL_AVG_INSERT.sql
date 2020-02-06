@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_AVG_INSERT]
-	@WEEK_NUM					INT,
+	@WEEK_ID					UniqueIdentifier,
 	@NET						NVARCHAR(256),
 	@COMPL_COUNT				INT,
 	@COMPL_NO_ENT				INT,
@@ -47,16 +47,7 @@ BEGIN
 										)
 	SELECT
 			GETDATE(),
-			(
-			SELECT ID
-			FROM Common.Period
-			WHERE TYPE=1 AND START=(
-								SELECT TOP(1) START
-								FROM Common.Period
-								WHERE TYPE=1 AND DATEPART(yy, START)=DATEPART(yy, GETDATE()) AND DATEPART(ww, START)=@WEEK_NUM
-								ORDER BY START DESC
-								)
-			),
+			@WEEK_ID,
 			@NET,
 			@COMPL_COUNT,
 			@COMPL_NO_ENT,

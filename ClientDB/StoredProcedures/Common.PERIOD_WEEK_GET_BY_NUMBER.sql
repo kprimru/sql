@@ -1,0 +1,36 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [Common].[PERIOD_WEEK_GET_BY_NUMBER]
+	@YEAR	UniqueIdentifier,
+	@Week	SmallInt
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @Year_Num SmallInt;
+	SELECT @Year_Num = DatePart(yy, START)
+	FROM Common.Period
+	WHERE ID = @YEAR;
+
+	SELECT ID
+	FROM Common.Period
+	WHERE TYPE = 1
+		AND START = ISNULL(
+						(
+							SELECT TOP(1) START
+							FROM Common.Period
+							WHERE TYPE=1 AND DATEPART(yy, START)=DATEPART(yy, GETDATE()) AND DATEPART(ww, START)=@Week
+							ORDER BY START DESC
+						),
+						(
+							SELECT TOP(1) START
+							FROM Common.Period
+							WHERE TYPE=1 AND DATEPART(yy, FINISH)=DATEPART(yy, GETDATE()) AND DATEPART(ww, FINISH)=@Week
+							ORDER BY START DESC
+						)
+						);
+END
