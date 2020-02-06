@@ -1,0 +1,14 @@
+USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [Client].[DEPO_NUMBER_NEW_GET]
+AS
+BEGIN
+	SELECT MIN(DEPO_NUM) AS DEPO_NUM
+	FROM Client.DepoNumbers
+	WHERE	STATUS = 1 AND
+			DEPO_NUM > 6229 -- бнр щрн мюдн асдер сапюрэ, йнцдю бяеу дн 6000 днаюбър
+END
