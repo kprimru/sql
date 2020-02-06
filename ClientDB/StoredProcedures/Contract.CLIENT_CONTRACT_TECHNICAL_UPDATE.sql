@@ -43,9 +43,9 @@ BEGIN
 			COMMIT TRAN;
 	END TRY
 	BEGIN CATCH
-		EXEC [Maintenance].[ReRaise Error];
-	
 		IF @@TranCount > 0
 			ROLLBACK TRAN;
+
+		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
