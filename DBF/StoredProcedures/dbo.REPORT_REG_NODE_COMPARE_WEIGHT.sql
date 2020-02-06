@@ -23,10 +23,17 @@ CREATE PROCEDURE [dbo].[REPORT_REG_NODE_COMPARE_WEIGHT]
 	@SYS_LIST	VARCHAR(MAX),
 	@SH_LIST	VARCHAR(MAX),
 	@SST_LIST	VARCHAR(MAX),
-	@NEW_WEIGHT	BIT = 0
+	@NEW_WEIGHT	BIT = 0,
+	@TITLE		VarChar(256) = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+	SELECT @TITLE = 'Сравнение РЦ в период от ' + Convert(VarChar(20), S.PR_EREPORT, 104) + ' по ' + Convert(VarChar(20), D.PR_EREPORT, 104)
+	FROM dbo.PeriodTable S
+	CROSS JOIN dbo.PeriodTable D
+	WHERE S.PR_ID = @SRC_PR
+		AND D.PR_ID = @DEST_PR;
 
 	/******************************************************
 	Строим таблицы фильтров по системам, подхостам 
