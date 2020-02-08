@@ -386,6 +386,7 @@ BEGIN
 			WHEN UP_TECH = 'FLS' THEN 'Флеш-версия'
 			WHEN UP_TECH = 'OVKF' THEN 'ОВК-Ф'
 			WHEN UP_TECH = 'OVMF' THEN 'ОВМ-Ф'
+			WHEN UP_TECH = 'OVS' THEN 'ОВС'-- + CONVERT(VARCHAR(20), UP_NET)
 			ELSE
 				CASE UP_NET
 					WHEN 0 THEN 'лок'
