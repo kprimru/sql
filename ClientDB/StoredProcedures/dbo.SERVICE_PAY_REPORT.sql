@@ -47,7 +47,7 @@ BEGIN
 		
 	INSERT INTO #client(ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayDate, PayMonth)
 		SELECT 
-			ClientID, ClientFullName, ServiceName, PayTypeName, ContractPayName,
+			ClientID, ClientFullName, ServiceName, CASE WHEN a.ID_HEAD IS NULL THEN PayTypeName ELSE 'не оплачивает' END, ContractPayName,
 			DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END,
 				DATEADD(DAY, 
 					CASE 
