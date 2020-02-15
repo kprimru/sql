@@ -17,7 +17,7 @@ BEGIN
 			SELECT
 				CONVERT(VARCHAR(20), d.SystemNumber) + '_' + 
 				--CONVERT(VARCHAR(20), c.SystemNumber) + '_' + 
-				REPLICATE('0', 6 - LEN(CONVERT(VARCHAR(20), DistrNumber))) + CONVERT(VARCHAR(20), DistrNumber) + 
+				IsNull(REPLICATE('0', 6 - LEN(CONVERT(VARCHAR(20), DistrNumber))), '') + CONVERT(VARCHAR(20), DistrNumber) + 
 				CASE CompNumber WHEN 1 THEN '' ELSE '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(20), CompNumber))) + CONVERT(VARCHAR(20), CompNumber) END + ', '
 			FROM 
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
