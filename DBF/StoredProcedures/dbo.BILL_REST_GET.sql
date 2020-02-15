@@ -56,7 +56,3 @@ BEGIN
 	WHERE PR_ID = @periodid AND BL_ID_CLIENT = @clientid
 	ORDER BY DIS_STR
 END
-
-
-
-

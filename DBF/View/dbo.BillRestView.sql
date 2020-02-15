@@ -33,4 +33,3 @@ SELECT
 		dbo.BillDistrTable ON BL_ID = BD_ID_BILL LEFT OUTER JOIN
 		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 		dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
-		

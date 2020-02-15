@@ -117,7 +117,3 @@ BEGIN
 	IF OBJECT_ID('tempdb..#detail') IS NOT NULL
 		DROP TABLE #detail
 END
-
-
-
-

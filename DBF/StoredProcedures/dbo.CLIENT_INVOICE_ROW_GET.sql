@@ -30,17 +30,3 @@ BEGIN
 	WHERE INR_ID = @rowid
 
 END
-
-
-
-
-
-
-
-
-
-
-
-
-
-

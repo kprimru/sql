@@ -7,7 +7,7 @@ GO
 /*
 	Коэффициент насыщенности
 */
-CREATE FUNCTION [Ric].[DepthCoef]
+CREATE FUNCTION [Ric].[DepthCoefValue]
 (
 	@PR_ID	SMALLINT
 )

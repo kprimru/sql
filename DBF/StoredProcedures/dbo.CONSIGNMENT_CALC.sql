@@ -152,10 +152,3 @@ BEGIN
 	SET CSG_FOUND = @docstring
 	WHERE CSG_ID = @consid AND CSG_FOUND <> @docstring
 END
-
-
-
-
-
-
-

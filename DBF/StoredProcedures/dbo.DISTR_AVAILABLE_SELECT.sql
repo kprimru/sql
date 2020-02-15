@@ -33,6 +33,3 @@ BEGIN
 	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE DIS_ID = @disid
 END
-
-
-

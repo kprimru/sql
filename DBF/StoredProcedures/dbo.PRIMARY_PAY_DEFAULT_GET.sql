@@ -31,4 +31,3 @@ BEGIN
 		dbo.OrganizationTable x ON ORG_ID = CL_ID_ORG
 	WHERE a.DIS_ID = @distrid AND PP_ID = 2 AND PS_ID_PERIOD = @periodid AND TX_ID = 1 
 END
-

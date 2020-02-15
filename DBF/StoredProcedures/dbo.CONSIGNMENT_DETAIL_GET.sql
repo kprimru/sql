@@ -4,12 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 /*
 Автор:			
 Дата создания:  	
@@ -32,9 +26,3 @@ BEGIN
 		dbo.TaxTable ON TX_ID = CSD_ID_TAX
 	WHERE CSD_ID = @csdid		
 END
-
-
-
-
-
-

@@ -52,7 +52,3 @@ BEGIN
 		FROM dbo.BillTable
 		WHERE BL_ID = @billid
 END
-
-
-
-

@@ -7,7 +7,7 @@ GO
 /*
 	Функция, возвращающая задел
 */
-CREATE FUNCTION [Ric].[Stock]
+CREATE FUNCTION [Ric].[StockValue]
 (
 	@PR_ID	SMALLINT
 )

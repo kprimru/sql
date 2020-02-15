@@ -24,6 +24,3 @@ BEGIN
 		dbo.DistrView c WITH(NOEXPAND) ON c.SYS_ID_SO = b.SO_ID
 	WHERE DIS_ID = @distrid
 END
-
-
-

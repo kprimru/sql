@@ -23,15 +23,3 @@ BEGIN
 
 	SET NOCOUNT OFF
 END
-
-
-
-
-
-
-
-
-
-
-
-

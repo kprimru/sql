@@ -28,11 +28,3 @@ BEGIN
 		dbo.TaxTable ON TX_ID = CSD_ID_TAX
 	WHERE CSD_ID_CONS = @csgid		
 END
-
-
-
-
-
-
-
-

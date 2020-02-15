@@ -7,7 +7,7 @@ GO
 /*
 	Получение кризисного коэффициента
 */
-CREATE FUNCTION [Ric].[CrisisCoef]
+CREATE FUNCTION [Ric].[CrisisCoefValue]
 (
 	@PR_ID	SMALLINT
 )

@@ -41,8 +41,3 @@ BEGIN
 		AD_TOTAL_PRICE = @totalprice
 	WHERE AD_ID = @adid
 END
-
-
-
-
-

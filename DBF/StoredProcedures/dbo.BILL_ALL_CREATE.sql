@@ -94,4 +94,3 @@ BEGIN
 	
 	EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Окончание формирования счетов', @TXT, NULL, NULL
 END
-

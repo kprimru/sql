@@ -23,7 +23,3 @@ BEGIN
 		dbo.TaxTable b ON a.SO_ID_TAX = b.TX_ID
 	WHERE SO_ID = @soid
 END
-
-
-
-

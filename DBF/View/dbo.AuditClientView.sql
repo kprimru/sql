@@ -472,4 +472,4 @@ AS
 				FROM dbo.ClientDistrView
 				WHERE CD_ID_CLIENT = CL_ID
 					AND DSS_REPORT = 1
-			)	
+			)
