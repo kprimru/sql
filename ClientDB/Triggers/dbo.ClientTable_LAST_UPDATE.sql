@@ -18,4 +18,14 @@ BEGIN
 	IF @@RowCount = 0
 		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
 		SELECT 'dbo', 'ClientTable', GetDate();
+		
+		
+	UPDATE Common.Reference
+	SET ReferenceLast = GETDATE()
+	WHERE ReferenceName = 'ClientReadList'
+		AND ReferenceSchema = 'dbo';
+	
+	IF @@RowCount = 0
+		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
+		SELECT 'dbo', 'ClientReadList', GetDate();
 END
