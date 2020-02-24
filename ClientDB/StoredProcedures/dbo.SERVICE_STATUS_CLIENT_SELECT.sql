@@ -10,15 +10,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ServiceStatusID, ServiceStatusName, ServiceDefault
-	FROM dbo.ServiceStatusTable
-	WHERE ServiceStatusReg = 
-		ISNULL((
-			SELECT ServiceStatusReg
-			FROM 
-				dbo.ClientTable INNER JOIN
-				dbo.ServiceStatusTable ON ServiceStatusID = StatusID
-			WHERE ClientID = @ID
-		), 0)
-	ORDER BY ServiceStatusName	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ServiceStatusID, ServiceStatusName, ServiceDefault
+		FROM dbo.ServiceStatusTable
+		WHERE ServiceStatusReg = 
+			ISNULL((
+				SELECT ServiceStatusReg
+				FROM 
+					dbo.ClientTable INNER JOIN
+					dbo.ServiceStatusTable ON ServiceStatusID = StatusID
+				WHERE ClientID = @ID
+			), 0)
+		ORDER BY ServiceStatusName	
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

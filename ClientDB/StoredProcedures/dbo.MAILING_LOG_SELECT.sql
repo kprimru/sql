@@ -25,24 +25,46 @@ CREATE PROCEDURE [dbo].[MAILING_LOG_SELECT]
 	@Error		VarChar(256)	= NULL
 AS
 BEGIN
-	SET @Address = NullIf(@Address, '') + '%';
-	SET @Subject = '%' + NullIf(@Subject, '') + '%';
-	SET @Body = '%' + NullIf(@Body, '') + '%';
-	SET @Error = '%' + NullIf(@Error, '') + '%';
-	SET @OnlyError = IsNull(@OnlyError, 0);
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT
-		Date, MailingTypeName, L.address, L.subject, L.body, L.status, L.error
-	FROM Common.MailingLog			L
-	INNER JOIN Common.MailingType	T ON L.TypeID = T.MailingTypeId
-	WHERE	(L.Date >= @DateFrom OR @DateFrom IS NULL)
-		AND (L.Date >= @DateTo OR @DateTo IS NULL)
-		AND (L.TypeId = @Type OR @Type IS NULL)
-		AND (L.Address LIKE @Address OR @Address IS NULL)
-		AND (L.Subject LIKE @Subject OR @Subject IS NULL)
-		AND (L.Body LIKE @Body OR @Body IS NULL)
-		AND (L.Status = 1 AND @OnlyError = 1 OR @OnlyError = 0)
-		AND (L.Error LIKE @Error OR @Error IS NULL)
-	ORDER BY Date DESC
-	OPTION(RECOMPILE)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @Address = NullIf(@Address, '') + '%';
+		SET @Subject = '%' + NullIf(@Subject, '') + '%';
+		SET @Body = '%' + NullIf(@Body, '') + '%';
+		SET @Error = '%' + NullIf(@Error, '') + '%';
+		SET @OnlyError = IsNull(@OnlyError, 0);
+
+		SELECT
+			Date, MailingTypeName, L.address, L.subject, L.body, L.status, L.error
+		FROM Common.MailingLog			L
+		INNER JOIN Common.MailingType	T ON L.TypeID = T.MailingTypeId
+		WHERE	(L.Date >= @DateFrom OR @DateFrom IS NULL)
+			AND (L.Date >= @DateTo OR @DateTo IS NULL)
+			AND (L.TypeId = @Type OR @Type IS NULL)
+			AND (L.Address LIKE @Address OR @Address IS NULL)
+			AND (L.Subject LIKE @Subject OR @Subject IS NULL)
+			AND (L.Body LIKE @Body OR @Body IS NULL)
+			AND (L.Status = 1 AND @OnlyError = 1 OR @OnlyError = 0)
+			AND (L.Error LIKE @Error OR @Error IS NULL)
+		ORDER BY Date DESC
+		OPTION(RECOMPILE)
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

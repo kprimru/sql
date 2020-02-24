@@ -10,58 +10,80 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		a.ClientID, 
-		ClientFullName,
-		ClientOfficial,
-		ClientINN, 
-		ClientTypeID,		
-		ClientServiceID AS ServiceID, 
-		ClientDayBegin, 
-		ClientDayEnd, 
-		DinnerBegin,
-		DinnerEnd,
-		PayTypeID, 
-		ClientMainBook, ClientNewspaper, 
-		StatusID AS ServiceStatusID,
-		ClientActivity, 
-		ClientNote,
-		ServiceTypeID, 
-		ClientShortName,		
-		OriClient,
-		ClientEmail,
-		DayID,
-		RangeID,
-		ServiceStart,
-		ServiceTime,
-		ClientKind_Id,
-		ClientPlace,
-		PurchaseTypeID,
-		ID_HEAD,
-		CASE
-			WHEN WCL_ID IS NULL THEN CONVERT(BIT, 0)
-			ELSE CONVERT(BIT, 1)
-		END AS ClientEdit,
-		CONVERT(BIT, CASE 
-			WHEN EXISTS
-				(
-					SELECT *
-					FROM 
-						dbo.ClientDistrView z WITH(NOEXPAND)
-						INNER JOIN dbo.SystemTable x ON x.HostID = z.HostID
-						INNER JOIN dbo.BLACK_LIST_REG y ON z.DISTR = y.DISTR AND z.COMP = y.COMP AND x.SystemID = y.ID_SYS
-					WHERE z.ID_CLIENT = a.ClientID AND P_DELETE = 0 AND z.DS_REG = 0
-				) THEN 1
-			ELSE 0
-		END) AS IPLock,
-		CA_STR,
-		CA_FULL,
-		STT_CHECK, HST_CHECK, USR_CHECK, INET_CHECK,
-		IsLarge, IsDebtor,
-		ClientVisitCountID
-	FROM
-		dbo.ClientTable a
-		LEFT OUTER JOIN dbo.ClientWriteList() ON WCL_ID = ClientID
-		LEFT OUTER JOIN dbo.ClientAddressView d ON d.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
-	WHERE a.ClientID = @CLIENTID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			a.ClientID, 
+			ClientFullName,
+			ClientOfficial,
+			ClientINN, 
+			ClientTypeID,		
+			ClientServiceID AS ServiceID, 
+			ClientDayBegin, 
+			ClientDayEnd, 
+			DinnerBegin,
+			DinnerEnd,
+			PayTypeID, 
+			ClientMainBook, ClientNewspaper, 
+			StatusID AS ServiceStatusID,
+			ClientActivity, 
+			ClientNote,
+			ServiceTypeID, 
+			ClientShortName,		
+			OriClient,
+			ClientEmail,
+			DayID,
+			RangeID,
+			ServiceStart,
+			ServiceTime,
+			ClientKind_Id,
+			ClientPlace,
+			PurchaseTypeID,
+			ID_HEAD,
+			CASE
+				WHEN WCL_ID IS NULL THEN CONVERT(BIT, 0)
+				ELSE CONVERT(BIT, 1)
+			END AS ClientEdit,
+			CONVERT(BIT, CASE 
+				WHEN EXISTS
+					(
+						SELECT *
+						FROM 
+							dbo.ClientDistrView z WITH(NOEXPAND)
+							INNER JOIN dbo.SystemTable x ON x.HostID = z.HostID
+							INNER JOIN dbo.BLACK_LIST_REG y ON z.DISTR = y.DISTR AND z.COMP = y.COMP AND x.SystemID = y.ID_SYS
+						WHERE z.ID_CLIENT = a.ClientID AND P_DELETE = 0 AND z.DS_REG = 0
+					) THEN 1
+				ELSE 0
+			END) AS IPLock,
+			CA_STR,
+			CA_FULL,
+			STT_CHECK, HST_CHECK, USR_CHECK, INET_CHECK,
+			IsLarge, IsDebtor,
+			ClientVisitCountID
+		FROM
+			dbo.ClientTable a
+			LEFT OUTER JOIN dbo.ClientWriteList() ON WCL_ID = ClientID
+			LEFT OUTER JOIN dbo.ClientAddressView d ON d.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
+		WHERE a.ClientID = @CLIENTID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

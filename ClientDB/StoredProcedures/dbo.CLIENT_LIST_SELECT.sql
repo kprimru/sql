@@ -9,41 +9,63 @@ AS
 BEGIN
 	SET NOCOUNT ON;	
 
-	DECLARE @Client Table
-	(
-		CL_ID INT PRIMARY KEY CLUSTERED
-	);
-	
-	DECLARE @RClient Table
-	(
-		RCL_ID INT PRIMARY KEY CLUSTERED
-	);
-	
-	DECLARE @WClient Table
-	(
-		WCL_ID INT PRIMARY KEY CLUSTERED
-	);
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @RClient
-	SELECT RCL_ID
-	FROM dbo.ClientReadList()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO @WClient
-	SELECT WCL_ID
-	FROM dbo.ClientWriteList()
+	BEGIN TRY
 
-	INSERT INTO @Client(CL_ID)
-	SELECT RCL_ID
-	FROM @RClient		
+		DECLARE @Client Table
+		(
+			CL_ID INT PRIMARY KEY CLUSTERED
+		);
 		
+		DECLARE @RClient Table
+		(
+			RCL_ID INT PRIMARY KEY CLUSTERED
+		);
+		
+		DECLARE @WClient Table
+		(
+			WCL_ID INT PRIMARY KEY CLUSTERED
+		);
 
-	SELECT 
-		ClientID = CL_ID, 
-		CASE 
-			WHEN WCL_ID IS NULL THEN CONVERT(BIT, 0)
-			ELSE CONVERT(BIT, 1)
-		END AS ClientEdit
-	FROM @Client
-	LEFT MERGE JOIN @WClient ON CL_ID = WCL_ID
-	ORDER BY CL_ID
+		INSERT INTO @RClient
+		SELECT RCL_ID
+		FROM dbo.ClientReadList()
+
+		INSERT INTO @WClient
+		SELECT WCL_ID
+		FROM dbo.ClientWriteList()
+
+		INSERT INTO @Client(CL_ID)
+		SELECT RCL_ID
+		FROM @RClient		
+			
+
+		SELECT 
+			ClientID = CL_ID, 
+			CASE 
+				WHEN WCL_ID IS NULL THEN CONVERT(BIT, 0)
+				ELSE CONVERT(BIT, 1)
+			END AS ClientEdit
+		FROM @Client
+		LEFT MERGE JOIN @WClient ON CL_ID = WCL_ID
+		ORDER BY CL_ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

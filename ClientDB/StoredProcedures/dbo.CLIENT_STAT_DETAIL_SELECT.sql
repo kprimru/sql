@@ -12,22 +12,44 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT
-		P.NAME,
-		[UpDate],
-		Net,
-		UserCount,
-		EnterSum,
-		[0Enter],
-		[1Enter],
-		[2Enter],
-		[3Enter],
-		SessionTimeSum = dbo.TimeMinToStr(SessionTimeSum),
-		SessionTimeAVG = dbo.TimeSecToStr(Floor(SessionTimeAVG * 60))
-	FROM dbo.ClientStatDetail D
-	INNER JOIN Common.Period P ON D.WeekId = P.Id
-	WHERE	HostId = @HOST
-		AND Distr = @DISTR
-		AND Comp = @COMP
-	ORDER BY P.START DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT
+			P.NAME,
+			[UpDate],
+			Net,
+			UserCount,
+			EnterSum,
+			[0Enter],
+			[1Enter],
+			[2Enter],
+			[3Enter],
+			SessionTimeSum = dbo.TimeMinToStr(SessionTimeSum),
+			SessionTimeAVG = dbo.TimeSecToStr(Floor(SessionTimeAVG * 60))
+		FROM dbo.ClientStatDetail D
+		INNER JOIN Common.Period P ON D.WeekId = P.Id
+		WHERE	HostId = @HOST
+			AND Distr = @DISTR
+			AND Comp = @COMP
+		ORDER BY P.START DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT SH_ID, SH_NAME, SH_REG
-	FROM dbo.Subhost
-	WHERE @FILTER IS NULL
-		OR SH_NAME LIKE @FILTER
-		OR SH_REG LIKE @FILTER
-	ORDER BY SH_REG
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SH_ID, SH_NAME, SH_REG
+		FROM dbo.Subhost
+		WHERE @FILTER IS NULL
+			OR SH_NAME LIKE @FILTER
+			OR SH_REG LIKE @FILTER
+		ORDER BY SH_REG
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

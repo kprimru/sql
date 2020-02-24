@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ID, NUM, NAME, FILE_PATH
-	FROM Contract.Forms
-	WHERE @FILTER IS NULL
-		OR NAME LIKE @FILTER
-		OR NUM LIKE @FILTER
-	ORDER BY NUM
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ID, NUM, NAME, FILE_PATH
+		FROM Contract.Forms
+		WHERE @FILTER IS NULL
+			OR NAME LIKE @FILTER
+			OR NUM LIKE @FILTER
+		ORDER BY NUM
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

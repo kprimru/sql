@@ -9,65 +9,86 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
 	DECLARE @CONTROL_DATE SMALLDATETIME
 
-	SET @CONTROL_DATE = dbo.DateOf(DATEADD(MONTH, 1, GETDATE()))
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT 
-		b.ClientID, ClientFullName, ManagerName, ExpireDate AS ContractEnd
-	FROM 
-		dbo.ClientWriteList()
-		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
-		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
-		--INNER JOIN dbo.ContractTable a ON a.ClientID = b.ClientID
-		INNER JOIN Contract.ClientContracts CC ON CC.Client_Id = b.ClientID
-		INNER JOIN Contract.Contract C ON C.ID = CC.Contract_Id
-		CROSS APPLY
-		(
-			SELECT TOP (1) ExpireDate
-			FROM Contract.ClientContractsDetails D
-			WHERE D.Contract_Id = C.ID
-			ORDER BY DATE DESC
-		) D
-	WHERE 
-		--ContractEnd <= @CONTROL_DATE
-		C.DateTo IS NULL
-		AND D.ExpireDate <= @CONTROL_DATE
-		/*
-		AND NOT EXISTS
+	BEGIN TRY
+		SET @CONTROL_DATE = dbo.DateOf(DATEADD(MONTH, 1, GETDATE()))
+
+		SELECT 
+			b.ClientID, ClientFullName, ManagerName, ExpireDate AS ContractEnd
+		FROM 
+			dbo.ClientWriteList()
+			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+			--INNER JOIN dbo.ContractTable a ON a.ClientID = b.ClientID
+			INNER JOIN Contract.ClientContracts CC ON CC.Client_Id = b.ClientID
+			INNER JOIN Contract.Contract C ON C.ID = CC.Contract_Id
+			CROSS APPLY
 			(
-				SELECT *
-				FROM dbo.ContractTable e
-				WHERE e.ClientID = a.ClientID
-					AND e.ContractEnd >= @CONTROL_DATE
-			)
-		*/
-	--GROUP BY b.ClientID, ClientFullName, ManagerName
+				SELECT TOP (1) ExpireDate
+				FROM Contract.ClientContractsDetails D
+				WHERE D.Contract_Id = C.ID
+				ORDER BY DATE DESC
+			) D
+		WHERE 
+			--ContractEnd <= @CONTROL_DATE
+			C.DateTo IS NULL
+			AND D.ExpireDate <= @CONTROL_DATE
+			/*
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ContractTable e
+					WHERE e.ClientID = a.ClientID
+						AND e.ContractEnd >= @CONTROL_DATE
+				)
+			*/
+		--GROUP BY b.ClientID, ClientFullName, ManagerName
+		
+		UNION ALL
+		
+		SELECT 
+			b.ClientID, ClientFullName, ManagerName, MAX(ContractEnd) AS ContractEnd
+		FROM 
+			dbo.ClientWriteList()
+			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
+			INNER JOIN dbo.ContractTable a ON a.ClientID = b.ClientID
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+		WHERE ContractEnd <= @CONTROL_DATE
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ContractTable e
+					WHERE e.ClientID = a.ClientID
+						AND e.ContractEnd >= @CONTROL_DATE
+				)
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM Contract.ClientContracts CC
+					WHERE CC.Client_Id = b.ClientID
+				)
+		GROUP BY b.ClientID, ClientFullName, ManagerName
+		
+		ORDER BY ClientFullName	
 	
-	UNION ALL
-	
-	SELECT 
-		b.ClientID, ClientFullName, ManagerName, MAX(ContractEnd) AS ContractEnd
-	FROM 
-		dbo.ClientWriteList()
-		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
-		INNER JOIN dbo.ContractTable a ON a.ClientID = b.ClientID
-		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
-	WHERE ContractEnd <= @CONTROL_DATE
-		AND NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.ContractTable e
-				WHERE e.ClientID = a.ClientID
-					AND e.ContractEnd >= @CONTROL_DATE
-			)
-		AND NOT EXISTS
-			(
-				SELECT *
-				FROM Contract.ClientContracts CC
-				WHERE CC.Client_Id = b.ClientID
-			)
-	GROUP BY b.ClientID, ClientFullName, ManagerName
-	
-	ORDER BY ClientFullName	
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

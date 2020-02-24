@@ -10,16 +10,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		SQ_ID, SQ_TEXT, SQ_SINGLE, SQ_BOLD, SQ_ORDER,
-		(
-			SELECT COUNT(*) 
-			FROM dbo.SatisfactionAnswer 
-			WHERE SA_ID_QUESTION = SQ_ID
-		) AS SQ_ANSWER
-	FROM dbo.SatisfactionQuestion
-	WHERE @FILTER IS NULL
-		OR SQ_TEXT LIKE @FILTER
-		OR SQ_ORDER LIKE @FILTER
-	ORDER BY SQ_ORDER, SQ_TEXT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			SQ_ID, SQ_TEXT, SQ_SINGLE, SQ_BOLD, SQ_ORDER,
+			(
+				SELECT COUNT(*) 
+				FROM dbo.SatisfactionAnswer 
+				WHERE SA_ID_QUESTION = SQ_ID
+			) AS SQ_ANSWER
+		FROM dbo.SatisfactionQuestion
+		WHERE @FILTER IS NULL
+			OR SQ_TEXT LIKE @FILTER
+			OR SQ_ORDER LIKE @FILTER
+		ORDER BY SQ_ORDER, SQ_TEXT
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

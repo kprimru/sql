@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT a.ID, b.NAME, START, FINISH, NOTE, UPD_DATE, UPD_USER
-	FROM 
-		dbo.ClientJournal a
-		INNER JOIN dbo.Journal b ON a.ID_JOURNAL = b.ID
-	WHERE ID_CLIENT = @ID AND STATUS = 1
-	ORDER BY FINISH DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT a.ID, b.NAME, START, FINISH, NOTE, UPD_DATE, UPD_USER
+		FROM 
+			dbo.ClientJournal a
+			INNER JOIN dbo.Journal b ON a.ID_JOURNAL = b.ID
+		WHERE ID_CLIENT = @ID AND STATUS = 1
+		ORDER BY FINISH DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

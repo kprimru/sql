@@ -11,13 +11,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT NAME, DistrTypeName, COEF, WEIGHT, RND, b.ID, c.DistrTypeID
-	FROM 
-		dbo.DistrTypeCoef a
-		INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
-		INNER JOIN dbo.DistrTypeTable c ON c.DistrTypeID = a.ID_NET
-	WHERE (DistrTypeID = @NET OR @NET IS NULL)
-		AND (b.ID = @PERIOD OR @PERIOD IS NULL)
-		AND START <= DATEADD(MONTH, 3, GETDATE())
-	ORDER BY START DESC, DistrTypeOrder
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT NAME, DistrTypeName, COEF, WEIGHT, RND, b.ID, c.DistrTypeID
+		FROM 
+			dbo.DistrTypeCoef a
+			INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
+			INNER JOIN dbo.DistrTypeTable c ON c.DistrTypeID = a.ID_NET
+		WHERE (DistrTypeID = @NET OR @NET IS NULL)
+			AND (b.ID = @PERIOD OR @PERIOD IS NULL)
+			AND START <= DATEADD(MONTH, 3, GETDATE())
+		ORDER BY START DESC, DistrTypeOrder
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+

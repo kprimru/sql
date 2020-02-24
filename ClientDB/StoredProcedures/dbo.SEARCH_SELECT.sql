@@ -15,24 +15,46 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @BEGIN IS NULL
-		SET @BEGIN = DATEADD(DAY, -5, GETDATE())
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @END IS NULL
-		SET @END = GETDATE()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @USER IS NULL
-		SET @USER = ORIGINAL_LOGIN()
+	BEGIN TRY
 
-	IF @HOST IS NULL
-		SET @HOST = HOST_NAME()
-	
-	SELECT MAX(SearchDateTime) AS SearchDateTime, SearchCategory, SearchText
-	FROM dbo.SearchTable
-	WHERE SearchDateTime >= @BEGIN 
-		AND SearchDateTime <= @END
-		AND SearchUser = @USER
-		AND SearchHost = @HOST
-	GROUP BY SearchCategory, SearchText
-	ORDER BY SearchDateTime DESC
+		IF @BEGIN IS NULL
+			SET @BEGIN = DATEADD(DAY, -5, GETDATE())
+
+		IF @END IS NULL
+			SET @END = GETDATE()
+
+		IF @USER IS NULL
+			SET @USER = ORIGINAL_LOGIN()
+
+		IF @HOST IS NULL
+			SET @HOST = HOST_NAME()
+		
+		SELECT MAX(SearchDateTime) AS SearchDateTime, SearchCategory, SearchText
+		FROM dbo.SearchTable
+		WHERE SearchDateTime >= @BEGIN 
+			AND SearchDateTime <= @END
+			AND SearchUser = @USER
+			AND SearchHost = @HOST
+		GROUP BY SearchCategory, SearchText
+		ORDER BY SearchDateTime DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

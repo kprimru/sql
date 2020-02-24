@@ -9,23 +9,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		b.ClientID, ClientFullName, 
-		ClientDutyDateTime,
-		DutyName, 
-		ClientDutyNPO, ClientDutyComment
-	FROM 
-		dbo.ClientDutyTable a
-		INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
-		INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 
-	WHERE ClientDutyComplete = 1 AND a.STATUS = 1
-		AND NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.ClientDutyResult z
-				WHERE z.ID_DUTY = a.ClientDutyID
-				
-			)
-		AND ClientDutyDateTime >= '20170101'
-	ORDER BY ClientDutyDateTime DESC, ClientFullName
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			b.ClientID, ClientFullName, 
+			ClientDutyDateTime,
+			DutyName, 
+			ClientDutyNPO, ClientDutyComment
+		FROM 
+			dbo.ClientDutyTable a
+			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
+			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 
+		WHERE ClientDutyComplete = 1 AND a.STATUS = 1
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientDutyResult z
+					WHERE z.ID_DUTY = a.ClientDutyID
+					
+				)
+			AND ClientDutyDateTime >= '20170101'
+		ORDER BY ClientDutyDateTime DESC, ClientFullName
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

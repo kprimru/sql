@@ -10,11 +10,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ID, NAME, CAPTION, RATE, [DEFAULT]
-	FROM Common.Tax
-	WHERE @FILTER IS NULL
-		OR NAME LIKE @FILTER
-		OR CAPTION LIKE @FILTER
-		OR CONVERT(VARCHAR(50), RATE) LIKE @FILTER
-	ORDER BY RATE
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ID, NAME, CAPTION, RATE, [DEFAULT]
+		FROM Common.Tax
+		WHERE @FILTER IS NULL
+			OR NAME LIKE @FILTER
+			OR CAPTION LIKE @FILTER
+			OR CONVERT(VARCHAR(50), RATE) LIKE @FILTER
+		ORDER BY RATE
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

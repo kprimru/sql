@@ -11,15 +11,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DutyID, DutyName, DutyLogin
-	FROM dbo.DutyTable
-	WHERE 
-		(@ACTIVE = 0 OR DutyActive = 1)
-		AND
-			(
-				@FILTER IS NULL
-				OR DutyName LIKE @FILTER
-				OR DutyLogin LIKE @FILTER
-			)
-	ORDER BY DutyName
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DutyID, DutyName, DutyLogin
+		FROM dbo.DutyTable
+		WHERE 
+			(@ACTIVE = 0 OR DutyActive = 1)
+			AND
+				(
+					@FILTER IS NULL
+					OR DutyName LIKE @FILTER
+					OR DutyLogin LIKE @FILTER
+				)
+		ORDER BY DutyName
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

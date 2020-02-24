@@ -10,17 +10,39 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DistrStr + ' (' + DistrTypeName + ')' AS DIS_STR, HostID, DISTR, COMP
-	FROM 
-		dbo.ClientDistrView a WITH(NOEXPAND)
-	WHERE ID_CLIENT = @CLIENT 
-		AND EXISTS
-			(
-				SELECT *
-				FROM dbo.OnlineActivity z
-				WHERE a.HostID = z.ID_HOST
-					AND a.DISTR = z.DISTR
-					AND a.COMP = z.COMP
-			)
-	ORDER BY SystemOrder, DISTR, COMP
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DistrStr + ' (' + DistrTypeName + ')' AS DIS_STR, HostID, DISTR, COMP
+		FROM 
+			dbo.ClientDistrView a WITH(NOEXPAND)
+		WHERE ID_CLIENT = @CLIENT 
+			AND EXISTS
+				(
+					SELECT *
+					FROM dbo.OnlineActivity z
+					WHERE a.HostID = z.ID_HOST
+						AND a.DISTR = z.DISTR
+						AND a.COMP = z.COMP
+				)
+		ORDER BY SystemOrder, DISTR, COMP
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -12,12 +12,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT
-		b.NAME, LGN, CASE ACTIVITY WHEN 1 THEN 'Да' WHEN 0 THEN 'Нет' ELSE '???' END AS ACTIVITY_DATA,
-		ACTIVITY, LOGIN_CNT, dbo.TimeMinToStr(SESSION_TIME) AS SESSION_TIME
-	FROM 
-		dbo.OnlineActivity a
-		INNER JOIN Common.Period b ON a.ID_WEEK = b.ID
-	WHERE a.ID_HOST = @HOST AND a.DISTR = @DISTR AND a.COMP = @COMP
-	ORDER BY b.START DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			b.NAME, LGN, CASE ACTIVITY WHEN 1 THEN 'Да' WHEN 0 THEN 'Нет' ELSE '???' END AS ACTIVITY_DATA,
+			ACTIVITY, LOGIN_CNT, dbo.TimeMinToStr(SESSION_TIME) AS SESSION_TIME
+		FROM 
+			dbo.OnlineActivity a
+			INNER JOIN Common.Period b ON a.ID_WEEK = b.ID
+		WHERE a.ID_HOST = @HOST AND a.DISTR = @DISTR AND a.COMP = @COMP
+		ORDER BY b.START DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

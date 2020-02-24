@@ -10,11 +10,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DistrTypeID, DistrTypeName
-	FROM dbo.DistrTypeTable
-	WHERE (@FILTER IS NULL
-		OR DistrTypeName LIKE @FILTER)
-		AND (DistrTypeBaseCheck = 1)
-	ORDER BY DistrTypeOrder
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DistrTypeID, DistrTypeName
+		FROM dbo.DistrTypeTable
+		WHERE (@FILTER IS NULL
+			OR DistrTypeName LIKE @FILTER)
+			AND (DistrTypeBaseCheck = 1)
+		ORDER BY DistrTypeOrder
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 

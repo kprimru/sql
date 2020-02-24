@@ -19,6 +19,6 @@ BEGIN
 	SET @FinishDateTime	= GetDate();
 	
 	
-	INSERT INTO [Debug].[Executions:Fiinsh]([Id], [FinishDateTime], [Error])
+	INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
 	VALUES(@Id, @FinishDateTime, @Error);
 END;

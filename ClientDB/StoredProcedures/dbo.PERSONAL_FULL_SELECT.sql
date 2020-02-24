@@ -9,28 +9,50 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 	
-	SELECT PersonalShortName, DepartmentName
-	FROM dbo.PersonalTable
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UNION ALL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT ManagerName, 'Руководители сервисной службы'
-	FROM dbo.ManagerTable
+	BEGIN TRY
+	
+		SELECT PersonalShortName, DepartmentName
+		FROM dbo.PersonalTable
 
-	UNION ALL
+		UNION ALL
 
-	SELECT ServiceName, 'Сервис-инженеры'
-	FROM dbo.ServiceTable
+		SELECT ManagerName, 'Руководители сервисной службы'
+		FROM dbo.ManagerTable
 
-	UNION ALL
+		UNION ALL
 
-	SELECT TeacherName, 'Преподаватели'
-	FROM dbo.TeacherTable
+		SELECT ServiceName, 'Сервис-инженеры'
+		FROM dbo.ServiceTable
 
-	UNION ALL
+		UNION ALL
 
-	SELECT DutyName, 'Дежурная служба'
-	FROM dbo.DutyTable
+		SELECT TeacherName, 'Преподаватели'
+		FROM dbo.TeacherTable
 
-	ORDER BY PersonalShortName
+		UNION ALL
+
+		SELECT DutyName, 'Дежурная служба'
+		FROM dbo.DutyTable
+
+		ORDER BY PersonalShortName
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

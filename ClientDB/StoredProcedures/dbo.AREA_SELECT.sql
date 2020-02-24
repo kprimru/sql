@@ -10,13 +10,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT AR_ID, AR_NAME, RG_NAME, AR_PREFIX, AR_SUFFIX
-	FROM
-		dbo.Area
-		INNER JOIN dbo.Region ON RG_ID = AR_ID_REGION
-	WHERE @FILTER IS NULL
-		OR AR_NAME LIKE @FILTER
-		OR RG_NAME LIKE @FILTER
-		OR CONVERT(VARCHAR(20), RG_NUM) LIKE @FILTER
-	ORDER BY AR_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT AR_ID, AR_NAME, RG_NAME, AR_PREFIX, AR_SUFFIX
+		FROM
+			dbo.Area
+			INNER JOIN dbo.Region ON RG_ID = AR_ID_REGION
+		WHERE @FILTER IS NULL
+			OR AR_NAME LIKE @FILTER
+			OR RG_NAME LIKE @FILTER
+			OR CONVERT(VARCHAR(20), RG_NUM) LIKE @FILTER
+		ORDER BY AR_NAME
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
