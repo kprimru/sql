@@ -11,39 +11,61 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		a.principal_id AS US_ID, 0 AS US_TYPE, name AS US_NAME,
-		REVERSE(STUFF(REVERSE(
-			(
-				SELECT RoleStr + ', '
-				FROM 
-					dbo.RoleTable
-					INNER JOIN sys.database_principals b ON b.name = RoleName
-					INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
-				WHERE c.member_principal_id = a.principal_id
-				ORDER BY RoleName FOR XML PATH('')
-			)
-		), 1, 2, '')) AS US_ROLE
-	FROM sys.database_principals a
-	WHERE Type IN ('S', 'U')
-		AND name NOT IN
-			(
-				'INFORMATION_SCHEMA', 'dbo', 'guest', 'sys'
-			)
-		AND
-			(
-				@FILTER IS NULL
-				OR a.name LIKE @FILTER
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UNION ALL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT b.principal_id AS US_ID, 1 AS US_TYPE, RoleStr, ''
-	FROM 
-		dbo.RoleTable
-		INNER JOIN sys.database_principals b ON b.name = RoleName
-	WHERE @FILTER IS NULL
-		OR RoleStr LIKE @FILTER
-		OR RoleName LIKE @FILTER
-	ORDER BY US_TYPE, name
+	BEGIN TRY
+
+		SELECT 
+			a.principal_id AS US_ID, 0 AS US_TYPE, name AS US_NAME,
+			REVERSE(STUFF(REVERSE(
+				(
+					SELECT RoleStr + ', '
+					FROM 
+						dbo.RoleTable
+						INNER JOIN sys.database_principals b ON b.name = RoleName
+						INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
+					WHERE c.member_principal_id = a.principal_id
+					ORDER BY RoleName FOR XML PATH('')
+				)
+			), 1, 2, '')) AS US_ROLE
+		FROM sys.database_principals a
+		WHERE Type IN ('S', 'U')
+			AND name NOT IN
+				(
+					'INFORMATION_SCHEMA', 'dbo', 'guest', 'sys'
+				)
+			AND
+				(
+					@FILTER IS NULL
+					OR a.name LIKE @FILTER
+				)
+
+		UNION ALL
+
+		SELECT b.principal_id AS US_ID, 1 AS US_TYPE, RoleStr, ''
+		FROM 
+			dbo.RoleTable
+			INNER JOIN sys.database_principals b ON b.name = RoleName
+		WHERE @FILTER IS NULL
+			OR RoleStr LIKE @FILTER
+			OR RoleName LIKE @FILTER
+		ORDER BY US_TYPE, name
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

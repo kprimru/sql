@@ -14,6 +14,8 @@ BEGIN
 	DECLARE @ClientKind Table (Id SmallInt Primary Key Clustered);
 	DECLARE @ContactType Table (Id UniqueIdentifier Primary Key Clustered);
 	DECLARE @ClientWrite Table (Id Int Primary Key Clustered);
+	
+	DECLARE @ControlDate	SmallDateTime;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -26,6 +28,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+		SET @ControlDate = dbo.DateOf(DateAdd(DAY, -180, GetDate()))
+	
 		INSERT INTO @Statuses
 		SELECT ServiceStatusId
 		FROM [dbo].[ServiceStatusConnected]();
@@ -68,7 +72,7 @@ BEGIN
 			ORDER BY DATE DESC
 		) LD
 		WHERE	ManagerId NOT IN (SELECT M.[Id] FROM @ManagerExclude M)
-			AND (LAST_DATE IS NULL OR DATEDIFF(DAY, LAST_DATE, GETDATE()) > 180)
+			AND (LAST_DATE IS NULL OR LAST_DATE < @ControlDate)
 		ORDER BY ISNULL(LAST_DATE, GETDATE()) DESC, LAST_DATE DESC, ManagerId, ServiceId
 		OPTION(RECOMPILE);
 		

@@ -10,11 +10,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT PRC_ID, PRC_NAME, PRC_FREQ, PRC_CORE, PF_NAME
-	FROM 
-		USR.Processor
-		LEFT OUTER JOIN USR.ProcessorFamily ON PF_ID = PRC_ID_FAMILY
-	WHERE @FILTER IS NULL
-		OR PRC_NAME LIKE @FILTER
-	ORDER BY PRC_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PRC_ID, PRC_NAME, PRC_FREQ, PRC_CORE, PF_NAME
+		FROM 
+			USR.Processor
+			LEFT OUTER JOIN USR.ProcessorFamily ON PF_ID = PRC_ID_FAMILY
+		WHERE @FILTER IS NULL
+			OR PRC_NAME LIKE @FILTER
+		ORDER BY PRC_NAME
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

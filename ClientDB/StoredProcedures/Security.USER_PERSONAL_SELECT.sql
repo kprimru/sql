@@ -9,42 +9,64 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @MANAGER	INT
-	DECLARE @SERVICE	INT
-	DECLARE @DUTY		INT
-	DECLARE @TEACHER	INT
-	DECLARE @LAWYER		UNIQUEIDENTIFIER
-	
-	--IF IS_MEMBER('DBTeacher') = 1 OR IS_MEMBER('DBSuperTeacher') = 1
-		SELECT @TEACHER = TeacherID
-		FROM dbo.TeacherTable
-		WHERE TeacherLogin = ORIGINAL_LOGIN()
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	--IF IS_MEMBER('DBDutyService') = 1
-		SELECT @DUTY = DutyID
-		FROM dbo.DutyTable
-		WHERE DutyLogin = ORIGINAL_LOGIN()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	--IF IS_MEMBER('DBService') = 1
-		SELECT @SERVICE = ServiceID, @MANAGER = ManagerID
-		FROM dbo.ServiceTable
-		WHERE ServiceLogin = ORIGINAL_LOGIN()
-			AND ServiceDismiss IS NULL			
+	BEGIN TRY
 
-	--IF IS_MEMBER('DBManager') = 1
-		SELECT @MANAGER = ManagerID
-		FROM dbo.ManagerTable
-		WHERE ManagerLogin = ORIGINAL_LOGIN()
+		DECLARE @MANAGER	INT
+		DECLARE @SERVICE	INT
+		DECLARE @DUTY		INT
+		DECLARE @TEACHER	INT
+		DECLARE @LAWYER		UNIQUEIDENTIFIER
+		
+		--IF IS_MEMBER('DBTeacher') = 1 OR IS_MEMBER('DBSuperTeacher') = 1
+			SELECT @TEACHER = TeacherID
+			FROM dbo.TeacherTable
+			WHERE TeacherLogin = ORIGINAL_LOGIN()
 
-	--IF IS_MEMBER('DBLawyer') = 1
-		SELECT @LAWYER = LW_ID
-		FROM dbo.Lawyer
-		WHERE LW_LOGIN = ORIGINAL_LOGIN()
+		--IF IS_MEMBER('DBDutyService') = 1
+			SELECT @DUTY = DutyID
+			FROM dbo.DutyTable
+			WHERE DutyLogin = ORIGINAL_LOGIN()
 
-	SELECT 
-		@SERVICE AS ServiceID, 
-		@MANAGER AS ManagerID, 
-		@DUTY AS DutyID, 
-		@TEACHER AS TeacherID,
-		@LAWYER AS LW_ID
+		--IF IS_MEMBER('DBService') = 1
+			SELECT @SERVICE = ServiceID, @MANAGER = ManagerID
+			FROM dbo.ServiceTable
+			WHERE ServiceLogin = ORIGINAL_LOGIN()
+				AND ServiceDismiss IS NULL			
+
+		--IF IS_MEMBER('DBManager') = 1
+			SELECT @MANAGER = ManagerID
+			FROM dbo.ManagerTable
+			WHERE ManagerLogin = ORIGINAL_LOGIN()
+
+		--IF IS_MEMBER('DBLawyer') = 1
+			SELECT @LAWYER = LW_ID
+			FROM dbo.Lawyer
+			WHERE LW_LOGIN = ORIGINAL_LOGIN()
+
+		SELECT 
+			@SERVICE AS ServiceID, 
+			@MANAGER AS ManagerID, 
+			@DUTY AS DutyID, 
+			@TEACHER AS TeacherID,
+			@LAWYER AS LW_ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

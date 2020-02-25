@@ -12,12 +12,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		@TOTAL_ROW = (SELECT row_count FROM Maintenance.DatabaseSize() WHERE obj_name = 'dbo.ClientStat'),
-		@TOTAL_RESERV = dbo.FileByteSizeToStr(SUM(reserved))
-	FROM Maintenance.DatabaseSize()
-	WHERE obj_name IN
-		(
-			'dbo.ClientStat'
-		)	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			@TOTAL_ROW = (SELECT row_count FROM Maintenance.DatabaseSize() WHERE obj_name = 'dbo.ClientStat'),
+			@TOTAL_RESERV = dbo.FileByteSizeToStr(SUM(reserved))
+		FROM Maintenance.DatabaseSize()
+		WHERE obj_name IN
+			(
+				'dbo.ClientStat'
+			)	
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

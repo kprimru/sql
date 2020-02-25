@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT PO_ID, PO_NAME, PO_NUM
-	FROM Purchase.PlacementOrder
-	WHERE @FILTER IS NULL
-		OR PO_NAME LIKE @FILTER
-		OR CONVERT(VARCHAR(20), PO_NUM) LIKE @FILTER
-	ORDER BY PO_NUM, PO_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PO_ID, PO_NAME, PO_NUM
+		FROM Purchase.PlacementOrder
+		WHERE @FILTER IS NULL
+			OR PO_NAME LIKE @FILTER
+			OR CONVERT(VARCHAR(20), PO_NUM) LIKE @FILTER
+		ORDER BY PO_NUM, PO_NAME
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

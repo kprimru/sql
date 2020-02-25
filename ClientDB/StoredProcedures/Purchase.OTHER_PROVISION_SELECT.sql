@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT OP_ID, OP_NAME, OP_SHORT
-	FROM Purchase.OtherProvision
-	WHERE @FILTER IS NULL
-		OR OP_NAME LIKE @FILTER
-		OR OP_SHORT LIKE @FILTER
-	ORDER BY OP_SHORT, OP_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT OP_ID, OP_NAME, OP_SHORT
+		FROM Purchase.OtherProvision
+		WHERE @FILTER IS NULL
+			OR OP_NAME LIKE @FILTER
+			OR OP_SHORT LIKE @FILTER
+		ORDER BY OP_SHORT, OP_NAME
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -10,13 +10,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT a.ID, INFO_DATE, CALL_DATE,
-		b.NAME AS LAW_NAME,
-		c.NAME AS STAT_NAME
-	FROM 
-		Tender.Tender a
-		INNER JOIN Tender.Status c ON a.ID_STATUS = c.ID
-		LEFT OUTER JOIN Tender.Law b ON a.ID_LAW = b.ID
-	WHERE ID_CLIENT = @CLIENT AND STATUS = 1
-	ORDER BY INFO_DATE DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT a.ID, INFO_DATE, CALL_DATE,
+			b.NAME AS LAW_NAME,
+			c.NAME AS STAT_NAME
+		FROM 
+			Tender.Tender a
+			INNER JOIN Tender.Status c ON a.ID_STATUS = c.ID
+			LEFT OUTER JOIN Tender.Law b ON a.ID_LAW = b.ID
+		WHERE ID_CLIENT = @CLIENT AND STATUS = 1
+		ORDER BY INFO_DATE DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

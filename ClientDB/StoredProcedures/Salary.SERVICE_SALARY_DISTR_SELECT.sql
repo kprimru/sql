@@ -10,11 +10,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		ID, CLIENT, DISTR_STR, OPER, PRICE_OLD, PRICE_NEW, PRICE_NEW - PRICE_OLD AS PRICE_DELTA, 
-		WEIGHT_OLD, WEIGHT_NEW, WEIGHT_NEW - WEIGHT_OLD AS WEIGHT_DELTA
-	FROM 
-		Salary.ServiceDistr		
-	WHERE ID_SALARY = @ID
-	ORDER BY CLIENT, DISTR_STR
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			ID, CLIENT, DISTR_STR, OPER, PRICE_OLD, PRICE_NEW, PRICE_NEW - PRICE_OLD AS PRICE_DELTA, 
+			WEIGHT_OLD, WEIGHT_NEW, WEIGHT_NEW - WEIGHT_OLD AS WEIGHT_DELTA
+		FROM 
+			Salary.ServiceDistr		
+		WHERE ID_SALARY = @ID
+		ORDER BY CLIENT, DISTR_STR
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

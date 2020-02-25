@@ -10,8 +10,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT TOP(100) *, DATEDIFF(ms, START, FINISH) AS EX_TIME
-	FROM Maintenance.Jobs
-	WHERE	Type_Id=@ID
-	ORDER BY START DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT TOP(100) *, DATEDIFF(ms, START, FINISH) AS EX_TIME
+		FROM Maintenance.Jobs
+		WHERE	Type_Id=@ID
+		ORDER BY START DESC
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END;

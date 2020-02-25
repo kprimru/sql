@@ -9,8 +9,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DISTINCT SUBJECT
-	FROM Tender.Call
-	WHERE STATUS = 1
-	ORDER BY SUBJECT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DISTINCT SUBJECT
+		FROM Tender.Call
+		WHERE STATUS = 1
+		ORDER BY SUBJECT
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
