@@ -13,22 +13,44 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @ID IS NULL
-	BEGIN
-		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-		
-		INSERT INTO Contract.Forms(NUM, NAME, FILE_PATH)
-			OUTPUT inserted.ID INTO @TBL
-			VALUES(@NUM, @NAME, @PATH)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @ID IS NULL
+		BEGIN
+			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 			
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-	BEGIN
-		UPDATE Contract.Forms
-		SET	NAME = @NAME,
-			NUM = @NUM,
-			FILE_PATH = @PATH
-		WHERE ID = @ID
-	END	
+			INSERT INTO Contract.Forms(NUM, NAME, FILE_PATH)
+				OUTPUT inserted.ID INTO @TBL
+				VALUES(@NUM, @NAME, @PATH)
+				
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+		BEGIN
+			UPDATE Contract.Forms
+			SET	NAME = @NAME,
+				NUM = @NUM,
+				FILE_PATH = @PATH
+			WHERE ID = @ID
+		END	
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

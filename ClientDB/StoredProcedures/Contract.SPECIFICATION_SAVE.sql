@@ -15,42 +15,63 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @ID IS NULL
-	BEGIN
-		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-		
-		INSERT INTO Contract.Specification(NUM, NAME, NOTE, FILE_PATH)
-			OUTPUT inserted.ID INTO @TBL
-			VALUES(@NUM, @NAME, @NOTE, @FILE_PATH)
-			
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-		UPDATE Contract.Specification
-		SET NUM			=	@NUM,
-			NAME		=	@NAME,
-			NOTE		=	@NOTE,
-			FILE_PATH	=	@FILE_PATH,
-			LAST		=	GETDATE()
-		WHERE ID = @ID
-		
-	DELETE 
-	FROM Contract.SpecificationForms
-	WHERE ID_SPECIFICATION = @ID
-		AND ID_FORM NOT IN
-			(
-				SELECT a.ID
-				FROM dbo.TableGUIDFromXML(@FORMS) AS a
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Contract.SpecificationForms(ID_SPECIFICATION, ID_FORM)
-		SELECT @ID, a.ID
-		FROM dbo.TableGUIDFromXML(@FORMS) AS a
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM Contract.SpecificationForms
-				WHERE ID_SPECIFICATION = @ID
-					AND ID_FORM = a.ID
-			)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		IF @ID IS NULL
+		BEGIN
+			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+			
+			INSERT INTO Contract.Specification(NUM, NAME, NOTE, FILE_PATH)
+				OUTPUT inserted.ID INTO @TBL
+				VALUES(@NUM, @NAME, @NOTE, @FILE_PATH)
+				
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+			UPDATE Contract.Specification
+			SET NUM			=	@NUM,
+				NAME		=	@NAME,
+				NOTE		=	@NOTE,
+				FILE_PATH	=	@FILE_PATH
+			WHERE ID = @ID
+			
+		DELETE 
+		FROM Contract.SpecificationForms
+		WHERE ID_SPECIFICATION = @ID
+			AND ID_FORM NOT IN
+				(
+					SELECT a.ID
+					FROM dbo.TableGUIDFromXML(@FORMS) AS a
+				)
+
+		INSERT INTO Contract.SpecificationForms(ID_SPECIFICATION, ID_FORM)
+			SELECT @ID, a.ID
+			FROM dbo.TableGUIDFromXML(@FORMS) AS a
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM Contract.SpecificationForms
+					WHERE ID_SPECIFICATION = @ID
+						AND ID_FORM = a.ID
+				)
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

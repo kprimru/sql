@@ -19,32 +19,54 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @ID IS NULL
-	BEGIN
-		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-		
-		INSERT INTO Tender.Call(ID_TENDER, DATE, SUBJECT, SURNAME, NAME, PATRON, PHONE, NOTE)
-			OUTPUT inserted.ID INTO @TBL
-			VALUES(@TENDER, @DATE, @SUBJECT, @SURNAME, @NAME, @PATRON, @PHONE, @NOTE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @ID IS NULL
+		BEGIN
+			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 			
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-	BEGIN
-		UPDATE Tender.Call
-		SET DATE		=	@DATE,
-			SUBJECT		=	@SUBJECT,
-			SURNAME		=	@SURNAME,
-			NAME		=	@NAME,
-			PATRON		=	@PATRON,
-			PHONE		=	@PHONE,
-			NOTE		=	@NOTE,
-			UPD_DATE	=	GETDATE(),
-			UPD_USER	=	ORIGINAL_LOGIN()
-		WHERE ID = @ID
-	END
-	
-	UPDATE Tender.Tender
-	SET CALL_DATE = @CALL_DATE
-	WHERE ID = @TENDER
+			INSERT INTO Tender.Call(ID_TENDER, DATE, SUBJECT, SURNAME, NAME, PATRON, PHONE, NOTE)
+				OUTPUT inserted.ID INTO @TBL
+				VALUES(@TENDER, @DATE, @SUBJECT, @SURNAME, @NAME, @PATRON, @PHONE, @NOTE)
+				
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+		BEGIN
+			UPDATE Tender.Call
+			SET DATE		=	@DATE,
+				SUBJECT		=	@SUBJECT,
+				SURNAME		=	@SURNAME,
+				NAME		=	@NAME,
+				PATRON		=	@PATRON,
+				PHONE		=	@PHONE,
+				NOTE		=	@NOTE,
+				UPD_DATE	=	GETDATE(),
+				UPD_USER	=	ORIGINAL_LOGIN()
+			WHERE ID = @ID
+		END
+		
+		UPDATE Tender.Tender
+		SET CALL_DATE = @CALL_DATE
+		WHERE ID = @TENDER
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

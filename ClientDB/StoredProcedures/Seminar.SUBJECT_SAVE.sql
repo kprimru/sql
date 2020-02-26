@@ -13,25 +13,46 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET @NAME = Replace(Replace(@Name, Char(10), ''), Char(13), '');
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @ID IS NULL
-	BEGIN
-		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-		
-		INSERT INTO Seminar.Subject(NAME, NOTE, READER)
-			OUTPUT inserted.ID INTO @TBL
-			VALUES(@NAME, @NOTE, @READER)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @NAME = Replace(Replace(@Name, Char(10), ''), Char(13), '');
+
+		IF @ID IS NULL
+		BEGIN
+			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 			
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-	BEGIN
-		UPDATE Seminar.Subject
-		SET NAME	=	@NAME,
-			NOTE	=	@NOTE,
-			READER	=	@READER
-		WHERE ID = @ID
-	END
+			INSERT INTO Seminar.Subject(NAME, NOTE, READER)
+				OUTPUT inserted.ID INTO @TBL
+				VALUES(@NAME, @NOTE, @READER)
+				
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+		BEGIN
+			UPDATE Seminar.Subject
+			SET NAME	=	@NAME,
+				NOTE	=	@NOTE,
+				READER	=	@READER
+			WHERE ID = @ID
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-

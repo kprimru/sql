@@ -17,28 +17,50 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @ID IS NULL
-	BEGIN
-		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-		
-		INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, INVITE_DATE, RESERVE_DATE)
-			OUTPUT inserted.ID INTO @TBL
-			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @INVITE, @RESERVE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @ID IS NULL
+		BEGIN
+			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 			
-		SELECT @ID = ID
-		FROM @TBL
-	END
-	ELSE
-	BEGIN
-		UPDATE Seminar.Schedule
-		SET ID_SUBJECT	=	@SUBJECT,
-			DATE		=	@DATE,
-			TIME		=	@TIME,
-			LIMIT		=	@LIMIT,
-			WEB			=	@WEB,
-			INVITE_DATE	=	@INVITE,
-			RESERVE_DATE	=	@RESERVE,
-			LAST		=	GETDATE()
-		WHERE ID = @ID
-	END
+			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, INVITE_DATE, RESERVE_DATE)
+				OUTPUT inserted.ID INTO @TBL
+				VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @INVITE, @RESERVE)
+				
+			SELECT @ID = ID
+			FROM @TBL
+		END
+		ELSE
+		BEGIN
+			UPDATE Seminar.Schedule
+			SET ID_SUBJECT	=	@SUBJECT,
+				DATE		=	@DATE,
+				TIME		=	@TIME,
+				LIMIT		=	@LIMIT,
+				WEB			=	@WEB,
+				INVITE_DATE	=	@INVITE,
+				RESERVE_DATE	=	@RESERVE,
+				LAST		=	GETDATE()
+			WHERE ID = @ID
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

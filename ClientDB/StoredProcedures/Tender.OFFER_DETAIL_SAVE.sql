@@ -28,6 +28,28 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Tender.OfferDetail(ID_OFFER, ID_CLIENT, CLIENT, ADDRESS, ID_SYSTEM, ID_OLD_SYSTEM, DISTR, ID_NET, ID_OLD_NET, DELIVERY_BASE, DELIVERY, EXCHANGE_BASE, EXCHANGE, ACTUAL_BASE, ACTUAL, SUPPORT_BASE, SUPPORT, SUPPORT_TOTAL, MON_CNT)
-		VALUES(@OFFER, @ID_CLIENT, @CLIENT, @ADDRESS, @SYS,	@SYS_OLD, @DISTR, @NET, @NET_OLD, @DBASE, @D, @EBASE, @E, @ABASE, @A, @SBASE, @S, @STOTAL, @MON_CNT)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO Tender.OfferDetail(ID_OFFER, ID_CLIENT, CLIENT, ADDRESS, ID_SYSTEM, ID_OLD_SYSTEM, DISTR, ID_NET, ID_OLD_NET, DELIVERY_BASE, DELIVERY, EXCHANGE_BASE, EXCHANGE, ACTUAL_BASE, ACTUAL, SUPPORT_BASE, SUPPORT, SUPPORT_TOTAL, MON_CNT)
+			VALUES(@OFFER, @ID_CLIENT, @CLIENT, @ADDRESS, @SYS,	@SYS_OLD, @DISTR, @NET, @NET_OLD, @DBASE, @D, @EBASE, @E, @ABASE, @A, @SBASE, @S, @STOTAL, @MON_CNT)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

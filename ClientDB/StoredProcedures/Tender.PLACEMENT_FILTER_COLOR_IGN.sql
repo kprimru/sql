@@ -10,19 +10,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DECLARE @IGN	BIT
-	SELECT @IGN = COLOR_IGN 
-	FROM Tender.Placement 
-	WHERE ID_TENDER = @ID_TENDER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
 	
-	SET @IGN = ISNULL(@IGN, 0)
-	
-	IF @IGN = 0
-		SET @IGN = 1
-	ELSE
-		SET @IGN = 0
-	
-	UPDATE Tender.Placement
-	SET COLOR_IGN = @IGN
-	WHERE ID_TENDER = @ID_TENDER
+		DECLARE @IGN	BIT
+		SELECT @IGN = COLOR_IGN 
+		FROM Tender.Placement 
+		WHERE ID_TENDER = @ID_TENDER
+		
+		SET @IGN = ISNULL(@IGN, 0)
+		
+		IF @IGN = 0
+			SET @IGN = 1
+		ELSE
+			SET @IGN = 0
+		
+		UPDATE Tender.Placement
+		SET COLOR_IGN = @IGN
+		WHERE ID_TENDER = @ID_TENDER
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

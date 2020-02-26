@@ -10,9 +10,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT F.UF_NAME, D.UF_DATA
-	FROM USR.USRFile F
-	INNER JOIN USR.USRFileData D ON F.UF_ID = D.UF_ID
-	WHERE F.UF_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT F.UF_NAME, D.UF_DATA
+		FROM USR.USRFile F
+		INNER JOIN USR.USRFileData D ON F.UF_ID = D.UF_ID
+		WHERE F.UF_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 

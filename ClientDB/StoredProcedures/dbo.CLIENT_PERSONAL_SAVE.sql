@@ -20,63 +20,85 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET @SURNAME = LTRIM(RTRIM(@SURNAME))
-	SET @NAME = LTRIM(RTRIM(@NAME))
-	SET @PATRON = LTRIM(RTRIM(@PATRON))
-	SET @POS = LTRIM(RTRIM(@POS))		
-		
-	-- если это главбух
-	IF @TYPE = (SELECT CPT_ID FROM dbo.ClientPersonalType WHERE CPT_PSEDO = 'BUH')
-		AND (SELECT Maintenance.GlobalClientAutoClaim()) = 1 BEGIN
-		
-		DECLARE
-			@OLD_SURNAME	VarChar(250),
-			@OLD_NAME		VarChar(250),
-			@OLD_PATRON		VarChar(250);
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @SURNAME = LTRIM(RTRIM(@SURNAME))
+		SET @NAME = LTRIM(RTRIM(@NAME))
+		SET @PATRON = LTRIM(RTRIM(@PATRON))
+		SET @POS = LTRIM(RTRIM(@POS))		
 			
-		SELECT
-			@OLD_SURNAME = CP_SURNAME,
-			@OLD_NAME = CP_NAME,
-			@OLD_PATRON = CP_PATRON
-		FROM dbo.ClientPersonal
-		WHERE CP_ID_CLIENT = 
-			(
-				SELECT TOP 1 ClientID
-				FROM dbo.ClientTable
-				WHERE ID_MASTER = @CLIENT
-					AND ClientID <> @CLIENT
-				ORDER BY ClientLast DESC
-			) AND CP_ID_TYPE = @TYPE;
+		-- если это главбух
+		IF @TYPE = (SELECT CPT_ID FROM dbo.ClientPersonalType WHERE CPT_PSEDO = 'BUH')
+			AND (SELECT Maintenance.GlobalClientAutoClaim()) = 1 BEGIN
 			
-		
-			
-		-- если получилось что-то выбрать
-		IF @OLD_SURNAME IS NOT NULL BEGIN		
-			IF (
-				SELECT SUM(CNT)
-				FROM
+			DECLARE
+				@OLD_SURNAME	VarChar(250),
+				@OLD_NAME		VarChar(250),
+				@OLD_PATRON		VarChar(250);
+				
+			SELECT
+				@OLD_SURNAME = CP_SURNAME,
+				@OLD_NAME = CP_NAME,
+				@OLD_PATRON = CP_PATRON
+			FROM dbo.ClientPersonal
+			WHERE CP_ID_CLIENT = 
 				(
-					SELECT [CNT] = CASE WHEN @OLD_SURNAME <> @SURNAME THEN 1 ELSE 0 END
-					UNION ALL
-					SELECT [CNT] = CASE WHEN @OLD_NAME <> @NAME THEN 1 ELSE 0 END
-					UNION ALL
-					SELECT [CNT] = CASE WHEN @OLD_PATRON <> @PATRON THEN 1 ELSE 0 END
-				) AS B
-				) > 1 BEGIN
-				INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-					SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Смена главного бухгалтера', 0, 'Автомат'
-					WHERE NOT EXISTS
-						(
-							SELECT *
-							FROM dbo.ClientStudyClaim a
-							WHERE ID_CLIENT = @CLIENT
-								AND UPD_USER = 'Автомат'
-						)
-			END
-							
+					SELECT TOP 1 ClientID
+					FROM dbo.ClientTable
+					WHERE ID_MASTER = @CLIENT
+						AND ClientID <> @CLIENT
+					ORDER BY ClientLast DESC
+				) AND CP_ID_TYPE = @TYPE;
+				
+			
+				
+			-- если получилось что-то выбрать
+			IF @OLD_SURNAME IS NOT NULL BEGIN		
+				IF (
+					SELECT SUM(CNT)
+					FROM
+					(
+						SELECT [CNT] = CASE WHEN @OLD_SURNAME <> @SURNAME THEN 1 ELSE 0 END
+						UNION ALL
+						SELECT [CNT] = CASE WHEN @OLD_NAME <> @NAME THEN 1 ELSE 0 END
+						UNION ALL
+						SELECT [CNT] = CASE WHEN @OLD_PATRON <> @PATRON THEN 1 ELSE 0 END
+					) AS B
+					) > 1 BEGIN
+					INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
+						SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Смена главного бухгалтера', 0, 'Автомат'
+						WHERE NOT EXISTS
+							(
+								SELECT *
+								FROM dbo.ClientStudyClaim a
+								WHERE ID_CLIENT = @CLIENT
+									AND UPD_USER = 'Автомат'
+							)
+				END
+								
+			END;
 		END;
-	END;
-	
-	INSERT INTO dbo.ClientPersonal(CP_ID_CLIENT, CP_ID_TYPE, CP_SURNAME, CP_NAME, CP_PATRON, CP_POS, CP_NOTE, CP_EMAIL, CP_PHONE, CP_FAX, CP_PHONE_S) 
-		SELECT @CLIENT, @TYPE, @SURNAME, @NAME, @PATRON, @POS, @NOTE, @EMAIL, @PHONE, @FAX, dbo.PhoneString(@PHONE)
+		
+		INSERT INTO dbo.ClientPersonal(CP_ID_CLIENT, CP_ID_TYPE, CP_SURNAME, CP_NAME, CP_PATRON, CP_POS, CP_NOTE, CP_EMAIL, CP_PHONE, CP_FAX, CP_PHONE_S) 
+			SELECT @CLIENT, @TYPE, @SURNAME, @NAME, @PATRON, @POS, @NOTE, @EMAIL, @PHONE, @FAX, dbo.PhoneString(@PHONE)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

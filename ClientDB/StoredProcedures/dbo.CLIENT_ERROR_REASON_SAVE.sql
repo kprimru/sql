@@ -15,19 +15,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-	
-	IF @ID IS NULL
-		INSERT INTO dbo.ClientErrorReason(TP, NAME, ID_GROUP, RS_TYPE, ORD)
-			OUTPUT inserted.ID INTO @TBL
-			SELECT @TP, @NAME, @GROUP, @TYPE, ISNULL((SELECT MAX(ORD) + 1 FROM dbo.ClientErrorReason WHERE TP = @TP), 1)
-	ELSE
-		UPDATE dbo.ClientErrorReason
-		SET NAME	=	@NAME,
-			ORD		=	@ORD
-		WHERE ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 		
-	IF @ID IS NULL
-		SELECT @ID = ID
-		FROM @TBL
+		IF @ID IS NULL
+			INSERT INTO dbo.ClientErrorReason(TP, NAME, ID_GROUP, RS_TYPE, ORD)
+				OUTPUT inserted.ID INTO @TBL
+				SELECT @TP, @NAME, @GROUP, @TYPE, ISNULL((SELECT MAX(ORD) + 1 FROM dbo.ClientErrorReason WHERE TP = @TP), 1)
+		ELSE
+			UPDATE dbo.ClientErrorReason
+			SET NAME	=	@NAME,
+				ORD		=	@ORD
+			WHERE ID = @ID
+			
+		IF @ID IS NULL
+			SELECT @ID = ID
+			FROM @TBL
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

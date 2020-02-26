@@ -26,139 +26,161 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @ORG_NAME
-	WHERE GS_NAME = 'ORG_NAME'
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'ORG_NAME', @ORG_NAME, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @UINF
-	WHERE GS_NAME = 'UINF'
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'UINF', @UINF, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @TENDER_PATH
-	WHERE GS_NAME = 'TENDER_PATH'
+	BEGIN TRY
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'TENDER_PATH', @TENDER_PATH, ''
-						
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @STT_PATH
-	WHERE GS_NAME = 'STT_PATH'
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @ORG_NAME
+		WHERE GS_NAME = 'ORG_NAME'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'STT_PATH', @STT_PATH, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @SERV_REPORT
-	WHERE GS_NAME = 'SERVICE_REPORT_PATH'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'ORG_NAME', @ORG_NAME, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @UINF
+		WHERE GS_NAME = 'UINF'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'SERVICE_REPORT_PATH', @SERV_REPORT, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @USR_PATH
-	WHERE GS_NAME = 'USR_PATH'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'UINF', @UINF, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @TENDER_PATH
+		WHERE GS_NAME = 'TENDER_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'USR_PATH', @USR_PATH, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @USR_IP_PATH
-	WHERE GS_NAME = 'USR_IP_PATH'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'TENDER_PATH', @TENDER_PATH, ''
+							
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @STT_PATH
+		WHERE GS_NAME = 'STT_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'USR_IP_PATH', @USR_IP_PATH, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @USR_CONTROL_PATH
-	WHERE GS_NAME = 'USR_CONTROL_PATH'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'STT_PATH', @STT_PATH, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @SERV_REPORT
+		WHERE GS_NAME = 'SERVICE_REPORT_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'USR_CONTROL_PATH', @USR_CONTROL_PATH, ''
-						
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @SUBHOST_NAME
-	WHERE GS_NAME = 'SUBHOST_NAME'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'SERVICE_REPORT_PATH', @SERV_REPORT, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @USR_PATH
+		WHERE GS_NAME = 'USR_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'SUBHOST_NAME', @SUBHOST_NAME, ''		
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @CLAIM_PATH
-	WHERE GS_NAME = 'CLAIM_PATH'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'USR_PATH', @USR_PATH, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @USR_IP_PATH
+		WHERE GS_NAME = 'USR_IP_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'CLAIM_PATH', @CLAIM_PATH, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @JUR_NAME
-	WHERE GS_NAME = 'JUR_NAME'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'USR_IP_PATH', @USR_IP_PATH, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @USR_CONTROL_PATH
+		WHERE GS_NAME = 'USR_CONTROL_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'JUR_NAME', @JUR_NAME, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @JUR_EMAIL
-	WHERE GS_NAME = 'JUR_EMAIL'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'USR_CONTROL_PATH', @USR_CONTROL_PATH, ''
+							
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @SUBHOST_NAME
+		WHERE GS_NAME = 'SUBHOST_NAME'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'JUR_EMAIL', @JUR_EMAIL, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @RIC_ADDRESS
-	WHERE GS_NAME = 'RIC_ADDRESS'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'SUBHOST_NAME', @SUBHOST_NAME, ''		
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @CLAIM_PATH
+		WHERE GS_NAME = 'CLAIM_PATH'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'RIC_ADDRESS', @RIC_ADDRESS, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @RIC_LOGIN
-	WHERE GS_NAME = 'RIC_LOGIN'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'CLAIM_PATH', @CLAIM_PATH, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @JUR_NAME
+		WHERE GS_NAME = 'JUR_NAME'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'RIC_LOGIN', @RIC_LOGIN, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = @RIC_PASS
-	WHERE GS_NAME = 'RIC_PASS'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'JUR_NAME', @JUR_NAME, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @JUR_EMAIL
+		WHERE GS_NAME = 'JUR_EMAIL'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'RIC_PASS', @RIC_PASS, ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = CONVERT(VARCHAR(500), @CLIENT_AUTO_CLAIM)
-	WHERE GS_NAME = 'CLIENT_AUTO_CLAIM'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'JUR_EMAIL', @JUR_EMAIL, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @RIC_ADDRESS
+		WHERE GS_NAME = 'RIC_ADDRESS'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'CLIENT_AUTO_CLAIM', CONVERT(VARCHAR(500), @CLIENT_AUTO_CLAIM), ''
-			
-	UPDATE Maintenance.GlobalSettings
-	SET GS_VALUE = CONVERT(VARCHAR(500), @CONTRACT_YEAR)
-	WHERE GS_NAME = 'CONTRACT_YEAR'
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'RIC_ADDRESS', @RIC_ADDRESS, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @RIC_LOGIN
+		WHERE GS_NAME = 'RIC_LOGIN'
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
-			SELECT 'CONTRACT_YEAR', CONVERT(VARCHAR(500), @CONTRACT_YEAR), ''
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'RIC_LOGIN', @RIC_LOGIN, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = @RIC_PASS
+		WHERE GS_NAME = 'RIC_PASS'
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'RIC_PASS', @RIC_PASS, ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = CONVERT(VARCHAR(500), @CLIENT_AUTO_CLAIM)
+		WHERE GS_NAME = 'CLIENT_AUTO_CLAIM'
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'CLIENT_AUTO_CLAIM', CONVERT(VARCHAR(500), @CLIENT_AUTO_CLAIM), ''
+				
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = CONVERT(VARCHAR(500), @CONTRACT_YEAR)
+		WHERE GS_NAME = 'CONTRACT_YEAR'
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'CONTRACT_YEAR', CONVERT(VARCHAR(500), @CONTRACT_YEAR), ''
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
