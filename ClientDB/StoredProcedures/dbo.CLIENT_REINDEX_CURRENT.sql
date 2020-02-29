@@ -65,6 +65,46 @@ BEGIN
 						
 		END
 		
+		UPDATE A
+		SET A.DisplayText = CA_STR
+		FROM dbo.ClientAddressView				AS V
+		INNER JOIN [Cache].[Client?Addresses]	AS A ON V.CA_ID_CLIENT = A.Id AND V.CA_ID_TYPE = A.[Type_Id]
+		WHERE CA_ID_CLIENT = @ID
+		
+		INSERT INTO [Cache].[Client?Addresses]([Id], [Type_Id], [DisplayText])
+		SELECT CA_ID_CLIENT, CA_ID_TYPE, CA_STR
+		FROM dbo.ClientAddressView AS V
+		WHERE CA_ID_CLIENT = @ID
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM [Cache].[Client?Addresses]	AS A
+					WHERE V.CA_ID_CLIENT = A.Id AND V.CA_ID_TYPE = A.[Type_Id]
+				);
+		
+		UPDATE [Cache].[Client?Names]
+		SET [Names] = 
+				REVERSE(STUFF(REVERSE(
+					(
+						SELECT NAME + '; '
+						FROM dbo.ClientNames
+						WHERE ID_CLIENT = @ID
+						ORDER BY NAME FOR XML PATH('')
+					)), 1, 2, ''))
+		WHERE Id = @ID
+		
+		IF @@RowCount = 0
+			INSERT INTO [Cache].[Client?Names]([Id], [Names])
+			SELECT
+				@ID,
+				REVERSE(STUFF(REVERSE(
+					(
+						SELECT NAME + '; '
+						FROM dbo.ClientNames
+						WHERE ID_CLIENT = @ID
+						ORDER BY NAME FOR XML PATH('')
+					)), 1, 2, ''));
+		
 		EXEC dbo.CLIENT_REINDEX @ID, NULL
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

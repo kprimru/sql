@@ -63,10 +63,17 @@ BEGIN
 	SET @FilterType_DISCONNECT	= 7;
 	SET @FilterType_MANAGER		= 8;
 	
+	DECLARE @AddressType_Id	UniqueIdentifier;
 	
 	DECLARE @CUR_DATE SMALLDATETIME;
 	
 	DECLARE @IDs Table
+	(
+		[Id]		Int		NOT NULL,
+		Primary Key Clustered([Id])
+	);
+	
+	DECLARE @WIDs Table
 	(
 		[Id]		Int		NOT NULL,
 		Primary Key Clustered([Id])
@@ -85,12 +92,6 @@ BEGIN
 		Primary Key Clustered([Type])
 	);
 
-	DECLARE @names Table
-	(
-		CL_ID	INT PRIMARY KEY CLUSTERED,
-		NAMES	VARCHAR(MAX)
-	);
-
 	DECLARE @search Table
 	(
 		WRD		VARCHAR(250) PRIMARY KEY CLUSTERED
@@ -107,6 +108,8 @@ BEGIN
 			SET @HIST = 0;
 
 		SET @CUR_DATE = dbo.DateOf(GETDATE());
+			
+		SET @AddressType_Id = (SELECT TOP (1) AT_ID FROM dbo.AddressType WHERE AT_REQUIRED = 1);
 			
 		IF @SIMPLE IS NULL
 		BEGIN
@@ -212,10 +215,10 @@ BEGIN
 
 			IF @ADDRESS IS NOT NULL BEGIN
 				INSERT INTO @IdByFilterType
-				SELECT CA_ID_CLIENT, @FilterType_ADDRESS
-				FROM dbo.ClientAddressView
-				WHERE CA_STR LIKE @ADDRESS
-					AND AT_REQUIRED = 1;
+				SELECT Id, @FilterType_ADDRESS
+				FROM [Cache].[Client?Addresses]
+				WHERE DisplayText LIKE @ADDRESS
+					AND [Type_Id] = @AddressType_Id;
 					
 				INSERT INTO @UsedFilterTypes
 				VALUES(@FilterType_ADDRESS)
@@ -360,38 +363,20 @@ BEGIN
 				SELECT WCL_ID
 				FROM [dbo].[ClientList@Get?Read]()
 		END;
-			
-		INSERT INTO @names(CL_ID, NAMES)
-		SELECT t.Id, 
-			REVERSE(STUFF(REVERSE(
-			(
-				SELECT NAME + '; '
-				FROM dbo.ClientNames
-				WHERE ID_CLIENT = t.Id
-				ORDER BY NAME FOR XML PATH('')
-			)), 1, 2, ''))
-		FROM @IDs t
-		OPTION(RECOMPILE);
+
+		INSERT INTO @WIDs
+		SELECT WCL_ID
+		FROM [dbo].[ClientList@Get?Write]() 
 
 		SELECT 
 			a.ClientID, 
 			ClientFullName,
 			NAMES AS ClientParallelName, 
-			CONVERT(VARCHAR(255), CA_STR) AS ClientAdress,
+			CONVERT(VARCHAR(255), DisplayText) AS ClientAdress,
 			ClientServiceId,
 			ServiceStatusIndex, OriClient,
 				
-			CONVERT(BIT, CASE 
-				WHEN EXISTS
-					(
-						SELECT *
-						FROM dbo.ClientControl
-						WHERE CC_ID_CLIENT = t.Id
-							AND CC_REMOVE_DATE IS NULL
-							AND (CC_BEGIN IS NULL OR CC_BEGIN <= @CUR_DATE)
-					) THEN 1
-				ELSE 0
-			END) AS ClientControl,
+			CONVERT(BIT, 0) AS ClientControl,
 			CONVERT(BIT, CASE
 				WHEN EXISTS
 					(
@@ -434,7 +419,7 @@ BEGIN
 							AND (
 									a.RECEIVER = ORIGINAL_LOGIN()
 									OR
-									(c.PSEDO = 'MANAGER' AND IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT WCL_ID FROM dbo.[ClientList@Get?Write]()))
+									(c.PSEDO = 'MANAGER' AND IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT Id FROM @WIDs))
 									OR
 									(c.PSEDO = 'LAW' AND IS_MEMBER('rl_control_law') = 1)
 									OR
@@ -452,12 +437,10 @@ BEGIN
 		FROM 
 			@IDs t
 			INNER JOIN dbo.ClientTable a ON t.Id = a.ClientID
-			--INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
-			--INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 			INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID 
-			LEFT OUTER JOIN dbo.ClientAddressView e ON a.ClientID = e.CA_ID_CLIENT AND e.AT_REQUIRED = 1
-			LEFT OUTER JOIN @names f ON f.CL_ID = t.Id
-			LEFT OUTER JOIN dbo.DayTable g ON g.DayID = a.DayID		
+			LEFT JOIN [Cache].[Client?Addresses] e ON a.ClientID = e.Id AND e.[Type_Id] = @AddressType_Id
+			LEFT JOIN [Cache].[Client?Names] f ON f.Id = t.Id
+			LEFT JOIN dbo.DayTable g ON g.DayID = a.DayID
 		ORDER BY ClientFullName
 		OPTION (RECOMPILE);
 		
