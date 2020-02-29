@@ -88,8 +88,11 @@ BEGIN
 		FROM [PC275-SQL\DELTA].[DBF].[Sync].[DistrFinancing];
 		
 		-- нет дистрибутивов - нет обработки
-		IF @@ROWCOUNT = 0
+		IF @@ROWCOUNT = 0 BEGIN
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+			
 			RETURN;
+		END;
 		
 		-- и забираем по этим дистрибутивам данные
 		

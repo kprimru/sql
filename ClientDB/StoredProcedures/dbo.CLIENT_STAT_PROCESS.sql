@@ -26,8 +26,11 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @DATE < DATEADD(MONTH, -7, GETDATE())
+		IF @DATE < DATEADD(MONTH, -7, GETDATE()) BEGIN
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+			
 			RETURN
+		END
 		
 		DECLARE @NUM	VARCHAR(10)
 		DECLARE @DISTR	VARCHAR(10)
@@ -66,6 +69,8 @@ BEGIN
 					AND MD5 = @MD5
 			)
 		BEGIN
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+			
 			RETURN
 		END
 		

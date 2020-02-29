@@ -53,6 +53,9 @@ BEGIN
 				)
 			BEGIN
 				SET @RES = 1
+				
+				EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+				
 				RETURN
 			END
 		END

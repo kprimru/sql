@@ -167,6 +167,8 @@ BEGIN
 			SET @res = 'Некорректное имя файла  (' + ISNULL(@FileName, '') + ')';
 			SET @resstatus = 3;
 			
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+			
 			RETURN;
 		END;
 
@@ -309,6 +311,8 @@ BEGIN
 					UF_ID_SERVICE	= @Service_Id
 				WHERE UF_ID = @Usr_Id;
 
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+
 			RETURN;
 		END;
 
@@ -324,6 +328,8 @@ BEGIN
 		BEGIN
 			SET @res = 'Комплект не нуждается в контроле';
 			SET @resstatus = 1;
+
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 
 			RETURN;
 		END;
@@ -433,6 +439,8 @@ BEGIN
 			SET @res = @res + 'Ошибка. Старый формат файла. Обработка прервана.';
 			SET @resstatus = 3;
 
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+
 			RETURN;
 		END;
 
@@ -441,6 +449,8 @@ BEGIN
 		BEGIN
 			SET @res = 'USR-файл сформирован не по ключу';
 			SET @resstatus = 1;
+
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 
 			RETURN;
 		END;
@@ -643,6 +653,8 @@ BEGIN
 
 			SET @resstatus = 3;
 
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+
 			RETURN;
 		END;
 
@@ -672,6 +684,8 @@ BEGIN
 				);
 
 			SET @resstatus = 3;
+
+			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 
 			RETURN;
 		END;
