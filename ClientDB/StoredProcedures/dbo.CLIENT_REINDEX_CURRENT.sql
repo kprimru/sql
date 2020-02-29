@@ -65,6 +65,9 @@ BEGIN
 						
 		END
 		
+		EXEC [Cache].[CLIENT_CACHE_REFRESH] @Client_Id = @ID;
+		
+		/*
 		UPDATE A
 		SET A.DisplayText = CA_STR
 		FROM dbo.ClientAddressView				AS V
@@ -104,6 +107,7 @@ BEGIN
 						WHERE ID_CLIENT = @ID
 						ORDER BY NAME FOR XML PATH('')
 					)), 1, 2, ''));
+		*/
 		
 		EXEC dbo.CLIENT_REINDEX @ID, NULL
 		

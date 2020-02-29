@@ -64,6 +64,8 @@ BEGIN
 	SET @FilterType_MANAGER		= 8;
 	
 	DECLARE @AddressType_Id	UniqueIdentifier;
+
+	DECLARE @Client_Id_FromName Int;
 	
 	DECLARE @CUR_DATE SMALLDATETIME;
 	
@@ -108,6 +110,14 @@ BEGIN
 			SET @HIST = 0;
 
 		SET @CUR_DATE = dbo.DateOf(GETDATE());
+		
+		BEGIN TRY
+			IF @NAME IS NOT NULL
+				SET @Client_Id_FromName = Cast(REPLACE(@NAME, '%', '') AS Int);
+		END TRY
+		BEGIN CATCH
+			SET @Client_Id_FromName = NULL;
+		END CATCH
 			
 		SET @AddressType_Id = (SELECT TOP (1) AT_ID FROM dbo.AddressType WHERE AT_REQUIRED = 1);
 			
@@ -133,32 +143,45 @@ BEGIN
 				FROM
 				(
 					SELECT ClientID
-					FROM dbo.ClientTable
+					FROM dbo.ClientTable AS C
 					WHERE STATUS = 1
-						AND
-						(
-							ClientFullName LIKE @NAME
-							OR EXISTS
-								(
-									SELECT *
-									FROM dbo.ClientNames
-									WHERE ID_CLIENT = ClientID
-										AND NAME LIKE @NAME
-								)
-							OR ClientShortName LIKE @NAME
-							OR ClientOfficial LIKE @NAME
-							OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
-						)
+						AND ClientFullName LIKE @NAME
+						
+						
+					UNION
+					
+					SELECT ClientID
+					FROM dbo.ClientTable AS C
+					WHERE STATUS = 1
+						AND ClientShortName LIKE @NAME
+						
+					UNION
+					
+					SELECT ClientID
+					FROM dbo.ClientTable AS C
+					WHERE STATUS = 1
+						AND ClientOfficial LIKE @NAME
+						
+					UNION
+					
+					SELECT ClientID
+					FROM dbo.ClientTable AS C
+					WHERE STATUS = 1
+						AND ClientID = @Client_Id_FromName 
+					
+					UNION 
+					
+					SELECT Id
+					FROM [Cache].[Client?Names]	AS N
+					WHERE N.[Names] LIKE @NAME
 						
 					UNION
 						
 					SELECT ID_MASTER
 					FROM dbo.ClientTable
-					WHERE (ClientFullName LIKE @NAME
-							--OR ClientShortName LIKE @NAME
-						)
+					WHERE ClientFullName LIKE @NAME
 						AND @HIST = 1
-						AND STATUS <> 1
+						AND STATUS = 2
 				) AS C
 				OPTION (RECOMPILE);
 				
