@@ -14,12 +14,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-	
-	INSERT INTO dbo.Innovation(NAME, NOTE, START, FINISH)
-		OUTPUT inserted.ID INTO @TBL
-		VALUES(@NAME, @NOTE, @START, @FINISH)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 		
-	SELECT @ID = ID
-	FROM @TBL
+		INSERT INTO dbo.Innovation(NAME, NOTE, START, FINISH)
+			OUTPUT inserted.ID INTO @TBL
+			VALUES(@NAME, @NOTE, @START, @FINISH)
+			
+		SELECT @ID = ID
+		FROM @TBL
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -11,12 +11,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT DbRole = b.name, MemberName = d.name, MemberSID = d.sid
-	FROM 
-		dbo.RoleTable a
-		INNER JOIN sys.database_principals b ON a.RoleName = b.name		
-		INNER JOIN sys.database_role_members c ON b.principal_id = c.role_principal_id
-		INNER JOIN sys.database_principals d ON d.principal_id = c.member_principal_id
-	WHERE b.Name <> 'DBStatistic' /*AND d.name = ORIGINAL_LOGIN()*/
-	ORDER BY d.Name
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DbRole = b.name, MemberName = d.name, MemberSID = d.sid
+		FROM 
+			dbo.RoleTable a
+			INNER JOIN sys.database_principals b ON a.RoleName = b.name		
+			INNER JOIN sys.database_role_members c ON b.principal_id = c.role_principal_id
+			INNER JOIN sys.database_principals d ON d.principal_id = c.member_principal_id
+		WHERE b.Name <> 'DBStatistic' /*AND d.name = ORIGINAL_LOGIN()*/
+		ORDER BY d.Name
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -10,12 +10,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @DATE DATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @DATE = MAX(SearchGet)
-	FROM dbo.ClientSearchTable
-	WHERE ClientID = @CLIENTID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE FROM dbo.ClientSearchTable
-	WHERE ClientID = @CLIENTID AND SearchGet = @DATE
+	BEGIN TRY
+
+		DECLARE @DATE DATETIME
+
+		SELECT @DATE = MAX(SearchGet)
+		FROM dbo.ClientSearchTable
+		WHERE ClientID = @CLIENTID
+
+		DELETE FROM dbo.ClientSearchTable
+		WHERE ClientID = @CLIENTID AND SearchGet = @DATE
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

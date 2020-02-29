@@ -12,8 +12,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.ClientKind
-	SET Name		= @Name,
-		SortIndex	= @SortIndex
-	WHERE Id = @Id
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.ClientKind
+		SET Name		= @Name,
+			SortIndex	= @SortIndex
+		WHERE Id = @Id
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

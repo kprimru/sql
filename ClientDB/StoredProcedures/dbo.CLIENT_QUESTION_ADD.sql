@@ -15,10 +15,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ClientQuestionTable(
-				ClientID, QuestionID, AnswerID, 
-				ClientQuestionText, ClientQuestionDate,
-				ClientQuestionComment,
-				ClientQuestionLastUpdate, ClientQuestionLastUpdateUser)
-	VALUES (@clientid, @questionid, @answerid, @text, @date, @COMMENT, GETDATE(), ORIGINAL_LOGIN())
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ClientQuestionTable(
+					ClientID, QuestionID, AnswerID, 
+					ClientQuestionText, ClientQuestionDate,
+					ClientQuestionComment,
+					ClientQuestionLastUpdate, ClientQuestionLastUpdateUser)
+		VALUES (@clientid, @questionid, @answerid, @text, @date, @COMMENT, GETDATE(), ORIGINAL_LOGIN())
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

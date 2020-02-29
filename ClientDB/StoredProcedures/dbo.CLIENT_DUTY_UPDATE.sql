@@ -37,43 +37,65 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ClientDutyTable(ID_MASTER, ClientID, ClientDutyDateTime, ClientDutyDate, ClientDutyTime, ClientDutyContact, ClientDutySurname, ClientDutyName, ClientDutyPatron, ClientDutyPos, ClientDutyPhone, DutyID, ManagerID, CallTypeID, ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyComment, ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer, ClientDutyClaimDate, ClientDutyClaimNum, ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, STATUS, UPD_DATE, UPD_USER, ID_DIRECTION, EMAIL, LINK)
-		SELECT @ID, ClientID, ClientDutyDateTime, ClientDutyDate, ClientDutyTime, ClientDutyContact, ClientDutySurname, ClientDutyName, ClientDutyPatron, ClientDutyPos, ClientDutyPhone, DutyID, ManagerID, CallTypeID, ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyComment, ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer, ClientDutyClaimDate, ClientDutyClaimNum, ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, 2, UPD_DATE, UPD_USER, ID_DIRECTION, EMAIL, LINK
-		FROM dbo.ClientDutyTable
-		WHERE ClientDutyID = @ID
-	
-	UPDATE dbo.ClientDutyTable
-	SET	ClientDutyDateTime = @DT, 
-		ClientDutyContact = @CONTACT, 
-		ClientDutySurname = @SURNAME,
-		ClientDutyName = @NAME,
-		ClientDutyPatron = @PATRON,
-		ClientDutyPos = @POS, 
-		ClientDutyPhone = @PHONE, 
-		DutyID = @DUTY, 
-		CallTypeID = @CALL_TYPE, 
-		ClientDutyQuest = @QUEST, 
-		ClientDutyDocs = @DOCS, 
-		ClientDutyNPO = @NPO, 
-		ClientDutyComplete = @COMPLETE, 
-		ClientDutyComment = @COMMENT, 
-		ClientDutyUncomplete = @UNCOMPLETE, 
-		ClientDutyGive = @GIVE,
-		ClientDutyAnswer = @ANSWER,
-		ClientDutyClaimDate = @CLAIM_DATE, 
-		ClientDutyClaimNum = @CLAIM_NUM, 
-		ClientDutyClaimAnswer = @CLAIM_ANSWER, 
-		ClientDutyClaimComment = @CLAIM_COMMENT,
-		ID_GRANT_TYPE = @GRANT_TYPE,		
-		UPDATE_DATE = GETDATE(),
-		UPDATE_USER = ORIGINAL_LOGIN(),
-		UPD_DATE = GETDATE(),
-		UPD_USER = ORIGINAL_LOGIN(),
-		ID_DIRECTION = @DIRECTION,
-		EMAIL = @EMAIL,
-		LINK	=	@LINK
-	WHERE ClientDutyID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ClientDutyTable(ID_MASTER, ClientID, ClientDutyDateTime, ClientDutyDate, ClientDutyTime, ClientDutyContact, ClientDutySurname, ClientDutyName, ClientDutyPatron, ClientDutyPos, ClientDutyPhone, DutyID, ManagerID, CallTypeID, ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyComment, ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer, ClientDutyClaimDate, ClientDutyClaimNum, ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, STATUS, UPD_DATE, UPD_USER, ID_DIRECTION, EMAIL, LINK)
+			SELECT @ID, ClientID, ClientDutyDateTime, ClientDutyDate, ClientDutyTime, ClientDutyContact, ClientDutySurname, ClientDutyName, ClientDutyPatron, ClientDutyPos, ClientDutyPhone, DutyID, ManagerID, CallTypeID, ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyComment, ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer, ClientDutyClaimDate, ClientDutyClaimNum, ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, 2, UPD_DATE, UPD_USER, ID_DIRECTION, EMAIL, LINK
+			FROM dbo.ClientDutyTable
+			WHERE ClientDutyID = @ID
 		
-	EXEC dbo.CLIENT_DUTY_IB_PROCESS @ID, @IB
+		UPDATE dbo.ClientDutyTable
+		SET	ClientDutyDateTime = @DT, 
+			ClientDutyContact = @CONTACT, 
+			ClientDutySurname = @SURNAME,
+			ClientDutyName = @NAME,
+			ClientDutyPatron = @PATRON,
+			ClientDutyPos = @POS, 
+			ClientDutyPhone = @PHONE, 
+			DutyID = @DUTY, 
+			CallTypeID = @CALL_TYPE, 
+			ClientDutyQuest = @QUEST, 
+			ClientDutyDocs = @DOCS, 
+			ClientDutyNPO = @NPO, 
+			ClientDutyComplete = @COMPLETE, 
+			ClientDutyComment = @COMMENT, 
+			ClientDutyUncomplete = @UNCOMPLETE, 
+			ClientDutyGive = @GIVE,
+			ClientDutyAnswer = @ANSWER,
+			ClientDutyClaimDate = @CLAIM_DATE, 
+			ClientDutyClaimNum = @CLAIM_NUM, 
+			ClientDutyClaimAnswer = @CLAIM_ANSWER, 
+			ClientDutyClaimComment = @CLAIM_COMMENT,
+			ID_GRANT_TYPE = @GRANT_TYPE,		
+			UPDATE_DATE = GETDATE(),
+			UPDATE_USER = ORIGINAL_LOGIN(),
+			UPD_DATE = GETDATE(),
+			UPD_USER = ORIGINAL_LOGIN(),
+			ID_DIRECTION = @DIRECTION,
+			EMAIL = @EMAIL,
+			LINK	=	@LINK
+		WHERE ClientDutyID = @ID
+
+			
+		EXEC dbo.CLIENT_DUTY_IB_PROCESS @ID, @IB
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

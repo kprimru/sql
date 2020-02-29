@@ -11,22 +11,44 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @XML XML
-	DECLARE @HDOC INT
-	
-	SET @XML = CAST(@COMMENT AS XML)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	UPDATE dbo.ClientTable 
-	SET ClientLastUpdate = GETDATE()
-	WHERE ClientID = @CLIENT
+	BEGIN TRY
 
-	UPDATE dbo.ClientSearchComments
-	SET CSC_COMMENTS = @XML
-	WHERE CSC_ID_CLIENT = @CLIENT
+		DECLARE @XML XML
+		DECLARE @HDOC INT
+		
+		SET @XML = CAST(@COMMENT AS XML)
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO dbo.CLientSearchComments(CSC_ID_CLIENT, CSC_COMMENTS)
-			VALUES(@CLIENT, @XML)
+		EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
+
+		UPDATE dbo.ClientTable 
+		SET ClientLastUpdate = GETDATE()
+		WHERE ClientID = @CLIENT
+
+		UPDATE dbo.ClientSearchComments
+		SET CSC_COMMENTS = @XML
+		WHERE CSC_ID_CLIENT = @CLIENT
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO dbo.CLientSearchComments(CSC_ID_CLIENT, CSC_COMMENTS)
+				VALUES(@CLIENT, @XML)
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

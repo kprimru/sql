@@ -19,53 +19,75 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SIGN	UNIQUEIDENTIFIER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @RESERVED = 0
-	BEGIN
-		SELECT @SIGN = SP_ID
-		FROM Training.SeminarSign
-		WHERE SP_ID_SEMINAR = @SCHEDULE
-			AND SP_ID_CLIENT = @CLIENT
+	BEGIN TRY
 
-		IF @SIGN IS NULL
+		DECLARE @SIGN	UNIQUEIDENTIFIER
+
+		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+
+		IF @RESERVED = 0
 		BEGIN
-			INSERT INTO Training.SeminarSign(SP_ID_SEMINAR, SP_ID_CLIENT)
-				OUTPUT INSERTED.SP_ID INTO @TBL
-				VALUES(@SCHEDULE, @CLIENT)
+			SELECT @SIGN = SP_ID
+			FROM Training.SeminarSign
+			WHERE SP_ID_SEMINAR = @SCHEDULE
+				AND SP_ID_CLIENT = @CLIENT
 
-			SELECT @SIGN = ID
-			FROM @TBL
+			IF @SIGN IS NULL
+			BEGIN
+				INSERT INTO Training.SeminarSign(SP_ID_SEMINAR, SP_ID_CLIENT)
+					OUTPUT INSERTED.SP_ID INTO @TBL
+					VALUES(@SCHEDULE, @CLIENT)
+
+				SELECT @SIGN = ID
+				FROM @TBL
+			END
+
+			IF @SIGN IS NULL
+			BEGIN
+				RAISERROR ('Ошибка записи о клиенте. Обратитесь к разработчику.', 10, 1)
+				RETURN
+			END	
+
+			UPDATE Training.SeminarSignPersonal
+			SET SSP_ID_SIGN =	@SIGN, 
+				SSP_SURNAME	=	@SURNAME, 
+				SSP_NAME	=	@NAME,
+				SSP_PATRON	=	@PATRON, 
+				SSP_POS		=	@POS, 
+				SSP_PHONE	=	@PHONE,
+				SSP_NOTE	=	@NOTE
+			WHERE SSP_ID = @ID
 		END
-
-		IF @SIGN IS NULL
+		ELSE
 		BEGIN
-			RAISERROR ('Ошибка записи о клиенте. Обратитесь к разработчику.', 10, 1)
-			RETURN
-		END	
-
-		UPDATE Training.SeminarSignPersonal
-		SET SSP_ID_SIGN =	@SIGN, 
-			SSP_SURNAME	=	@SURNAME, 
-			SSP_NAME	=	@NAME,
-			SSP_PATRON	=	@PATRON, 
-			SSP_POS		=	@POS, 
-			SSP_PHONE	=	@PHONE,
-			SSP_NOTE	=	@NOTE
-		WHERE SSP_ID = @ID
-	END
-	ELSE
-	BEGIN
-		UPDATE Training.SeminarReserve
-		SET SR_ID_CLIENT	=	@CLIENT,
-			SR_SURNAME		=	@SURNAME,
-			SR_NAME			=	@NAME,
-			SR_PATRON		=	@PATRON,
-			SR_POS			=	@POS,
-			SR_PHONE		=	@PHONE,
-			SR_NOTE			=	@NOTE
-		WHERE SR_ID = @ID
-	END
+			UPDATE Training.SeminarReserve
+			SET SR_ID_CLIENT	=	@CLIENT,
+				SR_SURNAME		=	@SURNAME,
+				SR_NAME			=	@NAME,
+				SR_PATRON		=	@PATRON,
+				SR_POS			=	@POS,
+				SR_PHONE		=	@PHONE,
+				SR_NOTE			=	@NOTE
+			WHERE SR_ID = @ID
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -18,29 +18,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.ClientDistr(ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE)
-		OUTPUT inserted.ID INTO @TBL
-		SELECT @CLIENT, HostID, @SYSTEM, @DISTR, @COMP, @STYPE, @DTYPE, @STATUS, @BEGIN
-		FROM dbo.SystemTable
-		WHERE SystemID = @system
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @ID = ID FROM @TBL
-	
-	IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-	BEGIN			
-		INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-			SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
-			WHERE NOT EXISTS
-				(
-					SELECT *
-					FROM dbo.ClientStudyClaim a
-					WHERE ID_CLIENT = @CLIENT
-						AND ID_MASTER IS NULL
-						AND UPD_USER = 'Автомат'
-				)
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		INSERT INTO dbo.ClientDistr(ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE)
+			OUTPUT inserted.ID INTO @TBL
+			SELECT @CLIENT, HostID, @SYSTEM, @DISTR, @COMP, @STYPE, @DTYPE, @STATUS, @BEGIN
+			FROM dbo.SystemTable
+			WHERE SystemID = @system
+
+		SELECT @ID = ID FROM @TBL
 		
-		EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-	END
+		IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
+		BEGIN			
+			INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
+				SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
+				WHERE NOT EXISTS
+					(
+						SELECT *
+						FROM dbo.ClientStudyClaim a
+						WHERE ID_CLIENT = @CLIENT
+							AND ID_MASTER IS NULL
+							AND UPD_USER = 'Автомат'
+					)
+			
+			EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -11,44 +11,66 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DECLARE @XML XML
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @XML = CAST(@DATA AS XML)
-	
-	DECLARE @ADD	INT
-	
-	SET @ADD = 0
-	
-	DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO dbo.OnlineActivity(ID_HOST, DISTR, COMP, ID_WEEK, ACTIVITY, LGN)
-		OUTPUT inserted.ID INTO @TBL
-		SELECT HostID, DISTR, COMP, c.ID, ACTIVITY, LGN
-		FROM
-			(
-				SELECT
-					c.value('(@host)[1]', 'NVARCHAR(64)') AS HOST,
-					c.value('(@login)[1]', 'NVARCHAR(64)') AS LGN,
-					c.value('(@distr)[1]', 'INT') AS DISTR,
-					c.value('(@comp)[1]', 'INT') AS COMP,
-					c.value('(@activity)[1]', 'INT') AS ACTIVITY,
-					CONVERT(SMALLDATETIME, c.value('(@week)[1]', 'NVARCHAR(64)'), 104) AS START
-				FROM @XML.nodes('root/online') a(c)
-			) AS a
-			INNER JOIN dbo.Hosts b ON b.HostReg = a.HOST
-			INNER JOIN Common.Period c ON c.START = a.START AND c.TYPE = 1
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.OnlineActivity z
-				WHERE z.ID_HOST = b.HostID
-					AND z.DISTR = a.DISTR
-					AND z.COMP = a.COMP
-					AND z.ID_WEEK = c.ID
-					AND z.LGN = a.LGN
-			)
+	BEGIN TRY
 	
-	SET @ADD = @ADD + @@ROWCOUNT	
-	
-	SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @ADD) + ' записей.'
+		DECLARE @XML XML
+
+		SET @XML = CAST(@DATA AS XML)
+		
+		DECLARE @ADD	INT
+		
+		SET @ADD = 0
+		
+		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+
+		INSERT INTO dbo.OnlineActivity(ID_HOST, DISTR, COMP, ID_WEEK, ACTIVITY, LGN)
+			OUTPUT inserted.ID INTO @TBL
+			SELECT HostID, DISTR, COMP, c.ID, ACTIVITY, LGN
+			FROM
+				(
+					SELECT
+						c.value('(@host)[1]', 'NVARCHAR(64)') AS HOST,
+						c.value('(@login)[1]', 'NVARCHAR(64)') AS LGN,
+						c.value('(@distr)[1]', 'INT') AS DISTR,
+						c.value('(@comp)[1]', 'INT') AS COMP,
+						c.value('(@activity)[1]', 'INT') AS ACTIVITY,
+						CONVERT(SMALLDATETIME, c.value('(@week)[1]', 'NVARCHAR(64)'), 104) AS START
+					FROM @XML.nodes('root/online') a(c)
+				) AS a
+				INNER JOIN dbo.Hosts b ON b.HostReg = a.HOST
+				INNER JOIN Common.Period c ON c.START = a.START AND c.TYPE = 1
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.OnlineActivity z
+					WHERE z.ID_HOST = b.HostID
+						AND z.DISTR = a.DISTR
+						AND z.COMP = a.COMP
+						AND z.ID_WEEK = c.ID
+						AND z.LGN = a.LGN
+				)
+		
+		SET @ADD = @ADD + @@ROWCOUNT	
+		
+		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @ADD) + ' записей.'
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

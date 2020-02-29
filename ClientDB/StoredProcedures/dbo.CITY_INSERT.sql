@@ -18,19 +18,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL	TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @DEFAULT = 1
-		UPDATE dbo.CityTable
-		SET CT_DEFAULT = 0
-		WHERE CT_DEFAULT = 1
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO dbo.City(CT_ID_REGION, CT_ID_AREA, CT_ID_CITY, CT_NAME, CT_PREFIX, CT_SUFFIX, CT_DISPLAY, CT_DEFAULT)
-		OUTPUT INSERTED.CT_ID INTO @TBL
-		VALUES(@REGION, @AREA, @CITY, @NAME, @PREFIX, @SUFFIX, @DISPLAY, @DEFAULT)
+	BEGIN TRY
 
-	SELECT @ID = ID FROM @TBL
-	
-	INSERT INTO dbo.Street(ST_ID_CITY, ST_NAME, ST_PREFIX, ST_SUFFIX)
-		VALUES(@ID, 'Без улицы', '', '')
+		DECLARE @TBL	TABLE (ID UNIQUEIDENTIFIER)
+
+		IF @DEFAULT = 1
+			UPDATE dbo.CityTable
+			SET CT_DEFAULT = 0
+			WHERE CT_DEFAULT = 1
+
+		INSERT INTO dbo.City(CT_ID_REGION, CT_ID_AREA, CT_ID_CITY, CT_NAME, CT_PREFIX, CT_SUFFIX, CT_DISPLAY, CT_DEFAULT)
+			OUTPUT INSERTED.CT_ID INTO @TBL
+			VALUES(@REGION, @AREA, @CITY, @NAME, @PREFIX, @SUFFIX, @DISPLAY, @DEFAULT)
+
+		SELECT @ID = ID FROM @TBL
+		
+		INSERT INTO dbo.Street(ST_ID_CITY, ST_NAME, ST_PREFIX, ST_SUFFIX)
+			VALUES(@ID, 'Без улицы', '', '')
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

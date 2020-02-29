@@ -10,8 +10,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT R.*, S.SystemID, S.SystemShortName
-	FROM dbo.RegNodeTable R
-	LEFT JOIN dbo.SystemTable S ON S.SystemBaseName = R.SystemName
-	ORDER BY S.SystemOrder
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT R.*, S.SystemID, S.SystemShortName
+		FROM dbo.RegNodeTable R
+		LEFT JOIN dbo.SystemTable S ON S.SystemBaseName = R.SystemName
+		ORDER BY S.SystemOrder
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

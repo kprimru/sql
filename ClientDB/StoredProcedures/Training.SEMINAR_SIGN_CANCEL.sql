@@ -11,38 +11,60 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SCHEDULE UNIQUEIDENTIFIER
-	
-	SELECT @SCHEDULE = SP_ID_SEMINAR
-	FROM 
-		Training.SeminarSign 
-		INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
-	WHERE SSP_ID = @ID
-	
-	IF @STATUS = 0
-		IF (
-				SELECT COUNT(*) 
-				FROM 
-					Training.SeminarSign 
-					INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
-				WHERE SP_ID_SEMINAR = @SCHEDULE AND SSP_CANCEL = 0
-			) >= 
-			(
-				SELECT TSC_LIMIT
-				FROM Training.TrainingSchedule
-				WHERE TSC_ID = @SCHEDULE
-			)
-		BEGIN
-			RAISERROR ('”же записано максимальное количество участников. ћожно записать только в резерв.', 16, 1)
-			RETURN
-		END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @STATUS IS NULL
-		UPDATE Training.SeminarSignPersonal
-		SET SSP_CANCEL = CASE SSP_CANCEL WHEN 1 THEN 0 ELSE 1 END
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @SCHEDULE UNIQUEIDENTIFIER
+		
+		SELECT @SCHEDULE = SP_ID_SEMINAR
+		FROM 
+			Training.SeminarSign 
+			INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 		WHERE SSP_ID = @ID
-	ELSE
-		UPDATE Training.SeminarSignPersonal
-		SET SSP_CANCEL = @STATUS
-		WHERE SSP_ID = @ID
+		
+		IF @STATUS = 0
+			IF (
+					SELECT COUNT(*) 
+					FROM 
+						Training.SeminarSign 
+						INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
+					WHERE SP_ID_SEMINAR = @SCHEDULE AND SSP_CANCEL = 0
+				) >= 
+				(
+					SELECT TSC_LIMIT
+					FROM Training.TrainingSchedule
+					WHERE TSC_ID = @SCHEDULE
+				)
+			BEGIN
+				RAISERROR ('”же записано максимальное количество участников. ћожно записать только в резерв.', 16, 1)
+				RETURN
+			END
+
+		IF @STATUS IS NULL
+			UPDATE Training.SeminarSignPersonal
+			SET SSP_CANCEL = CASE SSP_CANCEL WHEN 1 THEN 0 ELSE 1 END
+			WHERE SSP_ID = @ID
+		ELSE
+			UPDATE Training.SeminarSignPersonal
+			SET SSP_CANCEL = @STATUS
+			WHERE SSP_ID = @ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

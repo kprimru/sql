@@ -12,17 +12,39 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.DistrDisconnect
-	SET STATUS = 2
-	WHERE ID_DISTR = @ID AND STATUS = 1
-	
-	IF @TP = 0
-	BEGIN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
 		UPDATE dbo.DistrDisconnect
 		SET STATUS = 2
 		WHERE ID_DISTR = @ID AND STATUS = 1
 		
-		INSERT INTO dbo.DistrDisconnect(ID_DISTR, NOTE)
-			VALUES(@ID, @NOTE)
-	END
+		IF @TP = 0
+		BEGIN
+			UPDATE dbo.DistrDisconnect
+			SET STATUS = 2
+			WHERE ID_DISTR = @ID AND STATUS = 1
+			
+			INSERT INTO dbo.DistrDisconnect(ID_DISTR, NOTE)
+				VALUES(@ID, @NOTE)
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

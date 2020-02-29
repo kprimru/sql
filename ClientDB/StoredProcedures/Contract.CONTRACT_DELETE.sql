@@ -10,19 +10,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF (
-			SELECT a.IND
-			FROM 
-				Contract.Status a
-				INNER JOIN Contract.Contract b ON a.ID = b.ID_STATUS
-			WHERE b.ID = @ID
-		) <> 4
-	BEGIN
-		RAISERROR('—татус договора не позвол€ет его удалить', 16, 1)
-		RETURN
-	END
-	
-	DELETE FROM Contract.ContractSpecification WHERE ID_CONTRACT = @ID
-	DELETE FROM Contract.Additional WHERE ID_CONTRACT = @ID
-	DELETE FROM Contract.Contract WHERE ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF (
+				SELECT a.IND
+				FROM 
+					Contract.Status a
+					INNER JOIN Contract.Contract b ON a.ID = b.ID_STATUS
+				WHERE b.ID = @ID
+			) <> 4
+		BEGIN
+			RAISERROR('—татус договора не позвол€ет его удалить', 16, 1)
+			RETURN
+		END
+		
+		DELETE FROM Contract.ContractSpecification WHERE ID_CONTRACT = @ID
+		DELETE FROM Contract.Additional WHERE ID_CONTRACT = @ID
+		DELETE FROM Contract.Contract WHERE ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

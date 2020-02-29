@@ -10,12 +10,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE USR.USRData
-	SET UD_ACTIVE = 
-			CASE UD_ACTIVE 
-				WHEN 1 THEN 0 
-				WHEN 0 THEN 1 
-				ELSE NULL
-			END
-	WHERE UD_ID = @UD_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE USR.USRData
+		SET UD_ACTIVE = 
+				CASE UD_ACTIVE 
+					WHEN 1 THEN 0 
+					WHEN 0 THEN 1 
+					ELSE NULL
+				END
+		WHERE UD_ID = @UD_ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

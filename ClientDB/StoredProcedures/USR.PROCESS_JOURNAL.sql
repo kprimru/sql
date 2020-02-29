@@ -16,10 +16,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF (SELECT Maintenance.GlobalUSRJournal()) = '1'
-	BEGIN
-		IF @DATE IS NOT NULL
-		INSERT INTO USR.ProcessJournal(PR_DATE, PR_BEGIN, PR_END, PR_RES, PR_TEXT, PR_FILE, PR_COMPLECT)
-			VALUES(@DATE, @BEGIN, @END, @RES, @TXT, @FILE, @COMP)
-	END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF (SELECT Maintenance.GlobalUSRJournal()) = '1'
+		BEGIN
+			IF @DATE IS NOT NULL
+			INSERT INTO USR.ProcessJournal(PR_DATE, PR_BEGIN, PR_END, PR_RES, PR_TEXT, PR_FILE, PR_COMPLECT)
+				VALUES(@DATE, @BEGIN, @END, @RES, @TXT, @FILE, @COMP)
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

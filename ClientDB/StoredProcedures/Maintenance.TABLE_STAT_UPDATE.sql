@@ -10,8 +10,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SQL	NVARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @SQL = N'UPDATE STATISTICS ' + @TABLE_NAME + N' WITH FULLSCAN'
-	EXEC (@SQL)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @SQL	NVARCHAR(MAX)
+
+		SET @SQL = N'UPDATE STATISTICS ' + @TABLE_NAME + N' WITH FULLSCAN'
+		EXEC (@SQL)
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -14,10 +14,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ResVersionTable(
-			ResVersionNumber, ResVersionBegin, ResVersionEnd, IsLatest
-		)
-		VALUES(@NUMBER, @BEGIN, @END, @LATEST)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		INSERT INTO dbo.ResVersionTable(
+				ResVersionNumber, ResVersionBegin, ResVersionEnd, IsLatest
+			)
+			VALUES(@NUMBER, @BEGIN, @END, @LATEST)
+
+		SELECT @ID = SCOPE_IDENTITY()
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

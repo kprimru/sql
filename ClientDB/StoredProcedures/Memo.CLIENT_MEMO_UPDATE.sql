@@ -29,27 +29,49 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Memo.ClientMemo
-	SET	CURRENT_CONTRACT	=	@CONTRACT,
-		DISTR				=	@DISTR,
-		ID_DOC_TYPE			=	@DOC_TYPE,
-		ID_SERVICE			=	@SERVICE,
-		ID_VENDOR			=	@VENDOR,
-		START				=	@START,
-		FINISH				=	@FINISH,
-		MONTH_PRICE			=	@MONTH,
-		PERIOD_PRICE		=	@PERIOD,
-		PERIOD_START		=	@PER_START,
-		PERIOD_END			=	@PER_END,
-		PERIOD_FULL_PRICE	=	@PER_FULL,
-		ID_PAY_TYPE			=	@PAY_TYPE,
-		ID_CONTRACT_PAY_TYPE = @ID_CONTRACT_PAY,
-		FRAMEWORK			=	@FRAMEWORK,
-		DOCUMENTS			=	@DOCUMENTS,
-		LETTER_CANCEL		=	@CANCEL,
-		SYSTEMS				=	@SYSTEM
-	WHERE ID = @ID
-	
-	DELETE FROM Memo.ClientMemoConditions
-	WHERE ID_MEMO = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Memo.ClientMemo
+		SET	CURRENT_CONTRACT	=	@CONTRACT,
+			DISTR				=	@DISTR,
+			ID_DOC_TYPE			=	@DOC_TYPE,
+			ID_SERVICE			=	@SERVICE,
+			ID_VENDOR			=	@VENDOR,
+			START				=	@START,
+			FINISH				=	@FINISH,
+			MONTH_PRICE			=	@MONTH,
+			PERIOD_PRICE		=	@PERIOD,
+			PERIOD_START		=	@PER_START,
+			PERIOD_END			=	@PER_END,
+			PERIOD_FULL_PRICE	=	@PER_FULL,
+			ID_PAY_TYPE			=	@PAY_TYPE,
+			ID_CONTRACT_PAY_TYPE = @ID_CONTRACT_PAY,
+			FRAMEWORK			=	@FRAMEWORK,
+			DOCUMENTS			=	@DOCUMENTS,
+			LETTER_CANCEL		=	@CANCEL,
+			SYSTEMS				=	@SYSTEM
+		WHERE ID = @ID
+		
+		DELETE FROM Memo.ClientMemoConditions
+		WHERE ID_MEMO = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

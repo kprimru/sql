@@ -11,30 +11,52 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @table TABLE (SysID INT)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @table
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM dbo.ClientDutyIBTable 
-	WHERE ClientDutyID = @ClientDutyID
-		AND NOT EXISTS
-			(
-				SELECT *
-				FROM @table
-				WHERE SysID = SystemID
-			)
+	BEGIN TRY
 
-	INSERT INTO dbo.ClientDutyIBTable(ClientDutyID, SystemID)
-		SELECT @ClientDutyID, SysID
-		FROM @table	
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.ClientDutyIBTable
-				WHERE SysID = SystemID
-					AND ClientDutyID = @ClientDutyID
-			)
+		DECLARE @table TABLE (SysID INT)
+
+		INSERT INTO @table
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+
+		DELETE 
+		FROM dbo.ClientDutyIBTable 
+		WHERE ClientDutyID = @ClientDutyID
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM @table
+					WHERE SysID = SystemID
+				)
+
+		INSERT INTO dbo.ClientDutyIBTable(ClientDutyID, SystemID)
+			SELECT @ClientDutyID, SysID
+			FROM @table	
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientDutyIBTable
+					WHERE SysID = SystemID
+						AND ClientDutyID = @ClientDutyID
+				)
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

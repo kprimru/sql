@@ -10,19 +10,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE 
-	FROM Salary.ServiceStudy
-	WHERE ID_SALARY = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE 
-	FROM Salary.ServiceDistr
-	WHERE ID_SALARY = @ID
-	
-	DELETE 
-	FROM Salary.ServiceClient
-	WHERE ID_SALARY = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM Salary.Service
-	WHERE ID = @ID
+	BEGIN TRY
+
+		DELETE 
+		FROM Salary.ServiceStudy
+		WHERE ID_SALARY = @ID
+
+		DELETE 
+		FROM Salary.ServiceDistr
+		WHERE ID_SALARY = @ID
+		
+		DELETE 
+		FROM Salary.ServiceClient
+		WHERE ID_SALARY = @ID
+
+		DELETE 
+		FROM Salary.Service
+		WHERE ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -10,11 +10,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE
-	FROM Seminar.Schedule
-	WHERE ID_SUBJECT = @ID
-	
-	DELETE
-	FROM Seminar.Subject
-	WHERE ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE
+		FROM Seminar.Schedule
+		WHERE ID_SUBJECT = @ID
+		
+		DELETE
+		FROM Seminar.Subject
+		WHERE ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

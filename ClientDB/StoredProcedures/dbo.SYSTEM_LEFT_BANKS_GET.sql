@@ -11,21 +11,42 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @t	TABLE
-	(
-		InfoBank_ID			SMALLINT, 
-		InfoBankName		VARCHAR(100), 
-		InfoBankShortName	VARCHAR(100), 
-		Required			BIT, 
-		InfoBankOrder		INT
-	)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @t
-	EXEC [dbo].[SYSTEM_BANKS_GET] @SYS_LIST, @DISTR_TYPE_LIST
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT InfoBankID, InfoBankName, InfoBankShortName, InfoBankOrder
-	FROM InfoBankTable
-	WHERE InfoBankID NOT IN (SELECT InfoBank_ID FROM @t)
+	BEGIN TRY
 
+		DECLARE @t	TABLE
+		(
+			InfoBank_ID			SMALLINT, 
+			InfoBankName		VARCHAR(100), 
+			InfoBankShortName	VARCHAR(100), 
+			Required			BIT, 
+			InfoBankOrder		INT
+		)
+
+		INSERT INTO @t
+		EXEC [dbo].[SYSTEM_BANKS_GET] @SYS_LIST, @DISTR_TYPE_LIST
+
+		SELECT InfoBankID, InfoBankName, InfoBankShortName, InfoBankOrder
+		FROM InfoBankTable
+		WHERE InfoBankID NOT IN (SELECT InfoBank_ID FROM @t)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 

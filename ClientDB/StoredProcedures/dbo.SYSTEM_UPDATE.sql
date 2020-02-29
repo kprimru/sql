@@ -26,97 +26,119 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF EXISTS
-		(
-			SELECT Item
-			FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-			INTERSECT
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-			SELECT Item
-			FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
-		)
-	BEGIN
-		DECLARE @BN	VARCHAR(MAX)	
+	BEGIN TRY
 
-		SELECT @BN = InfoBankShortName + ', '
-		FROM 
-			dbo.InfoBankTable
-			INNER JOIN 
-				(		
-					SELECT Item
-					FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
-
-					INTERSECT
-
-					SELECT Item
-					FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
-				) AS o_O ON InfoBankID = Item
-		ORDER BY InfoBankShortName
-
-		SET @BN = LEFT(@BN, LEN(@BN) - 1)		
-
-		SET @BN = 'ИБ указаны как обязательные и как необязательные' + @BN
-
-		RAISERROR (@BN, 16, 1)
-
-		RETURN
-	END
-
-	UPDATE dbo.SystemTable
-	SET	SystemShortName = @SHORT,
-		SystemName = @NAME,
-		SystemBaseName = @BASE,
-		SystemNumber = @NUMBER,
-		HostID = @HOST,
-		SystemRic = @RIC,
-		SystemOrder = @ORDER,
-		SystemVMI = @VMI,
-		SystemFullName = @FULL,
-		SystemActive = @ACTIVE,
-		SystemDemo	=	@DEMO,
-		SystemComplect	=	@COMPLECT,
-		SystemReg	=	@REG,
-		SystemSalaryWeight = @WEIGHT
-	WHERE SystemID = @ID
-
-	DELETE FROM dbo.SystemBankTable
-	WHERE SystemID = @ID
-		AND Required = 0
-		AND InfoBankID NOT IN
+		IF EXISTS
 			(
 				SELECT Item
 				FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
-			)
-			
-	DELETE FROM dbo.SystemBankTable
-	WHERE SystemID = @ID
-		AND Required = 1
-		AND InfoBankID NOT IN
-			(
+
+				INTERSECT
+
 				SELECT Item
 				FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
 			)
-	
-	INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
-		SELECT @ID, Item, 0
-		FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.SystemBankTable
-				WHERE SystemID = @ID
-					AND InfoBankID = Item
-			)	
+		BEGIN
+			DECLARE @BN	VARCHAR(MAX)	
 
-	INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
-		SELECT @ID, Item, 1
-		FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.SystemBankTable
-				WHERE SystemID = @ID
-					AND InfoBankID = Item
-			)	
+			SELECT @BN = InfoBankShortName + ', '
+			FROM 
+				dbo.InfoBankTable
+				INNER JOIN 
+					(		
+						SELECT Item
+						FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+
+						INTERSECT
+
+						SELECT Item
+						FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
+					) AS o_O ON InfoBankID = Item
+			ORDER BY InfoBankShortName
+
+			SET @BN = LEFT(@BN, LEN(@BN) - 1)		
+
+			SET @BN = 'ИБ указаны как обязательные и как необязательные' + @BN
+
+			RAISERROR (@BN, 16, 1)
+
+			RETURN
+		END
+
+		UPDATE dbo.SystemTable
+		SET	SystemShortName = @SHORT,
+			SystemName = @NAME,
+			SystemBaseName = @BASE,
+			SystemNumber = @NUMBER,
+			HostID = @HOST,
+			SystemRic = @RIC,
+			SystemOrder = @ORDER,
+			SystemVMI = @VMI,
+			SystemFullName = @FULL,
+			SystemActive = @ACTIVE,
+			SystemDemo	=	@DEMO,
+			SystemComplect	=	@COMPLECT,
+			SystemReg	=	@REG,
+			SystemSalaryWeight = @WEIGHT
+		WHERE SystemID = @ID
+
+		DELETE FROM dbo.SystemBankTable
+		WHERE SystemID = @ID
+			AND Required = 0
+			AND InfoBankID NOT IN
+				(
+					SELECT Item
+					FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+				)
+				
+		DELETE FROM dbo.SystemBankTable
+		WHERE SystemID = @ID
+			AND Required = 1
+			AND InfoBankID NOT IN
+				(
+					SELECT Item
+					FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
+				)
+		
+		INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
+			SELECT @ID, Item, 0
+			FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.SystemBankTable
+					WHERE SystemID = @ID
+						AND InfoBankID = Item
+				)	
+
+		INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
+			SELECT @ID, Item, 1
+			FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.SystemBankTable
+					WHERE SystemID = @ID
+						AND InfoBankID = Item
+				)	
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

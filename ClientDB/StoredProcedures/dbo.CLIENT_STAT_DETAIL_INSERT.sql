@@ -21,20 +21,42 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	INSERT INTO dbo.ClientStatDetail ([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
-	SELECT
-		GETDATE(),
-		@WEEK_ID,
-		1,
-		@DISTR,
-		@COMP,
-		@NET,
-		@USER_COUNT,
-		@ENTER_SUM,
-		@ZERO_ENTER,
-		@ONE_ENTER,
-		@TWO_ENTER,
-		@THREE_ENTER,
-		@SES_TIME_SUM,
-		@SES_TIME_AVG
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		INSERT INTO dbo.ClientStatDetail ([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
+		SELECT
+			GETDATE(),
+			@WEEK_ID,
+			1,
+			@DISTR,
+			@COMP,
+			@NET,
+			@USER_COUNT,
+			@ENTER_SUM,
+			@ZERO_ENTER,
+			@ONE_ENTER,
+			@TWO_ENTER,
+			@THREE_ENTER,
+			@SES_TIME_SUM,
+			@SES_TIME_AVG
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END;

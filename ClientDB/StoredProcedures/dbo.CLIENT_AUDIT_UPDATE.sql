@@ -31,26 +31,48 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE	dbo.ClientAudit
-	SET		CA_DATE = @DATE, 
-			CA_STUDY = @STUDY, 
-			CA_STUDY_DATE = @STUDY_DATE, 
-			CA_SEARCH = @SEARCH, 
-			CA_SEARCH_NOTE = @SEARCH_NOTE, 
-			CA_DUTY = @DUTY, 
-			CA_DUTY_DATE = @DUTY_DATE, 
-			CA_DUTY_AVG = @DUTY_AVG, 
-			CA_TRANSFER = @TRANSFER, 
-			CA_TRANSFER_NOTE = @TRANSFER_NOTE, 
-			CA_RIVAL = @RIVAL, 
-			CA_RIVAL_DATE = @RIVAL_DATE, 
-			CA_RIVAL_NOTE = @RIVAL_NOTE, 
-			CA_SYSTEM = @SYSTEM, 
-			CA_SYSTEM_COUNT = @SYSTEM_COUNT, 
-			CA_SYSTEM_ER_COUNT = @SYSTEM_ER_COUNT,
-			CA_INCOME = @INCOME,
-			CA_INCOME_NOTE = @INCOME_NOTE,
-			CA_NOTE = @NOTE,
-			CA_CONTROL = @CONTROL
-	WHERE	CA_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE	dbo.ClientAudit
+		SET		CA_DATE = @DATE, 
+				CA_STUDY = @STUDY, 
+				CA_STUDY_DATE = @STUDY_DATE, 
+				CA_SEARCH = @SEARCH, 
+				CA_SEARCH_NOTE = @SEARCH_NOTE, 
+				CA_DUTY = @DUTY, 
+				CA_DUTY_DATE = @DUTY_DATE, 
+				CA_DUTY_AVG = @DUTY_AVG, 
+				CA_TRANSFER = @TRANSFER, 
+				CA_TRANSFER_NOTE = @TRANSFER_NOTE, 
+				CA_RIVAL = @RIVAL, 
+				CA_RIVAL_DATE = @RIVAL_DATE, 
+				CA_RIVAL_NOTE = @RIVAL_NOTE, 
+				CA_SYSTEM = @SYSTEM, 
+				CA_SYSTEM_COUNT = @SYSTEM_COUNT, 
+				CA_SYSTEM_ER_COUNT = @SYSTEM_ER_COUNT,
+				CA_INCOME = @INCOME,
+				CA_INCOME_NOTE = @INCOME_NOTE,
+				CA_NOTE = @NOTE,
+				CA_CONTROL = @CONTROL
+		WHERE	CA_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

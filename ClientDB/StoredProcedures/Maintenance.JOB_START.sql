@@ -11,21 +11,43 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @Type_Id	SmallInt;
-	
-	SELECT @Type_Id = Id
-	FROM Maintenance.JobType
-	WHERE Name = @Name;
-	
-	IF @Type_Id IS NULL BEGIN
-		INSERT INTO Maintenance.JobType(Name)
-		VALUES(@Name);
-		
-		SELECT @Type_Id = Scope_Identity();
-	END;
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Maintenance.Jobs([Type_Id])
-	VALUES(@Type_Id);
-	
-	SELECT @Id = Scope_Identity();
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @Type_Id	SmallInt;
+		
+		SELECT @Type_Id = Id
+		FROM Maintenance.JobType
+		WHERE Name = @Name;
+		
+		IF @Type_Id IS NULL BEGIN
+			INSERT INTO Maintenance.JobType(Name)
+			VALUES(@Name);
+			
+			SELECT @Type_Id = Scope_Identity();
+		END;
+
+		INSERT INTO Maintenance.Jobs([Type_Id])
+		VALUES(@Type_Id);
+		
+		SELECT @Id = Scope_Identity();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

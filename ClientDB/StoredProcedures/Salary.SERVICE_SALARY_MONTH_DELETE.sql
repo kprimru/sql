@@ -10,39 +10,61 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE 
-	FROM Salary.ServiceStudy
-	WHERE ID_SALARY IN
-		(
-			SELECT ID
-			FROM Salary.Service
-			WHERE ID_MONTH = @ID
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE 
-	FROM Salary.ServiceDistr
-	WHERE ID_SALARY IN
-		(
-			SELECT ID
-			FROM Salary.Service
-			WHERE ID_MONTH = @ID
-		)
-	
-	DELETE 
-	FROM Salary.ServiceClient
-	WHERE ID_SALARY IN
-		(
-			SELECT ID
-			FROM Salary.Service
-			WHERE ID_MONTH = @ID
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM Salary.Service
-	WHERE ID IN
-		(
-			SELECT ID
-			FROM Salary.Service
-			WHERE ID_MONTH = @ID
-		)
+	BEGIN TRY
+
+		DELETE 
+		FROM Salary.ServiceStudy
+		WHERE ID_SALARY IN
+			(
+				SELECT ID
+				FROM Salary.Service
+				WHERE ID_MONTH = @ID
+			)
+
+		DELETE 
+		FROM Salary.ServiceDistr
+		WHERE ID_SALARY IN
+			(
+				SELECT ID
+				FROM Salary.Service
+				WHERE ID_MONTH = @ID
+			)
+		
+		DELETE 
+		FROM Salary.ServiceClient
+		WHERE ID_SALARY IN
+			(
+				SELECT ID
+				FROM Salary.Service
+				WHERE ID_MONTH = @ID
+			)
+
+		DELETE 
+		FROM Salary.Service
+		WHERE ID IN
+			(
+				SELECT ID
+				FROM Salary.Service
+				WHERE ID_MONTH = @ID
+			)
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -12,12 +12,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @LIST IS NULL
-		UPDATE dbo.ClientDelivery
-		SET FINISH = @DATE
-		WHERE ID = @ID
-	ELSE
-		UPDATE dbo.ClientDelivery
-		SET FINISH = @DATE
-		WHERE ID IN (SELECT ID FROM dbo.TableGUIDFromXML(@LIST))
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @LIST IS NULL
+			UPDATE dbo.ClientDelivery
+			SET FINISH = @DATE
+			WHERE ID = @ID
+		ELSE
+			UPDATE dbo.ClientDelivery
+			SET FINISH = @DATE
+			WHERE ID IN (SELECT ID FROM dbo.TableGUIDFromXML(@LIST))
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -11,16 +11,36 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-    DECLARE @ERROR VARCHAR(MAX)	
-	IF (CHARINDEX('''', @USER) <> 0) 
-	BEGIN
-		SET @ERROR = 'Имя пользователя или роль содержат недоспустимые символы (кавычка)'
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-		RAISERROR (@ERROR, 16, 1)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		RETURN
-	END
-    EXEC('DROP USER [' + @USER +']')
+	BEGIN TRY
 
-    SET NOCOUNT OFF
+		DECLARE @ERROR VARCHAR(MAX)	
+		IF (CHARINDEX('''', @USER) <> 0) 
+		BEGIN
+			SET @ERROR = 'Имя пользователя или роль содержат недоспустимые символы (кавычка)'
+
+			RAISERROR (@ERROR, 16, 1)
+
+			RETURN
+		END
+		EXEC('DROP USER [' + @USER +']')
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

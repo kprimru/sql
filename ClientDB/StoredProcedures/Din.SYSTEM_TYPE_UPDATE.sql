@@ -18,14 +18,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;	
 
-	UPDATE Din.SystemType
-	SET SST_NAME	=	@NAME,
-		SST_SHORT	=	@SHORT,
-		SST_NOTE	=	@NOTE,
-		SST_REG		=	@REG,
-		SST_WEIGHT	=	@WEIGHT,
-		SST_COMPLECT	=	@COMPLECT,
-		SST_ID_MASTER	=	@MASTER,
-		SST_SALARY		=	@SALARY
-	WHERE SST_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Din.SystemType
+		SET SST_NAME	=	@NAME,
+			SST_SHORT	=	@SHORT,
+			SST_NOTE	=	@NOTE,
+			SST_REG		=	@REG,
+			SST_WEIGHT	=	@WEIGHT,
+			SST_COMPLECT	=	@COMPLECT,
+			SST_ID_MASTER	=	@MASTER,
+			SST_SALARY		=	@SALARY
+		WHERE SST_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

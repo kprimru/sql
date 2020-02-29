@@ -10,27 +10,49 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		CL_PSEDO AS [Псевдоним], TO_NAME AS [Название ТО], CL_SHORT_NAME AS [Короткое название клиента],
-		(
-			SELECT TOP 1 DIS_STR
-			FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
-			WHERE CD_ID_CLIENT = CL_ID
-				AND DSS_REPORT = 1
-			ORDER BY SYS_ORDER
-		) AS [Основной дистрибутив]
-	FROM 
-		[PC275-SQL\DELTA].DBF.dbo.TOTable
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID
-	WHERE TO_REPORT = 1
-		AND LTRIM(RTRIM(TO_NAME)) NOT LIKE RTRIM(LTRIM(CL_SHORT_NAME)) + '%'
-		--AND TO_NAME LIKE CL_SHORT_NAME + '%'
-		AND EXISTS
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			CL_PSEDO AS [Псевдоним], TO_NAME AS [Название ТО], CL_SHORT_NAME AS [Короткое название клиента],
 			(
-				SELECT *
+				SELECT TOP 1 DIS_STR
 				FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
 				WHERE CD_ID_CLIENT = CL_ID
 					AND DSS_REPORT = 1
-			)
-	ORDER BY CL_PSEDO
+				ORDER BY SYS_ORDER
+			) AS [Основной дистрибутив]
+		FROM 
+			[PC275-SQL\DELTA].DBF.dbo.TOTable
+			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID
+		WHERE TO_REPORT = 1
+			AND LTRIM(RTRIM(TO_NAME)) NOT LIKE RTRIM(LTRIM(CL_SHORT_NAME)) + '%'
+			--AND TO_NAME LIKE CL_SHORT_NAME + '%'
+			AND EXISTS
+				(
+					SELECT *
+					FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
+					WHERE CD_ID_CLIENT = CL_ID
+						AND DSS_REPORT = 1
+				)
+		ORDER BY CL_PSEDO
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

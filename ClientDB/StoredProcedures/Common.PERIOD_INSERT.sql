@@ -14,11 +14,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Common.Period(TYPE, NAME, START, FINISH)
-		OUTPUT INSERTED.ID INTO @TBL
-		VALUES(@TYPE, @NAME, @START, @FINISH)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @ID = ID FROM @TBL
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		INSERT INTO Common.Period(TYPE, NAME, START, FINISH)
+			OUTPUT INSERTED.ID INTO @TBL
+			VALUES(@TYPE, @NAME, @START, @FINISH)
+
+		SELECT @ID = ID FROM @TBL
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

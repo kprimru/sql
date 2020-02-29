@@ -13,63 +13,85 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT 
-		a.ClientID, a.ClientFullName, ServiceName, ManagerName, 
-		(
-			SELECT TOP 1 CC_DATE
-			FROM dbo.ClientTrustView WITH(NOEXPAND)
-			WHERE CC_ID_CLIENT = a.ClientID
-			ORDER BY CC_DATE DESC
-		) AS LAST_TRUST,
-		(
-			SELECT TOP 1 CT_TRUST_STR
-			FROM dbo.ClientTrustView WITH(NOEXPAND)
-			WHERE CC_ID_CLIENT = a.ClientID
-			ORDER BY CC_DATE DESC
-		) AS LAST_TRUST_STR,
-		(
-			SELECT TOP 1 CC_DATE
-			FROM 
-				dbo.ClientCall
-				INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
-				INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
-			WHERE CC_ID_CLIENT = a.ClientID
-			ORDER BY CC_DATE DESC
-		) AS LAST_SATIS,
-		(
-			SELECT TOP 1 STT_NAME
-			FROM 
-				dbo.ClientCall
-				INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
-				INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
-			WHERE CC_ID_CLIENT = a.ClientID
-			ORDER BY CC_DATE DESC
-		) AS LAST_SATIS_STR,
-		(
-			SELECT MIN(ConnectDate)
-			FROM dbo.ClientConnectView z WITH(NOEXPAND)
-			WHERE z.ClientID = a.CLientID
-		) AS CONNECT_DATE
-	FROM 
-		dbo.ClientView a WITH(NOEXPAND)
-		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-	WHERE	(@TYPE IS NULL OR ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
-		AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-		AND NOT EXISTS
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT 
+			a.ClientID, a.ClientFullName, ServiceName, ManagerName, 
 			(
-				SELECT *
+				SELECT TOP 1 CC_DATE
 				FROM dbo.ClientTrustView WITH(NOEXPAND)
 				WHERE CC_ID_CLIENT = a.ClientID
-					AND CC_DATE BETWEEN @BEGIN AND @END
-			)
-		AND NOT EXISTS
+				ORDER BY CC_DATE DESC
+			) AS LAST_TRUST,
 			(
-				SELECT *
+				SELECT TOP 1 CT_TRUST_STR
+				FROM dbo.ClientTrustView WITH(NOEXPAND)
+				WHERE CC_ID_CLIENT = a.ClientID
+				ORDER BY CC_DATE DESC
+			) AS LAST_TRUST_STR,
+			(
+				SELECT TOP 1 CC_DATE
 				FROM 
 					dbo.ClientCall
 					INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
+					INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
 				WHERE CC_ID_CLIENT = a.ClientID
-					AND CC_DATE BETWEEN @BEGIN AND @END
-			)
-	ORDER BY ManagerName, ServiceName, ClientFullName
+				ORDER BY CC_DATE DESC
+			) AS LAST_SATIS,
+			(
+				SELECT TOP 1 STT_NAME
+				FROM 
+					dbo.ClientCall
+					INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
+					INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
+				WHERE CC_ID_CLIENT = a.ClientID
+				ORDER BY CC_DATE DESC
+			) AS LAST_SATIS_STR,
+			(
+				SELECT MIN(ConnectDate)
+				FROM dbo.ClientConnectView z WITH(NOEXPAND)
+				WHERE z.ClientID = a.CLientID
+			) AS CONNECT_DATE
+		FROM 
+			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(@TYPE IS NULL OR ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
+			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientTrustView WITH(NOEXPAND)
+					WHERE CC_ID_CLIENT = a.ClientID
+						AND CC_DATE BETWEEN @BEGIN AND @END
+				)
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM 
+						dbo.ClientCall
+						INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
+					WHERE CC_ID_CLIENT = a.ClientID
+						AND CC_DATE BETWEEN @BEGIN AND @END
+				)
+		ORDER BY ManagerName, ServiceName, ClientFullName
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

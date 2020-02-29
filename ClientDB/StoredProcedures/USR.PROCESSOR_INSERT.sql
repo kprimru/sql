@@ -15,8 +15,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO USR.Processor(PRC_NAME, PRC_FREQ_S, PRC_FREQ, PRC_CORE, PRC_ID_FAMILY)
-		SELECT @NAME, @FREQ_S, @FREQ, @CORE, @PF_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO USR.Processor(PRC_NAME, PRC_FREQ_S, PRC_FREQ, PRC_CORE, PRC_ID_FAMILY)
+			SELECT @NAME, @FREQ_S, @FREQ, @CORE, @PF_ID
+
+		SELECT @ID = SCOPE_IDENTITY()
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -11,19 +11,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SQL NVARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @PATH = @PATH + N'ClientDB' + CONVERT(NVARCHAR(100), GETDATE(), 112) + N'.bak'
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET @SQL = N'BACKUP DATABASE  [' + DB_NAME() + N'] TO  DISK = ''' + @PATH + N'''
-			WITH  
-				INIT ,  
-				NOUNLOAD ,  
-				NAME = ''ClientDB FULL BACKUP'',
-				SKIP ,  
-				STATS = 10,  
-				NOFORMAT 
-		'
+	BEGIN TRY
 
-	EXEC (@SQL)
+		DECLARE @SQL NVARCHAR(MAX)
+
+		SET @PATH = @PATH + N'ClientDB' + CONVERT(NVARCHAR(100), GETDATE(), 112) + N'.bak'
+
+		SET @SQL = N'BACKUP DATABASE  [' + DB_NAME() + N'] TO  DISK = ''' + @PATH + N'''
+				WITH  
+					INIT ,  
+					NOUNLOAD ,  
+					NAME = ''ClientDB FULL BACKUP'',
+					SKIP ,  
+					STATS = 10,  
+					NOFORMAT 
+			'
+
+		EXEC (@SQL)
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

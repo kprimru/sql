@@ -8,10 +8,34 @@ CREATE PROCEDURE [dbo].[MAILING_TYPE_GET]
 	@ID		SMALLINT
 AS
 BEGIN
-	SELECT
-		MailingTypeName
-	FROM
-		Common.MailingType
-	WHERE
-		MailingTypeId = @ID
+	SET NOCOUNT ON;
+	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT
+			MailingTypeName
+		FROM
+			Common.MailingType
+		WHERE
+			MailingTypeId = @ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

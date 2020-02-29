@@ -9,15 +9,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DISTINCT SENDER
-	FROM Task.Tasks
-	WHERE STATUS = 1 AND ID_CLIENT IS NOT NULL
-	
-	UNION
-	
-	SELECT DISTINCT PERSONAL
-	FROM dbo.ClientContact
-	WHERE STATUS = 1
-	
-	ORDER BY SENDER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DISTINCT SENDER
+		FROM Task.Tasks
+		WHERE STATUS = 1 AND ID_CLIENT IS NOT NULL
+		
+		UNION
+		
+		SELECT DISTINCT PERSONAL
+		FROM dbo.ClientContact
+		WHERE STATUS = 1
+		
+		ORDER BY SENDER
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

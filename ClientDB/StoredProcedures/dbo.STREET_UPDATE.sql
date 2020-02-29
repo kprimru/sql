@@ -14,10 +14,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE	dbo.Street
-	SET		ST_ID_CITY	=	@CITY,
-			ST_NAME		=	@NAME,
-			ST_PREFIX	=	@PREFIX,
-			ST_SUFFIX	=	@SUFFIX
-	WHERE ST_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE	dbo.Street
+		SET		ST_ID_CITY	=	@CITY,
+				ST_NAME		=	@NAME,
+				ST_PREFIX	=	@PREFIX,
+				ST_SUFFIX	=	@SUFFIX
+		WHERE ST_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

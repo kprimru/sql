@@ -10,7 +10,29 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT CT_ID, CT_ID_REGION, CT_ID_AREA, CT_ID_CITY, CT_NAME, CT_PREFIX, CT_SUFFIX, CT_DISPLAY, CT_DEFAULT
-	FROM dbo.City
-	WHERE CT_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT CT_ID, CT_ID_REGION, CT_ID_AREA, CT_ID_CITY, CT_NAME, CT_PREFIX, CT_SUFFIX, CT_DISPLAY, CT_DEFAULT
+		FROM dbo.City
+		WHERE CT_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

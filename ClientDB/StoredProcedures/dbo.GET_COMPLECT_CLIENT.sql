@@ -13,15 +13,37 @@ AS
 BEGIN  
 	SET NOCOUNT ON;
 	
-	EXECUTE AS USER = 'CLAIM_VIEW';
-	
-	SELECT TOP 1
-		@ClientShortName = C.[ClientFullName],
-		@ClientFullName = C.[ClientFullName]
-	FROM USR.USRActiveView U 
-	INNER JOIN dbo.ClientTable C ON C.ClientID = U.UD_ID_CLIENT
-	INNER JOIN dbo.SystemTable s ON s.SystemID = u.UF_ID_SYSTEM
-	WHERE dbo.DistrString(s.SystemShortName, U.UD_DISTR, U.UD_COMP) = @COMPLECTNAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	REVERT
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		EXECUTE AS USER = 'CLAIM_VIEW';
+		
+		SELECT TOP 1
+			@ClientShortName = C.[ClientFullName],
+			@ClientFullName = C.[ClientFullName]
+		FROM USR.USRActiveView U 
+		INNER JOIN dbo.ClientTable C ON C.ClientID = U.UD_ID_CLIENT
+		INNER JOIN dbo.SystemTable s ON s.SystemID = u.UF_ID_SYSTEM
+		WHERE dbo.DistrString(s.SystemShortName, U.UD_DISTR, U.UD_COMP) = @COMPLECTNAME
+
+		REVERT
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

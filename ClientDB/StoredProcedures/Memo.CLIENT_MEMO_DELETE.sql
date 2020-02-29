@@ -11,15 +11,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @TP = 1
-	BEGIN
-		DELETE FROM Memo.ClientMemoConditions
-		WHERE ID_MEMO = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-		DELETE
-		FROM Memo.ClientMemo	
-		WHERE ID = @ID	
-	END
-	ELSE
-		DELETE FROM Memo.ClientCalculation WHERE ID = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @TP = 1
+		BEGIN
+			DELETE FROM Memo.ClientMemoConditions
+			WHERE ID_MEMO = @ID
+
+			DELETE
+			FROM Memo.ClientMemo	
+			WHERE ID = @ID	
+		END
+		ELSE
+			DELETE FROM Memo.ClientCalculation WHERE ID = @ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

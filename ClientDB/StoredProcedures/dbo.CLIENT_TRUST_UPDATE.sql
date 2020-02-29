@@ -34,36 +34,58 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @CT_ID	UNIQUEIDENTIFIER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @CT_ID = CT_ID
-	FROM dbo.ClientTrust
-	WHERE CT_ID_CALL = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	UPDATE	dbo.ClientTrust
-	SET		CT_TNAME		=	@TNAME,
-			CT_NAME			=	@NAME,
-			CT_TADDRESS		=	@TADDRESS,
-			CT_ADDRESS		=	@ADDRESS,
-			CT_TDIR			=	@TDIR,
-			CT_DIR			=	@DIR,
-			CT_TDIR_POS		=	@TDIR_POS,
-			CT_DIR_POS		=	@DIR_POS,
-			CT_TDIR_PHONE	=	@TDIR_PHONE,
-			CT_DIR_PHONE	=	@DIR_PHONE,
-			CT_TBUH			=	@TBUH,
-			CT_BUH			=	@BUH,
-			CT_TBUH_POS		=	@TBUH_POS,
-			CT_BUH_POS		=	@BUH_POS,
-			CT_TBUH_PHONE	=	@TBUH_PHONE,
-			CT_BUH_PHONE	=	@BUH_PHONE,	
-			CT_TRES			=	@TRES,
-			CT_RES			=	@RES,
-			CT_TRES_POS		=	@TRES_POS,
-			CT_RES_POS		=	@RES_POS,
-			CT_TRES_PHONE	=	@TRES_PHONE,
-			CT_RES_PHONE	=	@RES_PHONE,
-			CT_TRUST		=	@TRUST,
-			CT_NOTE			=	@NOTE
-	WHERE	CT_ID = @CT_ID
+	BEGIN TRY
+
+		DECLARE @CT_ID	UNIQUEIDENTIFIER
+
+		SELECT @CT_ID = CT_ID
+		FROM dbo.ClientTrust
+		WHERE CT_ID_CALL = @ID
+
+		UPDATE	dbo.ClientTrust
+		SET		CT_TNAME		=	@TNAME,
+				CT_NAME			=	@NAME,
+				CT_TADDRESS		=	@TADDRESS,
+				CT_ADDRESS		=	@ADDRESS,
+				CT_TDIR			=	@TDIR,
+				CT_DIR			=	@DIR,
+				CT_TDIR_POS		=	@TDIR_POS,
+				CT_DIR_POS		=	@DIR_POS,
+				CT_TDIR_PHONE	=	@TDIR_PHONE,
+				CT_DIR_PHONE	=	@DIR_PHONE,
+				CT_TBUH			=	@TBUH,
+				CT_BUH			=	@BUH,
+				CT_TBUH_POS		=	@TBUH_POS,
+				CT_BUH_POS		=	@BUH_POS,
+				CT_TBUH_PHONE	=	@TBUH_PHONE,
+				CT_BUH_PHONE	=	@BUH_PHONE,	
+				CT_TRES			=	@TRES,
+				CT_RES			=	@RES,
+				CT_TRES_POS		=	@TRES_POS,
+				CT_RES_POS		=	@RES_POS,
+				CT_TRES_PHONE	=	@TRES_PHONE,
+				CT_RES_PHONE	=	@RES_PHONE,
+				CT_TRUST		=	@TRUST,
+				CT_NOTE			=	@NOTE
+		WHERE	CT_ID = @CT_ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

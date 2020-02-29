@@ -14,12 +14,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-    UPDATE dbo.BLACK_LIST_REG 
-	SET 
-	COMMENT_DELETE=@COMMENT,
-	U_LOGIN_DELETE=ORIGINAL_LOGIN(),
-	DATE_DELETE=GETDATE(),
-	P_DELETE=1
-	WHERE ID = @ID
-	SET NOCOUNT OFF
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.BLACK_LIST_REG 
+		SET 
+		COMMENT_DELETE=@COMMENT,
+		U_LOGIN_DELETE=ORIGINAL_LOGIN(),
+		DATE_DELETE=GETDATE(),
+		P_DELETE=1
+		WHERE ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

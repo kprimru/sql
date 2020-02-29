@@ -16,35 +16,58 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @DB   VARCHAR(128)
-    SET @DB = DB_NAME()
-	IF  NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = @LOGIN)
-	BEGIN
-		if @WIN = 1 EXEC('CREATE LOGIN [' + @LOGIN + '] FROM WINDOWS WITH DEFAULT_DATABASE ='+@DB)
-        ELSE EXEC('CREATE LOGIN [' + @LOGIN + '] WITH PASSWORD = ''' + @PASS + ''', DEFAULT_DATABASE ='+@DB+', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF ')
-	END
+	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF  EXISTS (SELECT * FROM sys.server_principals WHERE [name] = @LOGIN)
-    BEGIN
-		IF  NOT EXISTS (SELECT * FROM sys.database_principals WHERE [name] = @USER)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		DECLARE @DB   VARCHAR(128)
+		SET @DB = DB_NAME()
+		IF  NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = @LOGIN)
 		BEGIN
-			EXEC('CREATE USER [' + @USER+ '] FOR LOGIN [' + @LOGIN+']')
-		END
-		IF NOT (@ROLE IS NULL) BEGIN
-		IF  EXISTS (SELECT * FROM sys.database_principals WHERE [name] = @USER)
-           BEGIN 
-			IF @ADM=1 BEGIN
-              EXEC sp_addrolemember [db_owner], @USER
-              /*EXEC sp_addrolemember [db_accessadmin], @USER*/
-			  EXEC ('master..sp_addsrvrolemember ['+@LOGIN+'], [securityadmin]');
-            END ELSE EXEC sp_addrolemember @ROLE, @USER 
-           END
-		END
-		IF @FIO = '-1' RETURN 
-   	    IF  NOT EXISTS (SELECT * FROM dbo.Z_USER_LIST WHERE [LOGIN_NAME] = @LOGIN)
-		BEGIN
-			INSERT INTO  dbo.Z_USER_LIST ([LOGIN_NAME], [FIO]) VALUES (@LOGIN, @FIO)
+			if @WIN = 1 EXEC('CREATE LOGIN [' + @LOGIN + '] FROM WINDOWS WITH DEFAULT_DATABASE ='+@DB)
+			ELSE EXEC('CREATE LOGIN [' + @LOGIN + '] WITH PASSWORD = ''' + @PASS + ''', DEFAULT_DATABASE ='+@DB+', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF ')
 		END
 
-    END
+		IF  EXISTS (SELECT * FROM sys.server_principals WHERE [name] = @LOGIN)
+		BEGIN
+			IF  NOT EXISTS (SELECT * FROM sys.database_principals WHERE [name] = @USER)
+			BEGIN
+				EXEC('CREATE USER [' + @USER+ '] FOR LOGIN [' + @LOGIN+']')
+			END
+			IF NOT (@ROLE IS NULL) BEGIN
+			IF  EXISTS (SELECT * FROM sys.database_principals WHERE [name] = @USER)
+			   BEGIN 
+				IF @ADM=1 BEGIN
+				  EXEC sp_addrolemember [db_owner], @USER
+				  /*EXEC sp_addrolemember [db_accessadmin], @USER*/
+				  EXEC ('master..sp_addsrvrolemember ['+@LOGIN+'], [securityadmin]');
+				END ELSE EXEC sp_addrolemember @ROLE, @USER 
+			   END
+			END
+			IF @FIO = '-1' RETURN 
+   			IF  NOT EXISTS (SELECT * FROM dbo.Z_USER_LIST WHERE [LOGIN_NAME] = @LOGIN)
+			BEGIN
+				INSERT INTO  dbo.Z_USER_LIST ([LOGIN_NAME], [FIO]) VALUES (@LOGIN, @FIO)
+			END
+
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

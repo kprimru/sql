@@ -8,8 +8,32 @@ CREATE PROCEDURE [dbo].[REF_VALUE_COLUMN_GET]
 	@REF_NAME	NVARCHAR(128)
 AS
 BEGIN
-	SELECT ValueColumn
-	FROM dbo.RefColumnMeta
-	WHERE RefName = @REF_NAME
+	SET NOCOUNT ON;
+	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT ValueColumn
+		FROM dbo.RefColumnMeta
+		WHERE RefName = @REF_NAME
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 

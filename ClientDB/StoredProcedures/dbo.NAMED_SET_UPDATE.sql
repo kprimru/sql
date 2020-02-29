@@ -10,18 +10,41 @@ CREATE PROCEDURE [dbo].[NAMED_SET_UPDATE]
 	@VALUES		NVARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON
-	DECLARE @ID	UNIQUEIDENTIFIER
+	SET NOCOUNT ON;
+	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SetId
-	FROM dbo.NamedSets
-	WHERE SetName=@SET_NAME AND RefName=@REF_NAME
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE FROM dbo.NamedSets
-	WHERE SetName=@SET_NAME AND RefName=@REF_NAME
+	BEGIN TRY
+	
+		DECLARE @ID	UNIQUEIDENTIFIER
 
-	DELETE FROM dbo.NamedSetsItems
-	WHERE SetId=@ID
+		SELECT @ID = SetId
+		FROM dbo.NamedSets
+		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
 
-	EXEC dbo.NAMED_SET_ADD @SET_NAME, @REF_NAME, @VALUES
+		DELETE FROM dbo.NamedSets
+		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
+
+		DELETE FROM dbo.NamedSetsItems
+		WHERE SetId=@ID
+
+		EXEC dbo.NAMED_SET_ADD @SET_NAME, @REF_NAME, @VALUES
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

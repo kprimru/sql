@@ -10,6 +10,18 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
 		SELECT 
 			ServiceName AS [СИ], 
 			ClientFullName AS [Клиент], DistrStr AS [Дистрибутив],
@@ -53,6 +65,16 @@ BEGIN
 						WHERE COD_ID_DISTR = DIS_ID AND CO_ACTIVE = 1 AND CO_ID_CLIENT = CL_ID
 					) AS u
 			) AS DBF ON SYS_REG_NAME = SystemBaseName AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM
-	WHERE ContractPayDay <> COP_DAY OR ContractPayMonth <> COP_MONTH
-	ORDER BY ServiceName, ClientFullname
+		WHERE ContractPayDay <> COP_DAY OR ContractPayMonth <> COP_MONTH
+		ORDER BY ServiceName, ClientFullname
+	
+	EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -14,31 +14,53 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TXT NVARCHAR(1024)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @TXT = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF IS_MEMBER('rl_client_event_limit') = 1
-	BEGIN
-		IF @DATE < DATEADD(DAY, -7, dbo.DateOf(GETDATE()))
-			SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
-		IF @DATE > dbo.DateOf(GETDATE())
-			SET @TXT = 'Нельзя ввести дату посещения позже текущей'
-		
-		IF @TXT <> '' 
+	BEGIN TRY
+
+		DECLARE @TXT NVARCHAR(1024)
+
+		SET @TXT = ''
+
+		IF IS_MEMBER('rl_client_event_limit') = 1
 		BEGIN
-			RAISERROR (@TXT, 16, 1)
-		
-			RETURN	
+			IF @DATE < DATEADD(DAY, -7, dbo.DateOf(GETDATE()))
+				SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
+			IF @DATE > dbo.DateOf(GETDATE())
+				SET @TXT = 'Нельзя ввести дату посещения позже текущей'
+			
+			IF @TXT <> '' 
+			BEGIN
+				RAISERROR (@TXT, 16, 1)
+			
+				RETURN	
+			END
 		END
-	END
 
-	INSERT INTO dbo.EventTable(ClientID, EventDate, EventTypeID, EventComment)
-		VALUES(@CLIENT, @DATE, @TYPE, @COMMENT)
+		INSERT INTO dbo.EventTable(ClientID, EventDate, EventTypeID, EventComment)
+			VALUES(@CLIENT, @DATE, @TYPE, @COMMENT)
 
-	SELECT @ID = SCOPE_IDENTITY()
+		SELECT @ID = SCOPE_IDENTITY()
 
-	UPDATE dbo.EventTable
-	SET MasterID = @ID
-	WHERE EventID = @ID
+		UPDATE dbo.EventTable
+		SET MasterID = @ID
+		WHERE EventID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

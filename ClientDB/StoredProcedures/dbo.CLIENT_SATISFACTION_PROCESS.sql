@@ -14,30 +14,52 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @CS_ID UNIQUEIDENTIFIER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @CS_ID = CS_ID
-	FROM dbo.ClientSatisfaction
-	WHERE CS_ID_CALL = @CALL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	BEGIN TRY
 
-	IF @CS_ID IS NULL
-	BEGIN
-		INSERT INTO dbo.ClientSatisfaction(CS_ID_CALL, CS_ID_TYPE, CS_NOTE, CS_TYPE)
-			OUTPUT INSERTED.CS_ID INTO @TBL
-			VALUES(@CALL, @TYPE, @NOTE, @CTYPE)
+		DECLARE @CS_ID UNIQUEIDENTIFIER
 
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-	BEGIN
-		UPDATE dbo.ClientSatisfaction
-		SET CS_ID_TYPE = @TYPE,
-			CS_NOTE = @NOTE,
-			CS_TYPE = @CTYPE
+		SELECT @CS_ID = CS_ID
+		FROM dbo.ClientSatisfaction
 		WHERE CS_ID_CALL = @CALL
 
-		SELECT @ID = @CS_ID
-	END
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		IF @CS_ID IS NULL
+		BEGIN
+			INSERT INTO dbo.ClientSatisfaction(CS_ID_CALL, CS_ID_TYPE, CS_NOTE, CS_TYPE)
+				OUTPUT INSERTED.CS_ID INTO @TBL
+				VALUES(@CALL, @TYPE, @NOTE, @CTYPE)
+
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+		BEGIN
+			UPDATE dbo.ClientSatisfaction
+			SET CS_ID_TYPE = @TYPE,
+				CS_NOTE = @NOTE,
+				CS_TYPE = @CTYPE
+			WHERE CS_ID_CALL = @CALL
+
+			SELECT @ID = @CS_ID
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

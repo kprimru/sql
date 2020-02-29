@@ -12,11 +12,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @STATE = 0
-		DELETE
-		FROM dbo.InfoPanelUser
-		WHERE ID_PANEL = @ID AND USR_NAME = @USER
-	ELSE
-		INSERT INTO dbo.InfoPanelUser(ID_PANEL, USR_NAME)
-			VALUES(@ID, @USER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @STATE = 0
+			DELETE
+			FROM dbo.InfoPanelUser
+			WHERE ID_PANEL = @ID AND USR_NAME = @USER
+		ELSE
+			INSERT INTO dbo.InfoPanelUser(ID_PANEL, USR_NAME)
+				VALUES(@ID, @USER)
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

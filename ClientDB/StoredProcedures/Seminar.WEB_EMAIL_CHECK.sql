@@ -12,38 +12,60 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET @STATUS = 0
-	SET @MSG = ''
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @EMAIL = ''
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Не введен e-mail'
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @STATUS = 0
+		SET @MSG = ''
+
+		IF @EMAIL = ''
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'Не введен e-mail'
+			
+			RETURN
+		END
 		
-		RETURN
-	END
-	
-	IF CHARINDEX('@', @EMAIL) = 0
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'В адресе отсутствует символ "@"'
+		IF CHARINDEX('@', @EMAIL) = 0
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'В адресе отсутствует символ "@"'
+			
+			RETURN
+		END
 		
-		RETURN
-	END
-	
-	IF CHARINDEX(' ', @EMAIL) <> 0
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'В адресе присутстуют пробелы'
+		IF CHARINDEX(' ', @EMAIL) <> 0
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'В адресе присутстуют пробелы'
+			
+			RETURN
+		END
 		
-		RETURN
-	END
-	
-	IF @EMAIL LIKE '%[а-я]%' OR @EMAIL LIKE '%[А-Я]%'
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'В адресе присутстуют русские буквы'
+		IF @EMAIL LIKE '%[а-я]%' OR @EMAIL LIKE '%[А-Я]%'
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'В адресе присутстуют русские буквы'
+			
+			RETURN
+		END
 		
-		RETURN
-	END
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

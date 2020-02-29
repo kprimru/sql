@@ -13,12 +13,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.FoundationLog(ID_CONTRACT)
-		VALUES(@ID)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE dbo.ContractTable
-	SET	ID_FOUNDATION = @ID_FOUND,
-		FOUND_END = @FOUND_END,
-		FOUND_NOTE = @NOTE
-	WHERE ContractID = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.FoundationLog(ID_CONTRACT)
+			VALUES(@ID)
+
+		UPDATE dbo.ContractTable
+		SET	ID_FOUNDATION = @ID_FOUND,
+			FOUND_END = @FOUND_END,
+			FOUND_NOTE = @NOTE
+		WHERE ContractID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

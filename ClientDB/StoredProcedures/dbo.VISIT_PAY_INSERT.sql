@@ -13,8 +13,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	INSERT INTO dbo.VisitPayTable(VisitPayBegin, VisitPayEnd, VisitPayValue)
-		VALUES(@BEGIN, @END, @VALUE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		INSERT INTO dbo.VisitPayTable(VisitPayBegin, VisitPayEnd, VisitPayValue)
+			VALUES(@BEGIN, @END, @VALUE)
+
+		SELECT @ID = SCOPE_IDENTITY()
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

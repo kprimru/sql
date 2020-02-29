@@ -10,76 +10,98 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#check') IS NOT NULL
-		DROP TABLE #check
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #check
-		(
-			TP	VARCHAR(50),
-			ER	VARCHAR(1000)
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @STATUS		BIT
-	DECLARE @CATEGORY	BIT
-	DECLARE @INN		BIT
-	DECLARE @SERVICE	BIT
-	DECLARE @ACTIVITY	BIT
-	DECLARE	@PAPPER		BIT
-	DECLARE @GRAPH		BIT
+	BEGIN TRY
 
-	SELECT 
-		@STATUS = ST_CA_STATUS, @CATEGORY = ST_CA_CATEGORY,
-		@INN = ST_CA_INN, @SERVICE = ST_CA_SERVICE,
-		@ACTIVITY = ST_CA_ACTIVITY, @PAPPER = ST_CA_PAPPER,
-		@GRAPH = ST_CA_GRAPH
-	FROM dbo.Settings
-	WHERE ST_USER = ORIGINAL_LOGIN() AND ST_HOST = HOST_NAME()
+		IF OBJECT_ID('tempdb..#check') IS NOT NULL
+			DROP TABLE #check
 
-	IF @STATUS = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'STATUS'
+		CREATE TABLE #check
+			(
+				TP	VARCHAR(50),
+				ER	VARCHAR(1000)
+			)
 
-	IF @CATEGORY = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'CATEGORY'
+		DECLARE @STATUS		BIT
+		DECLARE @CATEGORY	BIT
+		DECLARE @INN		BIT
+		DECLARE @SERVICE	BIT
+		DECLARE @ACTIVITY	BIT
+		DECLARE	@PAPPER		BIT
+		DECLARE @GRAPH		BIT
 
-	IF @INN = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'INN'
+		SELECT 
+			@STATUS = ST_CA_STATUS, @CATEGORY = ST_CA_CATEGORY,
+			@INN = ST_CA_INN, @SERVICE = ST_CA_SERVICE,
+			@ACTIVITY = ST_CA_ACTIVITY, @PAPPER = ST_CA_PAPPER,
+			@GRAPH = ST_CA_GRAPH
+		FROM dbo.Settings
+		WHERE ST_USER = ORIGINAL_LOGIN() AND ST_HOST = HOST_NAME()
 
-	IF @SERVICE = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'SERVICE_TYPE'
+		IF @STATUS = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'STATUS'
 
-	IF @ACTIVITY = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'ACTIVITY'
+		IF @CATEGORY = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'CATEGORY'
 
-	IF @PAPPER = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER 
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'PAPPER'
+		IF @INN = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'INN'
 
-	IF @GRAPH = 1
-		INSERT INTO #check(TP, ER)
-			SELECT TP, ER 
-			FROM dbo.ClientCheckView
-			WHERE ClientID = @ID AND TP = 'GRAPH'
+		IF @SERVICE = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'SERVICE_TYPE'
 
-	SELECT TP, ER
-	FROM #check
+		IF @ACTIVITY = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'ACTIVITY'
 
-	IF OBJECT_ID('tempdb..#check') IS NOT NULL
-		DROP TABLE #check
+		IF @PAPPER = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER 
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'PAPPER'
+
+		IF @GRAPH = 1
+			INSERT INTO #check(TP, ER)
+				SELECT TP, ER 
+				FROM dbo.ClientCheckView
+				WHERE ClientID = @ID AND TP = 'GRAPH'
+
+		SELECT TP, ER
+		FROM #check
+
+		IF OBJECT_ID('tempdb..#check') IS NOT NULL
+			DROP TABLE #check
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

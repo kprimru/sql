@@ -20,16 +20,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Din.NetType
-	SET NT_NAME		=	@NAME,
-		NT_NOTE		=	@NOTE,
-		NT_NET		=	@NET,
-		NT_TECH		=	@TECH,
-		NT_SHORT	=	@SHORT,
-		NT_ID_MASTER	=	@MASTER,
-		NT_VMI_SHORT	=	@VMI_SHORT,
-		NT_ODOFF		=	@ODOFF,
-		NT_ODON			= @ODON,
-		NT_TECH_USR		= @TECH_USR
-	WHERE NT_ID	= @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Din.NetType
+		SET NT_NAME		=	@NAME,
+			NT_NOTE		=	@NOTE,
+			NT_NET		=	@NET,
+			NT_TECH		=	@TECH,
+			NT_SHORT	=	@SHORT,
+			NT_ID_MASTER	=	@MASTER,
+			NT_VMI_SHORT	=	@VMI_SHORT,
+			NT_ODOFF		=	@ODOFF,
+			NT_ODON			= @ODON,
+			NT_TECH_USR		= @TECH_USR
+		WHERE NT_ID	= @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

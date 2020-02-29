@@ -14,37 +14,59 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TXT NVARCHAR(1024)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @TXT = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF (IS_MEMBER('rl_client_event_limit') = 1) AND (@DATE <> (SELECT EventDate FROM dbo.EventTable WHERE EventID = @ID))
-	BEGIN
-		IF @DATE < DATEADD(DAY, -7, dbo.DateOf(GETDATE()))
-			SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
-		IF @DATE > dbo.DateOf(GETDATE())
-			SET @TXT = 'Нельзя ввести дату посещения позже текущей'
-		
-		IF @TXT <> '' 
+	BEGIN TRY
+
+		DECLARE @TXT NVARCHAR(1024)
+
+		SET @TXT = ''
+
+		IF (IS_MEMBER('rl_client_event_limit') = 1) AND (@DATE <> (SELECT EventDate FROM dbo.EventTable WHERE EventID = @ID))
 		BEGIN
-			RAISERROR (@TXT, 16, 1)
-		
-			RETURN	
+			IF @DATE < DATEADD(DAY, -7, dbo.DateOf(GETDATE()))
+				SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
+			IF @DATE > dbo.DateOf(GETDATE())
+				SET @TXT = 'Нельзя ввести дату посещения позже текущей'
+			
+			IF @TXT <> '' 
+			BEGIN
+				RAISERROR (@TXT, 16, 1)
+			
+				RETURN	
+			END
 		END
-	END
 
-	INSERT INTO dbo.EventTable
-		(
-			ClientID, MasterID, EventDate, EventComment, EventTypeID, 
-			EventCreate, EventLastUpdate, EventCreateUser, EventLastUpdateUser
-		)
-		SELECT 
-			@CLIENT, MasterID, @DATE, @COMMENT, @TYPE, 
-			EventCreate, GETDATE(), EventCreateUser, ORIGINAL_LOGIN()
-		FROM dbo.EventTable
-		WHERE EventID = @ID
+		INSERT INTO dbo.EventTable
+			(
+				ClientID, MasterID, EventDate, EventComment, EventTypeID, 
+				EventCreate, EventLastUpdate, EventCreateUser, EventLastUpdateUser
+			)
+			SELECT 
+				@CLIENT, MasterID, @DATE, @COMMENT, @TYPE, 
+				EventCreate, GETDATE(), EventCreateUser, ORIGINAL_LOGIN()
+			FROM dbo.EventTable
+			WHERE EventID = @ID
+			
+		UPDATE dbo.EventTable
+		SET EventActive = 0
+		WHERE EventID = @ID	
 		
-	UPDATE dbo.EventTable
-	SET EventActive = 0
-	WHERE EventID = @ID	
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

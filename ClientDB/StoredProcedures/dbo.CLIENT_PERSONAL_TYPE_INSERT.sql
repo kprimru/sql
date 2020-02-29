@@ -13,11 +13,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.ClientPersonalType(CPT_NAME, CPT_PSEDO, CPT_REQUIRED)
-		OUTPUT INSERTED.CPT_ID INTO @TBL
-		VALUES(@NAME, @PSEDO, @REQUIRED)
-	
-	SELECT @ID = ID FROM @TBL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		INSERT INTO dbo.ClientPersonalType(CPT_NAME, CPT_PSEDO, CPT_REQUIRED)
+			OUTPUT INSERTED.CPT_ID INTO @TBL
+			VALUES(@NAME, @PSEDO, @REQUIRED)
+		
+		SELECT @ID = ID FROM @TBL
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

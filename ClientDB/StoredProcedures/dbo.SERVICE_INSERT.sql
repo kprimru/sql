@@ -17,13 +17,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO	dbo.ServiceTable(ServiceName, ServicePositionID, ManagerID, ServicePhone,
-				ServiceLogin, ServiceFullName, ServiceFirst)
-		VALUES(@NAME, @POS, @MANAGER, @PHONE, @LOGIN, @FULL, GETDATE())	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO dbo.ServiceCity(ID_SERVICE, ID_CITY)
-		SELECT @ID, ID
-		FROM dbo.TableGUIDFromXML(@CITY)
+	BEGIN TRY
+
+		INSERT INTO	dbo.ServiceTable(ServiceName, ServicePositionID, ManagerID, ServicePhone,
+					ServiceLogin, ServiceFullName, ServiceFirst)
+			VALUES(@NAME, @POS, @MANAGER, @PHONE, @LOGIN, @FULL, GETDATE())	
+
+		SELECT @ID = SCOPE_IDENTITY()
+
+		INSERT INTO dbo.ServiceCity(ID_SERVICE, ID_CITY)
+			SELECT @ID, ID
+			FROM dbo.TableGUIDFromXML(@CITY)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

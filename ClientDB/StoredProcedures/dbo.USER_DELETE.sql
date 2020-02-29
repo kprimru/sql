@@ -12,9 +12,29 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	DELETE FROM dbo.Z_USER_LIST	WHERE [LOGIN_NAME] = @LOGIN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-    EXEC('DROP USER [' + @USER +']')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-    SET NOCOUNT OFF
+	BEGIN TRY
+
+		DELETE FROM dbo.Z_USER_LIST	WHERE [LOGIN_NAME] = @LOGIN
+
+		EXEC('DROP USER [' + @USER +']')
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

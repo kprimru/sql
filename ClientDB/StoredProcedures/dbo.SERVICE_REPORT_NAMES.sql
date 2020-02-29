@@ -11,16 +11,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @SERVICE IS NOT NULL
-		SELECT ServiceFullName, ManagerFullName
-		FROM 
-			dbo.ServiceTable a
-			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
-		WHERE ServiceID = @SERVICE
-	ELSE IF @MANAGER IS NOT NULL
-		SELECT NULL AS ServiceFullName, ManagerFullName
-		FROM dbo.ManagerTable
-		WHERE ManagerID = @MANAGER
-	ELSE 
-		SELECT NULL AS ServiceFullName, NULL AS ManagerFullName
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @SERVICE IS NOT NULL
+			SELECT ServiceFullName, ManagerFullName
+			FROM 
+				dbo.ServiceTable a
+				INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
+			WHERE ServiceID = @SERVICE
+		ELSE IF @MANAGER IS NOT NULL
+			SELECT NULL AS ServiceFullName, ManagerFullName
+			FROM dbo.ManagerTable
+			WHERE ManagerID = @MANAGER
+		ELSE 
+			SELECT NULL AS ServiceFullName, NULL AS ManagerFullName
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

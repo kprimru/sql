@@ -14,89 +14,111 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ERROR VARCHAR(MAX)		
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF (CHARINDEX('''', @NAME) <> 0)
-		OR (CHARINDEX('''', @PASS) <> 0)
-	BEGIN
-		SET @ERROR = '»м€ пользовател€ или пароль содержат недоспустимые символы (кавычка)'
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		RAISERROR (@ERROR, 16, 1)
+	BEGIN TRY
 
-		RETURN
-	END
+		DECLARE @ERROR VARCHAR(MAX)		
 
-	/*
-	IF EXISTS(
-			SELECT *
-			FROM sys.server_principals
-			WHERE name = @NAME
-		)
-	BEGIN
-		SET @ERROR = 'ѕользователь "' + @NAME + '" уже есть на сервере'
-		
-		RAISERROR (@ERROR, 16, 1)
+		IF (CHARINDEX('''', @NAME) <> 0)
+			OR (CHARINDEX('''', @PASS) <> 0)
+		BEGIN
+			SET @ERROR = '»м€ пользовател€ или пароль содержат недоспустимые символы (кавычка)'
 
-		RETURN
-	END
-	*/
-	
+			RAISERROR (@ERROR, 16, 1)
 
-	IF EXISTS(
-			SELECT *
-			FROM sys.database_principals
-			WHERE name = @NAME
-		)
-	BEGIN		
-		SET @ERROR = 'ѕользователь или роль "' + @NAME + '" уже существуют в базе данных'
-		
-		RAISERROR (@ERROR, 16, 1)
+			RETURN
+		END
 
-		RETURN
-	END
-
-	IF @AUTH = 0
-	BEGIN
-		IF NOT EXISTS
-			(
+		/*
+		IF EXISTS(
 				SELECT *
 				FROM sys.server_principals
 				WHERE name = @NAME
 			)
-		/* авторизаци€ Windows*/
-			EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')		
-	END
-	ELSE
-	BEGIN
-		IF NOT EXISTS
-			(
+		BEGIN
+			SET @ERROR = 'ѕользователь "' + @NAME + '" уже есть на сервере'
+			
+			RAISERROR (@ERROR, 16, 1)
+
+			RETURN
+		END
+		*/
+		
+
+		IF EXISTS(
 				SELECT *
-				FROM sys.server_principals
+				FROM sys.database_principals
 				WHERE name = @NAME
 			)
-		/* авторизаци€ SQL		*/
-			EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')		
-	END
+		BEGIN		
+			SET @ERROR = 'ѕользователь или роль "' + @NAME + '" уже существуют в базе данных'
+			
+			RAISERROR (@ERROR, 16, 1)
 
-	EXEC('CREATE USER [' + @NAME + '] FOR LOGIN [' + @NAME + ']')
+			RETURN
+		END
 
-	DECLARE RL CURSOR LOCAL FOR
-		SELECT ID
-		FROM dbo.TableStringFromXML(@ROLES)
+		IF @AUTH = 0
+		BEGIN
+			IF NOT EXISTS
+				(
+					SELECT *
+					FROM sys.server_principals
+					WHERE name = @NAME
+				)
+			/* авторизаци€ Windows*/
+				EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')		
+		END
+		ELSE
+		BEGIN
+			IF NOT EXISTS
+				(
+					SELECT *
+					FROM sys.server_principals
+					WHERE name = @NAME
+				)
+			/* авторизаци€ SQL		*/
+				EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')		
+		END
 
-	OPEN RL
-	
-	DECLARE @RL	VARCHAR(50)
+		EXEC('CREATE USER [' + @NAME + '] FOR LOGIN [' + @NAME + ']')
 
-	FETCH NEXT FROM RL INTO @RL
+		DECLARE RL CURSOR LOCAL FOR
+			SELECT ID
+			FROM dbo.TableStringFromXML(@ROLES)
 
-	WHILE @@FETCH_STATUS = 0 
-	BEGIN
-		EXEC sp_addrolemember @RL, @NAME
+		OPEN RL
+		
+		DECLARE @RL	VARCHAR(50)
 
 		FETCH NEXT FROM RL INTO @RL
-	END
 
-	CLOSE RL
-	DEALLOCATE RL
+		WHILE @@FETCH_STATUS = 0 
+		BEGIN
+			EXEC sp_addrolemember @RL, @NAME
+
+			FETCH NEXT FROM RL INTO @RL
+		END
+
+		CLOSE RL
+		DEALLOCATE RL
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

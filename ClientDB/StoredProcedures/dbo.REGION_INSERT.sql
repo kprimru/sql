@@ -14,11 +14,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.Region(RG_NAME, RG_PREFIX, RG_SUFFIX, RG_NUM)
-		OUTPUT INSERTED.RG_ID INTO @TBL
-		VALUES(@NAME, @PREFIX, @SUFFIX, @NUM)
-	
-	SELECT @ID = ID FROM @TBL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		INSERT INTO dbo.Region(RG_NAME, RG_PREFIX, RG_SUFFIX, RG_NUM)
+			OUTPUT INSERTED.RG_ID INTO @TBL
+			VALUES(@NAME, @PREFIX, @SUFFIX, @NUM)
+		
+		SELECT @ID = ID FROM @TBL
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

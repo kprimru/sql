@@ -11,10 +11,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     
-    UPDATE dbo.ServiceFlashTable
-    SET NUM_COUNT = (NUM_COUNT+1), LAST_DATE = GETDATE()
-    WHERE ID_FLASH=@FLASHID
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.ServiceFlashTableCount (ID_FLASH, LAST_DATE) VALUES (@FLASHID, GETDATE())
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
+	BEGIN TRY
+    
+		UPDATE dbo.ServiceFlashTable
+		SET NUM_COUNT = (NUM_COUNT+1), LAST_DATE = GETDATE()
+		WHERE ID_FLASH=@FLASHID
+
+		INSERT INTO dbo.ServiceFlashTableCount (ID_FLASH, LAST_DATE) VALUES (@FLASHID, GETDATE())
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -15,27 +15,49 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF EXISTS
-		(
-			SELECT *
-			FROM sys.database_principals
-			WHERE Name = @RoleName
-		)
-	BEGIN
-		DECLARE @ERROR VARCHAR(MAX)		
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF EXISTS
+			(
+				SELECT *
+				FROM sys.database_principals
+				WHERE Name = @RoleName
+			)
+		BEGIN
+			DECLARE @ERROR VARCHAR(MAX)		
+			
+			SET @ERROR = 'Пользователь или роль "' + @RoleName + '" уже существуют в базе данных'
+			
+			RAISERROR (@ERROR, 16, 1)
+
+			RETURN
+		END
+
+		INSERT INTO Security.Roles (RoleMasterID, RoleName, RoleCaption, RoleNote)
+			VALUES(@RoleID, @RoleName, @RoleCaption, @RoleNote)
+
+		SET @Id = Scope_Identity();
+
+		IF @RoleName IS NOT NULL AND @RoleName != ''
+			EXEC ('CREATE ROLE ' + @RoleName)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 		
-		SET @ERROR = 'Пользователь или роль "' + @RoleName + '" уже существуют в базе данных'
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 		
-		RAISERROR (@ERROR, 16, 1)
-
-		RETURN
-	END
-
-	INSERT INTO Security.Roles (RoleMasterID, RoleName, RoleCaption, RoleNote)
-		VALUES(@RoleID, @RoleName, @RoleCaption, @RoleNote)
-
-	SET @Id = Scope_Identity();
-
-	IF @RoleName IS NOT NULL AND @RoleName != ''
-		EXEC ('CREATE ROLE ' + @RoleName)
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

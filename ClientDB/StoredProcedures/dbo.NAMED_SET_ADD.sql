@@ -10,29 +10,52 @@ CREATE PROCEDURE [dbo].[NAMED_SET_ADD]
 	@VALUES		NVARCHAR(MAX)
 AS
 BEGIN
-SET NOCOUNT ON
-	INSERT INTO dbo.NamedSets(RefName, SetName)
-	VALUES (@REF_NAME, @SET_NAME)
+	SET NOCOUNT ON;
 	
-	DECLARE @ITEM	NVARCHAR(128)
-	DECLARE @ID		UNIQUEIDENTIFIER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
 	
-	SELECT @ID=SetId
-	FROM dbo.NamedSets
-	WHERE RefName=@REF_NAME AND SetName=@SET_NAME
+		INSERT INTO dbo.NamedSets(RefName, SetName)
+		VALUES (@REF_NAME, @SET_NAME)
+		
+		DECLARE @ITEM	NVARCHAR(128)
+		DECLARE @ID		UNIQUEIDENTIFIER
+		
+		SELECT @ID=SetId
+		FROM dbo.NamedSets
+		WHERE RefName=@REF_NAME AND SetName=@SET_NAME
 
-	WHILE LEN(@VALUES)>0
-	BEGIN
-		IF CHARINDEX(',', @VALUES)<>0
-			SET @ITEM = LEFT(@VALUES, CHARINDEX(',', @VALUES)-1)
-		ELSE
-			SET @ITEM = @VALUES
-		IF (LEN(@VALUES)-(LEN(@ITEM)+1))>0
-			SET @VALUES = SUBSTRING(@VALUES, LEN(@ITEM)+2, LEN(@VALUES)-(LEN(@ITEM)+1))
-		ELSE
-			SET @VALUES=''
+		WHILE LEN(@VALUES)>0
+		BEGIN
+			IF CHARINDEX(',', @VALUES)<>0
+				SET @ITEM = LEFT(@VALUES, CHARINDEX(',', @VALUES)-1)
+			ELSE
+				SET @ITEM = @VALUES
+			IF (LEN(@VALUES)-(LEN(@ITEM)+1))>0
+				SET @VALUES = SUBSTRING(@VALUES, LEN(@ITEM)+2, LEN(@VALUES)-(LEN(@ITEM)+1))
+			ELSE
+				SET @VALUES=''
 
-		INSERT INTO dbo.NamedSetsItems(SetID, SetItem)
-		VALUES (@ID, @ITEM)
-	END
+			INSERT INTO dbo.NamedSetsItems(SetID, SetItem)
+			VALUES (@ID, @ITEM)
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

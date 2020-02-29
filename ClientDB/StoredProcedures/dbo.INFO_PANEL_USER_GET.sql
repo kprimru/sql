@@ -11,17 +11,39 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT 
-		US_ID, US_SQL_NAME, US_NAME, US_USER, 
-		CONVERT(BIT, CASE WHEN EXISTS
-			(
-				SELECT *
-				FROM dbo.InfoPanelUser
-				WHERE ID_PANEL = @PANEL
-					AND USR_NAME = US_SQL_NAME
-			) THEN 1
-			ELSE 0
-		END) AS CHECKED
-	FROM Security.UserView a	
-	ORDER BY US_USER, US_NAME	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT 
+			US_ID, US_SQL_NAME, US_NAME, US_USER, 
+			CONVERT(BIT, CASE WHEN EXISTS
+				(
+					SELECT *
+					FROM dbo.InfoPanelUser
+					WHERE ID_PANEL = @PANEL
+						AND USR_NAME = US_SQL_NAME
+				) THEN 1
+				ELSE 0
+			END) AS CHECKED
+		FROM Security.UserView a	
+		ORDER BY US_USER, US_NAME	
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

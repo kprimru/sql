@@ -16,70 +16,92 @@ AS
 BEGIN
 	SET NOCOUNT ON;	
 
-	-- если регистрируем договор уже с заданным номером - то и делать ничего не нужно
-	IF @NUM_S IS NOT NULL
-		RETURN;
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE @YEAR INT
-	
-	SELECT @YEAR = DATEPART(YEAR, START)
-	FROM Common.Period
-	WHERE ID = @ID_YEAR
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF ISNULL(@COUNT, 1) = 1
-	BEGIN
-		IF @NUM IS NULL
-			SELECT @NUM = ISNULL(
-												(
-													SELECT MAX(NUM) 
-													FROM 
-														Contract.Contract a
-														INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
-													WHERE ID_VENDOR = @VENDOR 
-														AND DATEPART(YEAR, START) = @YEAR
-												) + 1, 
-												1)
+	BEGIN TRY
+
+		-- если регистрируем договор уже с заданным номером - то и делать ничего не нужно
+		IF @NUM_S IS NOT NULL
+			RETURN;
+
+		DECLARE @YEAR INT
+		
+		SELECT @YEAR = DATEPART(YEAR, START)
+		FROM Common.Period
+		WHERE ID = @ID_YEAR
+
+		IF ISNULL(@COUNT, 1) = 1
+		BEGIN
+			IF @NUM IS NULL
+				SELECT @NUM = ISNULL(
+													(
+														SELECT MAX(NUM) 
+														FROM 
+															Contract.Contract a
+															INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
+														WHERE ID_VENDOR = @VENDOR 
+															AND DATEPART(YEAR, START) = @YEAR
+													) + 1, 
+													1)
+				FROM Contract.Type
+				WHERE ID = @TYPE
+				
+			SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + CASE WHEN PREFIX = '' THEN '' ELSE PREFIX + ' ' END + REPLICATE('0', 4 - LEN(CONVERT(NVARCHAR(16), @NUM))) + CONVERT(NVARCHAR(32), @NUM)
 			FROM Contract.Type
 			WHERE ID = @TYPE
-			
-		SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + CASE WHEN PREFIX = '' THEN '' ELSE PREFIX + ' ' END + REPLICATE('0', 4 - LEN(CONVERT(NVARCHAR(16), @NUM))) + CONVERT(NVARCHAR(32), @NUM)
-		FROM Contract.Type
-		WHERE ID = @TYPE
-	END
-	ELSE
-	BEGIN
-		IF @NUM IS NULL
-			SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + 
-							PREFIX + ' ' + 
-								CONVERT(NVARCHAR(32), 
-										ISNULL(
-												(
-													SELECT MAX(NUM) 
-													FROM 
-														Contract.Contract a
-														INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
-													WHERE ID_VENDOR = @VENDOR 
-														AND DATEPART(YEAR, START) = @YEAR
-												) + 1, 
-												1))
-							+ ' -- ' +
-							CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + 
-								CONVERT(NVARCHAR(32), 
-										ISNULL(
-												(
-													SELECT MAX(NUM) 
-													FROM 
-														Contract.Contract a
-														INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
-													WHERE ID_VENDOR = @VENDOR 
-														AND DATEPART(YEAR, START) = @YEAR
-												) + 1, 
-												1) + @COUNT - 1)
-			FROM Contract.Type
-			WHERE ID = @TYPE
+		END
 		ELSE
-			SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + CONVERT(NVARCHAR(32), @NUM) + ' -- ' + CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + CONVERT(NVARCHAR(32), @NUM + @COUNT - 1)
-			FROM Contract.Type
-			WHERE ID = @TYPE
-	END
+		BEGIN
+			IF @NUM IS NULL
+				SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + 
+								PREFIX + ' ' + 
+									CONVERT(NVARCHAR(32), 
+											ISNULL(
+													(
+														SELECT MAX(NUM) 
+														FROM 
+															Contract.Contract a
+															INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
+														WHERE ID_VENDOR = @VENDOR 
+															AND DATEPART(YEAR, START) = @YEAR
+													) + 1, 
+													1))
+								+ ' -- ' +
+								CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + 
+									CONVERT(NVARCHAR(32), 
+											ISNULL(
+													(
+														SELECT MAX(NUM) 
+														FROM 
+															Contract.Contract a
+															INNER JOIN Common.Period b ON a.ID_YEAR = b.ID
+														WHERE ID_VENDOR = @VENDOR 
+															AND DATEPART(YEAR, START) = @YEAR
+													) + 1, 
+													1) + @COUNT - 1)
+				FROM Contract.Type
+				WHERE ID = @TYPE
+			ELSE
+				SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + CONVERT(NVARCHAR(32), @NUM) + ' -- ' + CONVERT(NVARCHAR(16), @YEAR) + '-' + PREFIX + ' ' + CONVERT(NVARCHAR(32), @NUM + @COUNT - 1)
+				FROM Contract.Type
+				WHERE ID = @TYPE
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

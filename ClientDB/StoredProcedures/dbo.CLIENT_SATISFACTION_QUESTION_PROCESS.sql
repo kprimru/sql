@@ -13,18 +13,40 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @ID IS NULL
-	BEGIN
-		INSERT INTO dbo.ClientSatisfactionQuestion(CSQ_ID_CS, CSQ_ID_QUESTION, CSQ_NOTE)
-			OUTPUT INSERTED.CSQ_ID INTO @TBL
-			VALUES(@CS_ID, @SQ_ID, @NOTE)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		SELECT @ID = ID FROM @TBL
-	END
-	ELSE
-		UPDATE dbo.ClientSatisfactionQuestion
-		SET CSQ_NOTE = @NOTE
-		WHERE CSQ_ID = @ID
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		IF @ID IS NULL
+		BEGIN
+			INSERT INTO dbo.ClientSatisfactionQuestion(CSQ_ID_CS, CSQ_ID_QUESTION, CSQ_NOTE)
+				OUTPUT INSERTED.CSQ_ID INTO @TBL
+				VALUES(@CS_ID, @SQ_ID, @NOTE)
+
+			SELECT @ID = ID FROM @TBL
+		END
+		ELSE
+			UPDATE dbo.ClientSatisfactionQuestion
+			SET CSQ_NOTE = @NOTE
+			WHERE CSQ_ID = @ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

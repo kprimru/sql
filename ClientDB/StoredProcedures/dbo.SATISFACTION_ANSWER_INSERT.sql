@@ -12,6 +12,28 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.SatisfactionAnswer(SA_ID_QUESTION, SA_TEXT, SA_ORDER)
-		VALUES(@SQ_ID, @TEXT, @ORDER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.SatisfactionAnswer(SA_ID_QUESTION, SA_TEXT, SA_ORDER)
+			VALUES(@SQ_ID, @TEXT, @ORDER)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

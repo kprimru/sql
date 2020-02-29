@@ -13,6 +13,28 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Subhost.CheckTestQuestion(ID_TEST, ID_QUESTION, RESULT, NOTE)
-		SELECT @TEST, @QST, @RES, @NOTE
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO Subhost.CheckTestQuestion(ID_TEST, ID_QUESTION, RESULT, NOTE)
+			SELECT @TEST, @QST, @RES, @NOTE
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

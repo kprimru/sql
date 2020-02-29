@@ -9,15 +9,37 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT DistrTypeID, DistrTypeName, DistrTypeName AS DistrTypeShortName
-	FROM dbo.DistrTypeTable
-    WHERE DistrTypeName IN ('лок', 'сеть', 'ОВК-Ф','ОВМ-Ф(1;2)')
-	ORDER BY DistrTypeOrder
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	--SELECT NT_SHORT, NT_ID, [NT_VMI_SHORT]
-	--FROM din.NetType
-	--WHERE 
-    --     [NT_TECH] IN (0,1,10,11)
-	--	  AND (NT_SHORT IN ('лок', 'ОВК-Ф','ОВМ-Ф (1;2)'))	
-	--  ORDER BY NT_SHORT           
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DistrTypeID, DistrTypeName, DistrTypeName AS DistrTypeShortName
+		FROM dbo.DistrTypeTable
+		WHERE DistrTypeName IN ('лок', 'сеть', 'ОВК-Ф','ОВМ-Ф(1;2)')
+		ORDER BY DistrTypeOrder
+	
+		--SELECT NT_SHORT, NT_ID, [NT_VMI_SHORT]
+		--FROM din.NetType
+		--WHERE 
+		--     [NT_TECH] IN (0,1,10,11)
+		--	  AND (NT_SHORT IN ('лок', 'ОВК-Ф','ОВМ-Ф (1;2)'))	
+		--  ORDER BY NT_SHORT           
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH	
 END

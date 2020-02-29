@@ -11,7 +11,29 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE FROM Contract.ClientContractsDocuments
-	WHERE Contract_Id = @Contract_Id
-		AND RowIndex = @RowIndex;
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE FROM Contract.ClientContractsDocuments
+		WHERE Contract_Id = @Contract_Id
+			AND RowIndex = @RowIndex;
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -12,16 +12,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET @TEXT = NULL
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @COLOR = 0
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS
-		(
-			SELECT *
-			FROM dbo.ClientDutyTable
-			WHERE ClientID = @CLIENT
-				AND ClientDutyComplete = 0
-		)
-		SET @COLOR = 2
+	BEGIN TRY
+
+		SET @TEXT = NULL
+
+		SET @COLOR = 0
+
+		IF EXISTS
+			(
+				SELECT *
+				FROM dbo.ClientDutyTable
+				WHERE ClientID = @CLIENT
+					AND ClientDutyComplete = 0
+			)
+			SET @COLOR = 2
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

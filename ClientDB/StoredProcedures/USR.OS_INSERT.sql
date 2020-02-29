@@ -20,8 +20,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO USR.OS(OS_NAME, OS_MIN, OS_MAJ, OS_BUILD, OS_PLATFORM, OS_EDITION, OS_CAPACITY, OS_LANG, OS_COMPATIBILITY, OS_ID_FAMILY)
-		VALUES(@NAME, @MIN, @MAJ, @BUILD, @PLATFORM, @EDITION, @CAPACITY, @LANG, @COMPATIBILITY, @FAMILY)
-	
-	SELECT @ID = SCOPE_IDENTITY()
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO USR.OS(OS_NAME, OS_MIN, OS_MAJ, OS_BUILD, OS_PLATFORM, OS_EDITION, OS_CAPACITY, OS_LANG, OS_COMPATIBILITY, OS_ID_FAMILY)
+			VALUES(@NAME, @MIN, @MAJ, @BUILD, @PLATFORM, @EDITION, @CAPACITY, @LANG, @COMPATIBILITY, @FAMILY)
+		
+		SELECT @ID = SCOPE_IDENTITY()
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

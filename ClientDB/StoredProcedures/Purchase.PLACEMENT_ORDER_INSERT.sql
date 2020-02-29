@@ -12,12 +12,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Purchase.PlacementOrder(PO_NAME, PO_NUM)
-		OUTPUT inserted.PO_ID INTO @TBL
-		VALUES(@NAME, @NUM)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
+
+		INSERT INTO Purchase.PlacementOrder(PO_NAME, PO_NUM)
+			OUTPUT inserted.PO_ID INTO @TBL
+			VALUES(@NAME, @NUM)
+			
+		SELECT @ID = ID
+		FROM @TBL
 		
-	SELECT @ID = ID
-	FROM @TBL
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

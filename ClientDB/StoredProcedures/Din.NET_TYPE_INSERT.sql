@@ -20,8 +20,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Din.NetType(NT_NAME, NT_NOTE, NT_NET, NT_TECH, NT_SHORT, NT_ID_MASTER, NT_VMI_SHORT, NT_ODOFF, NT_ODON, NT_TECH_USR)
-		VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO Din.NetType(NT_NAME, NT_NOTE, NT_NET, NT_TECH, NT_SHORT, NT_ID_MASTER, NT_VMI_SHORT, NT_ODOFF, NT_ODON, NT_TECH_USR)
+			VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
+
+		SELECT @ID = SCOPE_IDENTITY()
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

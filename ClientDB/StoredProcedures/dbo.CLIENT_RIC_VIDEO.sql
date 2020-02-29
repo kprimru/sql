@@ -10,9 +10,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 'Подписан на "Видео.Консультант" с ' + CONVERT(NVARCHAR(64), START, 104) AS TXT
-	FROM dbo.ClientDelivery
-	WHERE ID_CLIENT = @ID
-		AND ID_DELIVERY = '25EEB199-A6DA-E511-9D3C-0007E92AAFC5'
-		AND FINISH IS NULL
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 'Подписан на "Видео.Консультант" с ' + CONVERT(NVARCHAR(64), START, 104) AS TXT
+		FROM dbo.ClientDelivery
+		WHERE ID_CLIENT = @ID
+			AND ID_DELIVERY = '25EEB199-A6DA-E511-9D3C-0007E92AAFC5'
+			AND FINISH IS NULL
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

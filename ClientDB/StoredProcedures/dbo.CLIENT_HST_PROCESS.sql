@@ -16,16 +16,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	INSERT INTO dbo.ClientHST(PATH, FILE_DATE, FILE_MD5, FILE_SIZE)
-		SELECT @PATH, @DATE, @MD5, @SIZE
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.ClientHST
-				WHERE FILE_DATE = @DATE
-					AND FILE_MD5 = @MD5
-					AND FILE_SIZE = @SIZE
-			)
-				
-	EXEC dbo.CLIENT_SEARCH_PROCESS @CLIENT, @SEARCH_DATA, @RC OUTPUT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		INSERT INTO dbo.ClientHST(PATH, FILE_DATE, FILE_MD5, FILE_SIZE)
+			SELECT @PATH, @DATE, @MD5, @SIZE
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientHST
+					WHERE FILE_DATE = @DATE
+						AND FILE_MD5 = @MD5
+						AND FILE_SIZE = @SIZE
+				)
+					
+		EXEC dbo.CLIENT_SEARCH_PROCESS @CLIENT, @SEARCH_DATA, @RC OUTPUT
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

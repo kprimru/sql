@@ -10,7 +10,29 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT LW_SHORT, LW_FULL, LW_LOGIN
-	FROM dbo.Lawyer
-	WHERE LW_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT LW_SHORT, LW_FULL, LW_LOGIN
+		FROM dbo.Lawyer
+		WHERE LW_ID = @ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
