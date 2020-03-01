@@ -7,6 +7,7 @@ GO
 CREATE PROCEDURE [Debug].[Execution@Finish]
 	@DebugContext	Xml,
 	@Error			VarChar(512)
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;

@@ -8,6 +8,7 @@ CREATE PROCEDURE [Debug].[Execution@Start]
 	@Proc_Id		Int,
 	@Params			Xml,
 	@DebugContext	Xml OUT
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
