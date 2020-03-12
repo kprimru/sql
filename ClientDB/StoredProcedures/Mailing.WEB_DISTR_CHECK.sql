@@ -64,10 +64,11 @@ BEGIN
 			RETURN
 		END
 
+		-- ToDO два обращения!
 		IF NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.RegNodeMainSystemView
+				FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
 				WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
 			)
 		BEGIN
@@ -78,7 +79,7 @@ BEGIN
 		END
 		
 		SELECT @HOST = MainHostID
-		FROM dbo.RegNodeMainSystemView
+		FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
 		WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
 		
 		IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0

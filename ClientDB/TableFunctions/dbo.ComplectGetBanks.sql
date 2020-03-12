@@ -63,10 +63,10 @@ BEGIN
 
 	-----------------------------------------бшвхякъел уняр, дхярп х йнло нямнбмни яхярелш щрнцн йнлокейрю------------------------
 	SELECT TOP(1)
-		@DISTR = MainDistrNumber,
+		@DISTR = Cast(MainDistrNumber AS Int),
 		@HOST = MainHostID,
-		@COMP = MainCompNumber
-	FROM dbo.RegNodeMainSystemView
+		@COMP = Cast(MainCompNumber AS TinyInt)
+	FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
 	WHERE Complect = @COMPLECT;
 	------------------------------------------------------------------------------------------------------------------------------
 

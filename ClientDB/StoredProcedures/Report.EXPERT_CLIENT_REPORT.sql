@@ -151,7 +151,7 @@ BEGIN
 				INNER JOIN 
 					(
 						SELECT DISTINCT MainHostID, MainCompNumber, MainDistrNumber
-						FROM dbo.RegNodeMainSystemView
+						FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
 					) AS b ON a.HostID = b.MainHostID
 						AND a.DistrNumber = b.MainDistrNumber
 						AND a.CompNumber = b.MainCompNumber

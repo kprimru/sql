@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE VIEW [dbo].[ClientDistrWarningView]
 AS
+	-- ToDo - избавиться от этого. План отвратительный
 	SELECT ClientID, REG_ERROR
 	FROM
 		(
@@ -25,13 +26,13 @@ AS
 							SELECT ID_CLIENT
 							FROM 
 								dbo.ClientDistrView z WITH(NOEXPAND)
-								INNER JOIN dbo.RegNodeMainSystemView y ON z.HostID = y.MainHostID AND z.DISTR = y.MainDistrNumber AND z.COMP = y.MainCompNumber
+								INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON z.HostID = y.MainHostID AND z.DISTR = y.MainDistrNumber AND z.COMP = y.MainCompNumber
 							WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
 						), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
 							SELECT ClientFullName + ' (' + y.Complect + ')'
 							FROM 
 								dbo.ClientDistrView z WITH(NOEXPAND)
-								INNER JOIN dbo.RegNodeMainSystemView y ON z.HostID = y.MainHostID AND z.DISTR = y.MainDistrNumber AND z.COMP = y.MainCompNumber
+								INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON z.HostID = y.MainHostID AND z.DISTR = y.MainDistrNumber AND z.COMP = y.MainCompNumber
 								INNER JOIN dbo.ClientTable x ON x.ClientID = z.ID_CLIENT
 							WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
 						)

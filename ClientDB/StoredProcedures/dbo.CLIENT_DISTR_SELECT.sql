@@ -140,7 +140,7 @@ BEGIN
 										SELECT ID_CLIENT
 										FROM 
 											dbo.ClientDistrView z WITH(NOEXPAND)
-											INNER JOIN dbo.RegNodeMainSystemView y ON 
+											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON 
 																			z.HostID = y.MainHostID 
 																			AND z.DISTR = y.MainDistrNumber 
 																			AND z.COMP = y.MainCompNumber
@@ -152,7 +152,7 @@ BEGIN
 										SELECT ClientFullName + ' (' + y.Complect + ')'
 										FROM 
 											dbo.ClientDistrView z
-											INNER JOIN dbo.RegNodeMainSystemView y ON 
+											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON 
 																			z.HostID = y.MainHostID 
 																			AND z.DISTR = y.MainDistrNumber 
 																			AND z.COMP = y.MainCompNumber
