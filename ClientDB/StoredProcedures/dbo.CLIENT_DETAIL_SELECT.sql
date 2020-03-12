@@ -15,13 +15,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE @AddressType_Id	UniqueIdentifier;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
+		SET @AddressType_Id = (SELECT TOP (1) AT_ID FROM dbo.AddressType WHERE AT_REQUIRED = 1);
+		
 		SELECT 
 			a.ClientID, 
 			ClientFullName,
@@ -66,15 +69,14 @@ BEGIN
 					) THEN 1
 				ELSE 0
 			END) AS IPLock,
-			CA_STR,
-			CA_FULL,
+			CA_STR = DisplayText,
+			CA_FULL = DisplayTextFull,
 			STT_CHECK, HST_CHECK, USR_CHECK, INET_CHECK,
 			IsLarge, IsDebtor,
 			ClientVisitCountID
-		FROM
-			dbo.ClientTable a
-			LEFT OUTER JOIN dbo.ClientWriteList() ON WCL_ID = ClientID
-			LEFT OUTER JOIN dbo.ClientAddressView d ON d.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
+		FROM dbo.ClientTable a
+		LEFT JOIN dbo.[ClientList@Get?Write]() ON WCL_ID = ClientID
+		LEFT JOIN Cache.[Client?Addresses] d ON d.Id = a.ClientID AND Type_Id = @AddressType_Id
 		WHERE a.ClientID = @CLIENTID
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

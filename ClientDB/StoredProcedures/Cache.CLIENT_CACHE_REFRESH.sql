@@ -25,13 +25,14 @@ BEGIN
 		IF @Client_Id IS NOT NULL
 		BEGIN
 			UPDATE A
-			SET A.DisplayText = CA_STR
+			SET DisplayText = CA_STR,
+				DisplayTextFull = CA_FULL
 			FROM dbo.ClientAddressView				AS V
 			INNER JOIN [Cache].[Client?Addresses]	AS A ON V.CA_ID_CLIENT = A.Id AND V.CA_ID_TYPE = A.[Type_Id]
 			WHERE CA_ID_CLIENT = @Client_Id
 			
-			INSERT INTO [Cache].[Client?Addresses]([Id], [Type_Id], [DisplayText])
-			SELECT CA_ID_CLIENT, CA_ID_TYPE, CA_STR
+			INSERT INTO [Cache].[Client?Addresses]([Id], [Type_Id], [DisplayText], [DisplayTextFull])
+			SELECT CA_ID_CLIENT, CA_ID_TYPE, CA_STR, CA_FULL
 			FROM dbo.ClientAddressView AS V
 			WHERE CA_ID_CLIENT = @Client_Id
 				AND NOT EXISTS
@@ -82,8 +83,8 @@ BEGIN
 			
 			TRUNCATE TABLE [Cache].[Client?Addresses];
 			
-			INSERT INTO [Cache].[Client?Addresses]([Id], [Type_Id], [DisplayText])
-			SELECT CA_ID_CLIENT, CA_ID_TYPE, CA_STR
+			INSERT INTO [Cache].[Client?Addresses]([Id], [Type_Id], [DisplayText], [DisplayTextFull])
+			SELECT CA_ID_CLIENT, CA_ID_TYPE, CA_STR, CA_FULL
 			FROM dbo.ClientAddressView AS V
 			INNER JOIN dbo.ClientTable AS C ON V.CA_ID_CLIENT = C.ClientID
 			WHERE C.STATUS = 1;			
