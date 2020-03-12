@@ -9,8 +9,8 @@ CREATE PROCEDURE [Reg].[REG_PROTOCOL_SEARCH]
 	@DateTimeTo		DateTime,
 	@HostsIDs		VarChar(Max),
 	@Distr			Int,
-	@Operations		VarCHar(Max),
-	@Users			VarCHar(Max)
+	@Operations		VarChar(Max),
+	@Users			VarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,17 +20,39 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Oper_EMAIL		VarChar(256);
+
+	DECLARE @IDs	Table
+	(
+		Id		BigInt			NOT NULL PRIMARY KEY CLUSTERED
+	);
+
+	DECLARE @Opers Table
+	(
+		Oper	Varchar(256)	NOT NULL PRIMARY KEY CLUSTERED
+	);
+
+	DECLARE
+		@IsEmailOperation	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+		SET @Oper_EMAIL	= 'Изменен email';
 
-		DECLARE @IDs	Table
-		(
-			Id		BigInt	NOT NULL PRIMARY KEY CLUSTERED
-		);
+		INSERT INTO @Opers
+		SELECT DISTINCT String
+		FROM dbo.StringSplit(@Operations, ',')
+		WHERE String IS NOT NULL
+
+		IF EXISTS(SELECT TOP (1) 1 FROM @Opers WHERE Oper = @Oper_EMAIL)
+			SET @IsEmailOperation = 1
+		ELSE
+			SET @IsEmailOperation = 0;
 
 		INSERT INTO @IDs
 		SELECT TOP (1000) P.RPR_ID
@@ -39,7 +61,13 @@ BEGIN
 			AND	(RPR_DATE <= @DateTimeTo OR @DateTimeTo IS NULL)
 			AND (RPR_DISTR = @Distr OR @Distr IS NULL)
 			AND	(RPR_ID_HOST IN (SELECT Cast(String AS SmallInt) FROM dbo.StringSplit(@HostsIDs, ',')) OR @HostsIDs IS NULL)
-			AND (RPR_OPER IN (SELECT String FROM dbo.StringSplit(@Operations, ',')) OR @Operations IS NULL)
+			AND (
+						RPR_OPER IN (SELECT Oper FROM @Opers)
+					OR
+						RPR_OPER LIKE @Oper_EMAIL + '%' AND @IsEmailOperation = 1
+					OR
+						@Operations IS NULL
+				)
 			AND (RPR_USER IN (SELECT String FROM dbo.StringSplit(@Users, ',')) OR @Users IS NULL)
 		ORDER BY RPR_DATE DESC
 		OPTION (RECOMPILE)

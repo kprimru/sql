@@ -46,6 +46,11 @@ BEGIN
 			AND RPR_OPER NOT LIKE 'Изменен состав ИБ%'
 			AND RPR_OPER NOT LIKE 'Дистрибутив переведен из%'
 			AND RPR_OPER NOT LIKE 'Система%'
+			
+		UNION
+		
+		SELECT 'Изменен email'
+			
 		ORDER BY RPR_OPER
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
