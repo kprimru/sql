@@ -39,7 +39,7 @@ BEGIN
 		SET @xml = CAST(@DATA AS XML)
 
 		EXEC sp_xml_preparedocument @hdoc OUTPUT, @xml
-
+		-- ToDo поменять формат xml
 		INSERT INTO #ib(IB_NAME, FPATH, FNAME, FSIZE)
 			SELECT 
 				c.value('local-name(./..)', 'VARCHAR(50)'),

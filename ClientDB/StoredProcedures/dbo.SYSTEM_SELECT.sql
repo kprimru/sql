@@ -41,10 +41,15 @@ BEGIN
 				)
 			) AS IBS_SIZE,
 			sdv.Docs
-		FROM 
-			dbo.SystemTable a
-			LEFT OUTER JOIN dbo.Hosts b ON a.HostID = b.HostID
-			LEFT OUTER JOIN dbo.SystemDocsView sdv ON a.SystemID = sdv.SystemID
+		FROM dbo.SystemTable a
+		LEFT JOIN dbo.Hosts b ON a.HostID = b.HostID
+		OUTER APPLY
+		(
+			SELECT TOP (1)
+				sdv.Docs
+			FROM dbo.SystemDocsView sdv
+			WHERE a.SystemID = sdv.SystemID
+		) AS sdv
 		WHERE (@FILTER IS NULL
 			OR SystemShortName LIKE @FILTER
 			OR SystemName LIKE @FILTER

@@ -21,6 +21,12 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+		DECLARE
+			@Status_Id	UniqueIdentifier;
+			
+		SET @Status_Id = (SELECT TOP (1) ID FROM Seminar.Status WHERE INDX = 1);
+
+		-- ToDo вычислить Id сотрудников, которых записываем, а потом уже делать выборку данных
 
 		SELECT 
 			a.ID, a.PSEDO, 
@@ -52,11 +58,10 @@ BEGIN
 		FROM 
 			Seminar.Personal a
 			INNER JOIN Seminar.Schedule b ON a.ID_SCHEDULE = b.ID
-			INNER JOIN Seminar.Status c ON c.ID = a.ID_STATUS
 			INNER JOIN Seminar.Subject d ON b.ID_SUBJECT = d.ID
-			INNER JOIN dbo.Month e ON DATEPART(MONTH, b.DATE) = e.NUM
+			INNER LOOP JOIN dbo.Month e ON DATEPART(MONTH, b.DATE) = e.NUM
 		WHERE b.WEB = 1 AND a.PSEDO IS NOT NULL AND a.EMAIL IS NOT NULL		
-			AND c.INDX = 1
+			AND a.ID_STATUS = @Status_Id
 			AND a.STATUS = 1
 			
 			AND

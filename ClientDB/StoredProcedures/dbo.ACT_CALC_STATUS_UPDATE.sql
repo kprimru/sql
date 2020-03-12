@@ -50,6 +50,7 @@ BEGIN
 			FROM dbo.DBFActView c WITH(NOLOCK)
 			WHERE PR_DATE >= DATEADD(YEAR, -2, GETDATE())
 			
+		--ToDo переписать это убожество
 		UPDATE z
 		SET NEW_STATUS = 
 			CASE 

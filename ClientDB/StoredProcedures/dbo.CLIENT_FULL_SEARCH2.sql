@@ -137,7 +137,7 @@ BEGIN
 				VALUES(@FilterType_DISTR)
 			END;
 					
-			IF @NAME IS NOT NULL AND @HIST = 0 BEGIN
+			IF @NAME IS NOT NULL BEGIN
 				INSERT INTO @IdByFilterType
 				SELECT ClientID, @FilterType_NAME
 				FROM

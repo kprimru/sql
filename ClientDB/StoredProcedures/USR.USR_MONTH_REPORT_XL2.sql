@@ -103,6 +103,7 @@ BEGIN
 		CREATE TABLE #client (CL_ID INT PRIMARY KEY, IsOnline Bit)
 		
 		INSERT INTO #client(CL_ID, IsOnline)
+			-- ToDo переделать на именованное множество
 			SELECT ClientID, CASE WHEN NOT EXISTS (SELECT *
 						FROM dbo.ClientDistrView WITH(NOEXPAND)
 						WHERE ID_CLIENT = ClientID
@@ -169,6 +170,7 @@ BEGIN
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #month (UD_ID_CLIENT, UI_ID_BASE) INCLUDE(UIU_DATE_S, UI_DISTR, UI_COMP)'
 		EXEC (@SQL)	
 
+		-- ToDo кажется, это вообще не нужно
 		INSERT INTO #inet(UD_ID, UF_PATH, UF_DATE_S, UF_KIND)
 			SELECT UD_ID, UF_PATH, UF_DATE_S, USRFileKindName
 			FROM 
@@ -260,6 +262,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
+			--ToDo сделать нормльные индексы, чтобы мог сработать MERGE JOIN
 			INSERT INTO #week_system(CL_ID, WEEK_ID, CNT)
 				SELECT CL_ID, WEEK_ID, 
 					(
@@ -301,6 +304,8 @@ BEGIN
 		IF @BEGIN5 IS NOT NULL
 			SET @WEEK_CNT = @WEEK_CNT + 1
 
+		-- ToDo избавить от лукапов
+		-- ToDo избавиться от лишних подзапросов с помощью OUTER APPLY
 		SELECT
 			ClientID, ServiceFullName, ManagerFullName, ClientFullName, DISTR, NET, PayTypeName, RangeValue, Category, ServicePositionName, ContractTypeName,
 			CASE

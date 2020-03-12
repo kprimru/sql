@@ -40,6 +40,7 @@ BEGIN
 		FROM
 		(
 			SELECT
+				SH_ID		= SH_ID,
 				SH_REG		= '(' + SH_REG + ')%',
 				SH_REG_ADD	= '(' + SH_REG_ADD + ')%',
 				SH_EMAIL	= SH_EMAIL
@@ -62,7 +63,7 @@ BEGIN
 						dbo.RegNodeTable a
 						INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 						INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
-					WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
+					WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = SH_ID
 
 					UNION 
 
@@ -75,7 +76,7 @@ BEGIN
 								dbo.RegNodeTable a
 								INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 								INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
-							WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
+							WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = SH_ID
 						)
 					
 					UNION
@@ -85,9 +86,9 @@ BEGIN
 					WHERE Comment LIKE '%' + SH_REG
 				) AS o_O
 			) AS a
-				INNER JOIN dbo.SystemTable b ON b.SystemBaseName = a.SystemName
-				INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID
-				INNER JOIN dbo.ClientDutyQuestion d ON d.SYS = c.SystemNumber AND d.DISTR = a.DistrNumber AND d.COMP = a.CompNumber
+		INNER JOIN dbo.SystemTable b ON b.SystemBaseName = a.SystemName
+		INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID
+		INNER JOIN dbo.ClientDutyQuestion d ON d.SYS = c.SystemNumber AND d.DISTR = a.DistrNumber AND d.COMP = a.CompNumber
 		WHERE d.SUBHOST IS NULL
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

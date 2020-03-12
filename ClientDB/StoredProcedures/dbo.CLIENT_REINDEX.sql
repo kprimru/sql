@@ -42,6 +42,7 @@ BEGIN
 			INSERT INTO #client_list(CL_ID)
 				SELECT ClientID
 				FROM dbo.ClientTable
+				WHERE STATUS = 1
 				
 		DELETE FROM #client_list WHERE CL_ID NOT IN (SELECT CLientID FROM dbo.ClientTable WHERE STATUS = 1)
 		
