@@ -19,7 +19,7 @@ BEGIN
 	SET @Id				= @DebugContext.value('(/DEBUG/@Id)[1]', 'BigInt');
 	SET @FinishDateTime	= GetDate();
 	
-	
-	INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
-	VALUES(@Id, @FinishDateTime, @Error);
+	IF @Id IS NOT NULL
+		INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
+		VALUES(@Id, @FinishDateTime, @Error);
 END;

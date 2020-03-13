@@ -39,9 +39,10 @@ BEGIN
 						FROM dbo.HotlineDistr
 						WHERE STATUS = 1
 					) AS b ON a.HostID = ID_HOST AND DistrNumber = DISTR AND CompNumber = COMP
-					INNER JOIN dbo.SystemTable c ON c.SystemID = a.SystemID
+					--INNER JOIN dbo.SystemTable c ON c.SystemID = a.SystemID
 					INNER JOIN dbo.SystemTable d ON d.HostID = a.HostID 
-				ORDER BY a.SystemOrder, DistrNumber, CompNumber FOR XML PATH('')
+				--ORDER BY a.SystemOrder, DistrNumber, CompNumber
+				FOR XML PATH('')
 			)
 		
 		
