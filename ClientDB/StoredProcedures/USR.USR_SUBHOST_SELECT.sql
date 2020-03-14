@@ -20,6 +20,14 @@ BEGIN
 		@Date			SmallDateTime;
 		
 	DECLARE @Complects Table(Id Int Primary Key Clustered);
+	
+	DECLARE @Distrs Table
+	(
+		[Host_Id]		SmallInt	NOT NULL,
+		[Distr]			Int			NOT NULL,
+		[Comp]			TinyInt		NOT NULL,
+		PRIMARY KEY CLUSTERED([Host_Id], [Distr], [Comp])
+	);
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -29,31 +37,19 @@ BEGIN
 	BEGIN TRY
 		SET @Date = DATEADD(MONTH, -1, GETDATE());
 		
-		SELECT @REG = '(' + SH_REG + ')%' 
-		FROM dbo.Subhost
-		WHERE SH_ID = CONVERT(UNIQUEIDENTIFIER, @SH_ID)
+		INSERT INTO @Distrs
+		SELECT HostId, DistrNumber, CompNumber
+		FROM [dbo].[SubhostDistrs@Get](@SH_ID, NULL);
 
 		INSERT INTO @Complects
-		SELECT UD_ID
-		FROM
-			USR.USRComplectNumberView a WITH(NOEXPAND)
-			INNER JOIN	dbo.SystemTable c ON a.UD_SYS = c.SystemNumber
-			INNER JOIN	dbo.RegNodeTable b ON b.SystemName = c.SystemBaseName							
-											AND a.UD_DISTR = DistrNumber
-											AND a.UD_COMP = CompNumber
-		WHERE Comment LIKE @REG
-
-		UNION
-
-		SELECT UD_ID
-		FROM 
-			USR.USRComplectNumberView a WITH(NOEXPAND)
-			INNER JOIN dbo.SystemTable ON UD_SYS = SystemNumber
-			INNER JOIN dbo.SubhostComplect ON SC_ID_HOST = HostID
-											AND UD_DISTR = SC_DISTR
-											AND UD_COMP = SC_COMP				
-		WHERE SC_ID_SUBHOST = @SH_ID
-
+		SELECT DISTINCT UD_ID
+		FROM @Distrs							AS D
+		INNER JOIN dbo.SystemTable				AS S ON D.Host_Id = S.HostId
+		INNER JOIN USR.USRComplectNumberView	AS U WITH(NOEXPAND) ON	U.UD_SYS = S.SystemNumber
+																	AND U.UD_DISTR = D.Distr
+																	AND U.UD_COMP = D.Comp
+		OPTION (RECOMPILE);
+		
 		SELECT 
 			C.Id AS UD_ID, UF_DATA, UF_NAME
 		FROM @Complects C

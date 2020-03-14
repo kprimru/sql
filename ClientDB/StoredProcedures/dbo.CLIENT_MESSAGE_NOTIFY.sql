@@ -21,7 +21,7 @@ BEGIN
 
 	BEGIN TRY
 	
-		SELECT TOP 100
+		SELECT TOP 30
 			ID, ClientFullName, ID_CLIENT,
 			ClientFullName + ' ' + CONVERT(VARCHAR(20), DATE, 104) + ' ' + NOTE AS NOTE
 		FROM 
