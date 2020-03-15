@@ -51,7 +51,11 @@ BEGIN
 			Maintenance.GlobalRicPassword() AS RIC_PASSWORD,
 			Maintenance.GlobalClientAutoClaim() AS CLIENT_AUTO_CLAIM,
 			
-			Maintenance.GlobalContractYear() AS CONTRACT_YEAR
+			Maintenance.GlobalContractYear() AS CONTRACT_YEAR,
+			
+			Maintenance.GlobalControlDocumentURL() AS CONTROL_DOCUMENT_URL,
+			Maintenance.GlobalControlDocumentUser() AS CONTROL_DOCUMENT_USER,
+			Maintenance.GlobalControlDocumentPass() AS CONTROL_DOCUMENT_PASS
 			
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
