@@ -32,7 +32,7 @@ BEGIN
 					AND b.StatisticDate <= @DATE
 				ORDER BY StatisticDate DESC
 			) as DOCS
-		FROM [dbo].[SystemBanksView] a
+		FROM [dbo].[SystemBanksView] a WITH(NOEXPAND)
 		WHERE a.SystemID = @SYSTEM_ID
 		ORDER BY a.InfoBankOrder
 		

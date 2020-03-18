@@ -20,6 +20,22 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE @TBL Table
+	(
+		Id UniqueIdentifier NOT NULL PRIMARY KEY CLUSTERED
+	);
+	
+	DECLARE
+		@SystemNumber	Int,
+		@DistrNumber	Int,
+		@CompNumber		TinyInt,
+		@Host_Id		SmallInt,
+		@CallDirection_Id UniqueIdentifier,
+		@Id				UniqueIdentifier,
+		@Duty_Id		Int,
+		@Client_Id		Int;
+	
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -27,29 +43,33 @@ BEGIN
 
 	BEGIN TRY
 
-		SET @DT = DATEADD(HOUR, 7, @DT)
-
-		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-
-		-- ToDo - отдельно вычислить дистрибутив
+		SET @DT = DATEADD(HOUR, 7, @DT);
+		
+		SELECT
+			@SystemNumber	= C.[SystemNumber],
+			@DistrNumber	= C.[DistrNumber],
+			@CompNumber		= C.[CompNumber]
+		FROM dbo.Complect@Parse(@CPL) AS C;
+		
+		SELECT @Host_Id = HostID
+		FROM dbo.SystemTable
+		WHERE SystemNumber = @SystemNumber
+			AND SystemRic = 20;
 
 		INSERT INTO dbo.ClientDutyQuestion(SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, QUEST)
 		OUTPUT inserted.ID INTO @TBL
 		SELECT SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, REPLACE(QUEST, CHAR(10), '')
 		FROM
 		(
-			SELECT 
-				CONVERT(INT, LEFT(@CPL, CHARINDEX('_', @CPL) - 1)) AS SYS,
-				CONVERT(INT, 
-							CASE 
-								WHEN CHARINDEX('_', REVERSE(@CPL)) > 3 THEN 
-										RIGHT(@CPL, LEN(@CPL) - CHARINDEX('_', @CPL))
-								ELSE LEFT(RIGHT(@CPL, LEN(@CPL) - CHARINDEX('_', @CPL)), CHARINDEX('_', RIGHT(@CPL, LEN(@CPL) - CHARINDEX('_', @CPL))) - 1)
-							END) AS DISTR,
-				CASE 
-					WHEN CHARINDEX('_', REVERSE(@CPL)) > 3 THEN 1
-					ELSE CONVERT(INT, REVERSE(LEFT(REVERSE(@CPL), CHARINDEX('_', REVERSE(@CPL)) - 1)))
-				END AS COMP, @DT AS DATE, @FIO AS FIO, @EMAIL AS EMAIL, @PHONE AS PHONE, @QUEST AS QUEST
+			SELECT
+				@SystemNumber AS SYS,
+				@DistrNumber AS DISTR,
+				@CompNumber AS COMP,
+				@DT AS DATE,
+				@FIO AS FIO,
+				@EMAIL AS EMAIL,
+				@PHONE AS PHONE,
+				@QUEST AS QUEST
 		) AS a
 		WHERE NOT EXISTS
 			(
@@ -68,96 +88,72 @@ BEGIN
 							OR
 								a.QUEST = b.QUEST
 						)
-			)
+			);
 				
-		DECLARE @ID UNIQUEIDENTIFIER
-		
 		SELECT @ID = ID FROM @TBL
 		
-		DECLARE @DUTY INT
-		
-		SELECT @DUTY = DutyID
+		SELECT @Duty_Id = DutyID
 		FROM dbo.DutyTable
-		WHERE DutyLogin = 'Автомат'
+		WHERE DutyLogin = 'Автомат';
 		
-		IF @DUTY IS NULL
-			SELECT TOP 1 @DUTY = DutyID
-			FROM dbo.DutyTable
+		IF @Duty_Id IS NULL
+			SELECT TOP 1 @Duty_Id = DutyID
+			FROM dbo.DutyTable;
 		
-		--ToDo отдельно вычислить клиента, без лишних JOIN-ов
-		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL, 
-			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-		SELECT 
-			ID_CLIENT, a.DATE, a.FIO, a.PHONE, @DUTY, a.QUEST, a.EMAIL, 0, '', 0, '',
+		SET @CallDirection_Id = 
 			(
 				SELECT TOP 1 ID
 				FROM dbo.CallDirection
 				WHERE NAME = 'ВопросЭксперту'
-			)
-		FROM
-			dbo.ClientDutyQuestion a
-			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP
-			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
-		WHERE a.IMPORT IS NULL AND a.ID = @ID
-			
-		IF @@ROWCOUNT = 0
-		BEGIN
-			-- если клиента нет - то это подхост
-			-- ToDo - отдельно вычислить подхоста
-			IF (
-					SELECT SubhostName 
-					FROM 
-						dbo.ClientDutyQuestion a
-						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber
-						INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS	
-					WHERE a.IMPORT IS NULL AND a.ID = @ID
-				) = 'Л1'
-			BEGIN
-				-- если это Славянка - то пишем в карточку клиента Славянка
-				-- ToDo - убрать злостный хардкод (вопрос эксперту и Id славянки)
-				INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL, 
-							ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-					SELECT 
-						3103, a.DATE, a.FIO, a.PHONE, @DUTY, a.QUEST, a.EMAIL, 0, '', 0, '',
-						(
-							SELECT TOP 1 ID
-							FROM dbo.CallDirection
-							WHERE NAME = 'ВопросЭксперту'
-						)
-					FROM dbo.ClientDutyQuestion a
-					WHERE a.IMPORT IS NULL AND a.ID = @ID
-					
-				UPDATE a
-				SET IMPORT = GETDATE()
-				FROM
-					dbo.ClientDutyQuestion a
-				WHERE a.IMPORT IS NULL AND a.ID = @ID
-			END
-		END
-			
-		-- Ужас!!!! Опять возвращаемяс к вычислению Id клиента
-		UPDATE a
-		SET IMPORT = GETDATE()
-		FROM
-			dbo.ClientDutyQuestion a
-			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP
-			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
-		WHERE a.IMPORT IS NULL AND a.ID = @ID
+			);
+		
+		SET @Client_Id =
+			(
+				SELECT TOP (1) ID_CLIENT
+				FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
+				WHERE	D.[DISTR] = @DistrNumber
+					AND D.[COMP] = @CompNumber
+					AND D.[HostId] = @Host_Id
+			);
 		
 		
+		IF @Client_Id IS NULL AND 
+			(
+				SELECT TOP (1) SubhostName 
+				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+				WHERE b.DistrNumber = @DistrNumber
+					AND b.CompNumber = @CompNumber
+					AND b.HostId = @Host_Id
+			) = 'Л1'
+			-- ToDo - убрать злостный хардкод (Id славянки)
+			SET @Client_Id = 3103
+			
+		IF @Client_Id IS NOT NULL BEGIN
+			INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL, 
+					ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
+			SELECT 
+				@Client_Id, a.DATE, a.FIO, a.PHONE, @Duty_Id, a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
+			FROM dbo.ClientDutyQuestion a
+			WHERE	a.ID = @ID
+				AND a.IMPORT IS NULL;
+				
+			UPDATE a
+			SET IMPORT = GETDATE()
+			FROM dbo.ClientDutyQuestion a
+			WHERE	a.ID = @ID
+				AND a.IMPORT IS NULL;
+		END;
+		
+		-- ToDo а это жесть - мы же не должны при загрузке каждого вопроса проверять, не принадлежит ли он кому-то? Вынести в отдельный JOB
+		-- и там на Славянку тоже должна быть проверка
 		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, 
 			DutyID, 
 			ClientDutyQuest, EMAIL, 
 			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
 			SELECT 
 				ID_CLIENT, a.DATE, a.FIO, a.PHONE, 
-				@DUTY, 
-				a.QUEST, a.EMAIL, 0, '', 0, '',
-				(
-					SELECT TOP 1 ID
-					FROM dbo.CallDirection
-					WHERE NAME = 'ВопросЭксперту'
-				)
+				@Duty_Id, 
+				a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
 			FROM
 				dbo.ClientDutyQuestion a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP

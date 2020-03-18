@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT C.ID, C.NUM_S, DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments
+		SELECT C.ID, NUM_S = C.NUM_S + ISNULL(' от ' + CONVERT(VARCHAR(20), C.Date, 104), ''), DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments
 		FROM Contract.ClientContracts	CC
 		INNER JOIN Contract.Contract	C	ON C.ID = CC.Contract_Id
 		CROSS APPLY

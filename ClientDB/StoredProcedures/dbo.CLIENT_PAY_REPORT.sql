@@ -23,21 +23,24 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			DistrStr,
-			c.LAST_ACT,
-			c.LAST_PAY_MON,
+			D.DistrStr,
+			P.LAST_ACT,
+			P.LAST_PAY_MON,
 			/*c.NEXT_MONTH AS 'ближайшие незакрытый мес€ц', */
-			c.PAY_DELTA,
-			c.LAST_BILL_SUM
-		FROM 
-			dbo.ClientDistrView a WITH(NOEXPAND)
-			INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.ClientID
-			LEFT OUTER JOIN dbo.DBFDistrLastPayView c ON c.SYS_REG_NAME = a.SystemBaseName
-																AND c.DIS_NUM = a.DISTR
-																AND c.DIS_COMP_NUM = a.COMP
-		WHERE b.ClientID = @ID
-			AND DS_REG = 0
-		ORDER BY SystemOrder, DISTR, COMP
+			P.PAY_DELTA,
+			P.LAST_BILL_SUM
+		FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
+		OUTER APPLY
+		(
+			SELECT TOP (1) *
+			FROM dbo.DBFDistrLastPayView AS P
+			WHERE	P.SYS_REG_NAME = D.SystemBaseName
+				AND P.DIS_NUM = D.DISTR
+				AND P.DIS_COMP_NUM = D.COMP
+		) AS P
+		WHERE	D.ID_CLIENT = @ID
+			AND D.DS_REG = 0
+		ORDER BY D.SystemOrder, D.DISTR, D.COMP
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

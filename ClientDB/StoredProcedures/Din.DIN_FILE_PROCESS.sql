@@ -50,6 +50,7 @@ BEGIN
 					SELECT *
 					FROM Din.DinFiles
 					WHERE DF_DIN = @DIN
+						AND DF_MD5 = @MD5
 				)
 			BEGIN
 				SET @RES = 1

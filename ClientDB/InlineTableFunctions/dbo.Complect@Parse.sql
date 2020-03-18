@@ -23,7 +23,7 @@ RETURN
 	CROSS APPLY
 	(
 		SELECT
-			[SystemNumber] = Left([Complect], CharIndex('_', [Complect]) - 1),
+			[SystemNumber] = Cast(Left([Complect], CharIndex('_', [Complect]) - 1) AS Int),
 			[ComplectWithoutSystem] = Right([Complect], Len([Complect]) - CharIndex('_', [Complect]))
 	) AS S
 	CROSS APPLY
