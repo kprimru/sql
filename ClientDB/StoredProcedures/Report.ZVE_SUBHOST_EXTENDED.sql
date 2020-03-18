@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT 
-			SH_CAPTION AS [Подхост], ClientName AS [Клиент], DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть], SST_SHORT AS [Тип системы],
+			SH_CAPTION AS [Подхост], ClientName AS [Клиент], DistrStr AS [Дистрибутив], RPR_DATE_S AS [Дата регистрации], NT_SHORT AS [Сеть], SST_SHORT AS [Тип системы],
 			(
 				SELECT COUNT(*)
 				FROM 
@@ -33,7 +33,7 @@ BEGIN
 			) AS [Кол-во вопросов]
 		FROM
 			(
-				SELECT SH_CAPTION, SH_NAME, ClientName, DistrStr, HostID, DistrNumber, CompNumber, NT_SHORT, SST_SHORT, SystemOrder
+				SELECT SH_CAPTION, SH_NAME, ClientName, DistrStr, HostID, DistrNumber, CompNumber, NT_SHORT, SST_SHORT, SystemOrder, RPR_DATE_S
 				FROM
 					(
 						SELECT 'Владивосток' AS SH_CAPTION, '' AS SH_NAME
@@ -53,6 +53,15 @@ BEGIN
 						WHERE SubhostName = SH_NAME
 							AND DS_REG = 0
 					) AS CLIENT
+					CROSS APPLY
+					(
+						SELECT TOP (1) RPR_DATE_S
+						FROM dbo.RegProtocol  AS P
+						WHERE P.RPR_ID_HOST = Client.HostID
+							AND P.RPR_DISTR = Client.DIstrNumber
+							AND P.RPR_COMP = Client.CompNumber
+						ORDER BY RPR_DATE_S
+					) AS P
 			) AS o_O
 		ORDER BY SH_NAME, SystemOrder, DistrNumber, CompNumber, ClientName
 		
