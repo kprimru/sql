@@ -33,6 +33,7 @@ BEGIN
 		ELSE
 			SET @CLIENT = '%' + @CLIENT + '%'
 
+		-- ToDo очень плохой план...
 		SELECT 
 			TP, DS_INDEX,
 			c.Comment, c.DistrStr,
@@ -84,11 +85,9 @@ BEGIN
 					c.Complect IN
 						(
 							SELECT Complect
-							FROM 
-								dbo.RegNodeTable a
-								INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-								INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
-								INNER JOIN dbo.Subhost d ON SC_ID_SUBHOST = SH_ID
+							FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+							INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = a.HostID
+							INNER JOIN dbo.Subhost d ON SC_ID_SUBHOST = SH_ID
 							WHERE SystemReg = 1 AND SC_REG = 1 AND SH_REG = @SUBHOST
 						)
 					

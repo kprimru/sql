@@ -27,6 +27,7 @@ BEGIN
 			(
 				SELECT 
 					dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' + 
+					-- ToDo - сделать через справочник
 					CASE RN_TECH_TYPE 
 						WHEN 0 THEN
 							CASE RN_NET_COUNT

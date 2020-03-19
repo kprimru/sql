@@ -27,25 +27,19 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT @SYSTEM = b.SystemID, @DATE = CONVERT(SMALLDATETIME, RegisterDate, 104)
-		FROM 
-			dbo.ClientDistrView a WITH(NOEXPAND)
-			INNER JOIN dbo.SystemTable b ON b.HostID = a.HostID
-			INNER JOIN dbo.RegNodeTable c ON c.SystemName = b.SystemBaseName 
-											AND c.DistrNumber = a.DISTR 
-											AND c.CompNumber = a.COMP
-		WHERE a.ID = @ID AND a.SystemID <> b.SystemID
+		SELECT @SYSTEM = c.SystemID, @DATE = CONVERT(SMALLDATETIME, RegisterDate, 104)
+		FROM dbo.ClientDistrView a WITH(NOEXPAND)
+		INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostId = a.HostId
+															AND c.DistrNumber = a.DISTR 
+															AND c.CompNumber = a.COMP
+		WHERE a.ID = @ID AND a.SystemID <> c.SystemID
 		
-		SELECT @NET = d.DistrTypeID, @DATE = CONVERT(SMALLDATETIME, RegisterDate, 104)
-		FROM 
-			dbo.ClientDistrView a WITH(NOEXPAND)
-			INNER JOIN dbo.SystemTable b ON b.HostID = a.HostID
-			INNER JOIN dbo.RegNodeTable c ON c.SystemName = b.SystemBaseName 
-											AND c.DistrNumber = a.DISTR 
-											AND c.CompNumber = a.COMP
-			INNER JOIN Din.NetType e ON e.NT_NET = c.NetCount AND e.NT_TECH = c.TechnolType AND e.NT_ODON = c.ODON AND e.NT_ODOFF = c.ODOFF
-			INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeId = e.NT_ID_MASTER
-		WHERE a.ID = @ID AND a.DistrTypeID <> d.DistrTypeID
+		SELECT @NET = c.DistrTypeID, @DATE = CONVERT(SMALLDATETIME, RegisterDate, 104)
+		FROM dbo.ClientDistrView a WITH(NOEXPAND)
+		INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostId = a.HostId
+														AND c.DistrNumber = a.DISTR 
+														AND c.CompNumber = a.COMP	
+		WHERE a.ID = @ID AND a.DistrTypeID <> c.DistrTypeID
 		
 		SELECT @DISTR = DistrStr, @HOST = HostID
 		FROM dbo.ClientDistrView a WITH(NOEXPAND)

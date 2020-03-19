@@ -17,10 +17,10 @@ AS
 				SELECT *
 				FROM 
 					dbo.ClientDistrView b WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeTable d ON d.SystemName = b.SystemBaseName
+					INNER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON d.SystemBaseName = b.SystemBaseName
 												AND b.DISTR = d.DistrNumber
 												AND b.COMP = d.CompNumber
-				WHERE b.ID_CLIENT = a.ClientID AND DS_REG = 0
+				WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
 			)			
 
 	UNION ALL
@@ -36,10 +36,10 @@ AS
 				SELECT *
 				FROM 
 					dbo.ClientDistrView b WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeTable d ON d.SystemName = b.SystemBaseName
+					INNER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON d.SystemBaseName = b.SystemBaseName
 												AND b.DISTR = d.DistrNumber
 												AND b.COMP = d.CompNumber
-				WHERE b.ID_CLIENT = a.ClientID AND DS_REG = 0
+				WHERE b.ID_CLIENT = a.ClientID AND d.DS_REG = 0
 			)
 			
 	UNION ALL

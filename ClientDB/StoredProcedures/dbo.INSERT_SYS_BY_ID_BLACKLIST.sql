@@ -29,7 +29,7 @@ BEGIN
 
 		declare @COMPLECT VARCHAR(20)
 
-		SET @COMPLECT = (SELECT COMPLECT FROM dbo.REGNODETABLE r WHERE (r.DistrNumber=@DISTR)and(r.CompNumber=@COMP)and(r.SystemName=(select SystemBaseName from  SystemTable where SystemID=@ID_SYS) ))
+		SET @COMPLECT = (SELECT COMPLECT FROM Reg.RegNodeSearchView r WITH(NOEXPAND) WHERE (r.DistrNumber=@DISTR)and(r.CompNumber=@COMP)and(r.SystemId = @ID_SYS))
 
 		IF EXISTS (SELECT ID FROM  dbo.BLACK_LIST_REG WHERE
 				  (DISTR = @DISTR) AND (COMP = @COMP) AND (ID_SYS = @ID_SYS) AND (P_DELETE=0))

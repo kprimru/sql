@@ -29,12 +29,11 @@ BEGIN
 		
 		UPDATE a
 		SET ID_STATUS = @STAT
-		FROM 
-			dbo.ClientDistr a
-			INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
-			INNER JOIN dbo.RegNodeTable c ON c.SystemName = b.SystemBaseName AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
-			INNER JOIN dbo.DistrStatus d ON d.DS_ID = a.ID_STATUS
-		WHERE DS_REG = 1 AND Service = 2 AND a.STATUS = 1
+		FROM dbo.ClientDistr a
+		INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
+		INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.SystemBaseName = b.SystemBaseName AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
+		INNER JOIN dbo.DistrStatus d ON d.DS_ID = a.ID_STATUS
+		WHERE d.DS_REG = 1 AND c.DS_REG = 2 AND a.STATUS = 1
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

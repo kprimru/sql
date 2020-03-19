@@ -6,15 +6,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE FUNCTION [Reg].[RegComplectGet]
 (
-	@HOST	INT,
-	@DISTR	INT,
-	@COMP	TINYINT,
-	@DATE	DATETIME
+	@HOST	SmallInt,
+	@DISTR	Int,
+	@COMP	TinyInt,
+	@DATE	DateTime
 )
-RETURNS VARCHAR(50)
+RETURNS VarChar(50)
 AS
 BEGIN
-	DECLARE @RES VARCHAR(50)
+	DECLARE @RES VarChar(50)
 
 	IF NOT EXISTS
 		(
@@ -23,17 +23,14 @@ BEGIN
 		)
 	BEGIN
 		SELECT TOP 1 @RES = Complect
-		FROM 
-			dbo.RegNodeTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-		WHERE a.DistrNumber = @DISTR AND a.CompNumber = @COMP AND b.HostID = @HOST
+		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+		WHERE a.DistrNumber = @DISTR AND a.CompNumber = @COMP AND a.HostID = @HOST
 	END
 	ELSE
 	BEGIN
 		SELECT TOP 1 @RES = COMPLECT
-		FROM 
-			Reg.RegHistory
-			INNER JOIN Din.SystemType ON ID_TYPE = SST_ID
+		FROM Reg.RegHistory
+		INNER JOIN Din.SystemType ON ID_TYPE = SST_ID
 		WHERE DATE <= @DATE 
 			AND ID_DISTR = 
 				(

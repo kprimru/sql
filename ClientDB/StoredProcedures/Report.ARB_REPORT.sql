@@ -33,10 +33,10 @@ BEGIN
 			AND EXISTS
 				(
 					SELECT *
-					FROM dbo.RegNodeTable z
+					FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
 					WHERE z.Complect = a.Complect
-						AND z.Service = 0
-						AND z.SystemName = 'ARB'
+						AND z.DS_REG = 0
+						AND z.SystemBaseName = 'ARB'
 				)
 		ORDER BY ISNULL(ManagerName, ''), 1, 2, 4
 		

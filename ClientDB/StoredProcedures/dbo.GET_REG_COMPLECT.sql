@@ -23,7 +23,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
+		-- ToDo...
 		SELECT 
 			R.*, S.*
 		FROM [dbo].[RegNodeTable] R

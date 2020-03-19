@@ -50,10 +50,8 @@ BEGIN
 				dbo.DistrString(SystemShortName, DF_DISTR, a.DF_COMP), DF_DISTR, a.DF_COMP, ID, 
 				(
 					SELECT TOP 1 Service
-					FROM 
-						dbo.RegNodeTable p
-						INNER JOIN dbo.SystemTable q ON p.SystemName = q.SystemBaseName
-					WHERE q.HostID = b.HostID AND p.DistrNumber = DF_DISTR AND p.CompNumber = DF_COMP
+					FROM Reg.RegNodeSearchView p WITH(NOEXPAND)
+					WHERE p.HostID = b.HostID AND p.DistrNumber = DF_DISTR AND p.CompNumber = DF_COMP
 					ORDER BY Service
 				)
 			FROM
@@ -75,7 +73,6 @@ BEGIN
 						AND (x.DF_DISTR = @DISTR OR @DISTR IS NULL)
 						AND (DF_CREATE >= @BEGIN OR @BEGIN IS NULL)
 						AND (DF_CREATE < @END OR @END IS NULL)
-				/*LEFT OUTER JOIN dbo.RegNodeTable d ON d.SystemName = b.SystemBaseName AND d.DistrNumber = a.DF_DISTR AND d.CompNumber = a.DF_COMP*/
 				) AS o_O
 				INNER JOIN Din.DinFiles a ON o_O.ID = DF_ID
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID

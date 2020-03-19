@@ -431,11 +431,7 @@ BEGIN
 						UP_DISTR, UP_COMP, UP_RIC, UP_NET, UP_TECH, UP_TYPE, UP_FORMAT,
 						Reg.DistrStatusGet(HostID, UP_DISTR, UP_COMP, @UF_DATE) AS Service
 				FROM #package
-			) b /*LEFT OUTER JOIN
-			dbo.RegNodeTable f ON f.SystemName = b.SystemBaseName 
-								AND f.DistrNumber = UP_DISTR 
-								AND f.CompNumber = UP_COMP
-			*/
+			) b
 
 		UNION
 

@@ -23,7 +23,7 @@ SET NOCOUNT ON
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
+		-- не смог сходу переписать...
 			SELECT 
 				R.*, S.*
 			FROM [dbo].[RegNodeTable] R

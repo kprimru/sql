@@ -151,7 +151,7 @@ BEGIN
 									), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
 										SELECT ClientFullName + ' (' + y.Complect + ')'
 										FROM 
-											dbo.ClientDistrView z
+											dbo.ClientDistrView z WITH(NOEXPAND)
 											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON 
 																			z.HostID = y.MainHostID 
 																			AND z.DISTR = y.MainDistrNumber 

@@ -274,7 +274,7 @@ BEGIN
 																			AND d.DIS_NUM = c.DISTR
 																			AND d.DIS_COMP_NUM = c.COMP
 						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-						INNER JOIN dbo.RegNodeTable f ON f.SystemName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
+						INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON f.SystemBaseName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
 					WHERE f.Service = 0
 				) AS o_O
 			

@@ -15,6 +15,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE @ClientDistrs Table
+	(
+		Host_Id		SmallInt	NOT NULL,
+		Distr		Int			NOT NULL,
+		Comp		TinyInt		NOT NULL,
+		DF_ID		Int				NULL,
+		System_Id	SmallInt		NULL,
+		PRIMARY KEY CLUSTERED(Distr, Host_Id, Comp)
+	);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -22,53 +32,35 @@ BEGIN
 
 	BEGIN TRY
 
-		IF OBJECT_ID('tempdb..#client') IS NOT NULL
-			DROP TABLE #client
-
-		CREATE TABLE #client
-			(
-				HST_ID	INT,
-				DISTR	INT,
-				COMP	TINYINT,
-				DF_ID	BIGINT,
-				SYS_ID	INT
-			)
-
-		INSERT INTO #client(HST_ID, DISTR, COMP)
+		INSERT INTO @ClientDistrs(Host_Id, Distr, Comp)
 			SELECT HostID, DISTR, COMP
-			FROM 
-				dbo.ClientDistrView a WITH(NOEXPAND)			
-			WHERE a.ID_CLIENT = @CLIENT
+			FROM  dbo.ClientDistrView a WITH(NOEXPAND)			
+			WHERE a.ID_CLIENT = @CLIENT;
 
-		INSERT INTO #client(HST_ID, DISTR, COMP)
-			SELECT HostID, DistrNumber, CompNumber
-			FROM 
-				dbo.RegNodeTable a
-				INNER JOIN dbo.SystemTable b ON b.SystemBaseName = a.SystemName
-			WHERE NOT EXISTS
+		INSERT INTO @ClientDistrs(Host_Id, Distr, Comp)
+		SELECT HostID, DistrNumber, CompNumber
+		FROM Reg.RegNodeSearchView AS A WITH(NOEXPAND)
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM @ClientDistrs c
+				WHERE c.Host_Id = A.HostID
+					AND c.Distr = A.DistrNumber
+					AND c.Comp = A.CompNumber
+			)
+			AND a.Complect IN
+				(
+					SELECT DISTINCT Complect
+					FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
+					INNER JOIN @ClientDistrs x ON x.Host_Id = z.HostID AND x.Distr = z.DistrNumber AND x.Comp = z.CompNumber
+				)
+			AND NOT EXISTS
 				(
 					SELECT *
-					FROM #client c
-					WHERE c.HST_ID = b.HostID
-						AND a.DistrNumber = c.DISTR
-						AND a.CompNumber = c.COMP
-				)
-				AND a.Complect IN
-					(
-						SELECT DISTINCT Complect
-						FROM 
-							dbo.RegNodeTable z
-							INNER JOIN dbo.SystemTable y ON z.SystemName = y.SystemBaseName
-							INNER JOIN #client x ON x.HST_ID = y.HostID AND x.DISTR = z.DistrNumber AND x.COMP = z.CompNumber
-					)
-				AND NOT EXISTS
-					(
-						SELECT *
-						FROM 
-							dbo.ClientDistrView c WITH(NOEXPAND)						
-						WHERE c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber AND b.HostID = c.HostID
-							AND c.ID_CLIENT <> @CLIENT
-					)
+					FROM dbo.ClientDistrView c WITH(NOEXPAND)						
+					WHERE c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber AND A.HostID = c.HostID
+						AND c.ID_CLIENT <> @CLIENT
+				);
 
 
 		IF OBJECT_ID('tempdb..#din') IS NOT NULL
@@ -86,68 +78,59 @@ BEGIN
 				DistrNum	INT,
 				CompNum		TINYINT,
 				DF_ID		INT,
-				DIS_STATUS	INT
-			)
+				DIS_STATUS	INT,
+				PRIMARY KEY CLUSTERED (ID)
+			);
 
 		UPDATE x
-		SET DF_ID = (
-						SELECT TOP 1 z.DF_ID
-						FROM 
-							Din.DinFiles z
-							INNER JOIN dbo.SystemTable y ON y.SystemID = z.DF_ID_SYS
-							INNER JOIN Din.NetType ON NT_ID = DF_ID_NET						
-							INNER JOIN dbo.RegNodeTable q ON DistrNumber = z.DF_DISTR AND CompNumber = z.DF_COMP AND y.SYstemBaseName = q.SystemName AND NetCount = NT_NET AND TechnolType = NT_TECH AND ODON = NT_ODON AND ODOFF = NT_ODOFF
-						WHERE z.DF_DISTR = x.DISTR AND z.DF_COMP = x.COMP AND y.HostID = t.HostID
-						ORDER BY DF_CREATE DESC
-					)
-		FROM
-			dbo.SystemTable t
-			INNER JOIN #client x ON x.HST_ID = t.HostID
-
-		UPDATE #client
-		SET SYS_ID = 
+		SET DF_ID = 
 				(
-					SELECT TOP 1 SystemID
-					FROM
-						(
-							SELECT a.SystemID, SystemOrder
-							FROM 
-								dbo.ClientDistrView a WITH(NOEXPAND)
-							WHERE a.HostID = HST_ID AND a.DISTR = #client.DISTR AND a.COMP = #client.COMP
-
-							UNION
-		
-							SELECT SystemID, SystemOrder
-							FROM 
-								dbo.RegNodeTable a
-								INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-							WHERE b.HostID = HST_ID AND a.DistrNumber = DISTR AND a.CompNumber = COMP
-						) AS o_O
-					ORDER BY SystemOrder
+					SELECT TOP 1 z.DF_ID
+					FROM Din.DinFiles z
+					INNER JOIN Reg.RegNodeSearchView q WITH(NOEXPAND) ON DistrNumber = z.DF_DISTR AND CompNumber = z.DF_COMP AND z.DF_ID_SYS = q.SystemId AND z.DF_ID_NET = q.NT_ID
+					WHERE z.DF_DISTR = x.DISTR AND z.DF_COMP = x.COMP AND q.HostID = X.Host_ID
+					ORDER BY DF_CREATE DESC
 				)
+		FROM @ClientDistrs X;
+
+		UPDATE D
+		SET System_Id = 
+			(
+				SELECT TOP 1 SystemID
+				FROM
+					(
+						SELECT a.SystemID, SystemOrder
+						FROM dbo.ClientDistrView a WITH(NOEXPAND)
+						WHERE a.HostID = D.Host_Id AND a.DISTR = D.DISTR AND a.COMP = D.COMP
+
+						UNION
+	
+						SELECT SystemID, SystemOrder
+						FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+						WHERE a.HostID = D.Host_Id AND a.DistrNumber = D.DISTR AND a.CompNumber = D.COMP
+					) AS o_O
+				ORDER BY SystemOrder
+			)
+		FROM @ClientDistrs AS D;
 		
 
 		INSERT INTO #din(ID_MASTER, HST_ID, ID_SYSTEM, NT_ID, SST_ID, DIS_STR, DistrNum, CompNum, DF_ID, DIS_STATUS)
-			SELECT 
-				NULL, ISNULL(b.HostID, c.HostID), ISNULL(b.SystemID, c.SystemID), NT_ID, SST_ID, 
-				dbo.DistrString(ISNULL(b.SystemShortName, c.SystemShortName), DISTR, COMP), DISTR AS DF_DISTR, COMP AS DF_COMP, t.DF_ID,
-				(
-					SELECT TOP 1 Service
-					FROM 
-						dbo.RegNodeTable p
-						INNER JOIN dbo.SystemTable q ON p.SystemName = q.SystemBaseName
-					WHERE q.HostID = b.HostID AND p.DistrNumber = DISTR AND p.CompNumber = COMP
-					ORDER BY Service
-				)
-			FROM
-				#client t			
-				LEFT OUTER JOIN Din.DinFiles a ON t.DF_ID = a.DF_ID			
-				LEFT OUTER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
-				LEFT OUTER JOIN dbo.SystemTable c ON t.SYS_ID = c.SystemID
-				LEFT OUTER JOIN Din.NetType ON NT_ID = DF_ID_NET
-				LEFT OUTER JOIN Din.SystemType ON SST_ID = DF_ID_TYPE
-			
-			ORDER BY ISNULL(b.SystemOrder, c.SystemOrder), DISTR, COMP					
+		SELECT 
+			NULL, ISNULL(b.HostID, c.HostID), ISNULL(b.SystemID, c.SystemID), NT_ID, SST_ID, 
+			dbo.DistrString(ISNULL(b.SystemShortName, c.SystemShortName), DISTR, COMP), DISTR AS DF_DISTR, COMP AS DF_COMP, t.DF_ID,
+			(
+				SELECT TOP 1 Service
+				FROM Reg.RegNodeSearchView p WITH(NOEXPAND)
+				WHERE p.HostID = b.HostID AND p.DistrNumber = DISTR AND p.CompNumber = COMP
+				ORDER BY Service
+			)
+		FROM @ClientDistrs AS T
+		LEFT OUTER JOIN Din.DinFiles a ON t.DF_ID = a.DF_ID			
+		LEFT OUTER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
+		LEFT OUTER JOIN dbo.SystemTable c ON t.System_Id = c.SystemID
+		LEFT OUTER JOIN Din.NetType ON NT_ID = DF_ID_NET
+		LEFT OUTER JOIN Din.SystemType ON SST_ID = DF_ID_TYPE
+		ORDER BY ISNULL(b.SystemOrder, c.SystemOrder), DISTR, COMP;
 
 		INSERT INTO #din(ID_MASTER, HST_ID, ID_SYSTEM, NT_ID, SST_ID, DIS_STR, DistrNum, CompNum, DF_ID)
 			SELECT 

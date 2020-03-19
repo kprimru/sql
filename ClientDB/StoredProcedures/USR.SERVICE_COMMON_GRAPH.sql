@@ -80,9 +80,8 @@ BEGIN
 				#client 
 				INNER JOIN USR.USRActiveView z ON z.UD_ID_CLIENT = CL_ID
 				INNER JOIN USR.USRFileTech t ON z.UF_ID = t.UF_ID
-				INNER JOIN dbo.SystemTable y ON z.UF_ID_SYSTEM = y.SystemID 
-				LEFT OUTER JOIN dbo.RegNodeTable x ON x.SystemName = SystemBaseName AND z.UD_DISTR = x.DistrNumber AND z.UD_COMP = x.CompNumber
-			WHERE ISNULL(Service, 0) = 0
+				LEFT OUTER JOIN Reg.RegNodeSearchView x WITH(NOEXPAND) ON x.SystemId = z.UF_ID_SYSTEM AND z.UD_DISTR = x.DistrNumber AND z.UD_COMP = x.CompNumber
+			WHERE ISNULL(x.DS_REG, 0) = 0
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res

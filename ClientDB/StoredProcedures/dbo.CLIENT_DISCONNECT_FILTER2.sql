@@ -80,10 +80,8 @@ BEGIN
 		WHERE EXISTS
 			(
 				SELECT *
-				FROM 
-					dbo.RegNodeTable a
-					INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-					INNER JOIN Din.SystemType c ON c.SST_REG = a.DistrType
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				INNER JOIN Din.SystemType c ON c.SST_ID = a.SST_ID
 				WHERE DistrNumber = DISTR AND CompNumber = COMP AND HostID = ID_HOST AND SST_WEIGHT = 0
 			)
 			 

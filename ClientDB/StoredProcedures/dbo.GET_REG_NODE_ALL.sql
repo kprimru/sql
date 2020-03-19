@@ -22,6 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
+		-- ToDo да что же это такое...
 		SELECT R.*, S.SystemID, S.SystemShortName
 		FROM dbo.RegNodeTable R
 		LEFT JOIN dbo.SystemTable S ON S.SystemBaseName = R.SystemName

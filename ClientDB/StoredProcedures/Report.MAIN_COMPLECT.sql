@@ -55,33 +55,22 @@ BEGIN
 				(
 					SELECT 
 						dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + '(' +
-						CASE TechnolType
-							WHEN 1 THEN 'Флэш'
-							ELSE
-								CASE NetCount
-									WHEN 0 THEN 'лок'
-									WHEN 1 THEN '1/с'
-									ELSE 'сеть ' + CONVERT(VARCHAR(20), NetCount)
-								END
-						END + ')' + ', '
-					FROM 
-						dbo.SystemTable b 
-						INNER JOIN dbo.RegNodeTable c ON c.SystemName = b.SystemBaseName
-						INNER JOIN @MAIN ON SYS_NAME = SystemBaseName
-					WHERE c.Complect = a.Complect AND c.Service = 0
+						C.NT_SHORT + ')' + ', '
+					FROM Reg.RegNodeSearchView C  WITH(NOEXPAND)
+					INNER JOIN @MAIN ON SYS_NAME = SystemBaseName
+					WHERE c.Complect = a.Complect AND c.DS_REG = 0
 					ORDER BY SystemOrder FOR XML PATH('')
 				)
 			), 1, 2, '')) AS [Дистрибутивы]
-		FROM dbo.RegNodeTable a
-		WHERE a.Service = 0
+		FROM Reg.RegNodeSearchView A WITH(NOEXPAND)
+		WHERE A.DS_REG = 0
 			--AND DistrType NOT IN ('NCT', 'ADM', 'NEK')
 			AND 
 			(
 				SELECT COUNT(*)
-				FROM 
-					dbo.RegNodeTable d 
-					INNER JOIN @MAIN ON d.SystemName = SYS_NAME
-				WHERE d.Complect = a.Complect AND d.Service = 0
+				FROM Reg.RegNodeSearchView D WITH(NOEXPAND)
+				INNER JOIN @MAIN ON d.SystemBaseName = SYS_NAME
+				WHERE d.Complect = a.Complect AND d.DS_REG = 0
 			) > 1
 		ORDER BY Comment
 		

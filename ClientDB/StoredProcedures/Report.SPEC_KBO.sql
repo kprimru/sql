@@ -28,31 +28,24 @@ BEGIN
 			a.DistrStr AS 'Дистрибутив', NT_SHORT AS 'Сеть', ClientName AS 'Клиент', SST_SHORT AS 'Тип',
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT 
-						dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-					FROM 
-						dbo.RegNodeTable b
-						INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+					SELECT b.DistrStr + ','
+					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
-						AND b.Service = 0
-						AND t.SystemShortName <> a.SystemShortName					
+						AND b.DS_REG = 0
+						AND b.SystemShortName <> a.SystemShortName					
 					ORDER BY SystemOrder FOR XML PATH('')
 			)), 1, 1, '')) AS [Дополнительные системы]
-		FROM 
-			--Reg.RegNodeSearchView a WITH(NOEXPAND)		
-			dbo.RegNodeComplectClientView a
-			--LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
-			--LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON d.ClientID = c.ID_CLIENT
+		FROM dbo.RegNodeComplectClientView a
 		WHERE a.SystemShortName NOT IN ('БО', 'БОс', 'БОВП', 'СвРег')
 			AND a.DS_REG = 0
 			AND SST_SHORT IN ('СПЕЦ', 'ЛСВ')
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM dbo.RegNodeTable z
+					FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
 					WHERE z.Complect = a.Complect
-						AND z.Service = 0
-						AND z.SystemName = 'BORG'
+						AND z.DS_REG = 0
+						AND z.SystemBaseName = 'BORG'
 				)
 		ORDER BY ISNULL(ManagerName, ''), 1, 2, 4
 		

@@ -602,7 +602,7 @@ BEGIN
 				BEGIN			
 					DECLARE CL CURSOR LOCAL FOR 
 						SELECT DISTINCT ID_CLIENT
-						FROM dbo.ClientDistr
+						FROM dbo.ClientDistrView WITH(NOEXPAND)
 						WHERE ID IN
 							(
 								SELECT a.ID
@@ -741,7 +741,7 @@ BEGIN
 				BEGIN			
 					DECLARE CL CURSOR LOCAL FOR 
 						SELECT ID_CLIENT
-						FROM dbo.ClientDistr
+						FROM dbo.ClientDistrView WITH(NOEXPAND)
 						WHERE ID IN
 							(
 								SELECT a.ID

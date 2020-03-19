@@ -23,11 +23,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT R.SystemName, R.DistrNumber, R.CompNumber
-		FROM dbo.RegNodeTable R
-		LEFT JOIN dbo.SystemTable S ON S.SystemBaseName=R.SystemName
+		SELECT R.SystemBaseName AS SystemName, R.DistrNumber, R.CompNumber
+		FROM Reg.RegNodeSearchView AS R WITH(NOEXPAND)
 		LEFT JOIN dbo.BLACK_LIST_REG B ON (B.DISTR=R.DistrNumber)
-		AND(B.COMP=R.CompNumber)AND(B.ID_SYS=S.SystemID)AND(B.[P_DELETE]=0)
+										AND(B.COMP=R.CompNumber)
+										AND(B.ID_SYS=R.SystemID)
+										AND(B.[P_DELETE]=0)
 		WHERE (B.ID IS NULL)AND((CHARINDEX(@COMMENT, R.COMMENT)>0)AND(CHARINDEX(@COMMENT, R.COMMENT)<3))
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

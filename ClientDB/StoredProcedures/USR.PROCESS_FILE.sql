@@ -534,21 +534,21 @@ BEGIN
 		IF @Client_Id IS NULL
 		BEGIN
 			SELECT @ClientName = Comment
-			FROM dbo.RegNodeTable			
+			FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 			WHERE DistrNumber = @DISTRINT 
 				AND CompNumber = @COMPINT
-				AND SystemName = @systemname;
+				AND SystemBaseName = @systemname;
 
 			IF @ClientName IS NULL
 			BEGIN
 				SELECT TOP 1
 					@ClientName = Comment
-				FROM dbo.RegNodeTable a
-				INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
+				FROM Reg.RegNodeSearchView AS a WITH(NOEXPAND)
+				INNER JOIN dbo.SystemTable b ON a.SystemBaseName = b.SystemBaseName
 				INNER JOIN @package c ON	PackageName = b.SystemBaseName + '_' + CONVERT(VARCHAR(20), SystemNumber)
 											AND c.DistrNumber = a.DistrNumber
 											AND c.CompNumber = a.CompNumber
-				ORDER BY SystemOrder;
+				ORDER BY a.SystemOrder;
 			END;
 
 			SET @res = @res + 'Предупреждение. Не найден клиент (' + ISNULL(@ClientName, '') + ')';

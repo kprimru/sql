@@ -57,9 +57,9 @@ BEGIN
 				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON d.UD_ID_CLIENT = a.ClientID
 				INNER JOIN USR.USRPackage e ON UP_ID_USR = UF_ID
 				INNER JOIN dbo.SystemTable f ON f.SystemID = e.UP_ID_SYSTEM
-				LEFT JOIN dbo.RegNodeTable g ON g.SystemName = f.SystemBaseName
-											AND g.DistrNumber = e.UP_DISTR
-											AND g.CompNumber = e.UP_COMP
+				LEFT JOIN Reg.RegNodeSearchView g WITH(NOEXPAND) ON g.SystemBaseName = f.SystemBaseName
+																AND g.DistrNumber = e.UP_DISTR
+																AND g.CompNumber = e.UP_COMP
 			WHERE (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (UF_DATE >= @LAST_DATE OR @LAST_DATE IS NULL)

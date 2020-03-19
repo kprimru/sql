@@ -25,10 +25,8 @@ BEGIN
 	IF @DIS_ID IS NULL
 	BEGIN
 		SELECT @RES = Service
-		FROM 
-			dbo.RegNodeTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-		WHERE b.HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP
+		FROM Reg.RegNodeSerachView a WITH(NOEXPAND)
+		WHERE a.HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP
 	END
 	ELSE
 	BEGIN

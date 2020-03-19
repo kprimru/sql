@@ -73,39 +73,18 @@ BEGIN
 			
 		IF @BASE = 1
 			INSERT INTO #temp (ClientID, ClientFullName, ManagerName, ServiceName, DisStr, ErType, BaseValue, RegValue, RegComment, RegisterDate)
-				SELECT 
-					(
-						SELECT TOP 1 ID_CLIENT
+				SELECT C.ID_CLIENT, '', C.ManagerName, C.ServiceName, d.DistrStr, 'Система не найдена в базе', '', '', Comment, RegisterDate
+				FROM Reg.RegNodeSearchView d WITH(NOEXPAND)
+				OUTER APPLY
+				(
+					SELECT TOP 1 ServiceName, ManagerName, ID_CLIENT
 						FROM 
 							dbo.ClientView z WITH(NOEXPAND)
 							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.ClientID = y.ID_CLIENT
-							INNER JOIN dbo.RegNodeTable x ON x.SystemName = y.SystemBaseName AND x.DistrNumber = y.DISTR AND x.CompNumber = y.COMP
+							INNER JOIN Reg.RegNodeSearchView x WITH(NOEXPAND) ON x.SystemBaseName = y.SystemBaseName AND x.DistrNumber = y.DISTR AND x.CompNumber = y.COMP
 						WHERE x.Complect = d.Complect
 						ORDER BY x.Service, y.SystemOrder
-					), '', 
-					(
-						SELECT TOP 1 ManagerName
-						FROM 
-							dbo.ClientView z WITH(NOEXPAND)
-							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.ClientID = y.ID_CLIENT
-							INNER JOIN dbo.RegNodeTable x ON x.SystemName = y.SystemBaseName AND x.DistrNumber = y.DISTR AND x.CompNumber = y.COMP
-						WHERE x.Complect = d.Complect
-						ORDER BY x.Service, y.SystemOrder
-					), 
-					(
-						SELECT TOP 1 ServiceName
-						FROM 
-							dbo.ClientView z WITH(NOEXPAND)
-							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.ClientID = y.ID_CLIENT
-							INNER JOIN dbo.RegNodeTable x ON x.SystemName = y.SystemBaseName AND x.DistrNumber = y.DISTR AND x.CompNumber = y.COMP
-						WHERE x.Complect = d.Complect
-						ORDER BY x.Service, y.SystemOrder
-					), 
-					d.DistrStr, 
-					'Система не найдена в базе', '', '', Comment, RegisterDate
-				FROM 
-					Reg.RegNodeSearchView d WITH(NOEXPAND) LEFT OUTER JOIN
-					dbo.SystemTable e ON e.SystemBaseName = d.SystemBaseName
+				) AS C
 				WHERE DistrNumber <> 20 AND DistrType NOT IN ('NEK', 'DSP')
 					AND NOT EXISTS
 					(

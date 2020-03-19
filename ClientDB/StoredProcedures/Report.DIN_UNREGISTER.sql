@@ -22,6 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
+		-- ToDo сначала выбрать результат, а потом последний дистр вычислять
 		SELECT 
 			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [Дистрибутив],
 			NT_SHORT AS [Сеть], SST_SHORT AS [Тип], dbo.DateOf(DF_CREATE) AS [Получен],
@@ -39,10 +40,8 @@ BEGIN
 					--HostID, DF_DISTR, DF_COMP,
 					(
 						SELECT TOP 1 DF_ID
-						FROM 
-							Din.DinFiles z
-							INNER JOIN dbo.SystemTable y ON z.DF_ID_SYS = y.SystemID
-						WHERE y.HostID = b.HostID
+						FROM Din.DinView z WITH(NOEXPAND)
+						WHERE z.HostID = b.HostID
 							AND z.DF_DISTR = a.DF_DISTR
 							AND z.DF_COMP = a.DF_COMP
 						ORDER BY DF_CREATE DESC
@@ -53,10 +52,8 @@ BEGIN
 				WHERE NOT EXISTS
 					(
 						SELECT *
-						FROM 
-							dbo.RegNodeTable z
-							INNER JOIN dbo.SystemTable y ON z.SystemName = y.SystemBaseName
-						WHERE y.HostID = b.HostID
+						FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
+						WHERE z.HostID = b.HostID
 							AND z.DistrNumber = DF_DISTR
 							AND z.CompNumber = DF_COMP
 					) AND DF_RIC = 20

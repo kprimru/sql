@@ -21,231 +21,208 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
+		
 		SELECT 
 			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], Comment AS [Название клиента в РЦ], 
 			Systems AS [Подчиненные системы в комплекте], ManagerName AS [Рук-ль], a.RegisterDate AS [Дата регистрации]
 		FROM
 			(
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('CMT', 'QSA', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('CMT', 'QSA', 'ARB')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'MBP'
+					AND SystemBaseName = 'MBP'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('CMT', 'QSA', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('CMT', 'QSA', 'ARB')
 						)
 						
 				UNION ALL
 
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+								DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('CMT', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('CMT', 'ARB')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'JUR'
+					AND SystemBaseName = 'JUR'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('CMT', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('CMT', 'ARB')
 						)
 						
 				UNION ALL
 						
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('BORG', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('BORG', 'ARB')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'BUD'
+					AND SystemBaseName = 'BUD'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('BORG', 'ARB')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('BORG', 'ARB')
 						)
 						
 				UNION ALL
 						
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('BORG')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('BORG')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'BUDU'
+					AND SystemBaseName = 'BUDU'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('BORG')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('BORG')
 						)
 				
 				UNION ALL
 				
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'BORG', 'ARB', 'CMT', 'QSA')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'BORG', 'ARB', 'CMT', 'QSA')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'BUDP'
+					AND SystemBaseName = 'BUDP'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'BORG', 'ARB', 'CMT', 'QSA')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'BORG', 'ARB', 'CMT', 'QSA')
 						)
 			
 				UNION ALL
 				
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'ARB', 'CMT', 'FIN')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT', 'FIN')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'BVP'
+					AND SystemBaseName = 'BVP'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'ARB', 'CMT', 'FIN')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT', 'FIN')
 						)
 			
 				UNION ALL
 				
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'ARB', 'CMT')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND DistrNumber <> 20
-					AND SystemName = 'JURP'
+					AND SystemBaseName = 'JURP'
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'ARB', 'CMT')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT')
 						)
 						
 				UNION ALL
 				
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('LAW', 'ARB', 'CMT', 'FIN')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT', 'FIN')
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
-				WHERE Service = 0
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
 					AND Complect IS NULL
 					AND dbo.SubhostByComment(Comment, DistrNumber) != '490'
 					AND DistrType NOT IN ('HSS', 'NCT', 'DSP')
@@ -253,64 +230,58 @@ BEGIN
 				UNION ALL
 
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName = 'PAS'
+								AND b.DS_REG = 0
+								AND b.SystemBaseName = 'PAS'
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 				WHERE
-					Service = 0 AND
-					SystemName IN ('BVP', 'BUDP', 'JURP')
+					DS_REG = 0 AND
+					SystemBaseName IN ('BVP', 'BUDP', 'JURP')
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('PAS')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('PAS')
 						)
 
 				UNION ALL
 
 				SELECT 
-					SystemName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + ','
-							FROM 
-								dbo.RegNodeTable b
-								INNER JOIN dbo.SystemTable t ON t.SystemBaseName = b.SystemName
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName = 'FIN'
+								AND b.DS_REG = 0
+								AND b.SystemBaseName = 'FIN'
 							ORDER BY SystemOrder FOR XML PATH('')
 					)), 1, 1, '')) AS Systems
-				FROM dbo.RegNodeTable a
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 				WHERE
-					Service = 0 AND
-					SystemName IN ('BUDP')
+					DS_REG = 0 AND
+					SystemBaseName IN ('BUDP')
 					AND EXISTS
 						(
 							SELECT *
-							FROM dbo.RegNodeTable b
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
-								AND b.Service = 0
-								AND b.SystemName IN ('FIN')
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('FIN')
 						)
 
 				) AS a
-			INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemName
-			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
+			INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemBaseName
+			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemBaseName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
 			
 

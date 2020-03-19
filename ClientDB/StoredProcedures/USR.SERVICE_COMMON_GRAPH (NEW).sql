@@ -117,9 +117,8 @@ BEGIN
 		FROM @Clients C
 		INNER JOIN USR.USRActiveView z ON z.UD_ID_CLIENT = C.ClientId
 		INNER JOIN USR.USRFileTech t ON z.UF_ID = t.UF_ID
-		INNER JOIN dbo.SystemTable y ON z.UF_ID_SYSTEM = y.SystemID 
-		INNER JOIN dbo.RegNodeTable x ON x.SystemName = SystemBaseName AND z.UD_DISTR = x.DistrNumber AND z.UD_COMP = x.CompNumber
-		WHERE	x.Service = 0
+		LEFT OUTER JOIN Reg.RegNodeSearchView x WITH(NOEXPAND) ON x.SystemId = z.UF_ID_SYSTEM AND z.UD_DISTR = x.DistrNumber AND z.UD_COMP = x.CompNumber
+		WHERE	x.DS_REG = 0
 			AND x.Complect = c.Complect;
 
 		UPDATE C

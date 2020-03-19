@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_COMPLECT_GET]	
+CREATE PROCEDURE [dbo].[SERVICE_COMPLECT_GET]
 	@ID_SERVICE INT
 AS
 BEGIN
@@ -26,24 +26,21 @@ BEGIN
 		SELECT DISTINCT
 			R.COMPLECT,
 			(
-				SELECT SystemName + ','
-				FROM RegNodeTable
-				WHERE (COMPLECT = R.COMPLECT)
-					AND (Service = 0)
+				SELECT RC.SystemBaseName + ','
+				FROM Reg.RegNodeSearchView	AS RC WITH(NOEXPAND)
+				WHERE (RC.COMPLECT = R.COMPLECT)
+					AND (RC.DS_REG = 0)
 				FOR XML PATH('')
 			) as SystemsList,
-			C.ClientFullName AS ClientShortName, C.ClientFullName, R.TechNolType
-		FROM RegNodeTable R
-		LEFT JOIN SystemTable SY ON SY.SystemBaseName = R.SystemName
-		LEFT JOIN ClientDistr CD ON (CD.DISTR = R.DistrNumber)
-								AND (CD.COMP = R.CompNumber)
-								AND (CD.ID_SYSTEM = Sy.SystemID)
-								AND (CD.Status = 1)
-		LEFT JOIN ClientTable C ON (C.ClientID = CD.ID_Client)AND(C.STATUS=1)
-		WHERE (R.Service = 0)
+			C.ClientFullName AS ClientShortName, C.ClientFullName, NT_TECH AS TechNolType
+		FROM dbo.ClientView					AS C WITH(NOEXPAND)
+		INNER JOIN dbo.ClientDistrView		AS CD WITH(NOEXPAND) ON C.ClientId = CD.ID_CLIENT
+		INNER JOIN Reg.RegNodeSearchView	AS R WITH(NOEXPAND) ON (CD.DISTR = R.DistrNumber)
+																AND (CD.COMP = R.CompNumber)
+																AND (CD.SystemId = R.SystemID)
+		WHERE (R.DS_REG = 0)
 			AND R.COMPLECT IS NOT NULL
-			AND C.ClientID IS NOT NULL
-			AND C.ClientServiceID = @ID_SERVICE
+			AND C.ServiceID = @ID_SERVICE
 		ORDER BY R.COMPLECT
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
