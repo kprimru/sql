@@ -15,6 +15,11 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE @Serviced Table
+	(
+		[Id] SmallInt NOT NULL PRIMARY KEY CLUSTERED
+	);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -22,6 +27,31 @@ BEGIN
 
 	BEGIN TRY
 
+		/*
+		--ToDo
+		INSERT INTO @Serviced
+		SELECT ServiceStatusId
+		FROM [dbo].[ServiceStatusConnected]();
+
+		SELECT 
+			ManagerID, ManagerName, ManagerLogin, ManagerCount,
+			CONVERT(BIT, CASE WHEN ManagerCount <> 0 AND ManagerName <> 'Исаева' THEN 1 ELSE 0 END) AS ManagerCheck,
+			CASE WHEN  ManagerCount = 0 THEN 1 ELSE 0 END AS ManagerEnable, ManagerLocal
+		FROM dbo.ManagerTable AS M
+		OUTER APPLY
+		(
+			SELECT TOP (1)
+				[ManagerCount] = Count(*)
+			FROM dbo.ClientView AS C WITH(NOEXPAND)
+			INNER JOIN @Serviced AS SS ON C.ServiceStatusId = SS.Id
+			WHERE C.ManagerID = M.ManagerID
+		) AS S
+		WHERE @FILTER IS NULL
+			OR ManagerName LIKE @FILTER
+			OR ManagerFullName LIKE @FILTER
+			OR ManagerLogin LIKE @FILTER
+		ORDER BY ManagerName
+		*/
 		SELECT 
 			ManagerID, ManagerName, ManagerLogin, ManagerCount,
 			CONVERT(BIT, CASE WHEN ManagerCount <> 0 AND ManagerName <> 'Исаева' THEN 1 ELSE 0 END) AS ManagerCheck,

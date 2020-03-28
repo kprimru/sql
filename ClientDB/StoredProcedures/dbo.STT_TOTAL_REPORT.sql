@@ -65,7 +65,16 @@ BEGIN
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
 
-		CREATE TABLE #cl(ClientID INT, Service VARCHAR(250), Manager VARCHAR(150), STT_COUNT INT, STT_CHECK BIT)
+		CREATE TABLE #cl
+		(
+			ClientID	INT,
+			Service		VARCHAR(250),
+			Manager		VARCHAR(150),
+			STT_COUNT	INT,
+			STT_CHECK	BIT,
+			--ToDo ???
+			--PRIMARY KEY CLUSTERED(ClientId)
+		);
 		
 		INSERT INTO #cl(ClientID, Service, Manager, STT_COUNT, STT_CHECK)		
 		SELECT 

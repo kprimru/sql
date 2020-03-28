@@ -217,7 +217,7 @@ BEGIN
 				);
 
 		SELECT 
-			a.ID, CONVERT(int, Null) AS MASTER_ID, b.DIS_STR, c.DistrNumber, CASE b.DF_RIC WHEN 20 THEN NULL ELSE b.DF_RIC END AS DF_RIC, 
+			a.ID, CONVERT(int, Null) AS MASTER_ID, b.DIS_STR, c.SystemId, c.DistrNumber, c.CompNumber, c.NT_ID, c.SST_ID, CASE b.DF_RIC WHEN 20 THEN NULL ELSE b.DF_RIC END AS DF_RIC, 
 			b.DF_CREATE, b.SST_SHORT, b.NT_SHORT, 
 			DS_INDEX, 
 			Comment, RegisterDate,
@@ -284,6 +284,10 @@ BEGIN
 						SELECT TOP 1 DF_ID
 						FROM Din.DinFiles DF
 						WHERE DF.DF_DISTR = DistrNumber
+							AND DF.DF_COMP = CompNumber
+							AND DF.DF_ID_SYS = SystemId
+							AND DF.DF_ID_NET = NT_ID
+							AND DF.DF_ID_TYPE = SST_ID
 						ORDER BY DF_CREATE DESC
 					)
 			);
