@@ -14,6 +14,7 @@ BEGIN
 	BEGIN TRY		
 		SELECT
 			D.[Id],
+			D.[Status_Id],
 			[Company_Id],
 			[DateFrom],
 			[DateTo],

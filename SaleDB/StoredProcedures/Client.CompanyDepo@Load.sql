@@ -34,6 +34,8 @@ BEGIN
 	);
 
 	BEGIN TRY
+		RaisError('Функционал заблокирован.', 16, 2);
+	
 		INSERT INTO @DepoFile
 		SELECT *
 		FROM [Client].[DepoList@Parse](@Data);
@@ -50,7 +52,9 @@ BEGIN
 						FROM Client.Company C
 						WHERE	C.STATUS = 1
 							AND C.DEPO_NUM = D.[Code]
+							AND C.[DEPO] = 1
 					)
+				ORDER BY D.[Code]
 				FOR XML PATH('')
 			)
 		), 1, 1, ''))

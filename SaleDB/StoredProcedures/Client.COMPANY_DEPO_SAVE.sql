@@ -36,7 +36,7 @@ BEGIN
 					INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
 					WHERE D.[Company_Id] = @Company_Id
 						AND D.[Status] = 1
-						AND S.[Code] != 'REFUSED'
+						AND S.[Code] NOT IN ('REFUSED', 'TERMINATION')
 				)
 				RaisError('Компания уже зарегистрирована в программе ДЕПО!', 16, 1);
 			

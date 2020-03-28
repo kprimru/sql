@@ -30,6 +30,9 @@ BEGIN
 		Primary Key Clustered([Code])
 	);
 
+	INSERT INTO Client.CompanyDepoFile([Depo])
+	VALUES(@Data);
+
 	INSERT INTO @DepoFile
 	SELECT *
 	FROM [Client].[DepoList@Parse](@Data);

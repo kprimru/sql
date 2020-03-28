@@ -34,8 +34,9 @@ BEGIN
 			[Depo:Rival]
 		FROM Client.CompanyDepo				AS D
 		INNER JOIN Client.[Depo->Statuses]	AS S ON D.[Status_Id] = S.[Id]
-		WHERE @Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM Common.TableIDFromXML(@Statuses))
-		ORDER BY D.[DateFrom] DESC
+		WHERE D.STATUS = 1
+			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM Common.TableIDFromXML(@Statuses)))
+		ORDER BY D.[Number] DESC, D.[DateFrom] DESC
 
 		SELECT @RC = @@ROWCOUNT
 	END TRY

@@ -23,8 +23,6 @@ BEGIN
 				FOR XML PATH('item'), ROOT('root')
 			);
 	
-		SELECT @GUIds
-	
 		SET @Status_Id_ACTIVE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
 		SET @Status_Id_TERMINATION	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 	

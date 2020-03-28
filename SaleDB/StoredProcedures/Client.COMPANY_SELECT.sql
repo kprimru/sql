@@ -381,14 +381,17 @@ BEGIN
 					WHERE STATUS = 1 AND BLACK_NOTE LIKE @BLACK_NOTE
 			ELSE IF @DEPO = 1
 				INSERT INTO #company(ID)
-					SELECT ID
-					FROM Client.Company
-					WHERE STATUS = 1 AND DEPO = 1
+					SELECT Company_Id
+					FROM Client.CompanyDepo
+					--ToDo убрать хардкод
+					WHERE STATUS = 1 AND Status_Id IN (1, 2, 3)
 			ELSE IF @DEPO_NUM IS NOT NULL
 				INSERT INTO #company(ID)
-					SELECT ID
-					FROM Client.Company
-					WHERE STATUS = 1 AND DEPO_NUM IN
+					SELECT Company_Id
+					FROM Client.CompanyDepo
+					WHERE STATUS = 1
+						AND Status_Id IN (1, 2, 3)
+						AND Number IN
 						(
 							SELECT ITEM
 							FROM Common.IntTableFromList(@DEPO_NUM, ',')
@@ -765,23 +768,26 @@ BEGIN
 					)
 					
 			IF @DEPO = 1
-				DELETE FROM #company
+				DELETE C FROM #company C
 				WHERE ID NOT IN
 					(
-						SELECT ID
-						FROM Client.Company
+						SELECT Company_Id
+						FROM Client.CompanyDepo D
 						WHERE STATUS = 1
-							AND DEPO = 1
+							-- ToDo убрать хардкод
+							AND Status_Id IN (1, 2, 3)
 					)
 					
 			IF @DEPO_NUM IS NOT NULL
-				DELETE FROM #company
+				DELETE C FROM #company C
 				WHERE ID NOT IN
 					(
-						SELECT ID
-						FROM Client.Company
+						SELECT Company_Id
+						FROM Client.CompanyDepo D
 						WHERE STATUS = 1
-							AND DEPO_NUM IN
+							-- ToDo убрать хардкод
+							AND Status_Id IN (1, 2, 3)
+							AND D.Number IN
 								(
 									SELECT ITEM
 									FROM Common.IntTableFromList(@DEPO_NUM, ',')
@@ -823,7 +829,7 @@ BEGIN
 		
 		
 		SELECT
-			a.ID, NUMBER, b.STATUS,
+			a.ID, b.NUMBER, b.STATUS,
 			/*
 			(
 				SELECT TOP 1 AD_STR
@@ -834,7 +840,7 @@ BEGIN
 			t.ADDRESS AS SHORT, b.NAME, CONVERT(BIT, CASE WHEN c.ID IS NOT NULL THEN 1 ELSE 0 END) AS WRITE,			
 			d.NAME AS AVA_NAME, e.NAME AS POT_NAME, f.NAME AS WS_NAME, g.NAME AS PC_NAME, 
 			h.SHORT AS PHONE_SHORT, j.SHORT AS SALE_SHORT, n.SHORT AS MAN_SHORT, s.SHORT AS RIVAL_SHORT,
-			l.NAME AS MON_NAME, l.DATE AS MON_DATE, WORK_DATE, BLACK_LIST, q.NAME AS CHAR_NAME, PAPER_CARD, b.DEPO,
+			l.NAME AS MON_NAME, l.DATE AS MON_DATE, WORK_DATE, BLACK_LIST, q.NAME AS CHAR_NAME, PAPER_CARD, DEPO = Cast(IsNull(DP.IsDepo, 0) AS Bit),
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT y.NAME + ', '
@@ -873,31 +879,58 @@ BEGIN
 						ELSE 1
 					END
 				) AS WARNING,
-			b.DEPO_NUM
+			DEPO_NUM = DP.Number,
+			[EMAIL] = Reverse(Stuff(Reverse((
+				SELECT EML.[EMAIL] + ','
+				FROM
+				(
+					SELECT b.[EMAIL]
+					--
+					UNION
+					--
+					SELECT P.[EMAIL]
+					FROM Client.CompanyPersonal AS P
+					WHERE P.ID_COMPANY = C.ID
+				) AS EML
+				WHERE EML.[EMAIL] IS NOT NULL
+					AND EML.[EMAIL] NOT IN ('', '-')
+				FOR XML PATH('')
+			)), 1, 1, ''))
 		FROM 
 			#company a
 			INNER JOIN Client.Company b ON a.ID = b.ID
-			LEFT OUTER JOIN Client.CompanyIndex t ON t.ID_COMPANY = a.ID
-			LEFT OUTER JOIN #wlist c ON c.ID = a.ID
-			LEFT OUTER JOIN Client.Availability d ON d.ID = b.ID_AVAILABILITY
-			LEFT OUTER JOIN Client.Potential e ON e.ID = b.ID_POTENTIAL
-			LEFT OUTER JOIN Client.WorkState f ON f.ID = b.ID_WORK_STATE
-			LEFT OUTER JOIN Client.PayCategory g ON g.ID = b.ID_PAY_CAT
-			LEFT OUTER JOIN Client.CompanyProcessPhoneView h WITH(NOEXPAND) ON h.ID = b.ID
-			LEFT OUTER JOIN Client.CompanyProcessSaleView j WITH(NOEXPAND) ON j.ID = b.ID
-			LEFT OUTER JOIN Common.Month l ON l.ID = b.ID_NEXT_MON
-			LEFT OUTER JOIN (SELECT DISTINCT ID, ID_COMPANY FROM Client.CompanyControlView WITH(NOEXPAND)) AS m ON m.ID_COMPANY = a.ID
-			LEFT OUTER JOIN Client.CompanyProcessManagerView n WITH(NOEXPAND) ON n.ID = b.ID
-			LEFT OUTER JOIN (SELECT DISTINCT ID, ID_COMPANY FROM Client.CompanyArchiveView WITH(NOEXPAND)) AS p ON p.ID_COMPANY = a.ID
-			LEFT OUTER JOIN Client.Character q ON q.ID = b.ID_CHARACTER
-			LEFT OUTER JOIN Client.CompanyCallView r WITH(NOEXPAND) ON r.ID = a.ID
-			LEFT OUTER JOIN Client.CompanyProcessRivalView s WITH(NOEXPAND) ON s.ID = b.ID
-			LEFT OUTER JOIN Client.CallDate u ON u.ID_COMPANY = a.ID
-			LEFT OUTER JOIN Client.Sender w ON w.ID = b.ID_SENDER
-			--LEFT OUTER JOIN Client.Project prj ON prj.ID = b.ID_PROJECT
-			LEFT OUTER JOIN (SELECT DISTINCT ID_COMPANY FROM Client.CompanyWarningView WITH(NOEXPAND)) AS war ON war.ID_COMPANY = a.ID
+			LEFT JOIN Client.CompanyIndex t ON t.ID_COMPANY = a.ID
+			LEFT JOIN #wlist c ON c.ID = a.ID
+			LEFT JOIN Client.Availability d ON d.ID = b.ID_AVAILABILITY
+			LEFT JOIN Client.Potential e ON e.ID = b.ID_POTENTIAL
+			LEFT JOIN Client.WorkState f ON f.ID = b.ID_WORK_STATE
+			LEFT JOIN Client.PayCategory g ON g.ID = b.ID_PAY_CAT
+			LEFT JOIN Client.CompanyProcessPhoneView h WITH(NOEXPAND) ON h.ID = b.ID
+			LEFT JOIN Client.CompanyProcessSaleView j WITH(NOEXPAND) ON j.ID = b.ID
+			LEFT JOIN Common.Month l ON l.ID = b.ID_NEXT_MON
+			LEFT JOIN (SELECT DISTINCT ID, ID_COMPANY FROM Client.CompanyControlView WITH(NOEXPAND)) AS m ON m.ID_COMPANY = a.ID
+			LEFT JOIN Client.CompanyProcessManagerView n WITH(NOEXPAND) ON n.ID = b.ID
+			LEFT JOIN (SELECT DISTINCT ID, ID_COMPANY FROM Client.CompanyArchiveView WITH(NOEXPAND)) AS p ON p.ID_COMPANY = a.ID
+			LEFT JOIN Client.Character q ON q.ID = b.ID_CHARACTER
+			LEFT JOIN Client.CompanyCallView r WITH(NOEXPAND) ON r.ID = a.ID
+			LEFT JOIN Client.CompanyProcessRivalView s WITH(NOEXPAND) ON s.ID = b.ID
+			LEFT JOIN Client.CallDate u ON u.ID_COMPANY = a.ID
+			LEFT JOIN Client.Sender w ON w.ID = b.ID_SENDER
+			LEFT JOIN (SELECT DISTINCT ID_COMPANY FROM Client.CompanyWarningView WITH(NOEXPAND)) AS war ON war.ID_COMPANY = a.ID
+			OUTER APPLY
+			(
+				SELECT TOP (1)
+					DP.[Number],
+					IsDepo = 1
+				FROM Client.CompanyDepo DP
+				WHERE DP.Company_Id = a.ID
+					AND DP.Status = 1
+					-- ToDo убрать хардкод
+					AND DP.Status_Id IN (3)
+				ORDER BY DP.DateFrom DESC
+			) AS DP
 		WHERE @HISTORY = 0 OR r.ID IS NOT NULL
-		ORDER BY b.NAME, NUMBER
+		ORDER BY b.NAME, b.NUMBER
 		--OPTION (FAST 25)
 
 
