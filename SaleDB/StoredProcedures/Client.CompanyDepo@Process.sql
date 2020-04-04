@@ -12,27 +12,28 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
-		@Status_Id_NEW		SmallInt,
-		@Status_Id_ACCEPT	SmallInt,
-		@Status_Id_ACTIVE	SmallInt,
-		@Status_Id_REFUSED	SmallInt;
+		@Status_Id_NEW			SmallInt,
+		@Status_Id_ACCEPT		SmallInt,
+		@Status_Id_ACTIVE		SmallInt,
+		@Status_Id_REFUSED		SmallInt,
+		@Status_Id_TERMINATION	SmallInt;
 	
 	DECLARE @DepoFile Table
 	(
-		[Ric]				SmallInt,
-		[Code]				Int,
-		[Priority]			Int,
-		[Name]				VarChar(256),
-		[Inn]				VarChar(20),
-		[RegionAndAddress]	VarChar(256),
-		[Person1FIO]		VarChar(128),
-		[Person1Phone]		VarChar(128),
-		[Result]			VarChar(50),
-		[Status]			VarChar(50),
-		[AlienInn]			VarChar(50),
-		[DepoDate]			SmallDateTime,
-		[DepoExpireDate]	SmallDateTime,
-		[Rival]				VarChar(50),
+		[Ric]					SmallInt,
+		[Code]					Int,
+		[Priority]				Int,
+		[Name]					VarChar(256),
+		[Inn]					VarChar(20),
+		[RegionAndAddress]		VarChar(256),
+		[Person1FIO]			VarChar(128),
+		[Person1Phone]			VarChar(128),
+		[Result]				VarChar(50),
+		[Status]				VarChar(50),
+		[AlienInn]				VarChar(50),
+		[DepoDate]				SmallDateTime,
+		[DepoExpireDate]		SmallDateTime,
+		[Rival]					VarChar(50),
 		Primary Key Clustered([Code])
 	);
 
@@ -51,10 +52,11 @@ BEGIN
 		SELECT DISTINCT [Id]
 		FROM Common.TableGUIDFromXML(@GUIds);
 		
-		SET @Status_Id_NEW		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
-		SET @Status_Id_ACCEPT	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACCEPT');
-		SET @Status_Id_ACTIVE	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
-		SET @Status_Id_REFUSED	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');
+		SET @Status_Id_NEW			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
+		SET @Status_Id_ACCEPT		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACCEPT');
+		SET @Status_Id_ACTIVE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
+		SET @Status_Id_REFUSED		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');
+		SET @Status_Id_TERMINATION	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 		
 		BEGIN TRAN;
 		
@@ -96,7 +98,7 @@ BEGIN
 		FROM Client.CompanyDepo 				AS D
 		INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
 		WHERE	D.[Status] = 1
-			AND D.[Status_Id] IN (@Status_Id_ACTIVE, @Status_Id_ACCEPT, @Status_Id_NEW)
+			AND D.[Status_Id] IN (@Status_Id_ACTIVE, @Status_Id_ACCEPT, @Status_Id_NEW, @Status_Id_TERMINATION)
 			AND NOT EXISTS
 				(
 					SELECT *

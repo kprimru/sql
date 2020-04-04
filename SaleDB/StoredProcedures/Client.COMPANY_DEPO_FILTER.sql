@@ -6,12 +6,38 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [Client].[COMPANY_DEPO_FILTER]
 	@Statuses	VarChar(Max),
-	@RC			INT = NULL OUTPUT
+	@FileName	VarChar(250)	= NULL OUTPUT,
+	@RC			Int				= NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
+	DECLARE
+		@Status_NEW				SmallInt,
+		@Status_TERMINATION		SmallInt,
+		@Status_STAGE			SmallInt;
+
+	DECLARE @TStatuses Table ([Id] Smallint NOT NULL PRIMARY KEY CLUSTERED);
+
+	BEGIN TRY
+		SET @Status_NEW = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
+		SET @Status_TERMINATION = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
+		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
+		
+		INSERT INTO @TStatuses
+		SELECT [Id] FROM Common.TableIDFromXML(@Statuses);
+		
+		IF (SELECT Count(*) FROM @TStatuses) = 1 BEGIN
+			IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_NEW)
+				SET @FileName = 'Список NEW РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TERMINATION)
+				SET @FileName = 'Список OUT РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+			ELSE
+				SET @FileName = ''
+		END
+		ELSE
+			SET @FileName = ''
+		
 		SELECT
 			D.[Id],
 			[Company_Id],
@@ -31,11 +57,23 @@ BEGIN
 			[Depo:Person2Phone],
 			[Depo:Person3FIO],
 			[Depo:Person3Phone],
-			[Depo:Rival]
+			[Depo:Rival],
+			--
+			[Depo:Stage] = Cast(CASE WHEN DS.[Id] IS NOT NULL THEN 1 ELSE 0 END AS Bit)
 		FROM Client.CompanyDepo				AS D
 		INNER JOIN Client.[Depo->Statuses]	AS S ON D.[Status_Id] = S.[Id]
+		OUTER APPLY
+		(
+			SELECT TOP (1)
+				DS.[Id]
+			FROM Client.CompanyDepo				AS DS
+			WHERE DS.[Company_Id] = D.[Company_Id]
+				AND DS.[Status_Id] = @Status_STAGE
+				AND DS.STATUS = 1
+		) AS DS
 		WHERE D.STATUS = 1
-			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM Common.TableIDFromXML(@Statuses)))
+			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM @TStatuses))
+			AND D.[Status_Id] NOT IN (@Status_STAGE)
 		ORDER BY D.[Number] DESC, D.[DateFrom] DESC
 
 		SELECT @RC = @@ROWCOUNT

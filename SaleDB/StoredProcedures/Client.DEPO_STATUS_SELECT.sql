@@ -12,10 +12,15 @@ BEGIN
 	SET NOCOUNT ON;	
 
 	BEGIN TRY
-		SELECT	ID,	NAME, [Code]
+		SELECT	ID,	NAME, [Code], [IsVIsible]
 		FROM	[Client].[Depo->Statuses]
-		WHERE	@FILTER IS NULL
-				OR (NAME LIKE @FILTER)				
+		WHERE	IsVisible = 1
+			AND
+				(
+					@FILTER IS NULL
+					OR 
+					NAME LIKE @FILTER
+				)
 		ORDER BY NAME
 
 		SET @RC = @@ROWCOUNT
