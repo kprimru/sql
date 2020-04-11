@@ -27,7 +27,7 @@ BEGIN
 		SELECT ServiceName, ClientName, DistrStr, NT_SHORT, SET_DATE
 		FROM 
 			dbo.RegNodeComplectClientView a
-			INNER JOIN dbo.ExpDistr b ON a.HostID = b.ID_HOST
+			INNER JOIN dbo.ExpertDistr b ON a.HostID = b.ID_HOST
 									AND a.DistrNumber = b.DISTR
 									AND a.CompNumber = b.COMP
 									AND STATUS = 1

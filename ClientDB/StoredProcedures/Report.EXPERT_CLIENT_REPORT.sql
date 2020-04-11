@@ -108,7 +108,7 @@ BEGIN
 						SELECT *
 						FROM 
 							dbo.ClientDistrView b WITH(NOEXPAND)
-							INNER JOIN dbo.ExpDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
+							INNER JOIN dbo.ExpertDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
 						WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
 					) THEN 1
 					ELSE 0
@@ -117,7 +117,7 @@ BEGIN
 					SELECT MAX(dbo.DateOf(SET_DATE))
 					FROM 
 						dbo.ClientDistrView b WITH(NOEXPAND)
-						INNER JOIN dbo.ExpDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
+						INNER JOIN dbo.ExpertDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
 					WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
 				)
 			FROM dbo.ClientView a WITH(NOEXPAND)
@@ -130,7 +130,7 @@ BEGIN
 				CASE WHEN EXISTS
 					(
 						SELECT *
-						FROM dbo.ExpDistr c
+						FROM dbo.ExpertDistr c
 						WHERE ID_HOST = HostID 
 							AND a.DistrNumber = c.DISTR 
 							AND a.CompNumber = c.COMP 
@@ -140,7 +140,7 @@ BEGIN
 				END,
 				(
 					SELECT MAX(dbo.DateOf(SET_DATE))
-					FROM dbo.ExpDistr c 
+					FROM dbo.ExpertDistr c 
 					WHERE ID_HOST = HostID 
 							AND a.DistrNumber = c.DISTR 
 							AND a.CompNumber = c.COMP 

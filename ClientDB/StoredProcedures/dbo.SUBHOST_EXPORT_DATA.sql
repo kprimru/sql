@@ -440,7 +440,7 @@ BEGIN
 								)
 						) AS o_O
 						INNER JOIN dbo.SystemTable a ON a.SystemBaseName = o_O.SystemName
-						INNER JOIN dbo.ExpDistr b ON b.ID_HOST = a.HostID AND o_O.DistrNumber = b.DISTR AND o_O.CompNumber = b.COMP
+						INNER JOIN dbo.ExpertDistr b ON b.ID_HOST = a.HostID AND o_O.DistrNumber = b.DISTR AND o_O.CompNumber = b.COMP
 						INNER JOIN dbo.Hosts c ON c.HostID = a.HostID
 					WHERE UNSET_DATE IS NULL
 					

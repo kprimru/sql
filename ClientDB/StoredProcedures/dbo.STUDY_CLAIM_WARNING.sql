@@ -75,7 +75,7 @@ BEGIN
 								AND NOT EXISTS
 									(
 										SELECT *
-										FROM dbo.ExpDistr z
+										FROM dbo.ExpertDistr z
 										WHERE z.ID_HOST = g.HostID AND z.DISTR = g.DISTR AND z.COMP = g.COMP
 									)
 						) AS o_O

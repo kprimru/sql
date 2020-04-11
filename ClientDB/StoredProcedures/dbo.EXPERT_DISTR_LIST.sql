@@ -35,7 +35,7 @@ BEGIN
 					INNER JOIN
 					(
 						SELECT DISTINCT ID_HOST, DISTR, COMP
-						FROM dbo.ExpDistr
+						FROM dbo.ExpertDistr
 						WHERE STATUS = 1
 					) AS b ON a.HostID = ID_HOST AND DistrNumber = DISTR AND CompNumber = COMP
 					--INNER JOIN dbo.SystemTable c ON c.SystemID = a.SystemID

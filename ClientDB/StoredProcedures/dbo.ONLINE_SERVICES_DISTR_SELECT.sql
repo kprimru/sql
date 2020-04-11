@@ -73,7 +73,7 @@ BEGIN
 			SELECT TOP (1)
 				[ExpertDistrActive]		= Cast(1 AS Bit),
 				[ExpertCheckDateTime]	= ED.SET_DATE
-			FROM dbo.ExpDistr AS ED
+			FROM dbo.ExpertDistr AS ED
 			WHERE ED.ID_HOST = R.HostId
 				AND ED.DISTR = R.DistrNumber
 				AND ED.COMP = R.CompNumber

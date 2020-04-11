@@ -46,7 +46,7 @@ BEGIN
 		IF EXISTS
 			(
 				SELECT TOP (1) *
-				FROM dbo.ExpDistr
+				FROM dbo.ExpertDistr
 				WHERE	ID_HOST = @Host_Id
 					AND DISTR = @Distr
 					AND COMP = @Comp
@@ -70,10 +70,10 @@ BEGIN
 				AND STATUS = 1;
 				
 		IF @ExpertIsActive = 0 AND @Expert = 1
-			INSERT INTO dbo.ExpDistr(ID_HOST, DISTR, COMP)
+			INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP)
 			VALUES(@Host_Id, @Distr, @Comp)
 		ELSE IF @ExpertIsActive = 1 AND @Expert = 0
-			UPDATE dbo.ExpDistr
+			UPDATE dbo.ExpertDistr
 			SET STATUS = 2,
 				UNSET_DATE = GETDATE(),
 				UNSET_USER = ORIGINAL_LOGIN()

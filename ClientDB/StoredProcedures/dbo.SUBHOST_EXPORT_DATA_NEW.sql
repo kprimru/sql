@@ -224,7 +224,7 @@ BEGIN
 					[Comp]	= E.Comp,
 					[Date]	= SET_DATE
 				FROM @Distr D
-				INNER JOIN dbo.ExpDistr E ON E.ID_HOST = D.HostID AND D.Distr = E.DISTR AND D.Comp = E.COMP
+				INNER JOIN dbo.ExpertDistr E ON E.ID_HOST = D.HostID AND D.Distr = E.DISTR AND D.Comp = E.COMP
 				INNER JOIN dbo.Hosts H ON H.HostID = E.ID_HOST
 				WHERE UNSET_DATE IS NULL
 				FOR XML RAW('ITEM'), ROOT('EXPERT')

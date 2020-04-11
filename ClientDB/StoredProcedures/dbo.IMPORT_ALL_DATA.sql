@@ -182,9 +182,9 @@ BEGIN
 				
 		SET @REFRESH = @REFRESH + @@ROWCOUNT
 				
-		DELETE FROM dbo.ExpDistr
+		DELETE FROM dbo.ExpertDistr
 			
-		INSERT INTO dbo.ExpDistr(ID_HOST, DISTR, COMP, SET_DATE, SET_USER)
+		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE, SET_USER)
 			SELECT HostID, DISTR, COMP, DATE, ''
 			FROM
 				(

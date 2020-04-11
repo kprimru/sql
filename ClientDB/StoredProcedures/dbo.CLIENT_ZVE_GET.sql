@@ -38,7 +38,7 @@ BEGIN
 					AND NOT EXISTS
 						(
 							SELECT *
-							FROM dbo.ExpDistr z
+							FROM dbo.ExpertDistr z
 							WHERE z.ID_HOST = b.HostID AND z.DISTR = b.DISTR AND z.COMP = b.COMP
 						)
 					AND d.NT_TECH IN (0, 1)

@@ -410,7 +410,7 @@ BEGIN
 				(
 					SELECT TOP (1) Convert(VarChar(20), a.SET_DATE, 104)
 					FROM 
-						dbo.ExpDistr a
+						dbo.ExpertDistr a
 					WHERE a.STATUS = 1
 						AND a.ID_HOST = C.UD_HOST
 						AND a.DISTR = C.UD_DISTR

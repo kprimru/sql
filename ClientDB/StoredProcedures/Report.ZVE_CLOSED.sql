@@ -28,7 +28,7 @@ BEGIN
 			AND NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.ExpDistr b
+				FROM dbo.ExpertDistr b
 				WHERE a.HostID = b.ID_HOST
 					AND a.DistrNumber = b.DISTR
 					AND a.CompNumber = b.COMP

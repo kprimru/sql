@@ -616,9 +616,9 @@ BEGIN
 			);
 		
 		-- обновляем список дистрибутивов подключенных к ЗВЭ
-		TRUNCATE TABLE dbo.ExpDistr;
+		TRUNCATE TABLE dbo.ExpertDistr;
 		
-		INSERT INTO dbo.ExpDistr(ID_HOST, DISTR, COMP, SET_DATE)
+		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE)
 		SELECT HostID, Distr, Comp, Date
 		FROM
 		(

@@ -46,7 +46,7 @@ BEGIN
 			INNER JOIN USR.USRActiveView f ON f.UD_ID = c.UD_ID
 			INNER JOIN USR.USRFile g ON g.UF_ID = f.UF_ID
 			INNER JOIN USR.USRFileTech t ON t.UF_ID = g.UF_ID
-			INNER JOIN dbo.ExpDistr h ON h.ID_HOST = b.HostID AND h.DISTR = b.DISTR AND h.COMP = b.COMP
+			INNER JOIN dbo.ExpertDistr h ON h.ID_HOST = b.HostID AND h.DISTR = b.DISTR AND h.COMP = b.COMP
 		WHERE c.UD_ACTIVE = 1 AND h.UNSET_DATE IS NULL 
 			AND n.NT_TECH IN (0, 1)
 			AND 

@@ -71,7 +71,7 @@ BEGIN
 								@TP = 1 AND NOT EXISTS
 									(
 										SELECT *
-										FROM dbo.ExpDistr b
+										FROM dbo.ExpertDistr b
 										WHERE a.HostID = b.ID_HOST
 											AND a.DistrNumber = b.DISTR
 											AND a.CompNumber = b.COMP
@@ -80,7 +80,7 @@ BEGIN
 								OR @TP = 2 AND EXISTS
 									(
 										SELECT *
-										FROM dbo.ExpDistr b
+										FROM dbo.ExpertDistr b
 										WHERE a.HostID = b.ID_HOST
 											AND a.DistrNumber = b.DISTR
 											AND a.CompNumber = b.COMP
@@ -109,7 +109,7 @@ BEGIN
 					WHEN 1 THEN
 							(
 								SELECT TOP 1 CONVERT(NVARCHAR(64), UNSET_DATE, 120) + ' / ' + UNSET_USER
-								FROM dbo.ExpDistr b
+								FROM dbo.ExpertDistr b
 								WHERE a.HostID = b.ID_HOST
 									AND a.DistrNumber = b.DISTR
 									AND a.CompNumber = b.COMP
@@ -118,7 +118,7 @@ BEGIN
 					WHEN 2 THEN
 							(
 								SELECT TOP 1 CONVERT(NVARCHAR(64), SET_DATE, 120) + ' / ' + SET_USER
-								FROM dbo.ExpDistr b
+								FROM dbo.ExpertDistr b
 								WHERE a.HostID = b.ID_HOST
 									AND a.DistrNumber = b.DISTR
 									AND a.CompNumber = b.COMP
@@ -139,7 +139,7 @@ BEGIN
 						@TP = 1 AND NOT EXISTS
 							(
 								SELECT *
-								FROM dbo.ExpDistr b
+								FROM dbo.ExpertDistr b
 								WHERE a.HostID = b.ID_HOST
 									AND a.DistrNumber = b.DISTR
 									AND a.CompNumber = b.COMP
@@ -148,7 +148,7 @@ BEGIN
 						OR @TP = 2 AND EXISTS
 							(
 								SELECT *
-								FROM dbo.ExpDistr b
+								FROM dbo.ExpertDistr b
 								WHERE a.HostID = b.ID_HOST
 									AND a.DistrNumber = b.DISTR
 									AND a.CompNumber = b.COMP
