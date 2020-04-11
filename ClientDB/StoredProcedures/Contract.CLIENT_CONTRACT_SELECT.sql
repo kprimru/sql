@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT C.ID, C.NUM_S, DateFrom, DateTo, ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments
+		SELECT C.ID, C.NUM_S, C.SignDate, DateFrom, DateTo, ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments
 		FROM Contract.ClientContracts	CC
 		INNER JOIN Contract.Contract	C	ON C.ID = CC.Contract_Id
 		CROSS APPLY
