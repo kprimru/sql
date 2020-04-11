@@ -46,8 +46,8 @@ BEGIN
 			)
 
 		INSERT INTO #client(CL_ID)
-			SELECT RCL_ID
-			FROM dbo.ClientReadList()			
+			SELECT WCL_ID
+			FROM [dbo].[ClientList@Get?Read]()
 
 		IF @NAME IS NOT NULL
 			DELETE FROM #client

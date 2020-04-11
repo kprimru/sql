@@ -24,7 +24,7 @@ BEGIN
 		SELECT ClientID, ClientFullName, ManagerName, ServiceName, ServiceStatusIndex
 		FROM 
 			dbo.ClientView WITH(NOEXPAND)
-			INNER JOIN dbo.ClientReadList() ON RCL_ID = ClientID
+			INNER JOIN [dbo].[ClientList@Get?Read]() ON WCL_ID = ClientID
 		ORDER BY ClientFullName
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

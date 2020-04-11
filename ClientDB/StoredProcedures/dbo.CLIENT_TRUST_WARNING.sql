@@ -25,7 +25,7 @@ BEGIN
 			b.ClientID, ClientFullName, ManagerName, CC_DATE, CT_CORRECT, ServiceName
 		FROM 
 			dbo.ClientView b WITH(NOEXPAND) 
-			INNER JOIN dbo.ClientWriteList() ON WCL_ID = b.ClientID
+			INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = b.ClientID
 			INNER JOIN dbo.ClientTrustView WITH(NOEXPAND) ON CC_ID_CLIENT = b.ClientID 
 		WHERE CT_TRUST = 0 AND CT_MAKE IS NULL
 		ORDER BY ClientFullName

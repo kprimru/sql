@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CALENDAR_SEARCH]	
+CREATE PROCEDURE [dbo].[CLIENT_CALENDAR_SEARCH]
 	@NAME VARCHAR(500) = NULL,
 	@SERVICE INT = NULL,
 	@MANAGER INT = NULL,
@@ -42,12 +42,12 @@ BEGIN
 			FROM
 				(
 					SELECT WCL_ID
-					FROM dbo.ClientWriteList()
+					FROM [dbo].[ClientList@Get?Write]()
 
 					UNION 
 
-					SELECT RCL_ID
-					FROM dbo.ClientReadList()
+					SELECT WCL_ID
+					FROM [dbo].[ClientList@Get?Read]()
 				) AS o_O
 		
 		IF @NAME IS NOT NULL

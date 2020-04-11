@@ -55,8 +55,8 @@ BEGIN
 		INSERT INTO #client(CL_ID, ClientFullName, ClientAdress, ServiceTime)
 			SELECT ClientID, ClientFullName + ISNULL('(' + ServiceTypeShortName + ')', ''), CA_STR, ServiceTime
 			FROM
-				dbo.ClientReadList()
-				INNER JOIN dbo.ClientTable a ON ClientID = RCL_ID			
+				[dbo].[ClientList@Get?Read]()
+				INNER JOIN dbo.ClientTable a ON ClientID = WCL_ID			
 				INNER JOIN dbo.GET_TABLE_FROM_LIST(@TYPE, ',') ON a.ServiceTypeID = Item			
 				LEFT OUTER JOIN dbo.ClientAddressView ON CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
 				LEFT OUTER JOIN dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID

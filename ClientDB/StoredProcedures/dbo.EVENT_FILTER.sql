@@ -47,8 +47,8 @@ BEGIN
 		BEGIN
 			SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
 			FROM 
-				dbo.ClientReadList()
-				INNER JOIN dbo.EventTable a ON ClientID = RCL_ID 
+				[dbo].[ClientList@Get?Read]()
+				INNER JOIN dbo.EventTable a ON ClientID = WCL_ID 
 				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
 				INNER JOIN dbo.EventTypeTable c ON a.EventTypeID = c.EventTypeID 		
 			WHERE EventActive = 1 
@@ -65,8 +65,8 @@ BEGIN
 			IF @FLAG = 1
 				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
 				FROM 
-					dbo.ClientReadList()
-					INNER JOIN dbo.EventTable a ON ClientID = RCL_ID 
+					[dbo].[ClientList@Get?Read]()
+					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID 
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
 					INNER JOIN dbo.EventTypeTable c ON a.EventTypeID = c.EventTypeID 		
 				WHERE EventActive = 1 
@@ -86,8 +86,8 @@ BEGIN
 			ELSE
 				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
 				FROM 
-					dbo.ClientReadList()
-					INNER JOIN dbo.EventTable a ON ClientID = RCL_ID 
+					[dbo].[ClientList@Get?Read]()
+					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID 
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
 					INNER JOIN dbo.EventTypeTable c ON a.EventTypeID = c.EventTypeID 		
 				WHERE EventActive = 1 
@@ -108,65 +108,6 @@ BEGIN
 		
 		IF OBJECT_ID('tempdb..#words') IS NOT NULL
 			DROP TABLE #words
-
-		/*
-		DECLARE @SBEGIN VARCHAR(20)
-		DECLARE @SEND VARCHAR(20)
-
-		SET @SBEGIN = CONVERT(VARCHAR(20), @BEGIN, 112)
-		SET @SEND = CONVERT(VARCHAR(20), @END, 112)
-
-		DECLARE @SQL NVARCHAR(MAX)
-		SET @SQL = N'
-
-		SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
-		FROM 
-			dbo.ClientReadList()
-			INNER JOIN dbo.EventTable a ON ClientID = RCL_ID 
-			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
-			INNER JOIN dbo.EventTypeTable c ON a.EventTypeID = c.EventTypeID 		
-		WHERE EventActive = 1 '
-
-		IF @TYPE IS NOT NULL
-			SET @SQL = @SQL + ' AND a.EventTypeID = @TYPE '
-		IF @SERVICE IS NOT NULL
-			SET @SQL = @SQL + ' AND ServiceID = @SERVICE '
-		IF @MANAGER IS NOT NULL
-			SET @SQL = @SQL + ' AND ManagerID = @MANAGER '
-		IF @BEGIN IS NOT NULL
-			SET @SQL = @SQL + ' AND EventDate >= @BEGIN '
-		IF @END IS NOT NULL
-			SET @SQL = @SQL + ' AND EventDate <= @END '
-		IF @CLEAR = 1
-			SET @SQL = @SQL + ' AND LTRIM(RTRIM(EventComment)) = '''''
-
-		PRINT @SQL
-
-		IF @TEXT IS NOT NULL AND @FLAG IS NOT NULL
-		BEGIN
-			SET @SQL = @SQL + ' AND ('
-
-			SELECT 
-				@SQL = @SQL + 
-							' EventComment LIKE ''%' + REPLACE(Item, '*', '%') + '%'' ' + 
-							CASE @FLAG 
-								WHEN 1 THEN ' AND'
-								WHEN 0 THEN ' OR'
-								ELSE ' OR'
-							END
-			FROM dbo.GetTableList(@TEXT)
-				
-			SET @SQL = LEFT(@SQL, LEN(@SQL) - 3)
-
-			SET @SQL = @SQL + ')'
-		END
-
-		SET @SQL = @SQL + '
-		ORDER BY EventDate DESC, ServiceName, ClientFullName'
-
-		EXEC sp_executesql @SQL, N'@TYPE INT, @SERVICE INT, @MANAGER INT, @BEGIN VARCHAR(20), @END VARCHAR(20)',
-			@TYPE, @SERVICE, @MANAGER, @SBEGIN, @SEND		
-		*/
 		
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

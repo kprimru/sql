@@ -79,8 +79,8 @@ BEGIN
 			CASE i.SATISF WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS SATISF,
 			ServiceStatusIndex, a.ID_DIRECTION, a.CallTypeID, a.DutyID, a.ID_GRANT_TYPE
 		FROM
-			dbo.ClientReadList()
-			INNER JOIN dbo.ClientDutyTable a ON RCL_ID = ClientID 
+			[dbo].[ClientList@Get?Read]()
+			INNER JOIN dbo.ClientDutyTable a ON WCL_ID = ClientID 
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 			INNER JOIN dbo.ClientTable h ON h.ClientID = b.ClientID
 			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 

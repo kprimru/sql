@@ -53,8 +53,8 @@ BEGIN
 				ELSE ''
 			END AS EventlastUpdateData
 		FROM
-			dbo.ClientReadList() a
-			INNER JOIN dbo.EventTable b ON a.RCL_ID = b.CLientID
+			[dbo].[ClientList@Get?Read]() a
+			INNER JOIN dbo.EventTable b ON a.WCL_ID = b.CLientID
 			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ClientID = c.ClientID
 			INNER JOIN dbo.ClientTable d ON c.ClientID = d.ClientID
 			INNER JOIN dbo.EventTypeTable e ON e.EventTypeID = b.EventTypeID

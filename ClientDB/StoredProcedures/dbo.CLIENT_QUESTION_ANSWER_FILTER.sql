@@ -33,8 +33,8 @@ BEGIN
 					ELSE NULL
 				END AS AnswerName
 			FROM 
-				dbo.ClientReadList() INNER JOIN
-				dbo.ClientTable a ON ClientID = RCL_ID INNER JOIN
+				[dbo].[ClientList@Get?Read]() INNER JOIN
+				dbo.ClientTable a ON ClientID = WCL_ID INNER JOIN
 				dbo.ClientQuestionTable b ON a.ClientID = b.ClientID INNER JOIN
 				dbo.QuestionTable c ON c.QuestionID = b.QuestionID LEFT OUTER JOIN	
 				dbo.AnswerTable e ON e.AnswerID = b.AnswerID

@@ -81,8 +81,8 @@ BEGIN
 			END AS CR_COMPLETE_S,
 			CRR_CLAIM, CRR_COMPARE, CRR_REJECT, CRR_PARTNER
 		FROM 
-			dbo.ClientReadList() INNER JOIN
-			dbo.ClientRival y ON RCL_ID = CL_ID
+			[dbo].[ClientList@Get?Read]() INNER JOIN
+			dbo.ClientRival y ON WCL_ID = CL_ID
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = CL_ID 		
 			LEFT OUTER JOIN dbo.RivalTypeTable ON RivalTypeID = CR_ID_TYPE
 			LEFT OUTER JOIN dbo.RivalStatus ON RS_ID = CR_ID_STATUS

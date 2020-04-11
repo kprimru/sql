@@ -138,8 +138,8 @@ BEGIN
 			SystemShortName, ClientFullName, DS_NAME AS ServiceStatusName, b.ServiceName,
 			b.ManagerName, SystemOrder, b.ClientID
 		FROM 
-			dbo.ClientReadList()
-			INNER JOIN dbo.ClientDistrView a WITH(NOEXPAND) ON ID_CLIENT = RCL_ID
+			[dbo].[ClientList@Get?Read]()
+			INNER JOIN dbo.ClientDistrView a WITH(NOEXPAND) ON ID_CLIENT = WCL_ID
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID 
 			INNER JOIN #type c ON c.SystemTypeID = a.SystemTypeID 
 			INNER JOIN #net d ON d.DistrTypeID = a.DistrTypeID 

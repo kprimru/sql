@@ -29,8 +29,8 @@ BEGIN
 		SELECT 
 			CL.ClientID, ClientFullName, ContractNumber = NUM_S, 
 			ContractBegin = DateFrom, ContractTypeName, DiscountValue
-		FROM dbo.ClientReadList()			R
-		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.RCL_ID 
+		FROM [dbo].[ClientList@Get?Read]()			R
+		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID 
 		INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
 		CROSS APPLY
 		(
@@ -39,7 +39,7 @@ BEGIN
 			WHERE D.Contract_Id = C.ID
 			ORDER BY DATE DESC
 		) CD
-		INNER JOIN dbo.ClientTable CL ON CL.ClientID = R.RCL_ID
+		INNER JOIN dbo.ClientTable CL ON CL.ClientID = R.WCL_ID
 		LEFT JOIN dbo.DiscountTable D ON D.DiscountID = CD.Discount_Id
 		LEFT JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
 		WHERE

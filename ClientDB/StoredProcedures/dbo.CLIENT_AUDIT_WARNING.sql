@@ -24,7 +24,7 @@ BEGIN
 		FROM 
 			dbo.ClientAudit
 			INNER JOIN dbo.ClientTable a ON CA_ID_CLIENT = ClientID
-			INNER JOIN dbo.ClientWriteList() ON WCL_ID = ClientID
+			INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = ClientID
 			INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 			INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 		WHERE CA_CONTROL = 1 AND a.STATUS = 1

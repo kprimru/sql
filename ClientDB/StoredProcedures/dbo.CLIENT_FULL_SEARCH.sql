@@ -76,8 +76,8 @@ BEGIN
 		);
 
 		INSERT INTO @rclient(RCL_ID)
-		SELECT RCL_ID
-		FROM dbo.ClientReadList();
+		SELECT WCL_ID
+		FROM [dbo].[ClientList@Get?Read]();
 			
 		DECLARE @CUR_DATE SMALLDATETIME;
 		
@@ -489,7 +489,7 @@ BEGIN
 							AND (
 									a.RECEIVER = ORIGINAL_LOGIN()
 									OR
-									(c.PSEDO = 'MANAGER' AND IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT WCL_ID FROM dbo.ClientWriteList()))
+									(c.PSEDO = 'MANAGER' AND IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT WCL_ID FROM [dbo].[ClientList@Get?Write]()))
 									OR
 									(c.PSEDO = 'LAW' AND IS_MEMBER('rl_control_law') = 1)
 									OR

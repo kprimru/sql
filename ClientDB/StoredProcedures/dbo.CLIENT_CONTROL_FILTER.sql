@@ -44,8 +44,8 @@ BEGIN
 				ELSE ''
 			END AS CC_TYPE_STR
 		FROM 
-			dbo.ClientReadList()
-			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = RCL_ID		
+			[dbo].[ClientList@Get?Read]()
+			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = WCL_ID		
 			INNER JOIN dbo.ClientControl d ON d.CC_ID_CLIENT = a.ClientID
 		WHERE (CC_DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (CC_DATE < DATEADD(DAY, 1, @END) OR @END IS NULL)

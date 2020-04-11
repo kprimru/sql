@@ -71,8 +71,8 @@ BEGIN
 			ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyUncomplete,
 			ClientDutyAnswer, g.NAME AS DIR_NAME
 		FROM
-			dbo.ClientReadList()
-			INNER JOIN dbo.ClientDutyTable a ON RCL_ID = ClientID 
+			[dbo].[ClientList@Get?Read]()
+			INNER JOIN dbo.ClientDutyTable a ON WCL_ID = ClientID 
 			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
 			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 
 			INNER JOIN dbo.ServiceTable d ON d.ServiceID = b.ClientServiceID 

@@ -59,8 +59,8 @@ BEGIN
 		INSERT INTO #client(CL_ID, ClientFullName, ServiceName, ManagerName, ConnectDate)
 			SELECT b.ClientID, ClientFullName, ServiceName, ManagerName, ConnectDate
 			FROM 
-				dbo.ClientReadList() a
-				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON RCL_ID = ClientID
+				[dbo].[ClientList@Get?Read]() a
+				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = ClientID
 				INNER JOIN @MNGR z ON b.ManagerID = z.ID
 				LEFT OUTER JOIN
 					(

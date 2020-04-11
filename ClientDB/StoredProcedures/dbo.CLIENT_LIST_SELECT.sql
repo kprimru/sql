@@ -37,12 +37,12 @@ BEGIN
 		);
 
 		INSERT INTO @RClient
-		SELECT RCL_ID
-		FROM dbo.ClientReadList()
+		SELECT WCL_ID
+		FROM [dbo].[ClientList@Get?Read]()
 
 		INSERT INTO @WClient
 		SELECT WCL_ID
-		FROM dbo.ClientWriteList()
+		FROM [dbo].[ClientList@Get?Write]()
 
 		INSERT INTO @Client(CL_ID)
 		SELECT RCL_ID

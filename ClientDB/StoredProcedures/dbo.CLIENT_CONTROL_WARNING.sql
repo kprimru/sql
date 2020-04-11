@@ -23,7 +23,7 @@ BEGIN
 
 		SELECT ClientID, ClientFullName, ManagerName, CC_TEXT, CC_DATE, CC_BEGIN
 		FROM 
-			dbo.ClientWriteList()
+			[dbo].[ClientList@Get?Write]()
 			INNER JOIN dbo.ClientControl a ON CC_ID_CLIENT = WCL_ID
 			INNER JOIN dbo.ClientTable b ON ClientID = CC_ID_CLIENT
 			INNER JOIN dbo.ServiceTable c ON c.ServiceID = ClientServiceID

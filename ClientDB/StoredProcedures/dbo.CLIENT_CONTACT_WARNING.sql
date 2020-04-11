@@ -36,7 +36,7 @@ BEGIN
 						ORDER BY DATE DESC
 					)) AS LAST_DATE
 				FROM 
-					dbo.ClientWriteList() a
+					[dbo].[ClientList@Get?Write]() a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = ClientID
 					INNER JOIN dbo.ClientTable c ON c.ClientID = b.ClientID
 					INNER JOIN dbo.ClientTypeTable t ON c.ClientTypeId = t.ClientTypeId

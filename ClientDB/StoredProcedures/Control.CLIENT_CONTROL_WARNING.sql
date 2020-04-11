@@ -31,7 +31,7 @@ BEGIN
 			AND (
 					RECEIVER = ORIGINAL_LOGIN()
 					OR
-					(c.PSEDO = 'MANAGER' AND (IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT WCL_ID FROM dbo.ClientWriteList()) OR IS_SRVROLEMEMBER('sysadmin') = 1))
+					(c.PSEDO = 'MANAGER' AND (IS_MEMBER('rl_control_manager') = 1 AND ID_CLIENT IN (SELECT WCL_ID FROM [dbo].[ClientList@Get?Write]()) OR IS_SRVROLEMEMBER('sysadmin') = 1))
 					OR
 					(c.PSEDO = 'LAW' AND (IS_MEMBER('rl_control_law') = 1 OR IS_SRVROLEMEMBER('sysadmin') = 1))
 					OR

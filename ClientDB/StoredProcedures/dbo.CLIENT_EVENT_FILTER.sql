@@ -71,8 +71,8 @@ BEGIN
 					EventComment, ServiceName, ManagerName,
 					EventCreate, EventCreateUser, EventLastUpdate, EventLastUpdateUser
 				FROM
-					dbo.ClientReadList()
-					INNER JOIN dbo.EventTable a ON ClientID = RCL_ID
+					[dbo].[ClientList@Get?Read]()
+					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #type c ON TP_ID = EventTypeID
 				WHERE EventActive = 1 
@@ -97,8 +97,8 @@ BEGIN
 				EventComment, ServiceName, ManagerName,
 				EventCreate, EventCreateUser, EventLastUpdate, EventLastUpdateUser
 				FROM
-					dbo.ClientReadList()
-					INNER JOIN dbo.EventTable a ON ClientID = RCL_ID
+					[dbo].[ClientList@Get?Read]()
+					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #type c ON TP_ID = EventTypeID
 				WHERE EventActive = 1 
@@ -128,8 +128,8 @@ BEGIN
 				EventComment, ServiceName, ManagerName,
 				EventCreate, EventCreateUser, EventLastUpdate, EventLastUpdateUser
 			FROM
-				dbo.ClientReadList()
-				INNER JOIN dbo.EventTable a ON ClientID = RCL_ID
+				[dbo].[ClientList@Get?Read]()
+				INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 				INNER JOIN #type c ON TP_ID = EventTypeID
 			WHERE EventActive = 1 

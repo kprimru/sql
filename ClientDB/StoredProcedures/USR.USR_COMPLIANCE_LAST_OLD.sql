@@ -58,8 +58,8 @@ BEGIN
 				UI_ID_BASE, UI_DISTR, UI_COMP, 
 				UI_LAST
 			FROM
-				dbo.ClientReadList() a
-				INNER JOIN USR.USRActiveView b ON UD_ID_CLIENT = RCL_ID
+				[dbo].[ClientList@Get?Read]() a
+				INNER JOIN USR.USRActiveView b ON UD_ID_CLIENT = WCL_ID
 				INNER JOIN dbo.SystemTable s ON s.SystemID = UF_ID_SYSTEM
 				INNER JOIN USR.USRIB c ON UF_ID = UI_ID_USR
 				INNER JOIN dbo.ClientTable d ON UD_ID_CLIENT = ClientID 
@@ -82,8 +82,8 @@ BEGIN
 				UI_ID_BASE, UI_DISTR, UI_COMP,
 				UI_LAST
 			FROM
-				dbo.ClientReadList() a
-				INNER JOIN USR.USRActiveView b ON UD_ID_CLIENT = RCL_ID
+				[dbo].[ClientList@Get?Read]() a
+				INNER JOIN USR.USRActiveView b ON UD_ID_CLIENT = WCL_ID
 				INNER JOIN dbo.SystemTable s ON s.SystemID = UF_ID_SYSTEM
 				INNER JOIN USR.USRIB c ON UF_ID = UI_ID_USR
 				INNER JOIN dbo.ClientTable d ON UD_ID_CLIENT = ClientID
