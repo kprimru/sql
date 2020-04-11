@@ -39,10 +39,14 @@ AS
 						-- сетевая версия любой системы или с/о версия систем Проф, ЮВП, БВП, БОВП - это категория A
 						WHEN (NT_NET > 1) OR (NT_NET = 1 AND SystemBaseName IN ('LAW', 'JURP', 'BVP', 'BUDP')) THEN 'A'
 						-- с/о версия любой системы, кроме Проф, ЮВП, БВП, БОВП или локальная версия Проф, ЮВП, БВП, БОВП - это категория B
-						WHEN (NT_NET = 1 AND SystemBaseName NOT IN ('LAW', 'JURP', 'BVP', 'BUDP')) 
-							OR (SystemBaseName IN ('LAW', 'JURP', 'BVP', 'BUDP') AND NT_NET = 0)
-						-- ОВС - это по любому кат В 20.02.2019
-						OR (NT_TECH = 13) THEN 'B'
+						-- + смарт-комплекты на основе Проф 20.03.2019
+						WHEN (NT_NET = 1 AND SystemBaseName NOT IN ('LAW', 'JURP', 'BVP', 'BUDP', 'SBOE', 'SBOP', 'SKUP', 'SKUE', 'SKJP'))
+							OR (SystemBaseName IN ('LAW', 'JURP', 'BVP', 'BUDP', 'SBOE', 'SBOP', 'SKUP', 'SKUE', 'SKJP') AND NT_NET = 0)
+							-- ОВС - это по любому кат В 20.02.2019
+							OR (NT_TECH = 13)
+							-- ОВМ-Ф (1;2) - тоже категория B 20.03.2019
+							OR (NT_NET = 1 AND NT_TECH = 11 AND NT_ODON = 1 AND NT_ODOFF = 2)
+								THEN 'B'
 						-- все остальное - это категория C
 						ELSE 'C'
 					END
