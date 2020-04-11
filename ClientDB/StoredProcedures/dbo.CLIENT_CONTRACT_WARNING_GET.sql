@@ -28,7 +28,7 @@ BEGIN
 				SELECT COUNT(*)
 				FROM 
 					dbo.ClientContractWarningView
-					INNER JOIN dbo.ClientContractWriteList() ON WCL_ID = ClientID
+					INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = ClientID
 				WHERE ClientID = @CLIENT
 			)
 		

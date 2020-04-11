@@ -42,16 +42,10 @@ BEGIN
 		SELECT Cast(SetItem AS SmallInt)
 		FROM dbo.NamedSetItemsSelect('dbo.ClientKind', 'DefaultChecked');
 
-		--ToDO починить именованные множества, чтобы можно было Guid использовать
 		INSERT INTO @ContactType
-		SELECT ID
-		FROM dbo.ClientContactType
-		WHERE [Name] IN ('Визит плановый', 'Визит срочный')
-		/*
 		SELECT Cast(SetItem AS UniqueIdentifier)
 		FROM dbo.NamedSetItemsSelect('dbo.ClientContactType', 'Посещение');
-		*/
-
+		
 		INSERT INTO @ClientWrite
 		SELECT WCL_ID
 		FROM dbo.[ClientList@Get?Write]() a;
