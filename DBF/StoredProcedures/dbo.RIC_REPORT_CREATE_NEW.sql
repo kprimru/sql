@@ -96,11 +96,11 @@ BEGIN
 								INNER JOIN 	dbo.PeriodRegTable	b	ON	a.DIS_NUM =	b.REG_DISTR_NUM AND 
 																a.DIS_COMP_NUM = b.REG_COMP_NUM AND 
 																a.SYS_ID = b.REG_ID_SYSTEM
-								INNER JOIN dbo.PeriodTable c ON c.PR_ID = b.REG_ID_PERIOD
+								--INNER JOIN dbo.PeriodTable c ON c.PR_ID = b.REG_ID_PERIOD
 								INNER JOIN dbo.DistrStatusTable d ON d.DS_ID = b.REG_ID_STATUS
-						WHERE TD_ID_TO = TO_ID   AND REG_MAIN = 1 AND d.DS_REG = 0
-							AND PR_DATE >= '20120101'
-							AND PR_DATE <= @PR_DATE
+						WHERE TD_ID_TO = TO_ID   AND REG_MAIN = 1 AND d.DS_REG IN (0, 1) AND REG_ID_PERIOD = @PR_ID
+							--AND PR_DATE >= '20120101'
+							--AND PR_DATE <= @PR_DATE
 
 						UNION 
 
