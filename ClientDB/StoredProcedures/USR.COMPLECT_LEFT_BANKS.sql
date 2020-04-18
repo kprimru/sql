@@ -61,9 +61,9 @@ BEGIN
 
 		INSERT INTO @Clients
 		SELECT ClientId
-		FROM dbo.ClientView WITH(NOEXPAND)
-		WHERE	ServiceStatusId = 2 -- ToDo заменить на ИМ
-			AND (ServiceId = @SERVICE	OR @SERVICE IS NULL)
+		FROM dbo.ClientView AS C WITH(NOEXPAND)
+		INNER JOIN dbo.ServiceStatusConnected() AS S ON C.ServiceStatusId = S.ServiceStatusId
+		WHERE	(ServiceId = @SERVICE	OR @SERVICE IS NULL)
 			AND (ManagerId = @Manager	OR @MANAGER IS NULL)
 			AND (ClientId = @CLIENT		OR @CLIENT IS NULL);
 

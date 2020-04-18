@@ -143,23 +143,6 @@ BEGIN
 			WHERE	a.ID = @ID
 				AND a.IMPORT IS NULL;
 		END;
-		
-		-- ToDo а это жесть - мы же не должны при загрузке каждого вопроса проверять, не принадлежит ли он кому-то? Вынести в отдельный JOB
-		-- и там на Славянку тоже должна быть проверка
-		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, 
-			DutyID, 
-			ClientDutyQuest, EMAIL, 
-			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-			SELECT 
-				ID_CLIENT, a.DATE, a.FIO, a.PHONE, 
-				@Duty_Id, 
-				a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
-			FROM
-				dbo.ClientDutyQuestion a
-				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP
-				INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
-			WHERE a.IMPORT IS NULL --AND a.ID = @ID
-				AND DATE >= '20170801'
 				
 		UPDATE a
 		SET IMPORT = GETDATE()
