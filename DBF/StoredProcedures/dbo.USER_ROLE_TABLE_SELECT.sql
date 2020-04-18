@@ -34,7 +34,7 @@ BEGIN
 
 	SET @sql = 'SELECT RNAME, ROLE_NOTE, '
 
-	SELECT @sql = @sql + '[' + RUSER + '], ' 
+	SELECT @sql = @sql + '[' + RUSER + '],' 
 	FROM
 		(
 			SELECT DISTINCT RUSER
@@ -42,7 +42,7 @@ BEGIN
 		) AS O_O
 	ORDER BY RUSER
 
-	SET @sql = LEFT(@sql, LEN(@sql) - 2)
+	SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
 	SET @sql = @sql + ' 
 						FROM 
@@ -57,7 +57,7 @@ BEGIN
 								COUNT (RUser) 		
 								FOR RUSER IN
 									( '
-	SELECT @sql = @sql + '[' + RUSER + '], ' 
+	SELECT @sql = @sql + '[' + RUSER + '],' 
 	FROM
 		(
 			SELECT DISTINCT RUSER
@@ -65,12 +65,14 @@ BEGIN
 		) AS O_O
 	ORDER BY RUSER
 
-	SET @sql = LEFT(@sql, LEN(@sql) - 2)
+	SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
 	SET @sql = @sql + ' 
 									)
 							) AS pvt
 						ORDER BY RNAME'
+
+	--PRINT (@SQL)
 
 	EXEC (@sql)
 
