@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [Client].[COMPANY_DEPO_FILTER]
-	@Statuses	VarChar(Max),
+	@Statuses	VarChar(Max)	= NULL,
+	@ExpireDate	SmallDateTime	= NULL,
 	@FileName	VarChar(250)	= NULL OUTPUT,
 	@RC			Int				= NULL OUTPUT
 AS
@@ -73,6 +74,7 @@ BEGIN
 		) AS DS
 		WHERE D.STATUS = 1
 			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM @TStatuses))
+			AND (D.[ExpireDate] <= @ExpireDate OR @ExpireDate IS NULL)
 			AND D.[Status_Id] NOT IN (@Status_STAGE)
 		ORDER BY D.[Number] DESC, D.[DateFrom] DESC
 

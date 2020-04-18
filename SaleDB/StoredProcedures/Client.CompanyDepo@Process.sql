@@ -16,7 +16,8 @@ BEGIN
 		@Status_Id_ACCEPT		SmallInt,
 		@Status_Id_ACTIVE		SmallInt,
 		@Status_Id_REFUSED		SmallInt,
-		@Status_Id_TERMINATION	SmallInt;
+		@Status_Id_TERMINATION	SmallInt,
+		@Status_Id_STAGE		SmallInt;
 	
 	DECLARE @DepoFile Table
 	(
@@ -57,6 +58,7 @@ BEGIN
 		SET @Status_Id_ACTIVE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
 		SET @Status_Id_REFUSED		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');
 		SET @Status_Id_TERMINATION	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
+		SET @Status_Id_STAGE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
 		
 		BEGIN TRAN;
 		
@@ -89,6 +91,25 @@ BEGIN
 		INNER JOIN @DepoFile					AS F ON F.[Code] = D.[Number]
 		WHERE	D.[Status] = 1
 			AND D.[Status_Id] IN (@Status_Id_NEW, @Status_Id_ACCEPT);
+			
+		DELETE D
+		FROM Client.CompanyDepo AS D
+		WHERE D.Status = 1
+			AND D.Status_Id IN (@Status_Id_STAGE)
+			AND D.Company_Id IN
+			(
+				SELECT D.[Company_Id]
+				FROM Client.CompanyDepo 				AS D
+				INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
+				WHERE	D.[Status] = 1
+					AND D.[Status_Id] IN (@Status_Id_ACTIVE, @Status_Id_ACCEPT, @Status_Id_NEW, @Status_Id_TERMINATION)
+					AND NOT EXISTS
+						(
+							SELECT *
+							FROM @DepoFile					AS F
+							WHERE F.[Code] = D.[Number]
+						)
+			);
 			
 		UPDATE D
 		SET [Status_Id] 	= @Status_Id_REFUSED,
