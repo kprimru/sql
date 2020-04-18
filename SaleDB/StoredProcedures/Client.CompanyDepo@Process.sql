@@ -121,7 +121,7 @@ BEGIN
 		FROM Client.CompanyDepo 				AS D
 		INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
 		WHERE	D.[Status] = 1
-			AND D.[Status_Id] IN (@Status_Id_ACTIVE, @Status_Id_ACCEPT, @Status_Id_NEW, @Status_Id_TERMINATION)
+			AND D.[Status_Id] IN (@Status_Id_ACTIVE, @Status_Id_ACCEPT, @Status_Id_TERMINATION)
 			AND NOT EXISTS
 				(
 					SELECT *

@@ -89,7 +89,7 @@ BEGIN
 			FROM Client.CompanyDepo D
 			INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
 			WHERE	D.Status = 1
-				AND S.[Code] NOT IN ('REFUSED', 'STAGE')
+				AND S.[Code] NOT IN ('REFUSED', 'STAGE', 'NEW')
 		) AS D ON F.[Code] = D.[Number]
 	) D
 	WHERE @HideUnchanged = 0 OR @HideUnchanged = 1 AND D.[Action] != 'N'
