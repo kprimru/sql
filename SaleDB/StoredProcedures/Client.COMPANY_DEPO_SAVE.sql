@@ -19,7 +19,8 @@ CREATE PROCEDURE [Client].[COMPANY_DEPO_SAVE]
 	@DepoPerson3FIO		VarChar(256),
 	@DepoPerson3Phone	VarChar(256),
 	@DepoRival			VarChar(10),
-	@Stage				Bit					= 0
+	@Stage				Bit					= 0,
+	@Tag				Bit					= 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -89,23 +90,29 @@ BEGIN
 					FROM Client.CompanyDepo D
 					INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
 					WHERE D.[Id] = @Id
-				) NOT IN ('NEW', 'STAGE')
+				) NOT IN ('NEW', 'STAGE', 'TAG')
 				RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
-						
-			UPDATE Client.CompanyDepo
-			SET [Depo:Name]				= @DepoName,
-				[Depo:Inn]				= @DepoInn,
-				[Depo:Region]			= @DepoRegion,
-				[Depo:City]				= @DepoCity,
-				[Depo:Address]			= @DepoAddress,
-				[Depo:Person1FIO]		= @DepoPerson1FIO,
-				[Depo:Person1Phone]		= @DepoPerson1Phone,
-				[Depo:Person2FIO]		= @DepoPerson2FIO,
-				[Depo:Person2Phone]		= @DepoPerson2Phone,
-				[Depo:Person3FIO]		= @DepoPerson3FIO,
-				[Depo:Person3Phone]		= @DepoPerson3Phone,
-				[Depo:Rival]			= @DepoRival
-			WHERE [Id] = @Id
+					
+			IF @Tag = 1
+				UPDATE Client.CompanyDepo
+				SET [Status_Id]				= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG'),
+					[Depo:Rival]			= @DepoRival
+				WHERE [Id] = @Id
+			ELSE
+				UPDATE Client.CompanyDepo
+				SET [Depo:Name]				= @DepoName,
+					[Depo:Inn]				= @DepoInn,
+					[Depo:Region]			= @DepoRegion,
+					[Depo:City]				= @DepoCity,
+					[Depo:Address]			= @DepoAddress,
+					[Depo:Person1FIO]		= @DepoPerson1FIO,
+					[Depo:Person1Phone]		= @DepoPerson1Phone,
+					[Depo:Person2FIO]		= @DepoPerson2FIO,
+					[Depo:Person2Phone]		= @DepoPerson2Phone,
+					[Depo:Person3FIO]		= @DepoPerson3FIO,
+					[Depo:Person3Phone]		= @DepoPerson3Phone,
+					[Depo:Rival]			= @DepoRival
+				WHERE [Id] = @Id
 		END;
 	END TRY
 	BEGIN CATCH

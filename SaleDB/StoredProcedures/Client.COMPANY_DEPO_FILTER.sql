@@ -15,6 +15,7 @@ BEGIN
 
 	DECLARE
 		@Status_NEW				SmallInt,
+		@Status_TAG				SmallInt,
 		@Status_TERMINATION		SmallInt,
 		@Status_STAGE			SmallInt;
 
@@ -22,6 +23,7 @@ BEGIN
 
 	BEGIN TRY
 		SET @Status_NEW = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
+		SET @Status_TAG = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG');
 		SET @Status_TERMINATION = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
 		
@@ -31,6 +33,8 @@ BEGIN
 		IF (SELECT Count(*) FROM @TStatuses) = 1 BEGIN
 			IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_NEW)
 				SET @FileName = 'Список NEW РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TAG)
+				SET @FileName = 'Список TAG РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TERMINATION)
 				SET @FileName = 'Список OUT РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE

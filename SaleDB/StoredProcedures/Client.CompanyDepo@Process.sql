@@ -13,6 +13,7 @@ BEGIN
 
 	DECLARE
 		@Status_Id_NEW			SmallInt,
+		@Status_Id_TAG			SmallInt,
 		@Status_Id_ACCEPT		SmallInt,
 		@Status_Id_ACTIVE		SmallInt,
 		@Status_Id_REFUSED		SmallInt,
@@ -54,6 +55,7 @@ BEGIN
 		FROM Common.TableGUIDFromXML(@GUIds);
 		
 		SET @Status_Id_NEW			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
+		SET @Status_Id_TAG			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
 		SET @Status_Id_ACCEPT		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACCEPT');
 		SET @Status_Id_ACTIVE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
 		SET @Status_Id_REFUSED		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');
@@ -79,7 +81,7 @@ BEGIN
 		Можно сделать LEFT JOIN на таблицу @DepoFile и с помощью CASE выбрать поля для UPDATE
 		*/
 		
-		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта", то делаем ее действующей и 
+		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта" или "TAG", то делаем ее действующей и 
 		UPDATE D
 		SET [Status_Id] 	= @Status_Id_ACTIVE,
 			[DateFrom]		= F.[DepoDate],
@@ -90,7 +92,7 @@ BEGIN
 		INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
 		INNER JOIN @DepoFile					AS F ON F.[Code] = D.[Number]
 		WHERE	D.[Status] = 1
-			AND D.[Status_Id] IN (@Status_Id_NEW, @Status_Id_ACCEPT);
+			AND D.[Status_Id] IN (@Status_Id_NEW, @Status_Id_ACCEPT, @Status_Id_TAG);
 			
 		DELETE D
 		FROM Client.CompanyDepo AS D
