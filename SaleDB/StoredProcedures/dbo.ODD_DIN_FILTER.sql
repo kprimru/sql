@@ -9,13 +9,20 @@ CREATE PROCEDURE [dbo].[ODD_DIN_FILTER]
 	@SYS		NVARCHAR(10)	=	NULL,
 	@ACTIVE		BIT				=	NULL
 AS
-	SELECT	
-		SystemShortName,
-		DistrNumber,
-		Complect,
+BEGIN
+	SET NOCOUNT ON;
+	
+	SELECT
+		R.[HostId],
+		R.[DistrNumber],
+		R.[CompNumber],
+		R.[DistrStr],
 		RegisterDate,
 		DS_INDEX,
-		RPR_OPER
+		RPR_OPER,
+		O.[Company_Id],
+		C.[Name],
+		C.[Number]
 	FROM [PC275-SQL\ALPHA].[ClientDB].[Reg].[RegNodeSearchView] AS R  WITH(NOEXPAND)
 	OUTER APPLY
 	(
@@ -27,9 +34,20 @@ AS
 			AND RPR_OPER LIKE 'Èçìåíåí email%'
 		ORDER BY RPR_DATE DESC
 	) AS P
-	WHERE	R.SST_SHORT='ÎÄÄ'
-		AND NT_SHORT='ÎÂÏ'
+	OUTER APPLY
+	(
+		SELECT TOP (1) O.[Company_Id]
+		FROM [Client].[CompanyOdd] O
+		WHERE O.[Host_Id] = R.[HostId]
+			AND O.[Distr] = R.[DistrNumber]
+			AND O.[Comp] = R.[CompNumber]
+		ORDER BY O.[UpdDate] DESC
+	) AS O
+	LEFT JOIN Client.Company C ON C.[Id] = O.[Company_Id]
+	WHERE	R.SST_SHORT = 'ÎÄÄ'
+		AND NT_SHORT = 'ÎÂÏ' --?
 		AND (CAST(DistrNumber AS NVARCHAR) LIKE '%'+CAST(@DISTR AS NVARCHAR)+'%' OR @DISTR IS NULL)
 		AND (SystemShortName LIKE '%'+@SYS+'%' OR @SYS IS NULL)
 		AND (DS_INDEX = @ACTIVE OR @ACTIVE IS NULL)
 	ORDER BY DS_INDEX, SystemShortName
+END
