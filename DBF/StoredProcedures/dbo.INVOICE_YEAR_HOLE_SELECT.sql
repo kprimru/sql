@@ -16,48 +16,70 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @min BIGINT
-	DECLARE @max BIGINT
-	DECLARE @row BIGINT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	CREATE TABLE #temp
-		(
-			INS_NUM BIGINT
-		)
+	BEGIN TRY
 
-	SELECT @min = MIN(INS_NUM), @max = MAX(INS_NUM) 
-	FROM dbo.InvoiceSaleTable
-	WHERE INS_NUM_YEAR = @year AND INS_ID_ORG = @orgid
+		DECLARE @min BIGINT
+		DECLARE @max BIGINT
+		DECLARE @row BIGINT
 
-	SELECT @row = @min + 1
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
 
-	WHILE @row < @max
-	BEGIN
-		INSERT INTO #temp SELECT @row
-		SET @row = @row + 1 
-	END
-	/*
-	SELECT @year, INS_NUM, @orgid
-	FROM #temp a EXCEPT 
-		SELECT @year, INS_NUM, @orgid
+		CREATE TABLE #temp
+			(
+				INS_NUM BIGINT
+			)
+
+		SELECT @min = MIN(INS_NUM), @max = MAX(INS_NUM) 
 		FROM dbo.InvoiceSaleTable
-		WHERE INS_ID_ORG = @orgid
-		*/
-		
-	SELECT @year, INS_NUM, @orgid
-	FROM #temp a
-	WHERE NOT EXISTS
-		(
-			SELECT *
-			FROM dbo.InvoiceSaleTable b
-			WHERE INS_ID_ORG = @orgid
-				AND b.INS_NUM = a.INS_NUM
-				AND INS_NUM_YEAR = @year
-		)
+		WHERE INS_NUM_YEAR = @year AND INS_ID_ORG = @orgid
 
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
+		SELECT @row = @min + 1
+
+		WHILE @row < @max
+		BEGIN
+			INSERT INTO #temp SELECT @row
+			SET @row = @row + 1 
+		END
+		/*
+		SELECT @year, INS_NUM, @orgid
+		FROM #temp a EXCEPT 
+			SELECT @year, INS_NUM, @orgid
+			FROM dbo.InvoiceSaleTable
+			WHERE INS_ID_ORG = @orgid
+			*/
+			
+		SELECT @year, INS_NUM, @orgid
+		FROM #temp a
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM dbo.InvoiceSaleTable b
+				WHERE INS_ID_ORG = @orgid
+					AND b.INS_NUM = a.INS_NUM
+					AND INS_NUM_YEAR = @year
+			)
+
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

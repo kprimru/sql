@@ -14,25 +14,45 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DELETE
-	FROM dbo.ClientFinancing
-	WHERE ID_CLIENT = @clientid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE 
-	FROM dbo.DistrDeliveryHistoryTable
-	WHERE DDH_ID_OLD_CLIENT = @clientid OR DDH_ID_NEW_CLIENT = @clientid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE
-	FROM dbo.ClientDocumentSettingsTable
-	WHERE CDS_ID_CLIENT = @clientid
+	BEGIN TRY
 
-	DELETE 
-	FROM dbo.ClientFinancingAddressTable
-	WHERE CFA_ID_CLIENT = @clientid
+		DELETE
+		FROM dbo.ClientFinancing
+		WHERE ID_CLIENT = @clientid
 
-	DELETE 
-	FROM dbo.ClientTable 
-	WHERE CL_ID = @clientid
+		DELETE 
+		FROM dbo.DistrDeliveryHistoryTable
+		WHERE DDH_ID_OLD_CLIENT = @clientid OR DDH_ID_NEW_CLIENT = @clientid
 
-	SET NOCOUNT OFF
+		DELETE
+		FROM dbo.ClientDocumentSettingsTable
+		WHERE CDS_ID_CLIENT = @clientid
+
+		DELETE 
+		FROM dbo.ClientFinancingAddressTable
+		WHERE CFA_ID_CLIENT = @clientid
+
+		DELETE 
+		FROM dbo.ClientTable 
+		WHERE CL_ID = @clientid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

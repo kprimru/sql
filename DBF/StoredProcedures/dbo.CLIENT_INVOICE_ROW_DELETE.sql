@@ -19,52 +19,73 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @insid INT
-	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF OBJECT_ID('tempdb..#dbf_invrow') IS NOT NULL
-		DROP TABLE #dbf_invrow
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	CREATE TABLE #dbf_invrow
-		(
-		ROW_ID INT NOT NULL
-		)
+	BEGIN TRY
 
-	IF @rowlist IS NOT NULL
-		BEGIN
-		--парсить строчку и выбирать нужные значения
-		INSERT INTO #dbf_invrow
-			SELECT * FROM dbo.GET_TABLE_FROM_LIST(@rowlist, ',')
-		END
+		DECLARE @insid INT
+		
 
-	SELECT @insid = INS_ID
-	FROM 
-		dbo.InvoiceSaleTable a
-		INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE = INS_ID
-		INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
+		IF OBJECT_ID('tempdb..#dbf_invrow') IS NOT NULL
+			DROP TABLE #dbf_invrow
 
-	INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-		SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление строки с/ф',
-			ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') + 
-			CASE ISNULL(INR_COUNT, 1) 
-				WHEN 1 THEN ''
-				ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - '
-			END + dbo.MoneyFormat(INR_SALL)
+		CREATE TABLE #dbf_invrow
+			(
+			ROW_ID INT NOT NULL
+			)
+
+		IF @rowlist IS NOT NULL
+			BEGIN
+			--парсить строчку и выбирать нужные значения
+			INSERT INTO #dbf_invrow
+				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@rowlist, ',')
+			END
+
+		SELECT @insid = INS_ID
 		FROM 
 			dbo.InvoiceSaleTable a
 			INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE = INS_ID
 			INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
-			
 
-	DELETE
-	FROM 
-		dbo.InvoiceRowTable
-	WHERE INR_ID IN (SELECT ROW_ID FROM #dbf_invrow)
+		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление строки с/ф',
+				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') + 
+				CASE ISNULL(INR_COUNT, 1) 
+					WHEN 1 THEN ''
+					ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - '
+				END + dbo.MoneyFormat(INR_SALL)
+			FROM 
+				dbo.InvoiceSaleTable a
+				INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE = INS_ID
+				INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
+				
 
-	IF OBJECT_ID('tempdb..#dbf_invrow') IS NOT NULL
-		DROP TABLE #dbf_invrow
+		DELETE
+		FROM 
+			dbo.InvoiceRowTable
+		WHERE INR_ID IN (SELECT ROW_ID FROM #dbf_invrow)
 
-	EXEC dbo.BOOK_SALE_PROCESS @insid
-	EXEC dbo.BOOK_PURCHASE_PROCESS @insid
+		IF OBJECT_ID('tempdb..#dbf_invrow') IS NOT NULL
+			DROP TABLE #dbf_invrow
+
+		EXEC dbo.BOOK_SALE_PROCESS @insid
+		EXEC dbo.BOOK_PURCHASE_PROCESS @insid
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-

@@ -17,16 +17,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @insnum INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @insnum = MAX(INS_NUM) + 1
-	FROM dbo.InvoiceSaleTable
-	WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, @date),2)
-		AND INS_ID_ORG = @orgid
-	
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @insnum IS NULL	
-		SET @insnum = 1
+	BEGIN TRY
 
-	SELECT @insnum AS INS_NUM, RIGHT(DATEPART(yy, @date),2) AS INS_NUM_YEAR
+		DECLARE @insnum INT
+
+		SELECT @insnum = MAX(INS_NUM) + 1
+		FROM dbo.InvoiceSaleTable
+		WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, @date),2)
+			AND INS_ID_ORG = @orgid
+		
+
+		IF @insnum IS NULL	
+			SET @insnum = 1
+
+		SELECT @insnum AS INS_NUM, RIGHT(DATEPART(yy, @date),2) AS INS_NUM_YEAR
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -18,23 +18,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @list TABLE
-		(
-			TD_ID INT
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @list
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
-	
-	UPDATE dbo.ClientDistrTable
-	SET							
-		CD_ID_SERVICE = @STATUS
-	WHERE CD_ID_DISTR IN
-		(
-			SELECT TD_ID_DISTR
-			FROM 
-				@list a
-				INNER JOIN dbo.TODistrTable b ON a.TD_ID = b.TD_ID
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @list TABLE
+			(
+				TD_ID INT
+			)
+
+		INSERT INTO @list
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
+		
+		UPDATE dbo.ClientDistrTable
+		SET							
+			CD_ID_SERVICE = @STATUS
+		WHERE CD_ID_DISTR IN
+			(
+				SELECT TD_ID_DISTR
+				FROM 
+					@list a
+					INNER JOIN dbo.TODistrTable b ON a.TD_ID = b.TD_ID
+			)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

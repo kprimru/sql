@@ -29,19 +29,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.BillFactDetailTable
-	SET BILL_STR = @BILL_STR, 
-		TX_PERCENT = @TX_PERCENT, 
-		TX_NAME = @TX_NAME, 
-		SYS_NAME = @SYS_NAME, 
-		SYS_ORDER = @SYS_ORDER, 
-		DIS_ID = @DIS_ID, 
-		DIS_NUM = @DIS_NUM, 
-		PR_ID = @PR_ID, 
-		PR_MONTH = @PR_MONTH, 
-		PR_DATE = @PR_DATE, 
-		BD_UNPAY = @BD_UNPAY, 
-		BD_TAX_UNPAY = @BD_TAX_UNPAY, 
-		BD_TOTAL_UNPAY = @BD_TOTAL_UNPAY	
-	WHERE BFD_ID = @BFD_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.BillFactDetailTable
+		SET BILL_STR = @BILL_STR, 
+			TX_PERCENT = @TX_PERCENT, 
+			TX_NAME = @TX_NAME, 
+			SYS_NAME = @SYS_NAME, 
+			SYS_ORDER = @SYS_ORDER, 
+			DIS_ID = @DIS_ID, 
+			DIS_NUM = @DIS_NUM, 
+			PR_ID = @PR_ID, 
+			PR_MONTH = @PR_MONTH, 
+			PR_DATE = @PR_DATE, 
+			BD_UNPAY = @BD_UNPAY, 
+			BD_TAX_UNPAY = @BD_TAX_UNPAY, 
+			BD_TOTAL_UNPAY = @BD_TOTAL_UNPAY	
+		WHERE BFD_ID = @BFD_ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -21,17 +21,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO	dbo.TOPersonalTable(
-		TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, TP_ID_POS, TP_ID_RP, TP_PHONE)
-		SELECT
-			@toid, TP_SURNAME, TP_NAME, TP_OTCH, TP_ID_POS, TP_ID_RP, TP_PHONE
-		FROM	dbo.TOPersonalTable
-		WHERE	TP_ID=@toperid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
+	BEGIN TRY
 
-	SET NOCOUNT OFF
+		INSERT INTO	dbo.TOPersonalTable(
+			TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, TP_ID_POS, TP_ID_RP, TP_PHONE)
+			SELECT
+				@toid, TP_SURNAME, TP_NAME, TP_OTCH, TP_ID_POS, TP_ID_RP, TP_PHONE
+			FROM	dbo.TOPersonalTable
+			WHERE	TP_ID=@toperid
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-

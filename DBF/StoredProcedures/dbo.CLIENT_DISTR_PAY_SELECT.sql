@@ -17,30 +17,36 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT 
-		DIS_ID, DIS_STR, DIS_PRICE, 
-		CAST(ROUND(DIS_PRICE * ISNULL(TX_PERCENT / 100, 0), 2) AS MONEY) AS DIS_TAX_PRICE, 
-		CAST(ROUND(DIS_PRICE * (1 + ISNULL(TX_PERCENT / 100, 0)), 2) AS MONEY) AS DIS_TOTAL_PRICE
-	FROM 
-		dbo.DistrPriceView a INNER JOIN
-		dbo.SaleObjectTable b ON a.SYS_ID_SO = b.SO_ID INNER JOIN
-		dbo.TaxTable c ON c.TX_ID = b.SO_ID_TAX
-	WHERE CD_ID_CLIENT = @clientid AND PR_ID = @periodid
-	ORDER BY SYS_ORDER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			DIS_ID, DIS_STR, DIS_PRICE, 
+			CAST(ROUND(DIS_PRICE * ISNULL(TX_PERCENT / 100, 0), 2) AS MONEY) AS DIS_TAX_PRICE, 
+			CAST(ROUND(DIS_PRICE * (1 + ISNULL(TX_PERCENT / 100, 0)), 2) AS MONEY) AS DIS_TOTAL_PRICE
+		FROM 
+			dbo.DistrPriceView a INNER JOIN
+			dbo.SaleObjectTable b ON a.SYS_ID_SO = b.SO_ID INNER JOIN
+			dbo.TaxTable c ON c.TX_ID = b.SO_ID_TAX
+		WHERE CD_ID_CLIENT = @clientid AND PR_ID = @periodid
+		ORDER BY SYS_ORDER
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
-
-
-
-
-

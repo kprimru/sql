@@ -15,23 +15,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @tempregpath VARCHAR(MAX)
-	DECLARE @regkeys VARCHAR(MAX)
-	DECLARE @regnodepath VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @tempregpath = dbo.GET_SETTING('TEMP_REG_PATH')
-	SELECT @regkeys = dbo.GET_SETTING('REG_KEYS')
-	SELECT @regnodepath = dbo.GET_SETTING('REG_NODE_PATH')
-  
-	DECLARE @filename VARCHAR(50)	
-	SET @filename = @tempregpath + 'reg' + REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(VARCHAR(50), GETDATE(), 121), ':', ''), '-', ''), ' ', ''), '.', '') + '.csv'
-  
-	DECLARE @process VARCHAR(MAX)
-	SET @process = @regnodepath + ' ' + @regkeys + @filename
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @process
+	BEGIN TRY
 
-	EXEC('EXEC xp_cmdshell ''' + @process + ''', NO_OUTPUT')
+		DECLARE @tempregpath VARCHAR(MAX)
+		DECLARE @regkeys VARCHAR(MAX)
+		DECLARE @regnodepath VARCHAR(MAX)
 
-	EXEC REG_NODE_LOAD_LOCAL @filename
+		SELECT @tempregpath = dbo.GET_SETTING('TEMP_REG_PATH')
+		SELECT @regkeys = dbo.GET_SETTING('REG_KEYS')
+		SELECT @regnodepath = dbo.GET_SETTING('REG_NODE_PATH')
+	  
+		DECLARE @filename VARCHAR(50)	
+		SET @filename = @tempregpath + 'reg' + REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(VARCHAR(50), GETDATE(), 121), ':', ''), '-', ''), ' ', ''), '.', '') + '.csv'
+	  
+		DECLARE @process VARCHAR(MAX)
+		SET @process = @regnodepath + ' ' + @regkeys + @filename
+
+		SELECT @process
+
+		EXEC('EXEC xp_cmdshell ''' + @process + ''', NO_OUTPUT')
+
+		EXEC REG_NODE_LOAD_LOCAL @filename
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

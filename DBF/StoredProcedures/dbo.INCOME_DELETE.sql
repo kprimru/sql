@@ -19,23 +19,42 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DELETE 
-	FROM dbo.SaldoTable
-	WHERE SL_ID_IN_DIS IN 
-			(
-				SELECT ID_ID 
-				FROM dbo.IncomeDistrTable 
-				WHERE ID_ID_INCOME = @inid
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE 
-	FROM dbo.IncomeDistrTable
-	WHERE ID_ID_INCOME = @inid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM dbo.IncomeTable
-	WHERE IN_ID = @inid				
+	BEGIN TRY
+	
+		DELETE 
+		FROM dbo.SaldoTable
+		WHERE SL_ID_IN_DIS IN 
+				(
+					SELECT ID_ID 
+					FROM dbo.IncomeDistrTable 
+					WHERE ID_ID_INCOME = @inid
+				)
+
+		DELETE 
+		FROM dbo.IncomeDistrTable
+		WHERE ID_ID_INCOME = @inid
+
+		DELETE 
+		FROM dbo.IncomeTable
+		WHERE IN_ID = @inid
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-

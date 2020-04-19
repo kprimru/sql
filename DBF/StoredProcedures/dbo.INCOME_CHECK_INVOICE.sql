@@ -16,29 +16,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @inv INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @inv = IN_ID_INVOICE
-	FROM dbo.IncomeTable
-	WHERE IN_ID = @incomeid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @inv IS NULL
-		BEGIN
-			SELECT 1
-			WHERE 1 = 0
+	BEGIN TRY
 
-			RETURN
-		END
+		DECLARE @inv INT
 
-	SELECT
-		(
-			SELECT SUM(IN_SUM)
-			FROM dbo.IncomeTable
-			WHERE IN_ID_INVOICE = @inv
-		) AS IN_SUM,
-		(
-			SELECT SUM(INR_SALL)
-			FROM dbo.InvoiceRowTable
-			WHERE INR_ID_INVOICE = @inv
-		) AS INS_SUM
+		SELECT @inv = IN_ID_INVOICE
+		FROM dbo.IncomeTable
+		WHERE IN_ID = @incomeid
+
+		IF @inv IS NULL
+			BEGIN
+				SELECT 1
+				WHERE 1 = 0
+
+				RETURN
+			END
+
+		SELECT
+			(
+				SELECT SUM(IN_SUM)
+				FROM dbo.IncomeTable
+				WHERE IN_ID_INVOICE = @inv
+			) AS IN_SUM,
+			(
+				SELECT SUM(INR_SALL)
+				FROM dbo.InvoiceRowTable
+				WHERE INR_ID_INVOICE = @inv
+			) AS INS_SUM
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

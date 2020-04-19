@@ -14,8 +14,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET @TXT = ISNULL(@TXT, '')
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.FinancingProtocol(OPER, TP, TXT, ID_CLIENT, ID_DOCUMENT)
-		VALUES(@OPER, @TP, @TXT, @CLIENT, @DOC)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @TXT = ISNULL(@TXT, '')
+
+		INSERT INTO dbo.FinancingProtocol(OPER, TP, TXT, ID_CLIENT, ID_DOCUMENT)
+			VALUES(@OPER, @TP, @TXT, @CLIENT, @DOC)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

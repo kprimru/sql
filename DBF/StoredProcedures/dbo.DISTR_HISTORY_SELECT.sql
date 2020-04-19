@@ -10,17 +10,39 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @CL_ID IS NULL
-	BEGIN
-		SELECT DDH_ID, DIS_STR, CL_OLD_ID, CL_OLD_PSEDO, CL_NEW_ID, CL_NEW_PSEDO, DDH_NOTE, DDH_USER, DDH_DATE
-		FROM dbo.DistrHistoryView
-		ORDER BY DDH_DATE
-	END
-	ELSE
-	BEGIN
-		SELECT DDH_ID, DIS_STR, CL_OLD_ID, CL_OLD_PSEDO, CL_NEW_ID, CL_NEW_PSEDO, DDH_NOTE, DDH_USER, DDH_DATE
-		FROM dbo.DistrHistoryView
-		WHERE CL_OLD_ID = @CL_ID OR CL_NEW_ID = @CL_ID
-		ORDER BY DDH_DATE
-	END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @CL_ID IS NULL
+		BEGIN
+			SELECT DDH_ID, DIS_STR, CL_OLD_ID, CL_OLD_PSEDO, CL_NEW_ID, CL_NEW_PSEDO, DDH_NOTE, DDH_USER, DDH_DATE
+			FROM dbo.DistrHistoryView
+			ORDER BY DDH_DATE
+		END
+		ELSE
+		BEGIN
+			SELECT DDH_ID, DIS_STR, CL_OLD_ID, CL_OLD_PSEDO, CL_NEW_ID, CL_NEW_PSEDO, DDH_NOTE, DDH_USER, DDH_DATE
+			FROM dbo.DistrHistoryView
+			WHERE CL_OLD_ID = @CL_ID OR CL_NEW_ID = @CL_ID
+			ORDER BY DDH_DATE
+		END
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

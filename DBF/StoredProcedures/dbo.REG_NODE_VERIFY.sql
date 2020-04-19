@@ -14,18 +14,40 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DIS_SERVICE
-	FROM
-		(
-			SELECT 
-				CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DSS_REPORT, DIS_SERVICE				
-			FROM 
-				dbo.ClientDistrTable INNER JOIN
-				dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
-				dbo.DistrServiceView ON DIS_ID = CD_ID_DISTR INNER JOIN
-				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
-				dbo.DistrStatusTable ON DS_ID = DSS_ID_STATUS
-			WHERE DS_REG <> RN_SERVICE
-		) AS CL	
-	ORDER BY CL_PSEDO, DIS_STR
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DIS_SERVICE
+		FROM
+			(
+				SELECT 
+					CL_ID, CL_PSEDO, DIS_STR, DSS_NAME, DSS_REPORT, DIS_SERVICE				
+				FROM 
+					dbo.ClientDistrTable INNER JOIN
+					dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
+					dbo.DistrServiceView ON DIS_ID = CD_ID_DISTR INNER JOIN
+					dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
+					dbo.DistrStatusTable ON DS_ID = DSS_ID_STATUS
+				WHERE DS_REG <> RN_SERVICE
+			) AS CL	
+		ORDER BY CL_PSEDO, DIS_STR
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

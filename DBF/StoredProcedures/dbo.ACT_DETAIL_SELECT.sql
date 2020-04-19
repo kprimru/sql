@@ -17,14 +17,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-			AD_ID, DIS_ID, DIS_STR, TX_ID, TX_NAME, TX_PERCENT,
-			AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE, --AD_DATE
-			PR_DATE
-	FROM 
-		dbo.ActDistrView 
-	WHERE ACT_ID = @actid
-	ORDER BY DIS_STR
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+				AD_ID, DIS_ID, DIS_STR, TX_ID, TX_NAME, TX_PERCENT,
+				AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE, --AD_DATE
+				PR_DATE
+		FROM 
+			dbo.ActDistrView 
+		WHERE ACT_ID = @actid
+		ORDER BY DIS_STR
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 

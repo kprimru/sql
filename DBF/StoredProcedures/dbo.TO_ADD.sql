@@ -29,33 +29,50 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @toid INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.TOTable(
-						TO_ID_CLIENT, TO_NAME, TO_NUM, 
-						TO_REPORT, TO_ID_COUR, TO_VMI_COMMENT, TO_MAIN, TO_INN, TO_PARENT
-						)	
-	VALUES (
-			@clientid, @toname, @tonum, @toreport, @courid, @vmi, @tomain, @toinn, @parent
-			)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @toid = SCOPE_IDENTITY()
+	BEGIN TRY
 
-	IF @streetid IS NOT NULL
-	BEGIN
-		INSERT INTO dbo.TOAddressTable(
-									TA_ID_TO, TA_INDEX, TA_ID_STREET, TA_HOME
-									)
-		VALUES(
-				@toid, @index, @streetid, @home
+		DECLARE @toid INT
+
+		INSERT INTO dbo.TOTable(
+							TO_ID_CLIENT, TO_NAME, TO_NUM, 
+							TO_REPORT, TO_ID_COUR, TO_VMI_COMMENT, TO_MAIN, TO_INN, TO_PARENT
+							)	
+		VALUES (
+				@clientid, @toname, @tonum, @toreport, @courid, @vmi, @tomain, @toinn, @parent
 				)
-	END
-	
-	IF @returnvalue = 1 
-		SELECT @toid AS NEW_IDEN
 
-	SET NOCOUNT OFF
+		SELECT @toid = SCOPE_IDENTITY()
+
+		IF @streetid IS NOT NULL
+		BEGIN
+			INSERT INTO dbo.TOAddressTable(
+										TA_ID_TO, TA_INDEX, TA_ID_STREET, TA_HOME
+										)
+			VALUES(
+					@toid, @index, @streetid, @home
+					)
+		END
+		
+		IF @returnvalue = 1 
+			SELECT @toid AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-

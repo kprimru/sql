@@ -18,32 +18,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE CLIENT CURSOR LOCAL FOR 
-		SELECT CL_ID 
-		FROM dbo.ClientTable
-		WHERE EXISTS
-				(
-					SELECT *
-					FROM dbo.SaldoTable
-					WHERE SL_ID_CLIENT = CL_ID
-				)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	OPEN CLIENT
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @clid INT
+	BEGIN TRY
 
-	FETCH NEXT FROM CLIENT INTO @clid
+		DECLARE CLIENT CURSOR LOCAL FOR 
+			SELECT CL_ID 
+			FROM dbo.ClientTable
+			WHERE EXISTS
+					(
+						SELECT *
+						FROM dbo.SaldoTable
+						WHERE SL_ID_CLIENT = CL_ID
+					)
 
-	WHILE @@FETCH_STATUS = 0 
-		BEGIN
-			EXEC dbo.SALDO_RECALC @clid
+		OPEN CLIENT
 
-			FETCH NEXT FROM CLIENT INTO @clid
-		END
+		DECLARE @clid INT
 
-	CLOSE CLIENT
-	DEALLOCATE CLIENT
+		FETCH NEXT FROM CLIENT INTO @clid
+
+		WHILE @@FETCH_STATUS = 0 
+			BEGIN
+				EXEC dbo.SALDO_RECALC @clid
+
+				FETCH NEXT FROM CLIENT INTO @clid
+			END
+
+		CLOSE CLIENT
+		DEALLOCATE CLIENT
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-

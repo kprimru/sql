@@ -9,10 +9,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	SELECT CL_ID, CL_PSEDO
-	FROM 
-		dbo.ClientTable INNER JOIN dbo.ClientFinancing ON ID_CLIENT = CL_ID		
-	WHERE UNKNOWN_FINANCING = 1
-	ORDER BY CL_PSEDO
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
 	
+		SELECT CL_ID, CL_PSEDO
+		FROM 
+			dbo.ClientTable INNER JOIN dbo.ClientFinancing ON ID_CLIENT = CL_ID		
+		WHERE UNKNOWN_FINANCING = 1
+		ORDER BY CL_PSEDO
+	
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

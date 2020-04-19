@@ -18,26 +18,48 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
-		DROP TABLE #distr
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #distr
-		(
-			DIS_ID INT
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @disid IS NOT NULL
-		BEGIN
-			--парсить строчку и выбирать нужные значения
-			INSERT INTO #distr
-				SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@disid, ',')
-		END
+	BEGIN TRY
 
-	INSERT INTO dbo.TODistrTable(
-								TD_ID_TO, TD_ID_DISTR
-							) 
-		SELECT @toid, DIS_ID FROM #distr
+		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
+			DROP TABLE #distr
 
-	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
-		DROP TABLE #distr
+		CREATE TABLE #distr
+			(
+				DIS_ID INT
+			)
+
+		IF @disid IS NOT NULL
+			BEGIN
+				--парсить строчку и выбирать нужные значения
+				INSERT INTO #distr
+					SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@disid, ',')
+			END
+
+		INSERT INTO dbo.TODistrTable(
+									TD_ID_TO, TD_ID_DISTR
+								) 
+			SELECT @toid, DIS_ID FROM #distr
+
+		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
+			DROP TABLE #distr
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
