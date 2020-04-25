@@ -22,7 +22,9 @@ BEGIN
 		RPR_OPER,
 		O.[Company_Id],
 		C.[Name],
-		C.[Number]
+		C.[Number],
+		M.[Manager_Id],
+		OP.SHORT
 	FROM [PC275-SQL\ALPHA].[ClientDB].[Reg].[RegNodeSearchView] AS R  WITH(NOEXPAND)
 	OUTER APPLY
 	(
@@ -44,10 +46,26 @@ BEGIN
 		ORDER BY O.[UpdDate] DESC
 	) AS O
 	LEFT JOIN Client.Company C ON C.[Id] = O.[Company_Id]
+	OUTER APPLY
+	(
+		SELECT TOP (1) M.[Manager_Id]
+		FROM [Client].[ManagerOdd] M
+		WHERE M.[Host_Id] = R.[HostId]
+			AND M.[Distr] = R.[DistrNumber]
+			AND M.[Comp] = R.[CompNumber]
+		ORDER BY M.[UpdDate] DESC
+	) AS M
+	LEFT JOIN Personal.OfficePersonal AS OP ON OP.ID = M.Manager_Id
 	WHERE	R.SST_SHORT = 'ÎÄÄ'
 		AND NT_SHORT = 'ÎÂÏ' --?
 		AND (CAST(DistrNumber AS NVARCHAR) LIKE '%'+CAST(@DISTR AS NVARCHAR)+'%' OR @DISTR IS NULL)
 		AND (SystemShortName LIKE '%'+@SYS+'%' OR @SYS IS NULL)
 		AND (DS_INDEX = @ACTIVE OR @ACTIVE IS NULL)
-	ORDER BY DS_INDEX, SystemShortName
+	ORDER BY
+		CASE WHEN M.Manager_Id IS NULL THEN 1 ELSE 0 END,
+		OP.SHORT,
+		DS_INDEX,
+		SystemShortName,
+		DistrNumber,
+		CompNumber
 END
