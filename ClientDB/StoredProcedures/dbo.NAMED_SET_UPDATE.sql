@@ -30,11 +30,11 @@ BEGIN
 		FROM dbo.NamedSets
 		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
 
-		DELETE FROM dbo.NamedSets
-		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
-
 		DELETE FROM dbo.NamedSetsItems
 		WHERE SetId=@ID
+
+		DELETE FROM dbo.NamedSets
+		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
 
 		EXEC dbo.NAMED_SET_ADD @SET_NAME, @REF_NAME, @VALUES
 		
