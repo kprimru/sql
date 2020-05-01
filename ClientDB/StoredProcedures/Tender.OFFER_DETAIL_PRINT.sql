@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[OFFER_DETAIL_PRINT]
+ALTER PROCEDURE [Tender].[OFFER_DETAIL_PRINT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,17 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			RN					AS DETAIL_NUM, 
-			a.CLIENT			AS DETAIL_CLIENT, 
-			a.ADDRESS			AS DETAIL_ADDRESS, 
-			c.SystemFullName	AS DETAIL_SYSTEM, 
-			d.DistrTypeName		AS DETAIL_NET, 
-			DISTR				AS DETAIL_DISTR, 
-			DELIVERY			AS DETAIL_DELIVERY, 
-			ACTUAL				AS DETAIL_ACTUAL, 
-			EXCHANGE			AS DETAIL_EXCHANGE, 
-			SUPPORT				AS DETAIL_SUPPORT, 
+		SELECT
+			RN					AS DETAIL_NUM,
+			a.CLIENT			AS DETAIL_CLIENT,
+			a.ADDRESS			AS DETAIL_ADDRESS,
+			c.SystemFullName	AS DETAIL_SYSTEM,
+			d.DistrTypeName		AS DETAIL_NET,
+			DISTR				AS DETAIL_DISTR,
+			DELIVERY			AS DETAIL_DELIVERY,
+			ACTUAL				AS DETAIL_ACTUAL,
+			EXCHANGE			AS DETAIL_EXCHANGE,
+			SUPPORT				AS DETAIL_SUPPORT,
 			SUPPORT_TOTAL		AS DETAIL_SUPPORT_TOTAL,
 			(
 				SELECT COUNT(*)
@@ -41,7 +41,7 @@ BEGIN
 					AND z.CLIENT = a.CLIENT
 					AND z.ADDRESS = a.ADDRESS
 			)					AS DETAIL_CNT
-		FROM 
+		FROM
 			Tender.OfferDetail a
 			INNER JOIN
 				(
@@ -57,14 +57,14 @@ BEGIN
 			INNER JOIN dbo.DistrTypeTable d ON a.ID_NET = d.DistrTypeID
 		WHERE ID_OFFER = @ID
 		ORDER BY a.CLIENT, a.ADDRESS, c.SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

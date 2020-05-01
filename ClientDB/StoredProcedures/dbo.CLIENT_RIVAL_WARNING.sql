@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_WARNING]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 		SET @BEGIN = dbo.DateOf(GETDATE())
-		SET @END = DATEADD(DAY, 1, dbo.DateOf(GETDATE()))	
+		SET @END = DATEADD(DAY, 1, dbo.DateOf(GETDATE()))
 
 		SELECT DISTINCT ClientID, ClientFullName, CR_DATE, CR_CONTROL_DATE
 		FROM dbo.ClientRival
@@ -40,14 +40,16 @@ BEGIN
 		WHERE CR_COMPLETE = 0 AND CR_ACTIVE = 1
 		*/
 		ORDER BY CR_DATE DESC, ClientFullName
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_WARNING] TO rl_rival_warning;
+GO

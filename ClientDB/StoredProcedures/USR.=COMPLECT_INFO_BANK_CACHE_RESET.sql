@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[=COMPLECT_INFO_BANK_CACHE_RESET]
+ALTER PROCEDURE [USR].[=COMPLECT_INFO_BANK_CACHE_RESET]
 	@Complect	VarChar(100)	= NULL,
 	@Client_Id	Int				= NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,7 +22,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @Complect IS NOT NULL
 			DELETE FROM dbo.ComplectInfoBankCache WHERE Complect = @Complect;
 		ELSE IF @Client_Id IS NOT NULL
@@ -30,7 +30,7 @@ BEGIN
 			DECLARE
 				@RowIndex		SmallInt,
 				@CurComplect	VarChar(100);
-				
+
 			DECLARE
 				@Complects Table
 				(
@@ -38,7 +38,7 @@ BEGIN
 					Complect	VarChar(100)	NOT NULL,
 					Primary Key Clustered(RowIndex)
 				);
-			
+
 			INSERT INTO @Complects
 			SELECT DISTINCT R.Complect
 			FROM Reg.RegNodeSearchView		R WITH(NOEXPAND)
@@ -49,9 +49,9 @@ BEGIN
 				AND R.DS_REG = 0
 				AND D.DS_REG = 0
 				AND R.Complect IS NOT NULL;
-				
+
 			SET @RowIndex = 0;
-			
+
 			WHILE (1 = 1) BEGIN
 				SELECT TOP (1)
 					@RowIndex = RowIndex,
@@ -59,20 +59,20 @@ BEGIN
 				FROM @Complects
 				WHERE RowIndex > @RowIndex
 				ORDER BY RowIndex;
-				
+
 				IF @@RowCount < 1
 					BREAK;
-					
+
 				EXEC [dbo].[COMPLECT_INFO_BANK_CACHE_RESET]
 					@Complect = @CurComplect;
 			END;
-			
+
 			RETURN;
 		END
 		ELSE
 			TRUNCATE TABLE dbo.ComplectInfoBankCache;
-			
-		
+
+
 		INSERT INTO dbo.ComplectInfoBankCache(Complect, InfoBankID, InfoBankName)
 		SELECT rns.Complect, cgl.InfoBankID, cgl.InfoBankName
 		FROM
@@ -94,14 +94,14 @@ BEGIN
 					AND DS_REG = 0
 			)
 		--*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

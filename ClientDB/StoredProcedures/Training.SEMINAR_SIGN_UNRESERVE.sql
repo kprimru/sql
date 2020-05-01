@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_UNRESERVE]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_UNRESERVE]
 	@ID	UNIQUEIDENTIFIER,
 	@TSC_ID	UNIQUEIDENTIFIER,
 	@OUT_ID	UNIQUEIDENTIFIER = NULL OUTPUT
@@ -35,18 +35,20 @@ BEGIN
 		SELECT @CLIENT = SR_ID_CLIENT, @SURNAME = SR_SURNAME, @NAME = SR_NAME, @PATRON = SR_PATRON, @POS = SR_POS, @PHONE = SR_PHONE, @NOTE = SR_NOTE
 		FROM Training.SeminarReserve
 		WHERE SR_ID = @ID
-				
+
 		EXEC Training.SEMINAR_SIGN_INSERT @TSC_ID, @CLIENT, @SURNAME, @NAME, @PATRON, @POS, @PHONE, @NOTE, 0, @OUT_ID OUTPUT
 
 		DELETE FROM Training.SeminarReserve WHERE SR_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_UNRESERVE] TO rl_training_unreserve;
+GO

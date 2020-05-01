@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_COMPLECT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_DETAIL_COMPLECT_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -23,9 +23,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DistrStr + ' (' + DistrTypeName + ')' AS DIS_STR, HostID, DISTR, COMP
-		FROM 
+		FROM
 			dbo.ClientDistrView a WITH(NOEXPAND)
-		WHERE ID_CLIENT = @CLIENT 
+		WHERE ID_CLIENT = @CLIENT
 			AND EXISTS
 				(
 					SELECT *
@@ -35,14 +35,16 @@ BEGIN
 						AND a.COMP = z.COMP
 				)
 		ORDER BY SystemOrder, DISTR, COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_COMPLECT_SELECT] TO rl_client_stat_detail_r;
+GO

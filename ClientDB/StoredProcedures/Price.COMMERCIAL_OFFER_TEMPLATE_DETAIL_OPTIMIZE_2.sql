@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]
+ALTER PROCEDURE [Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,14 +23,14 @@ BEGIN
 	BEGIN TRY
 
 		IF (
-				SELECT COUNT(*) 
-				FROM Price.CommercialOfferView 
+				SELECT COUNT(*)
+				FROM Price.CommercialOfferView
 				WHERE ID_OFFER = @ID
 					AND VARIANT = 1
 			) <>
 			(
-				SELECT COUNT(*) 
-				FROM Price.CommercialOfferView 
+				SELECT COUNT(*)
+				FROM Price.CommercialOfferView
 				WHERE ID_OFFER = @ID
 					AND VARIANT = 1
 			)
@@ -38,10 +38,10 @@ BEGIN
 			RAISERROR ('Количество записей в каждом варианте должно быть одинаковое!', 16, 1)
 			RETURN
 		END
-		
-		
-		SELECT 		
-			t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,	
+
+
+		SELECT 
+			t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,
 			SYSTEM_NOTE, SYSTEM_NOTE_FULL, DOCS,
 			Common.MoneyFormat((
 				SELECT DELIVERY_PRICE
@@ -116,7 +116,7 @@ BEGIN
 			OPER, OPER_UNDERLINE, NOTE
 		FROM
 			(
-				SELECT  
+				SELECT
 					MIN(RN) AS RN_MIN,
 					MAX(RN) AS RN_MAX,
 					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName) AS SYS_REG,
@@ -126,7 +126,7 @@ BEGIN
 					ISNULL(e.NOTE, f.NOTE) AS SYSTEM_NOTE_FULL,
 					ISNULL(a.DOCS, a.NEW_DOCS) AS DOCS,
 					a.OPER_STRING AS OPER, a.OPER_UNDERLINE, a.FULL_STR AS NOTE
-				FROM 
+				FROM
 					Price.CommercialOfferView a
 					LEFT OUTER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
 					LEFT OUTER JOIN dbo.SystemTable c ON a.ID_OLD_SYSTEM = c.SystemID
@@ -134,7 +134,7 @@ BEGIN
 					LEFT OUTER JOIN dbo.SystemNote e ON e.ID_SYSTEM = b.SystemID
 					LEFT OUTER JOIN dbo.SystemNote f ON f.ID_SYSTEM = d.SystemID
 				WHERE a.ID_OFFER = @ID
-				GROUP BY 
+				GROUP BY
 					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName),
 					ISNULL(b.SystemOrder, d.SystemOrder),
 					b.SystemOrder, c.SystemOrder,
@@ -143,20 +143,20 @@ BEGIN
 					ISNULL(a.DOCS, a.NEW_DOCS),
 					a.OPER_STRING, a.OPER_UNDERLINE, a.FULL_STR
 			) AS t
-		ORDER BY 
-			CASE 
-				WHEN RN_MIN = 1 THEN 2 
+		ORDER BY
+			CASE
+				WHEN RN_MIN = 1 THEN 2
 				WHEN RN_MAX = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
 				ELSE RN_MIN + 1
 			END
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

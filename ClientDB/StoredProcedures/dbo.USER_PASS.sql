@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[USER_PASS]
+ALTER PROCEDURE [dbo].[USER_PASS]
 	@LOGIN varchar(128),
     @PASS varchar(50),
     @RESULT INT = 0 OUTPUT
 WITH EXECUTE AS OWNER
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -25,17 +25,17 @@ BEGIN
 
 	BEGIN TRY
 
-		EXEC('ALTER LOGIN [' + @LOGIN + '] WITH PASSWORD = ''' + @PASS + '''')    
-		SET @RESULT=@@ERROR  
+		EXEC('ALTER LOGIN [' + @LOGIN + '] WITH PASSWORD = ''' + @PASS + '''')
+		SET @RESULT=@@ERROR
 		SET NOCOUNT OFF
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

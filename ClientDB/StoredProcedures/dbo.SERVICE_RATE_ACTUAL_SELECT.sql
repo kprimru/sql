@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_RATE_ACTUAL_SELECT]
+ALTER PROCEDURE [dbo].[SERVICE_RATE_ACTUAL_SELECT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -32,7 +32,7 @@ BEGIN
 			SET @MANAGER = NULL
 
 		IF @MANAGER IS NULL
-		BEGIN	
+		BEGIN
 			SET @MANAGER = '<LIST>'
 
 			SELECT @MANAGER = @MANAGER + '<ITEM>' + CONVERT(VARCHAR(20), ManagerID) + '</ITEM>'
@@ -44,7 +44,7 @@ BEGIN
 		DECLARE @WEEK TABLE (WEEK_ID SMALLINT PRIMARY KEY, WBEGIN SMALLDATETIME, WEND SMALLDATETIME)
 
 		INSERT INTO @WEEK(WEEK_ID, WBEGIN, WEND)
-			SELECT WEEK_ID, WBEGIN, WEND 
+			SELECT WEEK_ID, WBEGIN, WEND
 			FROM dbo.WeekDates(@BEGIN, @END)
 
 
@@ -55,15 +55,15 @@ BEGIN
 
 		INSERT INTO #service(SR_ID)
 			SELECT ServiceID
-			FROM 
-				dbo.ServiceTable			
+			FROM
+				dbo.ServiceTable
 				INNER JOIN dbo.TableIDFromXML(@MANAGER) ON ID = ManagerID
 			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				/*AND (ManagerID = @MANAGER OR @MANAGER IS NULL)*/
 				AND EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.ClientTable a
 							INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 							INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
@@ -76,15 +76,15 @@ BEGIN
 			DROP TABLE #clientlist
 
 		CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY, SR_ID INT, ClientTypeID TinyInt)
-			
+
 		INSERT INTO #clientlist(CL_ID, SR_ID, ClientTypeID)
 			SELECT ClientID, ClientServiceID, ClientTypeID
-			FROM 
+			FROM
 				dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN #service ON ClientServiceID = SR_ID
 				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
-			WHERE STATUS = 1 
+			WHERE STATUS = 1
 				AND EXISTS
 					(
 						SELECT *
@@ -98,7 +98,7 @@ BEGIN
 		CREATE TABLE #updates
 			(
 				UD_ID_CLIENT	INT,
-				UIU_DATE_S		SMALLDATETIME,			
+				UIU_DATE_S		SMALLDATETIME,
 				InfoBankDaily	BIT,
 				ClientTypeDailyDay	TINYINT,
 				ClientTypeDay	TINYINT,
@@ -110,7 +110,7 @@ BEGIN
 		INSERT INTO #updates(UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily, ClientTypeDailyDay, ClientTypeDay, STAT_DATE)
 			SELECT
 				UD_ID_CLIENT,
-				UIU_DATE_S, 
+				UIU_DATE_S,
 				InfoBankDaily,
 				ClientTypeDailyDay, ClientTypeDay,
 				STAT_DATE
@@ -122,8 +122,8 @@ BEGIN
 					SELECT UD_ID_CLIENT, UIU_DATE_S, InfoBankDaily, MAX(StatisticDate) AS STAT_DATE
 					FROM USR.USRIBDateView c WITH(NOEXPAND)
 					INNER JOIN dbo.InfoBankTable i ON i.InfoBankId = c.UI_ID_BASE AND i.InfoBankActual = 1
-					INNER JOIN dbo.StatisticTable a ON Docs = UIU_DOCS 
-													AND a.InfoBankID = UI_ID_BASE 
+					INNER JOIN dbo.StatisticTable a ON Docs = UIU_DOCS
+													AND a.InfoBankID = UI_ID_BASE
 													AND StatisticDate <= UIU_DATE_S
 					WHERE CL_ID = UD_ID_CLIENT
 						AND UIU_DATE_S BETWEEN @BEGIN AND @END
@@ -131,14 +131,14 @@ BEGIN
 				) AS o_O
 
 		UPDATE #updates
-		SET STAT_DAILY	=	
+		SET STAT_DAILY	=
 				(
 					SELECT TOP 1 CalendarDate
 					FROM dbo.Calendar
-					WHERE CalendarIndex = 
+					WHERE CalendarIndex =
 						(
 							SELECT TOP 1 CalendarIndex
-							FROM 
+							FROM
 								dbo.Calendar INNER JOIN
 								dbo.DayTable ON DayID = CalendarWeekDayID
 							WHERE CalendarDate >= STAT_DATE
@@ -149,14 +149,14 @@ BEGIN
 						AND CalendarWork = 1
 					ORDER BY CalendarDate
 				),
-			STAT_DAY	=	
+			STAT_DAY	=
 				(
 					SELECT TOP 1 CalendarDate
 					FROM dbo.Calendar
-					WHERE CalendarIndex = 
+					WHERE CalendarIndex =
 						(
 							SELECT TOP 1 CalendarIndex
-							FROM 
+							FROM
 								dbo.Calendar INNER JOIN
 								dbo.DayTable ON DayID = CalendarWeekDayID
 							WHERE CalendarDate >= STAT_DATE
@@ -167,20 +167,20 @@ BEGIN
 						AND CalendarWork = 1
 					ORDER BY CalendarDate
 				)
-						
+
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = 'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #updates (UD_ID_CLIENT, UIU_DATE_S)'
 
 		EXEC (@SQL)
-									
+
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
 
-		CREATE TABLE #client 
+		CREATE TABLE #client
 				(
-					CL_ID		INT PRIMARY KEY, 
+					CL_ID		INT PRIMARY KEY,
 					ServiceID	INT,
 					ActualCount	INT,
 					WeekCount	INT
@@ -190,20 +190,20 @@ BEGIN
 			(
 				CL_ID, ServiceID, ActualCount, WeekCount
 			)
-			SELECT 
+			SELECT
 				CL_ID, SR_ID,
 				(
 					SELECT SUM(Upd)
-					FROM 
+					FROM
 						(
-							SELECT 
-								CASE								
+							SELECT
+								CASE
 									WHEN EXISTS(
-											SELECT * 
+											SELECT *
 											FROM #updates c
 											WHERE UIU_DATE_S BETWEEN WBEGIN AND WEND
 												AND UD_ID_CLIENT = CL_ID
-												AND 
+												AND
 												CASE
 													WHEN STAT_DATE IS NULL THEN 'Нет'
 													WHEN
@@ -213,7 +213,7 @@ BEGIN
 														END < UIU_DATE_S THEN 'Нет'
 													ELSE 'Да'
 												END = 'Нет'
-										) 
+										)
 										THEN 0
 									ELSE 1
 								END AS Upd
@@ -240,7 +240,7 @@ BEGIN
 			(
 				SR_ID, NormalCount, TotalCount
 			)
-			SELECT 
+			SELECT
 				SR_ID,
 				(
 					SELECT COUNT(*)
@@ -257,29 +257,29 @@ BEGIN
 			FROM #service
 
 		IF (SELECT SUM(TotalCount) FROM #rate) = 0
-			SELECT 
+			SELECT
 				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' из ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
 				@TOTAL_PER = '0'
 			FROM #rate
 		ELSE
-			SELECT 
+			SELECT
 				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' из ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
 				@TOTAL_PER = CONVERT(VARCHAR(20), CONVERT(DECIMAL(6, 2), ROUND(100 * CONVERT(DECIMAL(8, 4), SUM(NormalCount)) / SUM(TotalCount), 2)))
 			FROM #rate
 
-		SELECT 
+		SELECT
 			ServiceID, ManagerName, ServiceName,
 			CONVERT(VARCHAR(20), NormalCount) + ' из ' + CONVERT(VARCHAR(20), TotalCount) AS ServiceCount,
 			CASE TotalCount
 				WHEN 0 THEN 0
-				ELSE ROUND(100 * CONVERT(DECIMAL(8, 4), NormalCount) / TotalCount, 2) 
+				ELSE ROUND(100 * CONVERT(DECIMAL(8, 4), NormalCount) / TotalCount, 2)
 			END AS ServiceRate
-		FROM 
+		FROM
 			#rate
 			INNER JOIN dbo.ServiceTable a ON SR_ID = ServiceID
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 		WHERE TotalCount <> 0
-		ORDER BY ServiceName	
+		ORDER BY ServiceName
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
@@ -295,14 +295,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#updates') IS NOT NULL
 			DROP TABLE #updates
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_RATE_ACTUAL_SELECT] TO rl_service_rate;
+GO

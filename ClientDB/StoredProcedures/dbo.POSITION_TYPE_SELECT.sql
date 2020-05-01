@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[POSITION_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[POSITION_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -21,20 +21,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT PositionTypeID, PositionTypeName
 		FROM dbo.PositionTypeTable
 		WHERE @FILTER IS NULL
 			OR PositionTypeName LIKE @FILTER
 		ORDER BY PositionTypeName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_TYPE_SELECT] TO rl_position_type_r;
+GO

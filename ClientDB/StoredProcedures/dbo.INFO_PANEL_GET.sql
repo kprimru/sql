@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_PANEL_GET]
+ALTER PROCEDURE [dbo].[INFO_PANEL_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT TEXT, DETAIL
 		FROM dbo.InfoPanel
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_PANEL_GET] TO rl_info_panel;
+GO

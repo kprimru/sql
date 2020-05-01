@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONTRACT_PAY_GET]
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_GET]
 	@ID	INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT ContractPayName, ContractPayDay, ContractPayMonth
 		FROM dbo.ContractPayTable
 		WHERE ContractPayID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_PAY_GET] TO rl_contract_pay_r;
+GO

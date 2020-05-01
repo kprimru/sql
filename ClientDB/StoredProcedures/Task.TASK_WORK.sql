@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_WORK]
+ALTER PROCEDURE [Task].[TASK_WORK]
 	@ID		UNIQUEIDENTIFIER,
 	@NOTE	NVARCHAR(MAX)
 AS
@@ -25,18 +25,20 @@ BEGIN
 
 		INSERT INTO Task.TaskWork(ID_TASK, NOTE)
 			VALUES(@ID, @NOTE)
-			
+
 		UPDATE Task.Tasks
 		SET ID_STATUS = (SELECT ID FROM Task.TaskStatus WHERE PSEDO = N'WORK')
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_WORK] TO rl_task_w;
+GO

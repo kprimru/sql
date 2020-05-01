@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_SCHEDULE_UPDATE]
+ALTER PROCEDURE [Training].[TRAINING_SCHEDULE_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@SUBJECT	UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
@@ -26,18 +26,20 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE Training.TrainingSchedule
-		SET TSC_ID_TS = @SUBJECT, 
+		SET TSC_ID_TS = @SUBJECT,
 			TSC_DATE = @DATE,
 			TSC_LIMIT = @LIMIT
 		WHERE TSC_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_SCHEDULE_UPDATE] TO rl_training_i;
+GO

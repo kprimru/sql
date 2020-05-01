@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SCHEDULE_PERSONAL_EMAIL]
+ALTER PROCEDURE [Seminar].[SCHEDULE_PERSONAL_EMAIL]
 	@ID		UNIQUEIDENTIFIER,
 	@EMAIL	NVARCHAR(256)
 AS
@@ -24,18 +24,20 @@ BEGIN
 	BEGIN TRY
 
 		EXEC Seminar.SCHEDULE_PERSONAL_ARCH @ID
-			
+
 		UPDATE Seminar.Personal
 		SET EMAIL		=	@EMAIL
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[SCHEDULE_PERSONAL_EMAIL] TO rl_seminar_write;
+GO

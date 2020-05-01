@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[NAMED_SET_DELETE]
+ALTER PROCEDURE [dbo].[NAMED_SET_DELETE]
 	@REF_NAME	NVARCHAR(128),
 	@SET_NAME	NVARCHAR(128)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,7 +22,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @SET_ID UNIQUEIDENTIFIER
 
 		SELECT @SET_ID=SetId
@@ -36,14 +36,16 @@ BEGIN
 		DELETE
 		FROM dbo.NamedSetsItems
 		WHERE SetId=@SET_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[NAMED_SET_DELETE] TO rl_named_sets_d;
+GO

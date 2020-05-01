@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SATISFACTION_ANSWER_SELECT]
+ALTER PROCEDURE [dbo].[SATISFACTION_ANSWER_SELECT]
 	@SQ_ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.SatisfactionAnswer
 		WHERE SA_ID_QUESTION = @SQ_ID
 		ORDER BY SA_ORDER, SA_TEXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SATISFACTION_ANSWER_SELECT] TO rl_satisfaction_r;
+GO

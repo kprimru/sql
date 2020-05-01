@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RANGE_GET]
+ALTER PROCEDURE [dbo].[RANGE_GET]
 	@ID	INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT RangeValue
 		FROM dbo.RangeTable
 		WHERE RangeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RANGE_GET] TO rl_range_r;
+GO

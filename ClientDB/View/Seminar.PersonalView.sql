@@ -4,24 +4,24 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [Seminar].[PersonalView]
+ALTER VIEW [Seminar].[PersonalView]
 WITH SCHEMABINDING
 AS
-	SELECT 
-		a.ID, ID_SCHEDULE, ClientID, ClientFullName, a.SURNAME, a.NAME, a.PATRON, 
+	SELECT
+		a.ID, ID_SCHEDULE, ClientID, ClientFullName, a.SURNAME, a.NAME, a.PATRON,
 		CASE
 			WHEN a.SURNAME IS NULL THEN a.PSEDO + ' (' + a.EMAIL + ')'
 			ELSE
-				(a.SURNAME + ' ' + a.NAME + ' ' + a.PATRON) 
+				(a.SURNAME + ' ' + a.NAME + ' ' + a.PATRON)
 		END AS FIO,
 		a.EMAIL, a.PSEDO,
-		POSITION, PHONE, NOTE, 
-		a.UPD_DATE, a.UPD_USER, 
+		POSITION, PHONE, NOTE,
+		a.UPD_DATE, a.UPD_USER,
 		a.ID_STATUS, c.NAME AS STAT_NAME, c.COLOR, c.INDX,
 		ServiceName, ServiceID,
 		ServiceStatusIndex,
 		ID_SUBJECT, CONFIRM_DATE, CONFIRM_STATUS, INVITE_NUM
-	FROM 
+	FROM
 		Seminar.Personal a
 		INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.ClientID
 		INNER JOIN Seminar.Status c ON a.ID_STATUS = c.ID

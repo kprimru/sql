@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[NET_TYPE_UPDATE]
+ALTER PROCEDURE [Din].[NET_TYPE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100),
 	@NOTE	VARCHAR(50),
@@ -44,14 +44,16 @@ BEGIN
 			NT_ODON			= @ODON,
 			NT_TECH_USR		= @TECH_USR
 		WHERE NT_ID	= @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[NET_TYPE_UPDATE] TO rl_din_net_type_u;
+GO

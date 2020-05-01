@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SEARCH_HISTORY_REPORT]
+ALTER PROCEDURE [dbo].[SEARCH_HISTORY_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -42,22 +42,22 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-		
+
 		CREATE TABLE #client(CL_ID INT PRIMARY KEY)
 
 		INSERT INTO #client(CL_ID)
 			SELECT a.ClientID
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN @TP ON TP = ClientKind_Id
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-		
-		
+
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-		
+
 		CREATE TABLE #result
 			(
 				ClientID		INT	PRIMARY KEY,
@@ -70,11 +70,11 @@ BEGIN
 				DayCount		SMALLINT,
 				SearchCount		SMALLINT
 			)
-		
+
 		INSERT INTO #result(
-				ClientID, ClientFullName, ManagerName, ServiceName, 
-				LastFile, ClientConnect, Comment, DayCount, SearchCount)	
-			SELECT 
+				ClientID, ClientFullName, ManagerName, ServiceName,
+				LastFile, ClientConnect, Comment, DayCount, SearchCount)
+			SELECT
 				ClientID, ClientFullName, ManagerName, ServiceName, LastFile, ClientConnect, Comment,
 				(
 					SELECT COUNT(DISTINCT SearchDay)
@@ -92,8 +92,8 @@ BEGIN
 				) AS SearchCount
 			FROM
 				(
-					SELECT 
-						b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,					
+					SELECT
+						b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 						(
 							SELECT MAX(SearchGetDay)
 							FROM dbo.ClientSearchTable z
@@ -107,24 +107,24 @@ BEGIN
 						) AS ClientConnect,
 						(
 							SELECT TOP 1 CONVERT(VARCHAR(20), dbo.DateOf(CM_DATE), 104) + ' ' + CM_TEXT AS CM_TEXT
-							FROM 
+							FROM
 								dbo.ClientSearchComments z CROSS APPLY
 								(
-									SELECT 
+									SELECT
 										x.value('@TEXT[1]', 'VARCHAR(500)') AS CM_TEXT,
 										CONVERT(DATETIME, x.value('@DATE[1]', 'VARCHAR(50)'), 121) AS CM_DATE
-									FROM z.CSC_COMMENTS.nodes('/ROOT/COMMENT') t(x)								
+									FROM z.CSC_COMMENTS.nodes('/ROOT/COMMENT') t(x)
 								) AS o_O
 							WHERE z.CSC_ID_CLIENT = a.CL_ID AND CM_DATE >= @BEGIN AND CM_DATE < DATEADD(DAY, 1, @END)
 							ORDER BY CM_DATE DESC
 						) AS Comment
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.CL_ID = b.ClientID
 				) AS t
-		
-		SELECT 
-			ClientID, ClientFullName, ManagerName, ServiceName, 
+
+		SELECT
+			ClientID, ClientFullName, ManagerName, ServiceName,
 			/*LastFile, */CONVERT(VARCHAR(20), LastFile, 104) AS LastFileStr,
 			/*ClientConnect, */CONVERT(VARCHAR(20), ClientConnect, 104) AS ClientConnectStr,
 			Comment, DayCount, SearchCount,
@@ -149,7 +149,7 @@ BEGIN
 				SELECT COUNT(ClientID)
 				FROM #result b
 				WHERE a.ServiceName = b.ServiceName
-					AND DayCount < 10 AND DayCount >= 4 
+					AND DayCount < 10 AND DayCount >= 4
 			) AS ClientNorm,
 			(
 				SELECT COUNT(ClientID)
@@ -159,20 +159,22 @@ BEGIN
 			) AS ClientBad
 		FROM #result a
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-		
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SEARCH_HISTORY_REPORT] TO rl_search_history_report;
+GO

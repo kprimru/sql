@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[LESSON_PLACE_INSERT]	
+ALTER PROCEDURE [dbo].[LESSON_PLACE_INSERT]
 	@NAME	VARCHAR(100),
 	@REPORT	BIT,
 	@ID	INT = NULL OUTPUT
@@ -26,16 +26,18 @@ BEGIN
 
 		INSERT INTO dbo.LessonPlaceTable(LessonPlaceName, LessonPlaceReport)
 			VALUES(@NAME, @REPORT)
-			
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LESSON_PLACE_INSERT] TO rl_lesson_place_i;
+GO

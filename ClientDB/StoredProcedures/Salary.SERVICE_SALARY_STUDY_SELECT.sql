@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_STUDY_SELECT]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_STUDY_SELECT]
 	@ID			UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,19 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ID, ID_CLIENT, ClientFullName, DATE
-		FROM 
+		FROM
 			Salary.ServiceStudy
 			INNER JOIN dbo.ClientTable ON ID_CLIENT = ClientID
 		WHERE ID_SALARY = @ID
-		ORDER BY ClientFullName	
-		
+		ORDER BY ClientFullName
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_STUDY_SELECT] TO rl_salary;
+GO

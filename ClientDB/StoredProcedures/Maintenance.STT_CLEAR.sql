@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[STT_CLEAR]
+ALTER PROCEDURE [Maintenance].[STT_CLEAR]
 	@DATE	SMALLDATETIME = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -26,17 +26,19 @@ BEGIN
 		IF @DATE IS NULL
 			TRUNCATE TABLE dbo.ClientStat
 		ELSE
-			DELETE 
+			DELETE
 			FROM dbo.ClientStat
 			WHERE DATE < @DATE
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[STT_CLEAR] TO rl_maintenance;
+GO

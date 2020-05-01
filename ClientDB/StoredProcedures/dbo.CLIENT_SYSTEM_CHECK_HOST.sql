@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SYSTEM_CHECK_HOST]
+ALTER PROCEDURE [dbo].[CLIENT_SYSTEM_CHECK_HOST]
 	@ID		INT,
 	@SYS	INT,
 	@DISTR	INT,
@@ -32,19 +32,21 @@ BEGIN
 		WHERE SystemID = @SYS
 
 		SELECT ID
-		FROM 
+		FROM
 			dbo.ClientSystemsTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID		
+			INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 		WHERE HostID = @HST AND SystemDistrNumber = @DISTR AND CompNumber = @COMP
 			AND (a.ID <> @ID OR @ID IS NULL)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SYSTEM_CHECK_HOST] TO rl_client_system_r;
+GO

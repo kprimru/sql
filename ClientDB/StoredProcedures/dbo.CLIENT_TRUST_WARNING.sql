@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TRUST_WARNING]
+ALTER PROCEDURE [dbo].[CLIENT_TRUST_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,22 +21,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			b.ClientID, ClientFullName, ManagerName, CC_DATE, CT_CORRECT, ServiceName
-		FROM 
-			dbo.ClientView b WITH(NOEXPAND) 
+		FROM
+			dbo.ClientView b WITH(NOEXPAND)
 			INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = b.ClientID
-			INNER JOIN dbo.ClientTrustView WITH(NOEXPAND) ON CC_ID_CLIENT = b.ClientID 
+			INNER JOIN dbo.ClientTrustView WITH(NOEXPAND) ON CC_ID_CLIENT = b.ClientID
 		WHERE CT_TRUST = 0 AND CT_MAKE IS NULL
 		ORDER BY ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TRUST_WARNING] TO rl_trust_warning;
+GO

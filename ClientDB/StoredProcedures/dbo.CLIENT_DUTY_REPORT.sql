@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -48,7 +48,7 @@ BEGIN
 			)
 
 		INSERT INTO #client(ClientID, ClientFullName, ServiceName, ManagerName, ConnectDate, DUTY_COUNT, ANS_COUNT, SAT_COUNT)
-			SELECT 
+			SELECT
 				ClientID, ClientFullName, ServiceName, ManagerName,
 				(
 					SELECT MIN(ConnectDate)
@@ -65,7 +65,7 @@ BEGIN
 				) AS DUTY_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						dbo.ClientDutyTable z
 						INNER JOIN dbo.ClientDutyResult y ON z.ClientDutyID = y.ID_DUTY
 					WHERE z.ClientID = a.ClientID
@@ -77,7 +77,7 @@ BEGIN
 				) AS ANS_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						dbo.ClientDutyTable z
 						INNER JOIN dbo.ClientDutyResult y ON z.ClientDutyID = y.ID_DUTY
 					WHERE z.ClientID = a.ClientID
@@ -91,19 +91,19 @@ BEGIN
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-		
-					
+
+
 		DELETE
 		FROM #client
 		WHERE (DUTY_COUNT < @NUM_BEGIN AND @NUM_BEGIN IS NOT NULL)
-			OR (DUTY_COUNT > @NUM_END AND @NUM_END IS NULL)					
-				
+			OR (DUTY_COUNT > @NUM_END AND @NUM_END IS NULL)
+
 		IF @ANS = 1
 			DELETE FROM #client WHERE ANS_COUNT = 0
 		IF @SAT = 1
 			DELETE FROM #client WHERE SAT_COUNT = 0
-						
-		SELECT 
+
+		SELECT
 			RN, ClientID, CLientFullName, ServiceName, ManagerName, ConnectDate, DUTY_COUNT, NOTE, NOTE_ALL,
 			(
 				SELECT TOP 1 DistrStr + ' (' + DistrTypeName + ')'
@@ -114,19 +114,19 @@ BEGIN
 			) AS MAIN_DISTR,
 			ANS_COUNT, SAT_COUNT
 		FROM
-			(		
-				SELECT 
+			(
+				SELECT
 					ROW_NUMBER() OVER(PARTITION BY ServiceName ORDER BY ClientFullName) AS RN,
 					ClientID, ClientFullName, ServiceName, ManagerName, ConnectDate, DUTY_COUNT, ANS_COUNT, SAT_COUNT,
-					'Итого клиентов без обращения в ДС: ' + 
-						CONVERT(VARCHAR(20), 
+					'Итого клиентов без обращения в ДС: ' +
+						CONVERT(VARCHAR(20),
 							(
 								SELECT COUNT(*)
 								FROM #client z
 								WHERE z.ServiceName = a.ServiceName
 									AND DUTY_COUNT = 0
-							)) + ' (' + 
-							CONVERT(VARCHAR(20), 
+							)) + ' (' +
+							CONVERT(VARCHAR(20),
 								ROUND(CONVERT(FLOAT,
 									(
 										SELECT COUNT(*)
@@ -148,9 +148,9 @@ BEGIN
 								SELECT DISTINCT DUTY_COUNT, COUNT(*) AS CNT
 								FROM #client
 								GROUP BY DUTY_COUNT
-								
+
 								UNION ALL
-								
+
 								SELECT NULL, COUNT(*)
 								FROM #client
 								WHERE DUTY_COUNT <> 0
@@ -162,17 +162,19 @@ BEGIN
 					AND (DUTY_COUNT <= @NUM_END OR @NUM_END IS NULL)
 			) AS o_O
 		ORDER BY ManagerName, ServiceName, ClientFullName
-						
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_REPORT] TO rl_duty_client_report;
+GO

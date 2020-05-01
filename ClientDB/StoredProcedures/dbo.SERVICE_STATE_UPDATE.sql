@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_STATE_UPDATE]
+ALTER PROCEDURE [dbo].[SERVICE_STATE_UPDATE]
 	@SERVICE	INT
 AS
 BEGIN
@@ -25,7 +25,7 @@ BEGIN
 		IF @SERVICE IS NULL
 		BEGIN
 			EXEC dbo.SERVICE_STATE_REFRESH
-			
+
 			RETURN
 		END
 
@@ -51,7 +51,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cl_list') IS NOT NULL
 			DROP TABLE #cl_list
-			
+
 		CREATE TABLE #cl_list
 			(
 				ClientID		INT PRIMARY KEY,
@@ -59,20 +59,20 @@ BEGIN
 				ClientCom		BIT,
 				ClientParent	INT
 			)
-			
+
 		INSERT INTO #cl_list(ClientID, ClientName, ClientCom, ClientParent)
 			SELECT ClientID, ClientFullName, 0, ID_HEAD
-			FROM 
+			FROM
 				dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientKind k ON a.ClientKind_Id = k.Id
 			WHERE STATUS = 1 AND ClientServiceID = @SERVICE
-			
+
 		-- 1. Не сообветствующие эталону ИБ
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
-			SELECT @STATE, N'COMPLIANCE', ClientID, 
-				REVERSE(STUFF(REVERSE(			
+			SELECT @STATE, N'COMPLIANCE', ClientID,
+				REVERSE(STUFF(REVERSE(
 					(
 						SELECT InfoBankShortName + ', '
 						FROM
@@ -81,14 +81,14 @@ BEGIN
 						WHERE z.UF_ID = c.UF_ID
 						ORDER BY InfoBankOrder FOR XML PATH('')
 					)), 1, 2, ''))
-			FROM 
+			FROM
 				#cl_list a
 				INNER JOIN USR.USRComplianceView b WITH(NOEXPAND) ON a.ClientID = b.UD_ID_CLIENT
 				INNER JOIN USR.USRActiveView c ON c.UF_ID = b.UF_ID
 			WHERE UF_COMPLIANCE = '#HOST'
 
 		-- 2. Старые технологические модули
-			
+
 		IF OBJECT_ID('tempdb..#res_check') IS NOT NULL
 			DROP TABLE #res_check
 
@@ -110,21 +110,21 @@ BEGIN
 			EXEC USR.RES_VERSION_CHECK NULL, @SERVICE, null, null, 1, null, null, null
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
-			SELECT 
-				@STATE, N'RES', ClientID, 
-				'Комплект: ' + UD_NAME + 
+			SELECT
+				@STATE, N'RES', ClientID,
+				'Комплект: ' + UD_NAME +
 					CASE ResVersionNum WHEN '' THEN '' ELSE '  ТМ: ' + ResVersionNum END +
 					CASE ConsVersionNum WHEN '' THEN '' ELSE '  Cons.exe: ' + ConsVersionNum END
 			FROM #res_check
 
 		IF OBJECT_ID('tempdb..#res_check') IS NOT NULL
 			DROP TABLE #res_check
-			
+
 		-- 3. Процент сбора СТТ
-			
+
 		IF OBJECT_ID('tempdb..#stt_check') IS NOT NULL
 			DROP TABLE #stt_check
-			
+
 		CREATE TABLE #stt_check
 			(
 				ClientID	INT,
@@ -137,20 +137,20 @@ BEGIN
 
 		INSERT INTO #stt_check
 			EXEC dbo.STT_TOTAL_REPORT @CUR_MONTH_BEGIN, @CUR_MONTH_END, @SERVICE, 1
-			
+
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'STT', ClientID, ''--'Кол-во файлов USR: ' + CONVERT(NVARCHAR(16), USR_COUNT)
 			FROM #stt_check a
-			WHERE STT_COUNT = 0-- AND USR_COUNT <> 0	
-			
+			WHERE STT_COUNT = 0-- AND USR_COUNT <> 0
+
 		IF OBJECT_ID('tempdb..#stt_check') IS NOT NULL
 			DROP TABLE #stt_check
-			
+
 		-- 4. Неустановленные ИБ
-			
+
 		IF OBJECT_ID('tempdb..#ib_check') IS NOT NULL
 			DROP TABLE #ib_check
-			
+
 		CREATE TABLE #ib_check
 			(
 				ClientID		INT,
@@ -164,10 +164,10 @@ BEGIN
 				LAST_DATE	DATETIME,
 				UF_DATE		DATETIME
 			)
-			
+
 		INSERT INTO #ib_check
 			EXEC USR.CLIENT_SYSTEM_AUDIT NULL, @SERVICE, NULL, NULL
-			
+
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'IB', ClientID,
 				REVERSE(STUFF(REVERSE(
@@ -182,12 +182,12 @@ BEGIN
 					SELECT DISTINCT ClientID
 					FROM #ib_check
 				) AS o_O
-			
+
 		IF OBJECT_ID('tempdb..#ib_check') IS NOT NULL
 			DROP TABLE #ib_check
-			
+
 		-- 5. Должники
-			
+
 		IF OBJECT_ID('tempdb..#pay_check') IS NOT NULL
 			DROP TABLE #pay_check
 
@@ -212,29 +212,29 @@ BEGIN
 				LAST_ACT		SMALLDATETIME
 			)
 
-		INSERT INTO #pay_check	
+		INSERT INTO #pay_check
 			EXEC dbo.SERVICE_PAY_REPORT NULL, @SERVICE, @CUR_MONTH, NULL, NULL, NULL, NULL, NULL, NULL
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'PAY', ClientID, CONVERT(NVARCHAR(MAX), PRC)
-				
+
 			FROM #pay_check
 			WHERE PAY <> 'Да'
 
 		IF OBJECT_ID('tempdb..#pay_check') IS NOT NULL
 			DROP TABLE #pay_check
-			
+
 		-- 6. Низкий процент сбора CFG
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'CFG', ClientID, ''
-			FROM 
+			FROM
 				#cl_list a
 			WHERE /*ClientCom = 1
 				AND	*/NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.ClientSearchTable z
 					WHERE z.ClientID = a.ClientID
 						AND SearchGetDay BETWEEN @CUR_MONTH_BEGIN AND @CUR_MONTH_END
@@ -242,7 +242,7 @@ BEGIN
 				AND
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						USR.USRData z
 						INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
 					WHERE z.UD_ID_CLIENT = a.ClientID
@@ -286,22 +286,24 @@ BEGIN
 			FROM dbo.ClientGraphView
 			WHERE ClientServiceID = @SERVICE AND GR_ERROR IS NOT NULL
 
-		-- 9. Не записывали никого на семинары	
+		-- 9. Не записывали никого на семинары
 
-		
-			
-			
+
+
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SERVICE_STATE_UPDATE] TO rl_service_state_u;
+GO

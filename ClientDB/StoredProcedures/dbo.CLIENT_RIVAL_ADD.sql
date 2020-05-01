@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_ADD]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_ADD]
 	@CL_ID	INT,
 	@DATE	SMALLDATETIME,
 	@TYPE	INT,
@@ -47,38 +47,40 @@ BEGIN
 		WHERE CR_ID = @ID
 
 		EXEC dbo.CLIENT_RIVAL_PERSONAL_SET_NEW @ID, @PERSONAL
-		
-		DECLARE RV CURSOR LOCAL FOR 
+
+		DECLARE RV CURSOR LOCAL FOR
 			SELECT a.name
-			FROM 
+			FROM
 				sys.database_principals a
 				INNER JOIN sys.database_role_members b ON a.principal_id = member_principal_id
 				INNER JOIN sys.database_principals c ON c.principal_id = role_principal_id
 			WHERE c.name = 'rl_client_rival_message'
-		
+
 		OPEN RV
-		
+
 		DECLARE @RECEIVE_USER NVARCHAR(128)
-		
+
 		FETCH NEXT FROM RV INTO @RECEIVE_USER
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC dbo.CLIENT_MESSAGE_SEND @CL_ID, 1, @RECEIVE_USER, @CONDITION, 0
-			
+
 			FETCH NEXT FROM RV INTO @RECEIVE_USER
 		END
-		
+
 		CLOSE RV
 		DEALLOCATE RV
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_ADD] TO rl_client_rival_i;
+GO

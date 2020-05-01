@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[SystemInfoBanksView]
-WITH SCHEMABINDING 
+ALTER VIEW [dbo].[SystemInfoBanksView]
+WITH SCHEMABINDING
 AS
 	SELECT
 		SB.System_Id, S.SystemBaseName, S.SystemOrder, S.SystemActive, S.SystemFullName, S.SystemShortName,

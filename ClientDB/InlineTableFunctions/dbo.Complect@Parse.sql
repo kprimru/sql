@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[Complect@Parse]
+ALTER FUNCTION [dbo].[Complect@Parse]
 (
 	@Complect	VarChar(100)
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT
 		[SystemNumber],

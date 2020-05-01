@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[PERSONAL_STREET_SELECT]
+ALTER PROCEDURE [dbo].[PERSONAL_STREET_SELECT]
 	@SERVICE	SMALLINT,
 	@MANAGER	SMALLINT,
 	@MY_CITY	BIT = 1
@@ -23,14 +23,14 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
-			ST_ID, ST_NAME + ISNULL(' ' + ISNULL(ST_PREFIX, ST_SUFFIX), '') + 
+
+		SELECT
+			ST_ID, ST_NAME + ISNULL(' ' + ISNULL(ST_PREFIX, ST_SUFFIX), '') +
 			CASE CT_DISPLAY
 				WHEN 1 THEN ', ' + CT_NAME
 				ELSE ''
 			END AS ST_STR
-		FROM 
+		FROM
 			dbo.Street a
 			INNER JOIN dbo.City b ON a.ST_ID_CITY = b.CT_ID
 		WHERE (@MY_CITY = 0)
@@ -44,14 +44,14 @@ BEGIN
 				)
 				)
 		ORDER BY ST_NAME, CT_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

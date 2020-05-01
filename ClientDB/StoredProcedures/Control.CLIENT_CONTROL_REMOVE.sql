@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CLIENT_CONTROL_REMOVE]	
+ALTER PROCEDURE [Control].[CLIENT_CONTROL_REMOVE]
 	@ID	UNIQUEIDENTIFIER,
 	@NOTE	NVARCHAR(MAX) = NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -27,23 +27,26 @@ BEGIN
 		SET REMOVE_DATE	=	GETDATE(),
 			REMOVE_USER	=	ORIGINAL_LOGIN(),
 			REMOVE_NOTE =	@NOTE
-		WHERE ID = @ID		
-			
+		WHERE ID = @ID
+
 		IF @@ROWCOUNT <> 0
 		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
 				SELECT ID_CLIENT, 1, GETDATE(), 'Клиент был снят с контроля', AUTHOR, 0
-				FROM Control.ClientControl 
+				FROM Control.ClientControl
 				WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CLIENT_CONTROL_REMOVE] TO rl_control_teacher;
+GRANT EXECUTE ON [Control].[CLIENT_CONTROL_REMOVE] TO rl_control_u;
+GO

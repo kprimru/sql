@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Mailing].[WEB_EMAIL_CHECK]
+ALTER PROCEDURE [Mailing].[WEB_EMAIL_CHECK]
 	@EMAIL	NVARCHAR(64),
 	@MSG	NVARCHAR(256) OUTPUT,
 	@STATUS	SMALLINT OUTPUT
@@ -31,41 +31,43 @@ BEGIN
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'Не введен e-mail'
-			
+
 			RETURN
 		END
-		
+
 		IF CHARINDEX('@', @EMAIL) = 0
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'В адресе отсутствует символ "@"'
-			
+
 			RETURN
 		END
-		
+
 		IF CHARINDEX(' ', @EMAIL) <> 0
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'В адресе присутстуют пробелы'
-			
+
 			RETURN
 		END
-		
+
 		IF @EMAIL LIKE '%[а-я]%' OR @EMAIL LIKE '%[А-Я]%'
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'В адресе присутстуют русские буквы'
-			
+
 			RETURN
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Mailing].[WEB_EMAIL_CHECK] TO rl_mailing_web;
+GO

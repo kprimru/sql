@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_RATE_SELECT]
+ALTER PROCEDURE [dbo].[SERVICE_RATE_SELECT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -42,7 +42,7 @@ BEGIN
 				AND EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.ClientTable a
 							INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 							INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
@@ -61,7 +61,7 @@ BEGIN
 				CL_ID, ServiceID
 			)
 			SELECT ClientID, ClientServiceID
-			FROM 
+			FROM
 				dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN #service ON ClientServiceID = SR_ID
@@ -82,34 +82,34 @@ BEGIN
 			(
 				SR_ID, SearchClient, TotalClient
 			)
-			SELECT 
+			SELECT
 				SR_ID,
 				(
 					SELECT COUNT(DISTINCT CL_ID)
-					FROM 
-						#client					
+					FROM
+						#client
 						INNER JOIN dbo.ClientSearchTable y ON ClientID = CL_ID
-					WHERE SearchGetDay BETWEEN @BEGIN AND @END 
+					WHERE SearchGetDay BETWEEN @BEGIN AND @END
 						AND ServiceID = SR_ID
 				),
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						#client
 					WHERE ServiceID = SR_ID
 				)
 			FROM #service
 
-		SELECT 
+		SELECT
 			ServiceID, ManagerName, ServiceName,
 			CONVERT(VARCHAR(20), SearchClient) + ' из ' + CONVERT(VARCHAR(20), TotalClient) AS ServiceCount,
 			ROUND(100 * CONVERT(DECIMAL(8, 4), SearchClient) / TotalClient, 2) AS ServiceRate
-		FROM 
+		FROM
 			#rate
 			INNER JOIN dbo.ServiceTable a ON SR_ID = ServiceID
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 		WHERE TotalClient <> 0
-		ORDER BY ServiceName	
+		ORDER BY ServiceName
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
@@ -123,9 +123,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_RATE_SELECT] TO rl_service_rate;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_LAST_UPDATE_AUDIT]
+ALTER PROCEDURE [dbo].[CLIENT_LAST_UPDATE_AUDIT]
 	@SERVICE	INT,
 	@MANAGER	INT,
 	@DATE		SMALLDATETIME = NULL
@@ -54,7 +54,7 @@ BEGIN
 					(
 						SELECT *
 						FROM dbo.ClientDistrView WITH(NOEXPAND)
-						WHERE ID_CLIENT = ClientID 
+						WHERE ID_CLIENT = ClientID
 							AND DS_REG = 0
 							AND DistrTypeBaseCheck = 1
 							AND SystemBaseCheck = 1
@@ -74,11 +74,11 @@ BEGIN
 					AND C.CL_ID = U.UD_ID_CLIENT
 					AND UIU_DATE_S BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
 			);
-			
+
 		IF @DATE IS NOT NULL
 			DELETE C
 			FROM @Complect C
-			WHERE NOT EXISTS		
+			WHERE NOT EXISTS
 				(
 					SELECT *
 					FROM USR.USRIBDateView U WITH(NOEXPAND)
@@ -99,8 +99,8 @@ BEGIN
 			ORDER BY UF_DATE DESC, UF_CREATE DESC
 		) F;
 
-		SELECT 
-			ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, ServiceName, ManagerName, 
+		SELECT
+			ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, ServiceName, ManagerName,
 			(
 				SELECT TOP 1 UIU_DATE_S
 				FROM USR.USRIBDateView U WITH(NOEXPAND)
@@ -112,26 +112,28 @@ BEGIN
 			(
 				SELECT CONVERT(VARCHAR(20), EventDate, 104) + ' ' + EventComment + CHAR(10)
 				FROM EventTable z
-				WHERE EventActive = 1 
+				WHERE EventActive = 1
 					AND CL_ID = z.ClientID
 					AND EventDate BETWEEN DATEADD(WEEK, -3, @LAST_DATE) AND @LAST_DATE
 				ORDER BY EventDate FOR XML PATH('')
 			) AS EventComment
-		FROM 
+		FROM
 			@Complect a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON ClientID = CL_ID
 			INNER JOIN dbo.ServiceTypeTable c ON b.ServiceTypeID = c.ServiceTypeID
 		WHERE UD_NAME IS NOT NULL
 		ORDER BY ManagerName, ServiceName, ClientFullName, UD_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[CLIENT_LAST_UPDATE_AUDIT] TO rl_last_update_audit;
+GO

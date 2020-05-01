@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SEARCH_ADD]
+ALTER PROCEDURE [dbo].[SEARCH_ADD]
 	@CAT	VARCHAR(50),
 	@TXT	VARCHAR(250)
 AS
@@ -25,14 +25,16 @@ BEGIN
 
 		INSERT INTO dbo.SearchTable(SearchCategory, SearchText)
 		VALUES(@CAT, @TXT)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SEARCH_ADD] TO public;
+GO

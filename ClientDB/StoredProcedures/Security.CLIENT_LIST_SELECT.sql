@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[CLIENT_LIST_SELECT]
+ALTER PROCEDURE [Security].[CLIENT_LIST_SELECT]
 	@FILTER	VARCHAR(100)
 AS
 BEGIN
@@ -22,53 +22,53 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			principal_id AS US_ID, 
+		SELECT
+			principal_id AS US_ID,
 			1 AS RL,
-			RoleStr, 
+			RoleStr,
 			LST_RALL, LST_RMAN, LST_RSER, LST_RORI,
 			LST_WALL, LST_WMAN, LST_WSER, LST_WORI
-		FROM 
+		FROM
 			dbo.RoleTable
 			INNER JOIN sys.database_principals ON name = RoleName
 			INNER JOIN
 			(
-				SELECT 
+				SELECT
 					LST_USER, LST_ALL AS LST_RALL, LST_ORI AS LST_RORI, LST_MANAGER AS LST_RMAN, LST_SERVICE AS LST_RSER
 				FROM Security.ClientList
 				WHERE LST_TYPE = 'READ'
 			) AS r ON r.LST_USER = RoleName
-			INNER JOIN 
+			INNER JOIN
 			(
-				SELECT 
+				SELECT
 					LST_USER, LST_ALL AS LST_WALL, LST_ORI AS LST_WORI, LST_MANAGER AS LST_WMAN, LST_SERVICE AS LST_WSER
 				FROM Security.ClientList
 				WHERE LST_TYPE = 'WRITE'
 			) AS w ON w.LST_USER = RoleName
-		WHERE @FILTER IS NULL 
+		WHERE @FILTER IS NULL
 			OR RoleStr LIKE @FILTER
-			OR RoleName LIKE @FILTER 
+			OR RoleName LIKE @FILTER
 
 		UNION ALL
 
-		SELECT 
-			principal_id AS US_ID, 
+		SELECT
+			principal_id AS US_ID,
 			2 AS RL,
-			name AS RoleStr, 
+			name AS RoleStr,
 			LST_RALL, LST_RMAN, LST_RSER, LST_RORI,
 			LST_WALL, LST_WMAN, LST_WSER, LST_WORI
-		FROM 
+		FROM
 			sys.database_principals
 			INNER JOIN
 			(
-				SELECT 
+				SELECT
 					LST_USER, LST_ALL AS LST_RALL, LST_ORI AS LST_RORI, LST_MANAGER AS LST_RMAN, LST_SERVICE AS LST_RSER
 				FROM Security.ClientList
 				WHERE LST_TYPE = 'READ'
 			) AS r ON r.LST_USER = name
-			INNER JOIN 
+			INNER JOIN
 			(
-				SELECT 
+				SELECT
 					LST_USER, LST_ALL AS LST_WALL, LST_ORI AS LST_WORI, LST_MANAGER AS LST_WMAN, LST_SERVICE AS LST_WSER
 				FROM Security.ClientList
 				WHERE LST_TYPE = 'WRITE'
@@ -78,21 +78,23 @@ BEGIN
 					SELECT *
 					FROM dbo.RoleTable
 					WHERE RoleName = name
-				) 
+				)
 			AND
 				(
-					@FILTER IS NULL 
+					@FILTER IS NULL
 					OR name LIKE @FILTER
 				)
 		ORDER BY RL, RoleStr
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[CLIENT_LIST_SELECT] TO rl_security_client_list_r;
+GO

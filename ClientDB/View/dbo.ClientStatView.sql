@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientStatView]
+ALTER VIEW [dbo].[ClientStatView]
 WITH SCHEMABINDING
 AS
 	SELECT c.ID_CLIENT AS ClientID, dbo.DateOf(DATE) AS DATE_S, COUNT_BIG(*) AS CNT
-	FROM 
+	FROM
 		dbo.ClientStat a
 		INNER JOIN dbo.SystemTable b ON a.SYS_NUM = b.SystemNumber
 		INNER JOIN dbo.ClientDistr c ON c.ID_SYSTEM = b.SystemID

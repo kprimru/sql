@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalProcedureLog]
+ALTER FUNCTION [Maintenance].[GlobalProcedureLog]
 ()
 RETURNS BIT
 AS
@@ -21,6 +21,6 @@ BEGIN
 		SET @RES = CAST(1 AS BIT)
 	ELSE
 		SET @RES = CAST(0 AS BIT)
-		
+
 	RETURN @RES
 END

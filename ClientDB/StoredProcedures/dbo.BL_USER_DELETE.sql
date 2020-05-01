@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[BL_USER_DELETE]
+ALTER PROCEDURE [dbo].[BL_USER_DELETE]
 	@USER varchar(128)
-WITH EXECUTE AS OWNER  
+WITH EXECUTE AS OWNER
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -23,8 +23,8 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @ERROR VARCHAR(MAX)	
-		IF (CHARINDEX('''', @USER) <> 0) 
+		DECLARE @ERROR VARCHAR(MAX)
+		IF (CHARINDEX('''', @USER) <> 0)
 		BEGIN
 			SET @ERROR = 'Имя пользователя или роль содержат недоспустимые символы (кавычка)'
 
@@ -33,14 +33,16 @@ BEGIN
 			RETURN
 		END
 		EXEC('DROP USER [' + @USER +']')
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BL_USER_DELETE] TO BL_ADMIN;
+GO

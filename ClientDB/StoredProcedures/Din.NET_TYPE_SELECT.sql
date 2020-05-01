@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[NET_TYPE_SELECT]
+ALTER PROCEDURE [Din].[NET_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -28,14 +28,17 @@ BEGIN
 			OR NT_NAME LIKE @FILTER
 			OR NT_NOTE LIKE @FILTER
 		ORDER BY NT_NAME, NT_NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[NET_TYPE_SELECT] TO rl_din_import;
+GRANT EXECUTE ON [Din].[NET_TYPE_SELECT] TO rl_din_net_type_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TENDER_GET]
+ALTER PROCEDURE [Purchase].[TENDER_GET]
 	@ID	UNIQUEIDENTIFIER,
 	@CLIENT	INT
 AS
@@ -25,24 +25,24 @@ BEGIN
 
 		IF @ID IS NULL
 		BEGIN
-			SELECT 
-				TD_NOTICE_NUM, TD_NOTICE_DATE, 
+			SELECT
+				TD_NOTICE_NUM, TD_NOTICE_DATE,
 				TD_ID_NAME, TD_CANCEL_DATE, TD_NOTE,
-		
-				ClientFullName AS TCL_NAME, CONVERT(VARCHAR(250), '') AS TCL_PLACE, CA_STR AS TCL_ADDRESS, 
+
+				ClientFullName AS TCL_NAME, CONVERT(VARCHAR(250), '') AS TCL_PLACE, CA_STR AS TCL_ADDRESS,
 				ClientEmail AS TCL_EMAIL, CP_FIO AS TCL_RES, CP_PHONE AS TCL_PHONE, CONVERT(VARCHAR(250), '') AS TCL_FAX,
-				
-				TC_START_PRICE, 
-				TC_CLAIM_SIZE, TC_CLAIM_SIZE_VALUE, 
-				TC_CONTRACT_SIZE, TC_CONTRACT_SIZE_VALUE, 
-				TC_DELIVERY_BEGIN, TC_DELIVERY_BEGIN_NOTE, 
-				TC_DELIVERY_END, TC_DELIVERY_END_NOTE, 			
+
+				TC_START_PRICE,
+				TC_CLAIM_SIZE, TC_CLAIM_SIZE_VALUE,
+				TC_CONTRACT_SIZE, TC_CONTRACT_SIZE_VALUE,
+				TC_DELIVERY_BEGIN, TC_DELIVERY_BEGIN_NOTE,
+				TC_DELIVERY_END, TC_DELIVERY_END_NOTE, 
 				PP_ID,
 
-				TI_CLAIM_START, TI_CLAIM_END, TI_CLAIM_EL_END, 
+				TI_CLAIM_START, TI_CLAIM_END, TI_CLAIM_EL_END,
 				TI_INSPECT_DATE, TI_EL_DATE, TI_ID_SIGN_PERIOD,
 
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TCT_ID_CITY) + '}' AS ITEM
 						FROM Purchase.TenderCity
@@ -50,7 +50,7 @@ BEGIN
 						ORDER BY TCT_ID_CITY FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_CITY_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TDC_ID_DC) + '}' AS ITEM
 						FROM Purchase.TenderDocument
@@ -58,7 +58,7 @@ BEGIN
 						ORDER BY TDC_ID_DC FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_DOCUMENT_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TPV_ID_PV) + '}' AS ITEM
 						FROM Purchase.TenderPriceValidation
@@ -66,7 +66,7 @@ BEGIN
 						ORDER BY TPV_ID_PV FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_PRICE_VALIDATION_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TPK_ID_PK) + '}' AS ITEM
 						FROM Purchase.TenderPurchaseKind
@@ -74,7 +74,7 @@ BEGIN
 						ORDER BY TPK_ID_PK FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_PURCHASE_KIND_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TTS_ID_TS) + '}' AS ITEM
 						FROM Purchase.TenderTradeSite
@@ -82,7 +82,7 @@ BEGIN
 						ORDER BY TTS_ID_TS FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_TRADE_SITE_ID
-			FROM 
+			FROM
 				dbo.ClientTable
 				LEFT OUTER JOIN dbo.ClientAddressView ON CA_ID_CLIENT = ClientID AND AT_REQUIRED = 1
 				LEFT OUTER JOIN dbo.ClientPersonalResView WITH(NOEXPAND) ON ClientID = CP_ID_CLIENT
@@ -95,24 +95,24 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			SELECT 
-				TD_NOTICE_NUM, TD_NOTICE_DATE, 
+			SELECT
+				TD_NOTICE_NUM, TD_NOTICE_DATE,
 				TD_ID_NAME, TD_NOTE, TD_CANCEL_DATE,
-		
-				TCL_NAME, TCL_PLACE, TCL_ADDRESS, 
+
+				TCL_NAME, TCL_PLACE, TCL_ADDRESS,
 				TCL_EMAIL, TCL_RES, TCL_PHONE, TCL_FAX,
-				
-				TC_START_PRICE, 
-				TC_CLAIM_SIZE, TC_CLAIM_SIZE_VALUE, 
-				TC_CONTRACT_SIZE, TC_CONTRACT_SIZE_VALUE, 
-				TC_DELIVERY_BEGIN, TC_DELIVERY_BEGIN_NOTE, 
-				TC_DELIVERY_END, TC_DELIVERY_END_NOTE, 			
+
+				TC_START_PRICE,
+				TC_CLAIM_SIZE, TC_CLAIM_SIZE_VALUE,
+				TC_CONTRACT_SIZE, TC_CONTRACT_SIZE_VALUE,
+				TC_DELIVERY_BEGIN, TC_DELIVERY_BEGIN_NOTE,
+				TC_DELIVERY_END, TC_DELIVERY_END_NOTE, 
 				PP_ID,
 
-				TI_CLAIM_START, TI_CLAIM_END, TI_CLAIM_EL_END, 
+				TI_CLAIM_START, TI_CLAIM_END, TI_CLAIM_EL_END,
 				TI_INSPECT_DATE, TI_EL_DATE, TI_ID_SIGN_PERIOD,
 
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TCT_ID_CITY) + '}' AS ITEM
 						FROM Purchase.TenderCity
@@ -120,7 +120,7 @@ BEGIN
 						ORDER BY TCT_ID_CITY FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_CITY_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TDC_ID_DC) + '}' AS ITEM
 						FROM Purchase.TenderDocument
@@ -128,7 +128,7 @@ BEGIN
 						ORDER BY TDC_ID_DC FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_DOCUMENT_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TPV_ID_PV) + '}' AS ITEM
 						FROM Purchase.TenderPriceValidation
@@ -136,7 +136,7 @@ BEGIN
 						ORDER BY TPV_ID_PV FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_PRICE_VALIDATION_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TPK_ID_PK) + '}' AS ITEM
 						FROM Purchase.TenderPurchaseKind
@@ -144,7 +144,7 @@ BEGIN
 						ORDER BY TPK_ID_PK FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_PURCHASE_KIND_ID,
-				('<LIST>' + 
+				('<LIST>' +
 					(
 						SELECT '{' + CONVERT(VARCHAR(50), TTS_ID_TS) + '}' AS ITEM
 						FROM Purchase.TenderTradeSite
@@ -152,7 +152,7 @@ BEGIN
 						ORDER BY TTS_ID_TS FOR XML PATH('')
 					)
 				+ '</LIST>') AS TD_TRADE_SITE_ID
-			FROM 
+			FROM
 				Purchase.Tender
 				INNER JOIN Purchase.TenderClient ON TCL_ID_TENDER = TD_ID
 				INNER JOIN Purchase.TenderConditions ON TC_ID_TENDER = TD_ID
@@ -160,14 +160,16 @@ BEGIN
 				INNER JOIN Purchase.TenderInfo ON TI_ID_TENDER = TD_ID
 			WHERE TD_ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TENDER_GET] TO rl_tender_r;
+GO

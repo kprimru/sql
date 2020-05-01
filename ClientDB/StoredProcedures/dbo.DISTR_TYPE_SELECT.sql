@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[DISTR_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -29,14 +29,16 @@ BEGIN
 			OR DistrTypeFull LIKE @FILTER
 			OR DistrTypeCode LIKE @FILTER
 		ORDER BY DistrTypeOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_TYPE_SELECT] TO rl_distr_type_r;
+GO

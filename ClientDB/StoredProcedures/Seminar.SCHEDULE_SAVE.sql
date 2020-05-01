@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SCHEDULE_SAVE]
+ALTER PROCEDURE [Seminar].[SCHEDULE_SAVE]
 	@ID			UNIQUEIDENTIFIER OUTPUT,
 	@SUBJECT	UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
@@ -34,11 +34,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE)
-				
+
 			SELECT @ID = ID
 			FROM @TBL
 		END
@@ -57,14 +57,16 @@ BEGIN
 				LAST		=	GETDATE()
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[SCHEDULE_SAVE] TO rl_seminar_admin;
+GO

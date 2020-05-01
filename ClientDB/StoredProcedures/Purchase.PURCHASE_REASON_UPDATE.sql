@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PURCHASE_REASON_UPDATE]
+ALTER PROCEDURE [Purchase].[PURCHASE_REASON_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(4000),
 	@NUM	SMALLINT
@@ -28,14 +28,16 @@ BEGIN
 		SET PR_NAME =	@NAME,
 			PR_NUM	=	@NUM
 		WHERE PR_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PURCHASE_REASON_UPDATE] TO rl_reason_u;
+GO

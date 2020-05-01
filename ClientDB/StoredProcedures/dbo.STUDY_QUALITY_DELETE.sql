@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_QUALITY_DELETE]
+ALTER PROCEDURE [dbo].[STUDY_QUALITY_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,17 +23,19 @@ BEGIN
 	BEGIN TRY
 
 		DELETE
-		FROM 
+		FROM
 			dbo.StudyQuality
 		WHERE ID = @ID
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_QUALITY_DELETE] TO rl_client_study_d;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[PROC_JOURNAL_SIZE_SELECT]
+ALTER PROCEDURE [Maintenance].[PROC_JOURNAL_SIZE_SELECT]
 	@TOTAL_ROW		INT = NULL OUTPUT,
 	@TOTAL_RESERV	VARCHAR(50) = NULL OUTPUT
 WITH EXECUTE AS OWNER
@@ -24,22 +24,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			@TOTAL_ROW = (SELECT row_count FROM Maintenance.DatabaseSize() WHERE obj_name = 'Security.ExecutionLog'),
 			@TOTAL_RESERV = dbo.FileByteSizeToStr(SUM(reserved))
 		FROM Maintenance.DatabaseSize()
 		WHERE obj_name IN
 			(
 				'Security.ExecutionLog'
-			)	
-			
+			)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[PROC_JOURNAL_SIZE_SELECT] TO rl_maintenance;
+GO

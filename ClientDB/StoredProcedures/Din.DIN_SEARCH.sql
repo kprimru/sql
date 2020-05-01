@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[DIN_SEARCH]
+ALTER PROCEDURE [Din].[DIN_SEARCH]
 	@CLIENT		NVARCHAR(MAX) = NULL,
 	@CLIENT_ID	NVARCHAR(MAX) = NULL,
 	@SYS		NVARCHAR(MAX) = NULL,
@@ -22,7 +22,7 @@ CREATE PROCEDURE [Din].[DIN_SEARCH]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -34,13 +34,13 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @CHECKED BIT;
-		
+
 		SET @CLIENT = NULLIF(@Client, '');
 
-		IF		@CLIENT IS NULL 
-			AND @CLIENT_ID IS NULL 
+		IF		@CLIENT IS NULL
+			AND @CLIENT_ID IS NULL
 			AND @SYS IS NULL
 			AND @TYPE IS NULL
 			AND @NET IS NULL
@@ -54,15 +54,15 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#din') IS NOT NULL
 			DROP TABLE #din;
-			
+
 		CREATE TABLE #din
 			(
-				ID			INT PRIMARY KEY CLUSTERED, 
+				ID			INT PRIMARY KEY CLUSTERED,
 				ID_HOST		INT,
 				DISTR		INT,
 				COMP		TINYINT
 			);
-			
+
 		IF @CLIENT_ID IS NOT NULL
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, b.HostID, DF_DISTR, DF_COMP
@@ -73,7 +73,7 @@ BEGIN
 		ELSE IF @CLIENT IS NOT NULL
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-			FROM 
+			FROM
 				Din.DinFiles a
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 			WHERE DF_DISTR IN
@@ -91,13 +91,13 @@ BEGIN
 		ELSE IF @SYS IS NOT NULL
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-			FROM 
+			FROM
 				Din.DinFiles a
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 			WHERE DF_ID IN
 					(
 						SELECT DF_ID
-						FROM 
+						FROM
 							Din.DinFiles
 							INNER JOIN dbo.TableIDFromXML(@SYS) ON DF_ID_SYS = ID
 					);
@@ -105,40 +105,40 @@ BEGIN
 		ELSE IF @TYPE IS NOT NULL
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-			FROM 
+			FROM
 				Din.DinFiles a
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 			WHERE DF_ID IN
 					(
 						SELECT DF_ID
-						FROM 
+						FROM
 							Din.DinFiles
 							INNER JOIN dbo.TableIDFromXML(@TYPE) ON DF_ID_TYPE = ID
 					);
-		
+
 		ELSE IF @NET IS NOT NULL
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-			FROM 
+			FROM
 				Din.DinFiles a
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 			WHERE DF_ID IN
 					(
 						SELECT DF_ID
-						FROM 
+						FROM
 							Din.DinFiles
 							INNER JOIN dbo.TableIDFromXML(@NET) ON DF_ID_NET = ID
 					);
 		ELSE
 			INSERT INTO #din(ID, ID_HOST, DISTR, COMP)
 			SELECT DISTINCT DF_ID, HostID, DF_DISTR, DF_COMP
-			FROM 
+			FROM
 				Din.DinFiles a
 				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 			WHERE DF_DISTR = @DISTR OR @DISTR IS NULL;
 
 		IF @CLIENT IS NOT NULL
-			DELETE 
+			DELETE
 			FROM #din
 			WHERE DISTR NOT IN
 				(
@@ -151,50 +151,50 @@ BEGIN
 							WHERE /*(ClientFullName LIKE ('%'+@CLIENT+'%'))OR*/(ClientFullName LIKE ('%'+@CLIENT+'%'))
 						)
 				);
-		
+
 		/*IF @CLIENT_ID IS NOT NULL
 			DELETE
 			FROM #din
-			WHERE  DISTR NOT IN 
+			WHERE  DISTR NOT IN
 					(
 						SELECT DISTR
 						FROM dbo.ClientDistrView WITH (NOEXPAND)
 						WHERE ID_CLIENT = @CLIENT_ID
 					)*/
-		
+
 		IF @SYS IS NOT NULL
-			DELETE 
+			DELETE
 			FROM #din
 			WHERE ID NOT IN
 				(
 					SELECT DF_ID
-					FROM 
+					FROM
 						Din.DinFiles
 						INNER JOIN dbo.TableIDFromXML(@SYS) ON DF_ID_SYS = ID
 				);
-				
+
 		IF @TYPE IS NOT NULL
-			DELETE 
+			DELETE
 			FROM #din
 			WHERE ID NOT IN
 				(
 					SELECT DF_ID
-					FROM 
+					FROM
 						Din.DinFiles
 						INNER JOIN dbo.TableIDFromXML(@TYPE) ON DF_ID_TYPE = ID
 				);
-			
+
 		IF @NET IS NOT NULL
-			DELETE 
+			DELETE
 			FROM #din
 			WHERE ID NOT IN
 				(
 					SELECT DF_ID
-					FROM 
+					FROM
 						Din.DinFiles
 						INNER JOIN dbo.TableIDFromXML(@NET) ON DF_ID_NET = ID
 				);
-			
+
 		IF @BEGIN IS NOT NULL OR @END IS NOT NULL
 			DELETE
 			FROM #din
@@ -205,7 +205,7 @@ BEGIN
 					WHERE (DF_CREATE >= @BEGIN OR @BEGIN IS NULL)
 						AND (DF_CREATE <= @END OR @END IS NULL)
 				);
-			
+
 		IF @UNREG = 1
 			DELETE
 			FROM #din
@@ -216,20 +216,20 @@ BEGIN
 					WHERE ID_HOST = HostID AND DistrNumber = DISTR AND CompNumber = COMP
 				);
 
-		SELECT 
-			a.ID, CONVERT(int, Null) AS MASTER_ID, b.DIS_STR, c.SystemId, c.DistrNumber, c.CompNumber, c.NT_ID, c.SST_ID, CASE b.DF_RIC WHEN 20 THEN NULL ELSE b.DF_RIC END AS DF_RIC, 
-			b.DF_CREATE, b.SST_SHORT, b.NT_SHORT, 
-			DS_INDEX, 
+		SELECT
+			a.ID, CONVERT(int, Null) AS MASTER_ID, b.DIS_STR, c.SystemId, c.DistrNumber, c.CompNumber, c.NT_ID, c.SST_ID, CASE b.DF_RIC WHEN 20 THEN NULL ELSE b.DF_RIC END AS DF_RIC,
+			b.DF_CREATE, b.SST_SHORT, b.NT_SHORT,
+			DS_INDEX,
 			Comment, RegisterDate,
 			REVERSE(STUFF(REVERSE(RTRIM(
 				(
 					SELECT SystemShortName + ' (' + NT_SHORT + '), '
 					FROM
 						(
-							SELECT DISTINCT SystemShortName, NT_SHORT, SystemOrder, NT_TECH, NT_NET		
+							SELECT DISTINCT SystemShortName, NT_SHORT, SystemOrder, NT_TECH, NT_NET
 							FROM Din.DinView z WITH(NOEXPAND)
 							WHERE a.ID_HOST = z.HostID AND a.DISTR = z.DF_DISTR AND a.COMP = z.DF_COMP
-								AND (z.NT_ID <> b.NT_ID OR z.SystemID <> b.SystemID)		
+								AND (z.NT_ID <> b.NT_ID OR z.SystemID <> b.SystemID)
 						) AS o_O
 					ORDER BY SystemOrder, NT_TECH, NT_NET FOR XML PATH('')
 				))), 1, 1, '')) AS EXCHANGE,
@@ -237,7 +237,7 @@ BEGIN
 			b.HostID,
 			Complect
 		INTO #distr
-		FROM 
+		FROM
 			#din a
 			INNER JOIN Din.DinView b WITH(NOEXPAND) ON DF_ID = ID
 			LEFT OUTER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON a.ID_HOST = c.HostID AND a.DISTR = c.DistrNumber AND a.COMP = c.CompNumber
@@ -245,7 +245,7 @@ BEGIN
 			AND (Complect LIKE '%' + @COMPLECT + '%' OR @COMPLECT IS NULL)
 		ORDER BY Complect, b.SystemOrder, a.DISTR, a.COMP ASC;
 
-		-----------------------------бшдекъел беяэ йнлокейр 
+		-----------------------------бшдекъел беяэ йнлокейр
 		IF (@COMPL_CHECK IS NOT NULL) AND (@CLR_CHECK = 0)
 		BEGIN
 			UPDATE #distr
@@ -256,16 +256,16 @@ BEGIN
 
 		-----------------------------декюер ярюпше гюлемеммше дхярпхасрхбш меюйрхбмшлх х ямхлюер я мху цюкнвйс
 		UPDATE #distr
-		SET CHECKED = 0, 
+		SET CHECKED = 0,
 			DS_INDEX = 1,
 			MASTER_ID = 1
-		WHERE DIS_STR IN 
+		WHERE DIS_STR IN
 			(
 				SELECT DIS_STR
 				FROM Din.DinView
 				WHERE DF_DISTR IN
 					(
-						SELECT DISTR 
+						SELECT DISTR
 						FROM #din
 						GROUP BY ID_HOST, DISTR, COMP
 						HAVING COUNT(*) > 1
@@ -297,11 +297,11 @@ BEGIN
 		FROM #distr v
 		INNER JOIN #distr f ON (v.DistrNumber = f.DistrNumber AND f.MASTER_ID IS NULL)
 		WHERE v.MASTER_ID = 1;
-		
+
 		-------------------------------бшанп оепбнцн оноюбьецняъ юйрхбмнцн йнлокейрю опх оепеунде хг йюпрнвйх----------------
 		IF @CLIENT_ID IS NOT NULL AND @COMPL_CHECK IS NULL AND @CLR_CHECK=0
 			UPDATE #distr
-			SET CHECKED = 1 
+			SET CHECKED = 1
 			WHERE Complect IN
 				(
 					SELECT TOP (1) Complect
@@ -310,24 +310,26 @@ BEGIN
 						AND HostID = 1
 				)
 				AND DS_INDEX = 0;
-				
+
 		SELECT *
 		FROM #distr
 		WHERE DS_INDEX = @DS_INDEX OR @DS_INDEX IS NULL
-		
+
 		IF OBJECT_ID('tempdb..#din') IS NOT NULL
 			DROP TABLE #din
-		
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[DIN_SEARCH] TO rl_din_search;
+GO

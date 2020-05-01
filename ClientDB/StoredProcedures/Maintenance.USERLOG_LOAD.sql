@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[USERLOG_LOAD]
+ALTER PROCEDURE [Maintenance].[USERLOG_LOAD]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,21 +23,21 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
-			
+
 		CREATE TABLE #temp
-			(		
+			(
 				RW NVARCHAR(1024)
 			)
-			
-		EXEC xp_cmdshell 'xcopy \\bim\vol2\veda3000\cons\adm\userlog.txt c:\data\userlog\*.* /y /d /s', no_output 
-			
+
+		EXEC xp_cmdshell 'xcopy \\bim\vol2\veda3000\cons\adm\userlog.txt c:\data\userlog\*.* /y /d /s', no_output
+
 		BULK INSERT #temp FROM 'c:\data\userlog\userlog.txt' WITH (CODEPAGE=1251)
 
 		ALTER TABLE #temp ADD ID INT IDENTITY(1, 1)
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
-			
+
 		CREATE TABLE #res
 			(
 				ID		INT PRIMARY KEY,
@@ -50,11 +50,11 @@ BEGIN
 				A1		NVARCHAR(128),
 				A2		NVARCHAR(128)
 			)
-			
+
 		INSERT INTO #res(ID, DATA)
 			SELECT ID, RW
-			FROM #temp	
-				
+			FROM #temp
+
 		UPDATE #res
 		SET USR = LEFT(DATA, CHARINDEX(' ', DATA) - 1)
 
@@ -104,11 +104,11 @@ BEGIN
 			SELECT USR, COMP, OPER, DT, A1, A2
 			FROM
 				(
-					SELECT 
-						USR, COMP, OPER, 
+					SELECT
+						USR, COMP, OPER,
 						CONVERT(DATETIME, LEFT(CONVERT(NVARCHAR(64), CONVERT(DATETIME, DT, 104), 120), 10) + ' ' + TM, 120) AS DT,
 						A1, A2
-					FROM #res 
+					FROM #res
 				) AS a
 			WHERE NOT EXISTS
 				(
@@ -116,20 +116,20 @@ BEGIN
 					FROM Maintenance.UserLog b
 					WHERE a.USR = b.USR AND a.COMP = b.COMP AND a.OPER = b.OPER AND a.DT = b.DT
 				)
-			
+
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
-			
+
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

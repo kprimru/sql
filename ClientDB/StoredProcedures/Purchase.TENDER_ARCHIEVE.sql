@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TENDER_ARCHIEVE]
+ALTER PROCEDURE [Purchase].[TENDER_ARCHIEVE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -31,7 +31,7 @@ BEGIN
 			SELECT TD_ID, TD_ID_CLIENT, TD_NOTICE_NUM, TD_NOTICE_DATE, TD_ID_NAME, TD_CANCEL_DATE, TD_NOTE, 2, TD_UPDATE, TD_UPDATE_USER
 			FROM Purchase.Tender
 			WHERE TD_ID = @ID
-		
+
 		SELECT @NEWID = ID FROM @TBL
 
 		INSERT INTO Purchase.TenderCity(TCT_ID_TENDER, TCT_ID_CITY)
@@ -78,14 +78,14 @@ BEGIN
 			SELECT @NEWID, TTS_ID_TS
 			FROM Purchase.TenderTradeSite
 			WHERE TTS_ID_TENDER = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

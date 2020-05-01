@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_AUDIT_QUESTION_CHECK]
+ALTER PROCEDURE [Subhost].[TEST_AUDIT_QUESTION_CHECK]
 	@TEST	UNIQUEIDENTIFIER,
 	@QST	UNIQUEIDENTIFIER,
 	@RES	TINYINT,
@@ -27,14 +27,16 @@ BEGIN
 
 		INSERT INTO Subhost.CheckTestQuestion(ID_TEST, ID_QUESTION, RESULT, NOTE)
 			SELECT @TEST, @QST, @RES, @NOTE
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_AUDIT_QUESTION_CHECK] TO rl_subhost_test;
+GO

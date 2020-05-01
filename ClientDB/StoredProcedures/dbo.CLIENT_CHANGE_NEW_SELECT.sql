@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CHANGE_NEW_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_CHANGE_NEW_SELECT]
 	@BEGIN DATETIME,
 	@END DATETIME,
-	@MANAGER INT = NULL,	
-	@SERVICE INT = NULL,	
+	@MANAGER INT = NULL,
+	@SERVICE INT = NULL,
 	@CLIENT INT = NULL,
 	@DETAIL BIT = 0,
 	@NAME BIT = 1,
@@ -21,13 +21,13 @@ CREATE PROCEDURE [dbo].[CLIENT_CHANGE_NEW_SELECT]
 	@BUH_POS BIT = 1,
 	@BUH_PHONE BIT = 1,
 	@RES BIT = 1,
-	@RES_POS BIT = 1,	
-	@RES_PHONE BIT = 1,	
-	@SCHANGE BIT = 1	
+	@RES_POS BIT = 1,
+	@RES_PHONE BIT = 1,
+	@SCHANGE BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -39,7 +39,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @BEGIN < '20130701'
 			SET @BEGIN = '20130701'
 
@@ -70,7 +70,7 @@ BEGIN
 		IF @CLIENT IS NULL
 			INSERT INTO #client(ID)
 				SELECT DISTINCT ID_MASTER
-				FROM 
+				FROM
 					dbo.ClientTable a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_MASTER = b.ClientID
 				WHERE ClientLast >= @BEGIN AND ClientLast < @END
@@ -80,12 +80,12 @@ BEGIN
 		ELSE
 			INSERT INTO #client(ID)
 				SELECT @CLIENT
-					
+
 		IF @NAME = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Название', 1,
 						(
@@ -97,13 +97,13 @@ BEGIN
 						),
 						b.ClientFullName,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientTable b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Название', 1,
 						(
@@ -121,17 +121,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @INN = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'ИНН', 2,
 						(
 							SELECT TOP 1 ClientINN
@@ -142,14 +142,14 @@ BEGIN
 						),
 						b.ClientINN,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientTable b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
-					WHERE dbo.DateOf(ClientLast) >= @BEGIN			
+					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'ИНН', 2,
 						(
 							SELECT TOP 1 ClientINN
@@ -166,7 +166,7 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
@@ -175,8 +175,8 @@ BEGIN
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Адрес', 3,
 						(
 							SELECT TOP 1 CA_STR
@@ -187,13 +187,13 @@ BEGIN
 						),
 						b.CA_STR,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
-					WHERE dbo.DateOf(ClientLast) >= @BEGIN				
+					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Адрес', 3,
 						(
@@ -211,17 +211,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @DIR = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'ФИО руководителя', 4,
 						(
 							SELECT TOP 1 DIR_FIO
@@ -232,13 +232,13 @@ BEGIN
 						),
 						b.DIR_FIO,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
-					WHERE dbo.DateOf(ClientLast) >= @BEGIN			
+					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'ФИО руководителя', 4,
 						(
@@ -256,17 +256,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @DIR_POS = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Должность руководителя', 5,
 						(
 							SELECT TOP 1 DIR_POS
@@ -277,13 +277,13 @@ BEGIN
 						),
 						b.DIR_POS,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
-					WHERE dbo.DateOf(ClientLast) >= @BEGIN			
+					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Должность руководителя', 5,
 						(
@@ -301,17 +301,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @DIR_PHONE = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Телефон руководителя', 6,
 						(
 							SELECT TOP 1 DIR_PHONE
@@ -322,14 +322,14 @@ BEGIN
 						),
 						b.DIR_PHONE,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Телефон руководителя', 6,
 						(
 							SELECT TOP 1 DIR_PHONE
@@ -346,17 +346,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @BUH = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'ФИО гл.бух.', 7,
 						(
 							SELECT TOP 1 BUH_FIO
@@ -367,13 +367,13 @@ BEGIN
 						),
 						b.BUH_FIO,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'ФИО гл.бух.', 7,
 						(
@@ -391,17 +391,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @BUH_POS = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Должность гл.бух.', 8,
 						(
 							SELECT TOP 1 BUH_POS
@@ -412,14 +412,14 @@ BEGIN
 						),
 						b.BUH_POS,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Должность гл.бух.', 8,
 						(
 							SELECT TOP 1 BUH_POS
@@ -436,17 +436,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @BUH_PHONE = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Телефон гл.бух.', 9,
 						(
 							SELECT TOP 1 BUH_PHONE
@@ -457,13 +457,13 @@ BEGIN
 						),
 						b.BUH_PHONE,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Телефон гл.бух.', 9,
 						(
@@ -481,17 +481,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @RES = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'ФИО ответственного', 10,
 						(
 							SELECT TOP 1 RES_FIO
@@ -502,13 +502,13 @@ BEGIN
 						),
 						b.RES_FIO,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'ФИО ответственного', 10,
 						(
@@ -526,16 +526,16 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @RES_POS = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Должность ответственного', 11,
 						(
@@ -547,13 +547,13 @@ BEGIN
 						),
 						b.RES_POS,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Должность ответственного', 11,
 						(
@@ -571,17 +571,17 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 		IF @RES_PHONE = 1
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Телефон ответственного', 12,
 						(
 							SELECT TOP 1 RES_PHONE
@@ -592,13 +592,13 @@ BEGIN
 						),
 						b.RES_PHONE,
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientEditionView b ON a.ID = b.ID_MASTER OR a.ID = b.ClientID
 					WHERE dbo.DateOf(ClientLast) >= @BEGIN
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
+					SELECT
 						a.ID,
 						'Телефон ответственного', 12,
 						(
@@ -616,9 +616,9 @@ BEGIN
 							ORDER BY ClientLast DESC
 						),
 						ClientLast, UPD_USER
-					FROM 
+					FROM
 						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID				
+						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
 		END
 
 
@@ -626,43 +626,43 @@ BEGIN
 		BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Сервис-инженер', 13,
 						(
 							SELECT TOP 1 ServiceName
-							FROM 
+							FROM
 								dbo.ClientService z
-								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE						
+								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE
 							WHERE z.ID_CLIENT = a.ID
 								AND z.UPD_DATE < b.UPD_DATE
 							ORDER BY UPD_DATE DESC
 						),
 						c.ServiceName,
 						UPD_DATE, US_NAME
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientService b ON a.ID = b.ID_CLIENT
-						INNER JOIN dbo.ServiceTable c ON c.ServiceID = b.ID_SERVICE				
+						INNER JOIN dbo.ServiceTable c ON c.ServiceID = b.ID_SERVICE
 			ELSE
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
-					SELECT 
-						a.ID, 
+					SELECT
+						a.ID,
 						'Сервис-инженер', 13,
 						ISNULL((
 							SELECT TOP 1 ServiceName
-							FROM 
+							FROM
 								dbo.ClientService z
-								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE						
+								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE
 							WHERE z.ID_CLIENT = a.ID
 								AND z.UPD_DATE <= @BEGIN
 							ORDER BY UPD_DATE DESC
 						),
 						(
 							SELECT TOP 1 ServiceName
-							FROM 
+							FROM
 								dbo.ClientService z
-								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE						
+								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE
 							WHERE z.ID_CLIENT = a.ID
 								AND z.UPD_DATE >= @BEGIN
 							ORDER BY UPD_DATE
@@ -670,22 +670,22 @@ BEGIN
 						),
 						(
 							SELECT TOP 1 ServiceName
-							FROM 
+							FROM
 								dbo.ClientService z
-								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE						
+								INNER JOIN dbo.ServiceTable y ON y.ServiceID = z.ID_SERVICE
 							WHERE z.ID_CLIENT = a.ID
 								AND z.UPD_DATE < @END
 							ORDER BY UPD_DATE DESC
 						),
 						NULL AS UPD_DATE, NULL AS US_NAME
-					FROM 
+					FROM
 						#client a
 		END
 
 		/*DELETE FROM #change WHERE OldValue IS NULL*/
 
-		SELECT 
-			a.ClientID, b.ClientFullName, b.ServiceName, b.ManagerName, 
+		SELECT
+			a.ClientID, b.ClientFullName, b.ServiceName, b.ManagerName,
 			(
 				SELECT TOP 1 DistrStr
 				FROM dbo.ClientDistrView z WITH(NOEXPAND)
@@ -693,7 +693,7 @@ BEGIN
 				ORDER BY DS_REG, SystemOrder, DISTR
 			) AS DistrStr,
 			FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName
-		FROM 
+		FROM
 			#change a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 		WHERE ISNULL(OldValue, '') <> ISNULL(NewValue, '')
@@ -702,17 +702,19 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#change') IS NOT NULL
 			DROP TABLE #change
-			
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CHANGE_NEW_SELECT] TO rl_report_change;
+GO

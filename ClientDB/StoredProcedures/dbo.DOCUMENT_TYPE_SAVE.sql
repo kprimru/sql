@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DOCUMENT_TYPE_SAVE]
+ALTER PROCEDURE [dbo].[DOCUMENT_TYPE_SAVE]
 	@ID UNIQUEIDENTIFIER OUTPUT,
 	@NAME	NVARCHAR(128)
 AS
@@ -26,11 +26,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO dbo.DocumentType(NAME)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@NAME)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
@@ -39,14 +39,16 @@ BEGIN
 			SET NAME = @NAME
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_TYPE_SAVE] TO rl_document_type_u;
+GO

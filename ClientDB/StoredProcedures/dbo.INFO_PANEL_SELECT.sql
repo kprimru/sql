@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_PANEL_SELECT]
+ALTER PROCEDURE [dbo].[INFO_PANEL_SELECT]
 	@FILTER	NVARCHAR(256)
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR TEXT LIKE @FILTER
 			OR DETAIL LIKE @FILTER
 		ORDER BY TEXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_PANEL_SELECT] TO public;
+GO

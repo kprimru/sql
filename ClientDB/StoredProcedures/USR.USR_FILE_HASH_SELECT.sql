@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_FILE_HASH_SELECT]
+ALTER PROCEDURE [USR].[USR_FILE_HASH_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,7 +27,7 @@ BEGIN
 			UF_NAME	NVARCHAR(256)
 		);
 
-		
+
 		INSERT INTO @Files
 		SELECT TOP 1000
 			UF_ID, UF_NAME
@@ -38,15 +38,17 @@ BEGIN
 		FROM @Files F
 		INNER JOIN USR.USRFileData D ON F.UF_ID = D.UF_ID
 		OPTION (RECOMPILE);
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[USR_FILE_HASH_SELECT] TO rl_usr_process;
+GO

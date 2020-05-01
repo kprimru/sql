@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_NOTIFY_CLEAR]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_NOTIFY_CLEAR]
 	@DUTY		INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		DELETE
 		FROM dbo.ClientDutyNotify
 		WHERE ID_DUTY = @DUTY
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_NOTIFY_CLEAR] TO rl_client_duty_result;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_PRINT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_PRINT_SELECT]
 	@LIST	VARCHAR(MAX)
 AS
 BEGIN
@@ -22,18 +22,18 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @CLIENT	TABLE(CL_ID INT PRIMARY KEY)	
+		DECLARE @CLIENT	TABLE(CL_ID INT PRIMARY KEY)
 
 		INSERT INTO @CLIENT
 			SELECT ID
 			FROM dbo.TableIDFromXML(@LIST)
 
-		SELECT 
-			a.ClientID, ClientFullName, ServiceName = ServiceName + ' (' + ManagerName + ')', CA_STR_PRNT AS ClientAdress, 
-			ClientActivity, ClientDayBegin, ClientDayEnd, 
+		SELECT
+			a.ClientID, ClientFullName, ServiceName = ServiceName + ' (' + ManagerName + ')', CA_STR_PRNT AS ClientAdress,
+			ClientActivity, ClientDayBegin, ClientDayEnd,
 			ServiceTypeName,
 			DinnerBegin, DinnerEnd,
-			ClientNewsPaper, ClientMainBook, PayTypeName, 
+			ClientNewsPaper, ClientMainBook, PayTypeName,
 			DayName, ServiceStart, ServiceTime,
 			ClientNote, ClientEmail, ClientPlace,
 			PrintServer =
@@ -55,15 +55,15 @@ BEGIN
 							ORDER BY UF_CREATE DESC
 						) o_O
 						WHERE UD_ID_CLIENT = CL_ID
-							AND 
+							AND
 							(
 								OS_NAME LIKE '%Server%'
 								OR
 								OS_NAME LIKE '%Ñåðâåð%'
 							)
-					) THEN 'ÑÅÐÂÅÐÍÀß ÎÑ' 
+					) THEN 'ÑÅÐÂÅÐÍÀß ÎÑ'
 					ELSE NULL END
-		FROM 
+		FROM
 			@CLIENT
 			INNER JOIN dbo.ClientTable a ON CL_ID = a.ClientID
 			INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
@@ -73,14 +73,16 @@ BEGIN
 			LEFT OUTER JOIN dbo.PayTypeTable d ON a.PayTypeID = d.PayTypeID
 			LEFT OUTER JOIN dbo.DayTable e ON e.DayID = a.DayID
 		ORDER BY ClientFullName, ClientID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PRINT_SELECT] TO rl_client_p;
+GO

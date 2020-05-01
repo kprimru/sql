@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISCONNECT_REASON_SELECT]
+ALTER PROCEDURE [dbo].[DISCONNECT_REASON_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE @FILTER IS NULL
 			OR DR_NAME LIKE @FILTER
 		ORDER BY DR_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISCONNECT_REASON_SELECT] TO rl_disconnect_reason_r;
+GO

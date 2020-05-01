@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[DOCUMENT_SELECT]
+ALTER PROCEDURE [Subhost].[DOCUMENT_SELECT]
 	@SUBHOST	NVARCHAR(16),
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME
@@ -26,24 +26,26 @@ BEGIN
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
-		SELECT 
+		SELECT
 			a.DATE, c.Comment, c.DistrStr, a.IB, a.IB_NUM, a.DOC_NAME
-		FROM 
+		FROM
 			dbo.ControlDocument a
 			INNER JOIN dbo.SystemTable b ON a.SYS_NUM = b.SystemNumber
 			INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
 		WHERE c.SubhostName = @SUBHOST
 			AND (a.DATE >= @START OR @START IS NULL)
 			AND (a.DATE < @FINISH OR @FINISH IS NULL)
-		ORDER BY a.DATE DESC	
-		
+		ORDER BY a.DATE DESC
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[DOCUMENT_SELECT] TO rl_web_subhost;
+GO

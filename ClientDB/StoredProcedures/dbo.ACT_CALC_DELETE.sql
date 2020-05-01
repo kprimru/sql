@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_CALC_DELETE]
+ALTER PROCEDURE [dbo].[ACT_CALC_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -29,18 +29,20 @@ BEGIN
 			UPDATE dbo.ActCalc
 			SET STATUS = 3
 			WHERE ID = @ID AND STATUS = 1
-			
+
 			IF @@ROWCOUNT = 0
 				RAISERROR('Уже нельзя удалить заявку', 16, 1)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CALC_DELETE] TO rl_act_calc;
+GO

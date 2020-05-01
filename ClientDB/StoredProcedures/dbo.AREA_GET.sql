@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[AREA_GET]
+ALTER PROCEDURE [dbo].[AREA_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT AR_NAME, AR_ID_REGION, AR_PREFIX, AR_SUFFIX
 		FROM dbo.Area
 		WHERE AR_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_GET] TO rl_area_r;
+GO

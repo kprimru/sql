@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[OFFER_SELECT]
+ALTER PROCEDURE [Tender].[OFFER_SELECT]
 	@TENDER	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, a.DATE, b.SHORT, c.NAME AS TX_NAME,
 			(
 				SELECT COUNT(DISTINCT CLIENT)
@@ -34,21 +34,24 @@ BEGIN
 				FROM Tender.OfferDetail z
 				WHERE z.ID_OFFER = a.ID
 			) AS DIS_COUNT
-		FROM 
+		FROM
 			Tender.Offer a
 			INNER JOIN dbo.Vendor b ON a.ID_VENDOR = b.ID
 			INNER JOIN Common.Tax c ON a.ID_TAX = c.ID
 		WHERE a.STATUS = 1
 			AND a.ID_TENDER = @TENDER
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[OFFER_SELECT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[OFFER_SELECT] TO rl_tender_u;
+GO

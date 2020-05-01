@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_DETAIL_SELECT]
 	@HOST	INT,
 	@DISTR	INT,
 	@COMP	TINYINT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,7 +23,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT
 			P.NAME,
 			[UpDate],
@@ -42,14 +42,16 @@ BEGIN
 			AND Distr = @DISTR
 			AND Comp = @COMP
 		ORDER BY P.START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_SELECT] TO rl_client_stat_detail_r;
+GO

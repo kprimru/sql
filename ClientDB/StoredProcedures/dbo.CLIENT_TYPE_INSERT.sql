@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_INSERT]	
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@DAY	INT,
 	@DAILY	INT,
@@ -30,14 +30,16 @@ BEGIN
 			VALUES(@NAME, @DAILY, @DAY, @PAPPER)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_INSERT] TO rl_client_type_i;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_SAVE]
 	@ID				Int			OUTPUT,
 	@SHORT			VarChar(100),
 	@FULL			VarChar(250),
@@ -56,93 +56,93 @@ BEGIN
 	BEGIN TRY
 
 		IF @ID IS NULL
-		BEGIN			
+		BEGIN
 			INSERT INTO dbo.ClientTable(
 					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
-					OriClient, ClientActivity, ClientPlace, ClientNote, 
-					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
-					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
+					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
+					OriClient, ClientActivity, ClientPlace, ClientNote,
+					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
+					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook,
 					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK,
 					ClientVisitCountID, IsLarge, IsDebtor)
 				VALUES (
 					@SHORT, @FULL, @OFFICIAL, @INN, @SERVICE,
 					@STATUS, @RANGE, @PAY_TYPE, @SERV_TYPE, @CLIENT_KIND,
-					@ORI, @ACTIVITY, @PLACE, @NOTE, 
+					@ORI, @ACTIVITY, @PLACE, @NOTE,
 					@DAY_BEGIN, @DAY_END, @DINNER_BEGIN, @DINNER_END,
-					@VISIT_DAY, @VISIT_TIME, @VISIT_LEN, @PAPPER, @BOOK, 
+					@VISIT_DAY, @VISIT_TIME, @VISIT_LEN, @PAPPER, @BOOK,
 					@EMAIL, @PURCHASE, @HEAD, @USR_CHECK, @STT_CHECK, @HST_CHECK, @INET_CHECK,
 					@VISIT_COUNT, @IsLarge, @IsDebtor
 				)
-				
+
 			SELECT @ID = SCOPE_IDENTITY()
-			
+
 			UPDATE dbo.ClientTable
 			SET ID_MASTER = @ID
 			WHERE ClientID = @ID
-			
+
 			INSERT INTO dbo.ClientService(ID_CLIENT, ID_SERVICE, DATE, MANAGER)
 				SELECT @ID, @SERVICE, dbo.DateOf(GETDATE()), ManagerName
-				FROM 
+				FROM
 					dbo.ServiceTable a
 					INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 				WHERE ServiceID = @SERVICE
-				
+
 			IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-			BEGIN			
+			BEGIN
 				INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
 					SELECT @ID, dbo.Dateof(GETDATE()), 'Новый клиент', 0, 'Автомат'
 			END
-				
+
 			EXEC dbo.CLIENT_REINDEX @ID, NULL
 		END
 		ELSE
 		BEGIN
 			DECLARE @NEW INT
-			
+
 			INSERT INTO dbo.ClientTable(
 					ID_MASTER, STATUS,
 					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
-					OriClient, ClientActivity, ClientPlace, ClientNote, 
-					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
-					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
-					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK, 
+					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
+					OriClient, ClientActivity, ClientPlace, ClientNote,
+					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
+					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook,
+					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK,
 					ClientVisitCountID, IsLarge, IsDebtor, ClientTypeId, ClientLast, UPD_USER)
 				SELECT
 					@ID, 2,
 					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
-					OriClient, ClientActivity, ClientPlace, ClientNote, 
-					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
-					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
-					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK, 
+					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
+					OriClient, ClientActivity, ClientPlace, ClientNote,
+					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
+					DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook,
+					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK,
 					ClientVisitCountID, IsLarge, IsDebtor, ClientTypeId, ClientLast, UPD_USER
 				FROM dbo.ClientTable
 				WHERE ClientID = @ID
-				
+
 			SELECT @NEW = SCOPE_IDENTITY()
-				
+
 			UPDATE dbo.ClientAddress
 			SET CA_ID_CLIENT = @NEW
 			WHERE CA_ID_CLIENT = @ID
-			
+
 			UPDATE dbo.ClientPersonal
 			SET CP_ID_CLIENT = @NEW
 			WHERE CP_ID_CLIENT = @ID
-			
+
 			UPDATE dbo.ClientNames
 			SET ID_CLIENT = @NEW
 			WHERE ID_CLIENT = @ID
-				
+
 			IF (
 					SELECT ServiceStatusReg
 					FROM dbo.ServiceStatusTable
 					WHERE ServiceStatusID = @STATUS
-				) <> 
+				) <>
 				(
 					SELECT ServiceStatusReg
-					FROM 
+					FROM
 						dbo.ServiceStatusTable
 						INNER JOIN dbo.ClientTable ON StatusID = ServiceStatusID
 					WHERE ClientID = @ID AND STATUS = 1
@@ -151,7 +151,7 @@ BEGIN
 				/* кто-то уже отключил/подключил систему. Не трогаем статус*/
 				SET @STATUS = NULL
 			END
-				
+
 			UPDATE dbo.ClientTable
 			SET ClientShortName			=	@SHORT,
 				ClientFullName			=	@FULL,
@@ -190,14 +190,16 @@ BEGIN
 				UPD_USER				=	ORIGINAL_LOGIN()
 			WHERE ClientID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SAVE] TO rl_client_save;
+GO

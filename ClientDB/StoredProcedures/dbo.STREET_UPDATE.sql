@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STREET_UPDATE]
+ALTER PROCEDURE [dbo].[STREET_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@CITY	UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(150),
@@ -32,14 +32,16 @@ BEGIN
 				ST_PREFIX	=	@PREFIX,
 				ST_SUFFIX	=	@SUFFIX
 		WHERE ST_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_UPDATE] TO rl_street_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_DISCONNECT_LIST]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_DISCONNECT_LIST]
 	@ID		UNIQUEIDENTIFIER,
 	@TP		TINYINT, -- 0 - отключить, 1 - включить,
 	@NOTE	NVARCHAR(MAX)
@@ -27,24 +27,26 @@ BEGIN
 		UPDATE dbo.DistrDisconnect
 		SET STATUS = 2
 		WHERE ID_DISTR = @ID AND STATUS = 1
-		
+
 		IF @TP = 0
 		BEGIN
 			UPDATE dbo.DistrDisconnect
 			SET STATUS = 2
 			WHERE ID_DISTR = @ID AND STATUS = 1
-			
+
 			INSERT INTO dbo.DistrDisconnect(ID_DISTR, NOTE)
 				VALUES(@ID, @NOTE)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_DISCONNECT_LIST] TO rl_client_distr_disconnect_list;
+GO

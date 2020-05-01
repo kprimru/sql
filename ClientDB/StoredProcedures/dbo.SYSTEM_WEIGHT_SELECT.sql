@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_SELECT]
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_SELECT]
 	@SYSTEM	INT,
 	@PERIOD	UNIQUEIDENTIFIER
 AS
@@ -24,7 +24,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SystemShortName, NAME, WEIGHT, WEIGHT2, b.ID, c.SystemID
-		FROM 
+		FROM
 			dbo.SystemWeight a
 			INNER JOIN Common.Period b ON a.ID_PERIOD = b.ID
 			INNER JOIN dbo.SystemTable c ON a.ID_SYSTEM = c.SystemID
@@ -32,14 +32,16 @@ BEGIN
 			AND (ID_PERIOD = @PERIOD OR @PERIOD IS NULL)
 			AND START <= DATEADD(MONTH, 3, GETDATE())
 		ORDER BY START DESC, SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_SELECT] TO rl_system_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SELECT_SERVICE]
+ALTER PROCEDURE [dbo].[SELECT_SERVICE]
 	@managerid	INT,
 	@ACTIVE		BIT = 0
 AS
@@ -26,7 +26,7 @@ BEGIN
 		SELECT ServiceName, ServicePositionName, ServiceCount
 		FROM
 			(
-				SELECT 
+				SELECT
 					ServiceName, ServicePositionName,
 					(
 						SELECT COUNT(ClientID)
@@ -34,21 +34,23 @@ BEGIN
 						INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.StatusId = s.ServiceStatusId
 						WHERE z.STATUS = 1 AND z.ClientServiceID = a.ServiceID
 					) AS ServiceCount
-				FROM 
+				FROM
 					dbo.ServiceTable a
 					LEFT OUTER JOIN	dbo.ServicePositionTable b ON a.ServicePositionID = b.ServicePositionID
 				WHERE ManagerID = @managerid
 			) AS o_O
 		WHERE (@ACTIVE = 0 OR ServiceCount <> 0)
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SELECT_SERVICE] TO rl_personal_manager_r;
+GO

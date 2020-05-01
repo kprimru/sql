@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_RATE_GRAPH_DYNAMIC]
+ALTER PROCEDURE [dbo].[SERVICE_RATE_GRAPH_DYNAMIC]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -31,24 +31,24 @@ BEGIN
 		DECLARE @WEEK TABLE (WEEK_ID SMALLINT, WBEGIN SMALLDATETIME, WEND SMALLDATETIME)
 
 		INSERT INTO @WEEK(WEEK_ID, WBEGIN, WEND)
-			SELECT WEEK_ID, WBEGIN, WEND 
+			SELECT WEEK_ID, WBEGIN, WEND
 			FROM dbo.WeekDates(@BEGIN, @END)
-		
+
 		IF OBJECT_ID('tempdb..#clientlist') IS NOT NULL
 			DROP TABLE #clientlist
 
 		CREATE TABLE #clientlist(CL_ID INT PRIMARY KEY, SR_ID INT, SR_DAY INT)
-			
+
 		INSERT INTO #clientlist(CL_ID, SR_ID, SR_DAY)
 			SELECT ClientID, ClientServiceID, DayOrder
-			FROM 
+			FROM
 				dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientKind_Id
 				INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
 				LEFT OUTER JOIN dbo.DayTable d ON d.DayID = a.DayID
 			WHERE ClientServiceID = @SERVICE AND STATUS = 1
-		
+
 		IF OBJECT_ID('tempdb..#weekupdate') IS NOT NULL
 			DROP TABLE #weekupdate
 
@@ -60,19 +60,19 @@ BEGIN
 			)
 
 		INSERT INTO #weekupdate(CL_ID, WEEK_ID, GRAF_CNT)
-			SELECT 
-				CL_ID, WEEK_ID, 
+			SELECT
+				CL_ID, WEEK_ID,
 				(
 					SELECT SUM(CNT)
 					FROM
 						(
-							SELECT 
+							SELECT
 								CASE
 									WHEN EXISTS
 										(
 											SELECT *
 											FROM USR.USRIBDateView WITH(NOEXPAND)
-											WHERE UD_ID_CLIENT = CL_ID 
+											WHERE UD_ID_CLIENT = CL_ID
 												AND UIU_DATE_S BETWEEN WBEGIN AND WEND
 												AND DATEPART(WEEKDAY, UIU_DATE_S) = SR_DAY
 										) THEN 1
@@ -80,7 +80,7 @@ BEGIN
 								END AS CNT
 						) AS o_O
 				)
-			FROM 
+			FROM
 				#clientlist
 				CROSS JOIN @WEEK
 
@@ -92,16 +92,16 @@ BEGIN
 		SELECT @TOTAL = COUNT(*)
 		FROM #clientlist
 
-		SELECT 
+		SELECT
 			'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS WEEK_STR,
 			CONVERT(VARCHAR(20), SUM(GRAF_CNT)) + ' из ' + CONVERT(VARCHAR(20), @TOTAL) AS ServiceCount,
 			CASE @TOTAL
 				WHEN 0 THEN 0
 				ELSE ROUND(100 * CONVERT(DECIMAL(8, 4), SUM(GRAF_CNT)) / @TOTAL, 2)
 			END AS ServiceRate
-		FROM 
+		FROM
 			#weekupdate a
-			INNER JOIN @week b ON a.WEEK_ID = b.WEEK_ID	
+			INNER JOIN @week b ON a.WEEK_ID = b.WEEK_ID
 		GROUP BY WBEGIN, WEND
 		ORDER BY WBEGIN
 
@@ -113,14 +113,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#weekupdate') IS NOT NULL
 			DROP TABLE #weekupdate
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_RATE_GRAPH_DYNAMIC] TO rl_service_rate;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalConsregPath]
+ALTER FUNCTION [Maintenance].[GlobalConsregPath]
 ()
 RETURNS VARCHAR(500)
 AS

@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[JOB_DETAIL_SELECT]
+ALTER PROCEDURE [Maintenance].[JOB_DETAIL_SELECT]
 	@ID			INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,19 +21,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT TOP(100) *, DATEDIFF(ms, START, FINISH) AS EX_TIME
 		FROM Maintenance.Jobs
 		WHERE	Type_Id=@ID
 		ORDER BY START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;
+END;GRANT EXECUTE ON [Maintenance].[JOB_DETAIL_SELECT] TO rl_job_detail_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_MONTH_DELETE]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_MONTH_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM Salary.ServiceStudy
 		WHERE ID_SALARY IN
 			(
@@ -31,7 +31,7 @@ BEGIN
 				WHERE ID_MONTH = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Salary.ServiceDistr
 		WHERE ID_SALARY IN
 			(
@@ -39,8 +39,8 @@ BEGIN
 				FROM Salary.Service
 				WHERE ID_MONTH = @ID
 			)
-		
-		DELETE 
+
+		DELETE
 		FROM Salary.ServiceClient
 		WHERE ID_SALARY IN
 			(
@@ -49,7 +49,7 @@ BEGIN
 				WHERE ID_MONTH = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Salary.Service
 		WHERE ID IN
 			(
@@ -57,14 +57,16 @@ BEGIN
 				FROM Salary.Service
 				WHERE ID_MONTH = @ID
 			)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_MONTH_DELETE] TO rl_salary;
+GO

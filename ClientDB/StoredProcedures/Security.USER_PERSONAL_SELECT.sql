@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_PERSONAL_SELECT]
+ALTER PROCEDURE [Security].[USER_PERSONAL_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,7 +26,7 @@ BEGIN
 		DECLARE @DUTY		INT
 		DECLARE @TEACHER	INT
 		DECLARE @LAWYER		UNIQUEIDENTIFIER
-		
+
 		--IF IS_MEMBER('DBTeacher') = 1 OR IS_MEMBER('DBSuperTeacher') = 1
 			SELECT @TEACHER = TeacherID
 			FROM dbo.TeacherTable
@@ -41,7 +41,7 @@ BEGIN
 			SELECT @SERVICE = ServiceID, @MANAGER = ManagerID
 			FROM dbo.ServiceTable
 			WHERE ServiceLogin = ORIGINAL_LOGIN()
-				AND ServiceDismiss IS NULL			
+				AND ServiceDismiss IS NULL
 
 		--IF IS_MEMBER('DBManager') = 1
 			SELECT @MANAGER = ManagerID
@@ -53,20 +53,22 @@ BEGIN
 			FROM dbo.Lawyer
 			WHERE LW_LOGIN = ORIGINAL_LOGIN()
 
-		SELECT 
-			@SERVICE AS ServiceID, 
-			@MANAGER AS ManagerID, 
-			@DUTY AS DutyID, 
+		SELECT
+			@SERVICE AS ServiceID,
+			@MANAGER AS ManagerID,
+			@DUTY AS DutyID,
 			@TEACHER AS TeacherID,
 			@LAWYER AS LW_ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_PERSONAL_SELECT] TO public;
+GO

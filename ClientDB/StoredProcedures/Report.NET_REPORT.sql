@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[NET_REPORT]
+ALTER PROCEDURE [Report].[NET_REPORT]
 	@PARAM NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#net') IS NOT NULL
 			DROP TABLE #net
-			
+
 		CREATE TABLE #net
 			(
 				NT_ID		INT,
@@ -47,9 +47,9 @@ BEGIN
 				NT_TECH		INT,
 				NT_NET		INT
 			)
-			
+
 		INSERT INTO #net(NT_ID, NT_SHORT, CNT, NT_TECH, NT_NET)
-			SELECT 
+			SELECT
 				NT_ID, NT_SHORT,
 				(
 					SELECT COUNT(*)
@@ -58,11 +58,11 @@ BEGIN
 						AND DS_REG = 0
 						AND z.NT_ID = a.NT_ID
 						AND SST_SHORT NOT IN ('ОДД', 'ДСП', 'АДМ', 'ДИУ')
-				), 
+				),
 				NT_TECH, NT_NET
 			FROM Din.NetType a
-			
-			
+
+
 		SELECT NT_SHORT AS [Название], CNT AS [Кол-во], PRC AS [% от общего]
 		FROM
 			(
@@ -79,14 +79,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#net') IS NOT NULL
 			DROP TABLE #net
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[NET_REPORT] TO rl_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_PERSONAL_SET_NEW]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_PERSONAL_SET_NEW]
 	@CR_ID	INT,
 	@LIST	VARCHAR(MAX)
 AS
@@ -29,7 +29,7 @@ BEGIN
 			SELECT *
 			FROM dbo.GET_TABLE_FROM_LIST(@LIST, ',')
 
-		DELETE 
+		DELETE
 		FROM dbo.ClientRivalPersonal
 		WHERE CRP_ID_RIVAL = @CR_ID
 			AND NOT EXISTS
@@ -41,15 +41,15 @@ BEGIN
 
 		INSERT INTO dbo.ClientRivalPersonal(CRP_ID_RIVAL, CRP_ID_PERSONAL)
 			SELECT DISTINCT @CR_ID, PT_ID
-			FROM @table	
-			
+			FROM @table
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

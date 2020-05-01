@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[STT_REPORT]
+ALTER PROCEDURE [Subhost].[STT_REPORT]
 	@SH			NVARCHAR(64),
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
@@ -33,9 +33,9 @@ BEGIN
 		SELECT @HOST = HostID
 		FROM dbo.Hosts
 		WHERE HostReg = 'LAW'
-		
+
 		DECLARE @SYSTEM	INT
-		
+
 		SELECT @SYSTEM = SystemID
 		FROM dbo.SystemTable
 		WHERE SystemBaseName = 'RGN'
@@ -49,11 +49,11 @@ BEGIN
 				DISTR	INT,
 				COMP	TINYINT
 			)
-			
+
 		INSERT INTO #ip(SYS, DISTR, COMP)
 			SELECT DISTINCT CSD_SYS, CSD_DISTR, CSD_COMP
 			FROM dbo.IPSTTView
-			WHERE CSD_START >= @START AND CSD_START < @FINISH			
+			WHERE CSD_START >= @START AND CSD_START < @FINISH
 
 		IF OBJECT_ID('tempdb..#stt') IS NOT NULL
 			DROP TABLE #stt
@@ -70,20 +70,20 @@ BEGIN
 				CompNumber	TINYINT
 			)
 
-		INSERT INTO #stt(Comment, DistrStr, SST_SHORT, NT_SHORT, STT_COUNT, SystemOrder, DistrNumber, CompNumber)	
-			SELECT 
+		INSERT INTO #stt(Comment, DistrStr, SST_SHORT, NT_SHORT, STT_COUNT, SystemOrder, DistrNumber, CompNumber)
+			SELECT
 				Comment, DistrStr, SST_SHORT, NT_SHORT,
-				CASE 
+				CASE
 					WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 					ELSE STT_COUNT
 				END AS STT_COUNT, SystemOrder, DistrNumber, CompNumber
 			FROM
 				(
-					SELECT 
+					SELECT
 						b.Comment, b.DistrStr, b.SST_SHORT, b.NT_SHORT,
 						(
 							SELECT COUNT(DISTINCT OTHER)
-							FROM 
+							FROM
 								dbo.ClientStat z
 								INNER JOIN dbo.SystemTable y ON SYS_NUM = SystemNumber
 							WHERE b.HostID = y.HostID AND z.DISTR = DistrNumber AND z.COMP = CompNumber
@@ -95,7 +95,7 @@ BEGIN
 					FROM
 						(
 							SELECT SC_ID_HOST, SC_DISTR, SC_COMP
-							FROM 
+							FROM
 								dbo.SubhostComplect a
 								INNER JOIN dbo.Subhost b ON a.SC_ID_SUBHOST = b.SH_ID
 							WHERE SH_REG = @SH
@@ -116,26 +116,28 @@ BEGIN
 						AND NT_SHORT NOT IN ('îíëàéí', 'îíëàéí2', 'îíëàéí3', 'ìîáèëüíàÿ', 'ÎÂÌ (ÎÄ 1)', 'ÎÂÌ (ÎÄ 2)', 'ÎÂÏ', 'ÎÂÏÈ', 'ÎÂÊ', 'ÎÂÌ1', 'ÎÂÌ2', 'ÎÂÊ-Ô')
 						AND b.Complect LIKE b.SystemBaseName + '%'
 				) AS o_O
-			
+
 		SELECT Comment, DistrStr, SST_SHORT, NT_SHORT, STT_COUNT
 		FROM #stt
 		WHERE (@UNCOLLECT = 0 OR @UNCOLLECT = 1 AND STT_COUNT = 0)
 		ORDER BY SystemOrder, DistrNumber, CompNumber
-		
+
 		SET @PERCENT = 100 * CONVERT(FLOAT, (SELECT COUNT(*) FROM #stt WHERE STT_COUNT <> 0)) / (SELECT COUNT(*) FROM #stt)
-		
+
 		SET @PERCENT = ROUND(@PERCENT, 2)
-			
+
 		IF OBJECT_ID('tempdb..#stt') IS NOT NULL
 			DROP TABLE #stt
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[STT_REPORT] TO rl_web_subhost;
+GO

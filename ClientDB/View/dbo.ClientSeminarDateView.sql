@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientSeminarDateView]
+ALTER VIEW [dbo].[ClientSeminarDateView]
 WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		a.ID_CLIENT, a.DATE, COUNT_BIG(*) AS CNT
-	FROM 
+	FROM
 		dbo.ClientStudy a
 		INNER JOIN dbo.ClientStudyPeople b ON a.ID = b.ID_STUDY
 	WHERE ID_PLACE = 3 AND STATUS = 1

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_SYSTEM_DATES]
+ALTER PROCEDURE [dbo].[GET_SYSTEM_DATES]
 	@id INT
 AS
 BEGIN
@@ -28,8 +28,8 @@ BEGIN
 				SELECT SystemBegin AS SystemOp
 				FROM dbo.ClientSystemDatesTable
 				WHERE IDMaster = @id
-			
-				UNION 
+
+				UNION
 
 				SELECT SystemEnd
 				FROM dbo.ClientSystemDatesTable
@@ -46,8 +46,8 @@ BEGIN
 				SELECT SystemBegin AS SystemOp
 				FROM dbo.ClientSystemDatesTable
 				WHERE IDMaster = @id
-			
-				UNION 
+
+				UNION
 
 				SELECT SystemEnd
 				FROM dbo.ClientSystemDatesTable
@@ -56,14 +56,16 @@ BEGIN
 			dbo.ClientSystemDatesTable b ON a.SystemOp = b.SystemEnd
 		WHERE IDMaster = @id
 		ORDER BY SystemOp DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_SYSTEM_DATES] TO rl_client_system_history;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[NET_TYPE_INSERT]	
+ALTER PROCEDURE [Din].[NET_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@NOTE	VARCHAR(50),
 	@NET	SMALLINT,
@@ -36,14 +36,16 @@ BEGIN
 			VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[NET_TYPE_INSERT] TO rl_din_net_type_i;
+GO

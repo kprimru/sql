@@ -4,23 +4,23 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[RegNodeComplectClientView]
+ALTER VIEW [dbo].[RegNodeComplectClientView]
 AS
-	SELECT 
-		ClientID, ISNULL(ClientFullName, Comment) AS ClientName, 
+	SELECT
+		ClientID, ISNULL(ClientFullName, Comment) AS ClientName,
 		ISNULL(ServiceName, SubhostName) AS ServiceName, ServiceID,
 		a.HostID, a.DistrNumber, a.CompNumber, a.DistrStr, a.DS_INDEX, a.DS_REG, a.NT_SHORT, a.NT_TECH, a.SystemOrder,
 		ISNULL(c.ServiceStatusIndex, a.DS_INDEX) AS ServiceStatusIndex,
 		SST_SHORT, a.SystemShortName, ManagerID, ManagerName, SubhostName, Complect
 	FROM
 		(
-			SELECT 
+			SELECT
 				c.HostID, c.DistrNumber, c.CompNumber, c.DistrStr, c.SubhostName, c.DS_INDEX, c.DS_REG, c.NT_SHORT, c.NT_TECH, c.Comment, c.SystemOrder,
 				c.SST_SHORT, c.SystemShortName, c.Complect
 			FROM
 				(
 					SELECT DISTINCT Complect, y.SystemID
-					FROM 
+					FROM
 						Reg.RegNodeSearchView z WITH(NOEXPAND)
 						INNER JOIN dbo.SystemTable y ON z.Complect LIKE y.SystemBaseName + '%'
 					WHERE Complect IS NOT NULL AND DS_REG <> 2

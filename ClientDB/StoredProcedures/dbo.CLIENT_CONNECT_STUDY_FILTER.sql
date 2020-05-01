@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONNECT_STUDY_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_CONNECT_STUDY_FILTER]
 	@MANAGER	NVARCHAR(MAX),
 	@SERVICE	INT,
 	@BEGIN		SMALLDATETIME,
@@ -34,11 +34,11 @@ BEGIN
 		SELECT ClientID, ClientFullName, ManagerName, ServiceName, DATE, LAST_STUDY, LAST_STUDY_CLAIM, RPR_TEXT
 		FROM
 			(
-				SELECT 
+				SELECT
 					ClientID, ClientFullName, ManagerName, ServiceName, DATE, RPR_TEXT,
 					(
 						SELECT MAX(DATE)
-						FROM 
+						FROM
 							dbo.ClientStudy z
 							INNER JOIN dbo.LessonPlaceTable ON ID_PLACE = LessonPlaceID
 						WHERE z.STATUS = 1 AND z.ID_CLIENT = a.ClientID AND Teached = 1
@@ -52,7 +52,7 @@ BEGIN
 				FROM
 					(
 						SELECT a.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName, DATE, RPR_TEXT
-						FROM 
+						FROM
 							dbo.ClientStudyConnectView a
 							INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 							INNER JOIN dbo.TableIDFromXML(@TYPE) d ON d.ID = b.ClientKind_Id
@@ -65,14 +65,16 @@ BEGIN
 		WHERE (@STUDY = 0 OR @STUDY = 1 AND DATE > ISNULL(LAST_STUDY, DATEADD(DAY, -1, DATE)))
 			AND (@CLAIM = 0 OR @CLAIM = 1 AND DATE > ISNULL(LAST_STUDY_CLAIM, DATEADD(DAY, -1, DATE)))
 		ORDER BY DATE DESC, ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONNECT_STUDY_FILTER] TO rl_client_connect_study_filter;
+GO

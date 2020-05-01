@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_REPORT]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@MANAGER	INT,
@@ -13,7 +13,7 @@ CREATE PROCEDURE [dbo].[CLIENT_STAT_REPORT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -25,12 +25,12 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @SERVICE IS NOT NULL
 		BEGIN
 			SET @MANAGER = NULL
 		END
-		
+
 		SET @END = DATEADD(DAY, 1, @END)
 
 		DECLARE @HOST	INT
@@ -40,7 +40,7 @@ BEGIN
 		WHERE HostReg = 'LAW'
 
 		DECLARE @SYSTEM	INT
-		
+
 		SELECT @SYSTEM = SystemID
 		FROM dbo.SystemTable
 		WHERE SystemBaseName = 'RGN'
@@ -55,30 +55,30 @@ BEGIN
 				COMP	TINYINT,
 				DATE	DATETIME
 			)
-			
+
 		INSERT INTO #ip(SYS, DISTR, COMP, DATE)
 			SELECT CSD_SYS, CSD_DISTR, CSD_COMP, MAX(CSD_START)
 			FROM dbo.IPSTTView
-			WHERE CSD_START >= @BEGIN AND CSD_START < @END	
+			WHERE CSD_START >= @BEGIN AND CSD_START < @END
 			GROUP BY CSD_SYS, CSD_DISTR, CSD_COMP
 
-		SELECT 
+		SELECT
 			ROW_NUMBER() OVER(ORDER BY c.ClientFullName, a.SystemOrder) AS RN,
-			c.ClientID, c.ClientFullName, 
-			a.SystemOrder, a.DistrStr AS UD_NAME, a.DistrStr AS UD_COMPLECT, NT_SHORT AS NET_TYPE, 
-			
-			STT_DATE AS LAST_DATE, 
-			CASE 
+			c.ClientID, c.ClientFullName,
+			a.SystemOrder, a.DistrStr AS UD_NAME, a.DistrStr AS UD_COMPLECT, NT_SHORT AS NET_TYPE,
+
+			STT_DATE AS LAST_DATE,
+			CASE
 				WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 				ELSE STT_COUNT
-			END AS FILE_COUNT		
+			END AS FILE_COUNT
 		FROM
 			(
-				SELECT 
+				SELECT
 					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
 					(
 						SELECT COUNT(DISTINCT OTHER)
-						FROM 
+						FROM
 							dbo.ClientStat z
 							INNER JOIN dbo.SystemTable b ON SYS_NUM = SystemNumber
 						WHERE a.HostID = b.HostID AND z.DISTR = DistrNumber AND z.COMP = CompNumber
@@ -87,7 +87,7 @@ BEGIN
 					) AS STT_COUNT,
 					ISNULL((
 						SELECT MAX(DATE)
-						FROM 
+						FROM
 							dbo.ClientStat z
 							INNER JOIN dbo.SystemTable b ON SYS_NUM = SystemNumber
 						WHERE a.HostID = b.HostID AND z.DISTR = DistrNumber AND z.COMP = CompNumber
@@ -95,7 +95,7 @@ BEGIN
 							AND DATE < @END
 					), c.DATE) AS STT_DATE,
 					c.DISTR AS IP_DISTR
-				FROM 
+				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 					LEFT OUTER JOIN #ip c ON c.SYS = b.SystemNumber AND c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber
@@ -110,24 +110,26 @@ BEGIN
 		WHERE (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (
-					CASE 
+					CASE
 						WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 						ELSE STT_COUNT
 					END = 0 AND (STT_CHECK = 1 OR STT_CHECK IS NULL)
-					OR 
+					OR
 					@EMPTY = 0)
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 2 END, ManagerName, ServiceName, c.ClientFullName, a.SystemOrder, a.DistrStr
-		
+
 		IF OBJECT_ID('tempdb..#ip') IS NOT NULL
 			DROP TABLE #ip
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_REPORT] TO rl_client_stat_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_GET]
+ALTER PROCEDURE [Common].[PERIOD_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT NAME, TYPE, START, FINISH
 		FROM Common.Period
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_GET] TO rl_period_r;
+GO

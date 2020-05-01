@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_STATUS_SELECT]
+ALTER PROCEDURE [Task].[TASK_STATUS_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,14 +24,16 @@ BEGIN
 		SELECT ID, NAME, PSEDO, INT_VAL
 		FROM Task.TaskStatus
 		ORDER BY INT_VAL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_STATUS_SELECT] TO rl_task_r;
+GO

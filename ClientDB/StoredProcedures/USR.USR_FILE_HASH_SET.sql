@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_FILE_HASH_SET]
+ALTER PROCEDURE [USR].[USR_FILE_HASH_SET]
 	@ID		INT,
 	@HASH	VARCHAR(100)
 AS
@@ -22,20 +22,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		UPDATE USR.USRFile
 		SET UF_HASH = @HASH
 		WHERE UF_HASH IS NULL
 			AND UF_ID = @ID;
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[USR_FILE_HASH_SET] TO rl_usr_process;
+GO

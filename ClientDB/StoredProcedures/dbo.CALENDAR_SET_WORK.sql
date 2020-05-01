@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALENDAR_SET_WORK]
+ALTER PROCEDURE [dbo].[CALENDAR_SET_WORK]
 	@ID	INT
 AS
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 		WHERE CalendarID = @ID
 
 		UPDATE dbo.Calendar
-		SET CalendarWork = 
+		SET CalendarWork =
 				CASE CalendarWork
 					WHEN 1 THEN 0
 					WHEN 0 THEN 1
@@ -46,14 +46,16 @@ BEGIN
 					ELSE 0
 				END
 		WHERE CalendarDate >= @DT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CALENDAR_SET_WORK] TO rl_calendar_u;
+GO

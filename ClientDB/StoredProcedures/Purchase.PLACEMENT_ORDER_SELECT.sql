@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PLACEMENT_ORDER_SELECT]
+ALTER PROCEDURE [Purchase].[PLACEMENT_ORDER_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR PO_NAME LIKE @FILTER
 			OR CONVERT(VARCHAR(20), PO_NUM) LIKE @FILTER
 		ORDER BY PO_NUM, PO_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PLACEMENT_ORDER_SELECT] TO rl_placement_order_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SERVICE_GRAPH]
+ALTER PROCEDURE [Report].[SERVICE_GRAPH]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,13 +22,13 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ManagerName AS [Руководитель], ServiceName AS [СИ], CL_CNT AS [Кол-во клиентов], AVG_TIME AS [Среднее время у клиента],
 			dbo.TimeMinToStr(TOTAL_TIME) AS [Общее время в неделю]
 		FROM
 			(
 				SELECT ManagerName, ServiceName, COUNT(*) AS CL_CNT, AVG(ServiceTime) AS AVG_TIME, SUM(ServiceTime) AS TOTAL_TIME
-				FROM 
+				FROM
 					dbo.ClientTable a
 					INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 					INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
@@ -37,14 +37,16 @@ BEGIN
 				GROUP BY ManagerName, ServiceName
 			) AS o_O
 		ORDER BY ManagerName, ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SERVICE_GRAPH] TO rl_report;
+GO

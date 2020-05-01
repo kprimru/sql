@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE @FILTER IS NULL
 			OR ClientTypeName LIKE @FILTER
 		ORDER BY ClientTypeName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_SELECT] TO rl_client_type_r;
+GO

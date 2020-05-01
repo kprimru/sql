@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_GET]
+ALTER PROCEDURE [Security].[USER_GET]
 	@ID	INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT name AS US_NAME
 		FROM sys.database_principals
 		WHERE principal_id = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_GET] TO rl_user_i;
+GO

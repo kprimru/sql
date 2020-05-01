@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_TRADE_SITE_SELECT]
+ALTER PROCEDURE [Purchase].[CLIENT_CONDITION_TRADE_SITE_SELECT]
 	@ID	INT
 AS
 BEGIN
@@ -22,13 +22,13 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			TS_ID, TS_NAME, TS_URL, TS_SHORT,
-			CONVERT(BIT, 
+			CONVERT(BIT,
 				ISNULL(
 					(
 						SELECT COUNT(*)
-						FROM 
+						FROM
 							Purchase.ClientConditionCard
 							INNER JOIN Purchase.ClientConditionTradeSite ON CC_ID = CTS_ID_CC
 						WHERE CC_ID_CLIENT = @ID
@@ -38,14 +38,16 @@ BEGIN
 			) AS TS_CHECKED
 		FROM Purchase.TradeSite
 		ORDER BY TS_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLIENT_CONDITION_TRADE_SITE_SELECT] TO rl_condition_card_r;
+GO

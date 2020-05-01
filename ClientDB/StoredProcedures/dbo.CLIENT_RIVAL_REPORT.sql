@@ -4,20 +4,20 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_REPORT]
 	@CL_ID INT,
-	@STATUS UNIQUEIDENTIFIER,	
+	@STATUS UNIQUEIDENTIFIER,
 	@STUDY	INT,
 	@RIVAL	INT,
 	@EVENT_DATE	SMALLDATETIME,
 	@EVENT_COUNT INT,
-	@MANAGER VARCHAR(100) = NULL OUTPUT, 
+	@MANAGER VARCHAR(100) = NULL OUTPUT,
 	@SERVICE VARCHAR(100) = NULL OUTPUT,
-	@SYSTEMS VARCHAR(500) = NULL OUTPUT	
+	@SYSTEMS VARCHAR(500) = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -29,14 +29,14 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @DISCONNECT SMALLDATETIME
-		
+
 		IF NOT EXISTS
 			(
 				SELECT *
 				FROM dbo.ClientDistrView a WITH(NOEXPAND)
-				WHERE ID_CLIENT = @CL_ID 
+				WHERE ID_CLIENT = @CL_ID
 					AND DS_REG = 0
 			)
 			SELECT @DISCONNECT = MAX(DisconnectDate)
@@ -44,7 +44,7 @@ BEGIN
 			WHERE ClientID = @CL_ID
 
 		SELECT TOP 1 @MANAGER = MANAGER, @SERVICE = ServiceName
-		FROM 
+		FROM
 			dbo.ClientService
 			INNER JOIN dbo.ServiceTable ON ServiceID = ID_SERVICE
 		WHERE DATE <= @DISCONNECT
@@ -59,7 +59,7 @@ BEGIN
 		SET @SYSTEMS = ''
 
 		SELECT @SYSTEMS = @SYSTEMS + SystemShortName + ', '
-		FROM 
+		FROM
 			dbo.ClientDistrView a
 		WHERE ID_CLIENT = @CL_ID
 			AND (DS_ID = @STATUS OR @STATUS IS NULL)
@@ -73,7 +73,7 @@ BEGIN
 		DECLARE @ST VARCHAR(50)
 
 		SELECT @ST = ServiceTypeShortName
-		FROM 
+		FROM
 			dbo.ClientTable a INNER JOIN
 			dbo.ServiceTypeTable b ON a.ServiceTypeID = b.ServiceTypeID
 		WHERE ClientID = @CL_ID
@@ -83,18 +83,18 @@ BEGIN
 
 		SET @SYSTEMS = @SYSTEMS + ISNULL('(' + CONVERT(NVARCHAR(32), (SELECT MIN(ConnectDate) FROM dbo.ClientConnectView WITH(NOEXPAND) WHERE ClientID = @CL_ID), 104) + ')', '')
 
-		DECLARE @RESULT TABLE 
+		DECLARE @RESULT TABLE
 			(
 				NUM INT IDENTITY(1, 1) PRIMARY KEY,
 				EventDate SMALLDATETIME NULL,
 				EventText VARCHAR(MAX) NULL,
-				StudyDateTeacher VARCHAR(150) NULL,		
+				StudyDateTeacher VARCHAR(150) NULL,
 				StudyComment VARCHAR(MAX),
 				RivalDateType VARCHAR(150),
 				RivalCondition VARCHAR(MAX),
 				RivalAction VARCHAR(MAX)
 			)
-			
+
 		DECLARE @EVENT TABLE (ID INT IDENTITY(1, 1), DATE SMALLDATETIME, TXT VARCHAR(MAX))
 
 		INSERT INTO @EVENT (DATE, TXT)
@@ -116,18 +116,18 @@ BEGIN
 			)
 
 		INSERT INTO @STD(DateTeacher, StudyComment)
-			SELECT 
+			SELECT
 				CONVERT(VARCHAR(20), DATE, 104) + ' ' + TeacherName,
 				CASE REPLACE(RECOMEND, CHAR(10), '')
 					WHEN '' THEN ''
 					ELSE REPLACE(RECOMEND, CHAR(10), '') + CHAR(10)
-				END + 
+				END +
 				REPLACE(NOTE, CHAR(10), '')
 			FROM
 				dbo.ClientStudy a INNER JOIN
 				dbo.TeacherTable b ON a.ID_TEACHER = b.TeacherID
 			WHERE ID_CLIENT = @CL_ID AND STATUS = 1
-			ORDER BY DATE DESC, ID DESC	
+			ORDER BY DATE DESC, ID DESC
 
 		DELETE FROM @STD WHERE ID > @STUDY
 
@@ -138,9 +138,9 @@ BEGIN
 				Condition	VARCHAR(MAX),
 				Action		VARCHAR(MAX)
 			)
-			
+
 		INSERT INTO @RIV(DateType, Condition, Action)
-			SELECT 
+			SELECT
 				CONVERT(VARCHAR(20), CR_DATE, 104) + ' ' + ISNULL(RivalTypeName, ''),
 				REPLACE(CR_CONDITION, CHAR(10), ''),
 				REVERSE(
@@ -154,15 +154,15 @@ BEGIN
 								ORDER BY CRR_DATE DESC, CRR_ID DESC FOR XML PATH('')
 							)
 						), 1, 1, ''
-					)		
+					)
 				)
 			FROM
-				dbo.ClientRival a 
+				dbo.ClientRival a
 				LEFT OUTER JOIN dbo.RivalTypeTable b ON a.CR_ID_TYPE = b.RivalTypeID
 			WHERE CL_ID = @CL_ID AND CR_ACTIVE = 1
 			ORDER BY CR_DATE DESC, CR_ID DESC
-		
-		
+
+
 
 		DELETE FROM @RIV WHERE ID > @RIVAL
 
@@ -186,43 +186,45 @@ BEGIN
 		WHILE @I < @MAX
 		BEGIN
 			INSERT INTO @result DEFAULT VALUES
-			
+
 			SET @I = @I + 1
 		END
 
 		UPDATE t
 		SET EventDate = DATE,
 			EventText = TXT
-		FROM 
-			@RESULT t 
+		FROM
+			@RESULT t
 			INNER JOIN @EVENT e ON e.ID = t.NUM
-		
+
 		UPDATE t
 		SET t.StudyDateTeacher = e.DateTeacher,
 			t.StudyComment = e.StudyComment
-		FROM 
-			@RESULT t 
+		FROM
+			@RESULT t
 			INNER JOIN @STD e ON e.ID = t.NUM
 
 		UPDATE t
 		SET t.RivalDateType = e.DateType,
 			t.RivalCondition = e.Condition,
 			t.RivalAction = e.Action
-		FROM 
-			@RESULT t 
+		FROM
+			@RESULT t
 			INNER JOIN @RIV e ON e.ID = t.NUM
 
 		SELECT *
 		FROM @RESULT
 		ORDER BY NUM
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_REPORT] TO rl_client_rival_report;
+GO

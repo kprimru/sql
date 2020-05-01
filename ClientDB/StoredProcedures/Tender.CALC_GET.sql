@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[CALC_GET]
+ALTER PROCEDURE [Tender].[CALC_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,17 @@ BEGIN
 		SELECT ID_DIRECTION, NAME, PRICE, NOTE, CALC_DATA
 		FROM Tender.Calc
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[CALC_GET] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[CALC_GET] TO rl_tender_u;
+GO

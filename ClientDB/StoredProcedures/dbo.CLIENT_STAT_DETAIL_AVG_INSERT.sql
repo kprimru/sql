@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_AVG_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_DETAIL_AVG_INSERT]
 	@WEEK_ID					UniqueIdentifier,
 	@NET						NVARCHAR(256),
 	@COMPL_COUNT				INT,
@@ -25,7 +25,7 @@ CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_AVG_INSERT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -37,7 +37,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.ClientStatDetailAVG([UpDate],
 											WeekId,
 											Net,
@@ -76,14 +76,15 @@ BEGIN
 				@AVG_ENTER_COUNT,
 				@AVG_WORK_USER_ENTER_COUNT,
 				@AVG_SESSION_TIME;
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;
+END;GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_AVG_INSERT] TO rl_client_stat_detail_avg_i;
+GO

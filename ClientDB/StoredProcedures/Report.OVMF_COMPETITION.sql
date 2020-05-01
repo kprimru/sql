@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[OVMF_COMPETITION]
+ALTER PROCEDURE [Report].[OVMF_COMPETITION]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -43,14 +43,14 @@ BEGIN
 		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON D.HostId = R.HostId AND D.DISTR = R.DistrNumber AND D.COMP = R.CompNumber
 		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON C.ClientID = D.ID_CLIENT
 		ORDER BY C.ServiceName, IsNull(C.ServiceName, R.SubhostName), IsNull(C.ClientFullName, R.Comment)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

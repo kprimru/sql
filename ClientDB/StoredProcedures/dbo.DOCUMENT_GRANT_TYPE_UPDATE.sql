@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DOCUMENT_GRANT_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[DOCUMENT_GRANT_TYPE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(50),
 	@DEF	BIT
@@ -33,14 +33,16 @@ BEGIN
 		SET		NAME	=	@NAME,
 				DEF		=	@DEF
 		WHERE	ID		=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_GRANT_TYPE_UPDATE] TO rl_doc_grant_type_u;
+GO

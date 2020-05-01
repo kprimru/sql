@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[USR_OLD_COMPLECT]
+ALTER PROCEDURE [Report].[USR_OLD_COMPLECT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -25,8 +25,8 @@ BEGIN
 		SELECT Sys1 AS [Старая система], Sys2 AS [Новая система], UD_DISTR AS [Номер дистрибутива], UD_COMP AS [Номер комп], MAX_DATE AS [Дата последнего файла USR]
 		FROM
 			(
-				SELECT 
-					Sys1, Sys2, UD_DISTR, UD_COMP, 
+				SELECT
+					Sys1, Sys2, UD_DISTR, UD_COMP,
 					(
 								SELECT TOP 1 UF_DATE
 								FROM USR.USRFile
@@ -35,10 +35,10 @@ BEGIN
 					) AS MAX_DATE
 				FROM
 					(
-						SELECT 
+						SELECT
 							b.SystemShortName AS Sys1, c.SystemShortName AS Sys2, a.UD_DISTR, a.UD_COMP,
-							e.UD_ID		
-						FROM 
+							e.UD_ID
+						FROM
 							USR.USRComplectNumberView a WITH(NOEXPAND)
 							INNER JOIN dbo.SystemTable b ON a.UD_SYS = b.SystemNumber
 							INNER JOIN dbo.SystemTable c ON c.HostID = b.HostID AND b.SystemNumber <> c.SystemNumber
@@ -48,17 +48,19 @@ BEGIN
 						WHERE e.UD_ACTIVE = 1 AND f.UD_ACTIVE = 1 AND f.UD_ID_CLIENT IS NOT NULL AND e.UD_ID_CLIENT IS NOT NULL
 					) AS o_O
 			) AS o_O
-		WHERE MAX_DATE <= DATEADD(MONTH, -2, GETDATE()) 
+		WHERE MAX_DATE <= DATEADD(MONTH, -2, GETDATE())
 		ORDER BY UD_DISTR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [Report].[USR_OLD_COMPLECT] TO rl_report;
+GO

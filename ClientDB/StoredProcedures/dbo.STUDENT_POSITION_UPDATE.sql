@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDENT_POSITION_UPDATE]
+ALTER PROCEDURE [dbo].[STUDENT_POSITION_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(150)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE dbo.StudentPositionTable
 		SET StudentPositionName = @NAME
 		WHERE StudentPositionID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDENT_POSITION_UPDATE] TO rl_student_position_u;
+GO

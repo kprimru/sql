@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[EVENT_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[EVENT_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL,
 	@HIDDEN	BIT = NULL
 AS
@@ -25,7 +25,7 @@ BEGIN
 
 		SELECT EventTypeID, EventTypeName, EventTypeReport, EventTypeHide
 		FROM dbo.EventTypeTable
-		WHERE		
+		WHERE
 			(EventTypeReport = 1 OR @HIDDEN = 1)
 			AND
 				(
@@ -36,14 +36,16 @@ BEGIN
 				OR EventTypeName LIKE @FILTER
 				)
 		ORDER BY EventTypeName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[EVENT_TYPE_SELECT] TO rl_event_type_r;
+GO

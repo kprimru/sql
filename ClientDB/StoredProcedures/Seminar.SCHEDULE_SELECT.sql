@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SCHEDULE_SELECT]
+ALTER PROCEDURE [Seminar].[SCHEDULE_SELECT]
 	@BEGIN		SMALLDATETIME 		= NULL,
 	@END		SMALLDATETIME 		= NULL,
 	@CLIENT		NVARCHAR(128) 		= NULL,
@@ -27,17 +27,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, DATE, LIMIT,
 			ID_SUBJECT, b.NAME, b.NOTE, b.READER,
 			(
 				SELECT COUNT(*)
 				FROM Seminar.PersonalView z WITH(NOEXPAND)
 				WHERE z.ID_SCHEDULE = a.ID
-					AND z.INDX = 1 
+					AND z.INDX = 1
 			) AS PER_COUNT,
 			CONVERT(VARCHAR(20), DATE, 104) + ' ' + b.NAME AS TSC_LOOKUP
-		FROM 
+		FROM
 			Seminar.Schedule a
 			INNER JOIN Seminar.Subject b ON a.ID_SUBJECT = b.ID
 		WHERE (a.DATE >= @BEGIN OR @BEGIN IS NULL)
@@ -80,14 +80,16 @@ BEGIN
 						)
 				)
 		ORDER BY DATE DESC, TIME DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[SCHEDULE_SELECT] TO rl_seminar;
+GO

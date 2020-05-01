@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(TinyInt)]
+ALTER FUNCTION [Common].[Is Equal(TinyInt)]
 (
 	@V1	TinyInt,
 	@V2	TinyInt

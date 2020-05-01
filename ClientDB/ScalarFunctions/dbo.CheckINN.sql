@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[CheckINN]
+ALTER FUNCTION [dbo].[CheckINN]
 (
 	@inn varchar(15)
 )
@@ -21,7 +21,7 @@ BEGIN
 	SET @R = 1
 	SET @StrNum = @inn
 	SET @L =  LEN (@inn)
-	
+
 	/* Проверка длины ИНН*/
 
 	IF @inn = '' OR @inn = '-'
@@ -46,23 +46,23 @@ BEGIN
 			SET @Num = CONVERT(INT, SUBSTRING (@StrNum, 1, 1))
 			SET @StrNum = SUBSTRING (@StrNum, 2, @L)
 			IF @I = 1
-				SET @CheckSumm = @CheckSumm + @Num * 2 	
+				SET @CheckSumm = @CheckSumm + @Num * 2 
 			IF @I = 2
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 3
-				SET @CheckSumm = @CheckSumm + @Num * 10 	
+				SET @CheckSumm = @CheckSumm + @Num * 10 
 			IF @I = 4
-				SET @CheckSumm = @CheckSumm + @Num * 3 	
+				SET @CheckSumm = @CheckSumm + @Num * 3 
 			IF @I = 5
-				SET @CheckSumm = @CheckSumm + @Num * 5 	
+				SET @CheckSumm = @CheckSumm + @Num * 5 
 			IF @I = 6
-				SET @CheckSumm = @CheckSumm + @Num * 9 	
+				SET @CheckSumm = @CheckSumm + @Num * 9 
 			IF @I = 7
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 8
-				SET @CheckSumm = @CheckSumm + @Num * 6 	
+				SET @CheckSumm = @CheckSumm + @Num * 6 
 			IF @I = 9
-				SET @CheckSumm = @CheckSumm + @Num * 8 	
+				SET @CheckSumm = @CheckSumm + @Num * 8 
 
 			SET @I = @I + 1
 		END
@@ -88,23 +88,23 @@ BEGIN
 			SET @StrNum = SUBSTRING (@StrNum, 2, @L)
 
 			IF @I = 1
-				SET @CheckSumm = @CheckSumm + @Num * 7 	
+				SET @CheckSumm = @CheckSumm + @Num * 7 
 			IF @I = 2
-				SET @CheckSumm = @CheckSumm + @Num * 2 	
+				SET @CheckSumm = @CheckSumm + @Num * 2 
 			IF @I = 3
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 4
-				SET @CheckSumm = @CheckSumm + @Num * 10 	
+				SET @CheckSumm = @CheckSumm + @Num * 10 
 			IF @I = 5
-				SET @CheckSumm = @CheckSumm + @Num * 3	
+				SET @CheckSumm = @CheckSumm + @Num * 3
 			IF @I = 6
-				SET @CheckSumm = @CheckSumm + @Num * 5 	
+				SET @CheckSumm = @CheckSumm + @Num * 5 
 			IF @I = 7
-				SET @CheckSumm = @CheckSumm + @Num * 9 	
+				SET @CheckSumm = @CheckSumm + @Num * 9 
 			IF @I = 8
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 9
-				SET @CheckSumm = @CheckSumm + @Num * 6 	
+				SET @CheckSumm = @CheckSumm + @Num * 6 
 			IF @I = 10
 				SET @CheckSumm = @CheckSumm + @Num * 8
 			SET @I = @I + 1
@@ -128,23 +128,23 @@ BEGIN
 			SET @Num = CONVERT(INT, SUBSTRING (@StrNum, 1, 1))
 			SET @StrNum = SUBSTRING (@StrNum, 2, @L)
 			IF @I = 1
-				SET @CheckSumm = @CheckSumm + @Num * 3 	
+				SET @CheckSumm = @CheckSumm + @Num * 3 
 			IF @I = 2
-				SET @CheckSumm = @CheckSumm + @Num * 7 	
+				SET @CheckSumm = @CheckSumm + @Num * 7 
 			IF @I = 3
-				SET @CheckSumm = @CheckSumm + @Num * 2 	
+				SET @CheckSumm = @CheckSumm + @Num * 2 
 			IF @I = 4
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 5
-				SET @CheckSumm = @CheckSumm + @Num * 10	
+				SET @CheckSumm = @CheckSumm + @Num * 10
 			IF @I = 6
-				SET @CheckSumm = @CheckSumm + @Num * 3 	
+				SET @CheckSumm = @CheckSumm + @Num * 3 
 			IF @I = 7
-				SET @CheckSumm = @CheckSumm + @Num * 5	
+				SET @CheckSumm = @CheckSumm + @Num * 5
 			IF @I = 8
-				SET @CheckSumm = @CheckSumm + @Num * 9 	
+				SET @CheckSumm = @CheckSumm + @Num * 9 
 			IF @I = 9
-				SET @CheckSumm = @CheckSumm + @Num * 4 	
+				SET @CheckSumm = @CheckSumm + @Num * 4 
 			IF @I = 10
 				SET @CheckSumm = @CheckSumm + @Num * 6
 			IF @I = 11

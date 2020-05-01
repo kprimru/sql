@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[TYPE_SAVE]
+ALTER PROCEDURE [Contract].[TYPE_SAVE]
 	@ID		UNIQUEIDENTIFIER OUTPUT,
 	@NAME	NVARCHAR(128),
 	@PREFIX	NVARCHAR(32),
@@ -36,10 +36,10 @@ BEGIN
 			INSERT INTO Contract.Type(NAME, CDAY, CMONTH, PREFIX, FORM, Type_Id, PayType_Id)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@NAME, @CDAY, @CMONTH, @PREFIX, @FORM, @CTYPE, @PTYPE)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
-		ELSE	
+		ELSE
 			UPDATE Contract.Type
 			SET NAME	=	@NAME,
 				PREFIX	=	@PREFIX,
@@ -49,8 +49,8 @@ BEGIN
 				Type_Id =	@CTYPE,
 				PayType_Id = @PTYPE
 			WHERE ID = @ID
-			
-		DELETE 
+
+		DELETE
 		FROM Contract.TypeForms
 		WHERE ID_TYPE = @ID
 			AND ID_FORM NOT IN
@@ -69,14 +69,16 @@ BEGIN
 					WHERE ID_TYPE = @ID
 						AND ID_FORM = a.ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[TYPE_SAVE] TO rl_contract_type_u;
+GO

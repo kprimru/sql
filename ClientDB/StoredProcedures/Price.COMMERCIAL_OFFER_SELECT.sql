@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[COMMERCIAL_OFFER_SELECT]
+ALTER PROCEDURE [Price].[COMMERCIAL_OFFER_SELECT]
 	@CLIENT	INT,
 	@RC		INT = NULL OUTPUT
 AS
@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ID, DATE, NUM, NOTE,
 			CONVERT(VARCHAR(20), CREATE_DATE, 104) + ' ' + CREATE_USER AS CREATE_DATA
 		FROM Price.CommercialOffer
@@ -41,14 +41,16 @@ BEGIN
 		ORDER BY DATE, NUM DESC
 
 		SELECT @RC = @@ROWCOUNT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[COMMERCIAL_OFFER_SELECT] TO rl_commercial_offer_r;
+GO

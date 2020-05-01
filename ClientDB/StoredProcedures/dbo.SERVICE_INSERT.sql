@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_INSERT]	
+ALTER PROCEDURE [dbo].[SERVICE_INSERT]
 	@NAME	VARCHAR(100),
 	@POS	INT,
 	@MANAGER	INT,
@@ -31,21 +31,23 @@ BEGIN
 
 		INSERT INTO	dbo.ServiceTable(ServiceName, ServicePositionID, ManagerID, ServicePhone,
 					ServiceLogin, ServiceFullName, ServiceFirst)
-			VALUES(@NAME, @POS, @MANAGER, @PHONE, @LOGIN, @FULL, GETDATE())	
+			VALUES(@NAME, @POS, @MANAGER, @PHONE, @LOGIN, @FULL, GETDATE())
 
 		SELECT @ID = SCOPE_IDENTITY()
 
 		INSERT INTO dbo.ServiceCity(ID_SERVICE, ID_CITY)
 			SELECT @ID, ID
 			FROM dbo.TableGUIDFromXML(@CITY)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_INSERT] TO rl_personal_service_i;
+GO

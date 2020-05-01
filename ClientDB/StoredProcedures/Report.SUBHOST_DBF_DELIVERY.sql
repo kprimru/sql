@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SUBHOST_DBF_DELIVERY]
+ALTER PROCEDURE [Report].[SUBHOST_DBF_DELIVERY]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -42,59 +42,61 @@ BEGIN
 				PR_DATE DATETIME,
 				RNS_COMMENT NVARCHAR(100)
 			)
-		
+
 		INSERT INTO #regnode
-			SELECT 
-				RNS_ID, RNS_ID_PERIOD, RNS_ID_SYSTEM, RNS_DISTR, 
-				RNS_COMP, RNS_ID_TYPE, RNS_ID_NET, 
+			SELECT
+				RNS_ID, RNS_ID_PERIOD, RNS_ID_SYSTEM, RNS_DISTR,
+				RNS_COMP, RNS_ID_TYPE, RNS_ID_NET,
 				RNS_ID_OLD_SYS, RNS_ID_NEW_SYS,
 				RNS_ID_OLD_NET, RNS_ID_NEW_NET,
 				SH_LST_NAME, PR_DATE, RNS_COMMENT
-			FROM 
+			FROM
 				[PC275-SQL\DELTA].DBF.Subhost.RegNodeSubhostTable
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SubhostTable ON RNS_ID_HOST = SH_ID
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PeriodTable ON RNS_ID_PERIOD = PR_ID
 			WHERE SH_LST_NAME IN ('М', 'У1', 'Л1', 'Н1')
 				AND PR_DATE >= DATEADD(YEAR, -1, GETDATE())
 				AND PR_DATE <= GETDATE()
-		
-		
+
+
 				SELECT
-					SH_LST_NAME AS [Подхост], PR_DATE AS [Месяц], 
+					SH_LST_NAME AS [Подхост], PR_DATE AS [Месяц],
 					RNS_COMMENT AS [Примечание],
 					CASE
 						WHEN REG_ID_OLD_SYS IS NULL AND REG_ID_NEW_SYS IS NULL THEN b.SYS_SHORT_NAME
 						ELSE 'с ' + e.SYS_SHORT_NAME + ' на '  + f.SYS_SHORT_NAME
 					END AS [Система],
 					CASE
-						WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME					
-						ELSE 
-							'с ' + ISNULL(g.SN_NAME, '') + ' на ' + ISNULL(h.SN_NAME, '') 
+						WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME
+						ELSE
+							'с ' + ISNULL(g.SN_NAME, '') + ' на ' + ISNULL(h.SN_NAME, '')
 					END [Сеть],
 					dbo.DistrString(NULL, REG_DISTR_NUM, REG_COMP_NUM) AS [Дистрибутив],
 					CASE SST_LST WHEN '' THEN 'КОМ' ELSE SST_LST END AS [Тип системы]
-				FROM 
-					#regnode a 				
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE				
+				FROM
+					#regnode a 
+					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTable b ON b.SYS_ID = a.REG_ID_SYSTEM
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable c ON SN_ID = a.REG_ID_NET					
+					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable c ON SN_ID = a.REG_ID_NET
 					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTable e ON e.SYS_ID = a.REG_ID_OLD_SYS
 					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTable f ON f.SYS_ID = a.REG_ID_NEW_SYS
-					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable g ON g.SN_ID = a.REG_ID_OLD_NET						
-					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable h ON h.SN_ID = a.REG_ID_NEW_NET						
+					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable g ON g.SN_ID = a.REG_ID_OLD_NET
+					LEFT OUTER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetTable h ON h.SN_ID = a.REG_ID_NEW_NET
 		ORDER BY PR_DATE DESC, SH_LST_NAME, RNS_COMMENT
 
 
 		IF OBJECT_ID('tempdb..#regnode') IS NOT NULL
 			DROP TABLE #regnode
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SUBHOST_DBF_DELIVERY] TO rl_report;
+GO

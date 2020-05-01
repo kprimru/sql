@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_SCHEDULE_INSERT]
+ALTER PROCEDURE [Training].[TRAINING_SCHEDULE_INSERT]
 	@SUBJECT	UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
 	@LIMIT		SMALLINT,
@@ -31,16 +31,18 @@ BEGIN
 			OUTPUT INSERTED.TSC_ID INTO @TBL
 			VALUES(@SUBJECT, @DATE, @LIMIT)
 
-		SELECT @ID = ID 
+		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_SCHEDULE_INSERT] TO rl_training_i;
+GO

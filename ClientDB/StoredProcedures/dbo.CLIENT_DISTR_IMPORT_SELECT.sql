@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_IMPORT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_IMPORT_SELECT]
 	@CLIENT		INT,
 	@DISTR		INT,
 	@COMMENT	VARCHAR(100),
@@ -25,17 +25,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			HostID, SystemID, DistrStr, DistrNumber, CompNumber, a.SST_SHORT,
 			ISNULL(d.SST_ID_MASTER, (SELECT TOP 1 SystemTypeID FROM dbo.SystemTypeTable ORDER BY SystemTypeID)) AS SystemTypeID,
 			NT_ID_MASTER AS NT_ID, a.NT_SHORT, a.DS_ID, a.DS_INDEX, CONVERT(SMALLDATETIME, RegisterDate, 104) AS RegisterDate,
 			Comment, Complect,
-			CONVERT(BIT, 
+			CONVERT(BIT,
 				CASE
 					WHEN EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								dbo.ClientDistrView z WITH(NOEXPAND)
 								INNER JOIN Reg.RegNodeSearchView y WITH(NOEXPAND) ON z.HostID = y.HostID AND z.DISTR = y.DistrNumber AND z.COMP = y.CompNumber
 							WHERE z.ID_CLIENT = @CLIENT AND y.Complect = a.Complect
@@ -43,7 +43,7 @@ BEGIN
 					ELSE 0
 				END
 			) AS CHECKED
-		FROM 
+		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			INNER JOIN dbo.DistrStatus c ON c.DS_ID = a.DS_ID
 			INNER JOIN Din.SystemType d ON d.SST_ID = a.SST_ID
@@ -53,7 +53,7 @@ BEGIN
 			AND c.DS_REG = 0
 			AND (DistrNumber = @DISTR OR @DISTR IS NULL)
 			AND (Comment LIKE @COMMENT OR @COMMENT IS NULL)
-			AND NOT EXISTS		
+			AND NOT EXISTS
 				(
 					SELECT *
 					FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -62,14 +62,16 @@ BEGIN
 						AND a.CompNumber = b.COMP
 				)
 		ORDER BY Complect, SystemOrder, DistrNumber, CompNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_IMPORT_SELECT] TO rl_client_distr_i;
+GO

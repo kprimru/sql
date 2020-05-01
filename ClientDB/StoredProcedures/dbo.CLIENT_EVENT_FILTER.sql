@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_FILTER]
 	@TYPE		NVARCHAR(MAX),
 	@CLIENT		VARCHAR(500),
 	@AUTHOR		NVARCHAR(128),
@@ -17,7 +17,7 @@ CREATE PROCEDURE [dbo].[CLIENT_EVENT_FILTER]
 	@CLEAR		BIT	=	 NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -39,7 +39,7 @@ BEGIN
 				TP_ID	INT PRIMARY KEY,
 				TP_NAME	VARCHAR(50)
 			)
-			
+
 		IF @TYPE IS NULL
 			INSERT INTO #type(TP_ID, TP_NAME)
 				SELECT EventTypeID, EventTypeName
@@ -47,7 +47,7 @@ BEGIN
 		ELSE
 			INSERT INTO #type(TP_ID, TP_NAME)
 				SELECT EventTypeID, EventTypeName
-				FROM 
+				FROM
 					dbo.EventTypeTable
 					INNER JOIN dbo.TableIDFromXML(@TYPE) ON EventTypeID = ID
 
@@ -60,11 +60,11 @@ BEGIN
 				(
 					WRD	VARCHAR(100) PRIMARY KEY
 				)
-				
+
 			INSERT INTO #words(WRD)
 				SELECT DISTINCT '%' + Word + '%'
 				FROM dbo.SplitString(@TEXT)
-				
+
 			IF @FLAG = 1
 				SELECT
 					EventID, a.CLientID, ClientFullName, EventDate, TP_NAME,
@@ -75,7 +75,7 @@ BEGIN
 					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #type c ON TP_ID = EventTypeID
-				WHERE EventActive = 1 
+				WHERE EventActive = 1
 					AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
 					AND (a.EventTypeID = @TYPE OR @TYPE IS NULL)
 					AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
@@ -89,7 +89,7 @@ BEGIN
 							SELECT *
 							FROM #words
 							WHERE NOT (EventComment LIKE WRD)
-						)	
+						)
 				ORDER BY EventDate DESC, EventCreate DESC, ServiceName, ClientFullName
 			ELSE
 				SELECT
@@ -101,7 +101,7 @@ BEGIN
 					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #type c ON TP_ID = EventTypeID
-				WHERE EventActive = 1 
+				WHERE EventActive = 1
 					AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
 					AND (a.EventTypeID = @TYPE OR @TYPE IS NULL)
 					AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
@@ -115,9 +115,9 @@ BEGIN
 							SELECT *
 							FROM #words
 							WHERE EventComment LIKE WRD
-						)	
-				ORDER BY EventDate DESC, EventCreate DESC, ServiceName, ClientFullName		
-				
+						)
+				ORDER BY EventDate DESC, EventCreate DESC, ServiceName, ClientFullName
+
 			IF OBJECT_ID('tempdb..#words') IS NOT NULL
 				DROP TABLE #words
 		END
@@ -132,7 +132,7 @@ BEGIN
 				INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
 				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 				INNER JOIN #type c ON TP_ID = EventTypeID
-			WHERE EventActive = 1 
+			WHERE EventActive = 1
 				AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
 				AND (a.EventTypeID = @TYPE OR @TYPE IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
@@ -142,18 +142,20 @@ BEGIN
 				AND (EventDate <= @END OR @END IS NULL)
 				AND (LTRIM(RTRIM(EventComment)) = '''' OR @CLEAR <> 1)
 			ORDER BY EventDate DESC, EventCreate DESC, ServiceName, ClientFullName
-		END	
+		END
 
 		IF OBJECT_ID('tempdb..#type') IS NOT NULL
 			DROP TABLE #type
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_FILTER] TO rl_filter_event;
+GO

@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[LETTER_ADD]
+ALTER PROCEDURE [dbo].[LETTER_ADD]
 	@directory VARCHAR(100),
 	@name VARCHAR(100),
 	@data VARBINARY(MAX)
@@ -27,14 +27,16 @@ BEGIN
 
 		INSERT INTO dbo.LetterTable(LetterDirectory, LetterName, LetterData)
 		VALUES (@directory, @name, @data)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LETTER_ADD] TO rl_letter_i;
+GO

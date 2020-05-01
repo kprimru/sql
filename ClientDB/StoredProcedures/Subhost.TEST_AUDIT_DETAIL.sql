@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_AUDIT_DETAIL]
-	@ID	UNIQUEIDENTIFIER	
+ALTER PROCEDURE [Subhost].[TEST_AUDIT_DETAIL]
+	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,19 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT START, PERSONAL, b.NAME, c.NOTE, c.RESULT, QST_SUCCESS AS SUCCESS_VALUE
-		FROM 
+		FROM
 			Subhost.PersonalTest a
 			INNER JOIN Subhost.Test b ON a.ID_TEST = b.ID
-			LEFT OUTER JOIN Subhost.CheckTest c ON c.ID_TEST = a.ID 
+			LEFT OUTER JOIN Subhost.CheckTest c ON c.ID_TEST = a.ID
 		WHERE a.ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_AUDIT_DETAIL] TO rl_subhost_test;
+GO

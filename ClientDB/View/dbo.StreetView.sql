@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[StreetView]
+ALTER VIEW [dbo].[StreetView]
 AS
-	SELECT 
+	SELECT
 		ST_ID, ST_NAME, b.CT_ID, b.CT_NAME, ST_PREFIX, ST_SUFFIX,
 		e.CT_NAME AS CT_PARENT, b.CT_PREFIX,
 		CASE RG_DISPLAY
-			WHEN 1 THEN 
+			WHEN 1 THEN
 				CASE RG_PREFIX
 					WHEN '' THEN RG_NAME
 					ELSE RG_PREFIX + ' ' + RG_NAME
@@ -20,10 +20,10 @@ AS
 					ELSE ' ' + RG_SUFFIX
 				END + ','
 			ELSE ''
-		END + 
-		CASE 
+		END +
+		CASE
 			WHEN AR_ID IS NULL THEN ''
-			ELSE 
+			ELSE
 				CASE AR_PREFIX
 					WHEN '' THEN AR_NAME
 					ELSE AR_PREFIX + ' ' + AR_NAME
@@ -35,13 +35,13 @@ AS
 		END +
 		CASE b.CT_DEFAULT
 			WHEN 1 THEN ''
-			ELSE 
-				CASE 
+			ELSE
+				CASE
 					WHEN e.CT_ID IS NULL THEN ''
-					ELSE 
+					ELSE
 						CASE e.CT_PREFIX
 							WHEN '' THEN e.CT_NAME
-							ELSE 
+							ELSE
 								CASE ISNULL(e.CT_DISPLAY_PREFIX, 1)
 									WHEN 1 THEN e.CT_PREFIX + ' '
 									ELSE ''
@@ -54,7 +54,7 @@ AS
 				END +
 				CASE b.CT_PREFIX
 					WHEN '' THEN b.CT_NAME
-					ELSE 
+					ELSE
 						CASE ISNULL(b.CT_DISPLAY_PREFIX, 1)
 							WHEN 1 THEN b.CT_PREFIX + ' '
 							ELSE ''
@@ -64,7 +64,7 @@ AS
 					WHEN '' THEN ''
 					ELSE ' ' + b.CT_SUFFIX
 				END + ', '
-		END + 
+		END +
 		CASE ST_PREFIX
 			WHEN '' THEN ST_NAME
 			ELSE ST_PREFIX + ' ' + ST_NAME
@@ -73,17 +73,17 @@ AS
 			WHEN '' THEN ''
 			ELSE ' ' + ST_SUFFIX
 		END AS ST_STR,
-		ST_NAME + 
+		ST_NAME +
 		CASE ST_SUFFIX
 			WHEN '' THEN ''
 			ELSE ', ' + ST_SUFFIX
-		END + 
+		END +
 		CASE ST_PREFIX
 			WHEN '' THEN ''
 			ELSE ', ' + ST_PREFIX
-		END + 
+		END +
 		CASE RG_DISPLAY
-			WHEN 1 THEN 
+			WHEN 1 THEN
 				CASE RG_PREFIX
 					WHEN '' THEN ', ' + RG_NAME
 					ELSE ', ' + RG_PREFIX + ' ' + RG_NAME
@@ -93,10 +93,10 @@ AS
 					ELSE ' ' + RG_SUFFIX
 				END + ','
 			ELSE ''
-		END + 
-		CASE 
+		END +
+		CASE
 			WHEN AR_ID IS NULL THEN ''
-			ELSE 
+			ELSE
 				CASE AR_PREFIX
 					WHEN '' THEN ', ' + AR_NAME
 					ELSE ', ' + AR_PREFIX + ' ' + AR_NAME
@@ -108,18 +108,18 @@ AS
 		END +
 		CASE b.CT_DEFAULT
 			WHEN 1 THEN ''
-			ELSE ', ' + b.CT_NAME				
+			ELSE ', ' + b.CT_NAME
 		END +
-		CASE 
+		CASE
 			WHEN e.CT_ID IS NULL THEN ''
 			ELSE ', ' + e.CT_NAME
 		END AS ST_LOOKUP,
-		
-		
-		
+
+
+
 		'Российская Федерация, ' +
-		
-		
+
+
 		CASE RG_PREFIX
 			WHEN '' THEN RG_NAME
 			ELSE RG_PREFIX + ' ' + RG_NAME
@@ -128,10 +128,10 @@ AS
 			WHEN '' THEN ''
 			ELSE ' ' + RG_SUFFIX
 		END + ', ' +
-		
-		CASE 
+
+		CASE
 			WHEN AR_ID IS NULL THEN ''
-			ELSE 
+			ELSE
 				CASE AR_PREFIX
 					WHEN '' THEN AR_NAME
 					ELSE AR_PREFIX + ' ' + AR_NAME
@@ -141,13 +141,13 @@ AS
 					ELSE ' ' + AR_SUFFIX
 				END + ', '
 		END +
-		
-		CASE 
+
+		CASE
 			WHEN e.CT_ID IS NULL THEN ''
-			ELSE 
+			ELSE
 				CASE e.CT_PREFIX
 					WHEN '' THEN e.CT_NAME
-					ELSE 
+					ELSE
 						CASE ISNULL(e.CT_DISPLAY_PREFIX, 1)
 							WHEN 1 THEN e.CT_PREFIX + ' '
 							ELSE ''
@@ -158,16 +158,16 @@ AS
 					ELSE ' ' + e.CT_SUFFIX
 				END + ', '
 		END +
-		
+
 		CASE b.CT_PREFIX
 			WHEN '' THEN b.CT_NAME
-			ELSE 
+			ELSE
 				CASE ISNULL(b.CT_DISPLAY_PREFIX, 1)
 					WHEN 1 THEN b.CT_PREFIX + ' '
 					ELSE ''
 				END + b.CT_NAME
 		END +
-		
+
 		CASE b.CT_SUFFIX
 			WHEN '' THEN ''
 			ELSE ' ' + b.CT_SUFFIX
@@ -177,12 +177,12 @@ AS
 			WHEN '' THEN ST_NAME
 			ELSE ST_PREFIX + ' ' + ST_NAME
 		END +
-		
+
 		CASE ST_SUFFIX
 			WHEN '' THEN ''
 			ELSE ' ' + ST_SUFFIX
 		END AS ST_FULL
-	FROM 
+	FROM
 		dbo.Street a
 		INNER JOIN dbo.City b ON a.ST_ID_CITY = b.CT_ID
 		LEFT OUTER JOIN dbo.Area c ON c.AR_ID = b.CT_ID_AREA

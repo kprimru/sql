@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLAIM_CANCEL_REASON_SELECT]
+ALTER PROCEDURE [Purchase].[CLAIM_CANCEL_REASON_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR CCR_NAME LIKE @FILTER
 			OR CCR_SHORT LIKE @FILTER
 		ORDER BY CCR_SHORT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLAIM_CANCEL_REASON_SELECT] TO rl_claim_cancel_reason_r;
+GO

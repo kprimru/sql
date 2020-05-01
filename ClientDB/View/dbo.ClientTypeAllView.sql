@@ -4,16 +4,16 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientTypeAllView]
+ALTER VIEW [dbo].[ClientTypeAllView]
 AS
 	/*
-	SELECT a.ClientID, 
+	SELECT a.ClientID,
 		MIN(
 			CASE
 				-- сетевая версия любой системы или с/о версия систем Проф, ЮВП, БВП, БОВП - это категория A
 				WHEN (NT_NET > 1) OR (NT_NET = 1 AND SystemBaseName IN ('LAW', 'JURP', 'BVP', 'BUDP')) THEN 'A'
 				-- с/о версия любой системы, кроме Проф, ЮВП, БВП, БОВП или локальная версия Проф, ЮВП, БВП, БОВП - это категория B
-				WHEN (NT_NET = 1 AND SystemBaseName NOT IN ('LAW', 'JURP', 'BVP', 'BUDP')) 
+				WHEN (NT_NET = 1 AND SystemBaseName NOT IN ('LAW', 'JURP', 'BVP', 'BUDP'))
 					OR (SystemBaseName IN ('LAW', 'JURP', 'BVP', 'BUDP') AND NT_NET = 0) THEN 'B'
 				-- все остальное - это категория C
 				ELSE 'C'

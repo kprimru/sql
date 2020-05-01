@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [IP].[CLIENT_COMPLECT_SELECT]
+ALTER PROCEDURE [IP].[CLIENT_COMPLECT_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -29,24 +29,26 @@ BEGIN
 					dbo.DistrString(b.SystemShortName, a.DISTR, a.COMP) AS COMP_NAME,
 					c.CSD_SYS, c.CSD_DISTR, c.CSD_COMP, b.SystemOrder, a.DS_REG,
 					MAX(CSD_DATE) AS CSD_DATE
-				FROM 
+				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.HostID = b.HostID
-					INNER JOIN IP.ClientStatView c ON b.SystemNumber = c.CSD_SYS 
+					INNER JOIN IP.ClientStatView c ON b.SystemNumber = c.CSD_SYS
 													AND a.DISTR = c.CSD_DISTR
 													AND a.COMP = c.CSD_COMP
 				WHERE a.ID_CLIENT = @CLIENT
 				GROUP BY b.SystemShortName, c.CSD_SYS, c.CSD_DISTR, c.CSD_COMP, b.SystemOrder, a.DS_REG, a.DISTR, a.COMP
 			) AS o_O
 		ORDER BY CSD_DATE DESC, DS_REG, SystemOrder, CSD_DISTR, CSD_COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [IP].[CLIENT_COMPLECT_SELECT] TO rl_client_ip;
+GO

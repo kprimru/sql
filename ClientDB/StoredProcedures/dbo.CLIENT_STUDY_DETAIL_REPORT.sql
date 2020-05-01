@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STUDY_DETAIL_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_STUDY_DETAIL_REPORT]
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@START2		SMALLDATETIME,
@@ -30,7 +30,7 @@ BEGIN
 		IF @START IS NULL
 			SET @START = DATEADD(YEAR, -1, dbo.DateOf(GETDATE()))
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName, c.DATE,
 			REVERSE(STUFF(REVERSE(
 				(
@@ -42,7 +42,7 @@ BEGIN
 					ORDER BY SystemOrder, DISTR FOR XML PATH('')
 				)
 			), 1, 2, '')) AS DISTR,
-			REVERSE(STUFF(REVERSE(		
+			REVERSE(STUFF(REVERSE(
 				(
 					SELECT SURNAME + ' ' + NAME + ' ' + PATRON + ISNULL(' (' + POSITION + ')', '') + CHAR(10)
 					FROM dbo.ClientStudyPeople z
@@ -64,7 +64,7 @@ BEGIN
 				ELSE
 					''
 			END AS NOTE,
-			CASE 
+			CASE
 				WHEN c.DATE = a.LAST_DATE THEN
 					(
 						SELECT MAX(z.DATE)
@@ -95,14 +95,16 @@ BEGIN
 			AND (DATE >= @START2 OR @START2 IS NULL)
 			AND (DATE <= @FINISH2 OR @FINISH2 IS NULL)
 		ORDER BY LAST_DATE DESC, ClientFullName, DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STUDY_DETAIL_REPORT] TO rl_study_detail_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_DELETE]
 	@CRR_ID	INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		UPDATE dbo.ClientRivalReaction
 		SET CRR_ACTIVE = 0
 		WHERE CRR_ID = @CRR_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_REACTION_DELETE] TO rl_client_rival_reaction_d;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_AUDIT_CHECK]
+ALTER PROCEDURE [Subhost].[TEST_AUDIT_CHECK]
 	@ID		UNIQUEIDENTIFIER OUTPUT,
 	@TEST	UNIQUEIDENTIFIER,
 	@RESULT	TINYINT,
@@ -32,11 +32,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Subhost.CheckTest(ID_TEST, RESULT, NOTE)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@TEST, @RESULT, @NOTE)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
@@ -45,19 +45,21 @@ BEGIN
 			SET RESULT	=	@RESULT,
 				NOTE	=	@NOTE
 			WHERE ID = @ID
-			
+
 			DELETE
 			FROM Subhost.CheckTestQuestion
 			WHERE ID_TEST = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_AUDIT_CHECK] TO rl_subhost_test;
+GO

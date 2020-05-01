@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_MESSAGE_CHECK]
+ALTER PROCEDURE [dbo].[CLIENT_MESSAGE_CHECK]
 	@RES	TINYINT OUTPUT
 AS
 BEGIN
@@ -34,14 +34,17 @@ BEGIN
 			SET @RES = 1
 		ELSE
 			SET @RES = 0
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_MESSAGE_CHECK] TO public;
+GRANT EXECUTE ON [dbo].[CLIENT_MESSAGE_CHECK] TO rl_client_message_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[DISTR_TYPE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@ORDER	INT,
@@ -34,14 +34,16 @@ BEGIN
 			DistrTypeCode = @Code,
 			DistrTypeBaseCheck = @CHECK
 		WHERE DistrTypeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_TYPE_UPDATE] TO rl_distr_type_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[OFFER_OTHER_GET]
+ALTER PROCEDURE [Price].[OFFER_OTHER_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,17 +20,19 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT NOTE
 		FROM Price.OfferOther
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[OFFER_OTHER_GET] TO rl_commercial_offer_r;
+GO

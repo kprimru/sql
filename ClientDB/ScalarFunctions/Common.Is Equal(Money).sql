@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(Money)]
+ALTER FUNCTION [Common].[Is Equal(Money)]
 (
 	@V1	Money,
 	@V2	Money

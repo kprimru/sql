@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SUBHOST_IMPORT_DATA_NEW]
+ALTER PROCEDURE [dbo].[SUBHOST_IMPORT_DATA_NEW]
 	@InData	NVarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,10 +21,10 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @Data Xml;
 		SET @Data = CAST(@InData AS Xml);
-		
+
 		DECLARE @Hosts Table
 		(
 			[Short]		VarChar(100),
@@ -32,7 +32,7 @@ BEGIN
 			[Order]		Int,
 			Primary Key Clustered ([Reg])
 		);
-		
+
 		DECLARE @Systems Table
 		(
 			[Short]		VarChar(100),
@@ -54,7 +54,7 @@ BEGIN
 			[BaseCheck]	Bit,
 			Primary Key Clustered ([RegName])
 		);
-		
+
 		DECLARE @InfoBanks Table
 		(
 			[Name]		VarChar(100),
@@ -67,7 +67,7 @@ BEGIN
 			[Start]		SmallDateTime,
 			Primary Key Clustered ([Name])
 		);
-		
+
 		DECLARE @SystemBanks Table
 		(
 			[System]	VarChar(100),
@@ -75,7 +75,7 @@ BEGIN
 			[Required]	SmallInt,
 			Primary Key Clustered ([System], [InfoBank])
 		);
-		
+
 		DECLARE @SysType Table
 		(
 			[Name]		VarChar(100),
@@ -84,7 +84,7 @@ BEGIN
 			[Reg]		VarChar(100),
 			Primary Key Clustered([Reg])
 		);
-		
+
 		DECLARE @NetType Table
 		(
 			[Name]		VarChar(100),
@@ -97,7 +97,7 @@ BEGIN
 			[Odoff]		Int,
 			Primary Key Clustered ([Tech], [NetCnt], [Odon], [Odoff])
 		);
-		
+
 		DECLARE @DistrStatus Table
 		(
 			[Name]		VarChar(64),
@@ -105,7 +105,7 @@ BEGIN
 			[Index]		TinyInt,
 			Primary Key Clustered ([Reg])
 		);
-		
+
 		DECLARE @Compliance Table
 		(
 			[Name]		VarChar(50),
@@ -113,7 +113,7 @@ BEGIN
 			[Order]		Int,
 			Primary Key Clustered ([Name])
 		);
-		
+
 		DECLARE @USRKind Table
 		(
 			[Name]		VarChar(20),
@@ -121,7 +121,7 @@ BEGIN
 			[Short]		VarChar(100),
 			Primary Key Clustered ([Name])
 		);
-		
+
 		DECLARE @PersonalType Table
 		(
 			[Name]		VarChar(100),
@@ -131,14 +131,14 @@ BEGIN
 			[Order]		Int,
 			Primary Key Clustered ([Psedo])
 		);
-		
+
 		INSERT INTO @Hosts
 		SELECT
 			V.value('@Short[1]',	'VarChar(100)'),
 			V.value('@Reg[1]',		'VarChar(100)'),
 			V.value('@Order[1]',	'Int')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/HOST[1]/ITEM') N(V)
-		
+
 		INSERT INTO @Systems
 		SELECT
 			V.value('@Short[1]',		'VarChar(100)'),
@@ -159,7 +159,7 @@ BEGIN
 			V.value('@Reg[1]',			'Bit'),
 			V.value('@BaseCheck[1]',	'Bit')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/SYSTEM[1]/ITEM') N(V)
-		
+
 		INSERT INTO @InfoBanks
 		SELECT
 			V.value('@Name[1]',		'VarChar(100)'),
@@ -171,7 +171,7 @@ BEGIN
 			V.value('@Actual[1]',	'Bit'),
 			V.value('@Start[1]',	'SmallDateTime')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/INFO_BANK[1]/ITEM') N(V)
-		
+
 		INSERT INTO @SystemBanks
 		SELECT
 			V.value('@System[1]',	'VarChar(100)'),
@@ -198,28 +198,28 @@ BEGIN
 			V.value('@Odon[1]',		'Int'),
 			V.value('@Odoff[1]',	'Int')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/NET[1]/ITEM') N(V)
-		
+
 		INSERT INTO @DistrStatus
 		SELECT
 			V.value('@Name[1]',		'VarChar(64)'),
 			V.value('@Reg[1]',		'TinyInt'),
 			V.value('@Index[1]',	'TinyInt')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/DISTR_STATUS[1]/ITEM') N(V)
-		
+
 		INSERT INTO @Compliance
 		SELECT
 			V.value('@Name[1]',		'VarChar(50)'),
 			V.value('@Short[1]',	'VarChar(50)'),
 			V.value('@Order[1]',	'Int')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/COMPLIANCE[1]/ITEM') N(V)
-		
+
 		INSERT INTO @USRKind
 		SELECT
 			V.value('@Name[1]',			'VarChar(20)'),
 			V.value('@ShortName[1]',	'VarChar(50)'),
 			V.value('@Short[1]',		'VarChar(100)')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/USR_KIND[1]/ITEM') N(V)
-		
+
 		INSERT INTO @PersonalType
 		SELECT
 			V.value('@Name[1]',		'VarChar(100)'),
@@ -228,7 +228,7 @@ BEGIN
 			V.value('@Required[1]',	'Bit'),
 			V.value('@Order[1]',	'Int')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/PERSONAL_TYPE[1]/ITEM') N(V)
-		
+
 		-- Обновляем справочник Хостов
 		INSERT INTO dbo.Hosts(HostShort, HostReg, HostOrder)
 		SELECT [Short], [Reg], [Order]
@@ -239,7 +239,7 @@ BEGIN
 				FROM [dbo].[Hosts] H
 				WHERE D.[Reg] = H.[HostReg]
 			);
-			
+
 		UPDATE H
 		SET HostShort = Short,
 			HostOrder = [Order]
@@ -247,15 +247,15 @@ BEGIN
 		INNER JOIN @Hosts D	ON H.[HostReg] = D.[Reg]
 		WHERE H.HostShort != D.Short
 			OR H.HostOrder != D.[Order]
-		
-		
+
+
 		-- Обновляем справочник систем
 		INSERT INTO dbo.SystemTable(
 			SystemShortName, SystemName, SystemBaseName, SystemNumber, HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName,
 			SystemDin, SystemActive, SystemStart, SystemEnd, SystemDemo, SystemComplect, SystemReg, SystemBaseCheck
 			)
 		SELECT
-			[Short], [Name], [RegName], [Number], H.HostID, [Ric], [Order], [VMI], [FullName], 
+			[Short], [Name], [RegName], [Number], H.HostID, [Ric], [Order], [VMI], [FullName],
 			[DinName], [Active], [Start], [End], [Demo], [Complect], [Reg], [BaseCheck]
 		FROM @Systems D
 		INNER JOIN dbo.Hosts H ON D.Host = H.HostReg
@@ -265,7 +265,7 @@ BEGIN
 				FROM dbo.SystemTable S
 				WHERE S.SystemBaseName = D.RegName
 			);
-		
+
 		UPDATE S
 		SET	SystemShortName = D.Short,
 			SystemName		= D.Name,
@@ -302,9 +302,9 @@ BEGIN
 			OR S.SystemComplect		!= D.[Complect]
 			OR S.SystemReg			!= D.[Reg]
 			OR S.SystemBaseCheck	!= D.[BaseCheck];
-		
+
 		-- обновляем ИБ
-		
+
 		INSERT INTO dbo.InfoBankTable(InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankActive, InfoBankDaily, InfoBankActual, InfoBankStart)
 		SELECT [Name], [Short], [Full], [Order], [Active], [Daily], [Actual], [Start]
 		FROM @InfoBanks D
@@ -314,7 +314,7 @@ BEGIN
 				FROM dbo.InfoBankTable I
 				WHERE I.InfoBankName = D.Name
 			);
-			
+
 		UPDATE I
 		SET InfoBankShortName	= D.[Short],
 			InfoBankFullName	= D.[Full],
@@ -332,7 +332,7 @@ BEGIN
 			OR I.InfoBankDaily		!= D.Daily
 			OR I.InfoBankActual		!= D.Actual
 			OR I.InfoBankStart		!= D.Start;
-		
+
 		-- Обновляем состав систем
 		UPDATE SB
 		SET [Required] = D.[Required]
@@ -341,7 +341,7 @@ BEGIN
 		INNER JOIN dbo.InfoBankTable I ON I.InfoBankID = SB.InfoBankID
 		INNER JOIN @SystemBanks D ON D.System = S.SystemBaseName AND D.InfoBank = I.InfoBankName
 		WHERE SB.[Required] != D.[Required];
-		
+
 		DELETE SB
 		FROM dbo.SystemBankTable SB
 		WHERE NOT EXISTS
@@ -352,7 +352,7 @@ BEGIN
 				INNER JOIN dbo.InfoBankTable I ON I.InfoBankName = D.InfoBank
 				WHERE S.SystemID = SB.SystemID AND I.InfoBankID = SB.InfoBankID
 			);
-			
+
 		INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, [Required])
 		SELECT S.SystemID, I.InfoBankID, D.[Required]
 		FROM @SystemBanks D
@@ -364,10 +364,10 @@ BEGIN
 				FROM dbo.SystemBankTable SB
 				WHERE S.SystemID = SB.SystemID AND I.InfoBankID = SB.InfoBankID
 			);
-		
-		
+
+
 		-- обновляем справочник систем
-		
+
 		UPDATE S
 		SET SST_NAME = D.[Name],
 			SST_SHORT = D.[Short],
@@ -377,7 +377,7 @@ BEGIN
 		WHERE S.SST_NAME != D.[Name]
 			OR S.SST_SHORT != D.[Short]
 			OR S.SST_NOTE != D.[Note];
-					
+
 		INSERT INTO Din.SystemType(SST_NAME, SST_SHORT, SST_NOTE, SST_REG)
 		SELECT D.Name, D.Short, D.Note, D.Reg
 		FROM @SysType D
@@ -387,7 +387,7 @@ BEGIN
 				FROM Din.SystemType S
 				WHERE S.SST_REG = D.Reg
 			);
-			
+
 		-- Справочник типов сети
 		UPDATE N
 		SET NT_NAME = D.Name,
@@ -400,7 +400,7 @@ BEGIN
 			OR N.NT_SHORT != D.Short
 			OR N.NT_NOTE != D.Note
 			OR IsNull(N.NT_TECH_USR, '') != IsNull(D.TechUsr, '');
-			
+
 		INSERT INTO Din.NetType(NT_NAME, NT_NOTE, NT_NET, NT_TECH, NT_SHORT, NT_TECH_USR, NT_ODON, NT_ODOFF)
 		SELECT Name, Note, NetCnt, Tech, Short, TechUsr, Odon, Odoff
 		FROM @NetType D
@@ -410,7 +410,7 @@ BEGIN
 				FROM Din.NetType N
 				WHERE N.NT_NET = D.NetCnt AND N.NT_TECH = D.Tech AND N.NT_ODON = D.Odon AND N.NT_ODOFF = D.Odoff
 			);
-		
+
 		-- обновляем справочник статусов дистрибутива
 		UPDATE S
 		SET DS_NAME		= D.[Name],
@@ -419,7 +419,7 @@ BEGIN
 		INNER JOIN @DistrStatus D ON S.DS_REG = D.Reg
 		WHERE S.DS_NAME != D.[Name]
 			OR S.DS_INDEX != D.[Index];
-					
+
 		INSERT INTO dbo.DistrStatus(DS_NAME, DS_INDEX, DS_REG)
 		SELECT D.Name, D.[Index], D.Reg
 		FROM @DistrStatus D
@@ -429,9 +429,9 @@ BEGIN
 				FROM dbo.DistrStatus S
 				WHERE S.DS_REG = D.Reg
 			);
-			
+
 		-- обновляем справочник типов соответствия USR
-		
+
 		UPDATE S
 		SET ComplianceTypeShortName	= D.[Short],
 			ComplianceTypeOrder		= D.[Order]
@@ -439,7 +439,7 @@ BEGIN
 		INNER JOIN @Compliance D ON S.ComplianceTypeName = D.Name
 		WHERE S.ComplianceTypeShortName != D.[Short]
 			OR S.ComplianceTypeOrder != D.[Order];
-					
+
 		INSERT INTO dbo.ComplianceTypeTable(ComplianceTypeName, ComplianceTypeShortName, ComplianceTypeOrder)
 		SELECT D.Name, D.Short, D.[Order]
 		FROM @Compliance D
@@ -449,9 +449,9 @@ BEGIN
 				FROM dbo.ComplianceTypeTable S
 				WHERE S.ComplianceTypeName = D.Name
 			);
-		
+
 		-- обновляем справочник типов формирования файлов USR
-		
+
 		UPDATE S
 		SET USRFileKindShortName	= D.[ShortName],
 			USRFileKindShort		= D.[Short]
@@ -459,7 +459,7 @@ BEGIN
 		INNER JOIN @USRKind D ON S.USRFileKindName = D.Name
 		WHERE S.USRFileKindShortName != D.[ShortName]
 			OR S.USRFileKindShort != D.[Short];
-					
+
 		INSERT INTO dbo.USRFileKindTable(USRFileKindName, USRFileKindShortName, USRFileKindShort)
 		SELECT D.Name, D.ShortName, D.Short
 		FROM @USRKind D
@@ -469,9 +469,9 @@ BEGIN
 				FROM dbo.USRFileKindTable S
 				WHERE S.USRFileKindName = D.Name
 			);
-			
+
 		-- обновляем справочник типов сотрудников
-		
+
 		UPDATE S
 		SET CPT_NAME		= D.[Name],
 			CPT_SHORT		= D.[Short],
@@ -483,7 +483,7 @@ BEGIN
 			OR S.CPT_SHORT != D.[Short]
 			OR S.CPT_REQUIRED != D.[Required]
 			OR S.CPT_ORDER != D.[Order];
-					
+
 		INSERT INTO dbo.ClientPersonalType(CPT_NAME, CPT_SHORT, CPT_PSEDO, CPT_REQUIRED, CPT_ORDER)
 		SELECT D.[Name], D.[Short], D.[Psedo], D.[Required], D.[Order]
 		FROM @PersonalType D
@@ -493,10 +493,10 @@ BEGIN
 				FROM dbo.ClientPersonalType S
 				WHERE S.CPT_PSEDO = D.Psedo
 			);
-		
+
 		-- обновляем список дистрибутивов подключенных к ЗВЭ
 		TRUNCATE TABLE dbo.ExpertDistr;
-		
+
 		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE)
 		SELECT HostID, Distr, Comp, Date
 		FROM
@@ -509,11 +509,11 @@ BEGIN
 			FROM @Data.nodes('/DATA[1]/EXPERT[1]/ITEM') N(V)
 		) AS D
 		INNER JOIN dbo.Hosts H ON H.HostReg = D.Host;
-		
+
 		-- обновляем списко дистрибутивов подключенных к чату
-		
+
 		TRUNCATE TABLE dbo.HotlineDistr;
-		
+
 		INSERT INTO dbo.HotlineDistr(ID_HOST, DISTR, COMP, SET_DATE)
 		SELECT HostID, Distr, Comp, Date
 		FROM
@@ -526,11 +526,11 @@ BEGIN
 			FROM @Data.nodes('/DATA[1]/HOTLINE[1]/ITEM') N(V)
 		) AS D
 		INNER JOIN dbo.Hosts H ON H.HostReg = D.Host;
-		
+
 		-- Обновляем черный список ИП
-		
+
 		TRUNCATE TABLE dbo.BLACK_LIST_REG;
-		
+
 		INSERT INTO dbo.BLACK_LIST_REG(ID_SYS, DISTR, COMP, DATE, P_DELETE)
 		SELECT SystemID, Distr, Comp, Date, 0
 		FROM
@@ -543,9 +543,9 @@ BEGIN
 			FROM @Data.nodes('/DATA[1]/BLACK[1]/ITEM') N(V)
 		) AS D
 		INNER JOIN dbo.SystemTable S ON D.Sys = S.SystemBaseName;
-			
+
 		-- Обновляем протокол РЦ
-			
+
 		INSERT INTO dbo.RegProtocol(RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER)
 		SELECT Date, HostID, Distr, Comp, Oper, Reg, [Type], [Text], [User], Computer
 		FROM
@@ -576,9 +576,9 @@ BEGIN
 					AND R.RPR_OPER = D.[Oper]
 					AND R.RPR_TYPE = D.[Type]
 			);
-			
+
 		-- Обновляем текстовый протокол РЦ
-			
+
 		INSERT INTO Reg.ProtocolText(ID_HOST, DATE, DISTR, COMP, CNT, COMMENT)
 		SELECT HostID, Date, Distr, Comp, Cnt, Comment
 		FROM
@@ -603,9 +603,9 @@ BEGIN
 					AND R.DATE = D.Date
 					AND R.COMMENT = D.Comment
 			);
-			
+
 		-- Обновляем прейкурант
-			
+
 		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
 		SELECT DISTINCT SystemID, ID, PRICE
 		FROM
@@ -625,13 +625,13 @@ BEGIN
 				WHERE SP.ID_SYSTEM = SystemID
 					AND SP.ID_MONTH = P.ID
 			);
-			
+
 		-- Обновляем РЦ
-			
+
 		DELETE FROM dbo.RegNodeTable;
-		
+
 		INSERT INTO dbo.RegNodeTable(
-					SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft, 
+					SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft,
 					Service, RegisterDate, Comment, Complect, ODOn, ODOff
 					)
 		SELECT
@@ -651,15 +651,17 @@ BEGIN
 			V.value('@ODon[1]',		'SmallInt'),
 			V.value('@ODoff[1]',	'SmallInt')
 		FROM @Data.nodes('/DATA[1]/REG[1]/ITEM') N(V);
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SUBHOST_IMPORT_DATA_NEW] TO rl_import_data;
+GO

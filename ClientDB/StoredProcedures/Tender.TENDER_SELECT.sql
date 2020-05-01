@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[TENDER_SELECT]
+ALTER PROCEDURE [Tender].[TENDER_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -25,20 +25,23 @@ BEGIN
 		SELECT a.ID, INFO_DATE, CALL_DATE,
 			b.NAME AS LAW_NAME,
 			c.NAME AS STAT_NAME
-		FROM 
+		FROM
 			Tender.Tender a
 			INNER JOIN Tender.Status c ON a.ID_STATUS = c.ID
 			LEFT OUTER JOIN Tender.Law b ON a.ID_LAW = b.ID
 		WHERE ID_CLIENT = @CLIENT AND STATUS = 1
 		ORDER BY INFO_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[TENDER_SELECT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[TENDER_SELECT] TO rl_tender_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[KD_VERSION_UPDATE]
+ALTER PROCEDURE [dbo].[KD_VERSION_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	NVARCHAR(128),
 	@SHORT	NVARCHAR(64),
@@ -34,14 +34,16 @@ BEGIN
 			START	=	@START,
 			FINISH	=	@FINISH
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[KD_VERSION_UPDATE] TO rl_kd_version_u;
+GO

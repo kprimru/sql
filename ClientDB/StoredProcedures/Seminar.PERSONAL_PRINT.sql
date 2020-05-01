@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[PERSONAL_PRINT]
+ALTER PROCEDURE [Seminar].[PERSONAL_PRINT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -32,14 +32,16 @@ BEGIN
 			INNER JOIN Seminar.PersonalView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 		WHERE ID_SCHEDULE = @ID AND INDX = 1
 		ORDER BY a.ClientFullName, FIO
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[PERSONAL_PRINT] TO rl_seminar;
+GO

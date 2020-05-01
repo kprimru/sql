@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[GET_WHITELIST_SYSTEMS]
+ALTER PROCEDURE [dbo].[GET_WHITELIST_SYSTEMS]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -30,14 +30,18 @@ BEGIN
 										AND(B.ID_SYS=R.SystemID)
 										AND(B.[P_DELETE]=0)
 		WHERE B.ID IS NULL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_RGT;
+GO

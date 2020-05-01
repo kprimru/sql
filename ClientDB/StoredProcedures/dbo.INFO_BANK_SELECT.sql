@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANK_SELECT]
+ALTER PROCEDURE [dbo].[INFO_BANK_SELECT]
 	@FILTER	VARCHAR(150) = NULL,
 	@INFO_BANK_ACTIVE	BIT = NULL
 AS
@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			InfoBankID, InfoBankShortName, InfoBankName, InfoBankDaily, InfoBankActual,
 			InfoBankStart,
 			dbo.FileByteSizeToStr(
@@ -42,16 +42,18 @@ BEGIN
 			AND (InfoBankActive = @INFO_BANK_ACTIVE OR
 				@INFO_BANK_ACTIVE IS NULL)
 		ORDER BY InfoBankName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-	
+
 END
 
+GRANT EXECUTE ON [dbo].[INFO_BANK_SELECT] TO rl_info_bank_r;
+GO

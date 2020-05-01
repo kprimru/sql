@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[DIN_UNREGISTER]
+ALTER PROCEDURE [Report].[DIN_UNREGISTER]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		-- ToDo сначала выбрать результат, а потом последний дистр вычислять
-		SELECT 
+		SELECT
 			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [Дистрибутив],
 			NT_SHORT AS [Сеть], SST_SHORT AS [Тип], dbo.DateOf(DF_CREATE) AS [Получен],
 			(
@@ -36,7 +36,7 @@ BEGIN
 			) AS [Вес]
 		FROM
 			(
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					--HostID, DF_DISTR, DF_COMP,
 					(
 						SELECT TOP 1 DF_ID
@@ -46,7 +46,7 @@ BEGIN
 							AND z.DF_COMP = a.DF_COMP
 						ORDER BY DF_CREATE DESC
 					) AS DF_ID
-				FROM 
+				FROM
 					Din.DinFiles a
 					INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 				WHERE NOT EXISTS
@@ -66,14 +66,16 @@ BEGIN
 			INNER JOIN dbo.SystemTypeTable g ON g.SystemTypeID = SST_ID_MASTER
 		WHERE /*NT_SHORT <> 'мобильная' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> 'ДСП'
 		ORDER BY /*SST_SHORT, */SystemOrder, DF_DISTR, DF_COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[DIN_UNREGISTER] TO rl_report;
+GO

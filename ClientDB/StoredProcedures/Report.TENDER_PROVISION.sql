@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[TENDER_PROVISION]
+ALTER PROCEDURE [Report].[TENDER_PROVISION]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,9 +21,9 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @LAST_DATE	DATETIME
-		SELECT 
+		SELECT
 			t.CLIENT AS [Наименование заказчика],
 			SHORT AS [Базис/К-Прим],
 			p.GK_PROVISION_SUM AS [Сумма обеспечения контракта],
@@ -41,7 +41,7 @@ BEGIN
 			GK_PROVISION_PRC AS [Размер обеспечения заявки в %],
 			CONVERT(VARCHAR, GK_START, 104) + ' - ' + CONVERT(VARCHAR, GK_FINISH, 104) AS [Период действия ГК],
 			'' AS [Срок возврата]
-		FROM 
+		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER
 			INNER JOIN dbo.Vendor v ON p.ID_VENDOR = v.ID
@@ -58,9 +58,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Report].[TENDER_PROVISION] TO rl_report;
+GO

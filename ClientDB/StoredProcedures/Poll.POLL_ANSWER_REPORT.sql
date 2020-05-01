@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[POLL_ANSWER_REPORT]
+ALTER PROCEDURE [Poll].[POLL_ANSWER_REPORT]
 	@ANS	NVARCHAR(MAX),
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
@@ -24,9 +24,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ClientFullName, ServiceName, x.DATE, w.CC_PERSONAL, x.NOTE, q.NAME AS QST_NAME, p.NAME AS ANS_NAME
-		FROM 
+		FROM
 			Poll.ClientPollQuestion z
 			INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
 			INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
@@ -38,14 +38,16 @@ BEGIN
 		WHERE (DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (DATE <= @END OR @END IS NULL)
 		ORDER BY ServiceName, ClientFullName, q.ORD, p.ORD
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[POLL_ANSWER_REPORT] TO rl_blank_report;
+GO

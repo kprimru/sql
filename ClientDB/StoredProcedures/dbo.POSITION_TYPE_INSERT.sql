@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[POSITION_TYPE_INSERT]	
+ALTER PROCEDURE [dbo].[POSITION_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@ID	INT = NULL OUTPUT
 AS
@@ -22,19 +22,21 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.PositionTypeTable(PositionTypeName)
 			VALUES(@NAME)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_TYPE_INSERT] TO rl_position_type_i;
+GO

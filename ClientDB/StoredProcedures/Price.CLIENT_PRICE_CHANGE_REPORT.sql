@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[CLIENT_PRICE_CHANGE_REPORT]
+ALTER PROCEDURE [Price].[CLIENT_PRICE_CHANGE_REPORT]
 	@BEGIN		UNIQUEIDENTIFIER,
 	@END		UNIQUEIDENTIFIER,
 	@SERVICE	INT,
@@ -31,11 +31,11 @@ BEGIN
 
 		DECLARE @BEGIN_DATE SMALLDATETIME
 		DECLARE @END_DATE SMALLDATETIME
-		
+
 		SELECT @BEGIN_DATE = START
 		FROM Common.Period
 		WHERE ID = @BEGIN
-		
+
 		SELECT @END_DATE = START
 		FROM Common.Period
 		WHERE ID = @END
@@ -55,20 +55,20 @@ BEGIN
 			)
 
 		INSERT INTO #client(ClientID, ClientFullName, ManagerName, ServiceName, SystemList)
-			SELECT 
-				ClientID, ClientFullName, ManagerName, ServiceName, 
+			SELECT
+				ClientID, ClientFullName, ManagerName, ServiceName,
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT DistrStr + ' (' + DistrTypeName + '), '
 						FROM dbo.ClientDistrView
 						WHERE ID_CLIENT = ClientID AND DS_REG = 0
 						ORDER BY SystemOrder, DISTR, COMP FOR XML PATH('')
-					)), 1, 2, ''))			
+					)), 1, 2, ''))
 			FROM dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			
+
 		UPDATE a
 		SET DELTA = PRICE_DELTA,
 			DELTA_NDS = PRICE_NDS_DELTA
@@ -76,31 +76,31 @@ BEGIN
 			#client a
 			INNER JOIN
 				(
-					SELECT 
+					SELECT
 						ClientID,
 						SUM(PRICE_DELTA) AS PRICE_DELTA,
 						SUM(PRICE_NDS_DELTA) AS PRICE_NDS_DELTA
 					FROM
 						(
-							SELECT 
+							SELECT
 								ClientID,
-								NEW_PRICE - OLD_PRICE AS PRICE_DELTA,							
+								NEW_PRICE - OLD_PRICE AS PRICE_DELTA,
 								ROUND(NEW_PRICE * e.TOTAL_RATE, 2) - ROUND(OLD_PRICE * b.TOTAL_RATE, 2) AS PRICE_NDS_DELTA
 							FROM
 								(
-									SELECT 
+									SELECT
 										ClientID,
-										DSS_REPORT * CASE 
+										DSS_REPORT * CASE
 											WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
-											ELSE 
+											ELSE
 												ROUND(ROUND(op.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE)) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
 										END AS OLD_PRICE,
-										DSS_REPORT * CASE 
+										DSS_REPORT * CASE
 											WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
-											ELSE 
+											ELSE
 												ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
 										END AS NEW_PRICE
-									FROM 
+									FROM
 										#client
 										INNER JOIN dbo.ClientDistrView a WITH(NOEXPAND) ON ClientID = ID_CLIENT
 										INNER JOIN Price.SystemPrice op ON a.SystemID = op.ID_SYSTEM AND op.ID_MONTH = @BEGIN
@@ -113,24 +113,26 @@ BEGIN
 						) AS a
 					GROUP BY ClientID
 				) AS b ON a.ClientID = b.ClientID
-		
-		SELECT 
+
+		SELECT
 			ClientID, ManagerName, ServiceName, ClientFullName, SystemList, DELTA, DELTA_NDS,
 			ROW_NUMBER() OVER(PARTITION BY ManagerName, ServiceName ORDER BY ClientFullName) AS RN
 		FROM #client
 		WHERE (@HIDE = 0 OR DELTA <> 0)
-		ORDER BY ManagerName, ServiceName, ClientFullName	
-		
+		ORDER BY ManagerName, ServiceName, ClientFullName
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[CLIENT_PRICE_CHANGE_REPORT] TO rl_price_history;
+GO

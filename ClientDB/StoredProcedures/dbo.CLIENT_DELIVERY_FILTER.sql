@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELIVERY_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_DELIVERY_FILTER]
 	@DELIVERY	UNIQUEIDENTIFIER,
 	@CLIENT		NVARCHAR(256),
 	@EMAIL		NVARCHAR(256),
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT a.ID, b.ClientID, b.ClientFullName, b.ServiceName, b.ManagerName, b.ServiceStatusIndex, a.EMAIL, a.START, a.FINISH, a.NOTE
-		FROM 
+		FROM
 			dbo.ClientDelivery a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID
 		WHERE (a.ID_DELIVERY = @DELIVERY OR @DELIVERY IS NULL)
@@ -40,14 +40,16 @@ BEGIN
 			AND (a.START >= @BEGIN OR @BEGIN IS NULL)
 			AND (b.ServiceID = @SERVICE OR @SERVICE IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, EMAIL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELIVERY_FILTER] TO rl_delivery_filter;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[CLIENT_LIST_SET]
+ALTER PROCEDURE [Security].[CLIENT_LIST_SET]
 	@ID		INT,
 	@RALL	BIT,
 	@RMAN	BIT,
@@ -18,7 +18,7 @@ CREATE PROCEDURE [Security].[CLIENT_LIST_SET]
 	@WORI	BIT,
 	@WINC	NVARCHAR(MAX),
 	@WEXC	NVARCHAR(MAX)
-	
+
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -67,14 +67,16 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO Security.ClientList(LST_TYPE, LST_USER, LST_ALL, LST_MANAGER, LST_SERVICE, LST_ORI, LST_INCLUDE, LST_EXCLUDE)
 				VALUES('WRITE', @USER, @WALL, @WMAN, @WSER, @WORI, @WINC, @WEXC)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[CLIENT_LIST_SET] TO rl_security_client_list_u;
+GO

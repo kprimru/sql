@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DBF_COMPARE]
+ALTER PROCEDURE [dbo].[CLIENT_DBF_COMPARE]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@TYPE		NVARCHAR(MAX)
@@ -30,11 +30,11 @@ BEGIN
 			SET @MANAGER = NULL
 
 		DECLARE @TP	TABLE (TP_NAME NVARCHAR(512))
-		
+
 		INSERT INTO @TP(TP_NAME)
 			SELECT ID
 			FROM dbo.TableStringFromXML(@TYPE)
-			
+
 		DECLARE @NAME		BIT
 		DECLARE @ADDRESS	BIT
 		DECLARE	@DIR_FIO	BIT
@@ -46,9 +46,9 @@ BEGIN
 		DECLARE	@RES_FIO	BIT
 		DECLARE @RES_POS	BIT
 		DECLARE @RES_PHONE	BIT
-		DECLARE @SRVC		BIT		
+		DECLARE @SRVC		BIT
 		DECLARE @INN		BIT
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -58,7 +58,7 @@ BEGIN
 			SET @DIR_FIO = 1
 		ELSE
 			SET @DIR_FIO = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -68,7 +68,7 @@ BEGIN
 			SET @BUH_FIO = 1
 		ELSE
 			SET @BUH_FIO = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -78,7 +78,7 @@ BEGIN
 			SET @RES_FIO = 1
 		ELSE
 			SET @RES_FIO = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -88,7 +88,7 @@ BEGIN
 			SET @DIR_POS = 1
 		ELSE
 			SET @DIR_POS = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -98,7 +98,7 @@ BEGIN
 			SET @BUH_POS = 1
 		ELSE
 			SET @BUH_POS = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -108,7 +108,7 @@ BEGIN
 			SET @RES_POS = 1
 		ELSE
 			SET @RES_POS = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -118,7 +118,7 @@ BEGIN
 			SET @DIR_PHONE = 1
 		ELSE
 			SET @DIR_PHONE = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -128,7 +128,7 @@ BEGIN
 			SET @BUH_PHONE = 1
 		ELSE
 			SET @BUH_PHONE = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -138,7 +138,7 @@ BEGIN
 			SET @RES_PHONE = 1
 		ELSE
 			SET @RES_PHONE = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -148,7 +148,7 @@ BEGIN
 			SET @ADDRESS = 1
 		ELSE
 			SET @ADDRESS = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -158,7 +158,7 @@ BEGIN
 			SET @NAME = 1
 		ELSE
 			SET @NAME = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -168,7 +168,7 @@ BEGIN
 			SET @SRVC = 1
 		ELSE
 			SET @SRVC = 0
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -178,12 +178,12 @@ BEGIN
 			SET @INN = 1
 		ELSE
 			SET @INN = 0
-			
+
 		/*SELECT @ADDRESS, @DIR_FIO, @DIR_POS, @DIR_PHONE, @BUH_FIO, @BUH_POS, @BUH_PHONE, @RES_FIO, @RES_POS, @RES_PHONE, @SRVC*/
-			
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		CREATE TABLE #client
 			(
 				ClientID		INT PRIMARY KEY,
@@ -205,7 +205,7 @@ BEGIN
 				BUH_POS_LAST	DATETIME,
 				BUH_PHONE		VARCHAR(250),
 				BUH_PHONE_LAST	DATETIME,
-				RES_FIO			VARCHAR(250),			
+				RES_FIO			VARCHAR(250),
 				RES_SURNAME		VARCHAR(250),
 				RES_NAME		VARCHAR(250),
 				RES_PATRON		VARCHAR(250),
@@ -213,7 +213,7 @@ BEGIN
 				RES_POS			VARCHAR(250),
 				RES_POS_LAST	DATETIME,
 				RES_PHONE		VARCHAR(250),
-				RES_PHONE_LAST	DATETIME,			
+				RES_PHONE_LAST	DATETIME,
 				SERVICE			VARCHAR(250),
 				CITY_PARENT		VARCHAR(250),
 				CITY			VARCHAR(250),
@@ -225,14 +225,14 @@ BEGIN
 				INN				VARCHAR(50),
 				CLientFullName	VarCHar(500)
 			)
-			
+
 		INSERT INTO #client(ClientID)
 			SELECT ClientID
 			FROM dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			WHERE	(ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			
+
 		IF OBJECT_ID('tempdb..#client_dbf') IS NOT NULL
 			DROP TABLE #client_dbf
 
@@ -242,8 +242,8 @@ BEGIN
 				TO_ID		INT NOT NULL,
 				DISTR		VARCHAR(50),
 				DISTR_DBF	VARCHAR(50)
-			)	
-			
+			)
+
 		INSERT INTO #client_dbf(ClientID, TO_ID, DISTR, DISTR_DBF)
 			SELECT o_O.ClientID, o_O.TD_ID_TO,
 				(
@@ -260,7 +260,7 @@ BEGIN
 						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
 						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
 												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM 						
+												AND DIS_COMP_NUM = RN_COMP_NUM 
 					WHERE y.TD_ID_TO = o_O.TD_ID_TO AND RN_SERVICE = 0
 					ORDER BY SYS_ORDER
 				) AS DISTR_DBF
@@ -277,17 +277,17 @@ BEGIN
 						INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON f.SystemBaseName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
 					WHERE f.Service = 0
 				) AS o_O
-			
-		SET @SQL = 'ALTER TABLE #client_dbf ADD CONSTRAINT [' + CONVERT(NVARCHAR(128), NEWID()) + '] PRIMARY KEY CLUSTERED 
+
+		SET @SQL = 'ALTER TABLE #client_dbf ADD CONSTRAINT [' + CONVERT(NVARCHAR(128), NEWID()) + '] PRIMARY KEY CLUSTERED
 			(
 				ClientID,
 				TO_ID
 			) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)'
-		EXEC (@SQL)	
-			
+		EXEC (@SQL)
+
 		IF OBJECT_ID('tempdb..#dbf') IS NOT NULL
 			DROP TABLE #dbf
-			
+
 		CREATE TABLE #dbf
 			(
 				TO_ID			INT PRIMARY KEY,
@@ -320,11 +320,11 @@ BEGIN
 				INN				VARCHAR(50),
 				TO_NAME			VarChar(500)
 			)
-			
+
 		INSERT INTO #dbf(TO_ID)
 			SELECT DISTINCT TO_ID
 			FROM #client_dbf
-			
+
 		/*
 			заполнение данных адресов и сотрудников, которые выбраны
 		*/
@@ -342,12 +342,12 @@ BEGIN
 				DIR_POS_LAST = L.ClientLast,
 				DIR_PHONE_LAST = L.ClientLast
 				/*
-				DIR_FIO_LAST = 
+				DIR_FIO_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalDirLastView z
 							WHERE a.ClientID = z.ID_MASTER
-								AND 
+								AND
 									(
 										z.CP_SURNAME <> b.CP_SURNAME
 										OR z.CP_NAME <> b.CP_NAME
@@ -355,7 +355,7 @@ BEGIN
 									)
 							ORDER BY ClientLast DESC
 						),
-				DIR_POS_LAST = 
+				DIR_POS_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalDirLastView z
@@ -363,7 +363,7 @@ BEGIN
 								AND z.CP_POS <> b.CP_POS
 							ORDER BY ClientLast DESC
 						),
-				DIR_PHONE_LAST = 
+				DIR_PHONE_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalDirLastView z
@@ -372,7 +372,7 @@ BEGIN
 							ORDER BY ClientLast DESC
 						)
 				*/
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
 				OUTER APPLY
@@ -380,12 +380,12 @@ BEGIN
 					SELECT TOP 1 ClientLast
 					FROM dbo.ClientPersonalDirLastView z
 					WHERE a.ClientID = z.ID_MASTER
-						AND 
+						AND
 						(
 							z.CP_SURNAME <> b.CP_SURNAME
-							OR 
+							OR
 							z.CP_NAME <> b.CP_NAME
-							OR 
+							OR
 							z.CP_PATRON <> b.CP_PATRON
 							OR
 							z.CP_POS <> b.CP_POS
@@ -394,7 +394,7 @@ BEGIN
 						)
 					ORDER BY ClientLast DESC
 				) L
-				
+
 			UPDATE a
 			SET DIR_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
 				DIR_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
@@ -403,22 +403,22 @@ BEGIN
 				DIR_POS = POS_NAME,
 				DIR_PHONE = TP_PHONE,
 				DIR_LAST = TP_LAST
-			FROM 
+			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
-		
+
 			IF @DIR_PHONE = 1
 			BEGIN
 				UPDATE #client
 				SET DIR_PHONE = dbo.PhoneString(DIR_PHONE)
-				
+
 				UPDATE #dbf
 				SET DIR_PHONE = dbo.PhoneString(DIR_PHONE)
 			END
 		END
-		
+
 		IF @BUH_FIO = 1 OR @BUH_POS = 1 OR @BUH_PHONE = 1
 		BEGIN
 			UPDATE a
@@ -428,17 +428,17 @@ BEGIN
 				BUH_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
 				BUH_POS = CP_POS,
 				BUH_PHONE = CP_PHONE
-				,	
+				,
 				BUH_FIO_LAST = L.ClientLast,
 				BUH_POS_LAST = L.ClientLast,
 				BUH_PHONE_LAST = L.ClientLast
-				/*		
-				BUH_FIO_LAST = 
+				/*
+				BUH_FIO_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalBuhLastView z
 							WHERE a.ClientID = z.ID_MASTER
-								AND 
+								AND
 									(
 										z.CP_SURNAME <> b.CP_SURNAME
 										OR z.CP_NAME <> b.CP_NAME
@@ -446,7 +446,7 @@ BEGIN
 									)
 							ORDER BY ClientLast DESC
 						),
-				BUH_POS_LAST = 
+				BUH_POS_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalBuhLastView z
@@ -454,7 +454,7 @@ BEGIN
 								AND z.CP_POS <> b.CP_POS
 							ORDER BY ClientLast DESC
 						),
-				BUH_PHONE_LAST = 
+				BUH_PHONE_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalBuhLastView z
@@ -463,8 +463,8 @@ BEGIN
 							ORDER BY ClientLast DESC
 						)
 						*/
-				
-			FROM 
+
+			FROM
 				#client a
 				INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
 				OUTER APPLY
@@ -472,12 +472,12 @@ BEGIN
 					SELECT TOP 1 ClientLast
 					FROM dbo.ClientPersonalBuhLastView z
 					WHERE a.ClientID = z.ID_MASTER
-						AND 
+						AND
 						(
 							z.CP_SURNAME <> b.CP_SURNAME
-							OR 
+							OR
 							z.CP_NAME <> b.CP_NAME
-							OR 
+							OR
 							z.CP_PATRON <> b.CP_PATRON
 							OR
 							z.CP_POS <> b.CP_POS
@@ -486,7 +486,7 @@ BEGIN
 						)
 					ORDER BY ClientLast DESC
 				) L
-				
+
 			UPDATE a
 			SET BUH_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
 				BUH_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
@@ -495,7 +495,7 @@ BEGIN
 				BUH_POS = POS_NAME,
 				BUH_PHONE = TP_PHONE,
 				BUH_LAST = TP_LAST
-			FROM 
+			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
@@ -505,12 +505,12 @@ BEGIN
 			BEGIN
 				UPDATE #client
 				SET BUH_PHONE = dbo.PhoneString(BUH_PHONE)
-				
+
 				UPDATE #dbf
 				SET BUH_PHONE = dbo.PhoneString(BUH_PHONE)
 			END
 		END
-		
+
 		IF @RES_FIO = 1 OR @RES_POS = 1 OR @RES_PHONE = 1
 		BEGIN
 			UPDATE a
@@ -525,12 +525,12 @@ BEGIN
 				RES_POS_LAST = L.ClientLast,
 				RES_PHONE_LAST = L.ClientLast
 				/*
-				RES_FIO_LAST = 
+				RES_FIO_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalResLastView z
 							WHERE a.ClientID = z.ID_MASTER
-								AND 
+								AND
 									(
 										z.CP_SURNAME <> b.CP_SURNAME
 										OR z.CP_NAME <> b.CP_NAME
@@ -538,7 +538,7 @@ BEGIN
 									)
 							ORDER BY ClientLast DESC
 						),
-				RES_POS_LAST = 
+				RES_POS_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalResLastView z
@@ -546,7 +546,7 @@ BEGIN
 								AND z.CP_POS <> b.CP_POS
 							ORDER BY ClientLast DESC
 						),
-				RES_PHONE_LAST = 
+				RES_PHONE_LAST =
 						(
 							SELECT TOP 1 ClientLast
 							FROM dbo.ClientPersonalResLastView z
@@ -555,7 +555,7 @@ BEGIN
 							ORDER BY ClientLast DESC
 						)
 				*/
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
 				OUTER APPLY
@@ -563,12 +563,12 @@ BEGIN
 					SELECT TOP 1 ClientLast
 					FROM dbo.ClientPersonalResLastView z
 					WHERE a.ClientID = z.ID_MASTER
-						AND 
+						AND
 						(
 							z.CP_SURNAME <> b.CP_SURNAME
-							OR 
+							OR
 							z.CP_NAME <> b.CP_NAME
-							OR 
+							OR
 							z.CP_PATRON <> b.CP_PATRON
 							OR
 							z.CP_POS <> b.CP_POS
@@ -577,7 +577,7 @@ BEGIN
 						)
 					ORDER BY ClientLast DESC
 				) L
-				
+
 			UPDATE a
 			SET RES_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
 				RES_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
@@ -586,7 +586,7 @@ BEGIN
 				RES_POS = POS_NAME,
 				RES_PHONE = TP_PHONE,
 				RES_LAST = TP_LAST
-			FROM 
+			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
@@ -596,28 +596,28 @@ BEGIN
 			BEGIN
 				UPDATE #client
 				SET RES_PHONE = dbo.PhoneString(RES_PHONE)
-				
+
 				UPDATE #dbf
 				SET RES_PHONE = dbo.PhoneString(RES_PHONE)
 			END
 		END
-		
+
 		IF @SRVC = 1
 		BEGIN
 			UPDATE a
 			SET SERVICE = ServiceName
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientView b ON a.ClientID = b.ClientID
-				
+
 			UPDATE a
 			SET SERVICE = COUR_NAME
-			FROM 
+			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOTable b ON a.TO_ID = b.TO_ID
 				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.CourierTable c ON c.COUR_ID = b.TO_ID_COUR
 		END
-		
+
 		IF @ADDRESS = 1
 		BEGIN
 			UPDATE a
@@ -627,7 +627,7 @@ BEGIN
 				STREET = b.ST_NAME,
 				HOME = b.CA_HOME,
 				OFFICE = b.CA_OFFICE,
-				ADDRESS_LAST = 
+				ADDRESS_LAST =
 						(
 							SELECT MAX(ClientLast)
 							FROM dbo.ClientAddressLastView z
@@ -639,7 +639,7 @@ BEGIN
 			FROM
 				#client a
 				INNER JOIN dbo.ClientAddressView b ON a.ClientID = b.CA_ID_CLIENT
-				
+
 			UPDATE a
 			SET CITY = h.CT_NAME,
 				STREET = g.ST_NAME,
@@ -651,38 +651,38 @@ BEGIN
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.StreetTable g ON g.ST_ID = f.TA_ID_STREET
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable n ON n.TO_ID = f.TA_ID_TO
-		END	
-			
+		END
+
 		IF @INN = 1
 		BEGIN
 			UPDATE a
 			SET INN = ClientINN
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				
+
 			UPDATE a
 			SET INN = TO_INN
 			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
 		END
-		
+
 		IF @NAME = 1
 		BEGIN
 			UPDATE a
 			SET ClientFullName = b.ClientFullName
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				
+
 			UPDATE a
 			SET TO_NAME = b.TO_NAME
 			FROM
 				#dbf a
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
 		END
-			
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
@@ -701,318 +701,318 @@ BEGIN
 				CLIENT_LAST		DATETIME,
 				DBF_LAST		DATETIME
 			)
-			
+
 		IF @DIR_FIO = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.DIR_FIO AS IN_OIS, 
+					a.DIR_FIO AS IN_OIS,
 					'ФИО руководителя' AS TP,
 					e.DIR_FIO AS IN_DBF,
-					CASE 
-						WHEN 
+					CASE
+						WHEN
 							a.DIR_SURNAME <> e.DIR_SURNAME
 							AND a.DIR_NAME = e.DIR_NAME
 							AND a.DIR_PATRON = e.DIR_PATRON
 							THEN 'Неверная фамилия (возможно, опечатка)'
-						WHEN 
+						WHEN
 							a.DIR_SURNAME = e.DIR_SURNAME
 							AND a.DIR_NAME <> e.DIR_NAME
 							AND a.DIR_PATRON = e.DIR_PATRON
 							THEN 'Неверное имя (возможно опечатка)'
-						WHEN 
+						WHEN
 							a.DIR_SURNAME = e.DIR_SURNAME
 							AND a.DIR_NAME = e.DIR_PATRON
-							AND a.DIR_PATRON <> e.DIR_PATRON 
+							AND a.DIR_PATRON <> e.DIR_PATRON
 							THEN 'Неверное отчество (возможно опечатка)'
 						ELSE 'Совершенно другой сотрудник'
-					END AS ERROR,	
+					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.DIR_FIO_LAST, e.DIR_LAST
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf d ON d.ClientID = a.ClientID
 					INNER JOIN #dbf e ON e.TO_ID = d.TO_ID
-				WHERE 
+				WHERE
 					(
 						a.DIR_SURNAME <> e.DIR_SURNAME
 						OR a.DIR_NAME <> e.DIR_NAME
 						OR a.DIR_PATRON <> e.DIR_PATRON
 					)
-						
+
 		IF @DIR_POS = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.DIR_POS AS IN_OIS, 
+					a.DIR_POS AS IN_OIS,
 					'Должность руководителя' AS TP,
 					d.DIR_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.DIR_POS_LAST, d.DIR_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.DIR_POS <> d.DIR_POS
 						)
-						
+
 		IF @DIR_PHONE = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.DIR_PHONE AS IN_OIS, 
+					a.DIR_PHONE AS IN_OIS,
 					'Телефон руководителя' AS TP,
 					d.DIR_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.DIR_PHONE_LAST, d.DIR_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.DIR_PHONE <> d.DIR_PHONE
 						)
-						
-						
+
+
 		IF @BUH_FIO = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.BUH_FIO AS IN_OIS, 
+					a.BUH_FIO AS IN_OIS,
 					'ФИО гл.бух' AS TP,
 					e.BUH_FIO AS IN_DBF,
-					CASE 
-						WHEN 
+					CASE
+						WHEN
 							a.BUH_SURNAME <> e.BUH_SURNAME
 							AND a.BUH_NAME = e.BUH_NAME
 							AND a.BUH_PATRON = e.BUH_PATRON
 							THEN 'Неверная фамилия (возможно, опечатка)'
-						WHEN 
+						WHEN
 							a.BUH_SURNAME = e.BUH_SURNAME
 							AND a.BUH_NAME <> e.BUH_NAME
 							AND a.BUH_PATRON = e.BUH_PATRON
 							THEN 'Неверное имя (возможно опечатка)'
-						WHEN 
+						WHEN
 							a.BUH_SURNAME = e.BUH_SURNAME
 							AND a.BUH_NAME = e.BUH_PATRON
-							AND a.BUH_PATRON <> e.BUH_PATRON 
+							AND a.BUH_PATRON <> e.BUH_PATRON
 							THEN 'Неверное отчество (возможно опечатка)'
 						ELSE 'Совершенно другой сотрудник'
-					END AS ERROR,	
+					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.BUH_FIO_LAST, e.BUH_LAST
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf d ON d.ClientID = a.ClientID
 					INNER JOIN #dbf e ON e.TO_ID = d.TO_ID
-				WHERE 
+				WHERE
 					(
 						a.BUH_SURNAME <> e.BUH_SURNAME
 						OR a.BUH_NAME <> e.BUH_NAME
 						OR a.BUH_PATRON <> e.BUH_PATRON
 					)
-						
+
 		IF @BUH_POS = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.BUH_POS AS IN_OIS, 
+					a.BUH_POS AS IN_OIS,
 					'Должность гл.бух' AS TP,
 					d.BUH_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.BUH_POS_LAST, d.BUH_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.BUH_POS <> d.BUH_POS
 						)
-						
+
 		IF @BUH_PHONE = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.BUH_PHONE AS IN_OIS, 
+					a.BUH_PHONE AS IN_OIS,
 					'Телефон гл.бух' AS TP,
 					d.BUH_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.BUH_PHONE_LAST, d.BUH_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.BUH_PHONE <> d.BUH_PHONE
 						)
-						
-						
+
+
 		IF @RES_FIO = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.RES_FIO AS IN_OIS, 
+					a.RES_FIO AS IN_OIS,
 					'ФИО ответственного' AS TP,
 					e.RES_FIO AS IN_DBF,
-					CASE 
-						WHEN 
+					CASE
+						WHEN
 							a.RES_SURNAME <> e.RES_SURNAME
 							AND a.RES_NAME = e.RES_NAME
 							AND a.RES_PATRON = e.RES_PATRON
 							THEN 'Неверная фамилия (возможно, опечатка)'
-						WHEN 
+						WHEN
 							a.RES_SURNAME = e.RES_SURNAME
 							AND a.RES_NAME <> e.RES_NAME
 							AND a.RES_PATRON = e.RES_PATRON
 							THEN 'Неверное имя (возможно опечатка)'
-						WHEN 
+						WHEN
 							a.RES_SURNAME = e.RES_SURNAME
 							AND a.RES_NAME = e.RES_PATRON
-							AND a.RES_PATRON <> e.RES_PATRON 
+							AND a.RES_PATRON <> e.RES_PATRON
 							THEN 'Неверное отчество (возможно опечатка)'
 						ELSE 'Совершенно другой сотрудник'
-					END AS ERROR,	
+					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.RES_FIO_LAST, e.RES_LAST
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf d ON d.ClientID = a.ClientID
 					INNER JOIN #dbf e ON e.TO_ID = d.TO_ID
-				WHERE 
+				WHERE
 					(
 						a.RES_SURNAME <> e.RES_SURNAME
 						OR a.RES_NAME <> e.RES_NAME
 						OR a.RES_PATRON <> e.RES_PATRON
 					)
-						
+
 		IF @RES_POS = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.RES_POS AS IN_OIS, 
+					a.RES_POS AS IN_OIS,
 					'Должность ответственного' AS TP,
 					d.RES_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.RES_POS_LAST, d.RES_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.RES_POS <> d.RES_POS
 						)
-						
+
 		IF @RES_PHONE = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.RES_PHONE AS IN_OIS, 
+					a.RES_PHONE AS IN_OIS,
 					'Телефон ответственного' AS TP,
 					d.RES_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.RES_PHONE_LAST, d.RES_LAST
 				FROM
-					#client a 
-					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID				
+					#client a
+					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON a.ClientID = c.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
 							a.RES_PHONE <> d.RES_PHONE
 						)
-						
+
 		IF @SRVC = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.SERVICE AS IN_OIS, 
+					a.SERVICE AS IN_OIS,
 					'Сервис-инженер' AS TP,
 					d.SERVICE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
-							CASE 
+							CASE
 								WHEN CHARINDEX(' ', a.SERVICE) <> 0 THEN LEFT(a.SERVICE, CHARINDEX(' ', a.SERVICE) - 1)
 								WHEN CHARINDEX('_', a.SERVICE) <> 0 THEN LEFT(a.SERVICE, CHARINDEX('_', a.SERVICE) - 1)
 								ELSE a.SERVICE
-							END <> 
-							CASE 
+							END <>
+							CASE
 								WHEN CHARINDEX(' ', d.SERVICE) <> 0 THEN LEFT(d.SERVICE, CHARINDEX(' ', d.SERVICE) - 1)
 								ELSE d.SERVICE
-							END	
+							END
 						)
-						
+
 		IF @INN = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.INN AS IN_OIS, 
+					a.INN AS IN_OIS,
 					'ИНН' AS TP,
 					d.INN AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	a.INN <> d.INN
-						
+
 		IF @NAME = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					a.ClientFullName AS IN_OIS, 
+					a.ClientFullName AS IN_OIS,
 					'Название' AS TP,
 					d.TO_NAME AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,	
+					'Неправильно и все тут' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	a.ClientFullname <> d.TO_NAME
-						
+
 		IF @ADDRESS = 1
 			INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, IN_OIS, TP, IN_DBF, ERROR, DISTR, DISTR_DBF, CLIENT_LAST, DBF_LAST)
-				SELECT DISTINCT 
+				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
-					ISNULL(a.CITY_PARENT + ',' + a.PREFIX + ' ', '') + a.CITY + ',' + a.STREET + ISNULL(',' + NULLIF(a.HOME, ''), '') + CASE ISNULL(',' + NULLIF(a.OFFICE, ''), '') WHEN '' THEN '' ELSE ',' + a.OFFICE END AS IN_OIS, 
+					ISNULL(a.CITY_PARENT + ',' + a.PREFIX + ' ', '') + a.CITY + ',' + a.STREET + ISNULL(',' + NULLIF(a.HOME, ''), '') + CASE ISNULL(',' + NULLIF(a.OFFICE, ''), '') WHEN '' THEN '' ELSE ',' + a.OFFICE END AS IN_OIS,
 					'Адрес' AS TP,
 					d.CITY + ',' + d.STREET + CASE ISNULL(d.HOME, '') WHEN '' THEN '' ELSE ',' + d.HOME END AS IN_DBF,
-					CASE 
+					CASE
 						WHEN a.STREET <> d.STREET
 							AND a.CITY = d.CITY
 							AND REPLACE(
@@ -1048,7 +1048,7 @@ BEGIN
 									REPLACE(
 									REPLACE(
 									REPLACE(
-										d.HOME, 
+										d.HOME,
 										' ', ''),
 										'д.', ''),
 										'этаж', ''),
@@ -1060,7 +1060,7 @@ BEGIN
 										'.', ''),
 										',', ''
 									) THEN 'Неверная улица (возможно, опечатка)'
-						WHEN a.STREET = d.STREET													
+						WHEN a.STREET = d.STREET
 							AND a.CITY = d.CITY
 							AND REPLACE(
 									REPLACE(
@@ -1084,7 +1084,7 @@ BEGIN
 										'.', ''),
 										',', ''
 									)
-									<> 
+									<>
 								REPLACE(
 									REPLACE(
 									REPLACE(
@@ -1106,13 +1106,13 @@ BEGIN
 										'оф', ''),
 										'.', ''),
 										',', ''
-									) THEN 'Неверный номер дома/офиса (возможно опечатка)'		
+									) THEN 'Неверный номер дома/офиса (возможно опечатка)'
 						ELSE 'Совершенно другой адрес'
 					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.ADDRESS_LAST, d.ADDRESS_LAST
-				FROM 
+				FROM
 					#client a
 					INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 					INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
@@ -1121,7 +1121,7 @@ BEGIN
 							REPLACE(ISNULL(a.CITY_PARENT + ',', '') + a.CITY + ','+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '') <> REPLACE(d.CITY + ',' +  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(d.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '')
 							/*a.STREET <> d.STREET
 							OR a.CITY <> d.CITY*/
-							OR 
+							OR
 								REPLACE(
 									REPLACE(
 									REPLACE(
@@ -1144,7 +1144,7 @@ BEGIN
 										'.', ''),
 										',', ''
 									)
-									<> 
+									<>
 								REPLACE(
 									REPLACE(
 									REPLACE(
@@ -1168,30 +1168,32 @@ BEGIN
 										',', ''
 									)
 						)
-		
+
 		SELECT *
 		FROM #result
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		IF OBJECT_ID('tempdb..#dbf') IS NOT NULL
 			DROP TABLE #dbf
-			
+
 		IF OBJECT_ID('tempdb..#client_dbf') IS NOT NULL
-			DROP TABLE #client_dbf	
-			
+			DROP TABLE #client_dbf
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DBF_COMPARE] TO rl_client_dbf_compare;
+GO

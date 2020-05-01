@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDENT_POSITION_SELECT]
+ALTER PROCEDURE [dbo].[STUDENT_POSITION_SELECT]
 	@FILTER	VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE @FILTER IS NULL
 			OR StudentPositionName LIKE @FILTER
 		ORDER BY StudentPositionName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDENT_POSITION_SELECT] TO rl_student_position_r;
+GO

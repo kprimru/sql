@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_INNOVATION_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_INNOVATION_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,24 +25,26 @@ BEGIN
 		DELETE
 		FROM dbo.ClientInnovationControl
 		WHERE ID_PERSONAL IN (SELECT ID FROM  dbo.ClientInnovationPersonal WHERE ID_INNOVATION = @ID)
-		
+
 		DELETE
 		FROM dbo.ClientInnovationPersonal
 		WHERE ID_INNOVATION = @ID
-		
-		
-		
+
+
+
 		DELETE
 		FROM dbo.ClientInnovation
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INNOVATION_DELETE] TO rl_client_innovation_d;
+GO

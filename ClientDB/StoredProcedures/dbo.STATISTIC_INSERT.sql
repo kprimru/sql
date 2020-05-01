@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STATISTIC_INSERT]
+ALTER PROCEDURE [dbo].[STATISTIC_INSERT]
 	@IB_ID	INT,
 	@DATE	SMALLDATETIME,
-	@DOC	INT	
+	@DOC	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -32,14 +32,16 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO dbo.StatisticTable(InfoBankID, StatisticDate, Docs)
 			VALUES (@IB_ID, @DATE, @DOC)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STATISTIC_INSERT] TO DBStatistic;
+GO

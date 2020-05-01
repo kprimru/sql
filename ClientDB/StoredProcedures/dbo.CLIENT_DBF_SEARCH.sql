@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DBF_SEARCH]
+ALTER PROCEDURE [dbo].[CLIENT_DBF_SEARCH]
 	@NAME	VARCHAR(250),
 	@DISTR	INT
 WITH EXECUTE AS OWNER
@@ -37,14 +37,16 @@ BEGIN
 						)
 				)
 		ORDER BY TO_NUM DESC, TO_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DBF_SEARCH] TO rl_client_dbf_import;
+GO

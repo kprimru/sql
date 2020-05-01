@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_VISIT_SAVE]
+ALTER PROCEDURE [dbo].[STUDY_VISIT_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@CLIENT		INT,
 	@TEACHER	INT,
@@ -35,7 +35,7 @@ BEGIN
 				SELECT @ID, ID_CLIENT, ID_TEACHER, DATE, NOTE, 2, UPD_DATE, UPD_USER
 				FROM dbo.ClientStudyVisit
 				WHERE ID = @ID
-				
+
 			UPDATE dbo.ClientStudyVisit
 			SET	ID_TEACHER	=	@TEACHER,
 				DATE		=	@DATE,
@@ -44,14 +44,16 @@ BEGIN
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_VISIT_SAVE] TO rl_client_study_u;
+GO

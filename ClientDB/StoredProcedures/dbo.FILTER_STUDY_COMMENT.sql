@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[FILTER_STUDY_COMMENT] 
-	@pbegindate SMALLDATETIME, 
-	@penddate SMALLDATETIME, 
-	@pmanagerid int, 
+ALTER PROCEDURE [dbo].[FILTER_STUDY_COMMENT]
+	@pbegindate SMALLDATETIME,
+	@penddate SMALLDATETIME,
+	@pmanagerid int,
 	@pserviceid int,
 	@pteacherid int = NULL,
 	@learned bit = null
@@ -27,10 +27,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DISTINCT 
+		SELECT DISTINCT
 			ClientFullName,	DATE AS StudyDate, TeacherName,	Need AS SystemNeed,	Teached,
 			Recomend, Note AS StudyNote, ServiceName, b.CLientID
-		FROM 
+		FROM
 			dbo.ClientStudy a INNER JOIN
 			dbo.ClientTable b ON a.ID_CLIENT = b.ClientID INNER JOIN
 			dbo.ServiceTable c ON b.ClientServiceID = c.ServiceID INNER JOIN
@@ -44,14 +44,16 @@ BEGIN
 			AND (Teached = @learned OR @learned IS NULL)
 			AND b.STATUS = 1
 		ORDER BY StudyDate DESC, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FILTER_STUDY_COMMENT] TO rl_filter_study_comment;
+GO

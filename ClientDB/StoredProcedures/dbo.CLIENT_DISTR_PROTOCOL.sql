@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_PROTOCOL]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_PROTOCOL]
 	@ID		UNIQUEIDENTIFIER	= NULL,
 	@STR	VARCHAR(50)			= NULL OUTPUT,
 	@HST	INT					= NULL,
@@ -27,14 +27,14 @@ BEGIN
 	BEGIN TRY
 
 		IF @ID IS NOT NULL
-			SELECT 
+			SELECT
 				@HST = HostID, @DISTR = DISTR, @COMP = COMP,
 				@STR = DistrStr
 			FROM dbo.ClientDistrView a WITH(NOEXPAND)
 			WHERE ID = @ID
 		ELSE
 			SELECT @STR = DistrStr
-			FROM 
+			FROM
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 			WHERE b.HostID = @HST AND DistrNumber = @DISTR AND CompNumber = @COMP
@@ -44,14 +44,17 @@ BEGIN
 		FROM dbo.RegProtocol
 		WHERE RPR_ID_HOST = @HST AND RPR_DISTR = @DISTR AND RPR_COMP = @COMP
 		ORDER BY RPR_DATE DESC, RPR_ID DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_PROTOCOL] TO rl_client_distr_protocol;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_PROTOCOL] TO rl_client_system_protocol;
+GO

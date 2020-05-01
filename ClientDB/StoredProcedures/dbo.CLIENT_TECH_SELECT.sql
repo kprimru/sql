@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TECH_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_TECH_SELECT]
 	@CL_ID	INT
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.ClaimTable
 		WHERE CLM_ID_CLIENT = @CL_ID
 		ORDER BY CLM_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TECH_SELECT] TO rl_client_tech_r;
+GO

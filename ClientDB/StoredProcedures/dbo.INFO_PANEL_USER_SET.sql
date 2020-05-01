@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_PANEL_USER_SET]
+ALTER PROCEDURE [dbo].[INFO_PANEL_USER_SET]
 	@ID		UNIQUEIDENTIFIER,
 	@USER	NVARCHAR(128),
 	@STATE	BIT
@@ -31,14 +31,16 @@ BEGIN
 		ELSE
 			INSERT INTO dbo.InfoPanelUser(ID_PANEL, USR_NAME)
 				VALUES(@ID, @USER)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_PANEL_USER_SET] TO rl_info_panel;
+GO

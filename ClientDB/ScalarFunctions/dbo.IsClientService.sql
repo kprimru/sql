@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[IsClientService]
+ALTER FUNCTION [dbo].[IsClientService]
 (
 	@CLIENT	INT,
 	@START	SMALLDATETIME,
@@ -26,12 +26,12 @@ BEGIN
 		SET @RES = 1
 	ELSE
 	BEGIN
-		IF 
+		IF
 			(
 				SELECT TOP 1 StatusID
 				FROM dbo.ClientTable
 				WHERE (ClientID = @CLIENT OR ID_MASTER = @CLIENT)
-					AND ClientLast <= @START				
+					AND ClientLast <= @START
 				ORDER BY ClientLast DESC
 			) = 2
 			SET @RES = 1

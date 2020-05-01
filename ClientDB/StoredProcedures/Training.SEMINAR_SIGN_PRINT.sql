@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_PRINT]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_PRINT]
 	@SCH_ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -39,14 +39,16 @@ BEGIN
 			INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 		WHERE SP_ID_SEMINAR = @SCH_ID AND SSP_CANCEL = 0
 		ORDER BY ClientFullName, SSP_FIO
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_PRINT] TO rl_training_r;
+GO

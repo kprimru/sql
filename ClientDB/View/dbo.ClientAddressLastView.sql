@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientAddressLastView]
+ALTER VIEW [dbo].[ClientAddressLastView]
 AS
 	SELECT a.ID_MASTER, CA_ID_STREET, CA_HOME, CA_OFFICE, MAX(ClientLast) AS ClientLast
-	FROM 
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ClientAddress b ON a.ClientID = b.CA_ID_CLIENT
 		INNER JOIN dbo.AddressType ON CA_ID_TYPE = AT_ID

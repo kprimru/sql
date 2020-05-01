@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_DOCUMENT_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_DOCUMENT_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@CONTRACT	INT,
 	@TYPE		UNIQUEIDENTIFIER,
@@ -36,7 +36,7 @@ BEGIN
 				SELECT @ID, ID_CONTRACT, ID_TYPE, DATE, NOTE, FIXED, 2, UPD_DATE, UPD_USER
 				FROM dbo.ContractDocument
 				WHERE ID = @ID
-				
+
 			UPDATE dbo.ContractDocument
 			SET	ID_TYPE		=	@TYPE,
 				DATE		=	@DATE,
@@ -45,19 +45,21 @@ BEGIN
 				UPD_DATE	=	GETDATE(),
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
-		END	
-		
+		END
+
 		UPDATE dbo.ContractTable
 		SET ContractFixed = (SELECT TOP 1 FIXED FROM dbo.ContractDocument WHERE ID_CONTRACT = @CONTRACT ORDER BY DATE DESC, UPD_DATE DESC)
 		WHERE ContractID = @CONTRACT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_DOCUMENT_SAVE] TO rl_contract_document;
+GO

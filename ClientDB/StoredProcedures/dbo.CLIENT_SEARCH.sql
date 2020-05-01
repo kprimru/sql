@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH]
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH]
 	@NAME		VARCHAR(500) = NULL,
 	@SERVICE	INT = NULL,
 	@SYSTEM		INT = NULL,
@@ -55,7 +55,7 @@ BEGIN
 				(
 					SELECT ClientID
 					FROM dbo.ClientTable
-					WHERE ClientFullName LIKE @NAME 
+					WHERE ClientFullName LIKE @NAME
 						OR EXISTS
 							(
 								SELECT *
@@ -64,7 +64,7 @@ BEGIN
 									AND NAME LIKE @NAME
 							)
 				)
-			
+
 		IF @SERVICE IS NOT NULL
 			DELETE FROM #client
 			WHERE CL_ID NOT IN
@@ -72,7 +72,7 @@ BEGIN
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE ClientServiceID = @SERVICE
-				)		
+				)
 
 		IF @STATUS IS NOT NULL
 			DELETE FROM #client
@@ -82,17 +82,17 @@ BEGIN
 					FROM dbo.ClientTable
 					WHERE StatusID = @STATUS
 				)
-			
+
 		IF @MANAGER IS NOT NULL
 			DELETE FROM #client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
-					FROM 
+					FROM
 						dbo.ClientTable
 						INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 					WHERE ManagerID = @MANAGER
-				)		
+				)
 
 		IF @STYPE IS NOT NULL
 			DELETE FROM #client
@@ -101,7 +101,7 @@ BEGIN
 					SELECT ClientID
 					FROM dbo.ClientTable
 					WHERE ServiceTypeID = @STYPE
-				)				
+				)
 
 		IF (@SYSTEM IS NOT NULL) OR (@DISTR IS NOT NULL) OR (@NET IS NOT NULL)
 		BEGIN
@@ -124,52 +124,52 @@ BEGIN
 					FROM dbo.ClientTable
 					WHERE ClientServiceID = @RSERVICE
 				)
-			
-		IF @RMANAGER <> 0 
+
+		IF @RMANAGER <> 0
 			DELETE FROM #client
 			WHERE CL_ID NOT IN
 				(
 					SELECT ClientID
-					FROM 
-						dbo.ClientTable a 	
-						INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID				
+					FROM
+						dbo.ClientTable a 
+						INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 					WHERE ManagerID = @RMANAGER
 				)
 
 		IF @COMPL = 1
-			DELETE 
+			DELETE
 			FROM #client
 			WHERE CL_ID NOT IN
 				(
 					SELECT a.UD_ID_CLIENT
-					FROM 
+					FROM
 						USR.USRActiveView a
 						INNER JOIN USR.USRComplianceView b WITH(NOEXPAND) ON a.UF_ID = b.UF_ID
 					WHERE UF_ACTIVE = 1 AND UD_ACTIVE = 1 AND a.UD_ID_CLIENT IS NOT NULL
 						AND UF_COMPLIANCE = '#HOST'
 				)
-				
+
 
 		IF (@REG = 1) AND ((IS_MEMBER('rl_tech_reg') = 1) OR (IS_SRVROLEMEMBER('sysadmin') = 1))
 		BEGIN
-			SELECT 
-				a.ClientID, 'OIS' AS TP, a.ClientFullName, CA_STR AS ClientAdress, 
+			SELECT
+				a.ClientID, 'OIS' AS TP, a.ClientFullName, CA_STR AS ClientAdress,
 				ServiceName, ManagerName, a.ServiceStatusIndex
-			FROM 
-				#client 
-				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = CL_ID 
+			FROM
+				#client
+				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = CL_ID
 				INNER JOIN dbo.ClientTable b ON b.ClientID = a.ClientID
 				INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.ServiceStatusID
 				LEFT OUTER JOIN dbo.ClientAddressView e ON e.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
 
-			UNION ALL	
+			UNION ALL
 
-			SELECT 
-				ID, 'REG' AS TP, Comment, '', 
+			SELECT
+				ID, 'REG' AS TP, Comment, '',
 				'', '', (SELECT TOP 1 ServiceStatusIndex FROM dbo.ServiceStatusTable WHERE ServiceStatusReg = Service ORDER BY ServiceStatusIndex)
-			FROM 
+			FROM
 				dbo.RegNodeTable a
-				INNER JOIN 
+				INNER JOIN
 					(
 						SELECT DISTINCT Complect
 						FROM dbo.RegNodeTable a
@@ -177,7 +177,7 @@ BEGIN
 							/*AND NOT EXISTS
 								(
 									SELECT *
-									FROM 
+									FROM
 										dbo.ClientDistrView c WITH(NOEXPAND)
 									WHERE c.SystemBaseName = a.SystemName
 										AND a.DistrNumber = c.DISTR
@@ -191,8 +191,8 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 
-				ID, 'REG' AS TP, Comment, '', 
+			SELECT
+				ID, 'REG' AS TP, Comment, '',
 				'', '', (SELECT TOP 1 ServiceStatusIndex FROM dbo.ServiceStatusTable WHERE ServiceStatusReg = Service ORDER BY ServiceStatusIndex)
 			FROM dbo.RegNodeTable a
 			WHERE Complect IS NULL
@@ -201,8 +201,8 @@ BEGIN
 				AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
-						dbo.ClientDistrView c 
+					FROM
+						dbo.ClientDistrView c
 					WHERE c.SystemBaseName = a.SystemName
 						AND a.DistrNumber = c.DISTR
 						AND a.CompNumber = c.COMP
@@ -211,12 +211,12 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			SELECT 
-				a.ClientID, 'OIS' AS TP, a.ClientFullName, CONVERT(VARCHAR(250), CA_STR) AS ClientAdress, 
+			SELECT
+				a.ClientID, 'OIS' AS TP, a.ClientFullName, CONVERT(VARCHAR(250), CA_STR) AS ClientAdress,
 				ServiceName, ManagerName, a.ServiceStatusIndex
-			FROM 
-				#client 
-				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = CL_ID 
+			FROM
+				#client
+				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = CL_ID
 				INNER JOIN dbo.ClientTable b ON b.ClientID = a.ClientID
 				INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.ServiceStatusID
 				LEFT OUTER JOIN dbo.ClientAddressView e ON e.CA_ID_CLIENT = a.ClientID AND AT_REQUIRED = 1
@@ -225,14 +225,22 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO BL_EDITOR;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO BL_READER;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO BL_RGT;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_client_list;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_tech_info;
+GO

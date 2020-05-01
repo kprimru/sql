@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientSatisfactionView]
+ALTER VIEW [dbo].[ClientSatisfactionView]
 WITH SCHEMABINDING
 AS
 	SELECT CS_ID, CC_DATE, CC_ID_CLIENT, STT_RESULT
-	FROM 
+	FROM
 		dbo.ClientSatisfaction
 		INNER JOIN dbo.ClientCall ON CS_ID_CALL = CC_ID
 		INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
-	
+

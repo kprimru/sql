@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[PasswordGenerate]
+ALTER FUNCTION [Common].[PasswordGenerate]
 (
 	-- кол-во симоволов
 	@LN	SMALLINT
@@ -16,12 +16,12 @@ BEGIN
 
 	DECLARE @KEY INT
 	SET @RES = ''
-	
+
 	WHILE LEN(@RES) < @LN
 	BEGIN
 		SET @KEY = CAST(Common.Rand_f()*255 AS INT)%127
-		IF PATINDEX('%[a-zA-Z0-9]%',CHAR(@KEY)) > 0 	 
-		SET @RES = @RES + CHAR(@KEY)	
+		IF PATINDEX('%[a-zA-Z0-9]%',CHAR(@KEY)) > 0 
+		SET @RES = @RES + CHAR(@KEY)
 	END
 
 	RETURN @RES

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[WEB_SCHEDULE_LIMIT]
+ALTER PROCEDURE [Seminar].[WEB_SCHEDULE_LIMIT]
 	@ID		UNIQUEIDENTIFIER,
 	@LIMIT	SMALLINT = NULL OUTPUT
 AS
@@ -22,28 +22,30 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
-			@LIMIT = 
-				LIMIT - 
+
+		SELECT
+			@LIMIT =
+				LIMIT -
 				ISNULL((
-					SELECT COUNT(*) 
-					FROM 
+					SELECT COUNT(*)
+					FROM
 						Seminar.Personal a
 						INNER JOIN Seminar.Status b ON a.ID_STATUS = b.ID
 					WHERE ID_SCHEDULE = @ID AND b.INDX = 1 AND a.STATUS = 1
 				), 0)
-		FROM 
+		FROM
 			Seminar.Schedule
-		WHERE ID = @ID	
-		
+		WHERE ID = @ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[WEB_SCHEDULE_LIMIT] TO rl_seminar_web;
+GO

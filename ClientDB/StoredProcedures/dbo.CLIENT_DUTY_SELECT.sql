@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,20 +21,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
-			ClientDutyID, 
-			ClientDutyDateTime, 
+
+		SELECT
+			ClientDutyID,
+			ClientDutyDateTime,
 			ClientDutySurname + ISNULL(' ' + ClientDutyName, '') + ISNULL(' ' + ClientDutyPatron, '') + ISNULL('   ' + ClientDutyPhone, '') AS ClientDutyContact,
-			ClientDutyPos, ClientDutyPhone, 
-			DutyName, CallTypeName, 
-			ClientDutyQuest, ClientDutyDocs, 
-			ClientDutyNPO, ClientDutyComplete, ClientDutyUncomplete, 
+			ClientDutyPos, ClientDutyPhone,
+			DutyName, CallTypeName,
+			ClientDutyQuest, ClientDutyDocs,
+			ClientDutyNPO, ClientDutyComplete, ClientDutyUncomplete,
 			ClientDutyComment, ClientDutyGive, ClientDutyAnswer,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT SystemShortName + ','
-					FROM 
+					FROM
 						dbo.SystemTable z
 						INNER JOIN dbo.ClientDutyIBTable y ON z.SystemID = y.SystemID
 					WHERE y.ClientDutyID = a.ClientDutyID
@@ -42,14 +42,14 @@ BEGIN
 				)), 1, 1, '')
 			) AS IBList,
 			d.NAME AS GR_NAME,
-			ClientDutyClaimDate, ClientDutyClaimNum, 
+			ClientDutyClaimDate, ClientDutyClaimNum,
 			ClientDutyClaimAnswer, ClientDutyClaimComment,
 			ANSWER, ANSWER_NOTE, SATISF, SATISF_NOTE, NOTIFY, NOTIFY_NOTE, NOTIFY_TYPE,
 			CONVERT(NVARCHAR(32), e.UPD_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), e.UPD_DATE, 108) + '     ' + e.UPD_USER AS RESULT_DATA,
 			CONVERT(NVARCHAR(32), e.UPD_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), e.UPD_DATE, 108) + '     ' + e.UPD_USER AS UPD_DATA,
 			CONVERT(NVARCHAR(32), g.UPD_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), g.UPD_DATE, 108) + '     ' + g.UPD_USER AS NOTIFY_DATA,
 			f.NAME AS DIR_NAME
-		FROM 
+		FROM
 			dbo.ClientDutyTable a
 			INNER JOIN dbo.DutyTable b ON a.DutyID = b.DutyID
 			LEFT OUTER JOIN dbo.CallTypeTable c ON a.CallTypeID = c.CallTypeID
@@ -59,14 +59,16 @@ BEGIN
 			LEFT OUTER JOIN dbo.CallDirection f ON f.ID = a.ID_DIRECTION
 		WHERE ClientID = @CLIENT AND a.STATUS = 1
 		ORDER BY ClientDutyDateTime DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_SELECT] TO rl_client_duty_r;
+GO

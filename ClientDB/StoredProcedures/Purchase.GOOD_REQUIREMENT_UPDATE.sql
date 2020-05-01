@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[GOOD_REQUIREMENT_UPDATE]
+ALTER PROCEDURE [Purchase].[GOOD_REQUIREMENT_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(4000),
 	@SHORT	VARCHAR(200)
@@ -28,14 +28,16 @@ BEGIN
 		SET GR_NAME		=	@NAME,
 			GR_SHORT	=	@SHORT
 		WHERE GR_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[GOOD_REQUIREMENT_UPDATE] TO rl_good_requirement_u;
+GO

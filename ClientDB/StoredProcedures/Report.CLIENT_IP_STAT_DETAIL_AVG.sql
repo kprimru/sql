@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL_AVG]
+ALTER PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL_AVG]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -126,7 +126,7 @@ BEGIN
 														WHERE WeekId='''+CONVERT(NVARCHAR(64), ID)+'''
 														AND q.Net=a.Net))+1)--количество знаков после запятой
 					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)]
-			
+
 
 			'
 		FROM Common.Period
@@ -136,21 +136,21 @@ BEGIN
 
 		SET @SQL = @SQL +
 			N'
-			FROM 	
+			FROM 
 				dbo.ClientStatDetailAVG a
 			'
 		--PRINT len(@SQL)
 
 		--select (@SQL)
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

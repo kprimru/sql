@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[CLIENT_DIN_SELECT]
+ALTER PROCEDURE [Din].[CLIENT_DIN_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -34,7 +34,7 @@ BEGIN
 
 		INSERT INTO @ClientDistrs(Host_Id, Distr, Comp)
 			SELECT HostID, DISTR, COMP
-			FROM  dbo.ClientDistrView a WITH(NOEXPAND)			
+			FROM  dbo.ClientDistrView a WITH(NOEXPAND)
 			WHERE a.ID_CLIENT = @CLIENT;
 
 		INSERT INTO @ClientDistrs(Host_Id, Distr, Comp)
@@ -57,7 +57,7 @@ BEGIN
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM dbo.ClientDistrView c WITH(NOEXPAND)						
+					FROM dbo.ClientDistrView c WITH(NOEXPAND)
 					WHERE c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber AND A.HostID = c.HostID
 						AND c.ID_CLIENT <> @CLIENT
 				);
@@ -83,7 +83,7 @@ BEGIN
 			);
 
 		UPDATE x
-		SET DF_ID = 
+		SET DF_ID =
 				(
 					SELECT TOP 1 z.DF_ID
 					FROM Din.DinFiles z
@@ -94,7 +94,7 @@ BEGIN
 		FROM @ClientDistrs X;
 
 		UPDATE D
-		SET System_Id = 
+		SET System_Id =
 			(
 				SELECT TOP 1 SystemID
 				FROM
@@ -104,7 +104,7 @@ BEGIN
 						WHERE a.HostID = D.Host_Id AND a.DISTR = D.DISTR AND a.COMP = D.COMP
 
 						UNION
-	
+
 						SELECT SystemID, SystemOrder
 						FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 						WHERE a.HostID = D.Host_Id AND a.DistrNumber = D.DISTR AND a.CompNumber = D.COMP
@@ -112,11 +112,11 @@ BEGIN
 				ORDER BY SystemOrder
 			)
 		FROM @ClientDistrs AS D;
-		
+
 
 		INSERT INTO #din(ID_MASTER, HST_ID, ID_SYSTEM, NT_ID, SST_ID, DIS_STR, DistrNum, CompNum, DF_ID, DIS_STATUS)
-		SELECT 
-			NULL, ISNULL(b.HostID, c.HostID), ISNULL(b.SystemID, c.SystemID), NT_ID, SST_ID, 
+		SELECT
+			NULL, ISNULL(b.HostID, c.HostID), ISNULL(b.SystemID, c.SystemID), NT_ID, SST_ID,
 			dbo.DistrString(ISNULL(b.SystemShortName, c.SystemShortName), DISTR, COMP), DISTR AS DF_DISTR, COMP AS DF_COMP, t.DF_ID,
 			(
 				SELECT TOP 1 Service
@@ -125,7 +125,7 @@ BEGIN
 				ORDER BY Service
 			)
 		FROM @ClientDistrs AS T
-		LEFT OUTER JOIN Din.DinFiles a ON t.DF_ID = a.DF_ID			
+		LEFT OUTER JOIN Din.DinFiles a ON t.DF_ID = a.DF_ID
 		LEFT OUTER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
 		LEFT OUTER JOIN dbo.SystemTable c ON t.System_Id = c.SystemID
 		LEFT OUTER JOIN Din.NetType ON NT_ID = DF_ID_NET
@@ -133,17 +133,17 @@ BEGIN
 		ORDER BY ISNULL(b.SystemOrder, c.SystemOrder), DISTR, COMP;
 
 		INSERT INTO #din(ID_MASTER, HST_ID, ID_SYSTEM, NT_ID, SST_ID, DIS_STR, DistrNum, CompNum, DF_ID)
-			SELECT 
+			SELECT
 				(
 					SELECT TOP 1 ID
 					FROM #din
-					WHERE HST_ID = HostID 
-						AND DF_DISTR = DistrNum 
+					WHERE HST_ID = HostID
+						AND DF_DISTR = DistrNum
 						AND DF_COMP = CompNum
 					ORDER BY ID
-				), HostID, SystemID, DF_ID_NET, DF_ID_TYPE, 
+				), HostID, SystemID, DF_ID_NET, DF_ID_TYPE,
 				dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP), DF_DISTR, DF_COMP, c.DF_ID
-			FROM 
+			FROM
 				#din a
 				INNER JOIN dbo.SystemTable b ON HostID = HST_ID
 				INNER JOIN Din.DinFiles c ON DF_ID_SYS = SystemID AND DF_DISTR = DistrNum AND DF_COMP = CompNum AND a.DF_ID <> c.DF_ID
@@ -152,20 +152,20 @@ BEGIN
 		IF IS_MEMBER('rl_din_client_only') = 1
 			DELETE FROM #din WHERE ID_MASTER IS NOT NULL
 
-		SELECT 
+		SELECT
 			a.ID, ID_MASTER, a.DF_ID, a.NT_ID, a.SST_ID, ID_SYSTEM, DistrNum, CompNum,
-			CONVERT(BIT, CASE 
+			CONVERT(BIT, CASE
 				WHEN ID_MASTER IS NULL AND a.DF_ID IS NOT NULL AND ISNULL(DIS_STATUS, -1) = 0 THEN 1
 				ELSE 0
 			END) AS DF_SELECT,
-			DIS_STR, 
-			NT_NAME + 
+			DIS_STR,
+			NT_NAME +
 				CASE NT_NOTE
 					WHEN '' THEN ''
 					ELSE '(' + NT_NOTE + ')'
-				END AS NT_NAME, 
-			SST_NAME + 
-				CASE SST_NOTE 
+				END AS NT_NAME,
+			SST_NAME +
+				CASE SST_NOTE
 					WHEN '' THEN ''
 					ELSE '(' + SST_NOTE + ')'
 				END AS SST_NAME,
@@ -186,14 +186,17 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[CLIENT_DIN_SELECT] TO rl_din_client_only;
+GRANT EXECUTE ON [Din].[CLIENT_DIN_SELECT] TO rl_din_r;
+GO

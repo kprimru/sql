@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_CALC_SELECT]
+ALTER PROCEDURE [dbo].[ACT_CALC_SELECT]
 	@SERVICE	INT,
 	@MONTH		UNIQUEIDENTIFIER,
 	@TYPE		NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,16 +23,16 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @PERIOD SMALLDATETIME
-		
+
 		SELECT @PERIOD = START
 		FROM Common.Period
 		WHERE ID = @MONTH
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-		
+
 		CREATE TABLE #client
 			(
 				ID				UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
@@ -42,10 +42,10 @@ BEGIN
 				PayType			VARCHAR(150),
 				ContractPay		VARCHAR(150),
 				PayTypeMonth	SMALLINT
-			)	
-			
+			)
+
 		INSERT INTO #client(ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayTypeMonth)
-			SELECT 
+			SELECT
 				ClientID, ClientFullName, ServiceName, PayTypeName, ContractPayName,
 				PayTypeMonth
 			FROM
@@ -54,13 +54,13 @@ BEGIN
 				INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
 				INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
 				OUTER APPLY [dbo].[ClientContractPayGet](a.ClientId, NULL) o_O
-			WHERE (ServiceID = @SERVICE) 
+			WHERE (ServiceID = @SERVICE)
 				AND STATUS = 1 AND ID_HEAD IS NULL
 				AND (@TYPE IS NULL OR b.PayTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
-		
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		CREATE TABLE #distr
 			(
 				ID			UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
@@ -69,7 +69,7 @@ BEGIN
 				SYS_REG		VARCHAR(20),
 				SYS_ORD		INT,
 				DISTR		INT,
-				COMP		TINYINT,			
+				COMP		TINYINT,
 				BILL		MONEY,
 				INCOME		MONEY,
 				MON_DATE	SMALLDATETIME,
@@ -81,30 +81,30 @@ BEGIN
 			FROM
 				(
 					SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP, PayTypeMonth
-					FROM 
+					FROM
 						#client
 						INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON ClientID = ID_CLIENT
 					WHERE (DS_REG = 0)
-					
+
 					UNION
-					
+
 					SELECT a.ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP, PayTypeMonth
-					FROM 
+					FROM
 						#client a
 						INNER JOIN dbo.ClientTable b ON a.ClientID = b.ID_HEAD
 						INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON b.ClientID = ID_CLIENT
 					WHERE (DS_REG = 0) AND b.STATUS = 1
-					
+
 					UNION
-					
+
 					SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP, PayTypeMonth
-					FROM 
+					FROM
 						#client
 						INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON ClientID = ID_CLIENT
-						INNER JOIN 
+						INNER JOIN
 							(
 								SELECT a.SYS_REG_NAME, a.DIS_NUM, a.DIS_COMP_NUM, a.PR_DATE
-								FROM 
+								FROM
 									dbo.DBFIncomeView a
 									INNER JOIN dbo.DBFBillView b ON a.SYS_REG_NAME = b.SYS_REG_NAME
 																AND a.DIS_NUM = b.DIS_NUM
@@ -125,18 +125,18 @@ BEGIN
 										)
 							) AS o_O ON SYS_REG_NAME = SystemBaseName AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM
 					WHERE (DS_REG <> 0)
-					
+
 					UNION
-					
+
 					SELECT ClientID, REPLACE(y.DistrStr, y.SystemShortName, x.SystemShortName), x.SystemBaseName, x.SystemOrder, DISTR, COMP, PayTypeMonth
-					FROM 
+					FROM
 						#client z
 						INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.ClientID = y.ID_CLIENT
 						INNER JOIN dbo.SystemTable x ON x.HostID = y.HostID
-						INNER JOIN 
+						INNER JOIN
 							(
 								SELECT a.SYS_REG_NAME, a.DIS_NUM, a.DIS_COMP_NUM, a.PR_DATE
-								FROM 
+								FROM
 									dbo.DBFIncomeView a
 									INNER JOIN dbo.DBFBillView b ON a.SYS_REG_NAME = b.SYS_REG_NAME
 																AND a.DIS_NUM = b.DIS_NUM
@@ -157,14 +157,14 @@ BEGIN
 										)
 							) AS o_O ON SYS_REG_NAME = x.SystemBaseName AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM
 					WHERE (DS_REG = 0) AND x.SystemID <> y.SystemID
-					
+
 				) AS a
 				CROSS APPLY
 				(
 					SELECT @PERIOD AS PERIOD
-						
+
 					UNION
-							
+
 					SELECT DISTINCT PR_DATE
 					FROM dbo.DBFBillView z
 					WHERE z.SYS_REG_NAME = a.SystemBaseName
@@ -180,7 +180,7 @@ BEGIN
 									AND y.DIS_COMP_NUM = z.DIS_COMP_NUM
 									AND y.PR_DATE = z.PR_DATE
 							)
-				) AS c 
+				) AS c
 			WHERE NOT EXISTS
 				(
 					SELECT *
@@ -190,11 +190,11 @@ BEGIN
 						AND z.DIS_COMP_NUM = a.COMP
 						AND z.PR_DATE = PERIOD
 				)
-					
+
 		DELETE FROM #distr WHERE SYS_REG = 'KRF'
-					
+
 		UPDATE #distr
-		SET BILL = 
+		SET BILL =
 			ISNULL((
 				SELECT BD_TOTAL_PRICE
 				FROM dbo.DBFBillView
@@ -206,46 +206,46 @@ BEGIN
 				WHERE PR_DATE = MON_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
 			))
 			,
-			INCOME = 
+			INCOME =
 			(
 				SELECT ID_PRICE
 				FROM dbo.DBFIncomeView
 				WHERE PR_DATE = PAY_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
 			)
-				
-		SELECT DISTINCT a.ID AS TREE_ID, NULL AS TREE_PARENT, 		
+
+		SELECT DISTINCT a.ID AS TREE_ID, NULL AS TREE_PARENT, 
 			ClientID, ClientFullname + ' - ' + ISNULL(PayType, '') + ' (' + ISNULL(ContractPay, '') + ')' AS ClientFullName, NULL AS DisStr, /*BILL, INCOME, */NULL AS MON_DATE,
 			NULL AS PAY_COMMENT,
-			CONVERT(BIT, 
-				CASE 
+			CONVERT(BIT,
+				CASE
 					WHEN EXISTS
 						(
-							SELECT * 
-							FROM #distr b 
-							WHERE a.ClientID = b.CL_ID 
+							SELECT *
+							FROM #distr b
+							WHERE a.ClientID = b.CL_ID
 								AND ISNULL(BILL, -1) <> ISNULL(INCOME, 0)
-						) AND 
+						) AND
 						EXISTS
 						(
-							SELECT * 
-							FROM #distr b 
-							WHERE a.ClientID = b.CL_ID 
+							SELECT *
+							FROM #distr b
+							WHERE a.ClientID = b.CL_ID
 								AND ISNULL(BILL, -1) = ISNULL(INCOME, 0)
 						) THEN NULL
 					WHEN EXISTS
 						(
-							SELECT * 
-							FROM #distr b 
-							WHERE a.ClientID = b.CL_ID 
+							SELECT *
+							FROM #distr b
+							WHERE a.ClientID = b.CL_ID
 								AND ISNULL(BILL, -1) <> ISNULL(INCOME, 0)
 						) THEN 0
-					ELSE 1 
+					ELSE 1
 				END
 			) AS CHECKED,
 			CONVERT(BIT, 0) AS CHECKED_DEFAULT,
 			NULL AS SYS_REG, NULL AS DISTR, NULL AS COMP, NULL AS SYS_ORD,
 			CONVERT(BIT, 1) AS CAN_CHECK
-		FROM 
+		FROM
 			#client a
 			--INNER JOIN #distr b ON a.ClientID = b.CL_ID
 		WHERE EXISTS
@@ -254,39 +254,41 @@ BEGIN
 				FROM #distr b
 				WHERE a.ClientID = b.CL_ID
 			)
-				
+
 		UNION ALL
-				
+
 		SELECT
 			b.ID AS TREE_ID, a.ID AS TREE_PARENT,
 			ClientID, DisStr /*ClientFullname + ' - ' + PayType + ' (' + ContractPay + ')'*/ AS ClientFullName, DisStr, /*BILL, INCOME, */MON_DATE,
 			CASE
 				WHEN BILL IS NULL THEN 'ÍÅÒ Ñ×ÅÒÀ (' + CONVERT(VARCHAR(20), MON_DATE, 104) + ')'
-				WHEN BILL = INCOME THEN '' 
+				WHEN BILL = INCOME THEN ''
 				ELSE 'Íå îïëà÷åíî ' + CONVERT(NVARCHAR(64), ROUND(100 * (BILL - ISNULL(INCOME, 0)) / BILL, 2)) + '% ñóììû'
 			END AS PAY_COMMENT,
 			CONVERT(BIT, CASE WHEN BILL = INCOME THEN 1 ELSE 0 END) AS CHECKED,
 			CONVERT(BIT, CASE WHEN BILL = INCOME THEN 1 ELSE 0 END) AS CHECKED_DEFAULT,
 			SYS_REG, DISTR, COMP, SYS_ORD,
 			CONVERT(BIT, CASE WHEN BILL IS NULL THEN 0 ELSE 1 END) AS CAN_CHECK
-		FROM 
+		FROM
 			#client a
 			INNER JOIN #distr b ON a.ClientID = b.CL_ID
 		ORDER BY ClientFullName, SYS_ORD, MON_DATE, DISTR
-			
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CALC_SELECT] TO rl_act_calc;
+GO

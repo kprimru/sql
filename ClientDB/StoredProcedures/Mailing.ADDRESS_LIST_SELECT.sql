@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Mailing].[ADDRESS_LIST_SELECT]
+ALTER PROCEDURE [Mailing].[ADDRESS_LIST_SELECT]
 	@NAME			VARCHAR(250)	= NULL,
 	@STATUS			TINYINT			= NULL,
 	@DISTR			INT				= NULL,
@@ -28,7 +28,7 @@ BEGIN
 
 		SET @NAME = '%' + NullIf(@NAME, '') + '%';
 		SET @EMAIL = '%' + NullIf(@EMAIL, '') + '%';
-		
+
 		SELECT	a.ID								,
 				d.ClientID							,
 				CASE WHEN ClientFullName IS NULL THEN Comment ELSE ClientFullName END AS [Name],
@@ -56,14 +56,16 @@ BEGIN
 			AND (a.UpdateDate > @DATE_BEGIN OR @DATE_BEGIN IS NULL)
 			AND (a.UpdateDate < @DATE_END OR @DATE_END IS NULL)
 			AND ((C.SubhostName = '' AND (a.Email IS NULL) OR (a.Email='')) OR (a.ConfirmDate IS NULL AND C.SubhostName != '') OR @ISNEW=0)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Mailing].[ADDRESS_LIST_SELECT] TO rl_mailing_req;
+GO

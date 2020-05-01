@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[DateDiffString]
+ALTER FUNCTION [Common].[DateDiffString]
 (
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
@@ -38,7 +38,7 @@ BEGIN
 
 	IF @DAY > 0
 		SET @RES = @RES + CONVERT(NVARCHAR(64), @DAY) + ' ' + CASE WHEN @DAY = 1 THEN 'день' WHEN @DAY > 1 AND @DAY <= 4 THEN 'дня' ELSE 'дней' END + ' '
-			
+
 	SET @RES = RTRIM(@RES)
 
 	IF @RES = N''

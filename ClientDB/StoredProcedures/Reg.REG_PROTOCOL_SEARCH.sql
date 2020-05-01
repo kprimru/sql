@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[REG_PROTOCOL_SEARCH]
+ALTER PROCEDURE [Reg].[REG_PROTOCOL_SEARCH]
 	@DateTimeFrom	DateTime,
 	@DateTimeTo		DateTime,
 	@HostsIDs		VarChar(Max),
@@ -129,14 +129,16 @@ BEGIN
 		) H
 		ORDER BY R.RPR_DATE DESC
 		OPTION(RECOMPILE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Reg].[REG_PROTOCOL_SEARCH] TO rl_reg_protocol_filter;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SYSTEM_DELIVERY]
+ALTER PROCEDURE [dbo].[CLIENT_SYSTEM_DELIVERY]
 	@ID		VARCHAR(MAX),
 	@CLIENT	INT
 AS
@@ -30,14 +30,16 @@ BEGIN
 				SELECT ID
 				FROM dbo.TableIDFromXML(@ID)
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SYSTEM_DELIVERY] TO rl_client_system_delivery;
+GO

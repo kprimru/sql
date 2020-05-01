@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RICH_COEF_SELECT]
+ALTER PROCEDURE [dbo].[RICH_COEF_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT RichCoefID, RichCoefStart, RichCoefEnd, RichCoefVal
 		FROM dbo.RichCoefTable
 		ORDER BY RichCoefVal
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RICH_COEF_SELECT] TO rl_rich_coef_r;
+GO

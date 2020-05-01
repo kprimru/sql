@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_TYPE_INSERT]	
+ALTER PROCEDURE [dbo].[DISTR_TYPE_INSERT]
 	@NAME	VARCHAR(50),
 	@ORDER	INT,
 	@FULL	NVARCHAR(50),
@@ -29,16 +29,18 @@ BEGIN
 
 		INSERT INTO dbo.DistrTypeTable(DistrTypeName, DistrTypeOrder, DistrTypeFull, DistrTypeBaseCheck, DistrTypeCode)
 		VALUES(@NAME, @ORDER, @FULL, @CHECK, @Code);
-			
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_TYPE_INSERT] TO rl_distr_type_i;
+GO

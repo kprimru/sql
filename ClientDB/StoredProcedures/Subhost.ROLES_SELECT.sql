@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[ROLES_SELECT]
+ALTER PROCEDURE [Subhost].[ROLES_SELECT]
 	@SH_ID	UNIQUEIDENTIFIER,
 	@LGN	NVARCHAR(128)
 AS
@@ -24,9 +24,9 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @XML XML
-		
+
 		DECLARE @R NVARCHAR(MAX)
-		
+
 		SELECT @R = ROLES
 		FROM Subhost.Users
 		WHERE ID_SUBHOST = @SH_ID AND NAME = @LGN
@@ -34,15 +34,17 @@ BEGIN
 		SET @XML = CAST(@R AS XML)
 
 		SELECT c.value('(@name)', 'NVARCHAR(128)') AS RL_NAME
-		FROM @XML.nodes('/root/role') a(c)	
-		
+		FROM @XML.nodes('/root/role') a(c)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[ROLES_SELECT] TO rl_web_subhost;
+GO

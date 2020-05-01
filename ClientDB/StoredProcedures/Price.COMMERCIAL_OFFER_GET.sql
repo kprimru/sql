@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[COMMERCIAL_OFFER_GET]
+ALTER PROCEDURE [Price].[COMMERCIAL_OFFER_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,20 +22,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ID, ID_VENDOR, FULL_NAME, ADDRESS, DIRECTOR, PER_SURNAME, PER_NAME, PER_PATRON, DIRECTOR_POS, 
-			DATE, NUM, NOTE, 
+		SELECT
+			ID, ID_VENDOR, FULL_NAME, ADDRESS, DIRECTOR, PER_SURNAME, PER_NAME, PER_PATRON, DIRECTOR_POS,
+			DATE, NUM, NOTE,
 			DISCOUNT, INFLATION, ID_TEMPLATE, OTHER
 		FROM Price.CommercialOffer
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[COMMERCIAL_OFFER_GET] TO rl_commercial_offer_r;
+GO

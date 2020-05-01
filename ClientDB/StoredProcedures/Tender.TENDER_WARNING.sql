@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[TENDER_WARNING]
+ALTER PROCEDURE [Tender].[TENDER_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,24 +21,26 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ClientID,
 			ClientFullName,
 			CALL_DATE
-		FROM 
+		FROM
 			Tender.Tender a
 			INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.ClientID
 		WHERE a.STATUS = 1
 			AND dbo.DateOf(CALL_DATE) = dbo.Dateof(GETDATE())
 		ORDER BY CALL_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[TENDER_WARNING] TO rl_tender_warning;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[KRF_INSTALL]
+ALTER PROCEDURE [Report].[KRF_INSTALL]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,10 +22,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
+		SELECT
+			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
 			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
-		FROM 
+		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
@@ -33,9 +33,9 @@ BEGIN
 			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
 			AND NT_TECH IN (0, 1)
 			AND Complect IS NOT NULL
-			AND		
+			AND
 				(
-						
+
 					Complect NOT LIKE 'LAW%'
 					AND Complect NOT LIKE 'ROS%'
 					AND Complect NOT LIKE 'BUHL%'
@@ -81,13 +81,13 @@ BEGIN
 					AND Complect NOT LIKE 'RLAW%'
 					AND Complect NOT LIKE 'NBU%'
 				)
-		
+
 		UNION ALL
-		
-		SELECT 
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
+
+		SELECT
+			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
 			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
-		FROM 
+		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
@@ -103,13 +103,13 @@ BEGIN
 						AND z.DS_REG = 0
 						AND z.SystemShortName <> 'КРФ'
 				)
-					
+
 		UNION ALL
-		
-		SELECT 
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив], 
+
+		SELECT
+			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
 			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
-		FROM 
+		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
@@ -119,7 +119,7 @@ BEGIN
 			AND NT_TECH IN (0, 1)
 			AND a.HostId <> 1
 			AND a.SubhostName != '490'
-			AND 
+			AND
 			(	Complect IS NOT NULL
 				AND EXISTS
 					(
@@ -132,17 +132,19 @@ BEGIN
 				OR
 				Complect IS NULL
 			)
-					
+
 		ORDER BY 1, 2, 4
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [Report].[KRF_INSTALL] TO rl_report;
+GO

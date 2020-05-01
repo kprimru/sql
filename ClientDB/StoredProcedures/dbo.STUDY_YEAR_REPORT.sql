@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_YEAR_REPORT]
+ALTER PROCEDURE [dbo].[STUDY_YEAR_REPORT]
 	@STATUS		INT = NULL,
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL,
@@ -37,7 +37,7 @@ BEGIN
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = N'
-			SELECT 
+			SELECT
 				ClientFullName AS [Клиент], ServiceName AS [СИ], ManagerName AS [Рук-ль], ClientTypeName AS [Категория], ConnectDate AS [Подключен], '
 
 		SELECT @SQL = @SQL + 'Teach' + CONVERT(VARCHAR(20), STUDY_YEAR) + ' AS [' + CONVERT(VARCHAR(20), STUDY_YEAR) + '], '
@@ -71,7 +71,7 @@ BEGIN
 
 			SET @SQL = @SQL + 'THEN ''Обучался в ' + CONVERT(VARCHAR(20), @CUR_YEAR) + ''''
 
-			SET @CUR_YEAR = 
+			SET @CUR_YEAR =
 				(
 					SELECT MIN(STUDY_YEAR)
 					FROM @TBL
@@ -85,7 +85,7 @@ BEGIN
 		SET @SQL = @SQL + '
 			FROM
 				(
-					SELECT 
+					SELECT
 						a.ClientFullName, ServiceName, ManagerName, ClientTypeName, '
 
 		SELECT @SQL = @SQL + '
@@ -104,10 +104,10 @@ BEGIN
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1) + ',
 						(
 							SELECT DATE
-							FROM dbo.ClientStudyConnectView z 
+							FROM dbo.ClientStudyConnectView z
 							WHERE z.ClientID = a.ClientID
 						) AS ConnectDate
-					FROM 
+					FROM
 						dbo.ClientView a WITH(NOEXPAND)
 						INNER JOIN dbo.CLientTable c ON a.ClientID = c.ClientID
 						LEFT JOIN dbo.ClientTypeTable b ON c.ClientTypeID = b.ClientTypeID
@@ -125,21 +125,23 @@ BEGIN
 				) AS dt'
 		IF @DATE IS NOT NULL
 			SET @SQL = @SQL + '
-			WHERE ConnectDate >= @DATE'		
-		SET @SQL = @SQL + '		
+			WHERE ConnectDate >= @DATE'
+		SET @SQL = @SQL + '
 			ORDER BY ClientFullName '
 
 		--PRINT @SQL
 
 		EXEC sp_executesql @SQL, N'@STATUS INT, @MANAGER INT, @SERVICE INT, @DATE SMALLDATETIME, @TYPE VARCHAR(MAX)', @STATUS, @MANAGER, @SERVICE, @DATE, @TYPE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_YEAR_REPORT] TO rl_report_study;
+GO

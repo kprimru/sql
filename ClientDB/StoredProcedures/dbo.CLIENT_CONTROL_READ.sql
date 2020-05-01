@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTROL_READ]
+ALTER PROCEDURE [dbo].[CLIENT_CONTROL_READ]
 	@CC_ID	INT
 AS
 BEGIN
@@ -29,14 +29,14 @@ BEGIN
 				CC_READ_DATE = GETDATE()
 			WHERE CC_ID = @CC_ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

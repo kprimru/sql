@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CLIENT_LIST]
+ALTER PROCEDURE [Report].[CLIENT_LIST]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,10 +22,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			b.ManagerName AS [Рук-ль], b.ServiceName AS [СИ], a.ClientFullName AS [Клиент], 
+		SELECT
+			b.ManagerName AS [Рук-ль], b.ServiceName AS [СИ], a.ClientFullName AS [Клиент],
 			USR_CHECK AS [Файлы USR], STT_CHECK AS [Файлы STT], HST_CHECK AS [Файлы HST], INET_CHECK AS [Нет Интернета]
-		FROM 
+		FROM
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
@@ -33,7 +33,7 @@ BEGIN
 			AND
 				(
 					HST_CHECK = 0
-					OR 
+					OR
 					STT_CHECK = 0
 					OR
 					USR_CHECK = 0
@@ -41,14 +41,16 @@ BEGIN
 					INET_CHECK = 1
 				)
 		ORDER BY ManagerName, ServiceName, b.ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[CLIENT_LIST] TO rl_report;
+GO

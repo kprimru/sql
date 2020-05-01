@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[SYSTEM_BANKS_CLEAR]
+ALTER PROCEDURE [dbo].[SYSTEM_BANKS_CLEAR]
 	@SYS_LIST			NVARCHAR(MAX),
 	@DISTR_TYPE_LIST	NVARCHAR(MAX)
 AS
@@ -28,34 +28,36 @@ BEGIN
 		(
 			System_Id	VARCHAR(5)
 		)
-		
+
 		DECLARE @d	TABLE
 		(
 			DistrType_Id	VARCHAR(5)
 		)
 
-		
+
 		INSERT INTO @s(System_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@SYS_LIST, ',')
-		
+
 		INSERT INTO @d(DistrType_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@DISTR_TYPE_LIST, ',')
-		
+
 		DELETE
 		FROM dbo.SystemsBanks
 		WHERE	System_Id IN (SELECT System_Id FROM @s) AND
-				DistrType_Id IN (SELECT DistrType_Id FROM @d) 
-				
+				DistrType_Id IN (SELECT DistrType_Id FROM @d)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_CLEAR] TO rl_system_bank_d;
+GO

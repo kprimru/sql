@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_ACTIVE]
+ALTER PROCEDURE [Common].[PERIOD_ACTIVE]
 	@ID			UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		UPDATE	Common.Period
 		SET		ACTIVE		=	CASE ACTIVE WHEN 1 THEN 0 ELSE 1 END
 		WHERE	ID			=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_ACTIVE] TO rl_period_u;
+GO

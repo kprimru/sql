@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PURCHASE_KIND_INSERT]
+ALTER PROCEDURE [Purchase].[PURCHASE_KIND_INSERT]
 	@NAME	VARCHAR(50),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -27,18 +27,20 @@ BEGIN
 
 		INSERT INTO Purchase.PurchaseKind(PK_NAME)
 			OUTPUT inserted.PK_ID INTO @TBL
-			VALUES(@NAME)	
-			
+			VALUES(@NAME)
+
 		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PURCHASE_KIND_INSERT] TO rl_purchase_kind_i;
+GO

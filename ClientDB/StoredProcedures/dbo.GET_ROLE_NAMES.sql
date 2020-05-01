@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_ROLE_NAMES] 
+ALTER PROCEDURE [dbo].[GET_ROLE_NAMES]
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -21,17 +21,20 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT RoleID, RoleName, RoleStr 
-		FROM dbo.RoleTable 
+		SELECT RoleID, RoleName, RoleStr
+		FROM dbo.RoleTable
 		ORDER BY RoleName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_ROLE_NAMES] TO DBChief;
+GRANT EXECUTE ON [dbo].[GET_ROLE_NAMES] TO DBTech;
+GO

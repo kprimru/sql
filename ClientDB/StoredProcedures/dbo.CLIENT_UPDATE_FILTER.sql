@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_UPDATE_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_UPDATE_FILTER]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@STYPE		VARCHAR(MAX),
@@ -42,9 +42,9 @@ BEGIN
 			)
 
 		INSERT INTO #client(ClientID, ClientFullName, ManagerName, ServiceName, ServiceType)
-			SELECT 
+			SELECT
 				ClientID, ClientFullName, ManagerName, ServiceName, ServiceTypeShortName
-			FROM 
+			FROM
 				[dbo].[ClientList@Get?Read]()
 				INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON WCL_ID = ClientID
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
@@ -55,7 +55,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 			DROP TABLE #usr
-		
+
 		CREATE TABLE #usr
 		(
 			CL_ID		INT PRIMARY KEY,
@@ -64,7 +64,7 @@ BEGIN
 		)
 
 		INSERT INTO #usr(CL_ID, IB_LAST)
-		SELECT 
+		SELECT
 			ClientID, UIU_DATE
 		FROM #client
 		CROSS APPLY
@@ -75,35 +75,35 @@ BEGIN
 				AND UIU_DATE_S < @END
 			ORDER BY UIU_DATE DESC
 		) D;
-			
+
 		/*
 		UPDATE #usr
 		SET USR_LAST =
 			(
 				SELECT MAX(UF_CREATE)
-				FROM 
+				FROM
 					USR.USRFile
 					INNER JOIN USR.USRData ON UD_ID = UF_ID_COMPLECT
 					INNER JOIN USR.USRIB ON UI_ID_USR = UF_ID
-				WHERE UD_ID_CLIENT = CL_ID 
+				WHERE UD_ID_CLIENT = CL_ID
 					AND UI_LAST = IB_LAST
 			)*/
 
-		SELECT 
+		SELECT
 			ROW_NUMBER() OVER(ORDER BY ManagerName, ServiceName, ClientFullName) AS NUM,
 			ClientID, ClientFullName, ManagerName, ServiceName, ServiceType,
-			IB_LAST, USR_LAST, IB_CORRECT, USR_CORRECT, 
+			IB_LAST, USR_LAST, IB_CORRECT, USR_CORRECT,
 			(
 				SELECT CONVERT(VARCHAR(20), EventDate, 104) + ' ' + EventComment + CHAR(10)
 				FROM EventTable z
-				WHERE EventActive = 1 
+				WHERE EventActive = 1
 					AND o_O.ClientID = z.ClientID
 					AND EventDate BETWEEN @BEGIN AND @END
 				ORDER BY EventDate FOR XML PATH('')
 			) AS COMMENT
 		FROM
 			(
-				SELECT 
+				SELECT
 					ClientID, ClientFullName, ManagerName, ServiceName, ServiceType, IB_LAST, USR_LAST,
 					CONVERT(BIT,
 						CASE
@@ -129,14 +129,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_UPDATE_FILTER] TO rl_filter_last_update;
+GO

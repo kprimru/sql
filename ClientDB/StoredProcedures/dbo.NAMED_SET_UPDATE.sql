@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[NAMED_SET_UPDATE]
+ALTER PROCEDURE [dbo].[NAMED_SET_UPDATE]
 	@SET_NAME	NVARCHAR(128),
 	@REF_NAME	NVARCHAR(128),
 	@VALUES		NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,7 +23,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @ID	UNIQUEIDENTIFIER
 
 		SELECT @ID = SetId
@@ -37,14 +37,16 @@ BEGIN
 		WHERE SetName=@SET_NAME AND RefName=@REF_NAME
 
 		EXEC dbo.NAMED_SET_ADD @SET_NAME, @REF_NAME, @VALUES
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[NAMED_SET_UPDATE] TO rl_named_sets_u;
+GO

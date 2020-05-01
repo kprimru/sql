@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[JOB_SELECT]
+ALTER PROCEDURE [Maintenance].[JOB_SELECT]
 	@Start	DateTime = NULL,
 	@Finish	DateTime = NULL
 AS
@@ -54,14 +54,16 @@ BEGIN
 		) AS J
 		INNER JOIN Maintenance.JobType JT ON J.ID = JT.Id
 		ORDER BY JT.[Name]
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[JOB_SELECT] TO public;
+GO

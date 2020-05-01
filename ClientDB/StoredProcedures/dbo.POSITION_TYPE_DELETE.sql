@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[POSITION_TYPE_DELETE]
+ALTER PROCEDURE [dbo].[POSITION_TYPE_DELETE]
 	@ID	INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		DELETE
 		FROM dbo.PositionTypeTable
 		WHERE PositionTypeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_TYPE_DELETE] TO rl_position_type_d;
+GO

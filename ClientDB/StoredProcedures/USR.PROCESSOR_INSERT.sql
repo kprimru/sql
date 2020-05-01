@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESSOR_INSERT]
+ALTER PROCEDURE [USR].[PROCESSOR_INSERT]
 	@NAME	VARCHAR(100),
 	@FREQ_S	VARCHAR(50),
 	@FREQ	DECIMAL(8, 4),
@@ -31,14 +31,16 @@ BEGIN
 			SELECT @NAME, @FREQ_S, @FREQ, @CORE, @PF_ID
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[PROCESSOR_INSERT] TO rl_processor_i;
+GO

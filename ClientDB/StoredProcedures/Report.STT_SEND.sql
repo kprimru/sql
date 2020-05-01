@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[STT_SEND]
+ALTER PROCEDURE [Report].[STT_SEND]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,14 +22,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ISNULL(ClientFullName, d.Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], 
+		SELECT
+			ISNULL(ClientFullName, d.Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ],
 			ISNULL(b.DistrStr, d.DistrStr) AS [Осн.дистрибутив], dbo.DateOf(CSD_DATE) AS [Последняя отправка STT],
-			Common.DateDiffString(CSD_DATE, GETDATE()) AS [Как давно]	
+			Common.DateDiffString(CSD_DATE, GETDATE()) AS [Как давно]
 		FROM
 			(
 				SELECT HostID, CSD_DISTR, CSD_COMP, MAX(ISNULL(CSD_START, CSD_END)) AS CSD_DATE
-				FROM 
+				FROM
 					dbo.IPSttView
 					INNER JOIN dbo.SystemTable ON CSD_SYS = SystemNumber
 				GROUP BY HostID, CSD_DISTR, CSD_COMP
@@ -39,14 +39,16 @@ BEGIN
 			LEFT OUTER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON a.HostID = d.HostID AND a.CSD_DISTR = d.DistrNumber AND a.CSD_COMP = d.CompNumber
 		WHERE d.DS_REG = 0
 		ORDER BY ISNULL(ManagerName, ''), 2, 3, 1, 4
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[STT_SEND] TO rl_report;
+GO

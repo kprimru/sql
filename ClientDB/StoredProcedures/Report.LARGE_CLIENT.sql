@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[LARGE_CLIENT]
+ALTER PROCEDURE [Report].[LARGE_CLIENT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,22 +22,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент], 
+		SELECT
+			ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент],
 			(
 				SELECT TOP 1 DistrStr + ' (' + DistrTypeName + ')'
 				FROM dbo.ClientDistrView z WITH(NOEXPAND)
 				WHERE z.ID_CLIENT = a.ClientID
 					AND DS_REG = 0
 					AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
-					AND 
+					AND
 						(
 							z.HostID = 1
-							AND 
+							AND
 							z.DistrTypeName IN ('сеть', 'м/с')
-								
+
 							OR
-								
+
 							z.DistrTypeName = '1/с'
 							AND
 							z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
@@ -60,19 +60,19 @@ BEGIN
 			) AS [Последняя запись истори посещений],
 			'' AS [Тендеры],
 			(
-				SELECT 
-					CPT_NAME + ' | ' + 
+				SELECT
+					CPT_NAME + ' | ' +
 					CASE ISNULL(CP_SURNAME, '')
 						WHEN '' THEN ''
 						ELSE CP_SURNAME + ' '
-					END + 		
-					CASE ISNULL(CP_NAME, '')	
+					END + 
+					CASE ISNULL(CP_NAME, '')
 						WHEN '' THEN ''
 						ELSE CP_NAME + ' '
 					END +
-					ISNULL(CP_PATRON, '') + ' | ' + 
-					CP_POS + ' | ' + CP_NOTE + ' | ' + 
-					CP_PHONE + ' | ' + CP_EMAIL + CHAR(10) 
+					ISNULL(CP_PATRON, '') + ' | ' +
+					CP_POS + ' | ' + CP_NOTE + ' | ' +
+					CP_PHONE + ' | ' + CP_EMAIL + CHAR(10)
 				FROM
 					dbo.ClientPersonal
 					LEFT OUTER JOIN dbo.ClientPersonalType ON CPT_ID = CP_ID_TYPE
@@ -116,28 +116,30 @@ BEGIN
 					WHERE z.ID_CLIENT = a.ClientID
 						AND DS_REG = 0
 						AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
-						AND 
+						AND
 							(
 								z.HostID = 1
-								AND 
+								AND
 								z.DistrTypeName IN ('сеть', 'м/с')
-								
+
 								OR
-								
+
 								z.DistrTypeName = '1/с'
 								AND
 								z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 							)
-				)		
+				)
 		ORDER BY ManagerName, ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[LARGE_CLIENT] TO rl_report;
+GO

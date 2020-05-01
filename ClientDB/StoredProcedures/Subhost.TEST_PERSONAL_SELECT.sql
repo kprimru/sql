@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_PERSONAL_SELECT]
+ALTER PROCEDURE [Subhost].[TEST_PERSONAL_SELECT]
 	@SUBHOST	UNIQUEIDENTIFIER,
 	@LGN		NVARCHAR(128)
 AS
@@ -23,9 +23,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, b.NAME, a.START, a.FINISH, Common.TimeSecToStr(DATEDIFF(SECOND, a.START, a.FINISH)) AS LN,
-			CASE 
+			CASE
 				WHEN FINISH IS NULL THEN 'Досдать'
 				ELSE
 					CASE ISNULL((SELECT RESULT FROM Subhost.CheckTest z WHERE z.ID_TEST = a.ID), 200)
@@ -37,24 +37,26 @@ BEGIN
 			END AS RES,
 			(
 				SELECT TOP 1 z.NOTE
-				FROM 
+				FROM
 					Subhost.CheckTest z
 				WHERE z.ID_TEST = a.ID
 			) AS RESULT_NOTE
-		FROM 
+		FROM
 			Subhost.PersonalTest a
 			INNER JOIN Subhost.Test b ON a.ID_TEST = b.ID
 		WHERE ID_SUBHOST = @SUBHOST
 			AND PERSONAL = @LGN
 		ORDER BY START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_PERSONAL_SELECT] TO rl_web_subhost;
+GO

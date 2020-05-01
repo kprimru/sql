@@ -32,7 +32,7 @@ BEGIN
 	ELSE IF DATEPART(dw, @last_date) < @wday
 		SET @res = @last_Date - (7 - (@wday - DATEPART(dw, @last_date)))
 	ELSE IF DATEPART(dw, @last_date) > @wday
-		SET @res = @last_date - (DATEPART(dw, @last_date) - @wday)	
+		SET @res = @last_date - (DATEPART(dw, @last_date) - @wday)
 
 	RETURN @res
 END

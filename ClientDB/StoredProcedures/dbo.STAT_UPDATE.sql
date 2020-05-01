@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STAT_UPDATE]
+ALTER PROCEDURE [dbo].[STAT_UPDATE]
 	@DATE	VARCHAR(20),
 	@SYS	VARCHAR(20),
 	@IB		VARCHAR(20),
@@ -34,31 +34,33 @@ BEGIN
 		IF NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.StatisticTable a
 					INNER JOIN dbo.InfoBankTable b ON a.InfoBankID = b.InfoBankID
-					INNER JOIN dbo.SystemBankTable c ON c.InfoBankID = b.InfoBankID 
+					INNER JOIN dbo.SystemBankTable c ON c.InfoBankID = b.InfoBankID
 					INNER JOIN dbo.SystemTable d ON d.SystemID = c.SystemID
-				WHERE a.StatisticDate = @DT 
-					AND a.Docs = @DC AND SystemBaseName = @SYS 
+				WHERE a.StatisticDate = @DT
+					AND a.Docs = @DC AND SystemBaseName = @SYS
 					AND InfoBankName = @IB
 			)
 			INSERT INTO dbo.StatisticTable (StatisticDate, InfoBankID, Docs)
 				SELECT @DT, b.InfoBankID, @DC
-				FROM 
+				FROM
 					dbo.InfoBankTable b
-					INNER JOIN dbo.SystemBankTable c ON c.InfoBankID = b.InfoBankID 
+					INNER JOIN dbo.SystemBankTable c ON c.InfoBankID = b.InfoBankID
 					INNER JOIN dbo.SystemTable d ON d.SystemID = c.SystemID
-				WHERE SystemBaseName = @SYS 
+				WHERE SystemBaseName = @SYS
 					AND InfoBankName = @IB
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STAT_UPDATE] TO rl_stat_import;
+GO

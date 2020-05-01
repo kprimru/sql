@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_COMMENTS_GET]
+ALTER PROCEDURE [dbo].[CLIENT_COMMENTS_GET]
 	@CLIENTID	INT
 AS
 BEGIN
@@ -23,24 +23,26 @@ BEGIN
 	BEGIN TRY
 
 		SELECT CM_TEXT, CONVERT(DATETIME, CM_DATE, 121) AS CM_DATE
-		FROM 
+		FROM
 			dbo.ClientTable a
 			INNER JOIN dbo.ClientSearchComments b ON a.ClientID = b.CSC_ID_CLIENT CROSS APPLY
 			(
-				SELECT 
-					z.value('@TEXT[1]', 'VARCHAR(250)') AS CM_TEXT, 
+				SELECT
+					z.value('@TEXT[1]', 'VARCHAR(250)') AS CM_TEXT,
 					z.value('@DATE[1]', 'VARCHAR(50)') AS CM_DATE
 				FROM CSC_COMMENTS.nodes('/ROOT/COMMENT') x(z)
 			) AS o_O
 		WHERE ClientID = @CLIENTID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_COMMENTS_GET] TO rl_client_search_r;
+GO

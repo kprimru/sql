@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CLIENT_CONTROL_SET]	
+ALTER PROCEDURE [Control].[CLIENT_CONTROL_SET]
 	@CLIENT		INT,
 	@NOTE		NVARCHAR(MAX),
 	@NOTIFY		SMALLDATETIME,
@@ -45,13 +45,13 @@ BEGIN
 				REMOVE_GROUP = @REM_GROUP,
 				REMOVE_AUTHOR = @REM_AUTHOR
 			WHERE ID = @ID
-			
+
 		IF @ID_GROUP IS NOT NULL
 		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
 				SELECT DISTINCT @CLIENT, 1, GETDATE(), 'Клиент был поставлен на контроль с описанием: ' + @NOTE, US_NAME, 0
-				FROM Security.RoleUserView			 
-				WHERE 
+				FROM Security.RoleUserView
+				WHERE
 					(RL_NAME = 'rl_control_law' AND @PSEDO = 'LAW')
 					OR
 					(RL_NAME = 'rl_control_manager' AND @PSEDO = 'MANAGER' AND US_NAME IN (SELECT ManagerLogin FROM dbo.ClientView WITH(NOEXPAND) WHERE ClientID = @CLIENT))
@@ -69,14 +69,16 @@ BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
 				SELECT @CLIENT, 1, GETDATE(), 'Клиент был поставлен на контроль с описанием: ' + @NOTE, @RECEIVER, 0
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CLIENT_CONTROL_SET] TO rl_control_u;
+GO

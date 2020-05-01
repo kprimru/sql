@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_WORK_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_WORK_SELECT]
 	@CLIENT	INT,
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
@@ -30,20 +30,22 @@ BEGIN
 		WHERE ClientID = @CLIENT
 			AND (DT >= @BEGIN OR @BEGIN IS NULL)
 			AND (DT <= @END OR @END IS NULL)
-			AND 
+			AND
 				(
 					TP IN (SELECT ID FROM dbo.TableStringFromXML(@TYPE))
 					OR @TYPE IS NULL
 				)
 		ORDER BY DT DESC, TP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_WORK_SELECT] TO rl_report;
+GO

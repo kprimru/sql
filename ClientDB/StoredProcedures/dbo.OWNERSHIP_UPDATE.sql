@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[OWNERSHIP_UPDATE]
+ALTER PROCEDURE [dbo].[OWNERSHIP_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE dbo.OwnershipTable
 		SET OwnershipName = @NAME
 		WHERE OwnershipID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[OWNERSHIP_UPDATE] TO rl_ownership_u;
+GO

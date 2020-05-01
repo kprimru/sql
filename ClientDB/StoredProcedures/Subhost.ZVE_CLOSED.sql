@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[ZVE_CLOSED]
+ALTER PROCEDURE [Subhost].[ZVE_CLOSED]
 	@SUBHOST	NVARCHAR(16)
 AS
 BEGIN
@@ -39,14 +39,16 @@ BEGIN
 			AND NT_SHORT NOT IN ('нбо', 'нбох', 'нбл1', 'нбл2', 'нбй')
 			AND SubhostName = @SUBHOST
 		ORDER BY ClientName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[ZVE_CLOSED] TO rl_web_subhost;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_OLD_DIN_SELECT]
+ALTER PROCEDURE [USR].[USR_OLD_DIN_SELECT]
 	@MANAGER	INT,
 	@SERVICE	INT
 AS
@@ -30,7 +30,7 @@ BEGIN
 			DROP TABLE #client
 
 		CREATE TABLE #client (CL_ID INT PRIMARY KEY)
-		
+
 		INSERT INTO #client(CL_ID)
 			SELECT ClientID
 			FROM dbo.ClientView WITH(NOEXPAND)
@@ -57,26 +57,26 @@ BEGIN
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usr (UP_DISTR, UP_COMP, UP_ID_SYSTEM, UD_ID_CLIENT) INCLUDE (UD_NAME, UF_DATE, UP_FORMAT)'
 		EXEC (@SQL)
 
-		SELECT 
+		SELECT
 			ManagerName, ServiceName, ClientFullName, DistrStr AS DisStr,
-			UF_DATE, 
+			UF_DATE,
 			CASE UP_FORMAT
 				WHEN 0 THEN 'Не заменен'
 				WHEN 1 THEN 'Заменен'
 				ELSE 'Неизвестно'
 			END AS UP_RESULT, UD_NAME
-		FROM 
+		FROM
 			#client
 			INNER JOIN dbo.ClientDistrView a WITH(NOEXPAND) ON a.ID_CLIENT = CL_ID
-			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID		
+			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID
 			LEFT OUTER JOIN #usr d ON d.UD_ID_CLIENT = a.ID_CLIENT
-							AND UP_ID_SYSTEM = a.SystemID 
+							AND UP_ID_SYSTEM = a.SystemID
 							AND UP_DISTR = DISTR
 							AND UP_COMP = COMP
-			LEFT OUTER JOIN 
+			LEFT OUTER JOIN
 				(
 					SELECT RPR_ID_HOST, RPR_DISTR, RPR_COMP, dbo.DateOf(RPR_DATE) AS RPR_DATE
-					FROM dbo.RegProtocol e 
+					FROM dbo.RegProtocol e
 					WHERE RPR_OPER = 'НОВАЯ'
 				) AS e ON e.RPR_ID_HOST = a.HostID AND RPR_DISTR = UP_DISTR AND RPR_COMP = UP_COMP
 		WHERE DS_REG = 0 AND ISNULL(UP_FORMAT, 0) = 0 AND (RPR_DATE <= DATEADD(MONTH, -1, dbo.DateOf(GETDATE())) OR RPR_DATE IS NULL)
@@ -85,17 +85,17 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-		
+
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 			DROP TABLE #usr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_REASON_SELECT]
+ALTER PROCEDURE [Purchase].[CLIENT_CONDITION_REASON_SELECT]
 	@ID	INT
 AS
 BEGIN
@@ -22,13 +22,13 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			PR_ID, PR_NAME, 
-			CONVERT(BIT, 
+		SELECT
+			PR_ID, PR_NAME,
+			CONVERT(BIT,
 				ISNULL(
 					(
 						SELECT COUNT(*)
-						FROM 
+						FROM
 							Purchase.ClientConditionCard
 							INNER JOIN Purchase.ClientConditionReason ON CC_ID = CCR_ID_CC
 						WHERE CC_ID_CLIENT = @ID
@@ -38,14 +38,16 @@ BEGIN
 			) AS PR_CHECKED
 		FROM Purchase.PurchaseReason
 		ORDER BY PR_NUM
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLIENT_CONDITION_REASON_SELECT] TO rl_condition_card_r;
+GO

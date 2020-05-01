@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[DIN_UNREGISTER_EXCHANGE]
+ALTER PROCEDURE [Report].[DIN_UNREGISTER_EXCHANGE]
 	@PARAM NVARCHAR(MAX) = NULL OUTPUT
 AS
 BEGIN
@@ -22,9 +22,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ISNULL(ClientFullName, Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], c.DistrStr AS [Текущий дистрибутив], c.NT_SHORT AS [Текущая сетевитость], 
-			CASE 
+		SELECT
+			ISNULL(ClientFullName, Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], c.DistrStr AS [Текущий дистрибутив], c.NT_SHORT AS [Текущая сетевитость],
+			CASE
 				WHEN b.SystemShortName <> c.SystemShortName THEN
 					CASE
 						WHEN b.NT_SHORT <> c.NT_SHORT THEN b.SystemShortName + ' (' + b.NT_SHORT + ')'
@@ -33,7 +33,7 @@ BEGIN
 				ELSE
 					b.NT_SHORT
 			END AS [Дистрибутив-замена],
-			--b.SystemShortName, b.NT_SHORT, 
+			--b.SystemShortName, b.NT_SHORT,
 			b.DF_CREATE AS [Дата поступления дистрибутива]
 		FROM
 			(
@@ -52,14 +52,16 @@ BEGIN
 					c.NT_SHORT <> b.NT_SHORT OR c.SystemShortName <> b.SystemShortName
 				)
 		ORDER BY b.DF_CREATE DESC, c.SystemOrder, DistrNumber, CompNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[DIN_UNREGISTER_EXCHANGE] TO rl_report;
+GO

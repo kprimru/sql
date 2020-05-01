@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[EMAIL_PROCESS]
+ALTER PROCEDURE [Report].[EMAIL_PROCESS]
 	@INPT NVARCHAR(MAX)
 AS
 BEGIN
@@ -25,7 +25,7 @@ BEGIN
 		SELECT EMAIL AS [Электронный адрес], ClientFullName AS [Клиент], ManagerName AS [Руководитель], ServiceName AS [СИ]
 		FROM
 			(
-				SELECT EMAIL, 
+				SELECT EMAIL,
 					(
 						SELECT TOP 1 ClientID
 						FROM dbo.ClientEmailView
@@ -39,14 +39,16 @@ BEGIN
 			) AS a
 			LEFT OUTER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = ID_CLIENT
 		ORDER BY ManagerName, ServiceName, ClientFullName, EMAIL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[EMAIL_PROCESS] TO rl_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[TEACHER_SELECT]
+ALTER PROCEDURE [dbo].[TEACHER_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR TeacherName LIKE @FILTER
 			OR TeacherLogin LIKE @FILTER
 		ORDER BY TeacherName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TEACHER_SELECT] TO rl_personal_teacher_r;
+GO

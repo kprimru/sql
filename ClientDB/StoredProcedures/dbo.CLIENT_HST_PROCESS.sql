@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_HST_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_HST_PROCESS]
 	@PATH			NVARCHAR(512),
 	@SIZE			BIGINT,
 	@DATE			DATETIME,
@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[CLIENT_HST_PROCESS]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -27,7 +27,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.ClientHST(PATH, FILE_DATE, FILE_MD5, FILE_SIZE)
 			SELECT @PATH, @DATE, @MD5, @SIZE
 			WHERE NOT EXISTS
@@ -38,16 +38,18 @@ BEGIN
 						AND FILE_MD5 = @MD5
 						AND FILE_SIZE = @SIZE
 				)
-					
+
 		EXEC dbo.CLIENT_SEARCH_PROCESS @CLIENT, @SEARCH_DATA, @RC OUTPUT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_HST_PROCESS] TO rl_hst_process;
+GO

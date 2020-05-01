@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_RESULT_WARNING]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_RESULT_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,33 +21,35 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			b.ClientID, ClientFullName, 
+		SELECT
+			b.ClientID, ClientFullName,
 			ClientDutyDateTime,
-			DutyName, 
+			DutyName,
 			ClientDutyNPO, ClientDutyComment
-		FROM 
+		FROM
 			dbo.ClientDutyTable a
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
-			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID 
+			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID
 		WHERE ClientDutyComplete = 1 AND a.STATUS = 1
 			AND NOT EXISTS
 				(
 					SELECT *
 					FROM dbo.ClientDutyResult z
 					WHERE z.ID_DUTY = a.ClientDutyID
-					
+
 				)
 			AND ClientDutyDateTime >= '20170101'
 		ORDER BY ClientDutyDateTime DESC, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_RESULT_WARNING] TO rl_duty_result_warning;
+GO

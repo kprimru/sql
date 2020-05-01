@@ -31,7 +31,7 @@ BEGIN
 	IF DATEPART(dw, @last_date) = 1
 		SET @last_date = @last_date - 3
 
-	ELSE IF DATEPART(dw, @last_date) = 2 
+	ELSE IF DATEPART(dw, @last_date) = 2
 		SET @last_date = @last_date - 4
 
 	ELSE IF DATEPART(dw, @last_date) = 4
@@ -46,7 +46,7 @@ BEGIN
 
 
 
-	WHILE(@last_date - @day <= 1) 
+	WHILE(@last_date - @day <= 1)
 	BEGIN
 		IF (DATEPART(dw, @last_date) = 3)
 			SET @last_date = @last_date + 2

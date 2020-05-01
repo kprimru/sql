@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[LOCK_CLEAR]
+ALTER PROCEDURE [dbo].[LOCK_CLEAR]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,20 +26,22 @@ BEGIN
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM sys.dm_exec_sessions 
+				FROM sys.dm_exec_sessions
 				WHERE	LC_SPID		=	session_id AND
-						LC_HOST		=	host_name AND					
+						LC_HOST		=	host_name AND
 						LC_LOGIN		=	original_login_name AND
-						LC_LOGIN_TIME	=	login_time  			
+						LC_LOGIN_TIME	=	login_time  
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LOCK_CLEAR] TO rl_lock_d;
+GO

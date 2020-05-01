@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_DELETE]
 	@ID	INT
 AS
 BEGIN
@@ -27,23 +27,25 @@ BEGIN
 				ClientID, MasterID, EventDate, EventComment, EventTypeID, EventActive,
 				EventCreate, EventLastUpdate, EventCreateUser, EventLastUpdateUser
 			)
-			SELECT 
+			SELECT
 				ClientID, MasterID, EventDate, EventComment, EventTypeID, 0,
 				EventCreate, GETDATE(), EventCreateUser, ORIGINAL_LOGIN()
 			FROM dbo.EventTable
 			WHERE EventID = @ID
-			
+
 		UPDATE dbo.EventTable
 		SET EventActive = 0
-		WHERE EventID = @ID	
-		
+		WHERE EventID = @ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_DELETE] TO rl_client_event_d;
+GO

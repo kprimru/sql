@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_SAVE]
 	@CLIENT		INT,
 	@TYPE		UNIQUEIDENTIFIER,
 	@SURNAME	VARCHAR(250),
@@ -35,23 +35,23 @@ BEGIN
 		SET @SURNAME = LTRIM(RTRIM(@SURNAME))
 		SET @NAME = LTRIM(RTRIM(@NAME))
 		SET @PATRON = LTRIM(RTRIM(@PATRON))
-		SET @POS = LTRIM(RTRIM(@POS))		
-			
+		SET @POS = LTRIM(RTRIM(@POS))
+
 		-- если это главбух
 		IF @TYPE = (SELECT CPT_ID FROM dbo.ClientPersonalType WHERE CPT_PSEDO = 'BUH')
 			AND (SELECT Maintenance.GlobalClientAutoClaim()) = 1 BEGIN
-			
+
 			DECLARE
 				@OLD_SURNAME	VarChar(250),
 				@OLD_NAME		VarChar(250),
 				@OLD_PATRON		VarChar(250);
-				
+
 			SELECT
 				@OLD_SURNAME = CP_SURNAME,
 				@OLD_NAME = CP_NAME,
 				@OLD_PATRON = CP_PATRON
 			FROM dbo.ClientPersonal
-			WHERE CP_ID_CLIENT = 
+			WHERE CP_ID_CLIENT =
 				(
 					SELECT TOP 1 ClientID
 					FROM dbo.ClientTable
@@ -59,11 +59,11 @@ BEGIN
 						AND ClientID <> @CLIENT
 					ORDER BY ClientLast DESC
 				) AND CP_ID_TYPE = @TYPE;
-				
-			
-				
+
+
+
 			-- если получилось что-то выбрать
-			IF @OLD_SURNAME IS NOT NULL BEGIN		
+			IF @OLD_SURNAME IS NOT NULL BEGIN
 				IF (
 					SELECT SUM(CNT)
 					FROM
@@ -85,20 +85,22 @@ BEGIN
 									AND UPD_USER = 'Автомат'
 							)
 				END
-								
+
 			END;
 		END;
-		
-		INSERT INTO dbo.ClientPersonal(CP_ID_CLIENT, CP_ID_TYPE, CP_SURNAME, CP_NAME, CP_PATRON, CP_POS, CP_NOTE, CP_EMAIL, CP_PHONE, CP_FAX, CP_PHONE_S) 
+
+		INSERT INTO dbo.ClientPersonal(CP_ID_CLIENT, CP_ID_TYPE, CP_SURNAME, CP_NAME, CP_PATRON, CP_POS, CP_NOTE, CP_EMAIL, CP_PHONE, CP_FAX, CP_PHONE_S)
 			SELECT @CLIENT, @TYPE, @SURNAME, @NAME, @PATRON, @POS, @NOTE, @EMAIL, @PHONE, @FAX, dbo.PhoneString(@PHONE)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_SAVE] TO rl_client_save;
+GO

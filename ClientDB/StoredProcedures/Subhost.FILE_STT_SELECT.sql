@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[FILE_STT_SELECT]
+ALTER PROCEDURE [Subhost].[FILE_STT_SELECT]
 	@SUBHOST	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM Subhost.STTFiles
 		WHERE ID_SUBHOST = @SUBHOST
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[FILE_STT_SELECT] TO rl_web_subhost;
+GO

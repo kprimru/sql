@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CONTRACT_EXECUTION_PROVISION_UPDATE]
+ALTER PROCEDURE [Purchase].[CONTRACT_EXECUTION_PROVISION_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(250),
 	@SHORT	VARCHAR(100)
@@ -28,14 +28,16 @@ BEGIN
 		SET CEP_NAME		=	@NAME,
 			CEP_SHORT		=	@SHORT
 		WHERE CEP_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CONTRACT_EXECUTION_PROVISION_UPDATE] TO rl_contract_execution_provision_u;
+GO

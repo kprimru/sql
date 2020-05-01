@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ONLINE_SERVICES_DISTR_SELECT]
+ALTER PROCEDURE [dbo].[ONLINE_SERVICES_DISTR_SELECT]
 	@ClientName				NVarChar(128),
 	@Distr					Int,
 	@Service				SmallInt,
@@ -34,13 +34,13 @@ BEGIN
 
 		IF @HideUnservicesDistrs IS NULL
 			SET @HideUnservicesDistrs = 1
-			
+
 		IF @HideHotlineDistrs IS NULL
 			SET @HideHotlineDistrs = 1
-			
+
 		IF @HideExpertDistrs IS NULL
 			SET @HideExpertDistrs = 1
-		
+
 		SELECT
 			ClientID,
 			ClientName,
@@ -90,14 +90,16 @@ BEGIN
 			AND (@HideHotlineDistrs = 0 OR @HideHotlineDistrs = 1 AND HD.[HotlineDistrActive] IS NULL)
 			AND (@HideExpertDistrs = 0 OR @HideExpertDistrs = 1 AND ED.[ExpertDistrActive] IS NULL)
 		ORDER BY ServiceName, ClientName, SystemOrder, DistrNumber;
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ONLINE_SERVICES_DISTR_SELECT] TO rl_expert_distr;
+GO

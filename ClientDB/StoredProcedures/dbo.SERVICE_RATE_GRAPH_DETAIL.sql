@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_RATE_GRAPH_DETAIL]
+ALTER PROCEDURE [dbo].[SERVICE_RATE_GRAPH_DETAIL]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -30,11 +30,11 @@ BEGIN
 		DECLARE @WEEK TABLE (WEEK_ID SMALLINT, WBEGIN SMALLDATETIME, WEND SMALLDATETIME)
 
 		INSERT INTO @WEEK(WEEK_ID, WBEGIN, WEND)
-			SELECT WEEK_ID, WBEGIN, WEND 
+			SELECT WEEK_ID, WBEGIN, WEND
 			FROM dbo.WeekDates(@BEGIN, @END)
 
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, GraphErr,
 			CASE
 				WHEN GraphErr IS NULL THEN 1
@@ -43,24 +43,24 @@ BEGIN
 			(
 				SELECT CONVERT(VARCHAR(20), EventDate, 104) + ' ' + EventComment + CHAR(10)
 				FROM EventTable z
-				WHERE EventActive = 1 
+				WHERE EventActive = 1
 					AND o_O.ClientID = z.ClientID
 					AND EventDate BETWEEN @BEGIN AND @END
 				ORDER BY EventDate FOR XML PATH('')
 			) AS EventComment
-		FROM 
+		FROM
 			(
-				SELECT 
-					ClientID, ClientFullName, 
+				SELECT
+					ClientID, ClientFullName,
 					REVERSE(STUFF(REVERSE((
 							SELECT 'С ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ', '
 							FROM @WEEK
 							WHERE  NOT EXISTS
 								(
 									SELECT *
-									FROM 
+									FROM
 										USR.USRIBDateView WITH(NOEXPAND)
-									WHERE UD_ID_CLIENT = ClientID 
+									WHERE UD_ID_CLIENT = ClientID
 										AND UIU_DATE_S BETWEEN WBEGIN AND WEND
 										AND DATEPART(WEEKDAY, UIU_DATE_S) = DayOrder
 								)
@@ -72,19 +72,21 @@ BEGIN
 					INNER JOIN dbo.TableIDFromXML(@TYPE) b ON b.ID = ClientKind_Id
 					INNER JOIN dbo.TableIDFromXML(@SERVICE_TYPE) c ON c.ID = ServiceTypeID
 					LEFT OUTER JOIN dbo.DayTable d ON a.DayID = d.DayID
-				WHERE ClientServiceID = @SERVICE 
+				WHERE ClientServiceID = @SERVICE
 					AND STATUS = 1
 			) AS o_O
 		WHERE (@ERROR = 0 OR GraphErr IS NOT NULL)
 		ORDER BY ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_RATE_GRAPH_DETAIL] TO rl_service_rate;
+GO

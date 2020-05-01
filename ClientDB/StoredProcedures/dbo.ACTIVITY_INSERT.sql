@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACTIVITY_INSERT]
+ALTER PROCEDURE [dbo].[ACTIVITY_INSERT]
 	@NAME	VARCHAR(500),
 	@CODE	VARCHAR(20),
 	@SHORT	VARCHAR(100),
@@ -32,14 +32,16 @@ BEGIN
 			VALUES(@NAME, @CODE, @SHORT)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTIVITY_INSERT] TO rl_activity_i;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_FINISH]
+ALTER PROCEDURE [Subhost].[TEST_FINISH]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,16 +25,18 @@ BEGIN
 		UPDATE Subhost.PersonalTest
 		SET FINISH = GETDATE()
 		WHERE ID = @ID
-		
+
 		EXEC Subhost.TEST_CHECK @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_FINISH] TO rl_web_subhost;
+GO

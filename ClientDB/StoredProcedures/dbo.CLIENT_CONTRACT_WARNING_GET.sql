@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_WARNING_GET]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_WARNING_GET]
 	@CLIENT		INT,
 	@WARN_COUNT	INT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,23 +22,25 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SET @WARN_COUNT = 
+
+		SET @WARN_COUNT =
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.ClientContractWarningView
 					INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = ClientID
 				WHERE ClientID = @CLIENT
 			)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_WARNING_GET] TO rl_client_contract_u;
+GO

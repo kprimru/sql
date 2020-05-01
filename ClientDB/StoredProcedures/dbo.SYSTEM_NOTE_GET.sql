@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_NOTE_GET]
-	@ID		INT	
+ALTER PROCEDURE [dbo].[SYSTEM_NOTE_GET]
+	@ID		INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,16 +23,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT NOTE
-		FROM dbo.SystemNote	
+		FROM dbo.SystemNote
 		WHERE ID_SYSTEM = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NOTE_GET] TO rl_system_u;
+GO

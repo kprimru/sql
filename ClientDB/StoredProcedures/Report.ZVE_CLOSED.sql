@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[ZVE_CLOSED]
+ALTER PROCEDURE [Report].[ZVE_CLOSED]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -38,14 +38,16 @@ BEGIN
 			AND SST_SHORT NOT IN ('дхс', 'юдл', 'дяо', 'кяб', 'ндд')
 			AND NT_SHORT NOT IN ('нбо', 'нбох', 'нбл1', 'нбл2', 'нбй')
 		ORDER BY SubhostName DESC, ManagerName, ServiceName, ClientName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[ZVE_CLOSED] TO rl_report;
+GO

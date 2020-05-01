@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_SERVICE_REPORT_NEW]
+ALTER PROCEDURE [dbo].[STUDY_SERVICE_REPORT_NEW]
 	@pbegindate SMALLDATETIME,
     @penddate SMALLDATETIME,
     @serviceid int = null,
@@ -26,14 +26,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ServiceFullName, 
+		SELECT ServiceFullName,
 		   (
 			 SELECT COUNT(DISTINCT b.ClientID)
 			 FROM dbo.ClientTable b INNER JOIN
 				  dbo.ServiceTable c ON b.ClientServiceID = c.ServiceID INNER JOIN
 				  dbo.ClientStudy d ON d.ID_CLIENT = b.ClientID INNER JOIN
 				  dbo.ClientStudyPeople e ON e.ID_STUDY = d.ID INNER JOIN
-				  dbo.TeacherTable f ON f.TeacherID = d.ID_TEACHER 
+				  dbo.TeacherTable f ON f.TeacherID = d.ID_TEACHER
 			 WHERE /*LessonPlaceReport = 1 AND */a.ServiceID = c.ServiceID /*AND TeacherReport = 1 */AND d.DATE BETWEEN @pbegindate AND @penddate AND Teached = 1 and (StatusID = @statusid or @statusid IS NULL) AND d.STATUS = 1 AND b.STATUS = 1
 				AND (ID_TEACHER IN (SELECT ID FROM dbo.TableIDFromXML(@TEACHER)) OR @TEACHER IS NULL)
 		   ) AS ClientCount,
@@ -57,14 +57,16 @@ BEGIN
 		FROM dbo.ServiceTable a
 		where (ServiceID = @serviceid or @serviceid IS NULL)
 		ORDER BY ServiceFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_SERVICE_REPORT_NEW] TO rl_report_client_study;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESSOR_FAMILY_SELECT]
+ALTER PROCEDURE [USR].[PROCESSOR_FAMILY_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -22,19 +22,21 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT PF_ID, PF_NAME 
+		SELECT PF_ID, PF_NAME
 		FROM USR.ProcessorFamily
 		WHERE @FILTER IS NULL
 			OR PF_NAME LIKE @FILTER
 		ORDER BY PF_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[PROCESSOR_FAMILY_SELECT] TO rl_proc_family_r;
+GO

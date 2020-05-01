@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[FILES_DOWNLOAD_SELECT]
+ALTER PROCEDURE [Subhost].[FILES_DOWNLOAD_SELECT]
 	@SUBHOST	UNIQUEIDENTIFIER,
 	@TYPE		NVARCHAR(64)
 AS
@@ -28,14 +28,16 @@ BEGIN
 		WHERE ID_SUBHOST = @SUBHOST
 			AND FTYPE = @TYPE
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[FILES_DOWNLOAD_SELECT] TO rl_web_subhost;
+GO

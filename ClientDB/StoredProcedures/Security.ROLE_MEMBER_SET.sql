@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[ROLE_MEMBER_SET]
+ALTER PROCEDURE [Security].[ROLE_MEMBER_SET]
 	@ROLE	NVARCHAR(128),
 	@MEMBER	NVARCHAR(128),
 	@MODE	BIT
@@ -29,14 +29,16 @@ BEGIN
 			EXEC sp_droprolemember @ROLE, @MEMBER
 		ELSE IF @MODE = 0
 			EXEC sp_addrolemember @ROLE, @MEMBER
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[ROLE_MEMBER_SET] TO rl_user_roles;
+GO

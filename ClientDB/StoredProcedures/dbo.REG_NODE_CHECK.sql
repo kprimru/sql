@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[REG_NODE_CHECK]
+ALTER PROCEDURE [dbo].[REG_NODE_CHECK]
 	@MANAGER		INT = NULL,
 	@SERVICE		INT = NULL,
 	@BASE			BIT = 1,
@@ -36,7 +36,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
-			
+
 		CREATE TABLE #res
 			(
 				ID_HOST		INT,
@@ -55,7 +55,7 @@ BEGIN
 		IF @BASE = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT a.HostID, DISTR, COMP, DistrStr, ID_CLIENT, 'Система не найдена в РЦ', '', '', NULL, NULL, NULL
-				FROM 
+				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
@@ -74,13 +74,13 @@ BEGIN
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT
 					a.HostID, DistrNumber, CompNumber, DistrStr, ID_CLIENT, 'Система не найдена в базе', '', '', RegisterDate, Complect, Comment
-				FROM 
+				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.DistrStatus b ON a.DS_ID = b.DS_ID
 					OUTER APPLY
 						(
 							SELECT TOP 1 ID_CLIENT
-							FROM 
+							FROM
 								Reg.RegNodeSearchView c WITH(NOEXPAND)
 								INNER JOIN dbo.ClientDistrView d WITH(NOEXPAND) ON d.DISTR = c.DistrNumber
 																				AND d.COMP = c.CompNumber
@@ -103,61 +103,63 @@ BEGIN
 		IF @NET = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Не совпадает тип сети', a.DistrTypeName, b.NT_SHORT, RegisterDate, Complect, Comment
-				FROM 
+				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber
 																	AND a.COMP = b.CompNumber
-																	AND a.HostID = b.HostID			
+																	AND a.HostID = b.HostID
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
 					INNER JOIN Din.NetType d ON d.NT_ID = b.NT_ID
 				WHERE d.NT_ID_MASTER <> a.DistrTypeID
-				
+
 		IF @STATUS = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Не совпадает статус', a.DS_NAME, d.DS_NAME, b.RegisterDate, Complect, Comment
-				FROM 
+				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber
 																	AND a.COMP = b.CompNumber
-																	AND a.HostID = b.HostID			
+																	AND a.HostID = b.HostID
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
 					INNER JOIN dbo.DistrStatus d ON d.DS_ID = b.DS_ID
 				WHERE a.DS_ID <> b.DS_ID
-				
+
 		IF @SYSTEM = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Система заменена', a.SystemShortName, b.SystemShortName, b.RegisterDate, Complect, Comment
-				FROM 
+				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber
 																	AND a.COMP = b.CompNumber
-																	AND a.HostID = b.HostID	
+																	AND a.HostID = b.HostID
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
 				WHERE a.SystemID <> b.SystemID
-				
-		SELECT 
+
+		SELECT
 			ClientID, ISNULL(ClientFullName, Comment) AS ClientName, DIS_STR,
 			ManagerName, ServiceName, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT,
 			ServiceName + ' (' + ManagerName + ')' AS ServiceStr,
 			ISNULL(ClientFullName, Complect + '/' + Complect) AS ClientComplect
-		FROM 
+		FROM
 			#res a
 			LEFT OUTER JOIN dbo.ClientView b WITH(NOEXPAND) ON b.ClientID = a.ID_CLIENT
 		WHERE (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 		ORDER BY TP, ManagerName, ServiceName, ClientFullName, DIS_STR
-			
+
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_NODE_CHECK] TO rl_reg_node_audit;
+GO

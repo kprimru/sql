@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_CARD_DELETE]
+ALTER PROCEDURE [Purchase].[CLIENT_CONDITION_CARD_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionGoodRequirement
 		WHERE CCGR_ID_CC IN
 			(
@@ -31,7 +31,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionPartnerRequirement
 		WHERE CCPR_ID_CC IN
 			(
@@ -40,7 +40,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionPriceValidation
 		WHERE CCPV_ID_CC IN
 			(
@@ -49,7 +49,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionReason
 		WHERE CCR_ID_CC IN
 			(
@@ -58,7 +58,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionActivity
 		WHERE CCA_ID_CC IN
 			(
@@ -67,7 +67,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionApplyReason
 		WHERE CAR_ID_CC IN
 			(
@@ -76,7 +76,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionTrademark
 		WHERE CCT_ID_CC IN
 			(
@@ -85,7 +85,7 @@ BEGIN
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionTradeSite
 		WHERE CTS_ID_CC IN
 			(
@@ -172,23 +172,23 @@ BEGIN
 				FROM Purchase.ClientConditionCard
 				WHERE CC_ID = @ID OR CC_ID_MASTER = @ID
 			)
-		
 
-		DELETE 
+
+		DELETE
 		FROM Purchase.ClientConditionCard
 		WHERE CC_ID_MASTER = @ID
 
-		DELETE 
+		DELETE
 		FROM Purchase.ClientConditionCard
 		WHERE CC_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

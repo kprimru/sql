@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_REG_NODE_ALL]
+ALTER PROCEDURE [dbo].[GET_REG_NODE_ALL]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -27,14 +27,20 @@ BEGIN
 		FROM dbo.RegNodeTable R
 		LEFT JOIN dbo.SystemTable S ON S.SystemBaseName = R.SystemName
 		ORDER BY S.SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_REG_NODE_ALL] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[GET_REG_NODE_ALL] TO BL_EDITOR;
+GRANT EXECUTE ON [dbo].[GET_REG_NODE_ALL] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[GET_REG_NODE_ALL] TO BL_READER;
+GRANT EXECUTE ON [dbo].[GET_REG_NODE_ALL] TO BL_RGT;
+GO

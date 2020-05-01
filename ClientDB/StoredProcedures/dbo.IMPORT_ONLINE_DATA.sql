@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[IMPORT_ONLINE_DATA]
-	@DATA		NVARCHAR(MAX),	
+ALTER PROCEDURE [dbo].[IMPORT_ONLINE_DATA]
+	@DATA		NVARCHAR(MAX),
 	@OUT_DATA	NVARCHAR(512) = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,15 +22,15 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @XML XML
 
 		SET @XML = CAST(@DATA AS XML)
-		
+
 		DECLARE @ADD	INT
-		
+
 		SET @ADD = 0
-		
+
 		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 
 		INSERT INTO dbo.OnlineActivity(ID_HOST, DISTR, COMP, ID_WEEK, ACTIVITY, LGN)
@@ -59,18 +59,20 @@ BEGIN
 						AND z.ID_WEEK = c.ID
 						AND z.LGN = a.LGN
 				)
-		
-		SET @ADD = @ADD + @@ROWCOUNT	
-		
+
+		SET @ADD = @ADD + @@ROWCOUNT
+
 		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @ADD) + ' записей.'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[IMPORT_ONLINE_DATA] TO rl_import_data;
+GO

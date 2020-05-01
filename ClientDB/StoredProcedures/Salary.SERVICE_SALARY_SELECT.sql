@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_SELECT]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_SELECT]
 	@MONTH		UNIQUEIDENTIFIER,
 	@SERVICE	INT,
 	@DISTR		INT = NULL
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, c.ServiceName, d.ServicePositionName, MANAGER_RATE, INSURANCE, b.NAME,
 			(
 				SELECT COUNT(*)
@@ -48,24 +48,24 @@ BEGIN
 			) AS CL_COUNT,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					Salary.ServiceClient z
 					INNER JOIN Salary.Service p ON z.ID_SALARY = p.ID
 				WHERE z.ID_SALARY = a.ID
 					AND NOT EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								Salary.ServiceClient y
 								INNER JOIN Salary.Service t ON y.ID_SALARY = t.ID
 							WHERE t.ID_SERVICE = p.ID_SERVICE
 								AND y.ID_CLIENT = z.ID_CLIENT
-								AND y.ID_SALARY = 
+								AND y.ID_SALARY =
 									(
 										SELECT ID
 										FROM Salary.Service x
 										WHERE x.ID_SERVICE = a.ID_SERVICE
-											AND x.ID_MONTH = 
+											AND x.ID_MONTH =
 												(
 													SELECT ID
 													FROM Common.Period w
@@ -77,15 +77,15 @@ BEGIN
 			) AS CL_PLUS,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					Salary.ServiceClient z
 					INNER JOIN Salary.Service p ON z.ID_SALARY = p.ID
-				WHERE z.ID_SALARY = 
+				WHERE z.ID_SALARY =
 					(
 						SELECT ID
 						FROM Salary.Service x
 						WHERE x.ID_SERVICE = a.ID_SERVICE
-							AND x.ID_MONTH = 
+							AND x.ID_MONTH =
 								(
 									SELECT ID
 									FROM Common.Period w
@@ -96,16 +96,16 @@ BEGIN
 					AND NOT EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								Salary.ServiceClient y
 								INNER JOIN Salary.Service t ON y.ID_SALARY = t.ID
 							WHERE t.ID_SERVICE = p.ID_SERVICE
 								AND y.ID_CLIENT = z.ID_CLIENT
 								AND y.ID_SALARY = a.ID
-									
+
 						)
 			) AS CL_MINUS
-		FROM 
+		FROM
 			Salary.Service a
 			INNER JOIN Common.Period b ON a.ID_MONTH  = b.ID
 			INNER JOIN dbo.ServiceTable c ON a.ID_SERVICE = c.ServiceID
@@ -114,7 +114,7 @@ BEGIN
 			AND (a.ID_SERVICE = @SERVICE OR @SERVICE IS NULL)
 			AND
 				(
-					@DISTR IS NULL 
+					@DISTR IS NULL
 					OR
 					EXISTS
 						(
@@ -125,14 +125,16 @@ BEGIN
 						)
 				)
 		ORDER BY b.START DESC, c.ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_SELECT] TO rl_salary;
+GO

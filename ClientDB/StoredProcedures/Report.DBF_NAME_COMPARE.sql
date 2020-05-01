@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[DBF_NAME_COMPARE]
+ALTER PROCEDURE [Report].[DBF_NAME_COMPARE]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CL_PSEDO AS [Псевдоним], TO_NAME AS [Название ТО], CL_SHORT_NAME AS [Короткое название клиента],
 			(
 				SELECT TOP 1 DIS_STR
@@ -31,7 +31,7 @@ BEGIN
 					AND DSS_REPORT = 1
 				ORDER BY SYS_ORDER
 			) AS [Основной дистрибутив]
-		FROM 
+		FROM
 			[PC275-SQL\DELTA].DBF.dbo.TOTable
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID
 		WHERE TO_REPORT = 1
@@ -45,14 +45,16 @@ BEGIN
 						AND DSS_REPORT = 1
 				)
 		ORDER BY CL_PSEDO
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[DBF_NAME_COMPARE] TO rl_report;
+GO

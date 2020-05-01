@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[KGS_DISTR_LIST_SELECT]
+ALTER PROCEDURE [dbo].[KGS_DISTR_LIST_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -34,14 +34,16 @@ BEGIN
 						AND CONVERT(VARCHAR(20), KD_DISTR) LIKE @FILTER
 				)
 		ORDER BY KDL_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[KGS_DISTR_LIST_SELECT] TO rl_kgs_distr_r;
+GO

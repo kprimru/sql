@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[TABLE_STAT_UPDATE]
+ALTER PROCEDURE [Maintenance].[TABLE_STAT_UPDATE]
 	@TABLE_NAME	NVARCHAR(512)
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 
 		SET @SQL = N'UPDATE STATISTICS ' + @TABLE_NAME + N' WITH FULLSCAN'
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[TABLE_STAT_UPDATE] TO rl_maintenance;
+GO

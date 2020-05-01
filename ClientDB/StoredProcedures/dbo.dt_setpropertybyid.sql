@@ -18,9 +18,9 @@ create procedure dbo.dt_setpropertybyid
 	@lvalue image
 as
 	set nocount on
-	declare @uvalue nvarchar(255) 
-	set @uvalue = convert(nvarchar(255), @value) 
-	if exists (select * from dbo.dtproperties 
+	declare @uvalue nvarchar(255)
+	set @uvalue = convert(nvarchar(255), @value)
+	if exists (select * from dbo.dtproperties
 			where objectid=@id and property=@property)
 	begin
 		--

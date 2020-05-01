@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_WORK_SELECT]
+ALTER PROCEDURE [Task].[TASK_WORK_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM Task.TaskWork
 		WHERE ID_TASK = @ID
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_WORK_SELECT] TO rl_task_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_GET]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT ID_SERVICE, ID_MONTH, ID_POSITION, MANAGER_RATE, INSURANCE
 		FROM Salary.Service
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_GET] TO rl_salary;
+GO

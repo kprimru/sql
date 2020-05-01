@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ERROR_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_ERROR_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE ID_CLIENT = @CLIENT
 			AND STATUS = 1
 		ORDER BY UPD_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ERROR_SELECT] TO rl_client_error_r;
+GO

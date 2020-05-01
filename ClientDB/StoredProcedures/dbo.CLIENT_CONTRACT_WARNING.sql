@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_WARNING]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -38,7 +38,7 @@ BEGIN
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 
-		SELECT 
+		SELECT
 			ClientID = B.[Client_Id], ClientFullName, ManagerName, ExpireDate AS ContractEnd
 		FROM @Clients B
 		INNER JOIN Contract.ClientContracts CC ON CC.Client_Id = b.Client_Id
@@ -50,13 +50,13 @@ BEGIN
 			WHERE D.Contract_Id = C.ID
 			ORDER BY DATE DESC
 		) D
-		WHERE 
+		WHERE
 			C.DateTo IS NULL
 			AND D.ExpireDate <= @CONTROL_DATE
-		
+
 		UNION ALL
-		
-		SELECT 
+
+		SELECT
 			ClientID = B.[Client_Id], ClientFullName, ManagerName, MAX(ContractEnd) AS ContractEnd
 		FROM @Clients B
 		INNER JOIN dbo.ContractTable a ON a.ClientID = b.Client_Id
@@ -75,16 +75,18 @@ BEGIN
 					WHERE CC.Client_Id = b.Client_Id
 				)
 		GROUP BY b.Client_Id, ClientFullName, ManagerName
-		
-		ORDER BY ClientFullName	
-	
+
+		ORDER BY ClientFullName
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_WARNING] TO rl_contract_warning;
+GO

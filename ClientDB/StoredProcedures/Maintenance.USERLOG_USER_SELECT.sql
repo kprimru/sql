@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[USERLOG_USER_SELECT]
+ALTER PROCEDURE [Maintenance].[USERLOG_USER_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,18 +20,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT DISTINCT USR
 		FROM Maintenance.Userlog
 		ORDER BY USR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[USERLOG_USER_SELECT] TO rl_userlog;
+GO

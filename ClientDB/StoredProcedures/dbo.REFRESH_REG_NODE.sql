@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[REFRESH_REG_NODE]
+ALTER PROCEDURE [dbo].[REFRESH_REG_NODE]
 	@REG_PATH NVARCHAR(500) = NULL,
 	@BCP_PATH NVARCHAR(500) = NULL
 WITH EXECUTE AS OWNER
@@ -48,7 +48,7 @@ BEGIN
 
 			IF OBJECT_ID('tempdb..#rn') IS NOT NULL
 				DROP TABLE #rn
-			
+
 			CREATE TABLE #rn
 				(
 					SystemName varchar(20),
@@ -73,7 +73,7 @@ BEGIN
 						(
 							FORMATFILE = ''E:\SQLScript\ImportReg\bcp.fmt'',
 							FIRSTROW = 2
-						)'	
+						)'
 
 			EXEC sp_executesql @sql
 
@@ -81,7 +81,7 @@ BEGIN
 
 			IF EXISTS(SELECT * FROM #rn)
 			BEGIN
-				/*TRUNCATE TABLE RegNodeTable		
+				/*TRUNCATE TABLE RegNodeTable
 
 				DBCC CHECKIDENT ('dbo.RegNodeTable', RESEED, 1) WITH NO_INFOMSGS
 				*/
@@ -90,7 +90,7 @@ BEGIN
 				SET Comment = REPLACE(LEFT(RIGHT(Comment, LEN(Comment) - 1), LEN(Comment) - 2), '""', '"')
 				WHERE SUBSTRING(Comment, 1, 1) = '"' AND SUBSTRING(Comment, LEN(Comment), 1) = '"'
 
-				DELETE 
+				DELETE
 				FROM dbo.RegNodeTable
 				WHERE NOT EXISTS
 					(
@@ -150,7 +150,7 @@ BEGIN
 
 			IF OBJECT_ID('tempdb..#rn') IS NOT NULL
 				DROP TABLE #rn
-		
+
 			SET @CMD = 'DEL ' + @SAVE
 
 			EXEC master..xp_cmdshell @CMD, NO_OUTPUT
@@ -177,7 +177,7 @@ BEGIN
 						[Comment] [varchar](255) NULL,
 						[Complect] [varchar](20) NULL
 					)
-	 
+
 				SET @sql = '
 					BULK INSERT #reg
 					FROM ''' + @REG_PATH + '''
@@ -198,14 +198,16 @@ BEGIN
 				IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 					DROP TABLE #reg
 			END
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REFRESH_REG_NODE] TO rl_reg_node_refresh;
+GO

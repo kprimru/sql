@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[BLANK_QUESTION_SELECT]
+ALTER PROCEDURE [Poll].[BLANK_QUESTION_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,8 +22,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ID, NAME, ORD, ANS_MIN, ANS_MAX, TP, 
+		SELECT
+			ID, NAME, ORD, ANS_MIN, ANS_MAX, TP,
 			CASE TP
 				WHEN 0 THEN 'однозначный выбор'
 				WHEN 1 THEN 'многозначный выбор'
@@ -33,14 +33,16 @@ BEGIN
 		FROM Poll.Question
 		WHERE ID_BLANK = @ID
 		ORDER BY ORD
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[BLANK_QUESTION_SELECT] TO rl_blank_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[TRUST_STAT_REPORT_NEW]
+ALTER PROCEDURE [dbo].[TRUST_STAT_REPORT_NEW]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -28,9 +28,9 @@ BEGIN
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
 
-		SELECT 
+		SELECT
 			ServiceName,
-			(	
+			(
 				SELECT COUNT(*)
 				FROM
 					dbo.ClientTable a
@@ -52,7 +52,7 @@ BEGIN
 				FROM
 					dbo.ClientCall
 					INNER JOIN dbo.ClientTable ON CC_ID_CLIENT = ClientID
-					INNER JOIN dbo.ClientTrust ON CT_ID_CALL = CC_ID				
+					INNER JOIN dbo.ClientTrust ON CT_ID_CALL = CC_ID
 				WHERE ServiceID = ClientServiceID
 					AND dbo.DateOf(CC_DATE) BETWEEN @BEGIN AND @END
 					AND CT_TRUST = 1
@@ -62,7 +62,7 @@ BEGIN
 				FROM
 					dbo.ClientCall
 					INNER JOIN dbo.ClientTable ON CC_ID_CLIENT = ClientID
-					INNER JOIN dbo.ClientTrust ON CT_ID_CALL = CC_ID				
+					INNER JOIN dbo.ClientTrust ON CT_ID_CALL = CC_ID
 				WHERE ServiceID = ClientServiceID
 					AND dbo.DateOf(CC_DATE) BETWEEN @BEGIN AND @END
 					AND CT_TRUST = 0
@@ -81,14 +81,16 @@ BEGIN
 					AND dbo.DateOf(CC_DATE) BETWEEN @BEGIN AND @END
 			)
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TRUST_STAT_REPORT_NEW] TO rl_report_client_trust;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SYS_INFO_BANK_ALL_MAIN]
+ALTER PROCEDURE [Report].[SYS_INFO_BANK_ALL_MAIN]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -25,14 +25,14 @@ BEGIN
 		DECLARE @t	TABLE(SysBaseName	NVARCHAR(MAX), DistrTypeName	NVARCHAR(MAX), Banks	NVARCHAR(MAX), SystemOrder	INT, BanksCount	INT)
 
 		INSERT INTO @t
-		SELECT 
+		SELECT
 				SystemBaseName , DistrTypeName,
-				REVERSE(STUFF(REVERSE(( 
+				REVERSE(STUFF(REVERSE((
 				SELECT InfoBankName + ', '
 				FROM dbo.SystemInfoBanksView b
 				WHERE b.System_ID = a.System_ID AND b.DistrType_ID = a.DistrType_ID
 				ORDER BY InfoBankName
-				FOR XML PATH('') 
+				FOR XML PATH('')
 				)), 1, 2, '')) AS Banks,
 				SystemOrder,
 				(SELECT COUNT(*)
@@ -57,14 +57,14 @@ BEGIN
 		FROM @t t1
 		GROUP BY SysBaseName, Banks, SystemOrder, BanksCount
 		ORDER BY SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

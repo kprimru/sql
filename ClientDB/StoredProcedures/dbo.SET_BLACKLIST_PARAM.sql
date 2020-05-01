@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[SET_BLACKLIST_PARAM]
+ALTER PROCEDURE [dbo].[SET_BLACKLIST_PARAM]
 @PARAMNAME varchar(50),
 @ParamValue varchar(2048)
 WITH EXECUTE AS OWNER
@@ -33,19 +33,22 @@ BEGIN
 			UPDATE dbo.BLACK_LIST_PARAMS SET PARAMVALUE=@ParamValue
 			WHERE PARAMNAME=@PARAMNAME
 		END
-		ELSE 
+		ELSE
 		BEGIN
 			INSERT INTO dbo.BLACK_LIST_PARAMS (PARAMNAME,PARAMVALUE)
 			VALUES (@PARAMNAME, @ParamValue)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SET_BLACKLIST_PARAM] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[SET_BLACKLIST_PARAM] TO BL_PARAM;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESSOR_SELECT]
+ALTER PROCEDURE [USR].[PROCESSOR_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -23,20 +23,22 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PRC_ID, PRC_NAME, PRC_FREQ, PRC_CORE, PF_NAME
-		FROM 
+		FROM
 			USR.Processor
 			LEFT OUTER JOIN USR.ProcessorFamily ON PF_ID = PRC_ID_FAMILY
 		WHERE @FILTER IS NULL
 			OR PRC_NAME LIKE @FILTER
 		ORDER BY PRC_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[PROCESSOR_SELECT] TO rl_processor_r;
+GO

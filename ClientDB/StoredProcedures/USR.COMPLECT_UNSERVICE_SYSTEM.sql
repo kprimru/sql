@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[COMPLECT_UNSERVICE_SYSTEM]
+ALTER PROCEDURE [USR].[COMPLECT_UNSERVICE_SYSTEM]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@LAST_DATE	SMALLDATETIME,
@@ -65,32 +65,32 @@ BEGIN
 			WHERE (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (UF_DATE >= @LAST_DATE OR @LAST_DATE IS NULL)
-				AND UP_TYPE <> 'NEK'		
+				AND UP_TYPE <> 'NEK'
 				AND f.SystemBaseCheck = 1
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usrdata (UP_ID_USR, Service) INCLUDE (SystemShortName, SystemOrder)'
 		EXEC (@SQL)
-		
-		SELECT DISTINCT UD_ID_CLIENT, 
-			UF_CREATE AS CreateDate, 
+
+		SELECT DISTINCT UD_ID_CLIENT,
+			UF_CREATE AS CreateDate,
 			UF_DATE AS USRFileDate,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT SystemShortName + ', '
-					FROM #usrdata z 
+					FROM #usrdata z
 					WHERE z.UP_ID_USR = d.UP_ID_USR AND z.Service = 0
 					ORDER BY SystemOrder FOR XML PATH('')
 				)), 1, 2, '')
 			) AS ServicedBase,
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT 
-						SystemShortName + 
+					SELECT
+						SystemShortName +
 						ISNULL('(' + CONVERT(VARCHAR(20), (
 							SELECT dbo.DateOf(MAX(RPR_DATE))
-							FROM dbo.RegProtocol 
+							FROM dbo.RegProtocol
 							WHERE RPR_OPER IN ('Отключение', 'Сопровождение отключено') AND RPR_ID_HOST = HostID AND RPR_DISTR = SystemDistrNumber AND RPR_COMP = CompNumber
 						), 104) + ')', '') + ', '
 					FROM #usrdata z
@@ -102,12 +102,12 @@ BEGIN
 				WHEN 1 THEN Complect
 			END AS Complect
 		FROM
-			#usrdata d 
-		WHERE 
+			#usrdata d
+		WHERE
 			EXISTS
 				(
 					SELECT *
-					FROM #usrdata z 
+					FROM #usrdata z
 					WHERE z.UP_ID_USR = d.UP_ID_USR AND z.Service = 1
 				) AND
 			EXISTS
@@ -120,14 +120,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#usrdata') IS NOT NULL
 			DROP TABLE #usrdata
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

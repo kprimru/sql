@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONTRACT_FOUNDATION_GET]
+ALTER PROCEDURE [dbo].[CONTRACT_FOUNDATION_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,17 @@ BEGIN
 		SELECT NAME
 		FROM dbo.ContractFoundation
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_FOUNDATION_GET] TO rl_contract_foundation_d;
+GRANT EXECUTE ON [dbo].[CONTRACT_FOUNDATION_GET] TO rl_contract_foundation_u;
+GO

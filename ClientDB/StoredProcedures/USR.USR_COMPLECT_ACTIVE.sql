@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_COMPLECT_ACTIVE]
+ALTER PROCEDURE [USR].[USR_COMPLECT_ACTIVE]
 	@UD_ID	INT
 AS
 BEGIN
@@ -23,21 +23,23 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE USR.USRData
-		SET UD_ACTIVE = 
-				CASE UD_ACTIVE 
-					WHEN 1 THEN 0 
-					WHEN 0 THEN 1 
+		SET UD_ACTIVE =
+				CASE UD_ACTIVE
+					WHEN 1 THEN 0
+					WHEN 0 THEN 1
 					ELSE NULL
 				END
 		WHERE UD_ID = @UD_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[USR_COMPLECT_ACTIVE] TO rl_tech_info_complect;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[KGS_MEMO_SELECT]
+ALTER PROCEDURE [Memo].[KGS_MEMO_SELECT]
 	@NAME	NVARCHAR(128),
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
@@ -27,8 +27,8 @@ BEGIN
 
 		IF @END IS NOT NULL
 			SET @END = DATEADD(DAY, 1, @END)
-		
-		SELECT 
+
+		SELECT
 			ID, NAME, DATE, PRICE,
 			(
 				SELECT COUNT(*)
@@ -48,14 +48,16 @@ BEGIN
 			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (DATE < @END OR @END IS NULL)
 		ORDER BY DATE DESC, NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[KGS_MEMO_SELECT] TO rl_kgs_complect_calc;
+GO

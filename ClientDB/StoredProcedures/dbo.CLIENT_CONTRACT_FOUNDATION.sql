@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_FOUNDATION]
-	@ID		INT,	
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_FOUNDATION]
+	@ID		INT,
 	@ID_FOUND	UNIQUEIDENTIFIER,
 	@FOUND_END	SMALLDATETIME,
 	@NOTE		NVARCHAR(MAX)
@@ -33,14 +33,16 @@ BEGIN
 			FOUND_END = @FOUND_END,
 			FOUND_NOTE = @NOTE
 		WHERE ContractID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_FOUNDATION] TO rl_client_contract_foundation;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_SERVICE] AS
+ALTER PROCEDURE [dbo].[GET_SERVICE] AS
 BEGIN
 	SET NOCOUNT ON
 
@@ -20,7 +20,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ServiceID, ServiceName, 
+		SELECT ServiceID, ServiceName,
 			(
 				SELECT COUNT(*)
 				FROM dbo.ClientTable a
@@ -30,14 +30,16 @@ BEGIN
 			) AS ServiceCount, ManagerID
 		FROM dbo.ServiceTable
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_SERVICE] TO rl_personal_service_r;
+GO

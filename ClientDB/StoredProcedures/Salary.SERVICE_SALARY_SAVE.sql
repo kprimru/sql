@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_SAVE]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_SAVE]
 	@ID			UNIQUEIDENTIFIER OUTPUT,
 	@MONTH		UNIQUEIDENTIFIER,
 	@SERVICE	INT,
@@ -34,26 +34,28 @@ BEGIN
 			MANAGER_RATE	=	@RATE,
 			INSURANCE		=	@INSURANCE
 		WHERE ID = @ID
-		
+
 		IF @@ROWCOUNT = 0
 		BEGIN
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Salary.Service(ID_MONTH, ID_SERVICE, ID_POSITION, MANAGER_RATE, INSURANCE)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@MONTH, @SERVICE, @POSITION, @RATE, @INSURANCE)
-				
+
 			SELECT @ID = ID
 			FROM @TBL
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_SAVE] TO rl_salary;
+GO

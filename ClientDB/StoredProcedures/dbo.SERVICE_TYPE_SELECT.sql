@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[SERVICE_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -24,7 +24,7 @@ BEGIN
 
 		SELECT ServiceTypeID, ServiceTypeName, ServiceTypeShortName, ServiceTypeVisit, ServiceTypeDefault, ServiceTypeActive
 		FROM dbo.ServiceTypeTable
-		WHERE 
+		WHERE
 			ServiceTypeActive = 1
 			AND
 				(
@@ -33,14 +33,16 @@ BEGIN
 					OR ServiceTypeShortName LIKE @FILTER
 				)
 		ORDER BY ServiceTypeName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_TYPE_SELECT] TO rl_service_type_r;
+GO

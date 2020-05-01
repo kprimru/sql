@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTROL_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_CONTROL_FILTER]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@SERVICE	INT,
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName,
 			CONVERT(DATETIME, CONVERT(VARCHAR(20), CC_DATE, 112), 112) AS CC_DATE_STR,
 			CONVERT(DATETIME, CONVERT(VARCHAR(20), CC_BEGIN, 112), 112) AS CC_BEGIN_STR,
@@ -43,19 +43,19 @@ BEGIN
 				WHEN 5 THEN 'ёрист'
 				ELSE ''
 			END AS CC_TYPE_STR
-		FROM 
+		FROM
 			[dbo].[ClientList@Get?Read]()
-			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = WCL_ID		
+			INNER JOIN dbo.ClientView a WITH(NOEXPAND) ON a.ClientID = WCL_ID
 			INNER JOIN dbo.ClientControl d ON d.CC_ID_CLIENT = a.ClientID
 		WHERE (CC_DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (CC_DATE < DATEADD(DAY, 1, @END) OR @END IS NULL)
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND 
+			AND
 				(
-					@STATUS = -1 
-					OR @STATUS = 0 
-					OR @STATUS = 1 AND CC_REMOVE_DATE IS NULL 
+					@STATUS = -1
+					OR @STATUS = 0
+					OR @STATUS = 1 AND CC_REMOVE_DATE IS NULL
 					OR @STATUS = 2 AND CC_REMOVE_DATE IS NOT NULL
 				)
 			AND (CC_TEXT LIKE @COMMENT OR @COMMENT IS NULL)
@@ -67,14 +67,16 @@ BEGIN
 					AND (CC_BEGIN <= @NOTIFY_E OR @NOTIFY_E IS NULL)
 				)
 		ORDER BY CC_DATE_STR DESC, ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_FILTER] TO rl_filter_control;
+GO

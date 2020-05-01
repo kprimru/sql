@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Reg].[Complect@Periodic]
+ALTER FUNCTION [Reg].[Complect@Periodic]
 (
 	@Complect	VarChar(100),
 	@Date		DateTime

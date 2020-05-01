@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[SERVICE_INSERT]
+ALTER PROCEDURE [Memo].[SERVICE_INSERT]
 	@NAME	NVARCHAR(512),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -28,16 +28,18 @@ BEGIN
 		INSERT INTO Memo.Service(NAME)
 			OUTPUT inserted.ID INTO @TBL
 			VALUES(@NAME)
-			
+
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[SERVICE_INSERT] TO rl_memo_service_i;
+GO

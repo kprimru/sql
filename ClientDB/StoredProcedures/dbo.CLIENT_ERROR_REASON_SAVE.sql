@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ERROR_REASON_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_ERROR_REASON_SAVE]
 	@ID		UNIQUEIDENTIFIER OUTPUT,
 	@TP		NVARCHAR(128),
 	@NAME	NVARCHAR(128),
@@ -28,7 +28,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-		
+
 		IF @ID IS NULL
 			INSERT INTO dbo.ClientErrorReason(TP, NAME, ID_GROUP, RS_TYPE, ORD)
 				OUTPUT inserted.ID INTO @TBL
@@ -38,18 +38,20 @@ BEGIN
 			SET NAME	=	@NAME,
 				ORD		=	@ORD
 			WHERE ID = @ID
-			
+
 		IF @ID IS NULL
 			SELECT @ID = ID
 			FROM @TBL
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ERROR_REASON_SAVE] TO rl_message_u;
+GO

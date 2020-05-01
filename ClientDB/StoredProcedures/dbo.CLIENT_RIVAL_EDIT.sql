@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_EDIT]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_EDIT]
 	@CR_ID	INT,
 	@TYPE	INT,
 	@STATUS	INT,
@@ -42,20 +42,22 @@ BEGIN
 		UPDATE dbo.ClientRivalReaction
 		SET CRR_ID_RIVAL = @ID
 		WHERE CRR_ID_RIVAL = @CR_ID
-		
+
 		UPDATE dbo.ClientRival
 		SET CR_ACTIVE = 0
 		WHERE CR_ID = @CR_ID
 
 		EXEC dbo.CLIENT_RIVAL_PERSONAL_SET_NEW @ID, @PERSONAL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_EDIT] TO rl_client_rival_u;
+GO

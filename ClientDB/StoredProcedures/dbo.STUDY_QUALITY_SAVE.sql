@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_QUALITY_SAVE]
+ALTER PROCEDURE [dbo].[STUDY_QUALITY_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@CLIENT		INT,
 	@DATE		SMALLDATETIME,
@@ -41,14 +41,16 @@ BEGIN
 				WEIGHT		=	@WEIGHT,
 				SYS_LIST	=	@SYS_LIST
 			WHERE ID = @ID
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_QUALITY_SAVE] TO rl_client_study_u;
+GO

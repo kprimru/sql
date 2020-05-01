@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_DETAIL_INSERT]
 	@DISTR			INT,
 	@COMP			INT,
 	@NET			NVARCHAR(256),
@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[CLIENT_STAT_DETAIL_INSERT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -32,7 +32,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.ClientStatDetail ([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
 		SELECT
 			GETDATE(),
@@ -49,14 +49,15 @@ BEGIN
 			@THREE_ENTER,
 			@SES_TIME_SUM,
 			@SES_TIME_AVG
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;
+END;GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_INSERT] TO rl_client_stat_detail_i;
+GO

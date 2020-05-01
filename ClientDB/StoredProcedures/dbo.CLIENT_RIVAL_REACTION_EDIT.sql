@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_EDIT]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_EDIT]
 	@CRR_ID	INT,
 	@DATE	SMALLDATETIME,
 	@COMM	VARCHAR(MAX),
@@ -43,14 +43,16 @@ BEGIN
 			SET CR_COMPLETE = 1,
 				CR_CONTROL = 0
 			WHERE CR_ID = (SELECT CRR_ID_RIVAL FROM dbo.ClientRivalReaction WHERE CRR_ID = @CRR_ID)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_REACTION_EDIT] TO rl_client_rival_reaction_u;
+GO

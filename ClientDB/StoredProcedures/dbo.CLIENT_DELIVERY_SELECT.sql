@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELIVERY_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_DELIVERY_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -23,19 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT a.ID, b.NAME, a.EMAIL, a.START, a.FINISH, a.NOTE
-		FROM 
+		FROM
 			dbo.ClientDelivery a
 			INNER JOIN dbo.Delivery b ON a.ID_DELIVERY = b.ID
 		WHERE a.ID_CLIENT = @CLIENT
 		ORDER BY START DESC, FINISH
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELIVERY_SELECT] TO rl_client_delivery_r;
+GO

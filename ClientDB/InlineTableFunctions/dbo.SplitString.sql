@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[SplitString]
+ALTER FUNCTION [dbo].[SplitString]
 (
 	@STRING	VARCHAR(MAX)
 )
@@ -15,27 +15,27 @@ RETURN
 	WITH Proposition
 		(
 			[Order], Word, Proposition
-		) AS 
-		(	
-			SELECT	          
+		) AS
+		(
+			SELECT
 				1,
-				SUBSTRING(Proposition, 0, CHARINDEX(' ', Proposition)), 
+				SUBSTRING(Proposition, 0, CHARINDEX(' ', Proposition)),
 				LTRIM(SUBSTRING(Proposition, CHARINDEX(' ', Proposition) + 1, LEN(Proposition)))
-			FROM	
+			FROM
 				(
-					SELECT 
+					SELECT
 						LTRIM(RTRIM(REPLACE(REPLACE(REPLACE(@STRING, Char(9), ' '), Char(10), ' '), Char(13), ' '))) + ' ' AS Proposition
 				) AS Proposition
-					
+
 			UNION	ALL
-	
-			SELECT	
+
+			SELECT
 				[Order] + 1,
-				SUBSTRING(Proposition, 0, CHARINDEX(' ', Proposition)), 
+				SUBSTRING(Proposition, 0, CHARINDEX(' ', Proposition)),
 				LTRIM(SUBSTRING(Proposition, CHARINDEX(' ', Proposition) + 1, LEN(Proposition)))
 			FROM Proposition
 			WHERE CHARINDEX(' ', Proposition) > 0
-		)	
+		)
 		SELECT [Order], Word
 		FROM Proposition
 )

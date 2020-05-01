@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SURNAMES_SELECT]
+ALTER PROCEDURE [dbo].[SURNAMES_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,14 +24,16 @@ BEGIN
 		SELECT CP_SURNAME = [Surname]
 		FROM [Cache].[Persons=Surnames]
 		ORDER BY CP_SURNAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SURNAMES_SELECT] TO public;
+GO

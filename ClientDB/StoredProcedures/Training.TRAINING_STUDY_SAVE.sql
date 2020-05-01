@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_STUDY_SAVE]
+ALTER PROCEDURE [Training].[TRAINING_STUDY_SAVE]
 	@CLIENT			INT,
 	@DATE			SMALLDATETIME,
 	@LESSON_PLACE	INT,
@@ -46,7 +46,7 @@ BEGIN
 		IF @STUDY_ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-		
+
 			INSERT INTO dbo.ClientStudy(ID_CLIENT, DATE, ID_PLACE, ID_TEACHER, NOTE, TEACHED)
 				OUTPUT inserted.ID INTO @TBL
 				SELECT @CLIENT, @DATE, @LESSON_PLACE, @TEACHER, @NOTE, 1
@@ -54,23 +54,25 @@ BEGIN
 			SELECT @STUDY_ID = ID
 			FROM @TBL
 		END
-		
+
 
 		INSERT INTO dbo.ClientStudyPeople(ID_STUDY, SURNAME, NAME, PATRON, POSITION, NUM)
-			SELECT 
+			SELECT
 				@STUDY_ID, @SURNAME, @NAME, @PATRON, @POS, 1
 
 		UPDATE Training.SeminarSignPersonal
 		SET SSP_STUDY = 1
 		WHERE SSP_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_STUDY_SAVE] TO rl_training_study;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELIVERY_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_DELIVERY_SAVE]
 	@ID		UNIQUEIDENTIFIER,
 	@CLIENT	INT,
 	@DELIVERY	UNIQUEIDENTIFIER,
@@ -35,14 +35,16 @@ BEGIN
 				EMAIL		= @EMAIL,
 				NOTE	=	@NOTE
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELIVERY_SAVE] TO rl_client_delivery_u;
+GO

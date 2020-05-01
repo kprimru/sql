@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_UPDATE]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@SCHEDULE	UNIQUEIDENTIFIER,
 	@CLIENT		INT,
@@ -56,14 +56,14 @@ BEGIN
 			BEGIN
 				RAISERROR ('Ошибка записи о клиенте. Обратитесь к разработчику.', 10, 1)
 				RETURN
-			END	
+			END
 
 			UPDATE Training.SeminarSignPersonal
-			SET SSP_ID_SIGN =	@SIGN, 
-				SSP_SURNAME	=	@SURNAME, 
+			SET SSP_ID_SIGN =	@SIGN,
+				SSP_SURNAME	=	@SURNAME,
 				SSP_NAME	=	@NAME,
-				SSP_PATRON	=	@PATRON, 
-				SSP_POS		=	@POS, 
+				SSP_PATRON	=	@PATRON,
+				SSP_POS		=	@POS,
 				SSP_PHONE	=	@PHONE,
 				SSP_NOTE	=	@NOTE
 			WHERE SSP_ID = @ID
@@ -80,14 +80,16 @@ BEGIN
 				SR_NOTE			=	@NOTE
 			WHERE SR_ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_UPDATE] TO rl_training_u;
+GO

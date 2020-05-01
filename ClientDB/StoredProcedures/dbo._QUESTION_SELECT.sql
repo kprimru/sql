@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[_QUESTION_SELECT]	
+ALTER PROCEDURE [dbo].[_QUESTION_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,19 +21,21 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			QuestionID, QuestionName, 
+		SELECT
+			QuestionID, QuestionName,
 			Convert(VARCHAR(20), CONVERT(DATETIME, QuestionDate, 112), 104) AS QuestionDateStr, QuestionFreeAnswer
 		FROM dbo.QuestionTable
 		ORDER BY QuestionDate DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[_QUESTION_SELECT] TO public;
+GO

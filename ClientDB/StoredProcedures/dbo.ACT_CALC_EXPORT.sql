@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_CALC_EXPORT]
+ALTER PROCEDURE [dbo].[ACT_CALC_EXPORT]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
 AS
@@ -25,7 +25,7 @@ BEGIN
 
 		SET @END = DATEADD(DAY, 1, @END)
 
-		SELECT 
+		SELECT
 			ID,
 			SERVICE + '_' + REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR(64), DATE, 120), '-', '_'), ':', '_'), ' ', '_') + '.xml' AS FNAME,
 			CONVERT(VARCHAR(MAX), (
@@ -38,14 +38,16 @@ BEGIN
 		WHERE STATUS = 1
 			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (DATE < @END OR @END IS NULL)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CALC_EXPORT] TO rl_act_calc;
+GO

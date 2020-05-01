@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_REPORT_NEW]
+ALTER PROCEDURE [dbo].[STUDY_REPORT_NEW]
 	@pbegindate VARCHAR(20),
 	@penddate VARCHAR(20),
 	@serviceid INT = null,
@@ -27,15 +27,15 @@ BEGIN
 	BEGIN TRY
 
 		SELECT (
-			   SELECT DISTINCT MIN(g.DATE) 
-			   FROM dbo.ClientStudy g 
-			   WHERE g.ID_CLIENT = b.ClientID AND 
-					 g.DATE <= @penddate AND 
+			   SELECT DISTINCT MIN(g.DATE)
+			   FROM dbo.ClientStudy g
+			   WHERE g.ID_CLIENT = b.ClientID AND
+					 g.DATE <= @penddate AND
 					 g.DATE >= @pbegindate AND
 						g.TEACHED = 1
 						AND g.STATUS = 1
-			 ) AS MinStudyDate, a.ID AS ClientStudyID, CLientFullName, a.DATE AS StudyDate, e.NUM AS StudyNumber, 
-			 dbo.GET_TEACHER_LIST(@pbegindate, @penddate, b.CLientID) AS TeacherName, 
+			 ) AS MinStudyDate, a.ID AS ClientStudyID, CLientFullName, a.DATE AS StudyDate, e.NUM AS StudyNumber,
+			 dbo.GET_TEACHER_LIST(@pbegindate, @penddate, b.CLientID) AS TeacherName,
 			 (CONVERT(VARCHAR(50), e.ID) + ' ' + RTRIM(LTRIM(SURNAME)) + ' ' + RTRIM(LTRIM(NAME)) + ' ' + RTRIM(LTRIM(PATRON)) + CONVERT(VARCHAR(10), GR_NUMBER)) AS StudentFullName, ServiceName,
 			 a.DATE AS StudyDateStr,
 			 RIVAL
@@ -48,22 +48,24 @@ BEGIN
 				SELECT NUM AS GR_NUMBER
 				FROM dbo.TableNumber(GR_COUNT)
 		   ) AS o_O
-		   
+
 		WHERE a.DATE <= @penddate AND a.DATE >= @pbegindate /*AND TeacherReport = 1  */
 			and (ServiceID = @serviceid or @serviceid IS NULL) AND Teached = 1
 			and (StatusID = @statusid or @statusid IS NULL)
 			AND (ID_TEACHER IN (SELECT ID FROM dbo.TableIDFromXML(@TEACHER)) OR @TEACHER IS NULL)
 			AND a.STATUS = 1
-			AND b.STATUS = 1		
+			AND b.STATUS = 1
 		ORDER BY MinStudyDate, ClientFullName, a.DATE, a.ID, e.NUM, e.NAME, TeacherName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_REPORT_NEW] TO rl_report_client_study;
+GO

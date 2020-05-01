@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[JOB_START]
+ALTER PROCEDURE [Maintenance].[JOB_START]
 	@Name	VarChar(100),
 	@Id		BigInt = NULL OUTPUT
 AS
@@ -24,30 +24,32 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @Type_Id	SmallInt;
-		
+
 		SELECT @Type_Id = Id
 		FROM Maintenance.JobType
 		WHERE Name = @Name;
-		
+
 		IF @Type_Id IS NULL BEGIN
 			INSERT INTO Maintenance.JobType(Name)
 			VALUES(@Name);
-			
+
 			SELECT @Type_Id = Scope_Identity();
 		END;
 
 		INSERT INTO Maintenance.Jobs([Type_Id])
 		VALUES(@Type_Id);
-		
+
 		SELECT @Id = Scope_Identity();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[JOB_START] TO public;
+GO

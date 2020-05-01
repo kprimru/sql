@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_LAST_EVENT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_LAST_EVENT_SELECT]
 	@MON_COUNT	TINYINT,
 	@MANAGER	VARCHAR(MAX)	=	NULL,
 	@SERVICE	INT	=	NULL,
@@ -32,7 +32,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#event') IS NOT NULL
 			DROP TABLE #event
 
-		CREATE TABLE #event 
+		CREATE TABLE #event
 			(
 				ClientID	INT PRIMARY KEY,
 				EventDate	SMALLDATETIME,
@@ -40,7 +40,7 @@ BEGIN
 				EventText	VARCHAR(MAX),
 				ClientTypeID	TinyInt
 			)
-		
+
 		IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
 			DROP TABLE #last_event
 
@@ -50,82 +50,82 @@ BEGIN
 				ClientTypeID	TinyInt
 			)
 
-		IF @SERVICE_EVENT = 1	
+		IF @SERVICE_EVENT = 1
 			INSERT INTO #last_event(EventID, ClientTypeID)
 				SELECT
 					(
 						SELECT TOP 1 EventID
-						FROM 
+						FROM
 							dbo.EventTable b INNER JOIN
 							dbo.ServiceTable ON EventCreateUser = ServiceLogin
 						WHERE a.ClientID = b.ClientID AND EventActive = 1
 						ORDER BY EventDate DESC, EventID DESC
 					), b.ClientTypeID
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				INNER JOIN 
+				INNER JOIN
 					(
-						SELECT ID 
+						SELECT ID
 						FROM dbo.TableIDFromXML(@TYPE)
 					) AS c ON a.ServiceTypeID = c.ID
-				INNER JOIN 
+				INNER JOIN
 					(
-						SELECT ID 
+						SELECT ID
 						FROM dbo.TableIDFromXML(@CL_TYPE)
 					) AS d ON b.ClientKind_Id = d.ID
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
-				
+
 		ELSE
 			INSERT INTO #last_event(EventID, ClientTypeID)
 				SELECT
 					(
 						SELECT TOP 1 EventID
-						FROM 
-							dbo.EventTable b 
+						FROM
+							dbo.EventTable b
 						WHERE a.ClientID = b.ClientID AND EventActive = 1
 						ORDER BY EventDate DESC, EventID DESC
 					), a.ClientTypeID
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				INNER JOIN 
+				INNER JOIN
 					(
-						SELECT ID 
+						SELECT ID
 						FROM dbo.TableIDFromXML(@TYPE)
 					) AS c ON a.ServiceTypeID = c.ID
-				INNER JOIN 
+				INNER JOIN
 					(
-						SELECT ID 
+						SELECT ID
 						FROM dbo.TableIDFromXML(@CL_TYPE)
 					) AS d ON b.ClientKind_Id = d.ID
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
-			
-		
+
+
 		INSERT INTO #event(ClientID, EventDate, Author, EventText, ClientTypeID)
 			SELECT ClientID, EventDate, EventCreateUser, EventComment, ClientTypeID
-			FROM 
+			FROM
 				#last_event a
 				INNER JOIN dbo.EventTable b ON a.EventID = b.EventID
-				
 
-		SELECT 
+
+		SELECT
 			a.ClientID,
 			ManagerName, ServiceName, ClientFullName, CATEGORY = c.ClientTypeName,
 			EventDate AS MaxDate,
 			DATEDIFF(MONTH, EventDate, GETDATE()) AS DIFF_DATA,
 			ISNULL(Author, '') + ' / ' + CONVERT(VARCHAR(20), EventDate, 104) + CHAR(10) + ISNULL(EventText, '') AS EventComment
-		FROM 
+		FROM
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN	#event t ON t.ClientID = a.ClientID
 			LEFT JOIN dbo.ClientTypeTable c ON c.ClientTypeID = t.ClientTypeID
-		WHERE 
+		WHERE
 			(@MON_EQUAL = 0 AND DATEADD(MONTH, @MON_COUNT, EventDate) < GETDATE())
 			OR (@MON_EQUAL = 1 AND dbo.MonthOf(DATEADD(MONTH, @MON_COUNT, EventDate)) = dbo.MonthOf(GETDATE()))
 		ORDER BY ManagerName, ServiceName, ClientFullName
@@ -135,14 +135,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
 			DROP TABLE #last_event
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_LAST_EVENT_SELECT] TO rl_event_audit;
+GO

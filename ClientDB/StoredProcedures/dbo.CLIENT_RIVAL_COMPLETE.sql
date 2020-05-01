@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_COMPLETE]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_COMPLETE]
 	@CR_ID	INT,
 	@COMPLETE	BIT
 AS
@@ -31,14 +31,16 @@ BEGIN
 			UPDATE dbo.ClientRival
 			SET CR_CONTROL = 0
 			WHERE CR_ID = @CR_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_COMPLETE] TO rl_client_rival_complete;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[JOB_FINISH]
+ALTER PROCEDURE [Maintenance].[JOB_FINISH]
 	@Id		BigInt,
 	@ERR	NVARCHAR(128) = NULL
 AS
@@ -24,18 +24,20 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE Maintenance.Jobs
-		SET 
+		SET
 			FINISH = GetDate(),
 			ERR = @ERR
 		WHERE ID = @Id;
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[JOB_FINISH] TO public;
+GO

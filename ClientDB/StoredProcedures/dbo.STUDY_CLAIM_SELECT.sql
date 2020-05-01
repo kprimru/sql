@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_CLAIM_SELECT]
+ALTER PROCEDURE [dbo].[STUDY_CLAIM_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -24,7 +24,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#claim') IS NOT NULL
 			DROP TABLE #claim
-			
+
 		CREATE TABLE #claim
 			(
 				ID			UNIQUEIDENTIFIER,
@@ -44,9 +44,9 @@ BEGIN
 				P_NOTE		NVARCHAR(MAX),
 				STATUS		TINYINT
 			)
-			
+
 		INSERT INTO #claim(ID, ID_CLAIM, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACH_NOTE, MET_DATE, MET_NOTE, UPD_DATA, P_FIO, STATUS)
-			SELECT 
+			SELECT
 				NEWID(), ID, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACHER_NOTE, MEETING_DATE, MEETING_NOTE,
 				UPD_USER + ' ' + CONVERT(NVARCHAR(32), UPD_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), UPD_DATE, 108),
 				ISNULL(TeacherName + ' ', '') + (
@@ -58,24 +58,24 @@ BEGIN
 								WHERE b.ID_CLAIM = a.ID
 							))
 				), STATUS
-			FROM 
+			FROM
 				dbo.ClientStudyClaim a
 				LEFT OUTER JOIN dbo.TeacherTable ON TeacherID = ID_TEACHER
 			WHERE ID_CLIENT = @CLIENT AND STATUS IN (1, 4, 5)
 			ORDER BY DATE DESC, ID DESC
-					
+
 		INSERT INTO #claim(ID, ID_CLAIM, MST, P_FIO, P_POS, P_PHONE, P_NOTE, NOTE, TEACH_NOTE)
-			SELECT 
+			SELECT
 				NEWID(), b.ID_CLAIM, b.ID, ISNULL(SURNAME + ' ', '') + ISNULL(NAME + ' ', '') + ISNULL(PATRON, ''),
 				POSITION, PHONE, a.NOTE, b.NOTE, b.TEACH_NOTE
-			FROM 
+			FROM
 				dbo.ClientStudyClaimPeople a
-				INNER JOIN #claim b ON a.ID_CLAIM = b.ID_CLAIM			
+				INNER JOIN #claim b ON a.ID_CLAIM = b.ID_CLAIM
 			ORDER BY 3
-			
-		SELECT 
-			ID, MST, ID_CLAIM, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACH_NOTE, MET_DATE, MET_NOTE, UPD_DATA, P_FIO, P_POS, P_PHONE, P_NOTE, 
-			CASE STATUS 
+
+		SELECT
+			ID, MST, ID_CLAIM, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACH_NOTE, MET_DATE, MET_NOTE, UPD_DATA, P_FIO, P_POS, P_PHONE, P_NOTE,
+			CASE STATUS
 				WHEN 1 THEN 'Активна'
 				WHEN 4 THEN 'Отменена'
 				WHEN 5 THEN 'Выполнена'
@@ -84,17 +84,19 @@ BEGIN
 			STATUS
 		FROM #claim
 		ORDER BY DATE DESC, P_FIO
-					
+
 		IF OBJECT_ID('tempdb..#claim') IS NOT NULL
 			DROP TABLE #claim
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_CLAIM_SELECT] TO rl_client_study_claim_r;
+GO

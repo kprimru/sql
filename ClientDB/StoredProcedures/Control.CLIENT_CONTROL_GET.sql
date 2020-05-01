@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CLIENT_CONTROL_GET]
+ALTER PROCEDURE [Control].[CLIENT_CONTROL_GET]
 	@ID UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT NOTE, NOTIFY, ID_GROUP, REMOVE_GROUP, REMOVE_AUTHOR, RECEIVER
 		FROM Control.ClientControl
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CLIENT_CONTROL_GET] TO rl_control_u;
+GO

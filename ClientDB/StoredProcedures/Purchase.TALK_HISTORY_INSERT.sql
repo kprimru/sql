@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TALK_HISTORY_INSERT]
+ALTER PROCEDURE [Purchase].[TALK_HISTORY_INSERT]
 	@CLIENT	INT,
 	@DATE	SMALLDATETIME,
 	@WHO	VARCHAR(150),
@@ -35,14 +35,16 @@ BEGIN
 
 		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TALK_HISTORY_INSERT] TO rl_talk_history_i;
+GO

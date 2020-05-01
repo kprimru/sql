@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_SUBJECT_INSERT]	
+ALTER PROCEDURE [Training].[TRAINING_SUBJECT_INSERT]
 	@NAME	VARCHAR(100),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -30,14 +30,16 @@ BEGIN
 			VALUES(@NAME)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_SUBJECT_INSERT] TO rl_training_subject_i;
+GO

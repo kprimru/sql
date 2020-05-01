@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[HOSTS_UPDATE]
+ALTER PROCEDURE [dbo].[HOSTS_UPDATE]
 	@ID	INT,
 	@SHORT	VARCHAR(50),
 	@REG	VARCHAR(50),
@@ -12,7 +12,7 @@ CREATE PROCEDURE [dbo].[HOSTS_UPDATE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,20 +24,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		UPDATE dbo.Hosts
 		SET HostShort = @SHORT,
 			HostReg = @REG,
 			HostOrder = @ORDER
 		WHERE HostID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOSTS_UPDATE] TO rl_hosts_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TENDER_DELETE]
+ALTER PROCEDURE [Purchase].[TENDER_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -29,14 +29,16 @@ BEGIN
 			TD_UPDATE = GETDATE(),
 			TD_UPDATE_USER = ORIGINAL_LOGIN()
 		WHERE TD_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TENDER_DELETE] TO rl_tender_d;
+GO

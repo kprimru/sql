@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
+ALTER PROCEDURE [dbo].[WEIGHT_TREE_SELECT]
 	@SYS		VARCHAR(20)	=	NULL,
 	@SYS_TYPE	VARCHAR(20)	=	NULL,
 	@NET_TYPE	VARCHAR(20)	=	NULL,
@@ -288,10 +288,12 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[WEIGHT_TREE_SELECT] TO rl_weights_tree_select;
+GO

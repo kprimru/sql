@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_CONDITIONS_CHANGE]
+ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_CONDITIONS_CHANGE]
 	@Contract_Id		UniqueIdentifier,
 	@Date				SmallDateTime,
 	@ExpireDate			SmallDateTime,
@@ -42,13 +42,13 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN;
-		
+
 		IF NOT EXISTS(SELECT * FROM [Contract].[Contract] WHERE [ID] = @Contract_Id AND [DateTo] IS NULL)
 			RaisError('Ошибка! Договор закрыт!', 16, 1);
-		
+
 		IF EXISTS(SELECT * FROM [Contract].[ClientContractsDetails] WHERE [Contract_Id] = @Contract_Id AND [DATE] >= @Date)
 			RaisError('Ошибка! Невозможно менять условия договора в прошлом!', 16, 1)
-		
+
 		SELECT TOP (1)
 			@OldExpireDate		= [ExpireDate],
 			@OldType_Id			= [Type_Id],
@@ -59,7 +59,7 @@ BEGIN
 		FROM [Contract].[ClientContractsDetails]
 		WHERE [Contract_Id] = @Contract_Id
 		ORDER BY [DATE] DESC;
-		
+
 		IF
 				[Common].[Is Equal(SmallDateTime)](@ExpireDate, @OldExpireDate) = 0
 			OR	[Common].[Is Equal(Int)](@Type_Id, @OldType_Id) = 0
@@ -70,31 +70,33 @@ BEGIN
 			SET @ConditionChanged = 1
 		ELSE
 			SET @ConditionChanged = 0;
-		
+
 		IF @ConditionChanged = 1
 			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments])
 			VALUES (@Contract_Id, @Date, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments);
-		
+
 		IF @DocumentExists = 1
 			INSERT INTO [Contract].[ClientContractsDocuments]([Contract_Id], [RowIndex], [Type_Id], [Date], [Note])
 			SELECT
 				@Contract_Id,
 				IsNull((SELECT Max([RowIndex]) + 1 FROM [Contract].[ClientContractsDocuments] WHERE [Contract_Id] = @Contract_Id), 1),
 				@DocumentType_Id, @DocumentDate, @DocumentNote;
-		
+
 		IF @@TranCount > 0
 			COMMIT TRAN;
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		IF @@TranCount > 0
 			ROLLBACK TRAN;
-			
+
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-			
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_CONDITIONS_CHANGE] TO rl_client_contract_u;
+GO

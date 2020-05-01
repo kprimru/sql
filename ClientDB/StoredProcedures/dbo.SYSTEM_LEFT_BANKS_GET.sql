@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE	[dbo].[SYSTEM_LEFT_BANKS_GET]
 	@SYS_LIST			NVARCHAR(128),
-	@DISTR_TYPE_LIST	NVARCHAR(128) 
+	@DISTR_TYPE_LIST	NVARCHAR(128)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,10 +25,10 @@ BEGIN
 
 		DECLARE @t	TABLE
 		(
-			InfoBank_ID			SMALLINT, 
-			InfoBankName		VARCHAR(100), 
-			InfoBankShortName	VARCHAR(100), 
-			Required			BIT, 
+			InfoBank_ID			SMALLINT,
+			InfoBankName		VARCHAR(100),
+			InfoBankShortName	VARCHAR(100),
+			Required			BIT,
 			InfoBankOrder		INT
 		)
 
@@ -43,10 +43,12 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SYSTEM_LEFT_BANKS_GET] TO rl_system_bank_r;
+GO

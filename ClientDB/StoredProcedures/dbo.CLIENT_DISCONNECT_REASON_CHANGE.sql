@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISCONNECT_REASON_CHANGE]
+ALTER PROCEDURE [dbo].[CLIENT_DISCONNECT_REASON_CHANGE]
 	@ID		UNIQUEIDENTIFIER,
 	@REASON	UNIQUEIDENTIFIER,
 	@NOTE	VARCHAR(MAX),
@@ -30,14 +30,16 @@ BEGIN
 			CD_NOTE			=	@NOTE,
 			CD_DATE			=	@DATE
 		WHERE CD_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISCONNECT_REASON_CHANGE] TO rl_client_disconnect;
+GO

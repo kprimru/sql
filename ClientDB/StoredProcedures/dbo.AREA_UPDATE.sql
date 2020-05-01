@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[AREA_UPDATE]
+ALTER PROCEDURE [dbo].[AREA_UPDATE]
 	@ID	UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(100),
 	@PREFIX	VARCHAR(20),
 	@SUFFIX	VARCHAR(20),
-	@REGION	UNIQUEIDENTIFIER	
+	@REGION	UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,19 +27,21 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE	dbo.Area
-		SET		AR_ID_REGION	=	@REGION, 
-				AR_NAME			=	@NAME, 
-				AR_PREFIX		=	@PREFIX, 
+		SET		AR_ID_REGION	=	@REGION,
+				AR_NAME			=	@NAME,
+				AR_PREFIX		=	@PREFIX,
 				AR_SUFFIX		=	@SUFFIX
 		WHERE	AR_ID			=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_UPDATE] TO rl_area_u;
+GO

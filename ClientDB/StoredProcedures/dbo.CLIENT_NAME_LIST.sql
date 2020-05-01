@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_NAME_LIST]
+ALTER PROCEDURE [dbo].[CLIENT_NAME_LIST]
 	@LIST	NVARCHAR(MAX)
 AS
 BEGIN
@@ -21,25 +21,27 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
+
+		SELECT
 				REVERSE(STUFF(REVERSE(
-					(			
-						SELECT a.ClientFullName + ', ' 
-						FROM 
+					(
+						SELECT a.ClientFullName + ', '
+						FROM
 							dbo.ClientTable a
 							INNER JOIN dbo.TableIDFromXML(@LIST) b ON a.ClientID = b.ID
 						ORDER BY a.ClientFullName FOR XML PATH('')
 					)
 					), 1, 2, '')) AS NAME
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_NAME_LIST] TO public;
+GO

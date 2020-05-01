@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_FILE_SAVE]
+ALTER PROCEDURE [USR].[USR_FILE_SAVE]
 	@ID	INT
 AS
 BEGIN
@@ -26,15 +26,17 @@ BEGIN
 		FROM USR.USRFile F
 		INNER JOIN USR.USRFileData D ON F.UF_ID = D.UF_ID
 		WHERE F.UF_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[USR_FILE_SAVE] TO rl_usr_collect;
+GO

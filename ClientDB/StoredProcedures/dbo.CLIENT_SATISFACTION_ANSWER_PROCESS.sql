@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SATISFACTION_ANSWER_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_SATISFACTION_ANSWER_PROCESS]
 	@CSQ_ID	UNIQUEIDENTIFIER,
 	@SA_ID	UNIQUEIDENTIFIER,
 	@CHECKED	BIT
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		IF @CHECKED = 0
-			DELETE FROM dbo.ClientSatisfactionAnswer 
+			DELETE FROM dbo.ClientSatisfactionAnswer
 			WHERE CSA_ID_QUESTION = @CSQ_ID
 				AND CSA_ID_ANSWER = @SA_ID
 		ELSE
@@ -40,14 +40,17 @@ BEGIN
 							AND CSA_ID_ANSWER = @SA_ID
 					)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_ANSWER_PROCESS] TO rl_client_call_i;
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_ANSWER_PROCESS] TO rl_client_call_u;
+GO

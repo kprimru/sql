@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTROL_UPDATE]
+ALTER PROCEDURE [dbo].[CLIENT_CONTROL_UPDATE]
 	@CC_ID	INT,
 	@TEXT	VARCHAR(MAX),
 	@BEGIN	SMALLDATETIME = NULL
@@ -28,14 +28,20 @@ BEGIN
 		SET CC_TEXT		=	@TEXT,
 			CC_BEGIN	=	@BEGIN
 		WHERE CC_ID = @CC_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_UPDATE] TO rl_client_control_chief_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_UPDATE] TO rl_client_control_duty_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_UPDATE] TO rl_client_control_lawyer_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_UPDATE] TO rl_client_control_manager_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_UPDATE] TO rl_client_control_quality_set;
+GO

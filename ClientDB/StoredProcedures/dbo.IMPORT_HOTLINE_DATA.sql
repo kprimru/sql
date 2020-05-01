@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[IMPORT_HOTLINE_DATA]
+ALTER PROCEDURE [dbo].[IMPORT_HOTLINE_DATA]
 	@DATA		NVARCHAR(MAX),
 	@OUT_DATA	NVARCHAR(512) = NULL OUTPUT
 AS
@@ -26,11 +26,11 @@ BEGIN
 		DECLARE @XML XML
 
 		SET @XML = CAST(@DATA AS XML)
-		
+
 		DECLARE @REFRESH	INT
-		
+
 		SET @REFRESH = 0
-		
+
 		INSERT INTO dbo.HotlineChat(SYS, DISTR, COMP, FIRST_DATE, START, FINISH, PROFILE, FIO, EMAIL, PHONE, CHAT, LGN, RIC_PERSONAL, LINKS)
 			SELECT SYS, DISTR, COMP, FIRST_DATE, START, FINISH, PROFILE, FIO, EMAIL, PHONE, CHAT, LGN, RIC_PERSONAL, ISNULL(LINKS, '')
 			FROM
@@ -71,19 +71,21 @@ BEGIN
 						AND z.RIC_PERSONAL = a.RIC_PERSONAL
 						AND ISNULL(z.LINKS, '') = ISNULL(a.LINKS, '')
 				)
-		
+
 		SET @REFRESH = @REFRESH + @@ROWCOUNT
-		
+
 		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @REFRESH) + ' записей'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[IMPORT_HOTLINE_DATA] TO rl_import_data;
+GO

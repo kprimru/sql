@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[RES_VERSION_CHECK]
+ALTER PROCEDURE [USR].[RES_VERSION_CHECK]
 	@MANAGER	INT,
-	@SERVICE	INT,		
+	@SERVICE	INT,
 	@DATE		SMALLDATETIME,
 	@STATUS		VARCHAR(MAX),
 	@ACTUAL		BIT,
@@ -57,7 +57,7 @@ BEGIN
 
 		INSERT INTO #client(CL_ID)
 			SELECT ClientID
-			FROM 
+			FROM
 				dbo.ClientView WITH(NOEXPAND)
 				INNER JOIN #status ON ST_ID = ServiceStatusID
 			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
@@ -68,7 +68,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cons') IS NOT NULL
 			DROP TABLE #cons
-			
+
 		IF OBJECT_ID('tempdb..#kd') IS NOT NULL
 			DROP TABLE #kd
 
@@ -81,7 +81,7 @@ BEGIN
 			(
 				CONS_ID	INT
 			)
-			
+
 		CREATE TABLE #kd
 			(
 				KD_ID	UNIQUEIDENTIFIER
@@ -99,7 +99,7 @@ BEGIN
 				SELECT ConsExeVersionID
 				FROM dbo.ConsExeVersionTable
 				WHERE ConsExeVersionActive = 1
-				
+
 			INSERT INTO #kd(KD_ID)
 				SELECT ID
 				FROM dbo.KDVersion
@@ -109,24 +109,24 @@ BEGIN
 		BEGIN
 			INSERT INTO #res(RES_ID)
 				SELECT ID
-				FROM dbo.TableIDFromXML(@RLIST)		
+				FROM dbo.TableIDFromXML(@RLIST)
 
 			INSERT INTO #cons(CONS_ID)
 				SELECT ID
-				FROM dbo.TableIDFromXML(@CLIST)	
-				
+				FROM dbo.TableIDFromXML(@CLIST)
+
 			INSERT INTO #kd(KD_ID)
 				SELECT ID
-				FROM dbo.TableGUIDFromXML(@KLIST)		
+				FROM dbo.TableGUIDFromXML(@KLIST)
 		END
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName, rnsw.Complect,
-			CASE WHEN RES_ID IS NULL THEN ResVersionShort ELSE '' END AS ResVersionNumber, 
-			CASE WHEN CONS_ID IS NULL THEN ConsExeVersionName ELSE '' END AS ConsExeVersionName, 
-			/*CASE WHEN KD_ID IS NULL THEN SHORT ELSE '' END */ '' AS KDVersionName, 
+			CASE WHEN RES_ID IS NULL THEN ResVersionShort ELSE '' END AS ResVersionNumber,
+			CASE WHEN CONS_ID IS NULL THEN ConsExeVersionName ELSE '' END AS ConsExeVersionName,
+			/*CASE WHEN KD_ID IS NULL THEN SHORT ELSE '' END */ '' AS KDVersionName,
 			UF_DATE, UF_CREATE
-		FROM 
+		FROM
 			USR.USRComplectCurrentStatusView a WITH(NOEXPAND)
 			INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON a.UD_DISTR = rnsw.DistrNumber AND a.UD_COMP = rnsw.CompNumber AND a.UD_SYS = rnsw.SystemID AND rnsw.DS_REG = 0
 			INNER JOIN USR.USRActiveView b ON a.UD_ID = b.UD_ID
@@ -136,11 +136,11 @@ BEGIN
 			INNER JOIN dbo.ResVersionTable e ON e.ResVersionID = t.UF_ID_RES
 			INNER JOIN dbo.ConsExeVersionTable f ON t.UF_ID_CONS = ConsExeVersionID
 			LEFT OUTER JOIN dbo.KDVersion g ON t.UF_ID_KDVERSION = g.ID
-			LEFT OUTER JOIN #res ON RES_ID = t.UF_ID_RES	
+			LEFT OUTER JOIN #res ON RES_ID = t.UF_ID_RES
 			LEFT OUTER JOIN #cons ON CONS_ID = t.UF_ID_CONS
 			LEFT OUTER JOIN #kd ON KD_ID = t.UF_ID_KDVERSION
-		WHERE UD_SERVICE = 0 
-			AND (UF_DATE >= @DATE OR @DATE IS NULL) 
+		WHERE UD_SERVICE = 0
+			AND (UF_DATE >= @DATE OR @DATE IS NULL)
 			AND (RES_ID IS NULL OR CONS_ID IS NULL /*OR KD_ID IS NULL*/)
 		ORDER BY ManagerName, ServiceName, ClientFullName, UD_NAME
 
@@ -149,7 +149,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cons') IS NOT NULL
 			DROP TABLE #cons
-			
+
 		IF OBJECT_ID('tempdb..#kd') IS NOT NULL
 			DROP TABLE #kd
 
@@ -158,14 +158,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#status') IS NOT NULL
 			DROP TABLE #status
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

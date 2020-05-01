@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE @FILTER IS NULL
 			OR AT_NAME LIKE @FILTER
 		ORDER BY AT_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_SELECT] TO rl_address_type_r;
+GO

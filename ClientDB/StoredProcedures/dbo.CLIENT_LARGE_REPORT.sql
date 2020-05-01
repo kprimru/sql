@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_LARGE_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_LARGE_REPORT]
 	@SERVICE	INT,
 	@MANAGER	NVARCHAR(MAX),
 	@CLIENT		NVARCHAR(256),
@@ -28,10 +28,10 @@ BEGIN
 
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
-			
+
 		IF @EVENT_CNT IS NULL
 			SET @EVENT_CNT = 1
-			
+
 		IF @RIVAL_CNT IS NULL
 			SET @RIVAL_CNT = 1
 
@@ -69,10 +69,10 @@ BEGIN
 				PERSONAL		NVARCHAR(128),
 				NOTE			NVARCHAR(MAX)
 			)
-		
+
 		INSERT INTO #client(ClientID, ManagerName, ServiceName, ClientFullName, DistrStr, ConnectDate, STUDY_COUNT, DUTY_COUNT, CL_ROW, RN)
-			SELECT 
-				ClientID, ManagerName, ServiceName, ClientFullName, 
+			SELECT
+				ClientID, ManagerName, ServiceName, ClientFullName,
 				(
 					SELECT TOP 1 DistrStr + ' (' + DistrTypeName + ')'
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
@@ -80,22 +80,22 @@ BEGIN
 						AND DS_REG = 0
 						/*
 						AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
-						AND 
+						AND
 							(
 								z.HostID = 1
-								AND 
+								AND
 								z.DistrTypeName IN ('сеть', 'м/с')
-									
+
 								OR
-									
+
 								z.DistrTypeName = '1/с'
 								AND
 								z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 							)
 						*/
 					ORDER BY SystemOrder
-				) AS DISTR_STR, 
-				ConnectDate,			
+				) AS DISTR_STR,
+				ConnectDate,
 				(
 					SELECT COUNT(*)
 					FROM dbo.CLientStudy z
@@ -111,7 +111,7 @@ BEGIN
 						AND z.ClientDutyDateTime >= DATEADD(MONTH, -3, GETDATE())
 				) AS DUTY_COUNT,
 				CL_ROW, num.ID
-			FROM 
+			FROM
 				(
 					SELECT a.ClientID, ClientFullName, a.ServiceStatusID, ServiceID, ManagerID, ManagerName, ServiceName, ConnectDate,
 						(
@@ -122,44 +122,44 @@ BEGIN
 									SELECT COUNT(*) AS CL_ROW
 									FROM dbo.ClientPersonal
 									WHERE CP_ID_CLIENT = a.ClientID
-									
+
 									UNION ALL
 									*/
-										
+
 									SELECT @EVENT_CNT AS CL_ROW
-										
+
 									UNION ALL
-										
+
 									SELECT @RIVAL_CNT
-									
+
 									UNION ALL
-									
+
 									SELECT COUNT(*)
 									FROM dbo.ClientContact z
 									WHERE z.ID_CLIENT = a.ClientID
 										AND z.STATUS = 1
 								) AS o_O
 						) AS CL_ROW
-					FROM 
+					FROM
 						dbo.ClientView a WITH(NOEXPAND)
 						INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 						LEFT OUTER JOIN
 							(
 								SELECT ClientID, MIN(ConnectDate) AS ConnectDate
 								FROM dbo.ClientConnectView WITH(NOEXPAND)
-								GROUP BY ClientID				
+								GROUP BY ClientID
 							) AS b ON a.ClientID = b.ClientID
 					WHERE	(a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 						AND (a.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 						AND (a.ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
-						
+
 						AND a.ClientID IN
 							(
 								SELECT ClientID
 								FROM dbo.ClientLargeView
 							)
-							
-						/*	
+
+						/*
 						AND EXISTS
 							(
 								SELECT *
@@ -167,14 +167,14 @@ BEGIN
 								WHERE z.ID_CLIENT = a.ClientID
 									AND DS_REG = 0
 									AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
-									AND 
+									AND
 										(
 											z.HostID = 1
-											AND 
+											AND
 											z.DistrTypeName IN ('сеть', 'м/с')
-											
+
 											OR
-											
+
 											z.DistrTypeName = '1/с'
 											AND
 											z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
@@ -187,7 +187,7 @@ BEGIN
 						SELECT ID
 						FROM dbo.Numbers z
 						WHERE z.ID <= CL_ROW
-					) AS num			
+					) AS num
 			ORDER BY ManagerName, ServiceName, ClientFullName, num.ID
 
 		UPDATE a
@@ -215,7 +215,7 @@ BEGIN
 					WHERE RN <= @EVENT_CNT
 				) AS b
 			WHERE a.RN = b.RN
-			
+
 		/*
 		UPDATE a
 		SET a.CPT_NAME	=	b.CPT_SHORT,
@@ -228,14 +228,14 @@ BEGIN
 			#client a
 			CROSS APPLY
 				(
-					SELECT 
+					SELECT
 						ROW_NUMBER() OVER(ORDER BY ISNULL(CPT_REQUIRED, 0) DESC, CPT_ORDER, CP_SURNAME) AS RN,
 						CPT_SHORT,
 						CASE ISNULL(CP_SURNAME, '')
 							WHEN '' THEN ''
 							ELSE CP_SURNAME + ' '
-						END + 		
-						CASE ISNULL(CP_NAME, '')	
+						END + 
+						CASE ISNULL(CP_NAME, '')
 							WHEN '' THEN ''
 							ELSE CP_NAME + ' '
 						END +
@@ -249,8 +249,8 @@ BEGIN
 				) AS b
 			WHERE a.RN = b.RN
 			*/
-			
-			
+
+
 		UPDATE a
 		SET a.CR_DATE		= b.CR_DATE,
 			a.CR_CONDITION	= b.CR_CONDITION,
@@ -263,7 +263,7 @@ BEGIN
 					FROM
 						(
 							SELECT ROW_NUMBER() OVER(ORDER BY CR_DATE DESC) AS RN, CR_DATE, CR_CONDITION, RivalTypeName
-							FROM 
+							FROM
 								dbo.ClientRival z
 								INNER JOIN dbo.RivalTypeTable y ON z.CR_ID_TYPE = y.RivalTypeID
 							WHERE CL_ID = a.ClientID
@@ -287,7 +287,7 @@ BEGIN
 						AND z.STATUS = 1
 				) AS b
 			WHERE a.RN = b.RN
-			
+
 
 		SELECT *
 		FROM #client
@@ -295,14 +295,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_LARGE_REPORT] TO rl_client_large_report;
+GO

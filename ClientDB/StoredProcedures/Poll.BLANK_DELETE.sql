@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[BLANK_DELETE]
+ALTER PROCEDURE [Poll].[BLANK_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM Poll.Answer
 		WHERE ID_QUESTION IN
 			(
@@ -30,22 +30,24 @@ BEGIN
 				FROM Poll.Question
 				WHERE ID_BLANK = @ID
 			)
-			
-		DELETE 
+
+		DELETE
 		FROM Poll.Question
 		WHERE ID_BLANK = @ID
-		
+
 		DELETE
-		FROM Poll.Blank	
+		FROM Poll.Blank
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[BLANK_DELETE] TO rl_blank_d;
+GO

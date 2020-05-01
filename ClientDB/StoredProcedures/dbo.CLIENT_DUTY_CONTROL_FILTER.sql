@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_CONTROL_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_CONTROL_FILTER]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@MANAGER	INT,
@@ -34,11 +34,11 @@ BEGIN
 		BEGIN
 			IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 				DROP TABLE #duty
-			
-			SELECT 
-				ClientID, ClientFullName, ServiceName, ManagerName, CC_DATE, CC_USER, 
-				CASE CDC_ANSWER WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_ANS, 
-				CASE CDC_SATISF WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_SAT, 
+
+			SELECT
+				ClientID, ClientFullName, ServiceName, ManagerName, CC_DATE, CC_USER,
+				CASE CDC_ANSWER WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_ANS,
+				CASE CDC_SATISF WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_SAT,
 				CDC_NOTE
 			INTO #duty
 			FROM
@@ -52,34 +52,34 @@ BEGIN
 				AND (@ANS_STAT = 0 OR @ANS_STAT = 1 AND CDC_ANSWER = 0 OR @ANS_STAT = 2 AND CDC_ANSWER = 1)
 				AND (@SAT_STAT = 0 OR @SAT_STAT = 1 AND CDC_SATISF = 0 OR @SAT_STAT = 2 AND CDC_SATISF = 1)
 			ORDER BY CC_DATE DESC, ManagerName, ServiceName, ClientFullName
-			
+
 			SELECT *
 			FROM #duty
 			ORDER BY CC_DATE DESC, ManagerName, ServiceName, ClientFullName
-			
+
 			SET @ANS_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_ANS = 'Нет')
 			SET @SAT_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_SAT = 'Нет')
-			
+
 			IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 				DROP TABLE #duty
 		END
 		ELSE
-			SELECT 
-				ClientID, ClientFullName, ServiceName, ManagerName, 
+			SELECT
+				ClientID, ClientFullName, ServiceName, ManagerName,
 				(
 					SELECT MAX(CC_DATE)
-					FROM 
+					FROM
 						dbo.ClientDutyControl a
 						INNER JOIN dbo.ClientCall b ON a.CDC_ID_CALL = b.CC_ID
 					WHERE CC_ID_CLIENT = ClientID
-				) AS CC_DATE, 
+				) AS CC_DATE,
 				NULL AS CC_USER, NULL AS CDC_ANS, NULL AS CDC_SAT, NULL AS CDC_NOTE
 			FROM dbo.ClientView c WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM	
+					FROM
 						dbo.ClientDutyControl a
 						INNER JOIN dbo.ClientCall b ON a.CDC_ID_CALL = b.CC_ID
 					WHERE CC_ID_CLIENT = ClientID
@@ -97,14 +97,16 @@ BEGIN
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			ORDER BY ManagerName, ServiceName, ClientFullName
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_CONTROL_FILTER] TO rl_filter_duty_control;
+GO

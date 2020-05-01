@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[ACTION_UPDATE]
+ALTER PROCEDURE [Price].[ACTION_UPDATE]
 	@ID				UNIQUEIDENTIFIER,
 	@NAME			NVARCHAR(128),
 	@DELIVERY		SMALLINT,
@@ -32,14 +32,16 @@ BEGIN
 			SUPPORT			=	@SUPPORT,
 			DELIVERY_FIXED	=	@DELIVERY_FIXED
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[ACTION_UPDATE] TO rl_action_u;
+GO

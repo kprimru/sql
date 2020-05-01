@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_DELETE]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_DELETE]
 	@ID			UNIQUEIDENTIFIER,
 	@RESERVE	BIT
 AS
@@ -31,13 +31,13 @@ BEGIN
 			FROM Training.SeminarSignPersonal
 			WHERE SSP_ID = @ID
 
-			DELETE 
+			DELETE
 			FROM Training.SeminarSignPersonal
 			WHERE SSP_ID = @ID
 
 			IF NOT EXISTS
 				(
-					SELECT * 
+					SELECT *
 					FROM Training.SeminarSignPersonal
 					WHERE SSP_ID_SIGN = @SIGN
 				)
@@ -47,14 +47,16 @@ BEGIN
 			DELETE FROM Training.SeminarReserve WHERE SR_ID = @ID
 
 		DELETE FROM Training.SeminarSign WHERE NOT EXISTS (SELECT * FROM Training.SeminarSignPersonal WHERE SSP_ID_SIGN = SP_ID)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_DELETE] TO rl_training_d;
+GO

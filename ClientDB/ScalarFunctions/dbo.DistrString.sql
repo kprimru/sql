@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[DistrString]
+ALTER FUNCTION [dbo].[DistrString]
 (
 	@SysShort	VarChar(20),
 	@Distr		Int,

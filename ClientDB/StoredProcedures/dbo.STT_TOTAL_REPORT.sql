@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STT_TOTAL_REPORT]
+ALTER PROCEDURE [dbo].[STT_TOTAL_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT = NULL,
@@ -32,15 +32,15 @@ BEGIN
 		SELECT @HOST = HostID
 		FROM dbo.Hosts
 		WHERE HostReg = 'LAW'
-		
+
 		DECLARE @SYSTEM	INT
-		
+
 		SELECT @SYSTEM = SystemID
 		FROM dbo.SystemTable
-		WHERE SystemBaseName = 'RGN'	
+		WHERE SystemBaseName = 'RGN'
 
 		IF OBJECT_ID('tempdb..#ip') IS NOT NULL
-			DROP TABLE #ip	
+			DROP TABLE #ip
 
 		CREATE TABLE #ip
 			(
@@ -48,16 +48,16 @@ BEGIN
 				DISTR	INT,
 				COMP	TINYINT
 			)
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
-		
+
 		SET @SQL = N'CREATE UNIQUE CLUSTERED INDEX [IX_' + CONVERT(NVARCHAR(128), NEWID()) + '] ON #ip(DISTR, SYS, COMP)'
 		EXEC (@SQL)
-			
+
 		INSERT INTO #ip(SYS, DISTR, COMP)
 			SELECT DISTINCT CSD_SYS, CSD_DISTR, CSD_COMP
 			FROM dbo.IPSTTView
-			WHERE CSD_START >= @BEGIN AND CSD_START < @END			
+			WHERE CSD_START >= @BEGIN AND CSD_START < @END
 
 		DECLARE @SH	NVARCHAR(16)
 		SET @SH = ISNULL(Maintenance.GlobalSubhostName(), '')
@@ -75,9 +75,9 @@ BEGIN
 			--ToDo ???
 			--PRIMARY KEY CLUSTERED(ClientId)
 		);
-		
-		INSERT INTO #cl(ClientID, Service, Manager, STT_COUNT, STT_CHECK)		
-		SELECT 
+
+		INSERT INTO #cl(ClientID, Service, Manager, STT_COUNT, STT_CHECK)
+		SELECT
 			c.ClientID,
 			ISNULL(
 				CASE @SH
@@ -99,17 +99,17 @@ BEGIN
 					ELSE
 						ManagerName
 				END, ''),
-			CASE 
+			CASE
 				WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 				ELSE STT_COUNT
 			END AS STT_COUNT, STT_CHECK
 		FROM
 			(
-				SELECT 
+				SELECT
 					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
 					(
 						SELECT COUNT(DISTINCT OTHER)
-						FROM 
+						FROM
 							dbo.ClientStat z
 							INNER JOIN dbo.SystemTable b ON SYS_NUM = SystemNumber
 						WHERE a.HostID = b.HostID AND z.DISTR = DistrNumber AND z.COMP = CompNumber
@@ -117,7 +117,7 @@ BEGIN
 							AND DATE < @END
 					) AS STT_COUNT,
 					c.DISTR AS IP_DISTR
-				FROM 
+				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 					LEFT OUTER JOIN #ip c ON c.SYS = b.SystemNumber AND c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber
@@ -129,7 +129,7 @@ BEGIN
 					AND a.Complect LIKE a.SystemBaseName + '%'
 			) AS a
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
-			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT	
+			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
 			LEFT OUTER JOIN dbo.ClientTable d ON c.ClientID = d.ClientID
 		WHERE @SERVICE IS NULL OR ServiceID = @SERVICE
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 2 END, ManagerName, ServiceName, c.ClientFullName, a.SystemOrder, a.DistrStr
@@ -138,21 +138,21 @@ BEGIN
 			SELECT *
 			FROM #cl
 		ELSE
-			SELECT 
+			SELECT
 				Service, Manager, CL_COUNT, STT_COUNT,
 				CASE WHEN CL_COUNT = CL_EXCLUDE THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, STT_COUNT) / (CL_COUNT - CL_EXCLUDE), 2) END AS PRC,
-				
+
 				CASE WHEN CASE WHEN CL_COUNT = CL_EXCLUDE THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, STT_COUNT) / (CL_COUNT - CL_EXCLUDE), 2) END < 80 THEN 1 ELSE 0 END AS PRC_BAD,
 				CASE WHEN CASE WHEN CL_COUNT = CL_EXCLUDE THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, STT_COUNT) / (CL_COUNT - CL_EXCLUDE), 2) END >= 80 THEN 1 ELSE 0 END AS PRC_GOOD,
-				CL_TOTAL, STT_TOTAL,	
-				ROUND(100 * CONVERT(FLOAT, STT_TOTAL) / CL_TOTAL, 2) AS TOTAL_PRC,			
+				CL_TOTAL, STT_TOTAL,
+				ROUND(100 * CONVERT(FLOAT, STT_TOTAL) / CL_TOTAL, 2) AS TOTAL_PRC,
 				MAN_CL_TOTAL, MAN_STT_TOTAL,
-				ROUND(100 * CONVERT(FLOAT, MAN_STT_TOTAL) / MAN_CL_TOTAL, 2) AS MAN_TOTAL_PRC,			
+				ROUND(100 * CONVERT(FLOAT, MAN_STT_TOTAL) / MAN_CL_TOTAL, 2) AS MAN_TOTAL_PRC,
 				CL_EXCLUDE, EXCLUDE_TOTAL, MAN_EXCLUDE_TOTAL
 			FROM
 				(
-					SELECT 
-						Service, Manager, 
+					SELECT
+						Service, Manager,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
@@ -163,13 +163,13 @@ BEGIN
 							FROM #cl b
 							WHERE a.Service = b.Service
 								AND b.STT_CHECK = 0
-						) AS CL_EXCLUDE,					
+						) AS CL_EXCLUDE,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
 							WHERE a.Service = b.Service
 								AND STT_COUNT <> 0
-						) AS STT_COUNT,					
+						) AS STT_COUNT,
 						(
 							SELECT COUNT(*)
 							FROM #cl
@@ -180,13 +180,13 @@ BEGIN
 							FROM #cl
 							WHERE Service IS NOT NULL
 								AND STT_CHECK = 0
-						) AS EXCLUDE_TOTAL,					
+						) AS EXCLUDE_TOTAL,
 						(
 							SELECT COUNT(*)
 							FROM #cl
 							WHERE STT_COUNT <> 0
 								AND Service IS NOT NULL
-						) AS STT_TOTAL,					
+						) AS STT_TOTAL,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
@@ -197,13 +197,13 @@ BEGIN
 							FROM #cl b
 							WHERE a.Manager = b.Manager
 								AND STT_CHECK = 0
-						) AS MAN_EXCLUDE_TOTAL,					
+						) AS MAN_EXCLUDE_TOTAL,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
 							WHERE a.Manager = b.Manager
 								AND STT_COUNT <> 0
-						) AS MAN_STT_TOTAL					
+						) AS MAN_STT_TOTAL
 					FROM
 						(
 							SELECT DISTINCT Service, Manager
@@ -216,17 +216,19 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
-			
+
 		IF OBJECT_ID('tempdb..#ip') IS NOT NULL
 			DROP TABLE #ip
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STT_TOTAL_REPORT] TO rl_stt_report;
+GO

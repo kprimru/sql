@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ONLINE_DATA_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_ONLINE_DATA_SELECT]
 	@HOST	INT,
 	@DISTR	INT,
 	@COMP	TINYINT
@@ -27,19 +27,21 @@ BEGIN
 		SELECT
 			b.NAME, LGN, CASE ACTIVITY WHEN 1 THEN 'Да' WHEN 0 THEN 'Нет' ELSE '???' END AS ACTIVITY_DATA,
 			ACTIVITY, LOGIN_CNT, dbo.TimeMinToStr(SESSION_TIME) AS SESSION_TIME
-		FROM 
+		FROM
 			dbo.OnlineActivity a
 			INNER JOIN Common.Period b ON a.ID_WEEK = b.ID
 		WHERE a.ID_HOST = @HOST AND a.DISTR = @DISTR AND a.COMP = @COMP
 		ORDER BY b.START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ONLINE_DATA_SELECT] TO rl_client_online_activity;
+GO

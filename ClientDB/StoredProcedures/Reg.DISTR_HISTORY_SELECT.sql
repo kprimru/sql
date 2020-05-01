@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[DISTR_HISTORY_SELECT]
+ALTER PROCEDURE [Reg].[DISTR_HISTORY_SELECT]
 	@ID		UNIQUEIDENTIFIER	= NULL,
 	@STR	VARCHAR(50)			= NULL OUTPUT,
 	@HST	INT					= NULL,
@@ -27,20 +27,20 @@ BEGIN
 	BEGIN TRY
 
 		IF @ID IS NOT NULL
-			SELECT 
+			SELECT
 				@HST = HostID, @DISTR = DISTR, @COMP = COMP,
 				@STR = DistrStr
 			FROM dbo.ClientDistrView a WITH(NOEXPAND)
 			WHERE ID = @ID
 		ELSE
 			SELECT @STR = DistrStr
-			FROM 
+			FROM
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 			WHERE b.HostID = @HST AND DistrNumber = @DISTR AND CompNumber = @COMP
 
 		SELECT b.DATE, b.SystemShortName, DS_NAME, SST_SHORT, NT_SHORT, TRAN_COUNT, TRAN_LEFT, REG_DATE, COMPLECT, COMMENT, CHANGES
-		FROM 
+		FROM
 			Reg.RegDistr a
 			INNER JOIN Reg.RegHistoryView b WITH(NOEXPAND)ON a.ID = b.ID_DISTR
 			/*INNER JOIN dbo.ClientSystemsTable c ON SystemDistrNumber = DISTR AND CompNumber = Comp
@@ -48,14 +48,17 @@ BEGIN
 			LEFT OUTER JOIN Reg.RegHistoryOperationView e ON e.ID = b.ID
 		WHERE ID_HOST = @HST AND DISTR = @DISTR AND COMP = @COMP
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Reg].[DISTR_HISTORY_SELECT] TO rl_client_distr_protocol;
+GRANT EXECUTE ON [Reg].[DISTR_HISTORY_SELECT] TO rl_client_system_protocol;
+GO

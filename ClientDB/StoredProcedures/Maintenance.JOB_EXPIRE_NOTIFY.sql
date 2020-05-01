@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[JOB_EXPIRE_NOTIFY]
+ALTER PROCEDURE [Maintenance].[JOB_EXPIRE_NOTIFY]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -39,21 +39,21 @@ BEGIN
 		) AS J
 		WHERE ExpireTime IS NOT NULL
 			AND DateDiff(second, Start, GetDate()) > JT.ExpireTime
-			
+
 		IF @Text != '' BEGIN
 			SET @Text = @Prefix + @Text;
-			
+
 			EXEC [Maintenance].[MAIL_SEND]
 				@TEXT = @Text;
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

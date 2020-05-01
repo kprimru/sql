@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[SEARCH_FREEZE_SELECT]
-	@TYPE	NVARCHAR(64)	
+ALTER PROCEDURE [Security].[SEARCH_FREEZE_SELECT]
+	@TYPE	NVARCHAR(64)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,19 +24,21 @@ BEGIN
 
 		SELECT CS_ID, CS_SHORT
 		FROM Security.ClientSearch
-		WHERE CS_TYPE = @TYPE		
+		WHERE CS_TYPE = @TYPE
 			AND CS_FREEZE = 1
 			AND CS_HOST = HOST_NAME()
 			AND CS_USER = ORIGINAL_LOGIN()
 		ORDER BY CS_SHORT DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[SEARCH_FREEZE_SELECT] TO public;
+GO

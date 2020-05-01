@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[DISCONNECT_EMAIL]
+ALTER PROCEDURE [Report].[DISCONNECT_EMAIL]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DISTINCT 
+		SELECT DISTINCT
 			b.ClientFullName AS [Клиент], b.ServiceStatusName AS [Статус], a.ClientEMail AS [Email],
 			(
 				SELECT TOP 1 DisconnectDate
@@ -30,19 +30,21 @@ BEGIN
 				WHERE z.ClientID = b.ClientID
 				ORDER BY DisconnectDate DESC
 			) AS [Дата отключения]
-		FROM 
+		FROM
 			dbo.ClientEMailView a
 			INNER JOIN dbo.ClientView b ON a.ClientID = b.ClientID
 		WHERE ServiceStatusID <> 2
 		ORDER BY ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[DISCONNECT_EMAIL] TO rl_report;
+GO

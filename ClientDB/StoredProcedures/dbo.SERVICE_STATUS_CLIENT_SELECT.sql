@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_STATUS_CLIENT_SELECT]
+ALTER PROCEDURE [dbo].[SERVICE_STATUS_CLIENT_SELECT]
 	@ID	INT = NULL
 AS
 BEGIN
@@ -24,23 +24,25 @@ BEGIN
 
 		SELECT ServiceStatusID, ServiceStatusName, ServiceDefault
 		FROM dbo.ServiceStatusTable
-		WHERE ServiceStatusReg = 
+		WHERE ServiceStatusReg =
 			ISNULL((
 				SELECT ServiceStatusReg
-				FROM 
+				FROM
 					dbo.ClientTable INNER JOIN
 					dbo.ServiceStatusTable ON ServiceStatusID = StatusID
 				WHERE ClientID = @ID
 			), 0)
-		ORDER BY ServiceStatusName	
-		
+		ORDER BY ServiceStatusName
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_STATUS_CLIENT_SELECT] TO rl_status_r;
+GO

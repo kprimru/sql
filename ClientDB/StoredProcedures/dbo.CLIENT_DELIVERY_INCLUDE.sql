@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELIVERY_INCLUDE]
+ALTER PROCEDURE [dbo].[CLIENT_DELIVERY_INCLUDE]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME
 AS
@@ -27,14 +27,16 @@ BEGIN
 			SELECT ID_CLIENT, ID_DELIVERY, EMAIL, @DATE, NOTE
 			FROM dbo.ClientDelivery
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELIVERY_INCLUDE] TO rl_client_delivery_u;
+GO

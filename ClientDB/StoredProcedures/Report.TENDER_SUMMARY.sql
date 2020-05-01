@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[TENDER_SUMMARY]
+ALTER PROCEDURE [Report].[TENDER_SUMMARY]
 	@CURDATE	DATETIME
 AS
 BEGIN
@@ -54,18 +54,18 @@ BEGIN
 																								WHERE TYPE = 3 AND			--узнаем сколько кварталов будет затронуто
 																									FINISH > p.GK_START AND
 																									START < p.GK_FINISH)) AS [LAST_QUART_SUM],
-			CONVERT(VARCHAR, p.GK_PROVISION_SUM)	AS [CASHBACK]				
+			CONVERT(VARCHAR, p.GK_PROVISION_SUM)	AS [CASHBACK]
 		FROM
 			Tender.Placement p
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

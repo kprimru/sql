@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[WRONG_MAIN_SYSTEM]
+ALTER PROCEDURE [Report].[WRONG_MAIN_SYSTEM]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -44,14 +44,14 @@ BEGIN
 					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
 						AND b.SystemBaseName IN ('BUHL', 'BUHUL',
-												'SKBP', 'SKBO', 'SKBB', 
-												'SKJE', 'SKJP', 'SKJO', 'SKJB', 
+												'SKBP', 'SKBO', 'SKBB',
+												'SKJE', 'SKJP', 'SKJO', 'SKJB',
 												'SKUE', 'SKUP', 'SKUO', 'SKUB',
 												'SBOE', 'SBOP', 'SBOO', 'SBOB',
 												'SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I',
 												'SKBEM', 'SKJEM', 'SKUEM', 'SBOEM')
 				)
-				
+
 		UNION ALL
 
 		SELECT DistrStr, Comment, SST_SHORT, NT_SHORT,
@@ -76,10 +76,10 @@ BEGIN
 						AND b.SystemBaseName IN ('LAW', 'BVP', 'JURP', 'BUDP',
 												'SKJP', 'SKUP', 'SBOP')
 				)
-				
+
 		UNION ALL
-				
-		SELECT 
+
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -101,17 +101,17 @@ BEGIN
 					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
 						AND b.SystemBaseName IN (
-														'SKBP', 'SKBO', 'SKBB', 
-												'SKJE', 'SKJP', 'SKJO', 'SKJB', 
+														'SKBP', 'SKBO', 'SKBB',
+												'SKJE', 'SKJP', 'SKJO', 'SKJB',
 												'SKUE', 'SKUP', 'SKUO', 'SKUB',
 												'SBOE', 'SBOP', 'SBOO', 'SBOB',
 												'SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I',
 												'SKBEM', 'SKJEM', 'SKUEM', 'SBOEM')
 				)
-				
+
 		UNION ALL
-				
-		SELECT 
+
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -145,7 +145,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -158,8 +158,8 @@ BEGIN
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('PAS', 'FIN')
-			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255', 
-								'сеть 150', 'сеть 100', 'сеть 5', 
+			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255',
+								'сеть 150', 'сеть 100', 'сеть 5',
 								'сеть 250', 'сеть 200')
 			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
 			AND a.Complect IS NOT NULL
@@ -174,7 +174,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -188,8 +188,8 @@ BEGIN
 		WHERE DS_REG = 0
 			AND (SystemBaseName = 'PAS')
 			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255', 
-								'сеть 150', 'сеть 100', 'сеть 5', 
+			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255',
+								'сеть 150', 'сеть 100', 'сеть 5',
 								'сеть 250', 'сеть 200')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
@@ -202,7 +202,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -216,8 +216,8 @@ BEGIN
 		WHERE DS_REG = 0
 			AND (SystemBaseName = 'PAS')
 			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT IN ('лок', 'флеш', 'ОВК', 
-							'ОВК-Ф', 'ОВМ-Ф (1;2)', 
+			AND NT_SHORT IN ('лок', 'флеш', 'ОВК',
+							'ОВК-Ф', 'ОВМ-Ф (1;2)',
 							'ОВМ-Ф (0;1)', 'ОВМ-Ф (1;0)')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
@@ -230,7 +230,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -256,7 +256,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -278,14 +278,14 @@ BEGIN
 					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
 						AND b.SystemBaseName IN ('SKBP','SKJE', 'SKJP',
-												'SKUE', 'SKUP','SBOE', 
+												'SKUE', 'SKUP','SBOE',
 												'SBOP')
 				)
 
 		/*
 		UNION ALL
-				
-		SELECT 
+
+		SELECT
 			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
 			(
 				SELECT TOP 1 b.DistrStr
@@ -306,22 +306,24 @@ BEGIN
 					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
 						AND b.SystemBaseName IN (
-														'SKBP', 'SKBO', 'SKBB', 
-												'SKJE', 'SKJP', 'SKJO', 'SKJB', 
+														'SKBP', 'SKBO', 'SKBB',
+												'SKJE', 'SKJP', 'SKJO', 'SKJB',
 												'SKUE', 'SKUP', 'SKUO', 'SKUB',
 												'SBOE', 'SBOP', 'SBOO', 'SBOB',
 												'SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I',
 												'SKBEM', 'SKJEM', 'SKUEM', 'SBOEM')
 				)
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[WRONG_MAIN_SYSTEM] TO rl_report;
+GO

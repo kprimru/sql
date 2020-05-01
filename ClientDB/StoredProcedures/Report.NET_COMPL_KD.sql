@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[NET_COMPL_KD]
+ALTER PROCEDURE [Report].[NET_COMPL_KD]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,7 +21,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT
 			dbo.DistrString(a.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив], Comment as [Название клиента в РЦ],
 			ManagerName AS [Рук-ль], RegisterDate AS [Дата регистрации], a.Complect AS [Комплект]
@@ -32,7 +32,7 @@ BEGIN
 		WHERE
 			(NT_ID=1 OR
 			NT_ID BETWEEN 3 AND 6 OR
-			NT_ID BETWEEN 8 AND 10) AND 
+			NT_ID BETWEEN 8 AND 10) AND
 			a.HostID=1 AND
 			a.DS_INDEX=0 AND
 			a.DistrNumber <> 20 AND
@@ -44,14 +44,14 @@ BEGIN
 						b.Complect = a.Complect
 			)
 		ORDER BY a.Complect
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 

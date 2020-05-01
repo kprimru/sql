@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_PRINT]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_PRINT]
 	@CL_ID	INT
 AS
 BEGIN
@@ -22,8 +22,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			CR_ID, CR_DATE, RivalTypeName, CR_COMPLETE, 
+		SELECT
+			CR_ID, CR_DATE, RivalTypeName, CR_COMPLETE,
 			CR_CONTROL, CR_CONTROL_DATE, CR_CONDITION,
 
 			CRR_DATE, CRR_COMMENT
@@ -34,14 +34,16 @@ BEGIN
 		WHERE CR_ACTIVE = 1 AND ISNULL(CRR_ACTIVE, 1) = 1
 			AND CL_ID = @CL_ID
 		ORDER BY CR_DATE DESC, CR_ID, CRR_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_PRINT] TO rl_client_rival_p;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[USERLOG_TIME_REPORT]
+ALTER PROCEDURE [Maintenance].[USERLOG_TIME_REPORT]
 	@START	SMALLDATETIME,
 	@FINISH	SMALLDATETIME,
 	@USR	NVARCHAR(MAX)
@@ -35,14 +35,16 @@ BEGIN
 				GROUP BY USR, S_DAY
 			) AS a
 		ORDER BY S_DAY DESC, WORK_TIME DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[USERLOG_TIME_REPORT] TO rl_userlog;
+GO

@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESSOR_UPDATE]
+ALTER PROCEDURE [USR].[PROCESSOR_UPDATE]
 	@ID		INT,
 	@NAME	VARCHAR(100),
 	@FREQ_S	VARCHAR(50),
 	@FREQ	DECIMAL(8, 4),
 	@CORE	SMALLINT,
-	@PF_ID	INT	
+	@PF_ID	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -34,14 +34,16 @@ BEGIN
 			PRC_CORE = @CORE,
 			PRC_ID_FAMILY = @PF_ID
 		WHERE PRC_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[PROCESSOR_UPDATE] TO rl_processor_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DEBT_GET]
+ALTER PROCEDURE [dbo].[CLIENT_DEBT_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,16 +23,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ID, ID_DEBT, START, FINISH, NOTE
-		FROM dbo.ClientDebt a		
+		FROM dbo.ClientDebt a
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DEBT_GET] TO rl_client_debt_r;
+GO

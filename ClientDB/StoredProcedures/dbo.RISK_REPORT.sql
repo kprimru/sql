@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RISK_REPORT]
+ALTER PROCEDURE [dbo].[RISK_REPORT]
 	@MANAGER	NVARCHAR(MAX),
 	@SERVICE	SMALLINT,
 	-- мин и макс кол-во проблем
@@ -30,12 +30,12 @@ BEGIN
 
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
-		
+
 		-- за сколько месяцев считать среднее количество пользователей
 		DECLARE @SEARCH_MON	SMALLINT
 		-- минимальный порог для среднего количества
 		DECLARE @SEARCH_CNT	SMALLINT
-			
+
 		-- за сколько месяцев считать звонки в ДС
 		DECLARE @DUTY_MON	SMALLINT
 		-- минимальный порог для количества
@@ -66,12 +66,12 @@ BEGIN
 		-- минимальный порог для количества
 		DECLARE @SEMINAR_CNT	SMALLINT
 
-		SELECT 
+		SELECT
 			@SEARCH_MON = SEARCH_MON, @SEARCH_CNT = SEARCH_CNT,
 			@DUTY_MON = DUTY_MON, @DUTY_CNT = DUTY_CNT,
 			@RIVAL_MON = RIVAL_MON, @RIVAL_CNT = RIVAL_CNT,
 			@UPD_MON = UPD_WEEK, @UPD_CNT = UPD_CNT,
-			--@CONTROL_MON	@CONTROL_CNT	
+			--@CONTROL_MON	@CONTROL_CNT
 			@STUDY_MON = STUDY_MON, @STUDY_CNT = STUDY_CNT,
 			@SEMINAR_MON = SEMINAR_MON, @SEMINAR_CNT = SEMINAR_CNT
 		FROM dbo.Risk
@@ -102,46 +102,46 @@ BEGIN
 			ERR_CNT		SMALLINT,
 			Primary Key Clustered(ClientID)
 		);
-			
+
 		DECLARE @BEGIN	SMALLDATETIME
 		DECLARE @END	SMALLDATETIME
-		
+
 		SET @BEGIN = DATEADD(MONTH, -1, dbo.MonthOf(GETDATE()))
 		SET @END = DATEADD(DAY, -1, DATEADD(MONTH, 1, dbo.MonthOf(GETDATE())))
-			
+
 		DECLARE @SearchMonthes Table
 		(
 			START SmallDateTime PRIMARY KEY CLUSTERED
 		);
-		
+
 		DECLARE @UpdatesMonthes Table
 		(
 			START	SmallDateTime,
 			FINISH	SmallDateTime,
 			PRIMARY KEY CLUSTERED(START)
-		);	
-		
+		);
+
 		INSERT INTO @SearchMonthes
 		SELECT a.START
 		FROM Common.Period a
 		WHERE a.START BETWEEN DATEADD(MONTH, -@SEARCH_MON, @MON) AND DATEADD(MONTH, -@SEARCH_MON + 1, @MON) AND a.TYPE = 2;
-		
+
 		INSERT INTO @UpdatesMonthes
 		SELECT START, FINISH
-		FROM 
+		FROM
 		(
 			SELECT START, FINISH, ROW_NUMBER() OVER(ORDER BY START DESC) AS RN
 			FROM Common.Period
 			WHERE TYPE = 1 AND START <= DATEADD(WEEK, -1, GETDATE())
-		) AS a				
+		) AS a
 		WHERE RN <= @UPD_MON;
-			
+
 		INSERT INTO @client(ClientID, USR_CNT)
-		SELECT 
+		SELECT
 			a.ClientID,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					USR.USRData z
 					INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
 				WHERE z.UD_ID_CLIENT = a.ClientID
@@ -150,14 +150,14 @@ BEGIN
 					AND (UF_PATH = 0 OR UF_PATH = 3)
 					AND UF_DATE BETWEEN @BEGIN AND @END
 			)
-		FROM 
+		FROM
 			dbo.ClientView AS a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			AND (a.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) OR @TYPE IS NULL)
 		OPTION(RECOMPILE);
-			
+
 		UPDATE a
 		SET SEARCH_AVG = AVG_CNT
 		FROM @client a
@@ -171,10 +171,10 @@ BEGIN
 					LEFT JOIN dbo.ClientSearchView b WITH(NOEXPAND) ON m.START = b.SearchMonthDate AND b.ClientID = a.ClientID
 				) AS o_O
 		) AS b;
-			
+
 		UPDATE @client
 		SET SEARCH = CASE WHEN SEARCH_AVG < @SEARCH_CNT THEN 1 ELSE 0 END
-			
+
 		UPDATE a
 		SET DUTY_CNT = CNT
 		FROM @client a
@@ -183,12 +183,12 @@ BEGIN
 				SELECT ClientID, COUNT(*) AS CNT
 				FROM dbo.ClientDutyTable
 				WHERE STATUS = 1 AND ClientDutyDateTime BETWEEN DATEADD(MONTH, -@DUTY_MON, GETDATE()) AND GETDATE()
-				GROUP BY ClientID			
+				GROUP BY ClientID
 			) AS b ON a.ClientID = b.ClientID;
-			
+
 		UPDATE @client
 		SET DUTY_CNT = ISNULL(DUTY_CNT, 0);
-			
+
 		UPDATE @client
 		SET DUTY = CASE WHEN DUTY_CNT < @DUTY_CNT THEN 1 ELSE 0 END;
 
@@ -202,10 +202,10 @@ BEGIN
 				WHERE CR_ACTIVE = 1 AND CR_DATE BETWEEN DATEADD(MONTH, -@RIVAL_MON, GETDATE()) AND GETDATE()
 				GROUP BY CL_ID
 			) AS b ON a.ClientID = b.ClientID;
-			
+
 		UPDATE @client
 		SET RIVAL_CNT = ISNULL(RIVAL_CNT, 0);
-			
+
 		UPDATE @client
 		SET RIVAL = CASE WHEN RIVAL_CNT >= @RIVAL_CNT THEN 1 ELSE 0 END;
 
@@ -219,10 +219,10 @@ BEGIN
 				WHERE STATUS = 1 AND DATE BETWEEN DATEADD(MONTH, -@STUDY_MON, GETDATE()) AND GETDATE() AND ID_PLACE IN (1, 2) AND TEACHED = 1
 				GROUP BY ID_CLIENT
 			) AS b ON a.ClientID = b.ClientID;
-			
+
 		UPDATE @client
 		SET STUDY_CNT = ISNULL(STUDY_CNT, 0);
-			
+
 		UPDATE @client
 		SET STUDY = CASE WHEN STUDY_CNT < @STUDY_CNT THEN 1 ELSE 0 END;
 
@@ -236,10 +236,10 @@ BEGIN
 				WHERE STATUS = 1 AND DATE BETWEEN DATEADD(MONTH, -@SEMINAR_MON, GETDATE()) AND GETDATE() AND ID_PLACE IN (3, 4, 5) AND TEACHED = 1
 				GROUP BY ID_CLIENT
 			) AS b ON a.ClientID = b.ClientID;
-			
+
 		UPDATE @client
 		SET SEMINAR_CNT = ISNULL(SEMINAR_CNT, 0);
-			
+
 		UPDATE @client
 		SET SEMINAR = CASE WHEN SEMINAR_CNT < @SEMINAR_CNT THEN 1 ELSE 0 END;
 
@@ -257,17 +257,17 @@ BEGIN
 				GROUP BY UD_ID_CLIENT, START, FINISH
 			) AS o_O
 		) AS b;
-			
+
 		UPDATE @client
 		SET UPDATES_CNT = ISNULL(UPDATES_CNT, 0);
-			
+
 		UPDATE @client
 		SET UPDATES = CASE WHEN UPDATES_CNT < @UPD_CNT THEN 1 ELSE 0 END;
 
 		UPDATE @client
 		SET ERR_CNT = CONVERT(SMALLINT, SEARCH) + CONVERT(SMALLINT, DUTY) + CONVERT(SMALLINT, RIVAL) + CONVERT(SMALLINT, UPDATES) + CONVERT(SMALLINT, STUDY) + CONVERT(SMALLINT, SEMINAR);
-			
-		SELECT 
+
+		SELECT
 			ROW_NUMBER() OVER(PARTITION BY ManagerName, ServiceName ORDER BY ManagerName, ServiceName, ClientFullName) AS RN,
 			a.ClientID, ClientFullName, USR_CNT, c.ServiceTypeShortName, ServiceName, ManagerName,
 			SEARCH, SEARCH_AVG, DUTY, DUTY_CNT, RIVAL, RIVAL_CNT,
@@ -279,24 +279,26 @@ BEGIN
 			CONVERT(NVARCHAR(32), @UPD_MON) + ' нед.' AS UPDATE_PARAM,
 			CONVERT(NVARCHAR(32), @STUDY_MON) + ' мес.' AS STUDY_PARAM,
 			CONVERT(NVARCHAR(32), @SEMINAR_MON) + ' мес.' AS SEMINAR_PARAM
-		FROM 
+		FROM
 			@client a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 			INNER JOIN dbo.ServiceTypeTable c ON c.ServiceTypeID = b.ServiceTypeID
 		WHERE (ERR_CNT >= @TOTAL_B OR @TOTAL_B IS NULL)
 			AND (ERR_CNT <= @TOTAL_E OR @TOTAL_E IS NULL)
 		ORDER BY ManagerName, ServiceName
-			
+
 		SELECT @AVG = CONVERT(NVARCHAR(16), ROUND(AVG(CONVERT(FLOAT, ERR_CNT)), 2))
 		FROM @client
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RISK_REPORT] TO rl_risk;
+GO

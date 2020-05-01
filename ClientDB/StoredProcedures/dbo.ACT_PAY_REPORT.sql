@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_PAY_REPORT]
+ALTER PROCEDURE [dbo].[ACT_PAY_REPORT]
 	@PERIOD		UNIQUEIDENTIFIER,
 	@MANAGER	INT,
 	@SERVICE	INT
@@ -26,7 +26,7 @@ BEGIN
 
 		IF @SERVICE IS NOT NULl
 			SET @MANAGER = NULL
-			
+
 		DECLARE @PR_DATE SMALLDATETIME
 
 		SELECT @PR_DATE = START
@@ -37,7 +37,7 @@ BEGIN
 		FROM
 			(
 				SELECT a.SYS_REG_NAME, a.DIS_NUM, a.DIS_COMP_NUM, a.PR_DATE
-				FROM 
+				FROM
 					dbo.DBFIncomeView a
 					INNER JOIN dbo.DBFBillView b ON a.SYS_REG_NAME = b.SYS_REG_NAME
 												AND a.DIS_NUM = b.DIS_NUM
@@ -65,14 +65,16 @@ BEGIN
 		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, d.START, SystemOrder, DISTR, COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_PAY_REPORT] TO public;
+GO

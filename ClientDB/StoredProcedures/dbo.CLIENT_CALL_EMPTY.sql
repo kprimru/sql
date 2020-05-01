@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CALL_EMPTY]
+ALTER PROCEDURE [dbo].[CLIENT_CALL_EMPTY]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@MANAGER	INT,
@@ -12,7 +12,7 @@ CREATE PROCEDURE [dbo].[CLIENT_CALL_EMPTY]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,9 +24,9 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
-			a.ClientID, a.ClientFullName, ServiceName, ManagerName, 
+
+		SELECT
+			a.ClientID, a.ClientFullName, ServiceName, ManagerName,
 			(
 				SELECT TOP 1 CC_DATE
 				FROM dbo.ClientTrustView WITH(NOEXPAND)
@@ -41,7 +41,7 @@ BEGIN
 			) AS LAST_TRUST_STR,
 			(
 				SELECT TOP 1 CC_DATE
-				FROM 
+				FROM
 					dbo.ClientCall
 					INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
 					INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
@@ -50,7 +50,7 @@ BEGIN
 			) AS LAST_SATIS,
 			(
 				SELECT TOP 1 STT_NAME
-				FROM 
+				FROM
 					dbo.ClientCall
 					INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
 					INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
@@ -62,7 +62,7 @@ BEGIN
 				FROM dbo.ClientConnectView z WITH(NOEXPAND)
 				WHERE z.ClientID = a.CLientID
 			) AS CONNECT_DATE
-		FROM 
+		FROM
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE	(@TYPE IS NULL OR ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
@@ -77,21 +77,23 @@ BEGIN
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.ClientCall
 						INNER JOIN dbo.ClientSatisfaction ON CS_ID_CALL = CC_ID
 					WHERE CC_ID_CLIENT = a.ClientID
 						AND CC_DATE BETWEEN @BEGIN AND @END
 				)
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CALL_EMPTY] TO rl_call_miss;
+GO

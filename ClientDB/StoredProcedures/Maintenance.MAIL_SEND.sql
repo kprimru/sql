@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[MAIL_SEND]
+ALTER PROCEDURE [Maintenance].[MAIL_SEND]
 	@TEXT	NVARCHAR(MAX)
 WITH EXECUTE AS OWNER
 AS
@@ -23,20 +23,20 @@ BEGIN
 
 	BEGIN TRY
 
-		EXEC msdb.dbo.sp_send_dbmail 
+		EXEC msdb.dbo.sp_send_dbmail
 					@profile_name	=	'SQLMail',
 					@recipients		=	'denisov@bazis;blohin@bazis;kudryavtsev@bazis',
 					@body			=	@TEXT,
 					@subject		=	'Уведомление "Досье клиентов"',
-					@query_result_header	=	0				
-					
+					@query_result_header	=	0
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

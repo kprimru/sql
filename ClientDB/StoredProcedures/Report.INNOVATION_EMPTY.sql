@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[INNOVATION_EMPTY]
+ALTER PROCEDURE [Report].[INNOVATION_EMPTY]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 
 
 		SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент]
-		FROM 
+		FROM
 			dbo.ClientInnovation a
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID
 		WHERE ID_INNOVATION = @INN
@@ -41,14 +41,16 @@ BEGIN
 					WHERE b.ID_INNOVATION = a.ID
 				)
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[INNOVATION_EMPTY] TO rl_report;
+GO

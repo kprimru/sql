@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_ACTIVITY_SELECT]
+ALTER PROCEDURE [Purchase].[CLIENT_CONDITION_ACTIVITY_SELECT]
 	@ID	INT
 AS
 BEGIN
@@ -22,13 +22,13 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			AC_ID, AC_NAME, AC_CODE + ' ' + ISNULL(AC_SHORT, AC_NAME) AS AC_SEARCH,
-			CONVERT(BIT, 
+			CONVERT(BIT,
 				ISNULL(
 					(
 						SELECT COUNT(*)
-						FROM 
+						FROM
 							Purchase.ClientConditionCard
 							INNER JOIN Purchase.ClientConditionActivity ON CC_ID = CCA_ID_CC
 						WHERE CC_ID_CLIENT = @ID
@@ -37,19 +37,21 @@ BEGIN
 					), 0)
 			) AS AC_CHECKED
 		FROM dbo.Activity
-		ORDER BY 
+		ORDER BY
 			dbo.StringDelimiterPartInt(AC_CODE, '.', 1),
 			dbo.StringDelimiterPartInt(AC_CODE, '.', 2),
 			dbo.StringDelimiterPartInt(AC_CODE, '.', 3),
 			dbo.StringDelimiterPartInt(AC_CODE, '.', 4)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLIENT_CONDITION_ACTIVITY_SELECT] TO rl_condition_card_r;
+GO

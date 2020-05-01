@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[EXPERT_CLIENT_REPORT]
+ALTER PROCEDURE [Report].[EXPERT_CLIENT_REPORT]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -35,34 +35,34 @@ BEGIN
 			)
 
 		INSERT INTO #vmi(MON, HOST, DISTR, COMP)
-			SELECT 
-				MON, HostID, 
-				CONVERT(INT, 
-							CASE 
-								WHEN CHARINDEX('_', REVERSE(DIS_S)) > 3 THEN 
+			SELECT
+				MON, HostID,
+				CONVERT(INT,
+							CASE
+								WHEN CHARINDEX('_', REVERSE(DIS_S)) > 3 THEN
 										RIGHT(DIS_S, LEN(DIS_S) - CHARINDEX('_', DIS_S))
 								ELSE LEFT(RIGHT(DIS_S, LEN(DIS_S) - CHARINDEX('_', DIS_S)), CHARINDEX('_', RIGHT(DIS_S, LEN(DIS_S) - CHARINDEX('_', DIS_S))) - 1)
 							END) AS DISTR,
-				CASE 
+				CASE
 					WHEN CHARINDEX('_', REVERSE(DIS_S)) > 3 THEN 1
 					ELSE CONVERT(INT, REVERSE(LEFT(REVERSE(DIS_S), CHARINDEX('_', REVERSE(DIS_S)) - 1)))
 				END AS COMP
 			FROM
 				(
 					SELECT DISTINCT MON, Item AS DIS_S
-					FROM 
+					FROM
 						dbo.ExpertVMI
 						CROSS APPLY (SELECT Item FROM dbo.GET_STRING_TABLE_FROM_LIST(DISTR, ',')) AS o_O
 				) AS a
 				INNER JOIN dbo.SystemTable ON CONVERT(INT, LEFT(DIS_S, CHARINDEX('_', DIS_S) - 1)) = SystemNumber
-				
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
 		CREATE TABLE #result
 			(
 				TP				TINYINT,
-				ManagerName		VARCHAR(150), 
+				ManagerName		VARCHAR(150),
 				ServiceName		VARCHAR(150),
 				ClientFullName	VARCHAR(500),
 				ClientID		INT,
@@ -79,7 +79,7 @@ BEGIN
 		SELECT @SQL = @SQL + '[' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '] BIT,'
 		FROM
 			(
-				SELECT DISTINCT MON 
+				SELECT DISTINCT MON
 				FROM #vmi
 			) AS a
 		ORDER BY MON
@@ -89,24 +89,24 @@ BEGIN
 		EXEC (@SQL)
 
 		INSERT INTO #result(TP, ManagerName, ServiceName, ClientFullName, ClientID, DistrStr, NT_SHORT, ExpertEnable, ExpertDate)
-			SELECT 
+			SELECT
 				1, ManagerName, ServiceName, ClientFullName, ClientID,
 				(
 					SELECT TOP 1 DistrStr
-					FROM dbo.ClientDistrView b WITH(NOEXPAND)						
+					FROM dbo.ClientDistrView b WITH(NOEXPAND)
 					WHERE b.ID_CLIENT = ClientID AND DS_REG = 0
 					ORDER BY SystemOrder, DISTR, COMP
 				),
 				(
 					SELECT TOP 1 DistrTypeName
-					FROM dbo.ClientDistrView b WITH(NOEXPAND)						
+					FROM dbo.ClientDistrView b WITH(NOEXPAND)
 					WHERE b.ID_CLIENT = ClientID AND DS_REG = 0
 					ORDER BY SystemOrder, DISTR, COMP
 				),
 				CASE WHEN EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.ClientDistrView b WITH(NOEXPAND)
 							INNER JOIN dbo.ExpertDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
 						WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
@@ -115,40 +115,40 @@ BEGIN
 				END,
 				(
 					SELECT MAX(dbo.DateOf(SET_DATE))
-					FROM 
+					FROM
 						dbo.ClientDistrView b WITH(NOEXPAND)
 						INNER JOIN dbo.ExpertDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
 					WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
 				)
 			FROM dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-			
+
 			UNION ALL
-			
-			SELECT 
+
+			SELECT
 				2, SubhostName, SubhostName, Comment, a.ID, DistrStr, NT_SHORT,
 				CASE WHEN EXISTS
 					(
 						SELECT *
 						FROM dbo.ExpertDistr c
-						WHERE ID_HOST = HostID 
-							AND a.DistrNumber = c.DISTR 
-							AND a.CompNumber = c.COMP 
-							AND c.STATUS = 1					
+						WHERE ID_HOST = HostID
+							AND a.DistrNumber = c.DISTR
+							AND a.CompNumber = c.COMP
+							AND c.STATUS = 1
 					) THEN 1
 					ELSE 0
 				END,
 				(
 					SELECT MAX(dbo.DateOf(SET_DATE))
-					FROM dbo.ExpertDistr c 
-					WHERE ID_HOST = HostID 
-							AND a.DistrNumber = c.DISTR 
-							AND a.CompNumber = c.COMP 
-							AND c.STATUS = 1	
+					FROM dbo.ExpertDistr c
+					WHERE ID_HOST = HostID
+							AND a.DistrNumber = c.DISTR
+							AND a.CompNumber = c.COMP
+							AND c.STATUS = 1
 				)
-			FROM 
+			FROM
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
-				INNER JOIN 
+				INNER JOIN
 					(
 						SELECT DISTINCT MainHostID, MainCompNumber, MainDistrNumber
 						FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
@@ -168,43 +168,43 @@ BEGIN
 		SET @SQL = ''
 		SELECT @SQL = @SQL + '
 		UPDATE #result
-		SET [' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '] = 
-			CASE TP 
+		SET [' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '] =
+			CASE TP
 				WHEN 1 THEN
 					(
-						SELECT COUNT(*) 
-						FROM 
-							#vmi a 
-							INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HOST = b.HostID 
-																		AND a.DISTR = b.DISTR 
-																		AND a.COMP = b.COMP 
+						SELECT COUNT(*)
+						FROM
+							#vmi a
+							INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HOST = b.HostID
+																		AND a.DISTR = b.DISTR
+																		AND a.COMP = b.COMP
 						WHERE ClientID = ID_CLIENT AND DATEPART(YEAR, MON) = ''' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + ''' AND DATEPART(MONTH, MON) = ''' + CONVERT(VARCHAR(4), DATEPART(MONTH, MON)) + '''
 					)
 				WHEN 2 THEN
 					(
-						SELECT COUNT(*) 
-						FROM 
-							#vmi a 
-							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HOST = b.HostID 
+						SELECT COUNT(*)
+						FROM
+							#vmi a
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HOST = b.HostID
 																		AND a.DISTR = b.DistrNumber
 																		AND a.COMP = b.CompNumber
 						WHERE ClientID = ID AND DATEPART(YEAR, MON) = ''' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + ''' AND DATEPART(MONTH, MON) = ''' + CONVERT(VARCHAR(4), DATEPART(MONTH, MON)) + '''
 					)
 			END
 		'
-		FROM 
+		FROM
 			(
-				SELECT DISTINCT MON 
+				SELECT DISTINCT MON
 				FROM #vmi
 			) AS a
-			
+
 		EXEC (@SQL)
 
 		SET @SQL = 'SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент], DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть], ExpertEnable AS [Кнопка включена], ExpertDate AS [Дата подключения],'
 		SELECT @SQL = @SQL + '[' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '],'
 		FROM
 			(
-				SELECT DISTINCT MON 
+				SELECT DISTINCT MON
 				FROM #vmi
 			) AS a
 		ORDER BY MON
@@ -215,17 +215,19 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-				
+
 		IF OBJECT_ID('tempdb..#vmi') IS NOT NULL
 			DROP TABLE #vmi
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[EXPERT_CLIENT_REPORT] TO rl_report;
+GO

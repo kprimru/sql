@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_SELECT]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
 AS
@@ -27,7 +27,7 @@ BEGIN
 
 		SET @END = DATEADD(DAY, 1, GETDATE())
 
-		SELECT @RC = COUNT(*)	
+		SELECT @RC = COUNT(*)
 		FROM
 			(
 				SELECT a.FL_NAME, MAX(DATE) AS DATE
@@ -56,16 +56,18 @@ BEGIN
 			) AS z
 			INNER JOIN dbo.ClientStat y ON z.FL_NAME = y.FL_NAME AND z.DATE = y.DATE
 		ORDER BY FL_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-	
-	
+
+
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_SELECT] TO rl_client_stat_save;
+GO

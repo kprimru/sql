@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANK_INSERT]	
+ALTER PROCEDURE [dbo].[INFO_BANK_INSERT]
 	@NAME	VARCHAR(20),
 	@SHORT	VARCHAR(20),
 	@FULL	VARCHAR(250),
@@ -12,7 +12,7 @@ CREATE PROCEDURE [dbo].[INFO_BANK_INSERT]
 	@PATH	VARCHAR(255),
 	@ACTIVE	BIT,
 	@DAILY	BIT,
-	@ACTUAL	BIT,	
+	@ACTUAL	BIT,
 	@ID	INT = NULL OUTPUT,
 	@START	SMALLDATETIME = NULL
 AS
@@ -32,19 +32,21 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.InfoBankTable(
-			InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, 
+			InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder,
 			InfoBankPath, InfoBankActive, InfoBankDaily, InfoBankActual, InfoBankStart)
 		VALUES(@NAME, @SHORT, @FULL, @ORDER, @PATH, @ACTIVE, @DAILY, @ACTUAL, @START)
-		
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_BANK_INSERT] TO rl_info_bank_i;
+GO

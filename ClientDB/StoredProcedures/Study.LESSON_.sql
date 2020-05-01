@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Study].[LESSON_]
+ALTER PROCEDURE [Study].[LESSON_]
 	@TEACHER	NVARCHAR(128),
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -33,14 +33,14 @@ BEGIN
 			AND (TEACHER = @TEACHER OR @TEACHER IS NULL)
 			AND (THEME LIKE @TXT OR NOTE LIKE @TXT OR @TXT IS NULL)
 		ORDER BY DATE DESC, TEACHER, THEME, NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

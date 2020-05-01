@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLAIM_REPORT_NEW]
+ALTER PROCEDURE [dbo].[CLAIM_REPORT_NEW]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
-	@SERVICE	INT	
+	@SERVICE	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -39,7 +39,7 @@ BEGIN
 
 			INTO #tech
 
-		FROM 
+		FROM
 			dbo.ClaimTable a
 			INNER JOIN dbo.ClientTable ON ClientID = CLM_ID_CLIENT
 		WHERE (dbo.DateOf(CLM_DATE) BETWEEN @BEGIN AND @END)
@@ -58,14 +58,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tech') IS NOT NULL
 			DROP TABLE #tech
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLAIM_REPORT_NEW] TO rl_report_client_tech;
+GO

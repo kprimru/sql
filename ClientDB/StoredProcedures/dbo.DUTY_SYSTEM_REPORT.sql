@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DUTY_SYSTEM_REPORT]
+ALTER PROCEDURE [dbo].[DUTY_SYSTEM_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -46,10 +46,10 @@ BEGIN
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-				
+
 		IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 			DROP TABLE #duty
-			
+
 		CREATE TABLE #duty
 			(
 				TP				VARCHAR(10),
@@ -63,16 +63,16 @@ BEGIN
 				SYS_EXISTS		VARCHAR(50),
 				VERDIKT			VARCHAR(50)
 			)
-				
-		INSERT INTO #duty(TP, ClientID, ClientFullName, ServiceName, ManagerName, 
+
+		INSERT INTO #duty(TP, ClientID, ClientFullName, ServiceName, ManagerName,
 			SystemShortName, SYS_CNT, SYS_EXISTS, VERDIKT)
-			SELECT 	
-				TP, ClientID, ClientFullName, ServiceName, ManagerName, 
+			SELECT 
+				TP, ClientID, ClientFullName, ServiceName, ManagerName,
 				SystemShortName, SYS_CNT, SYS_EXISTS, VERDIKT
 			FROM
 				(
-					SELECT 
-						TP, ClientID, ClientFullName, ServiceName, ManagerName, 
+					SELECT
+						TP, ClientID, ClientFullName, ServiceName, ManagerName,
 						SystemShortName, SYS_CNT, SystemOrder,
 						CASE
 							WHEN p.DS_REG = 0 THEN 'Есть'
@@ -92,11 +92,11 @@ BEGIN
 						END AS VERDIKT
 					FROM
 						(
-							SELECT 
+							SELECT
 								'DUTY' AS TP,
-								a.ClientID, ClientFullName, ServiceName, ManagerName, 
+								a.ClientID, ClientFullName, ServiceName, ManagerName,
 								d.SystemID, d.SystemShortName, d.SystemOrder, COUNT(*) AS SYS_CNT
-							FROM 
+							FROM
 								#client a
 								INNER JOIN dbo.ClientDutyTable b ON a.ClientID = b.ClientID
 								INNER JOIN dbo.ClientDutyIBTable c ON c.ClientDutyID = b.ClientDutyID
@@ -104,16 +104,16 @@ BEGIN
 							WHERE (ClientDutyDateTime >= @BEGIN OR @BEGIN IS NULL)
 								AND (ClientDutyDateTime < @END OR @END IS NULL)
 								AND b.STATUS = 1
-							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName, 
+							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName,
 								d.SystemShortName, d.SystemOrder, d.SystemID
-								
+
 							UNION ALL
-							
-							SELECT 
+
+							SELECT
 								'STUDY' AS TP,
-								a.ClientID, ClientFullName, ServiceName, ManagerName, 
+								a.ClientID, ClientFullName, ServiceName, ManagerName,
 								d.SystemID, d.SystemShortName, d.SystemOrder, COUNT(*) AS SYS_CNT
-							FROM 
+							FROM
 								#client a
 								INNER JOIN dbo.ClientStudy b ON a.ClientID = b.ID_CLIENT
 								INNER JOIN dbo.ClientStudySystem c ON c.ID_STUDY = b.ID
@@ -122,16 +122,16 @@ BEGIN
 								AND (b.DATE < @END OR @END IS NULL)
 								AND b.STATUS = 1
 								AND b.Teached = 1
-							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName, 
+							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName,
 								d.SystemShortName, d.SystemOrder, d.SystemID
-								
+
 							UNION ALL
-							
-							SELECT 
+
+							SELECT
 								'INET' AS TP,
-								a.ClientID, ClientFullName, ServiceName, ManagerName, 
+								a.ClientID, ClientFullName, ServiceName, ManagerName,
 								t.SystemID, t.SystemShortName, t.SystemOrder, COUNT(*) AS SYS_CNT
-							FROM 
+							FROM
 								#client a
 								INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 								INNER JOIN dbo.SystemTable c ON b.SystemID = c.SystemID
@@ -148,9 +148,9 @@ BEGIN
 								) t
 							WHERE (DATE >= @BEGIN OR @BEGIN IS NULL)
 								AND (DATE < @END OR @END IS NULL)
-							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName, 
+							GROUP BY a.ClientID, ClientFullName, ServiceName, ManagerName,
 								t.SystemShortName, t.SystemOrder, t.SystemID
-						) AS o_O 
+						) AS o_O
 						OUTER APPLY
 						(
 							SELECT TOP 1 DS_REG
@@ -165,9 +165,9 @@ BEGIN
 				) AS o_O
 			ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder
 
-		SELECT 
-			ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY SystemOrder) AS RN,		
-			ClientID, ClientFullName, ServiceName, ManagerName, 
+		SELECT
+			ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY SystemOrder) AS RN,
+			ClientID, ClientFullName, ServiceName, ManagerName,
 			CASE TP
 				WHEN 'INET' THEN 'Скачан'
 				WHEN 'DUTY' THEN 'ДС'
@@ -180,17 +180,19 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 			DROP TABLE #duty
-						
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DUTY_SYSTEM_REPORT] TO rl_duty_system_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_SUBJECT_UPDATE]
+ALTER PROCEDURE [Training].[TRAINING_SUBJECT_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(100)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE	Training.TrainingSubject
 		SET		TS_NAME	=	@NAME
 		WHERE	TS_ID	=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_SUBJECT_UPDATE] TO rl_training_subject_u;
+GO

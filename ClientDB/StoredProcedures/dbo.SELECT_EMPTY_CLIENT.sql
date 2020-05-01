@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SELECT_EMPTY_CLIENT]
+ALTER PROCEDURE [dbo].[SELECT_EMPTY_CLIENT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,7 +22,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ClientID, ClientFullName, ClientFullName AS ClientShortName, ServiceStatusName
-		FROM 
+		FROM
 			dbo.ClientTable a INNER JOIN
 			dbo.ServiceStatusTable b ON b.ServiceStatusID = a.StatusID
 		WHERE NOT EXISTS
@@ -32,14 +32,16 @@ BEGIN
 				WHERE a.ClientID = b.ClientID
 			)
 		ORDER BY ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SELECT_EMPTY_CLIENT] TO rl_empty_client;
+GO

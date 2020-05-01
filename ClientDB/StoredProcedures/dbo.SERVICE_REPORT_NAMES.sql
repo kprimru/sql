@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_REPORT_NAMES]
+ALTER PROCEDURE [dbo].[SERVICE_REPORT_NAMES]
 	@SERVICE	INT,
 	@MANAGER	INT
 AS
@@ -25,7 +25,7 @@ BEGIN
 
 		IF @SERVICE IS NOT NULL
 			SELECT ServiceFullName, ManagerFullName
-			FROM 
+			FROM
 				dbo.ServiceTable a
 				INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 			WHERE ServiceID = @SERVICE
@@ -33,16 +33,18 @@ BEGIN
 			SELECT NULL AS ServiceFullName, ManagerFullName
 			FROM dbo.ManagerTable
 			WHERE ManagerID = @MANAGER
-		ELSE 
+		ELSE
 			SELECT NULL AS ServiceFullName, NULL AS ManagerFullName
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_REPORT_NAMES] TO rl_service_report;
+GO

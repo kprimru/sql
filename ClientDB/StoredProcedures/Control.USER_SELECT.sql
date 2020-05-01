@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[USER_SELECT]
+ALTER PROCEDURE [Control].[USER_SELECT]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -25,7 +25,7 @@ BEGIN
 		(
 			RoleName	VarChar(128) PRIMARY KEY CLUSTERED
 		);
-		
+
 		INSERT INTO @Roles
 		SELECT DISTINCT RL_NAME
 		FROM Security.RoleUserView
@@ -39,19 +39,21 @@ BEGIN
 					'rl_control_chief',
 					'rl_control_teacher'
 				);
-		
+
 		SELECT DISTINCT US_NAME
 		FROM Security.RoleUserView	AS RU
 		INNER JOIN @Roles			AS R	ON RU.RL_NAME = R.RoleName
 		ORDER BY US_NAME;
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[USER_SELECT] TO rl_control_r;
+GO

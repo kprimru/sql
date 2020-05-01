@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CITY_UPDATE]
+ALTER PROCEDURE [dbo].[CITY_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@REGION		UNIQUEIDENTIFIER,
 	@AREA		UNIQUEIDENTIFIER,
@@ -45,14 +45,16 @@ BEGIN
 				CT_DISPLAY		=	@DISPLAY,
 				CT_DEFAULT		=	@DEFAULT
 		WHERE	CT_ID			=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_UPDATE] TO rl_city_u;
+GO

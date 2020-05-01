@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_SAVE]
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_SAVE]
 	@SYSTEM	INT,
 	@PERIOD	UNIQUEIDENTIFIER,
 	@WEIGHT	DECIMAL(8, 4),
@@ -27,20 +27,20 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @PR_DATE SMALLDATETIME
-		
+
 		SELECT @PR_DATE = START
 		FROM Common.Period
 		WHERE ID = @PERIOD
-		
+
 		UPDATE a
 		SET WEIGHT = @WEIGHT,
 			WEIGHT2 = @WEIGHT2
 		FROM
 			dbo.SystemWeight a
-			INNER JOIN Common.Period b ON a.ID_PERIOD = b.ID		
+			INNER JOIN Common.Period b ON a.ID_PERIOD = b.ID
 		WHERE ID_SYSTEM = @SYSTEM
-			AND (ID_PERIOD = @PERIOD OR START > @PR_DATE AND @NEXT = 1)		
-		
+			AND (ID_PERIOD = @PERIOD OR START > @PR_DATE AND @NEXT = 1)
+
 		INSERT INTO dbo.SystemWeight(ID_SYSTEM, ID_PERIOD, WEIGHT, WEIGHT2)
 			SELECT @SYSTEM, ID, @WEIGHT, @WEIGHT2
 			FROM Common.Period a
@@ -52,14 +52,16 @@ BEGIN
 						FROM dbo.SystemWeight b
 						WHERE ID_SYSTEM = @SYSTEM AND b.ID_PERIOD = a.ID
 					)
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_SAVE] TO rl_system_u;
+GO

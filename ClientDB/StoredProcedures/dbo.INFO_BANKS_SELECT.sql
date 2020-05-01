@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANKS_SELECT]
+ALTER PROCEDURE [dbo].[INFO_BANKS_SELECT]
 	@SYSTEM	INT
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.SystemBanksView WITH(NOEXPAND)
 		WHERE SystemID = @SYSTEM
 		ORDER BY InfoBankOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_BANKS_SELECT] TO public;
+GO

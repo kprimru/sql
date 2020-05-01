@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PRICE_VALIDATION_SELECT]
+ALTER PROCEDURE [Purchase].[PRICE_VALIDATION_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR PV_NAME LIKE @FILTER
 			OR PV_SHORT LIKE @FILTER
 		ORDER BY PV_SHORT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PRICE_VALIDATION_SELECT] TO rl_price_validation_r;
+GO

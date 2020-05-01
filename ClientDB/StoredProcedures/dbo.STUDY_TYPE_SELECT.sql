@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[STUDY_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -26,16 +26,18 @@ BEGIN
 		FROM dbo.StudyType
 		WHERE @FILTER IS NULL
 			OR NAME LIKE @FILTER
-			OR PSEDO LIKE @FILTER	
+			OR PSEDO LIKE @FILTER
 		ORDER BY NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_TYPE_SELECT] TO rl_study_type_r;
+GO

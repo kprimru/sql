@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_PAY_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_PAY_REPORT]
 	@ID	INT
 AS
 BEGIN
@@ -41,14 +41,16 @@ BEGIN
 		WHERE	D.ID_CLIENT = @ID
 			AND D.DS_REG = 0
 		ORDER BY D.SystemOrder, D.DISTR, D.COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PAY_REPORT] TO rl_client_pay_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_SHORT]
+ALTER PROCEDURE [Security].[USER_SHORT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,7 +23,7 @@ BEGIN
 
 		IF EXISTS
 			(
-				SELECT *			
+				SELECT *
 				FROM Security.Users
 				WHERE US_LOGIN = ORIGINAL_LOGIN()
 			)
@@ -31,19 +31,21 @@ BEGIN
 				CASE ISNULL(US_SHORT, '')
 					WHEN '' THEN ORIGINAL_LOGIN()
 					ELSE US_SHORT
-				END AS US_SHORT	
+				END AS US_SHORT
 			FROM Security.Users
 			WHERE US_LOGIN = ORIGINAL_LOGIN()
 		ELSE
 			SELECT ORIGINAL_LOGIN() AS US_SHORT
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_SHORT] TO public;
+GO

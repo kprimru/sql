@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STATISTIC_SELECT]
+ALTER PROCEDURE [dbo].[STATISTIC_SELECT]
 	@DATE	SMALLDATETIME
 AS
 BEGIN
@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SystemFullName, InfoBankFullName, InfoBankName, Docs
-		FROM 
+		FROM
 			dbo.StatisticTable a INNER JOIN
 			dbo.SystemBanksView b WITH(NOEXPAND) ON a.InfoBankID = b.InfoBankID
 		WHERE StatisticDate = @DATE
@@ -31,14 +31,16 @@ BEGIN
 			AND InfoBankActive = 1
 			AND Required IN (1, 2)
 		ORDER BY SystemOrder, InfoBankOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STATISTIC_SELECT] TO DBStatistic;
+GO

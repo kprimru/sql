@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[INFO_BANKS_OUT]
+ALTER PROCEDURE [Report].[INFO_BANKS_OUT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,8 +21,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT DISTINCT 
+
+		SELECT DISTINCT
 			C.Comment AS [Название клиента], C.Complect AS [Комплект], rnc.DistrNumber AS [Дистрибутив], cv.ServiceName AS [СИ], cv.ManagerName AS [Руководитель],
 			REVERSE(STUFF(REVERSE((
 				SELECT IB.InfoBankName + ', '
@@ -49,14 +49,16 @@ BEGIN
 
 		WHERE SubhostName = '' AND--AND (cv.ServiceName NOT IN ('УССУРИЙСК', 'АРТЕМ', 'СЛАВЯНКА'))
 				usr.UF_DATE IS NOT NULL AND usr.UF_DATE <> ''
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[INFO_BANKS_OUT] TO rl_report;
+GO

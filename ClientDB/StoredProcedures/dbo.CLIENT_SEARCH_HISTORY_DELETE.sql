@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH_HISTORY_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH_HISTORY_DELETE]
 	@CLIENT INT
 AS
 BEGIN
@@ -23,14 +23,16 @@ BEGIN
 	BEGIN TRY
 
 		DELETE FROM dbo.ClientSearchTable WHERE ClientID = @CLIENT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_HISTORY_DELETE] TO rl_client_search_d;
+GO

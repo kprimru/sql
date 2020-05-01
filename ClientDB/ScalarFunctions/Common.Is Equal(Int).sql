@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(Int)]
+ALTER FUNCTION [Common].[Is Equal(Int)]
 (
 	@V1	Int,
 	@V2	Int

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CALL_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_CALL_INSERT]
 	@CLIENT		INT,
 	@DATE		SMALLDATETIME,
 	@PERSONAL	VARCHAR(250),
@@ -34,14 +34,16 @@ BEGIN
 			VALUES(@CLIENT, @DATE, @PERSONAL, @SERVICE, @NOTE)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CALL_INSERT] TO rl_client_call_i;
+GO

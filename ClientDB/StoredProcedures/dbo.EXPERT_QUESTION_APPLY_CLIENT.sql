@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[EXPERT_QUESTION_APPLY_CLIENT]
+ALTER PROCEDURE [dbo].[EXPERT_QUESTION_APPLY_CLIENT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,7 +17,7 @@ BEGIN
 	DECLARE
 		@CallDirection_Id UniqueIdentifier,
 		@Duty_Id		Int;
-	
+
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -29,26 +29,26 @@ BEGIN
 		SELECT @Duty_Id = DutyID
 		FROM dbo.DutyTable
 		WHERE DutyLogin = 'Автомат';
-		
+
 		IF @Duty_Id IS NULL
 			SELECT TOP 1 @Duty_Id = DutyID
 			FROM dbo.DutyTable;
-		
-		SET @CallDirection_Id = 
+
+		SET @CallDirection_Id =
 			(
 				SELECT TOP 1 ID
 				FROM dbo.CallDirection
 				WHERE NAME = 'ВопросЭксперту'
-			);		
-		
-		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, 
-			DutyID, 
-			ClientDutyQuest, EMAIL, 
+			);
+
+		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone,
+			DutyID,
+			ClientDutyQuest, EMAIL,
 			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-		SELECT 
+		SELECT
 			-- ToDo убрать злостный хардкод
-			IsNull(ID_CLIENT, 3103), a.DATE, a.FIO, a.PHONE, 
-			@Duty_Id, 
+			IsNull(ID_CLIENT, 3103), a.DATE, a.FIO, a.PHONE,
+			@Duty_Id,
 			a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
 		FROM dbo.ClientDutyQuestion a
 		OUTER APPLY
@@ -60,7 +60,7 @@ BEGIN
 		) AS C
 		OUTER APPLY
 		(
-			SELECT TOP (1) SubhostName 
+			SELECT TOP (1) SubhostName
 			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
 			WHERE b.DistrNumber = a.DISTR
@@ -69,14 +69,14 @@ BEGIN
 		WHERE a.IMPORT IS NULL --AND a.ID = @ID
 			AND (C.ID_CLIENT IS NOT NULL OR C.ID_CLIENT IS NULL AND s.SubhostName = 'Л1')
 			AND DATE >= '20170801'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

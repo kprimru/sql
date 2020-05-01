@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[ZVE_NOT_IMPORT]
+ALTER PROCEDURE [Report].[ZVE_NOT_IMPORT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -23,17 +23,17 @@ BEGIN
 	BEGIN TRY
 
 		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Дистрибутив], DATE AS [Дата], FIO AS [ФИО], EMAIL, PHONE AS [Телефон], QUEST AS [Вопрос]
-		FROM 
+		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
 		WHERE EXISTS
 			(
 				SELECT 1
-				FROM 
+				FROM
 					dbo.ClientDistrView z WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable y ON z.SystemID = y.SystemID
-				WHERE z.DISTR = a.DISTR AND z.COMP = a.COMP AND y.SystemNumber = a.SYS			
-			) 
+				WHERE z.DISTR = a.DISTR AND z.COMP = a.COMP AND y.SystemNumber = a.SYS
+			)
 			AND
 			NOT EXISTS
 			(
@@ -45,43 +45,45 @@ BEGIN
 				WHERE z.DISTR = a.DISTR AND z.COMP = a.COMP AND y.SystemNumber = a.SYS
 					AND x.CLientDutyQuest = a.QUEST AND x.ClientDUtyDateTime = a.DATE
 			)
-			
+
 		UNION ALL
-		
+
 		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Дистрибутив], DATE AS [Дата], FIO AS [ФИО], EMAIL, PHONE AS [Телефон], QUEST AS [Вопрос]
-		FROM 
+		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
-		WHERE 
-			DATE >= '20170301'		
+		WHERE
+			DATE >= '20170301'
 			AND EXISTS
 			(
 				SELECT 1
-				FROM 
+				FROM
 					Reg.RegNodeSearchView z WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable y ON z.SystemID = y.SystemID
-				WHERE z.DistrNumber = a.DISTR AND z.CompNumber = a.COMP AND y.SystemNumber = a.SYS			
+				WHERE z.DistrNumber = a.DISTR AND z.CompNumber = a.COMP AND y.SystemNumber = a.SYS
 					AND z.SubhostName = 'Л1'
-			) 
+			)
 			AND
 			NOT EXISTS
 			(
 				SELECT *
 				FROM
-					dbo.ClientDutyTable x 
+					dbo.ClientDutyTable x
 				WHERE x.ClientID = 3103
 					AND x.CLientDutyQuest = a.QUEST AND x.ClientDUtyDateTime = a.DATE
 			)
-			
+
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[ZVE_NOT_IMPORT] TO rl_report;
+GO

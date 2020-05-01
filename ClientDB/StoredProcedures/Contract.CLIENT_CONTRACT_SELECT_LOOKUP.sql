@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_LOOKUP]
+ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_LOOKUP]
 	@ClientId	Int
 AS
 BEGIN
@@ -37,14 +37,16 @@ BEGIN
 		INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeId = D.Type_Id
 		WHERE CC.Client_Id = @ClientId
 		ORDER BY DateFrom DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_LOOKUP] TO rl_client_contract_r;
+GO

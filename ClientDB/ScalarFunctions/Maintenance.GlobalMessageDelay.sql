@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalMessageDelay]
+ALTER FUNCTION [Maintenance].[GlobalMessageDelay]
 ()
 RETURNS INT
 AS
@@ -19,8 +19,8 @@ BEGIN
 
 	IF @TMP IS NULL
 		SET @RES = 5
-	ELSE 
+	ELSE
 		SET @RES = CONVERT(INT, @TMP)
-		
+
 	RETURN @RES
 END

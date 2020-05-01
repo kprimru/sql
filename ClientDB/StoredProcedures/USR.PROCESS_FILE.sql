@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESS_FILE]
-	@t				NVarChar(Max),	
+ALTER PROCEDURE [USR].[PROCESS_FILE]
+	@t				NVarChar(Max),
 	@md5			VarChar(100),
 	@hash			VarChar(100),
 	@filename		VarCHar(50),
@@ -17,7 +17,7 @@ CREATE PROCEDURE [USR].[PROCESS_FILE]
 	@sessionid		VarCHar(50)		= NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -56,13 +56,13 @@ BEGIN
 			ID	Int,
 			Primary Key Clustered (ID)
 		);
-		
-		
+
+
 		SET	@res = '';
 		SET @resstatus = 0;
 
 		DECLARE @Usr TABLE
-		(	
+		(
 			ClientID			Int					NULL,
 			FormatVersion		Int				NOT NULL,
 			Ric					Int				NOT NULL,
@@ -73,7 +73,7 @@ BEGIN
 			ProcessorName		VarChar(100)		NULL,
 			ProcessorFrequency	VarChar(50) 		NULL,
 			ProcessorCores		VarChar(20) 		NULL,
-			RAM					VarChar(20)			NULL,		
+			RAM					VarChar(20)			NULL,
 			OSName				VarChar(100)	NOT NULL,
 			OSVersionMinor		VarChar(20) 	NOT NULL,
 			OSVersionMajor		VarChar(20) 	NOT NULL,
@@ -123,7 +123,7 @@ BEGIN
 		);
 
 		DECLARE @Package TABLE
-		(				
+		(
 			PackageName	VarChar(50)	NOT NULL,
 			DistrNumber Int			NOT NULL,
 			CompNumber	TinyInt		NOT NULL,
@@ -136,7 +136,7 @@ BEGIN
 		);
 
 		DECLARE @Ib Table
-		(		
+		(
 			DistrNumber		Int				NOT NULL,
 			CompNumber		tinyint			NOT NULL,
 			DirectoryName	VarChar(20) 	NOT NULL,
@@ -152,7 +152,7 @@ BEGIN
 		);
 
 		DECLARE @update Table
-		(		
+		(
 			DirectoryName	VarChar(20) NOT NULL,
 			UpdateName 		VarChar(8)	NOT NULL,
 			UpdateDate 		VarChar(20) 	NULL,
@@ -166,9 +166,9 @@ BEGIN
 		IF @FileName NOT LIKE 'CONS#%[_]%.usr' BEGIN
 			SET @res = 'Некорректное имя файла  (' + ISNULL(@FileName, '') + ')';
 			SET @resstatus = 3;
-			
+
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
-			
+
 			RETURN;
 		END;
 
@@ -177,7 +177,7 @@ BEGIN
 		SET @xml = CAST(@t AS XML);
 
 		INSERT INTO @package(PackageName, DistrNumber, CompNumber, Ric, NetCount, UserType, TechnolType, Format)
-		SELECT 
+		SELECT
 			c.value('local-name(.)',		'VarChar(20)')	AS PackageName,
 			c.value('(@distr)[1]',			'Int')			AS DistrNumber,
 			c.value('(@comp)[1]',			'TinyInt')		AS CompNumber,
@@ -189,12 +189,12 @@ BEGIN
 		FROM @xml.nodes('/user_info[1]/package[1]/*') AS a(c);
 
 		-- пытаемся определить основную систему по названию файла
-		SELECT TOP 1 
+		SELECT TOP 1
 			@systemnumber	= RIGHT(PackageName, LEN(PackageName) - CHARINDEX('_', PackageName)),
 			@systemname		= LEFT(PackageName, CHARINDEX('_', PackageName) - 1),
 			@distrnumber	= Convert(Varchar(20), DistrNumber),
 			@compnumber		= CompNumber
-		FROM 
+		FROM
 		@Package					P
 		INNER JOIN dbo.SystemTable	S ON (S.SystemBaseName + '_' + CONVERT(VARCHAR(20), S.SystemNumber)) = P.PackageName
 		WHERE S.SystemNumber = @system_num;
@@ -205,18 +205,18 @@ BEGIN
 				@systemname		= LEFT(PackageName, CHARINDEX('_', PackageName) - 1),
 				@distrnumber	= Convert(Varchar(20), DistrNumber),
 				@compnumber		= CompNumber
-			FROM 
+			FROM
 				@Package					P
 				INNER JOIN dbo.SystemTable	S ON (S.SystemBaseName + '_' + CONVERT(VARCHAR(20), S.SystemNumber)) = P.PackageName
 			WHERE DistrNumber <> 1
 			ORDER BY
-				CASE UserType 
-					WHEN 'NEK' THEN 1 
-					WHEN 'DMV' THEN 1 
-					ELSE 0 
-				END, 
-				CASE DistrNumber 
-					WHEN 1 THEN 1 
+				CASE UserType
+					WHEN 'NEK' THEN 1
+					WHEN 'DMV' THEN 1
+					ELSE 0
+				END,
+				CASE DistrNumber
+					WHEN 1 THEN 1
 					WHEN 1000 THEN 1
 					WHEN 22222 THEN 1
 					ELSE 0
@@ -225,7 +225,7 @@ BEGIN
 
 		SET @DistrInt	= CONVERT(Int,		@distrnumber);
 		SET @CompInt	= CONVERT(TinyInt,	@compnumber);
-		
+
 		SELECT TOP 1
 			@Complect_Id		= UD_ID,
 			@Complect_Active	= UD_ACTIVE,
@@ -241,14 +241,14 @@ BEGIN
 		SELECT
 			@Client_Id = ID_CLIENT
 		FROM dbo.ClientDistrView a WITH(NOEXPAND)
-		WHERE	a.DISTR = @distrint 
+		WHERE	a.DISTR = @distrint
 			AND a.COMP = @compint
 			AND a.SystemBaseName = @systemname;
 
 		IF @Client_Id IS NULL
 			SELECT TOP 1
 				@Client_Id = ID_CLIENT
-			FROM 
+			FROM
 				dbo.ClientDistrView			a WITH(NOEXPAND)
 				INNER JOIN dbo.SystemTable	b ON a.SystemID = b.SystemID
 				INNER JOIN @Package			c ON	c.PackageName = b.SystemBaseName + '_' + CONVERT(VARCHAR(20), b.SystemNumber)
@@ -260,10 +260,10 @@ BEGIN
 			@Usr_Id		= F.UF_ID
 		FROM USR.USRFile			F
 		INNER JOIN USR.USRFileData	D ON F.UF_ID = D.UF_ID
-		WHERE	UF_MD5 = @md5 
+		WHERE	UF_MD5 = @md5
 			AND UF_ID_COMPLECT = @Complect_Id
 			AND UF_DATA = @data
-			AND 
+			AND
 				(
 					(UF_PATH <> 3 AND @robot <> 3)
 					OR
@@ -290,7 +290,7 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				
+
 				UPDATE USR.USRData
 				SET UD_ID_CLIENT = @Client_Id
 				WHERE UD_ID = @Complect_Id;
@@ -301,8 +301,8 @@ BEGIN
 
 			IF
 				(
-					SELECT ISNULL(UF_ID_CLIENT, 0) 
-					FROM USR.USRFile 
+					SELECT ISNULL(UF_ID_CLIENT, 0)
+					FROM USR.USRFile
 					WHERE UF_ID = @Usr_Id
 				) <> ISNULL(@Client_Id, 0)
 				UPDATE USR.USRFile
@@ -352,26 +352,26 @@ BEGIN
 
 		INSERT INTO @Usr
 		(
-			ClientID, 
+			ClientID,
 			FormatVersion, Ric, ResVersion, ConsExeVersion, KDVersion, ComplectType,
-			ProcessorName, ProcessorFrequency, ProcessorCores, RAM, 
+			ProcessorName, ProcessorFrequency, ProcessorCores, RAM,
 			OSName, OSVersionMinor, OSVersionMajor, OSBuild, OSPlatformID,
-			OSEdition, OSCapacity, OSLangID, OSCompatibility, 
+			OSEdition, OSCapacity, OSLangID, OSCompatibility,
 			BootDiskName, BootDiskFreeSpace,
 			Office, Browser, MailAgent, Rights, DiskFreeSpace,
 			ODUsers, UDUsers, TSUsers, VMUsers,
 			USRFileDate, USRFileTime, USRFileKind, USRFileUptime,
-			InfoCodFileDate, InfoCodFileTime, InfoCfgFileDate, InfoCfgFileTime, 
+			InfoCodFileDate, InfoCodFileTime, InfoCfgFileDate, InfoCfgFileTime,
 			ConsultTorFileDate, ConsultTorFileTime, FileSystem,
 			ExpconsDate, ExpconsTime, ExpconsKind, ExpusersDate, ExpusersTime,
 			HotlineDate, HotlineTime, HotlineKind, HotlineUsersDate, HotlineUsersTime,
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname
 		)
-		SELECT 
+		SELECT
 			@Client_Id,
 			c.value('format_version[1]',							'Int') 			AS FormatVersion,
 			c.value('ric[1]',										'Int')			AS Ric,
-			c.value('res_version[1]',								'VarChar(20)')	AS ResVersion,			
+			c.value('res_version[1]',								'VarChar(20)')	AS ResVersion,
 			c.value('cons_exe_version[1]',							'VarChar(20)')	AS ConsExeVersion,
 			c.value('kd_version[1]',								'VarChar(20)')	AS KDVersion,
 			c.value('complect[1]',									'VarChar(64)')	AS ComplectType,
@@ -394,7 +394,7 @@ BEGIN
 			c.value('(tech_info[1]/Browser)[1]',					'VarChar(100)')	AS Browser,
 			c.value('(tech_info[1]/MailAgent)[1]',					'VarChar(100)')	AS MailAgent,
 			c.value('(tech_info[1]/Rights)[1]',						'VarChar(50)')	AS Rights,
-			c.value('(tech_info[1]/DiskFreeSpace)[1]',				'VarChar(20)')	AS DiscFreeSpace,			
+			c.value('(tech_info[1]/DiskFreeSpace)[1]',				'VarChar(20)')	AS DiscFreeSpace,
 			c.value('(tech_info[1]/Users[1]/@OD)[1]',				'VarChar(20)') 	AS ODUsers,
 			c.value('(tech_info[1]/Users[1]/@UD)[1]',				'VarChar(20)') 	AS UDUsers,
 			c.value('(tech_info[1]/Users[1]/@TS)[1]',				'VarChar(20)') 	AS TSUsers,
@@ -410,28 +410,28 @@ BEGIN
 			c.value('(files[1]/consult.tor[1]/@date)[1]',			'VarChar(20)')	AS ConsultTorFileDate,
 			c.value('(files[1]/consult.tor[1]/@time)[1]',			'VarChar(20)')	AS ConsultTorFileTime,
 			c.value('(tech_info[1]/FileSystem)[1]',					'VarChar(20)')	AS FileSystem,
-			
+
 			c.value('(files[1]/expcons.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS ExpconsDate,
 			c.value('(files[1]/expcons.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS ExpconsTime,
 			c.value('(files[1]/expcons.cfg[1]/@kind)[1]', 			'VarChar(20)') 	AS ExpconsKind,
-			
+
 			c.value('(files[1]/expusers.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS ExpusersDate,
 			c.value('(files[1]/expusers.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS ExpusersTime,
-			
+
 			c.value('(files[1]/hotline.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS HotlineDate,
 			c.value('(files[1]/hotline.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS HotlineTime,
 			c.value('(files[1]/hotline.cfg[1]/@kind)[1]', 			'VarChar(20)') 	AS HotlineKind,
-			
+
 			c.value('(files[1]/hotlineusers.cfg[1]/@date)[1]', 		'VarChar(20)') 	AS HotlineUsersDate,
 			c.value('(files[1]/hotlineusers.cfg[1]/@time)[1]', 		'VarChar(20)') 	AS HotlineUsersTime,
-			
+
 			c.value('(tech_info[1]/wine[1]/@exist)[1]',				'VarChar(20)')	AS WineExists,
 			c.value('(tech_info[1]/wine[1]/@version)[1]',			'VarChar(20)')	AS WineExists,
-			
+
 			c.value('(tech_info[1]/nowin[1]/name)[1]',				'VarChar(128)')	AS NowinName,
 			c.value('(tech_info[1]/nowin[1]/extend)[1]',			'VarChar(128)')	AS NowinExtend,
 			c.value('(tech_info[1]/nowin[1]/uname)[1]',				'VarChar(512)')	AS NowinUnname
-			
+
 		FROM @Xml.nodes('user_info[1]') AS a(c);
 
 		IF (SELECT FormatVersion FROM @Usr) = '1'
@@ -455,79 +455,79 @@ BEGIN
 			RETURN;
 		END;
 
-		UPDATE @Usr 
+		UPDATE @Usr
 		SET	USRFileDate = NULL
-		WHERE USRFileDate = '0' 
+		WHERE USRFileDate = '0'
 			OR USRFileDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET USRFileTime = NULL
 		WHERE USRFileTime = '0';
 
-		UPDATE @Usr 
+		UPDATE @Usr
 		SET InfoCodFileDate = NULL
-		WHERE InfoCodFileDate = '0' 
+		WHERE InfoCodFileDate = '0'
 			OR InfoCodFileDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET InfoCodFileTime = NULL
 		WHERE InfoCodFileTime = '0';
 
-		UPDATE @Usr 
+		UPDATE @Usr
 		SET InfoCfgFileDate = NULL
-		WHERE InfoCfgFileDate = '00.00.0000' 
+		WHERE InfoCfgFileDate = '00.00.0000'
 			OR InfoCfgFileDate = '0';
 
 		UPDATE @Usr
 		SET InfoCfgFileTime = NULL
 		WHERE InfoCfgFileTime = '0';
 
-		UPDATE @Usr 
+		UPDATE @Usr
 		SET ConsultTorFileDate = NULL
-		WHERE ConsultTorFileDate = '0' 
+		WHERE ConsultTorFileDate = '0'
 			OR ConsultTorFileDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET ConsultTorFileTime = NULL
 		WHERE ConsultTorFileTime = '0';
-		
-		UPDATE @Usr 
+
+		UPDATE @Usr
 		SET ExpconsDate = NULL
-		WHERE ExpconsDate = '0' 
+		WHERE ExpconsDate = '0'
 			OR ExpconsDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET ExpconsTime = NULL
-		WHERE ExpconsTime = '0';	
-		
-		UPDATE @Usr 
+		WHERE ExpconsTime = '0';
+
+		UPDATE @Usr
 		SET ExpusersDate = NULL
-		WHERE ExpusersDate = '0' 
+		WHERE ExpusersDate = '0'
 			OR ExpusersDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET ExpusersTime = NULL
-		WHERE ExpusersTime = '0';	
-		
-		UPDATE @Usr 
+		WHERE ExpusersTime = '0';
+
+		UPDATE @Usr
 		SET HotlineDate = NULL
-		WHERE HotlineDate = '0' 
+		WHERE HotlineDate = '0'
 			OR HotlineDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET HotlineTime = NULL
 		WHERE HotlineTime = '0';
-		
-		UPDATE @Usr 
+
+		UPDATE @Usr
 		SET HotlineUsersDate = NULL
-		WHERE HotlineUsersDate = '0' 
+		WHERE HotlineUsersDate = '0'
 			OR HotlineUsersDate = '00.00.0000';
 
 		UPDATE @Usr
 		SET HotlineUsersTime = NULL
-		WHERE HotlineUsersTime = '0';	
-		
-		UPDATE @Usr 
+		WHERE HotlineUsersTime = '0';
+
+		UPDATE @Usr
 		SET Ric = 999
 		WHERE Ric = 65535;
 
@@ -535,7 +535,7 @@ BEGIN
 		BEGIN
 			SELECT @ClientName = Comment
 			FROM Reg.RegNodeSearchView WITH(NOEXPAND)
-			WHERE DistrNumber = @DISTRINT 
+			WHERE DistrNumber = @DISTRINT
 				AND CompNumber = @COMPINT
 				AND SystemBaseName = @systemname;
 
@@ -554,17 +554,17 @@ BEGIN
 			SET @res = @res + 'Предупреждение. Не найден клиент (' + ISNULL(@ClientName, '') + ')';
 			SET @resstatus = 2;
 		END;
-		
+
 		UPDATE @Usr
 		SET ClientID = ISNULL(@Client_Id, 0);
-		
+
 
 		INSERT INTO @Ib(DistrNumber, CompNumber, DirectoryName, [Name], NCat, [NText], N3, N4, N5, N6, Compliance)
 		SELECT DISTINCT
 			c.value('(@nDistr)[1]',		'Int')			AS DistrNumber,
 			c.value('(@nComp)[1]',		'TinyInt')		AS CompNumber,
 			c.value('(@directory)[1]',	'VarChar(20)')	AS DirectoryName,
-			c.value('(@name)[1]',		'VarChar(150)') AS [Name],			
+			c.value('(@name)[1]',		'VarChar(150)') AS [Name],
 			c.value('(@nCat)[1]',		'Int') 			AS NCat,
 			c.value('(@nTexts)[1]', 	'Int') 			AS [NText],
 			c.value('(@n3)[1]', 		'Int') 			AS N3,
@@ -577,15 +577,15 @@ BEGIN
 		DELETE FROM @Ib WHERE DistrNumber IS NULL;
 
 		/*DELETE FROM #ib WHERE DirectoryName IN ('CMT', 'RLAW104', 'RLAW947', 'RLAW968')*/
-		
+
 		DELETE FROM @Ib WHERE DirectoryName IN ('SVR902', 'SVR017', 'SVBA072');
-		
+
 		DELETE FROM @Package WHERE PackageName IN ('SVR902_112', 'SVR017_112', 'SVBA072_102');
 
 		INSERT INTO @Update(DirectoryName, UpdateName, UpdateDate, UpdateTime, UpdateSysDate, UpdateDocs, UpdateKind)
 		SELECT DISTINCT
-			DirectoryName, UpdateName, UpdateDate, UpdateTime, UpdateSysDate, 
-			CASE 
+			DirectoryName, UpdateName, UpdateDate, UpdateTime, UpdateSysDate,
+			CASE
 				WHEN UpdateDocs > 2000000000 THEN 2000000000
 				ELSE CONVERT(Int, UpdateDocs)
 			END,
@@ -594,12 +594,12 @@ BEGIN
 		(
 			SELECT
 				c.value('local-name(../..)',	'VarChar(20)') 	AS DirectoryName,
-				c.value('local-name(.)',		'VarChar(20)') 	AS UpdateName,			
+				c.value('local-name(.)',		'VarChar(20)') 	AS UpdateName,
 				c.value('(@date)[1]', 			'VarChar(20)') 	AS UpdateDate,
 				c.value('(@time)[1]', 			'VarChar(20)') 	AS UpdateTime,
 				c.value('(@sysdate)[1]',		'VarChar(20)') 	AS UpdateSysDate,
 				c.value('(@docs)[1]',			'BigInt')		AS UpdateDocs,
-				c.value('(@kind)[1]',			'VarChar(20)')	AS UpdateKind		
+				c.value('(@kind)[1]',			'VarChar(20)')	AS UpdateKind
 			FROM @xml.nodes('/user_info[1]/ib[1]/*/updates/*') AS a(c)
 		) AS o_O;
 
@@ -611,12 +611,12 @@ BEGIN
 		SET UpdateDate = NULL
 		WHERE UpdateDate = '0';
 
-		UPDATE @Update 
+		UPDATE @Update
 		SET UpdateTime = '00:00'
 		WHERE UpdateTime = '0';
-		
+
 		DELETE FROM @Update
-		WHERE UpdateDate IS NULL 
+		WHERE UpdateDate IS NULL
 			OR UpdateTime IS NULL
 			OR UpdateSysDate IS NULL;
 
@@ -666,8 +666,8 @@ BEGIN
 					(
 						SELECT *
 						FROM dbo.InfoBankTable
-						WHERE InfoBankName = DirectoryName				
-			
+						WHERE InfoBankName = DirectoryName
+
 					)
 			)
 		BEGIN
@@ -679,8 +679,8 @@ BEGIN
 				(
 						SELECT *
 						FROM dbo.InfoBankTable
-						WHERE InfoBankName = DirectoryName				
-			
+						WHERE InfoBankName = DirectoryName
+
 				);
 
 			SET @resstatus = 3;
@@ -689,7 +689,7 @@ BEGIN
 
 			RETURN;
 		END;
-		
+
 		IF @Complect_Id IS NULL
 		BEGIN
 			INSERT INTO USR.USRData(UD_ID_CLIENT, UD_ACTIVE, UD_ID_HOST, UD_DISTR, UD_COMP)
@@ -700,7 +700,7 @@ BEGIN
 
 			SELECT @Complect_Id = ID
 			FROM @IDs;
-			
+
 			DELETE FROM @IDs;
 		END
 		ELSE
@@ -711,12 +711,12 @@ BEGIN
 					FROM USR.USRData
 					WHERE UD_ID = @Complect_Id
 				) <> @Client_Id
-				UPDATE USR.USRData 
+				UPDATE USR.USRData
 				SET UD_ID_CLIENT = @Client_Id
 				WHERE UD_ID = @Complect_Id;
 		END;
 
-		
+
 		IF NOT EXISTS
 			(
 				SELECT *
@@ -758,7 +758,7 @@ BEGIN
 		IF NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					USR.Os
 					INNER JOIN @Usr ON ISNULL(OSName, '') = ISNULL(OS_NAME, '')
 						AND ISNULL(OSVersionMinor, '') = ISNULL(OS_MIN, 0)
@@ -773,12 +773,12 @@ BEGIN
 		BEGIN
 			INSERT INTO USR.Os
 				(
-					OS_NAME, OS_MIN, OS_MAJ, OS_BUILD, OS_PLATFORM, 
+					OS_NAME, OS_MIN, OS_MAJ, OS_BUILD, OS_PLATFORM,
 					OS_EDITION, OS_CAPACITY, OS_LANG, OS_COMPATIBILITY
 				)
-			SELECT 
-				ISNULL(OSName, ''), ISNULL(OSVersionMinor, 0), ISNULL(OSVersionMajor, 0), ISNULL(OSBuild, 0), 
-				ISNULL(OSPlatformID, 0), ISNULL(OSEdition, ''), ISNULL(OSCapacity, ''), 
+			SELECT
+				ISNULL(OSName, ''), ISNULL(OSVersionMinor, 0), ISNULL(OSVersionMajor, 0), ISNULL(OSBuild, 0),
+				ISNULL(OSPlatformID, 0), ISNULL(OSEdition, ''), ISNULL(OSCapacity, ''),
 				ISNULL(OSLangID, ''), ISNULL(OSCompatibility, '')
 			FROM @Usr;
 		END;
@@ -792,27 +792,27 @@ BEGIN
 						AND ProcessorCores = PRC_CORE
 			)
 			INSERT INTO USR.Processor(PRC_NAME, PRC_FREQ_S, PRC_FREQ, PRC_CORE)
-				SELECT 
-					ProcessorName, ProcessorFrequency, 
+				SELECT
+					ProcessorName, ProcessorFrequency,
 					CASE CHARINDEX('GHz', ProcessorFrequency)
-						WHEN 0 THEN 
+						WHEN 0 THEN
 							CASE CHARINDEX('MHz', ProcessorFrequency)
 								WHEN 0 THEN 0
 								ELSE CONVERT(DECIMAL(8, 4), RTRIM(LEFT(ProcessorFrequency, CHARINDEX('MHz', ProcessorFrequency) - 1)) / 1000.0)
 							END
 						ELSE CONVERT(DECIMAL(8, 4), RTRIM(LEFT(ProcessorFrequency, CHARINDEX('GHz', ProcessorFrequency) - 1)))
-					END, 
+					END,
 					ProcessorCores
 				FROM @Usr
-				WHERE ProcessorName IS NOT NULL 
-					AND ProcessorCores IS NOT NULL 
+				WHERE ProcessorName IS NOT NULL
+					AND ProcessorCores IS NOT NULL
 					AND ProcessorFrequency IS NOT NULL;
 
 		IF NOT EXISTS
 			(
 				SELECT *
 				FROM dbo.USRFileKindTable
-				INNER JOIN 
+				INNER JOIN
 				(
 					SELECT USRFileKind
 					FROM @Usr
@@ -826,7 +826,7 @@ BEGIN
 		BEGIN
 			INSERT INTO dbo.USRFileKindTable(USRFileKindName, USRFileKindShortName)
 			SELECT USRFileKind, ''
-			FROM 
+			FROM
 			(
 				SELECT USRFileKind
 				FROM @Usr
@@ -861,27 +861,27 @@ BEGIN
 				WHERE ComplianceTypeName = Compliance
 			);
 		END;
-		
-		INSERT INTO USR.USRFile		
+
+		INSERT INTO USR.USRFile
 			(
-				UF_ID_COMPLECT, UF_PATH, UF_MD5, UF_HASH, UF_NAME, UF_DATE, UF_ID_KIND, 
+				UF_ID_COMPLECT, UF_PATH, UF_MD5, UF_HASH, UF_NAME, UF_DATE, UF_ID_KIND,
 				UF_UPTIME, UF_CREATE, UF_USER, UF_ACTIVE, UF_MIN_DATE, UF_MAX_DATE,
 				UF_COMPLIANCE, UF_ID_CLIENT, UF_ID_MANAGER, UF_ID_SERVICE, UF_SESSION,
 				UF_ID_SYSTEM, UF_DISTR, UF_COMP
 			)
 		OUTPUT INSERTED.UF_ID INTO @IDs(ID)
-		SELECT 
+		SELECT
 			@Complect_Id, @robot, @md5, @hash, @filename,
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, USRFileDate, 104), 121), 10) + ' ' + 
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, USRFileDate, 104), 121), 10) + ' ' +
 				SUBSTRING(USRFileTime, 1, 2) + ':' + SUBSTRING(USRFileTime, 4, 2) + ':00.000',
 				121
 			),
-			USRFileKindID, USRFileUptime, 
-			GETDATE(), ORIGINAL_LOGIN(), 
+			USRFileKindID, USRFileUptime,
+			GETDATE(), ORIGINAL_LOGIN(),
 			CASE
-				WHEN CONVERT(DATETIME, 
-					LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, USRFileDate, 104), 121), 10) + ' ' + 
+				WHEN CONVERT(DATETIME,
+					LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, USRFileDate, 104), 121), 10) + ' ' +
 					SUBSTRING(USRFileTime, 1, 2) + ':' + SUBSTRING(USRFileTime, 4, 2) + ':00.000',
 					121
 				) > DATEADD(HOUR, 2, GETDATE()) THEN 0
@@ -919,14 +919,14 @@ BEGIN
 		DELETE FROM @IDs;
 
 		INSERT INTO USR.USRFileTech(
-						UF_ID, UF_FORMAT, UF_RIC, UF_ID_RES, UF_ID_CONS, UF_ID_KDVERSION, 
-						UF_ID_PROC, UF_RAM, UF_ID_OS, UF_BOOT_NAME, UF_BOOT_FREE, UF_CONS_FREE, 
-						UF_OFFICE, UF_BROWSER, UF_MAIL, UF_RIGHT, UF_OD, UF_UD, UF_TS, UF_VM, 
-						UF_INFO_COD, UF_INFO_CFG, UF_CONSULT_TOR, UF_FILE_SYSTEM, UF_EXPCONS, 
-						UF_EXPCONS_KIND, UF_EXPUSERS, UF_HOTLINE, UF_HOTLINE_KIND, UF_HOTLINEUSERS, 
-						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND, 
+						UF_ID, UF_FORMAT, UF_RIC, UF_ID_RES, UF_ID_CONS, UF_ID_KDVERSION,
+						UF_ID_PROC, UF_RAM, UF_ID_OS, UF_BOOT_NAME, UF_BOOT_FREE, UF_CONS_FREE,
+						UF_OFFICE, UF_BROWSER, UF_MAIL, UF_RIGHT, UF_OD, UF_UD, UF_TS, UF_VM,
+						UF_INFO_COD, UF_INFO_CFG, UF_CONSULT_TOR, UF_FILE_SYSTEM, UF_EXPCONS,
+						UF_EXPCONS_KIND, UF_EXPUSERS, UF_HOTLINE, UF_HOTLINE_KIND, UF_HOTLINEUSERS,
+						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND,
 						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE)
-		SELECT 
+		SELECT
 			@Usr_Id, FormatVersion, Ric, ResVersionID, ConsExeVersionID, ID,
 			(
 				SELECT TOP 1 PRC_ID
@@ -934,7 +934,7 @@ BEGIN
 				WHERE PRC_NAME = ProcessorName
 					AND PRC_FREQ_S = ProcessorFrequency
 					AND PRC_CORE = ProcessorCores
-			), RAM, 
+			), RAM,
 			(
 				SELECT OS_ID
 				FROM USR.Os
@@ -947,48 +947,48 @@ BEGIN
 					AND ISNULL(OSCapacity, '') = ISNULL(OS_CAPACITY, '')
 					AND ISNULL(OSLangID, '') = ISNULL(OS_LANG, '')
 					AND ISNULL(OSCompatibility, '') = ISNULL(OS_COMPATIBILITY, '')
-			), BootDiskName, BootDiskFreeSpace, DiskFreeSpace, 
+			), BootDiskName, BootDiskFreeSpace, DiskFreeSpace,
 			Office, Browser, MailAgent, Rights, ODUsers, UDUsers, TSUsers, VMUsers,
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, InfoCodFileDate, 104), 121), 10) + ' ' + 
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, InfoCodFileDate, 104), 121), 10) + ' ' +
 				SUBSTRING(InfoCodFileTime, 1, 2) + ':' + SUBSTRING(InfoCodFileTime, 4, 2) + ':00.000',
 				121
 			),
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, InfoCfgFileDate, 104), 121), 10) + ' ' + 
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, InfoCfgFileDate, 104), 121), 10) + ' ' +
 				SUBSTRING(InfoCfgFileTime, 1, 2) + ':' + SUBSTRING(InfoCfgFileTime, 4, 2) + ':00.000',
 				121
 			),
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ConsultTorFileDate, 104), 121), 10) + ' ' + 
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ConsultTorFileDate, 104), 121), 10) + ' ' +
 				SUBSTRING(ConsultTorFileTime, 1, 2) + ':' + SUBSTRING(ConsultTorFileTime, 4, 2) + ':00.000',
 				121
 			),
 			FileSystem,
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ExpconsDate, 104), 121), 10) + ' ' + 
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ExpconsDate, 104), 121), 10) + ' ' +
 				SUBSTRING(ExpconsTime, 1, 2) + ':' + SUBSTRING(ExpconsTime, 4, 2) + ':00.000',
 				121
 			),
-			ExpconsKind, 
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ExpusersDate, 104), 121), 10) + ' ' + 
+			ExpconsKind,
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ExpusersDate, 104), 121), 10) + ' ' +
 				SUBSTRING(ExpusersTime, 1, 2) + ':' + SUBSTRING(ExpusersTime, 4, 2) + ':00.000',
 				121
 			),
-			
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, HotlineDate, 104), 121), 10) + ' ' + 
+
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, HotlineDate, 104), 121), 10) + ' ' +
 				SUBSTRING(HotlineTime, 1, 2) + ':' + SUBSTRING(HotlineTime, 4, 2) + ':00.000',
 				121
 			),
-			HotlineKind, 
-			CONVERT(DATETIME, 
-				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, HotlineUsersDate, 104), 121), 10) + ' ' + 
+			HotlineKind,
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, HotlineUsersDate, 104), 121), 10) + ' ' +
 				SUBSTRING(HotlineUsersTime, 1, 2) + ':' + SUBSTRING(HotlineUsersTime, 4, 2) + ':00.000',
 				121
 			),
-			
+
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType
 		FROM @Usr
 		INNER JOIN dbo.ResVersionTable		ON ResVersionNumber = ResVersion
@@ -1004,25 +1004,25 @@ BEGIN
 				UP_ID_SYSTEM, UP_DISTR, UP_COMP,
 				UP_RIC, UP_NET, UP_TECH, UP_TYPE, UP_FORMAT
 			)
-		SELECT 
+		SELECT
 			@Usr_Id, SystemID,
-			DistrNumber, CompNumber, 
+			DistrNumber, CompNumber,
 			Ric, NetCount, TechnolType, UserType, Format
 		FROM @Package a
 		INNER JOIN dbo.SystemTable ON SystemBaseName = LEFT(PackageName, CHARINDEX('_', PackageName) - 1)
 									AND SystemNumber = RIGHT(PackageName, LEN(PackageName) - CHARINDEX('_', PackageName));
-				
+
 
 		INSERT INTO USR.USRIB
 			   (
-					UI_ID_USR, 
-					UI_ID_BASE, UI_DISTR, UI_COMP, 
-					UI_NCAT, UI_NTEXT, UI_N3, UI_N4, UI_N5, UI_N6, 
+					UI_ID_USR,
+					UI_ID_BASE, UI_DISTR, UI_COMP,
+					UI_NCAT, UI_NTEXT, UI_N3, UI_N4, UI_N5, UI_N6,
 					UI_ID_COMP
 				)
-		SELECT 
-			@Usr_Id, b.InfoBankId, DistrNumber, CompNumber, 
-			NCat, [NText], N3, N4, N5, N6, 
+		SELECT
+			@Usr_Id, b.InfoBankId, DistrNumber, CompNumber,
+			NCat, [NText], N3, N4, N5, N6,
 			ComplianceTypeID
 		FROM @ib a
 		INNER JOIN dbo.InfoBankTable b		ON InfoBankName = DirectoryName
@@ -1032,38 +1032,40 @@ BEGIN
 			(
 				UIU_ID_IB, UIU_DATE, UIU_SYS, UIU_DOCS, UIU_ID_KIND, UIU_INDX
 			)
-		SELECT 
-			UI_ID, 
-			CONVERT(DATETIME, 
-					LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, UpdateDate, 104), 121), 10) + ' ' + 
+		SELECT
+			UI_ID,
+			CONVERT(DATETIME,
+					LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, UpdateDate, 104), 121), 10) + ' ' +
 					SUBSTRING(UpdateTime, 1, 2) + ':' + SUBSTRING(UpdateTime, 4, 2) + ':00.000',
 					121
 				),
-			CONVERT(SMALLDATETIME, UpdateSysDate, 104), UpdateDocs, 
+			CONVERT(SMALLDATETIME, UpdateSysDate, 104), UpdateDocs,
 			USRFileKindID, Cast(Replace(UpdateName, 'u', '') AS TinyInt)
 		FROM @Update a
 		INNER JOIN dbo.USRFileKindTable ON USRFileKindName = UpdateKind
 		INNER JOIN dbo.InfoBankTable	ON InfoBankName = DirectoryName
 		INNER JOIN USR.USRIB b			ON InfoBankID = UI_ID_BASE AND UI_ID_USR = @Usr_Id;
-		
+
 		UPDATE USR.USRIB
-		SET UI_LAST = 
+		SET UI_LAST =
 			(
 				SELECT UIU_DATE
 				FROM USR.USRUpdates
-				WHERE UIU_ID_IB = UI_ID 
+				WHERE UIU_ID_IB = UI_ID
 					AND UIU_INDX = 1
 			)
 		WHERE UI_ID_USR = @Usr_Id;
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[PROCESS_FILE] TO rl_usr_process;
+GO

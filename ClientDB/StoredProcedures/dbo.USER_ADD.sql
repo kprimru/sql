@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[USER_ADD]
+ALTER PROCEDURE [dbo].[USER_ADD]
 	@USER   VARCHAR(128),
 	@LOGIN   VARCHAR(128),
     @PASS VARCHAR(50),
@@ -16,7 +16,7 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -28,7 +28,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @DB   VARCHAR(128)
 		SET @DB = DB_NAME()
 		IF  NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = @LOGIN)
@@ -45,29 +45,31 @@ BEGIN
 			END
 			IF NOT (@ROLE IS NULL) BEGIN
 			IF  EXISTS (SELECT * FROM sys.database_principals WHERE [name] = @USER)
-			   BEGIN 
+			   BEGIN
 				IF @ADM=1 BEGIN
 				  EXEC sp_addrolemember [db_owner], @USER
 				  /*EXEC sp_addrolemember [db_accessadmin], @USER*/
 				  EXEC ('master..sp_addsrvrolemember ['+@LOGIN+'], [securityadmin]');
-				END ELSE EXEC sp_addrolemember @ROLE, @USER 
+				END ELSE EXEC sp_addrolemember @ROLE, @USER
 			   END
 			END
-			IF @FIO = '-1' RETURN 
+			IF @FIO = '-1' RETURN
    			IF  NOT EXISTS (SELECT * FROM dbo.Z_USER_LIST WHERE [LOGIN_NAME] = @LOGIN)
 			BEGIN
 				INSERT INTO  dbo.Z_USER_LIST ([LOGIN_NAME], [FIO]) VALUES (@LOGIN, @FIO)
 			END
 
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_ADD] TO BL_ADMIN;
+GO

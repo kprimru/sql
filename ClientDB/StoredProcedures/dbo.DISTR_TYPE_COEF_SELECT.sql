@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_TYPE_COEF_SELECT]
+ALTER PROCEDURE [dbo].[DISTR_TYPE_COEF_SELECT]
 	@NET	INT,
 	@PERIOD	UNIQUEIDENTIFIER
 AS
@@ -24,7 +24,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT NAME, DistrTypeName, COEF, WEIGHT, RND, b.ID, c.DistrTypeID
-		FROM 
+		FROM
 			dbo.DistrTypeCoef a
 			INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
 			INNER JOIN dbo.DistrTypeTable c ON c.DistrTypeID = a.ID_NET
@@ -32,15 +32,17 @@ BEGIN
 			AND (b.ID = @PERIOD OR @PERIOD IS NULL)
 			AND START <= DATEADD(MONTH, 3, GETDATE())
 		ORDER BY START DESC, DistrTypeOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[DISTR_TYPE_COEF_SELECT] TO rl_distr_type_u;
+GO

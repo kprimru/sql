@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_INNOVATION_EMPTY_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_INNOVATION_EMPTY_REPORT]
 	@INNOVATION	NVARCHAR(MAX) = NULL,
 	@MANAGER	NVARCHAR(MAX) = NULL,
 	@SERVICE	INT = NULL
@@ -26,7 +26,7 @@ BEGIN
 
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
-		
+
 		SELECT
 			ClientID, ManagerName, ServiceName, ClientFullName, c.NAME, c.START, c.FINISH,
 			(
@@ -35,7 +35,7 @@ BEGIN
 				WHERE UD_ID_CLIENT = ClientID
 				ORDER BY UIU_DATE_S DESC
 			) AS LAST_UPDATE
-		FROM 
+		FROM
 			dbo.ClientInnovation a
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID
 			INNER JOIN dbo.Innovation c ON c.ID = a.ID_INNOVATION
@@ -49,16 +49,18 @@ BEGIN
 					FROM dbo.ClientInnovationPersonal b
 					WHERE b.ID_INNOVATION = a.ID
 				)
-		ORDER BY ManagerName, ServiceName, NAME, ClientFullName	
-		
+		ORDER BY ManagerName, ServiceName, NAME, ClientFullName
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[CLIENT_INNOVATION_EMPTY_REPORT] TO rl_innovation_report;
+GO

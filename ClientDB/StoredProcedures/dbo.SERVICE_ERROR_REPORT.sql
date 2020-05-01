@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_ERROR_REPORT]
+ALTER PROCEDURE [dbo].[SERVICE_ERROR_REPORT]
 	@SERVICE	INT,
 	@DATE		SMALLDATETIME,
 	@MANAGER	VARCHAR(150) = NULL OUTPUT,
@@ -26,17 +26,17 @@ BEGIN
 	BEGIN TRY
 
 		SELECT @MANAGER = 'Сводка по актуальному состоянию систем ' + ServiceName + '(' + ManagerName + ') за ' + dbo.MonthString(GETDATE())
-		FROM 
+		FROM
 			dbo.ServiceTable a
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 		WHERE a.ServiceID = @SERVICE
-				
+
 		IF @DATE IS NULL
 			SET @DATE = DATEADD(MONTH, -1, dbo.DateOf(GETDATE()))
-			
+
 		IF OBJECT_ID('tempdb..#check') IS NOT NULL
 			DROP TABLE #check
-			
+
 		CREATE TABLE #check
 			(
 				CL_ID		INT,
@@ -50,8 +50,8 @@ BEGIN
 				IB_DATE		SMALLDATETIME,
 				NOTE		VARCHAR(MAX),
 				UNSERVICE	VARCHAR(MAX)
-			)	
-			
+			)
+
 		INSERT INTO #check(CL_ID, CL_NAME, DISTR, LAST_USR)
 			SELECT DISTINCT
 				ClientID, ClientFullName, Complect,
@@ -65,13 +65,13 @@ BEGIN
 				))
 			FROM dbo.ClientView cv WITH(NOEXPAND)
 			INNER JOIN dbo.ClientDistrView cdv WITH(NOEXPAND) ON cdv.ID_CLIENT = cv.ClientID
-			INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON cdv.HostID = rnsw.HostID AND 
-																	cdv.DISTR = rnsw.DistrNumber AND 
+			INNER JOIN Reg.RegNodeSearchView rnsw WITH(NOEXPAND) ON cdv.HostID = rnsw.HostID AND
+																	cdv.DISTR = rnsw.DistrNumber AND
 																	cdv.COMP = rnsw.CompNumber AND
 																	rnsw.DS_REG = 0
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON cv.ServiceStatusId = cv.ServiceStatusId
 			WHERE ServiceID = @SERVICE;
-			
+
 		DECLARE @IB TABLE
 			(
 				ClientID			INT,
@@ -85,21 +85,21 @@ BEGIN
 				LAST_DATE			DATETIME,
 				UF_DATE				DATETIME
 			)
-			
+
 		INSERT INTO @IB
 			EXEC USR.CLIENT_SYSTEM_AUDIT NULL, @SERVICE, NULL, @DATE
 
-		
+
 		UPDATE a
-		SET IB = 
+		SET IB =
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT InfoBankShortName + ','
-					FROM @IB b 
+					FROM @IB b
 					WHERE b.Complect = a.DISTR
 					FOR XML PATH('')
 				)), 1, 1, '')),
-			IB_DATE = 
+			IB_DATE =
 				dbo.DateOf(
 					(
 						SELECT MIN(LAST_DATE)
@@ -108,7 +108,7 @@ BEGIN
 							AND LAST_DATE IS NOT NULL
 					))
 		FROM #check a
-		
+
 		DECLARE @UNSERV TABLE
 			(
 				UD_NAME				VARCHAR(50),
@@ -117,24 +117,24 @@ BEGIN
 				Serviced			VARCHAR(1024),
 				Unserviced			VARCHAR(1024),
 				Complect			VARCHAR(50)
-			)		
+			)
 
-			
+
 		INSERT INTO @UNSERV
-			EXEC USR.COMPLECT_UNSERVICE_SYSTEM NULL, @SERVICE, @DATE, 1 
-			
-			
+			EXEC USR.COMPLECT_UNSERVICE_SYSTEM NULL, @SERVICE, @DATE, 1
+
+
 		UPDATE a
-		SET UNSERVICE = 
+		SET UNSERVICE =
 				REVERSE(STUFF(REVERSE(
 				(
 					SELECT Unserviced + ','
-					FROM @UNSERV b 
+					FROM @UNSERV b
 					WHERE a.DISTR = b.Complect
 					FOR XML PATH('')
 				)), 1, 1, ''))
 		FROM #check a
-		
+
 		DECLARE @RES TABLE
 			(
 				ClientID				INT,
@@ -148,16 +148,16 @@ BEGIN
 				UF_DATE					DATETIME,
 				UF_CREATE				DATETIME
 			)
-			
-		INSERT INTO @RES	
+
+		INSERT INTO @RES
 			EXEC USR.RES_VERSION_CHECK NULL, @SERVICE, @DATE, NULL, 1, 0, NULL, NULL, NULL
-			
+
 		UPDATE a
-		SET TECH_DATA = 
+		SET TECH_DATA =
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT 
-						CASE ResVersionNumber WHEN '' THEN '' ELSE 'ТМ : ' + ResVersionNumber + ',' END +  
+					SELECT
+						CASE ResVersionNumber WHEN '' THEN '' ELSE 'ТМ : ' + ResVersionNumber + ',' END +
 						CASE ConsExeVersionNumber WHEN '' THEN '' ELSE ' Cons.exe : ' + ConsExeVersionNumber + ',' END --+
 						--CASE KDVersionName WHEN '' THEN '' ELSE ' КД : ' + KDVersionName + ',' END
 					FROM @RES b
@@ -165,7 +165,7 @@ BEGIN
 					FOR XML PATH('')
 				)), 1, 1, ''))
 		FROM #check a
-			
+
 		DECLARE @COMPLIANCE	TABLE
 			(
 				ClientID			INT,
@@ -181,9 +181,9 @@ BEGIN
 
 		INSERT INTO @COMPLIANCE
 			EXEC USR.USR_COMPLIANCE_LAST @DATE, NULL, @SERVICE
-			
+
 		UPDATE a
-		SET COMPLIANCE = 
+		SET COMPLIANCE =
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT InfoBankShortName + ','
@@ -192,7 +192,7 @@ BEGIN
 					FOR XML PATH('')
 				)
 			), 1, 1, '')),
-			COMPLIANCE_DATE = 
+			COMPLIANCE_DATE =
 					(
 						SELECT dbo.DateOf(MIN(FIRST_DATE))
 						FROM @COMPLIANCE b
@@ -200,30 +200,30 @@ BEGIN
 							AND FIRST_DATE IS NOT NULL
 					)
 		FROM #check a
-				
-		SELECT @CNT = 
-				CONVERT(VARCHAR(20), 
+
+		SELECT @CNT =
+				CONVERT(VARCHAR(20),
 					(
 						SELECT COUNT(*) FROM #check WHERE TECH_DATA IS NOT NULL OR IB IS NOT NULL OR COMPLIANCE IS NOT NULL
 					))
-				 + ' из ' + 
-				CONVERT(VARCHAR(20), 
+				 + ' из ' +
+				CONVERT(VARCHAR(20),
 					(
 						SELECT COUNT(*) FROM #check
 					))
-				
+
 		UPDATE #check
-		SET NOTE = 
-			CASE 
+		SET NOTE =
+			CASE
 				WHEN IB_DATE IS NOT NULL THEN 'ИБ с ' + CONVERT(VARCHAR(20), IB_DATE, 104) + ' '
 				ELSE ''
-			END + 
+			END +
 			CASE
 				WHEN COMPLIANCE_DATE IS NOT NULL THEN 'Статистика с ' + CONVERT(VARCHAR(20), COMPLIANCE_DATE, 104)
 				ELSE ''
 			END
-			
-		SELECT 
+
+		SELECT
 			CL_ID, CL_NAME, DISTR, LAST_USR, TECH_DATA, COMPLIANCE, IB, NOTE, UNSERVICE,
 			CASE
 				WHEN TECH_DATA IS NULL AND COMPLIANCE IS NULL AND IB IS NULL AND UNSERVICE IS NULL THEN 1
@@ -235,21 +235,23 @@ BEGIN
 				WHERE UD_ID_CLIENT = CL_ID
 				ORDER BY UIU_DATE_S DESC
 			) AS LAST_UPDATE
-		FROM 
+		FROM
 			#check
-		ORDER BY CL_NAME		
-		
+		ORDER BY CL_NAME
+
 		IF OBJECT_ID('tempdb..#check') IS NOT NULL
 			DROP TABLE #check
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SERVICE_ERROR_REPORT] TO rl_service_error_report;
+GO

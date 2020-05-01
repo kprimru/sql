@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[TEACHER_MONTH_REPORT]
+ALTER PROCEDURE [dbo].[TEACHER_MONTH_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@TEACHER	NVARCHAR(MAX),
@@ -32,7 +32,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		CREATE TABLE #result
 			(
 				TEACHER		INT,
@@ -43,11 +43,11 @@ BEGIN
 			)
 
 		INSERT INTO #result(TEACHER, PERIOD, CL_COUNT, LESSON, PEOPLE)
-			SELECT 
+			SELECT
 				TeacherID, ID,
 				(
 					SELECT COUNT(DISTINCT ID_CLIENT)
-					FROM 
+					FROM
 						dbo.ClientStudy z
 						INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
 						INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientKind_Id
@@ -58,7 +58,7 @@ BEGIN
 				) AS CL_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						dbo.ClientStudy z
 						INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
 						INNER JOIN dbo.TableIDFromXML(@TYPE) y ON y.ID = ClientKind_Id
@@ -69,7 +69,7 @@ BEGIN
 				) AS LESSON,
 				(
 					SELECT SUM(CASE WHEN GR_COUNT IS NULL THEN 1 ELSE GR_COUNT END)
-					FROM 
+					FROM
 						dbo.ClientStudy z
 						INNER JOIN dbo.ClientStudyPeople y ON z.ID = y.ID_STUDY
 						INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
@@ -82,7 +82,7 @@ BEGIN
 			FROM
 				(
 					SELECT TeacherID, TeacherName
-					FROM 
+					FROM
 						dbo.TeacherTable
 						INNER JOIN dbo.TableIDFromXML(@TEACHER) ON ID = TeacherID
 				) AS Teach
@@ -94,17 +94,17 @@ BEGIN
 						AND START >= @BEGIN
 						AND START <= @END
 				) AS Pr
-				
-		SELECT 
+
+		SELECT
 			NAME, TeacherName, VAL, DAY_CNT, DAY_CNT * TeacherNorma AS NORMA, ROUND(100 * CONVERT(FLOAT, VAL) / NULLIF((DAY_CNT * TeacherNorma), 0), 2) AS PRC,
-			'Дней в месяце: ' + CONVERT(VARCHAR(20), DAY_CNT) + CHAR(10) + 
-			'Норма: ' + CONVERT(VARCHAR(20), DAY_CNT * TeacherNorma) + CHAR(10) + 
+			'Дней в месяце: ' + CONVERT(VARCHAR(20), DAY_CNT) + CHAR(10) +
+			'Норма: ' + CONVERT(VARCHAR(20), DAY_CNT * TeacherNorma) + CHAR(10) +
 			'Итого занятий: ' + CONVERT(VARCHAR(20), VAL) AS DATA
 			--'Норма выполнена на ' + CONVERT(VARCHAR(20), ROUND(100 * CONVERT(FLOAT, VAL) / (DAY_CNT * TeacherNorma), 2)) + ' %' ,
 			--CASE WHEN ROUND(100 * CONVERT(FLOAT, VAL) / (DAY_CNT * TeacherNorma), 2) >= 100 THEN 1 ELSE 0 END AS NORMA_COMPLETE
 		FROM
 			(
-				SELECT 
+				SELECT
 					START, NAME, TeacherName, ISNULL(TeacherNorma, 0) AS TeacherNorma,
 					/*CASE @TP*/ /*0 - количество занятий, 1 - колиечство клиентов, 2 - количество пользователей*/
 						/*WHEN 0 THEN LESSON
@@ -118,40 +118,42 @@ BEGIN
 					(
 						SELECT COUNT(*)
 						FROM dbo.Calendar
-						WHERE CalendarDate >= a.START 
-							AND CalendarDate <= a.FINISH 
+						WHERE CalendarDate >= a.START
+							AND CalendarDate <= a.FINISH
 							AND CalendarWork = 1
 							--AND CalendarWeekDayID <> @MONDAY
-					) - 
+					) -
 					(
 						SELECT COUNT(DISTINCT y.ID)
-						FROM 
+						FROM
 							dbo.Calendar z
 							INNER JOIN Common.Period y ON y.START <= z.CalendarDate AND y.FINISH >= z.CalendarDate
-						WHERE CalendarDate >= a.START 
-							AND CalendarDate <= a.FINISH 
+						WHERE CalendarDate >= a.START
+							AND CalendarDate <= a.FINISH
 							AND CalendarWork = 1
 							--AND CalendarWeekDayID <> @MONDAY
 							AND y.TYPE = 1
 					) AS DAY_CNT
 					--,CL_COUNT, LESSON, PEOPLE
-				FROM 
-					#result 
+				FROM
+					#result
 					INNER JOIN dbo.TeacherTable ON TEACHER = TeacherID
 					INNER JOIN Common.Period a ON ID = PERIOD
 			) AS o_O
 		ORDER BY START, TeacherName
-			
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TEACHER_MONTH_REPORT] TO rl_teacher_month_report;
+GO

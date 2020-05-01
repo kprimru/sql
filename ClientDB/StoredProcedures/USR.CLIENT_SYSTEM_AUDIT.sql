@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[CLIENT_SYSTEM_AUDIT]
+ALTER PROCEDURE [USR].[CLIENT_SYSTEM_AUDIT]
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL,
 	@IB			NVARCHAR(MAX) = NULL,
@@ -31,7 +31,7 @@ BEGIN
 			ClientId		Int				NOT NULL,
 			Primary Key Clustered(ClientId)
 		);
-		
+
 		DECLARE @ClientsComplects Table
 		(
 			ClientId		Int				NOT NULL,
@@ -42,7 +42,7 @@ BEGIN
 			InfoBanksCodes	VarChar(Max)		NULL,
 			Primary Key Clustered(ClientId, Complect)
 		);
-		
+
 		DECLARE @IBOut Table
 		(
 			Complect		VarChar(100)	NOT NULL,
@@ -54,7 +54,7 @@ BEGIN
 		(
 			Id				SmallInt		NOT NULL PRIMARY KEY CLUSTERED
 		);
-		
+
 		IF @IB IS NOT NULL
 			INSERT INTO @InfoBanks
 			SELECT DISTINCT ID
@@ -88,9 +88,9 @@ BEGIN
 		) U
 		WHERE	R.Service = 0
 			AND	(U.UF_DATE >= @DATE OR @DATE IS NULL);
-		
-		
-		-- ToDO убрать задвоение!!!	
+
+
+		-- ToDO убрать задвоение!!!
 		UPDATE C
 		SET InfoBanks		= I.InfoBankName,
 			InfoBanksCodes	= IC.InfoBanksCodes
@@ -136,22 +136,24 @@ BEGIN
 				)), 1, 1, ''))
 		) IC
 		OPTION(RECOMPILE);
-		
+
 		SELECT
 			C.ClientID, CC.Complect, C.ManagerName, C.ServiceName, C.ClientFullName, CC.Complect, Banks = CC.InfoBanks, BanksEn = CC.InfoBanksCodes, LAST_DATE = NULL, CC.UF_DATE
 		FROM @ClientsComplects		CC
 		INNER JOIN dbo.ClientView	C	WITH(NOEXPAND)	ON C.ClientID = CC.ClientID
 		WHERE CC.InfoBanks IS NOT NULL
 		ORDER BY ManagerName, ServiceName, ClientFullName, CC.Complect
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[CLIENT_SYSTEM_AUDIT] TO rl_complect_info_bank;
+GO

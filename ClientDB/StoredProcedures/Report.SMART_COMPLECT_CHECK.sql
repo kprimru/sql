@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SMART_COMPLECT_CHECK]
+ALTER PROCEDURE [Report].[SMART_COMPLECT_CHECK]
 	@PARAM NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CL_PSEDO AS [Псевдоним], CL_FULL_NAME AS [Клиент],
 			(
-				SELECT 
-					dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' + 
-					CASE RN_TECH_TYPE 
+				SELECT
+					dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' +
+					CASE RN_TECH_TYPE
 						WHEN 0 THEN
 							CASE RN_NET_COUNT
 								WHEN 0 THEN 'лок'
@@ -45,7 +45,7 @@ BEGIN
 						ELSE 'Неизвестно'
 					END
 					 + '), '
-				FROM 
+				FROM
 					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
@@ -60,32 +60,34 @@ BEGIN
 		WHERE EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 					AND b.RN_SYS_NAME IN ('BBKZ', 'UBKZ', 'UMKZ')
-			) 
+			)
 			AND NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 					AND b.RN_NET_COUNT > 0
 					AND b.RN_TECH_TYPE IN (0, 11)
-			) 
+			)
 			--AND CL_ID_ORG = 1
 		ORDER BY 4, 1
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SMART_COMPLECT_CHECK] TO rl_report;
+GO

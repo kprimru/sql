@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[TENDER_DEFAULT]
+ALTER PROCEDURE [Tender].[TENDER_DEFAULT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -22,16 +22,16 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ClientFullName, ContractBegin, ContractEnd,
 			SURNAME, NAME, PATRON, POSITION, PHONE, EMAIL, ID_LAW, ID_STATUS
 		FROM
 			(
-				SELECT ClientFulLName			
+				SELECT ClientFulLName
 				FROM dbo.ClientTable
 				WHERE ClientID = @CLIENT
 			) AS a
-			OUTER APPLY 
+			OUTER APPLY
 			(
 				SELECT TOP 1 ContractBegin, ContractEnd
 				FROM dbo.ContractTable
@@ -39,7 +39,7 @@ BEGIN
 					AND GETDATE() BETWEEN ContractBegin AND ContractEnd
 				ORDER BY ContractEnd DESC
 			) AS b
-			OUTER APPLY 
+			OUTER APPLY
 			(
 				SELECT TOP 1 SURNAME, NAME, PATRON, POSITION, PHONE, EMAIL, ID_LAW
 				FROM Tender.Tender
@@ -53,14 +53,17 @@ BEGIN
 				FROM Tender.Status
 				WHERE PSEDO = 'PLAN'
 			) AS d
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[TENDER_DEFAULT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[TENDER_DEFAULT] TO rl_tender_u;
+GO

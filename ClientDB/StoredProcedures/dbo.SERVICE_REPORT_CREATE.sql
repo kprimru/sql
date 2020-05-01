@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_REPORT_CREATE]
+ALTER PROCEDURE [dbo].[SERVICE_REPORT_CREATE]
 	@SERVICE	INT,
 	@MANAGER	INT,
 	@CSTATUS	VARCHAR(MAX),
@@ -52,13 +52,13 @@ BEGIN
 			(
 				CL_ID	INT
 			)
-		
+
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
 
 		INSERT INTO #client(CL_ID)
 			SELECT ClientID
-			FROM 
+			FROM
 				dbo.ClientTable
 				INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 				INNER JOIN #cstatus ON ST_ID = StatusID
@@ -76,17 +76,17 @@ BEGIN
 
 		INSERT INTO #host(HST_ID)
 			SELECT DISTINCT b.HostID
-			FROM 
+			FROM
 				dbo.SystemTable a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemID = b.SystemID
 				INNER JOIN #client ON ID_CLIENT = CL_ID
-				INNER JOIN #sstatus ON ST_ID = DS_ID	
+				INNER JOIN #sstatus ON ST_ID = DS_ID
 
 		IF OBJECT_ID('tempdb..#data') IS NOT NULL
 			DROP TABLE #data
 
 		CREATE TABLE #data
-			(		
+			(
 				CL_ID	INT PRIMARY KEY,
 				NUM	INT,
 				CL_NAME	VARCHAR(250),
@@ -103,22 +103,22 @@ BEGIN
 		)
 
 		INSERT INTO #data(CL_ID, CL_NAME, CO_COND, CO_FIXED, CO_TYPE, PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, NET, CSTATUS)
-			SELECT 
-				ClientID, ClientFullName, 
+			SELECT
+				ClientID, ClientFullName,
 				D.Comments, D.ContractPrice, D.ContractTypeName, D.ContractPayName,
 				PayTypeName, ClientNewspaper, ClientMainBook,
 				(
 					SELECT TOP 1 NT_SHORT
-					FROM	
-						dbo.ClientDistrView y WITH(NOEXPAND) 
+					FROM
+						dbo.ClientDistrView y WITH(NOEXPAND)
 						INNER JOIN Din.NetType z ON z.NT_ID_MASTER = y.DistrTypeId
 						INNER JOIN #sstatus ON ST_ID = y.DS_ID
-					WHERE y.ID_CLIENT = a.CLientID 
+					WHERE y.ID_CLIENT = a.CLientID
 					ORDER BY NT_NET DESC, NT_TECH DESC
 				),
 				ServiceStatusName
-			FROM 
-				#client 
+			FROM
+				#client
 				INNER JOIN dbo.ClientTable a ON a.ClientID = CL_ID
 				INNER JOIN dbo.ServiceStatusTable ON StatusID = ServiceStatusID
 				LEFT OUTER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
@@ -139,7 +139,7 @@ BEGIN
 					WHERE CC.Client_Id = a.ClientID
 						AND C.DateTo IS NULL
 				) D
-			
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
 
@@ -156,13 +156,13 @@ BEGIN
 				DIS			INT,
 				COMP		TINYINT,
 				SSTATUS		VARCHAR(50)
-			) 
+			)
 
 		INSERT INTO #distr(CL_ID, HST_ID, HST_SHORT, HST_ORDER, SYS_ID, SYS_SHORT, NET, DIS_STR, DIS, COMP, SSTATUS)
-			SELECT 
+			SELECT
 				ID_CLIENT, d.HostID, d.HostShort, HostOrder, c.SystemID, c.SystemShortName, b.DistrTypeName,
 				dbo.DistrString(NULL, DISTR, COMP), DISTR, COMP, b.DS_NAME
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.CL_ID = b.ID_CLIENT
 				INNER JOIN dbo.SystemTable c ON c.SystemID = b.SystemID
@@ -172,7 +172,7 @@ BEGIN
 				INNER JOIN dbo.DistrStatus f ON f.DS_ID = b.DS_ID
 
 		UPDATE #data
-		SET NUM = 
+		SET NUM =
 			(
 				SELECT MIN(ROW)
 				FROM
@@ -189,9 +189,9 @@ BEGIN
 
 		INSERT INTO dbo.ServiceReport(SR_SERVICE, SR_MANAGER, SR_CSTATUS, SR_SSTATUS, SR_DATE)
 			OUTPUT INSERTED.SR_ID INTO @TBL
-			SELECT 
+			SELECT
 				(
-					SELECT	ServiceName 
+					SELECT	ServiceName
 					FROM	dbo.ServiceTable
 					WHERE	ServiceID = @SERVICE
 				),
@@ -203,7 +203,7 @@ BEGIN
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT	ServiceStatusName + ','
-						FROM	
+						FROM
 							dbo.ServiceStatusTable
 							INNER JOIN #cstatus ON ST_ID = ServiceStatusID
 						ORDER BY ServiceStatusName FOR XML PATH('')
@@ -212,38 +212,38 @@ BEGIN
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT	DS_NAME + ','
-						FROM	
+						FROM
 							dbo.DistrStatus
 							INNER JOIN #sstatus ON ST_ID = DS_ID
 						ORDER BY DS_NAME FOR XML PATH('')
 					)
 				), 1, 1, '')),
 				@DATE
-			
+
 
 		SELECT @ID = ID
 		FROM @TBL
 
 		INSERT INTO dbo.ServiceReportClient(
-					SRC_ID_SR, SRC_ID_CLIENT, SRC_NAME, SCR_CO_COND, SRC_CO_TYPE, 
+					SRC_ID_SR, SRC_ID_CLIENT, SRC_NAME, SCR_CO_COND, SRC_CO_TYPE,
 					SRC_PAY_TYPE, SRC_CLIENT_PAY, SRC_PAPPER, SRC_BOOK, SRC_NET, SRC_STATUS)
-			SELECT 
-					@ID, CL_ID, CL_NAME, CO_COND, CO_TYPE, 
+			SELECT
+					@ID, CL_ID, CL_NAME, CO_COND, CO_TYPE,
 					PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, NET, CSTATUS
 			FROM #data
 
 		INSERT INTO dbo.ServiceReportDistr(
-					SRD_ID_SR, SRD_ID_CLIENT, SRD_HST, SRD_HST_NAME, SRD_HST_ORDER, 
-					SRD_SYS, SRD_SYS_NAME, SRD_NET, 
-					SRD_DIS_STR, SRD_DIS_NUM, SRD_DIS_COMP, SRD_STATUS)				
-			SELECT 
-					@ID, CL_ID, HST_ID, HST_SHORT, HST_ORDER, 
+					SRD_ID_SR, SRD_ID_CLIENT, SRD_HST, SRD_HST_NAME, SRD_HST_ORDER,
+					SRD_SYS, SRD_SYS_NAME, SRD_NET,
+					SRD_DIS_STR, SRD_DIS_NUM, SRD_DIS_COMP, SRD_STATUS)
+			SELECT
+					@ID, CL_ID, HST_ID, HST_SHORT, HST_ORDER,
 					SYS_ID, SYS_SHORT, NET,
 					DIS_STR, DIS, COMP, SSTATUS
 			FROM #distr
 
 		SELECT HostID, HostShort
-		FROM 
+		FROM
 			dbo.Hosts
 			INNER JOIN #host ON HostID = HST_ID
 		ORDER BY HostOrder
@@ -251,10 +251,10 @@ BEGIN
 		SELECT DISTINCT CL_ID
 		FROM #data
 
-		SELECT 
+		SELECT
 			a.CL_ID, CL_NAME, CO_COND, CO_FIXED, CO_TYPE, PAY_TYPE, CLIENT_PAY, PAPPER, BOOK, a.NET, PAY_DATE,
 			HST_ID, HST_SHORT, SYS_SHORT, b.NET AS DIS_NET, DIS_STR
-		FROM 
+		FROM
 			#data a LEFT OUTER JOIN
 			#distr b ON a.CL_ID = b.CL_ID
 		ORDER BY NUM
@@ -263,18 +263,18 @@ BEGIN
 		FROM dbo.DistrTypeTable
 		ORDER BY DistrTypeOrder
 
-		SELECT 
-			HST_ID, DistrTypeID, 
+		SELECT
+			HST_ID, DistrTypeID,
 			(
 				SELECT COUNT(*)
 				FROM #distr c
 				WHERE NET = DistrTypeName AND b.HST_ID = c.HST_ID
 			) AS CNT
-		FROM 
+		FROM
 			dbo.DistrTypeTable a
 			CROSS JOIN #host b
-			
-		
+
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
 
@@ -292,14 +292,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cstatus') IS NOT NULL
 			DROP TABLE #cstatus
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_REPORT_CREATE] TO rl_service_report;
+GO

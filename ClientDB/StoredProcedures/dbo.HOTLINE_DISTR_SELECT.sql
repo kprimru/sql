@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[HOTLINE_DISTR_SELECT]
+ALTER PROCEDURE [dbo].[HOTLINE_DISTR_SELECT]
 	@NAME			NVARCHAR(128),
 	@DISTR			INT,
 	@SERVICE		INT,
@@ -35,7 +35,7 @@ BEGIN
 
 		IF @HIDE_UNSERVICE IS NULL
 			SET @HIDE_UNSERVICE = 1
-		
+
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
 
@@ -49,7 +49,7 @@ BEGIN
 				ID_HOST		INT,
 				DISTR		INT,
 				COMP		TINYINT,
-				DS_INDEX	INT, 
+				DS_INDEX	INT,
 				NT_SHORT	NVARCHAR(32),
 				SST_SHORT	NVARCHAR(32),
 				DT			NVARCHAR(256)
@@ -66,7 +66,7 @@ BEGIN
 						AND (DistrNumber = @DISTR OR @DISTR IS NULL)
 						AND (CLientName LIKE @NAME OR @NAME IS NULL)
 						AND (@HIDE_UNSERVICE = 1 AND DS_REG = 0 OR @HIDE_UNSERVICE = 0 OR @TP = 2)
-						AND 
+						AND
 							(
 								@TP = 1 AND NOT EXISTS
 									(
@@ -91,21 +91,21 @@ BEGIN
 			ORDER BY CASE WHEN ClientID IS NULL THEN 0 ELSE 1 END, ServiceName, ClientName, SystemOrder
 
 		DECLARE @SQL NVARCHAR(MAX)
-		
+
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(NVARCHAR(64), NEWID()) + '] ON #cl (NAME, SERVICE, ID_CLIENT)'
 		EXEC (@SQL)
 
 		INSERT INTO #cl(ID_PARENT, ID_CLIENT, NAME, ID_HOST, DISTR, COMP, DS_INDEX, NT_SHORT, SST_SHORT, DT)
-			SELECT 
+			SELECT
 				(
-					SELECT TOP 1 ID 
-					FROM #cl b 
+					SELECT TOP 1 ID
+					FROM #cl b
 					WHERE ISNULL(a.ClientID, 0) = ISNULL(b.ID_CLIENT, 0)
 						AND ISNULL(a.ClientName, '') = ISNULL(b.NAME, '')
 						AND ISNULL(ServiceName + ISNULL(' (' + ManagerName + ')', ''), '') = ISNULL(b.SERVICE, '')
 				),
 				ClientID, DistrStr, HostID, DistrNumber, CompNumber, DS_INDEX, NT_SHORT, SST_SHORT,
-				CASE @TP 
+				CASE @TP
 					WHEN 1 THEN
 							(
 								SELECT TOP 1 CONVERT(NVARCHAR(64), UNSET_DATE, 120) + ' / ' + UNSET_USER
@@ -124,8 +124,8 @@ BEGIN
 									AND a.CompNumber = b.COMP
 								ORDER BY SET_DATE DESC
 							)
-				END		
-					
+				END
+
 			FROM dbo.RegNodeComplectClientView a
 			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
@@ -134,7 +134,7 @@ BEGIN
 				AND NT_TECH IN (0, 1, 11)
 				AND (SST_SHORT IN (SELECT ID FROM dbo.TableStringFromXML(@TYPE)) OR @TYPE IS NULL)
 				AND (@HIDE_UNSERVICE = 1 AND DS_REG = 0 OR @HIDE_UNSERVICE = 0 OR @TP = 2)
-				AND 
+				AND
 					(
 						@TP = 1 AND NOT EXISTS
 							(
@@ -176,15 +176,17 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[HOTLINE_DISTR_SELECT] TO rl_expert_distr;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(UniqueIdentifier)]
+ALTER FUNCTION [Common].[Is Equal(UniqueIdentifier)]
 (
 	@V1	UniqueIdentifier,
 	@V2	UniqueIdentifier

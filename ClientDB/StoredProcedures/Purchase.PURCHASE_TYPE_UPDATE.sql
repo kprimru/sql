@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PURCHASE_TYPE_UPDATE]
+ALTER PROCEDURE [Purchase].[PURCHASE_TYPE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(100)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE Purchase.PurchaseType
 		SET PT_NAME = @NAME
 		WHERE PT_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PURCHASE_TYPE_UPDATE] TO rl_purchase_type_u;
+GO

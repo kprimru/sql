@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_RESULT_SELECT]
+ALTER PROCEDURE [Subhost].[TEST_RESULT_SELECT]
 	@SUBHOST	UNIQUEIDENTIFIER,
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME
@@ -26,8 +26,8 @@ BEGIN
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
-		SELECT 
-			a.ID, b.NAME, PERSONAL, START, FINISH, 
+		SELECT
+			a.ID, b.NAME, PERSONAL, START, FINISH,
 			Common.TimeSecToStr(DATEDIFF(SECOND, a.START, a.FINISH)) AS LN,
 			(
 				SELECT COUNT(*)
@@ -36,13 +36,13 @@ BEGIN
 			) AS QST_CNT,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					Subhost.CheckTest z
 					INNER JOIN Subhost.CheckTestQuestion y ON z.ID = y.ID_TEST
 				WHERE z.ID_TEST = a.ID
 					AND y.RESULT = 1
 			) AS RIGHT_CNT,
-			CASE 
+			CASE
 				WHEN FINISH IS NULL THEN 'Досдать'
 				ELSE
 					CASE ISNULL((SELECT RESULT FROM Subhost.CheckTest z WHERE z.ID_TEST = a.ID), 200)
@@ -54,11 +54,11 @@ BEGIN
 			END AS RES,
 			(
 				SELECT TOP 1 z.NOTE
-				FROM 
+				FROM
 					Subhost.CheckTest z
 				WHERE z.ID_TEST = a.ID
 			) AS RESULT_NOTE
-		FROM 
+		FROM
 			Subhost.PersonalTest a
 			INNER JOIN Subhost.Test b ON a.ID_TEST = b.ID
 		WHERE a.ID_SUBHOST = @SUBHOST
@@ -66,14 +66,16 @@ BEGIN
 			AND (START < @FINISH OR @FINISH IS NULL)
 			AND FINISH IS NOT NULL
 		ORDER BY START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_RESULT_SELECT] TO rl_web_subhost;
+GO

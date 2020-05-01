@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_BANKS_CREATE(OLD)]
+ALTER PROCEDURE [dbo].[SYSTEM_BANKS_CREATE(OLD)]
 	@SYS_LIST				NVARCHAR(MAX),
 	@DISTR_TYPE_LIST		NVARCHAR(MAX),
 	@BANK_REQ_LIST			NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,12 +23,12 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @TEMP_S					NVARCHAR(15)			--оепелеммше дкъ упюмемхъ йюфднцн оюпюлерпю он ндмнлс б жхйке
 		DECLARE @TEMP_D					NVARCHAR(15)
 		DECLARE @TEMP_B					NVARCHAR(15)
 		DECLARE @TEMP_R					BIT
-		
+
 		DECLARE @DISTR_TYPE_TEMP_LIST	NVARCHAR(MAX)			--оепелеммше дкъ упюмемхъ йнохх яохяйю врнаш ецн лнфмн ашкн бняярюмнбхрэ дкъ якедсчыеи хрепюжхх жхйкю
 		DECLARE @BANK_REQ_TEMP_LIST		NVARCHAR(MAX)
 
@@ -47,7 +47,7 @@ BEGIN
 			IF (CHARINDEX(',', @SYS_LIST)<>0)
 			BEGIN
 				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--гдеяэ бшрюяйхбюел он ндмнлс ID яхярелш хг яохяйю
-				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))		
+				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))
 			END
 			ELSE
 			BEGIN
@@ -61,7 +61,7 @@ BEGIN
 			WHILE @DISTR_TYPE_END = 0
 			BEGIN
 				IF (CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)<>0)
-				BEGIN					
+				BEGIN
 					SET @TEMP_D = SUBSTRING(@DISTR_TYPE_TEMP_LIST, 1, CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)-1)
 					SET @DISTR_TYPE_TEMP_LIST = SUBSTRING(@DISTR_TYPE_TEMP_LIST, CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)+1, LEN(@DISTR_TYPE_TEMP_LIST))
 				END
@@ -70,10 +70,10 @@ BEGIN
 					SET @TEMP_D = @DISTR_TYPE_TEMP_LIST
 					SET @DISTR_TYPE_END = 1
 				END
-				
+
 				SET @BANK_REQ_END = 0
 				SET @BANK_REQ_TEMP_LIST = @BANK_REQ_LIST
-				
+
 				DELETE
 				FROM dbo.SystemsBanks
 				WHERE	System_Id = @TEMP_S AND			--онкмнярэч бяе сдюкъел дкъ щрни яхярелш х яерх х гюонкмъел гюмнбн
@@ -85,7 +85,7 @@ BEGIN
 					BEGIN
 						SET @TEMP_B = SUBSTRING(@BANK_REQ_TEMP_LIST, 1, CHARINDEX('-', @BANK_REQ_TEMP_LIST)-1)
 						SET @TEMP_R = SUBSTRING(@BANK_REQ_TEMP_LIST, CHARINDEX('-', @BANK_REQ_TEMP_LIST)+1, 1) --бюфмн онлмхрэ, 3 юпцслемр - дкхмю ю ме йнмевмюъ онгхжхъ
-						
+
 						SET @BANK_REQ_TEMP_LIST = SUBSTRING(@BANK_REQ_TEMP_LIST, CHARINDEX(',', @BANK_REQ_TEMP_LIST)+1, LEN(@BANK_REQ_TEMP_LIST))
 					END
 					ELSE
@@ -97,24 +97,26 @@ BEGIN
 					END
 
 						INSERT INTO dbo.SystemsBanks(System_Id, DistrType_Id, InfoBank_Id, [Required], [Start])
-						VALUES(@TEMP_S, @TEMP_D, @TEMP_B, @TEMP_R, GETDATE())	
+						VALUES(@TEMP_S, @TEMP_D, @TEMP_B, @TEMP_R, GETDATE())
 
 
 
-					--PRINT(@TEMP_S+' '+@TEMP_D+' '+@TEMP_B+' '+CONVERT(VARCHAR, @TEMP_R))											
+					--PRINT(@TEMP_S+' '+@TEMP_D+' '+@TEMP_B+' '+CONVERT(VARCHAR, @TEMP_R))
 
 				END
 			END
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_CREATE(OLD)] TO rl_system_bank_i;
+GO

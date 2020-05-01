@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PARTNER_REQUIREMENT_UPDATE]
+ALTER PROCEDURE [Purchase].[PARTNER_REQUIREMENT_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(4000),
 	@SHORT	VARCHAR(200)
@@ -28,14 +28,16 @@ BEGIN
 		SET PR_NAME		=	@NAME,
 			PR_SHORT	=	@SHORT
 		WHERE PR_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH		
+	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PARTNER_REQUIREMENT_UPDATE] TO rl_partner_requirement_u;
+GO

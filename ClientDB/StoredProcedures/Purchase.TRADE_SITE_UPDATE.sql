@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TRADE_SITE_UPDATE]
+ALTER PROCEDURE [Purchase].[TRADE_SITE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(4000),
 	@URL	VARCHAR(250),
@@ -30,14 +30,16 @@ BEGIN
 			TS_URL		=	@URL,
 			TS_SHORT	=	@SHORT
 		WHERE TS_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TRADE_SITE_UPDATE] TO rl_trade_site_u;
+GO

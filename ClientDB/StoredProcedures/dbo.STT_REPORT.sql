@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STT_REPORT]
+ALTER PROCEDURE [dbo].[STT_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SUBHOST	VARCHAR(10),
@@ -32,7 +32,7 @@ BEGIN
 			SET @SUBHOST = NULL
 			SET @MANAGER = NULL
 		END
-		
+
 		SET @END = DATEADD(DAY, 1, @END)
 
 		DECLARE @HOST	INT
@@ -42,7 +42,7 @@ BEGIN
 		WHERE HostReg = 'LAW'
 
 		DECLARE @SYSTEM	INT
-		
+
 		SELECT @SYSTEM = SystemID
 		FROM dbo.SystemTable
 		WHERE SystemBaseName = 'RGN'
@@ -56,27 +56,27 @@ BEGIN
 				DISTR	INT,
 				COMP	TINYINT
 			)
-			
+
 		INSERT INTO #ip(SYS, DISTR, COMP)
 			SELECT DISTINCT CSD_SYS, CSD_DISTR, CSD_COMP
 			FROM dbo.IPSTTView
-			WHERE CSD_START >= @BEGIN AND CSD_START < @END	
+			WHERE CSD_START >= @BEGIN AND CSD_START < @END
 
-		SELECT 
-			c.ClientID, ISNULL(c.ClientFullName, Comment) AS ClientFullName, 
+		SELECT
+			c.ClientID, ISNULL(c.ClientFullName, Comment) AS ClientFullName,
 			ISNULL(ManagerName, SubhostName) AS ManagerName, ServiceName,
-			a.DistrStr, SST_SHORT, NT_SHORT, 
-			CASE 
+			a.DistrStr, SST_SHORT, NT_SHORT,
+			CASE
 				WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 				ELSE STT_COUNT
 			END AS STT_COUNT
 		FROM
 			(
-				SELECT 
+				SELECT
 					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
 					(
 						SELECT COUNT(DISTINCT OTHER)
-						FROM 
+						FROM
 							dbo.ClientStat z
 							INNER JOIN dbo.SystemTable b ON SYS_NUM = SystemNumber
 						WHERE a.HostID = b.HostID AND z.DISTR = DistrNumber AND z.COMP = CompNumber
@@ -84,7 +84,7 @@ BEGIN
 							AND DATE < @END
 					) AS STT_COUNT,
 					c.DISTR AS IP_DISTR
-				FROM 
+				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
 					LEFT OUTER JOIN #ip c ON c.SYS = b.SystemNumber AND c.DISTR = a.DistrNumber AND c.COMP = a.CompNumber
@@ -100,24 +100,26 @@ BEGIN
 		WHERE (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			AND (ServiceID IN (SELECT ID FROM dbo.TableIDFromXML(@SERVICE)) OR @SERVICE IS NULL)
 			AND (
-					CASE 
+					CASE
 						WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 						ELSE STT_COUNT
 					END = 0 AND (STT_CHECK = 1 OR STT_CHECK IS NULL)
-					OR 
+					OR
 					@EMPTY = 0)
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 2 END, ManagerName, ServiceName, c.ClientFullName, a.SystemOrder, a.DistrStr
-		
+
 		IF OBJECT_ID('tempdb..#ip') IS NOT NULL
 			DROP TABLE #ip
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STT_REPORT] TO rl_stt_report;
+GO

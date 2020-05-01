@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[VENDOR_SELECT]
+ALTER PROCEDURE [dbo].[VENDOR_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -29,14 +29,16 @@ BEGIN
 			OR SHORT LIKE @FILTER
 			OR DIRECTOR LIKE @FILTER
 		ORDER BY SHORT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[VENDOR_SELECT] TO rl_vendor_r;
+GO

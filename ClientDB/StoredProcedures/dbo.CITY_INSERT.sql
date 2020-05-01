@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CITY_INSERT]	
+ALTER PROCEDURE [dbo].[CITY_INSERT]
 	@REGION		UNIQUEIDENTIFIER,
 	@AREA		UNIQUEIDENTIFIER,
 	@CITY		UNIQUEIDENTIFIER,
@@ -42,17 +42,19 @@ BEGIN
 			VALUES(@REGION, @AREA, @CITY, @NAME, @PREFIX, @SUFFIX, @DISPLAY, @DEFAULT)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		INSERT INTO dbo.Street(ST_ID_CITY, ST_NAME, ST_PREFIX, ST_SUFFIX)
 			VALUES(@ID, 'Без улицы', '', '')
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_INSERT] TO rl_city_i;
+GO

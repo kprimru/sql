@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CLIENT_SPECIFICATION_SELECT]
+ALTER PROCEDURE [Contract].[CLIENT_SPECIFICATION_SELECT]
 	@ID	INT
 AS
 BEGIN
@@ -23,21 +23,23 @@ BEGIN
 	BEGIN TRY
 
 		SELECT a.ID, ID_SPECIFICATION, b.NAME, a.NUM, a.REG_DATE, a.DATE, FINISH_DATE, a.RETURN_DATE, a.ID_STATUS, c.IND, a.NOTE
-		FROM 
+		FROM
 			Contract.ContractSpecification a
 			INNER JOIN Contract.Contract d ON d.ID = a.ID_CONTRACT
 			INNER JOIN Contract.Specification b ON a.ID_SPECIFICATION = b.ID
 			INNER JOIN Contract.Status c ON a.ID_STATUS = c.ID
 		WHERE ID_CLIENT = @ID
 		ORDER BY NUM, DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CLIENT_SPECIFICATION_SELECT] TO rl_contract_register_r;
+GO

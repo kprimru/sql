@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[PERSONAL_TEST_ANSWER_SAVE]
+ALTER PROCEDURE [Subhost].[PERSONAL_TEST_ANSWER_SAVE]
 	@QUEST	UNIQUEIDENTIFIER,
 	@ANS	NVARCHAR(MAX),
 	@TP		INT
@@ -29,24 +29,26 @@ BEGIN
 			SET ANS = @ANS,
 				STATUS = 2
 			WHERE ID = @QUEST
-		ELSE 
+		ELSE
 		BEGIN
 			INSERT INTO Subhost.PersonalTestAnswer(ID_QUESTION, ID_ANSWER)
 				SELECT @QUEST, ID
 				FROM dbo.TableGUIDFromXML(@ANS)
-				
+
 			UPDATE Subhost.PersonalTestQuestion
 			SET STATUS = 2
 			WHERE ID = @QUEST
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[PERSONAL_TEST_ANSWER_SAVE] TO rl_web_subhost;
+GO

@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_COMMENTS_SET]
-	@CLIENT INT,	
+ALTER PROCEDURE [dbo].[CLIENT_COMMENTS_SET]
+	@CLIENT INT,
 	@COMMENT NVARCHAR(MAX)
 AS
 BEGIN
@@ -25,12 +25,12 @@ BEGIN
 
 		DECLARE @XML XML
 		DECLARE @HDOC INT
-		
+
 		SET @XML = CAST(@COMMENT AS XML)
 
 		EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
 
-		UPDATE dbo.ClientTable 
+		UPDATE dbo.ClientTable
 		SET ClientLastUpdate = GETDATE()
 		WHERE ClientID = @CLIENT
 
@@ -41,14 +41,16 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO dbo.CLientSearchComments(CSC_ID_CLIENT, CSC_COMMENTS)
 				VALUES(@CLIENT, @XML)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_COMMENTS_SET] TO rl_client_search_comment;
+GO

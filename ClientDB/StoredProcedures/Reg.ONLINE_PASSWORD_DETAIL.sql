@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[ONLINE_PASSWORD_DETAIL]
+ALTER PROCEDURE [Reg].[ONLINE_PASSWORD_DETAIL]
 	@HOST	INT,
 	@DISTR	INT,
 	@COMP	TINYINT
@@ -24,23 +24,25 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			SystemShortName AS [Система], PASS AS [Пароль], 
-			CASE STATUS WHEN 1 THEN 'Действующий' WHEN 2 THEN 'Старый' WHEN 3 THEN 'Удален' ELSE '???' END AS [Статус], 
+		SELECT
+			SystemShortName AS [Система], PASS AS [Пароль],
+			CASE STATUS WHEN 1 THEN 'Действующий' WHEN 2 THEN 'Старый' WHEN 3 THEN 'Удален' ELSE '???' END AS [Статус],
 			UPD_DATE AS [Дата установки пароля], UPD_USER AS [Пользователь]
-		FROM 
+		FROM
 			Reg.OnlinePassword a
 			INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
-		WHERE ID_HOST = @HOST AND DISTR = @DISTR AND COMP = @COMP 
+		WHERE ID_HOST = @HOST AND DISTR = @DISTR AND COMP = @COMP
 		ORDER BY UPD_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Reg].[ONLINE_PASSWORD_DETAIL] TO rl_reg_online;
+GO

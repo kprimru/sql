@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RIVAL_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[RIVAL_TYPE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE dbo.RivalTypeTable
 		SET RivalTypeName = @NAME
 		WHERE RivalTypeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RIVAL_TYPE_UPDATE] TO rl_rival_u;
+GO

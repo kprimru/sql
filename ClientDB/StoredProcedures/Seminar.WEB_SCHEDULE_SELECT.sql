@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[WEB_SCHEDULE_SELECT]
+ALTER PROCEDURE [Seminar].[WEB_SCHEDULE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,23 +21,25 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, LIMIT, CONVERT(NVARCHAR(32), DATE, 104) + ' ' + LEFT(CONVERT(NVARCHAR(32), TIME, 108), 5) + ' ' + b.NAME AS SUBJ_FULL,
 			DATE, TIME, NOTE, READER, a.QUESTIONS, a.PERSONAL
-		FROM 
+		FROM
 			Seminar.Schedule a
 			INNER JOIN Seminar.Subject b ON a.ID_SUBJECT = b.ID
 		WHERE a.WEB = 1
 			AND DATE >= GETDATE()
 		ORDER BY a.DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[WEB_SCHEDULE_SELECT] TO rl_seminar_web;
+GO

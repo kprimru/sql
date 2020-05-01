@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TRUST_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_TRUST_FILTER]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@MANAGER	INT,
@@ -39,8 +39,8 @@ BEGIN
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			ORDER BY CC_DATE DESC, ManagerName, ServiceName, ClientFullName
 		ELSE
-			SELECT 
-				ClientID, ClientFullName, ServiceName, ManagerName, 
+			SELECT
+				ClientID, ClientFullName, ServiceName, ManagerName,
 				(
 					SELECT MAX(CC_DATE)
 					FROM dbo.ClientTrustView
@@ -60,14 +60,16 @@ BEGIN
 							AND (CC_DATE <= @END OR @END IS NULL)
 					)
 			ORDER BY ManagerName, ServiceName, ClientFullName
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TRUST_FILTER] TO rl_filter_trust;
+GO

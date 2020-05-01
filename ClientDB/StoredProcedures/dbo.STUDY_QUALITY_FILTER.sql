@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_QUALITY_FILTER]
+ALTER PROCEDURE [dbo].[STUDY_QUALITY_FILTER]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@TEACHER	INT,
@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT a.ID, DATE, NOTE, ClientID, ClientFullName, ManagerName, ServiceName, d.NAME, WEIGHT, TeacherName
-		FROM 
+		FROM
 			dbo.StudyQuality a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID
 			INNER JOIN dbo.TeacherTable c ON a.ID_TEACHER = c.TeacherID
@@ -36,14 +36,16 @@ BEGIN
 			AND (a.ID_TEACHER = @TEACHER OR @TEACHER IS NULL)
 			AND (a.ID_TYPE = @TYPE OR @TYPE IS NULL)
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_QUALITY_FILTER] TO rl_filter_study;
+GO

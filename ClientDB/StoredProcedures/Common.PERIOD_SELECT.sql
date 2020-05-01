@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_SELECT]
+ALTER PROCEDURE [Common].[PERIOD_SELECT]
 	@TYPE	TINYINT,
 	@BEGIN	SMALLDATETIME = NULL,
 	@END	SMALLDATETIME = NULL,
@@ -34,14 +34,17 @@ BEGIN
 			AND (FINISH <= @END OR @END IS NULL)
 			AND (NAME LIKE @FILTER OR @FILTER IS NULL)
 		ORDER BY START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_SELECT] TO public;
+GRANT EXECUTE ON [Common].[PERIOD_SELECT] TO rl_period_r;
+GO

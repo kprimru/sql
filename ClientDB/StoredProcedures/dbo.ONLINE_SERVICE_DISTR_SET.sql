@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ONLINE_SERVICE_DISTR_SET]
+ALTER PROCEDURE [dbo].[ONLINE_SERVICE_DISTR_SET]
 	@Host_Id	SmallInt,
 	@Distr		Int,
 	@Comp		TinyInt,
@@ -42,7 +42,7 @@ BEGIN
 			SET @HotlineIsActive = 1
 		ELSE
 			SET @HotlineIsActive = 0;
-			
+
 		IF EXISTS
 			(
 				SELECT TOP (1) *
@@ -68,7 +68,7 @@ BEGIN
 				AND DISTR = @Distr
 				AND COMP = @Comp
 				AND STATUS = 1;
-				
+
 		IF @ExpertIsActive = 0 AND @Expert = 1
 			INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP)
 			VALUES(@Host_Id, @Distr, @Comp)
@@ -81,14 +81,16 @@ BEGIN
 				AND DISTR = @Distr
 				AND COMP = @Comp
 				AND STATUS = 1
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ONLINE_SERVICE_DISTR_SET] TO rl_expert_distr;
+GO

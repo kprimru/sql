@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ANSWER_GET]
+ALTER PROCEDURE [dbo].[ANSWER_GET]
 	@question INT
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.AnswerTable
 		WHERE QuestionID = @question
 		ORDER BY AnswerName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ANSWER_GET] TO rl_client_question_r;
+GO

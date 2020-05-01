@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[WEIGHT_LOAD]
+ALTER PROCEDURE [dbo].[WEIGHT_LOAD]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,7 +24,7 @@ BEGIN
 		DELETE FROM dbo.Weight;
 
 		INSERT INTO dbo.Weight
-		SELECT 
+		SELECT
 			PR_DATE,
 			SYS_REG_NAME,
 			SST_NAME,
@@ -47,14 +47,14 @@ BEGIN
 		) AS W
 		WHERE RN = 1
 		ORDER BY PR_DATE, SYS_REG_NAME, SST_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_IMPORT]
+ALTER PROCEDURE [Price].[PRICE_IMPORT]
 	@DATA	NVARCHAR(MAX)
 AS
 BEGIN
@@ -24,7 +24,7 @@ BEGIN
 
 		DECLARE @XML XML
 		DECLARE @HDOC INT
-		
+
 		IF OBJECT_ID('tempdb..#price') IS NOT NULL
 			DROP TABLE #price
 
@@ -34,7 +34,7 @@ BEGIN
 				DATE	SMALLDATETIME,
 				PRICE	MONEY
 			)
-				
+
 		SET @XML = CAST(@DATA AS XML)
 
 		EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
@@ -45,7 +45,7 @@ BEGIN
 				c.value('@DATE', 'SMALLDATETIME'),
 				c.value('@PRICE', 'MONEY')
 			FROM @XML.nodes('/ROOT/*') AS a(c)
-		
+
 		INSERT INTO Price.SystemPrice(ID_MONTH, ID_SYSTEM, PRICE)
 			SELECT c.ID, b.SystemID, a.PRICE
 			FROM
@@ -58,19 +58,21 @@ BEGIN
 					FROM Price.SystemPrice
 					WHERE ID_MONTH = c.ID AND ID_SYSTEM = b.SystemID
 				)
-		
+
 		EXEC sp_xml_removedocument @hdoc
 
 		IF OBJECT_ID('tempdb..#price') IS NOT NULL
 			DROP TABLE #price
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[PRICE_IMPORT] TO rl_price_import;
+GO

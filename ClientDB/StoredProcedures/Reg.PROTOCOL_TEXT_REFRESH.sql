@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[PROTOCOL_TEXT_REFRESH]
+ALTER PROCEDURE [Reg].[PROTOCOL_TEXT_REFRESH]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,10 +21,10 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @regpath NVARCHAR(MAX)
 
-		SET @regpath = '\\BIM\VOL2\VEDAREG\VEDAREG\CONSREG\'	
+		SET @regpath = '\\BIM\VOL2\VEDAREG\VEDAREG\CONSREG\'
 
 		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 			DROP TABLE #reg
@@ -38,7 +38,7 @@ BEGIN
 
 		DECLARE @sys VARCHAR(50)
 
-		DECLARE SYSTEMS CURSOR LOCAL FOR 
+		DECLARE SYSTEMS CURSOR LOCAL FOR
 			SELECT HostReg
 			FROM dbo.Hosts
 			ORDER BY HostReg
@@ -55,7 +55,7 @@ BEGIN
 		/*SELECT @cmd*/
 
 		EXEC xp_cmdshell @cmd, NO_OUTPUT
-			
+
 		/*RETURN
 
 		TRUNCATE TABLE Reg.ProtocolText
@@ -70,36 +70,36 @@ BEGIN
 
 		SELECT @MIN_DATE
 
-		WHILE @@FETCH_STATUS = 0 
-		BEGIN		
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
 			SET @cmd = 'XCOPY /V /Y "' + @regpath + @sys + '\' + '#' + @sys + '.txt" "C:\DATA\BULK\' + @date + '"'
 
 			EXEC xp_cmdshell @cmd, NO_OUTPUT
-			
+
 			SET @filepath = 'C:\DATA\BULK\' + @date + '\#' + @sys + '.txt'
-			
+
 			EXECUTE xp_fileexist @filepath, @file_exists OUTPUT
 
 			IF @file_exists = 1
 			BEGIN
-			
+
 			SELECT @SYS
-				
+
 			TRUNCATE TABLE #reg
 
 			SET @sql = '
-			BULK INSERT #reg 
+			BULK INSERT #reg
 				FROM ''C:\DATA\BULK\' + @date + '\#' + @sys + '.txt''
-				WITH 
-					(					
-						DATAFILETYPE = ''char'',  
+				WITH
+					(
+						DATAFILETYPE = ''char'',
 						FIRSTROW = 2,
 						CODEPAGE = ''CP866''
 					)
 			'
 
 			EXEC (@sql)
-			
+
 			/*
 			 маска
 			 первые 10 символов 0 дата
@@ -117,32 +117,32 @@ BEGIN
 			FROM #reg
 			WHERE LTRIM(RTRIM(SUBSTRING(REG_STR, 12, 6))) <> ''
 			*/
-			
+
 			INSERT INTO Reg.ProtocolText
 				(
 					ID_HOST, DATE, DISTR, COMP, CNT, COMMENT
 				)
-				
+
 				SELECT ID_HOST, DATE, DISTR, COMP, CNT, COMMENT
 				FROM
 					(
-						SELECT 
-							HostID AS ID_HOST, 
-							CONVERT(SMALLDATETIME, LTRIM(RTRIM(SUBSTRING(REG_STR, 1, 10))), 104) AS DATE, 
-							/*CONVERT(INT, LTRIM(RTRIM(SUBSTRING(REG_STR, 12, 6)))) AS DISTR, 
-							CONVERT(TINYINT, 
+						SELECT
+							HostID AS ID_HOST,
+							CONVERT(SMALLDATETIME, LTRIM(RTRIM(SUBSTRING(REG_STR, 1, 10))), 104) AS DATE,
+							/*CONVERT(INT, LTRIM(RTRIM(SUBSTRING(REG_STR, 12, 6)))) AS DISTR,
+							CONVERT(TINYINT,
 								CASE LTRIM(RTRIM(SUBSTRING(REG_STR, 19, 3)))
 									WHEN '' THEN 1
 									ELSE LTRIM(RTRIM(SUBSTRING(REG_STR, 19, 3)))
 								END) AS COMP, */
 							CASE CHARINDEX('/', LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))))
 								WHEN 0 THEN CONVERT(INT, LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))))
-								ELSE CONVERT(INT, 
+								ELSE CONVERT(INT,
 												LEFT(
 														LTRIM(RTRIM(
 																SUBSTRING(REG_STR, 11, 14)
-																)), 
-														CHARINDEX('/', 
+																)),
+														CHARINDEX('/',
 															LTRIM(RTRIM(
 																SUBSTRING(REG_STR, 11, 14)
 																))
@@ -151,20 +151,20 @@ BEGIN
 							END AS DISTR,
 							CASE CHARINDEX('/', LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))))
 								WHEN 0 THEN CONVERT(TINYINT, 1)
-								ELSE CONVERT(TINYINT, 
+								ELSE CONVERT(TINYINT,
 									RIGHT(
 											LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))),
-											LEN(LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14)))) - 
+											LEN(LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14)))) -
 											CHARINDEX('/', LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))))
 										)
 									)
 							END AS COMP,
-							CONVERT(INT, LTRIM(RTRIM(SUBSTRING(REG_STR, 23, 4)))) AS CNT, 
+							CONVERT(INT, LTRIM(RTRIM(SUBSTRING(REG_STR, 23, 4)))) AS CNT,
 							LTRIM(RTRIM(SUBSTRING(REG_STR, 28, LEN(REG_STR) - 27))) AS COMMENT
-						FROM 
+						FROM
 							(
 								SELECT HostID, REG_STR
-								FROM 
+								FROM
 									#reg INNER JOIN
 									dbo.Hosts ON HostReg = @sys
 								WHERE LTRIM(RTRIM(SUBSTRING(REG_STR, 11, 14))) <> ''
@@ -199,14 +199,14 @@ BEGIN
 		/*SELECT @cmd*/
 
 		EXEC xp_cmdshell @cmd, NO_OUTPUT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

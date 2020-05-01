@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[BLANK_GET]
+ALTER PROCEDURE [Poll].[BLANK_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,16 +23,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT NAME
-		FROM Poll.Blank	
+		FROM Poll.Blank
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[BLANK_GET] TO rl_blank_r;
+GO

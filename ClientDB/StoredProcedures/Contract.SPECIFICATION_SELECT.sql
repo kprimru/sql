@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[SPECIFICATION_SELECT]
+ALTER PROCEDURE [Contract].[SPECIFICATION_SELECT]
 	@FILTER	NVARCHAR(256) = NULL
 AS
 BEGIN
@@ -28,15 +28,17 @@ BEGIN
 			OR NUM LIKE @FILTER
 			OR NAME LIKE @FILTER
 			OR NOTE LIKE @FILTER
-		ORDER BY NUM	
-		
+		ORDER BY NUM
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[SPECIFICATION_SELECT] TO rl_contract_specification_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_FILTER_2]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_FILTER_2]
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@CLIENT		NVARCHAR(256),
@@ -39,17 +39,17 @@ BEGIN
 			(
 				WRD	VARCHAR(100) PRIMARY KEY
 			)
-				
+
 		INSERT INTO #words(WRD)
 			SELECT DISTINCT '%' + Word + '%'
 			FROM dbo.SplitString(@WORDS)
 			WHERE Word IS NOT NULL
-			
+
 		SELECT
 			c.ClientID, EventDate, c.ClientFullName, ServiceName, ManagerName, ServiceStatusIndex, CATEGORY = ClientTypeName, EventTypeName, EventComment,
-			EventCreateUser AS EventCreateData, 
+			EventCreateUser AS EventCreateData,
 			CASE
-				WHEN EventLastUpdate <> EventCreate THEN EventLastUpdateUser 
+				WHEN EventLastUpdate <> EventCreate THEN EventLastUpdateUser
 				ELSE ''
 			END AS EventlastUpdateData
 		FROM
@@ -73,19 +73,21 @@ BEGIN
 					SELECT *
 					FROM #words
 					WHERE NOT (EventComment LIKE WRD)
-				)	
+				)
 		ORDER BY EventDate DESC, EventID DESC
-			
+
 		IF OBJECT_ID('tempdb..#words') IS NOT NULL
 			DROP TABLE #words
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_FILTER_2] TO rl_filter_event;
+GO

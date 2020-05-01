@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_KILL]
+ALTER PROCEDURE [Security].[USER_KILL]
 	@ID	INT
 WITH EXECUTE AS OWNER
 AS
@@ -24,18 +24,20 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @SQL NVARCHAR(MAX)
-		
+
 		SET @SQL = N'KILL ' + CONVERT(NVARCHAR(16), @ID)
-		
+
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_KILL] TO rl_maintenance;
+GO

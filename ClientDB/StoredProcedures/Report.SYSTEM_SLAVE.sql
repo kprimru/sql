@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SYSTEM_SLAVE]
+ALTER PROCEDURE [Report].[SYSTEM_SLAVE]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -21,13 +21,13 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		
-		SELECT 
-			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], Comment AS [Название клиента в РЦ], 
+
+		SELECT
+			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], Comment AS [Название клиента в РЦ],
 			Systems AS [Подчиненные системы в комплекте], ManagerName AS [Рук-ль], a.RegisterDate AS [Дата регистрации]
 		FROM
 			(
-				SELECT 
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -50,14 +50,14 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('CMT', 'QSA', 'ARB')
 						)
-						
+
 				UNION ALL
 
-				SELECT 
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
+							SELECT
 								DistrStr + ','
 							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 							WHERE a.Complect = b.Complect
@@ -77,10 +77,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('CMT', 'ARB')
 						)
-						
+
 				UNION ALL
-						
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -103,10 +103,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('BORG', 'ARB')
 						)
-						
+
 				UNION ALL
-						
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -129,10 +129,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('BORG')
 						)
-				
+
 				UNION ALL
-				
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -155,10 +155,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('LAW', 'BORG', 'ARB', 'CMT', 'QSA')
 						)
-			
+
 				UNION ALL
-				
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -181,10 +181,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT', 'FIN')
 						)
-			
+
 				UNION ALL
-				
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -207,10 +207,10 @@ BEGIN
 								AND b.DS_REG = 0
 								AND b.SystemBaseName IN ('LAW', 'ARB', 'CMT')
 						)
-						
+
 				UNION ALL
-				
-				SELECT 
+
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -229,7 +229,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT 
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -255,7 +255,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT 
+				SELECT
 					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
 					REVERSE(STUFF(REVERSE(
 						(
@@ -283,20 +283,22 @@ BEGIN
 			INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemBaseName
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemBaseName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
-			
 
-				
-					
-				
+
+
+
+
 		ORDER BY ManagerName, DistrNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SYSTEM_SLAVE] TO rl_report;
+GO

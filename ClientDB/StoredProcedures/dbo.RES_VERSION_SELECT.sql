@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RES_VERSION_SELECT]
+ALTER PROCEDURE [dbo].[RES_VERSION_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE @FILTER IS NULL
 			OR ResVersionNumber LIKE @FILTER
 		ORDER BY ResVersionNumber DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RES_VERSION_SELECT] TO rl_res_version_r;
+GO

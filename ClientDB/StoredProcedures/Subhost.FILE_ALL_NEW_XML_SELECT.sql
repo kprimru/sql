@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[FILE_ALL_NEW_XML_SELECT]
+ALTER PROCEDURE [Subhost].[FILE_ALL_NEW_XML_SELECT]
 	@SH		NVARCHAR(16),
 	@USR	NVARCHAR(128) = NULL
 WITH EXECUTE AS OWNER
@@ -25,20 +25,22 @@ BEGIN
 	BEGIN TRY
 
 		EXEC dbo.SUBHOST_EXPORT_DATA_NEW @SH
-		
+
 		INSERT INTO Subhost.FilesDownload(ID_SUBHOST, USR, FTYPE)
 			SELECT SH_ID, @USR, N'ALL'
 			FROM dbo.Subhost
 			WHERE SH_REG = @SH
 				AND @USR IS NOT NULL
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[FILE_ALL_NEW_XML_SELECT] TO rl_web_subhost;
+GO

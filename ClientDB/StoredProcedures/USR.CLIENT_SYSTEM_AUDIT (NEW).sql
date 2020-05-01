@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[CLIENT_SYSTEM_AUDIT (NEW)]
+ALTER PROCEDURE [USR].[CLIENT_SYSTEM_AUDIT (NEW)]
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL,
 	@IB			NVARCHAR(MAX) = NULL,
@@ -60,11 +60,11 @@ BEGIN
 			WHERE ClientID = a.ClientId
 				AND DS_REG = 0
 		) t
-		WHERE ServiceStatusID = 2 
+		WHERE ServiceStatusID = 2
 			AND (ManagerID = @manager OR @manager IS NULL)
 			AND (ServiceID = @service OR @service IS NULL)
 			AND (a.CLientID = @CLIENT OR @CLIENT IS NULL);
-			
+
 		INSERT INTO @ClientsDistrs
 		SELECT c.ClientId, c.Complect, c.ComplectStr, b.DistrStr, b.HostId, b.SystemId, b.DistrTypeId, b.Distr, b.Comp, b.DistrStr
 		FROM @Clients c
@@ -95,29 +95,29 @@ BEGIN
 
 		INSERT INTO @info_bank(ClientID, Complect, ComplectStr, DistrStr, Distr, Comp, SystemId, InfoBankID, InfoBankStart)
 		SELECT DISTINCT a.ClientID, Complect, ComplectStr, DistrStr, DISTR, COMP, SystemId, InfoBankID, InfoBankStart
-		FROM 
+		FROM
 		(
-			SELECT 
+			SELECT
 				a.ClientID, a.Complect, a.ComplectStr, DistrStr, DISTR, COMP, a.SystemId, c.InfoBankID, InfoBankStart, InfoBankName, SystemBaseName
 			FROM @ClientsDistrs a
 			CROSS APPLY dbo.SystemBankGet(a.SystemId, a.DistrTypeId) c
 			WHERE 	InfoBankActive = 1
 				AND Required = 1
-					
+
 			UNION
-				
-			SELECT 
+
+			SELECT
 				a.ClientID, a.Complect, a.ComplectStr, DistrStr, DISTR, COMP, a.SystemId, c.InfoBankID, InfoBankStart, InfoBankName, SystemBaseName
 			FROM @ClientsDistrs a
-			INNER JOIN dbo.DistrConditionView c ON a.SystemID = c.SystemID 
-												AND a.DISTR = c.DistrNumber 
+			INNER JOIN dbo.DistrConditionView c ON a.SystemID = c.SystemID
+												AND a.DISTR = c.DistrNumber
 												AND a.COMP = c.CompNumber
 			INNER JOIN dbo.SystemTable s ON s.SystemId = a.SystemId
 		) AS a
-		WHERE 
+		WHERE
 			(
-				@IB IS NULL OR 
-				InfoBankID IN 
+				@IB IS NULL OR
+				InfoBankID IN
 					(
 						SELECT ID
 						FROM dbo.TableIDFromXML(@IB)
@@ -130,15 +130,15 @@ BEGIN
 					FROM @ClientsDistrs p
 					CROSS APPLY dbo.SystemBankGet(p.SystemId, p.DistrTypeId) q
 					WHERE p.ClientId = a.ClientId
-						AND 
+						AND
 							(
-								(a.InfoBankName = 'BRB' AND q.InfoBankName = 'ARB') 								
+								(a.InfoBankName = 'BRB' AND q.InfoBankName = 'ARB') 
 								OR
 								(a.InfoBankName = 'DOF' AND q.InfoBankName = 'PAP')
 								OR
 								(a.InfoBankName = 'EPB' AND q.InfoBankName = 'EXP')
 								OR
-								
+
 								(a.InfoBankName = 'PBI' AND a.SystemBaseName = 'FIN' AND q.InfoBankName = 'PBI' AND q.SystemBaseName = 'BUDP')
 								OR
 								(a.InfoBankName = 'QSA' AND a.SystemBaseName = 'FIN' AND q.InfoBankName = 'QSA' AND q.SystemBaseName = 'BUDP')
@@ -170,11 +170,11 @@ BEGIN
 								(a.InfoBankName = 'BUR' AND a.SystemBaseName = 'FIN' AND q.InfoBankName = 'BUR' AND q.SystemBaseName = 'BUDP')
 								OR
 								(a.InfoBankName = 'BVV' AND a.SystemBaseName = 'FIN' AND q.InfoBankName = 'BVV' AND q.SystemBaseName = 'BUDP')
-								OR								
+								OR
 								(a.InfoBankName = 'CJI' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'CJI' AND q.SystemBaseName = 'BUD')
-								OR								
+								OR
 								(a.InfoBankName = 'CMB' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'CMB' AND q.SystemBaseName = 'BUD')
-								OR								
+								OR
 								(a.InfoBankName = 'PSG' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'PSG' AND q.SystemBaseName = 'BUD')
 								OR
 								(a.InfoBankName = 'PKG' AND a.SystemBaseName = 'CMT' AND q.InfoBankName = 'PKG' AND q.SystemBaseName = 'BUD')
@@ -218,20 +218,20 @@ BEGIN
 		INSERT INTO @usr(UF_ID, UF_DATE)
 		SELECT UF_ID, UF_DATE
 		FROM USR.USRActiveView
-		INNER JOIN 
+		INNER JOIN
 		(
-			SELECT DISTINCT ClientID 
-			FROM @info_bank 
+			SELECT DISTINCT ClientID
+			FROM @info_bank
 		) AS o_O ON ClientID = UD_ID_CLIENT
-		
+
 
 		DECLARE @ib_out Table
 		(
 			ID					INT IDENTITY(1,1),
-			ClientID			INT, 
-			ManagerName			NVARCHAR(450), 
-			ServiceName			NVARCHAR(450), 
-			ClientFullName		NVARCHAR(450), 
+			ClientID			INT,
+			ManagerName			NVARCHAR(450),
+			ServiceName			NVARCHAR(450),
+			ClientFullName		NVARCHAR(450),
 			ComplectStr			NVARCHAR(450),
 			DisStr				NVARCHAR(450),
 			InfoBankName		NVARCHAR(200),
@@ -243,19 +243,19 @@ BEGIN
 
 
 		INSERT INTO @ib_out(ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, DisStr, InfoBankName, InfoBankShortName, LAST_DATE, UF_DATE)
-		SELECT 
-			c.ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
+		SELECT
+			c.ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr,
 			DisStr = DistrStr,
-			InfoBankName, 
-			InfoBankShortName, 
+			InfoBankName,
+			InfoBankShortName,
 			LAST_DATE, UF_DATE
 		FROM
 		(
-			SELECT 
+			SELECT
 				a.ClientID, a.ComplectStr, DistrStr, SystemId, InfoBankId,
 				(
 					SELECT TOP 1 UI_LAST
-					FROM 
+					FROM
 						USR.USRIB z
 						INNER JOIN USR.USRFile y ON y.UF_ID = z.UI_ID_USR
 						INNER JOIN USR.USRData x ON x.UD_ID = y.UF_ID_COMPLECT
@@ -276,7 +276,7 @@ BEGIN
 					(
 						-- тут добавить комплект?
 						SELECT *
-						FROM 
+						FROM
 							@usr z INNER JOIN
 							USR.USRIB ON UI_ID_USR = UF_ID
 						WHERE InfoBankId = UI_ID_BASE
@@ -300,37 +300,37 @@ BEGIN
 		OPTION (RECOMPILE);
 
 		SELECT
-			ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, 
+			ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr,
 			ComplectStr AS DisStr,
 			REVERSE(STUFF(REVERSE((
-				SELECT 
+				SELECT
 					InfoBankShortName + ', '
-				FROM 
+				FROM
 					@ib_out b
-				WHERE 
+				WHERE
 					a.ComplectStr = b.ComplectStr
 				FOR XML PATH('')
 			)), 1, 2, '')) AS InfoBankShortName,
 			/*REVERSE(STUFF(REVERSE((
-				SELECT 
+				SELECT
 					InfoBankName + ', '
-				FROM 
+				FROM
 					@ib_out b
-				WHERE 
+				WHERE
 					a.ComplectStr = b.ComplectStr
 				FOR XML PATH('')
 			)), 1, 2, '')) AS InfoBankName,  */
 			Max(LAST_DATE) AS LAST_DATE, UF_DATE
 		FROM @ib_out a
 		GROUP BY ClientID, ManagerName, ServiceName, ClientFullName, ComplectStr, /*DisStr, LAST_DATE, */UF_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

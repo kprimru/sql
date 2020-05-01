@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[AREA_SELECT]
+ALTER PROCEDURE [dbo].[AREA_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -31,14 +31,16 @@ BEGIN
 			OR RG_NAME LIKE @FILTER
 			OR CONVERT(VARCHAR(20), RG_NUM) LIKE @FILTER
 		ORDER BY AR_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_SELECT] TO rl_area_r;
+GO

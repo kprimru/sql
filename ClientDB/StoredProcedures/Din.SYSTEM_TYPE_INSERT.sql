@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[SYSTEM_TYPE_INSERT]	
+ALTER PROCEDURE [Din].[SYSTEM_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@SHORT	VARCHAR(20),
 	@NOTE	VARCHAR(100),
@@ -16,7 +16,7 @@ CREATE PROCEDURE [Din].[SYSTEM_TYPE_INSERT]
 	@ID		INT = NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -32,16 +32,18 @@ BEGIN
 
 		INSERT INTO Din.SystemType(SST_NAME, SST_SHORT, SST_NOTE, SST_REG, SST_WEIGHT, SST_COMPLECT, SST_ID_MASTER, SST_SALARY)
 			VALUES(@NAME, @SHORT, @NOTE, @REG, @WEIGHT, @COMPLECT, @MASTER, @SALARY)
-		
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[SYSTEM_TYPE_INSERT] TO rl_din_system_type_i;
+GO

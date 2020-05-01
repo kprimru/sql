@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [KGS].[MEMO_CLAIM_SELECT]
+ALTER PROCEDURE [KGS].[MEMO_CLAIM_SELECT]
 	@TP		TINYINT,
 	@CLIENT	NVARCHAR(256),
 	@BEGIN	SMALLDATETIME,
@@ -25,10 +25,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			a.ID, TP, CASE TP WHEN 1 THEN 'Коммерч' WHEN 2 THEN 'Контракт' ELSE '???' END AS TP_STR, 
+		SELECT
+			a.ID, TP, CASE TP WHEN 1 THEN 'Коммерч' WHEN 2 THEN 'Контракт' ELSE '???' END AS TP_STR,
 			DATE, ID_CLIENT, CL_NAME, b.SHORT AS VD_NAME, c.TS_SHORT AS TRADESITE, DATE_LIMIT
-		FROM 
+		FROM
 			KGS.MemoClaim a
 			INNER JOIN dbo.Vendor b ON a.ID_VENDOR = b.ID
 			INNER JOIN Purchase.Tradesite c ON ID_TRADESITE = c.TS_ID
@@ -37,15 +37,17 @@ BEGIN
 			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (DATE <= @END OR @END IS NULL)
 			AND (CL_NAME LIKE @CLIENT OR @CLIENT IS NULL)
-		ORDER BY DATE DESC 
-		
+		ORDER BY DATE DESC
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [KGS].[MEMO_CLAIM_SELECT] TO rl_kgs_claim;
+GO

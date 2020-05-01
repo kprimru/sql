@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STAT_FILE_LOAD]
+ALTER PROCEDURE [dbo].[STAT_FILE_LOAD]
 	@DATA	NVARCHAR(MAX)
 AS
 BEGIN
@@ -23,9 +23,9 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @XML XML
-		
+
 		SET @XML = CAST(@DATA AS XML)
-			
+
 		INSERT INTO dbo.StatisticTable(StatisticDate, InfoBankID, Docs)
 			SELECT DT, InfoBankID, DOC
 			FROM
@@ -33,11 +33,11 @@ BEGIN
 					SELECT DATEADD(DAY, 1, DT) AS DT, InfoBankID, DOC
 					FROM
 					(
-						SELECT 
+						SELECT
 							CONVERT(SMALLDATETIME, c.value('(@date)', 'VARCHAR(20)'), 104) AS DT,
-							c.value('(@ib)', 'VARCHAR(50)') AS IB,					
+							c.value('(@ib)', 'VARCHAR(50)') AS IB,
 							c.value('(@docs)', 'INT') AS DOC
-						FROM 
+						FROM
 							@xml.nodes('/root/item') AS a(c)
 					) AS a
 					INNER JOIN dbo.InfoBankTable ON InfoBankName = IB
@@ -50,15 +50,17 @@ BEGIN
 				WHERE z.InfoBankID = a.InfoBankID
 					AND z.StatisticDate = a.DT
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[STAT_FILE_LOAD] TO rl_stat_import;
+GO

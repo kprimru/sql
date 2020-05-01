@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CLIENT_CONTROL_SELECT]
+ALTER PROCEDURE [Control].[CLIENT_CONTROL_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			a.ID, DATE, AUTHOR, 
-			NOTE, NOTIFY, 
+		SELECT
+			a.ID, DATE, AUTHOR,
+			NOTE, NOTIFY,
 			ISNULL(b.NAME, RECEIVER) AS NAME,
 			CONVERT(NVARCHAR(32), REMOVE_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), REMOVE_DATE, 108) + ' / ' + REMOVE_USER AS REMOVE_DATA,
-			CONVERT(BIT, 		
+			CONVERT(BIT, 
 			CASE
 				WHEN REMOVE_DATE IS NOT NULL THEN 0
 				WHEN REMOVE_AUTHOR = 1 AND ORIGINAL_LOGIN() = AUTHOR THEN 1
@@ -48,19 +48,21 @@ BEGIN
 				ELSE ''
 			END AS REMOVE_INFO,
 			REMOVE_NOTE
-		FROM 
+		FROM
 			Control.ClientControl a
 			LEFT OUTER JOIN Control.ControlGroup b ON a.ID_GROUP = b.ID
 		WHERE ID_CLIENT = @CLIENT
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CLIENT_CONTROL_SELECT] TO rl_control_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_PAY_DYNAMIC]
+ALTER PROCEDURE [dbo].[CLIENT_PAY_DYNAMIC]
 	@CLIENT	INT
 AS
 BEGIN
@@ -24,7 +24,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		CREATE TABLE #distr
 			(
 				ID			UNIQUEIDENTIFIER PRIMARY KEY,
@@ -37,74 +37,74 @@ BEGIN
 
 		INSERT INTO #distr(ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP)
 			SELECT ID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
-			FROM 
-				dbo.ClientDistrView WITH(NOEXPAND)		
+			FROM
+				dbo.ClientDistrView WITH(NOEXPAND)
 			WHERE ID_CLIENT = @CLIENT AND DS_REG = 0
-			
+
 		IF OBJECT_ID('tempdb..#month') IS NOT NULL
 			DROP TABLE #month
-			
+
 		CREATE TABLE #month
 			(
 				DATE		SMALLDATETIME PRIMARY KEY,
 				MUST_PAY	SMALLDATETIME,
 				COUR		VARCHAR(150)
 			)
-			
+
 		INSERT INTO #month(DATE, MUST_PAY)
-			SELECT DISTINCT 
+			SELECT DISTINCT
 				PR_DATE,
-				DATEADD(DAY, 
-					CASE 
+				DATEADD(DAY,
+					CASE
 						WHEN DATEPART(MONTH, PR_DATE) = 2 AND DATEPART(YEAR, PR_DATE) % 4 = 0 AND ContractPayDay > 29 THEN 29
 						WHEN DATEPART(MONTH, PR_DATE) = 2 AND DATEPART(YEAR, PR_DATE) % 4 <> 0 AND ContractPayDay > 28 THEN 28
 						ELSE ContractPayDay - 1
 					END, DATEADD(MONTH, ContractPayMonth, PR_DATE))
-			FROM 
-				dbo.DBFIncomeView 
+			FROM
+				dbo.DBFIncomeView
 				INNER JOIN #distr ON SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
 				CROSS APPLY dbo.ClientContractPayGet(@CLIENT, PR_DATE) o_O
-			
-		
+
+
 		UPDATE #month
-		SET COUR = 
+		SET COUR =
 			(
 				SELECT TOP 1 ServiceName
-				FROM 
+				FROM
 					dbo.ClientService z
 					INNER JOIN dbo.ServiceTable ON ID_SERVICE = ServiceID
 				WHERE ID_CLIENT = @CLIENT AND z.DATE <= #month.DATE
 				ORDER BY DATE DESC
 			)
-			
+
 		IF OBJECT_ID('tempdb..#distr_pay') IS NOT NULL
 			DROP TABLE #distr_pay
-			
+
 		CREATE TABLE #distr_pay
 			(
 				ID_DISTR	UNIQUEIDENTIFIER,
 				PAY_DATE	SMALLDATETIME,
 				PAY_MONTH	SMALLDATETIME
 			)
-			
+
 		INSERT INTO #distr_pay(ID_DISTR, PAY_DATE, PAY_MONTH)
 			SELECT ID, IN_DATE, DATE
 			FROM
 				(
 					SELECT ID, DATE, SYS_REG, DISTR, COMP
-					FROM 
+					FROM
 						#distr
 						CROSS JOIN #month
 				) AS a CROSS APPLY
 				(
 					SELECT DISTINCT IN_DATE
-					FROM dbo.DBFIncomeDateView 
+					FROM dbo.DBFIncomeDateView
 					WHERE SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP AND PR_DATE = DATE
-				) AS b		
-				
+				) AS b
+
 		IF OBJECT_ID('tempdb..#pay_detail') IS NOT NULL
 			DROP TABLE #pay_detail
-			
+
 		CREATE TABLE #pay_detail
 			(
 				COUR		VARCHAR(150),
@@ -114,19 +114,19 @@ BEGIN
 				TOTAL_PAY	SMALLINT,
 				PAY_IN_TIME	SMALLINT
 			)
-			
+
 		INSERT INTO #pay_detail(COUR, DATE, PAY_DATE, MUST_PAY, TOTAL_PAY, PAY_IN_TIME)
-			SELECT 
+			SELECT
 				COUR, DATE, PAY_DATE, MUST_PAY, TOTAL_PAY,
 				CASE
-					WHEN 
+					WHEN
 						(
-							SELECT MAX(PAY_DATE) 
-							FROM 
-								(		
+							SELECT MAX(PAY_DATE)
+							FROM
+								(
 									SELECT DISTINCT COUR, DATE, PAY_DATE, MUST_PAY--, DATEPART(DAY, PAY_DATE) AS PD, DATEPART(MONTH, PAY_DATE) As PM
-									FROM 
-										#month 
+									FROM
+										#month
 										LEFT OUTER JOIN #distr_pay ON PAY_MONTH = DATE
 								) AS b
 							WHERE a.DATE = b.DATE
@@ -135,17 +135,17 @@ BEGIN
 				END AS PAY_IN_TIME
 			FROM
 				(
-					SELECT 
-						COUR, DATE, PAY_DATE, MUST_PAY, 
-						CASE 
-							WHEN PAY_DATE = 
+					SELECT
+						COUR, DATE, PAY_DATE, MUST_PAY,
+						CASE
+							WHEN PAY_DATE =
 								(
-									SELECT MAX(PAY_DATE) 
-									FROM 
-										(		
+									SELECT MAX(PAY_DATE)
+									FROM
+										(
 											SELECT DISTINCT COUR, DATE, PAY_DATE, MUST_PAY--, DATEPART(DAY, PAY_DATE) AS PD, DATEPART(MONTH, PAY_DATE) As PM
-											FROM 
-												#month 
+											FROM
+												#month
 												LEFT OUTER JOIN #distr_pay ON PAY_MONTH = DATE
 										) AS b
 									WHERE a.DATE = b.DATE
@@ -153,18 +153,18 @@ BEGIN
 							ELSE 0
 						END AS TOTAL_PAY
 					FROM
-						(		
+						(
 							SELECT DISTINCT COUR, DATE, PAY_DATE, MUST_PAY--, DATEPART(DAY, PAY_DATE) AS PD, DATEPART(MONTH, PAY_DATE) As PM
-							FROM 
-								#month 
+							FROM
+								#month
 								LEFT OUTER JOIN #distr_pay ON PAY_MONTH = DATE
 						) AS a
 				) AS a
 			ORDER BY DATE DESC, PAY_DATE DESC
-			
+
 		--SELECT * FROM #pay_detail
-		
-		SELECT 
+
+		SELECT
 			COUR, DATE,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), DATEDIFF(MONTH, b.DATE, dbo.MonthOf(b.PAY_DATE))) + '|' + CONVERT(VARCHAR(20), TOTAL_PAY)  + '|' + CONVERT(VARCHAR(20), PAY_IN_TIME)
@@ -357,24 +357,26 @@ BEGIN
 				SELECT DISTINCT COUR, DATE
 				FROM #pay_detail
 			) AS a
-		ORDER BY DATE DESC	
+		ORDER BY DATE DESC
 
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		IF OBJECT_ID('tempdb..#month') IS NOT NULL
 			DROP TABLE #month
-		
+
 		IF OBJECT_ID('tempdb..#pay_detail') IS NOT NULL
-			DROP TABLE #pay_detail	
-			
+			DROP TABLE #pay_detail
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PAY_DYNAMIC] TO rl_client_pay_dynamic;
+GO

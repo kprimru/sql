@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[ServiceStatusConnected]()
-RETURNS @Result TABLE 
+ALTER FUNCTION [dbo].[ServiceStatusConnected]()
+RETURNS @Result TABLE
 (
 	ServiceStatusId SmallInt
 )
@@ -15,7 +15,7 @@ BEGIN
 	(
 		ServiceStatus_Id Sql_Variant
 	);
-	
+
 	INSERT INTO @Tmp
 	SELECT SetItem
 	FROM dbo.NamedSetItemsSelect('dbo.ServiceStatusTable', 'Пополняемые')

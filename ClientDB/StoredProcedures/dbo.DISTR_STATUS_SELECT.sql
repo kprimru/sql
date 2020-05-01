@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_STATUS_SELECT]
+ALTER PROCEDURE [dbo].[DISTR_STATUS_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -25,16 +25,18 @@ BEGIN
 		SELECT DS_ID, DS_NAME, DS_REG
 		FROM dbo.DistrStatus
 		WHERE @FILTER IS NULL
-			OR DS_NAME LIKE @FILTER	
+			OR DS_NAME LIKE @FILTER
 		ORDER BY DS_REG
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_SELECT] TO rl_distr_status_r;
+GO

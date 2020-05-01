@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[PRICE_LETTER]
+ALTER PROCEDURE [Report].[PRICE_LETTER]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ServiceName AS [ях],
 			(
 				SELECT COUNT(DISTINCT ClientID)
@@ -196,14 +196,16 @@ BEGIN
 					AND STATUS = 1
 			)
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[PRICE_LETTER] TO rl_report;
+GO

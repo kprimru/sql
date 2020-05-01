@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[USER_PASS]
+ALTER PROCEDURE [Subhost].[USER_PASS]
 	@SH_ID	UNIQUEIDENTIFIER,
 	@LGN	NVARCHAR(128),
 	@PASS	NVARCHAR(128)
@@ -27,15 +27,17 @@ BEGIN
 		UPDATE Subhost.Users
 		SET PASS = @PASS
 		WHERE NAME = @LGN
-			AND ID_SUBHOST = @SH_ID	
-			
+			AND ID_SUBHOST = @SH_ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[USER_PASS] TO rl_web_subhost;
+GO

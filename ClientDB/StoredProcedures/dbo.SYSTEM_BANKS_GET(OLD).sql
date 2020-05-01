@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_BANKS_GET(OLD)]
+ALTER PROCEDURE [dbo].[SYSTEM_BANKS_GET(OLD)]
 	@SYS_LIST			NVARCHAR(MAX),
 	@DISTR_TYPE_LIST	NVARCHAR(MAX)
 AS
@@ -39,21 +39,21 @@ BEGIN
 			IF (CHARINDEX(',', @SYS_LIST)<>0)
 			BEGIN
 				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--«ƒ≈—‹ ¬€“¿— »¬¿≈Ã œŒ ŒƒÕŒÃ” ID —»—“≈Ã€ »« —œ»— ¿
-				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))		
+				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))
 			END
 			ELSE
 			BEGIN
 				SET @TEMP_S = @SYS_LIST
 				SET @SYS_END = 1
 			END
-			
+
 			SET @DISTR_TYPE_END = 0
 			SET @DISTR_TYPE_TEMP_LIST = @DISTR_TYPE_LIST
 
 			WHILE @DISTR_TYPE_END = 0
 			BEGIN
 				IF (CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)<>0)
-				BEGIN					
+				BEGIN
 					SET @TEMP_D = SUBSTRING(@DISTR_TYPE_TEMP_LIST, 1, CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)-1)
 					SET @DISTR_TYPE_TEMP_LIST = SUBSTRING(@DISTR_TYPE_TEMP_LIST, CHARINDEX(',', @DISTR_TYPE_TEMP_LIST)+1, LEN(@DISTR_TYPE_TEMP_LIST))
 				END
@@ -62,25 +62,28 @@ BEGIN
 					SET @TEMP_D = @DISTR_TYPE_TEMP_LIST
 					SET @DISTR_TYPE_END = 1
 				END
-				
+
 				INSERT INTO @t(InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder)
 				EXEC [dbo].[SYSTEM_BANKS_SELECT] @TEMP_S, @TEMP_D
 			END
 		END
 
-		SELECT * 
+		SELECT *
 		FROM @t
 		GROUP BY InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder
 		ORDER BY InfoBankOrder
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_GET(OLD)] TO rl_info_bank_r;
+GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_GET(OLD)] TO rl_system_bank_r;
+GO

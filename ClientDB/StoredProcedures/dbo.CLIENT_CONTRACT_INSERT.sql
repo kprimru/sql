@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_INSERT]
 	@CLIENT	INT,
 	@NUM	VARCHAR(100),
 	@YEAR	VARCHAR(10),
@@ -42,14 +42,16 @@ BEGIN
 			VALUES(@CLIENT, @NUM, @YEAR, @TYPE, @BEGIN, @END, @COND, @PAY, @DISC, @DATE, @ID_FOUND, @FOUND_END, @FIXED)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_INSERT] TO rl_client_contract_i;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_CURRENT_SELECT]
+ALTER PROCEDURE [Common].[PERIOD_CURRENT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,8 +20,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
+
+		SELECT
 			(
 				SELECT TOP 1 ID
 				FROM Common.Period
@@ -52,14 +52,16 @@ BEGIN
 				WHERE GETDATE() BETWEEN START AND DATEADD(DAY, 1, FINISH)
 					AND TYPE = 5
 			) AS YR
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_CURRENT_SELECT] TO public;
+GO

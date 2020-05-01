@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISCONNECT_REASON_INSERT]
+ALTER PROCEDURE [dbo].[DISCONNECT_REASON_INSERT]
 	@NAME	VARCHAR(100),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -28,17 +28,19 @@ BEGIN
 		INSERT INTO dbo.DisconnectReason(DR_NAME)
 			OUTPUT INSERTED.DR_ID INTO @TBL
 			VALUES(@NAME)
-		
+
 		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISCONNECT_REASON_INSERT] TO rl_disconnect_reason_i;
+GO

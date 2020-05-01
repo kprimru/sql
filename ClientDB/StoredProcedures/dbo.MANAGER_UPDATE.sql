@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[MANAGER_UPDATE]
+ALTER PROCEDURE [dbo].[MANAGER_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100),
 	@LOGIN	VARCHAR(100),
@@ -30,14 +30,16 @@ BEGIN
 			ManagerLogin = @LOGIN,
 			ManagerFullName = @FULL
 		WHERE ManagerID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MANAGER_UPDATE] TO rl_personal_manager_u;
+GO

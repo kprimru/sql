@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [IP].[LIST_SELECT]
+ALTER PROCEDURE [IP].[LIST_SELECT]
 	@TP		TINYINT,
 	@DISTR	INT,
 	@NAME	NVARCHAR(256),
@@ -25,10 +25,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ID, ID_HOST, DISTR, COMP, SET_DATE, SET_USER, SET_REASON, UNSET_DATE, UNSET_USER, UNSET_REASON,
 			b.DS_INDEX, b.DistrStr, b.Comment
-		FROM 
+		FROM
 			IP.Lists a
 			INNER JOIN  Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.ID_HOST = b.HostID AND a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber
 		WHERE TP = @TP
@@ -36,14 +36,16 @@ BEGIN
 			AND (@STATUS IS NULL OR @STATUS = 0 OR @STATUS = 1 AND UNSET_DATE IS NULL OR @STATUS = 2 AND UNSET_DATE IS NOT NULL)
 			AND (b.Comment LIKE @NAME OR @NAME IS NULL)
 		ORDER BY b.SystemOrder, b.DistrNumber, b.CompNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [IP].[LIST_SELECT] TO rl_ip_list;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[CALL_SAVE]
+ALTER PROCEDURE [Tender].[CALL_SAVE]
 	@ID			UNIQUEIDENTIFIER OUTPUT,
 	@TENDER		UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
@@ -34,11 +34,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Tender.Call(ID_TENDER, DATE, SUBJECT, SURNAME, NAME, PATRON, PHONE, NOTE)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@TENDER, @DATE, @SUBJECT, @SURNAME, @NAME, @PATRON, @PHONE, @NOTE)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
@@ -55,18 +55,21 @@ BEGIN
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
 		END
-		
+
 		UPDATE Tender.Tender
 		SET CALL_DATE = @CALL_DATE
 		WHERE ID = @TENDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[CALL_SAVE] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[CALL_SAVE] TO rl_tender_u;
+GO

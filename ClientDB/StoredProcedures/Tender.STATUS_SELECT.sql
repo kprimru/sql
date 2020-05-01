@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[STATUS_SELECT]
+ALTER PROCEDURE [Tender].[STATUS_SELECT]
 	@FILTER	NVARCHAR(128) = NULL
 AS
 BEGIN
@@ -24,15 +24,18 @@ BEGIN
 
 		SELECT ID, NAME
 		FROM Tender.Status
-		ORDER BY ORD 
-		
+		ORDER BY ORD
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[STATUS_SELECT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[STATUS_SELECT] TO rl_tender_status_r;
+GO

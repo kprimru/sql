@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[SystemBankGet(Internal)]
+ALTER FUNCTION [dbo].[SystemBankGet(Internal)]
 (
 	-- Id системы
 	@System		Int
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT
 		InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,

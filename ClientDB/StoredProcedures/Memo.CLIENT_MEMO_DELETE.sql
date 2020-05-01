@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[CLIENT_MEMO_DELETE]
+ALTER PROCEDURE [Memo].[CLIENT_MEMO_DELETE]
 	@ID			UNIQUEIDENTIFIER,
 	@TP			SMALLINT = 1
 AS
@@ -29,19 +29,21 @@ BEGIN
 			WHERE ID_MEMO = @ID
 
 			DELETE
-			FROM Memo.ClientMemo	
-			WHERE ID = @ID	
+			FROM Memo.ClientMemo
+			WHERE ID = @ID
 		END
 		ELSE
 			DELETE FROM Memo.ClientCalculation WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[CLIENT_MEMO_DELETE] TO rl_client_memo_d;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_REG_FILTER]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_REG_FILTER]
 	@MANAGER	INT
 AS
 BEGIN
@@ -24,10 +24,10 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#oper') IS NOT NULL
 			DROP TABLE #oper
-			
+
 		SELECT DISTINCT RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER
 		INTO #oper
-		FROM 
+		FROM
 			dbo.RegProtocol
 		WHERE RPR_OPER IN ('НОВАЯ', 'Изм. парам.', 'Включение')
 			AND RPR_DATE >= DATEADD(MONTH, -2, GETDATE())
@@ -38,7 +38,7 @@ BEGIN
 		FROM
 			(
 				SELECT ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, RPR_OPER, RPR_DATE, '' AS RPR_NOTE, ManagerID
-				FROM 
+				FROM
 					#oper a
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON RPR_ID_HOST = HostID AND RPR_DISTR = DISTR AND RPR_COMP = COMP
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON ClientID = ID_CLIENT
@@ -47,7 +47,7 @@ BEGIN
 				UNION ALL
 
 				SELECT DISTINCT ClientID, ClientFullName, ManagerName, ServiceName, z.DistrStr, RPR_OPER, RPR_DATE, '' AS RPR_NOTE, ManagerID
-				FROM 
+				FROM
 					#oper a
 					INNER JOIN Reg.RegNodeSearchView z WITH(NOEXPAND) ON a.RPR_ID_HOST = z.HostID AND RPR_DISTR = z.DistrNumber AND RPR_COMP = z.CompNumber
 					INNER JOIN Reg.RegNodeSearchView y WITH(NOEXPAND) ON z.Complect = y.Complect
@@ -57,11 +57,11 @@ BEGIN
 
 				UNION ALL
 
-				SELECT ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, RPR_OPER, RPR_DATE, 
+				SELECT ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, RPR_OPER, RPR_DATE,
 					'c ' +
 					ISNULL((
 						SELECT TOP 1 z.SystemShortName + ' ' + z.NT_SHORT
-						FROM 
+						FROM
 							Reg.RegHistoryView z WITH(NOEXPAND)
 							INNER JOIN Reg.RegDistr y ON z.ID_DISTR = y.ID
 						WHERE y.ID_HOST = a.RPR_ID_HOST AND y.DISTR = a.RPR_DISTR AND y.COMP = a.RPR_COMP
@@ -70,14 +70,14 @@ BEGIN
 					), '')	+ ' на ' +
 					ISNULL((
 						SELECT TOP 1 z.SystemShortName + ' ' + z.NT_SHORT
-						FROM 
+						FROM
 							Reg.RegHistoryView z WITH(NOEXPAND)
 							INNER JOIN Reg.RegDistr y ON z.ID_DISTR = y.ID
 						WHERE y.ID_HOST = a.RPR_ID_HOST AND y.DISTR = a.RPR_DISTR AND y.COMP = a.RPR_COMP
 							AND DATEADD(MINUTE, 1, z.DATE) > a.RPR_DATE
 						ORDER BY z.DATE
 					), ''), ManagerID
-				FROM 
+				FROM
 					#oper a
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON RPR_ID_HOST = HostID AND RPR_DISTR = DISTR AND RPR_COMP = COMP
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON ClientID = ID_CLIENT
@@ -88,14 +88,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#oper') IS NOT NULL
 			DROP TABLE #oper
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_REG_FILTER] TO rl_distr_reg_filter;
+GO

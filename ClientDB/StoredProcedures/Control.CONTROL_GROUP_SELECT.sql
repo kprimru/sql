@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CONTROL_GROUP_SELECT]
+ALTER PROCEDURE [Control].[CONTROL_GROUP_SELECT]
 	@FILTER NVARCHAR(256) = NULL
 AS
 BEGIN
@@ -37,14 +37,16 @@ BEGIN
 			OR
 			(PSEDO = 'TEACHER' AND (IS_MEMBER('rl_control_teacher') = 1 OR IS_SRVROLEMEMBER('sysadmin') = 1))
 		ORDER BY NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CONTROL_GROUP_SELECT] TO rl_control_r;
+GO

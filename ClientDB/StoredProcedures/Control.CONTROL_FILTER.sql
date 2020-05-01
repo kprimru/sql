@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Control].[CONTROL_FILTER]
+ALTER PROCEDURE [Control].[CONTROL_FILTER]
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@MANAGER	INT,
@@ -34,12 +34,12 @@ BEGIN
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
-		SELECT 
-			ClientID, ClientFullName, ManagerName, ServiceName, DATE, AUTHOR, NOTE, NOTIFY, 
+		SELECT
+			ClientID, ClientFullName, ManagerName, ServiceName, DATE, AUTHOR, NOTE, NOTIFY,
 			ISNULL(c.NAME, a.RECEIVER) AS RECEIVER,
 			REMOVE_USER + ' / ' + CONVERT(NVARCHAR(64), REMOVE_DATE, 104) + ' ' + CONVERT(NVARCHAR(64), REMOVE_DATE, 108) AS REMOVE_DATA,
 			REMOVE_NOTE
-		FROM 
+		FROM
 			Control.ClientControl a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ID_CLIENT = b.ClientID
 			LEFT OUTER JOIN Control.ControlGroup c ON a.ID_GROUP = c.ID
@@ -55,14 +55,16 @@ BEGIN
 			AND (a.NOTE LIKE @TEXT OR @TEXT IS NULL)
 			AND (a.AUTHOR LIKE @AUTHOR OR @AUTHOR IS NULL)
 		ORDER BY a.DATE DESC, ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Control].[CONTROL_FILTER] TO rl_control_r;
+GO

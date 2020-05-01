@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalContractYear]
+ALTER FUNCTION [Maintenance].[GlobalContractYear]
 ()
 RETURNS UNIQUEIDENTIFIER
 AS
@@ -18,6 +18,6 @@ BEGIN
 	WHERE GS_NAME = 'CONTRACT_YEAR'
 
 	SET @RES = Cast(@TMP AS UniqueIdentifier)
-		
+
 	RETURN @RES
 END

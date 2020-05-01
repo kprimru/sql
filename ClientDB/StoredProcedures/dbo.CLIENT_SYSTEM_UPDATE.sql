@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SYSTEM_UPDATE]
+ALTER PROCEDURE [dbo].[CLIENT_SYSTEM_UPDATE]
 	@ID		INT,
 	@CLIENT	INT,
 	@SYSTEM	INT,
@@ -32,24 +32,24 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.ClientSystemsTable
-		SET	SystemID		=	@SYSTEM, 
-			SystemDistrNumber	=	@DISTR, 
-			CompNumber		=	@COMP, 
-			SystemTypeID	=	@STYPE, 
-			DistrTypeID		=	@DTYPE, 
+		SET	SystemID		=	@SYSTEM,
+			SystemDistrNumber	=	@DISTR,
+			CompNumber		=	@COMP,
+			SystemTypeID	=	@STYPE,
+			DistrTypeID		=	@DTYPE,
 			DistrStatusID	=	@STATUS
 		WHERE ID = @ID
 
-		
+
 		DECLARE @BDATE SMALLDATETIME
 		DECLARE @EDATE SMALLDATETIME
 
 		SELECT TOP 1 @BDATE = SystemBegin, @EDATE = SystemEnd
-		FROM dbo.ClientSystemDatesTable 
+		FROM dbo.ClientSystemDatesTable
 		WHERE IDMaster = @ID
 		ORDER BY SystemDate DESC
 
-		IF 
+		IF
 			(
 				(@BDATE IS NOT NULL AND @BEGIN IS NOT NULL) AND
 				(@BDATE <> @BEGIN)
@@ -74,14 +74,16 @@ BEGIN
 			INSERT INTO dbo.ClientSystemDatesTable (IDMaster, SystemBegin, SystemEnd)
 				VALUES(@ID, @BEGIN, @END)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SYSTEM_UPDATE] TO rl_client_system_u;
+GO

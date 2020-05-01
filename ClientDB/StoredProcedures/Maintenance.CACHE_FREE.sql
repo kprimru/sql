@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[CACHE_FREE]
+ALTER PROCEDURE [Maintenance].[CACHE_FREE]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,14 +23,16 @@ BEGIN
 
 		DBCC FREEPROCCACHE
 		DBCC FREESYSTEMCACHE('ALL')
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[CACHE_FREE] TO rl_import_data;
+GO

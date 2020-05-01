@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIC_VIDEO]
+ALTER PROCEDURE [dbo].[CLIENT_RIC_VIDEO]
 	@ID	INT
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		WHERE ID_CLIENT = @ID
 			AND ID_DELIVERY = '25EEB199-A6DA-E511-9D3C-0007E92AAFC5'
 			AND FINISH IS NULL
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIC_VIDEO] TO rl_client_delivery_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DUTY_REPORT_NEW]
+ALTER PROCEDURE [dbo].[DUTY_REPORT_NEW]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -26,12 +26,12 @@ BEGIN
 	BEGIN TRY
 
 		IF OBJECT_ID('tempdb..#duty') IS NOT NULL
-			DROP TABLE #duty	
+			DROP TABLE #duty
 
 		SELECT (
 			   SELECT dbo.DateOf(MIN(g.ClientDutyDateTime))
-			   FROM dbo.ClientDutyTable g 
-			   WHERE g.ClientID = b.ClientID 
+			   FROM dbo.ClientDutyTable g
+			   WHERE g.ClientID = b.ClientID
 					AND g.STATUS = 1
 					AND dbo.DateOf(g.ClientDutyDateTime) BETWEEN @BEGIN AND @END
 			 ) AS MinDutyDate, a.ClientDutyID, CLientFullName, dbo.DateOf(ClientDutyDateTime) AS ClientDutyDate,
@@ -46,18 +46,18 @@ BEGIN
 			dbo.DateOf(ClientDutyAnswer) AS ClientDutyAnswer
 
 			INTO #duty
-		FROM 
-			dbo.ClientDutyTable a 
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
+		FROM
+			dbo.ClientDutyTable a
+			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 			INNER JOIN dbo.DutyTable c ON c.DutyID = a.DutyID
 		WHERE dbo.DateOf(ClientDutyDateTime) BETWEEN @BEGIN AND @END
-			AND a.STATUS = 1		
+			AND a.STATUS = 1
 			AND (ClientServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (c.DutyID = @DUTY OR @DUTY IS NULL)
 			AND b.STATUS = 1
 		ORDER BY MinDutyDate, ClientFullName, ClientDutyDate, ClientDutyID
 
-		SELECT 
+		SELECT
 			MinDutyDate, ClientDutyID, ClientFullName, ClientDutyDate, DutyName, DutyDate,
 			ClientDutyDocs, ClientDutyStatus, ClientDutyAnswer,
 			(
@@ -70,14 +70,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 			DROP TABLE #duty
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DUTY_REPORT_NEW] TO rl_report_client_duty;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[ONLINE_TECH_REPORT]
+ALTER PROCEDURE [Report].[ONLINE_TECH_REPORT]
 	@PARAM NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -41,10 +41,10 @@ BEGIN
 				)
 
 		UNION ALL
-				
+
 		SELECT DistrStr, SST_SHORT, NT_SHORT, Comment, 'Не совпадают типы онлайн'
-		FROM 
-			Reg.RegNodeSearchView a WITH(NOEXPAND)	
+		FROM
+			Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE NT_TECH > 1
 			AND DS_REG = 0
 			AND a.Complect IS NOT NULL
@@ -57,14 +57,16 @@ BEGIN
 						AND z.NT_TECH <> a.NT_TECH
 				)
 		ORDER BY [Клиент]
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[ONLINE_TECH_REPORT] TO rl_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[LINUX_CLIENT]
+ALTER PROCEDURE [Report].[LINUX_CLIENT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -26,7 +26,7 @@ BEGIN
 		FROM
 			(
 				SELECT b.ClientFullName, UF_NAME, T.UF_NOWIN_NAME, T.UF_NOWIN_EXTEND, T.UF_NOWIN_UNNAME, MAX(a.UF_DATE) AS UF_DATE
-				FROM 
+				FROM
 					USR.USRFile a
 					INNER JOIN USR.USRFileTech t ON a.UF_ID = t.UF_ID
 					INNER JOIN dbo.ClientTable b ON a.UF_ID_CLIENT = b.ClientID
@@ -34,14 +34,16 @@ BEGIN
 				WHERE T.UF_NOWIN_NAME <> '-'
 				GROUP BY b.ClientFullName, UF_NAME, T.UF_NOWIN_NAME, T.UF_NOWIN_EXTEND, T.UF_NOWIN_UNNAME
 			) AS o_O
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[LINUX_CLIENT] TO rl_report;
+GO

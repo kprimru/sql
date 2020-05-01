@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLAIM_PROVISION_SELECT]
+ALTER PROCEDURE [Purchase].[CLAIM_PROVISION_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR CP_NAME LIKE @FILTER
 			OR CP_SHORT LIKE @FILTER
 		ORDER BY CP_SHORT, CP_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLAIM_PROVISION_SELECT] TO rl_claim_provision_r;
+GO

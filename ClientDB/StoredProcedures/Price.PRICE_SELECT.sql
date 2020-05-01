@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_SELECT]
+ALTER PROCEDURE [Price].[PRICE_SELECT]
 	@MONTH	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			INNER JOIN dbo.SystemTable ON SystemID = ID_SYSTEM
 		WHERE ID_MONTH = @MONTH
 		ORDER BY SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[PRICE_SELECT] TO rl_price_r;
+GO

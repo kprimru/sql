@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Din].[NetTypeOffline]()
-RETURNS @Result TABLE 
+ALTER FUNCTION [Din].[NetTypeOffline]()
+RETURNS @Result TABLE
 (
 	NT_ID SmallInt
 )
@@ -15,7 +15,7 @@ BEGIN
 	(
 		NT_ID Sql_Variant
 	);
-	
+
 	INSERT INTO @Tmp
 	SELECT SetItem
 	FROM dbo.NamedSetItemsSelect('Din.NetType', '־פפכאים')

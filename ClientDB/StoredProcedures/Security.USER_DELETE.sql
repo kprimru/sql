@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_DELETE]
+ALTER PROCEDURE [Security].[USER_DELETE]
 	@NAME	VARCHAR(50)
 WITH EXECUTE AS OWNER
 AS
@@ -25,14 +25,16 @@ BEGIN
 
 		EXEC ('DROP USER [' + @NAME + ']')
 		EXEC ('DROP LOGIN [' + @NAME + ']')
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_DELETE] TO rl_user_d;
+GO

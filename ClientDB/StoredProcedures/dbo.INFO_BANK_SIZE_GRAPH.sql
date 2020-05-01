@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANK_SIZE_GRAPH]
+ALTER PROCEDURE [dbo].[INFO_BANK_SIZE_GRAPH]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@SYS	VARCHAR(MAX),
@@ -48,7 +48,7 @@ BEGIN
 		ELSE
 			INSERT INTO #system(SYS_ID)
 				SELECT SystemID
-				FROM dbo.SystemTable INNER JOIN dbo.TableIDFromXML(@SYS) ON ID = SystemID	
+				FROM dbo.SystemTable INNER JOIN dbo.TableIDFromXML(@SYS) ON ID = SystemID
 
 		SELECT @BEGIN_DATE = MAX(IBS_DATE)
 		FROM dbo.InfoBankSizeView WITH(NOEXPAND)
@@ -82,13 +82,13 @@ BEGIN
 		INSERT INTO #size (IBS_DATE, IBS_SIZE)
 			SELECT IBS_DATE, SUM(IBS_SIZE)
 			FROM
-				(		
+				(
 					SELECT IBS_DATE, InfoBankID, IBS_SIZE
 					FROM
 						(
 							SELECT IBS_DATE, InfoBankID
 							FROM
-								(		
+								(
 									SELECT DISTINCT IBS_DATE
 									FROM dbo.InfoBankSizeView WITH(NOEXPAND)
 								) AS a
@@ -104,17 +104,17 @@ BEGIN
 						CROSS APPLY
 						(
 							SELECT TOP 1 IBS_SIZE
-							FROM dbo.InfoBankSizeView z WITH(NOEXPAND) 
+							FROM dbo.InfoBankSizeView z WITH(NOEXPAND)
 							WHERE z.IBF_ID_IB = t.InfoBankID
 								AND z.IBS_DATE <= t.IBS_DATE
 							ORDER BY z.IBS_DATE DESC
 						) AS m
-					
+
 				) AS s
 			WHERE IBS_DATE BETWEEN @BEGIN_DATE AND @END_DATE
 			GROUP BY IBS_DATE
 			ORDER BY IBS_DATE
-		
+
 		DECLARE @PERCENT	DECIMAL(8, 4)
 
 		SELECT @BEGIN_SIZE = IBS_SIZE
@@ -129,31 +129,31 @@ BEGIN
 			SET @PERCENT = 0
 		ELSE
 			SET @PERCENT = 100 * CONVERT(DECIMAL(18, 4), (@END_SIZE - @BEGIN_SIZE)) / @BEGIN_SIZE
-		
+
 		SELECT IBS_DATE, IBS_SIZE, dbo.FileByteSizeToStr(IBS_SIZE) AS IBS_SIZE_STR, dbo.FileByteSizeToStr(0) AS IBS_DELTA, 0 AS IBS_PERCENT
 		FROM #size
-		WHERE ID = 1	
+		WHERE ID = 1
 
 		UNION ALL
 
 		SELECT IBS_DATE, IBS_SIZE, IBS_SIZE_STR, IBS_DELTA, IBS_PERCENT
 		FROM
 			(
-				SELECT 
-					a.IBS_DATE, a.IBS_SIZE, dbo.FileByteSizeToStr(a.IBS_SIZE) AS IBS_SIZE_STR, 
+				SELECT
+					a.IBS_DATE, a.IBS_SIZE, dbo.FileByteSizeToStr(a.IBS_SIZE) AS IBS_SIZE_STR,
 					dbo.FileByteSizeToStr((a.IBS_SIZE - b.IBS_SIZE)) AS IBS_DELTA,
 					(a.IBS_SIZE - b.IBS_SIZE) AS IBS_DELTA_ALL,
 					CONVERT(DECIMAL(8, 4),
 						100 * CASE
 							WHEN ISNULL(b.IBS_SIZE, 0) = 0 THEN 0
 							ELSE CONVERT(DECIMAL(18, 4), (a.IBS_SIZE - b.IBS_SIZE)) / b.IBS_SIZE
-						END 
+						END
 					)AS IBS_PERCENT
-				FROM 
+				FROM
 					#size a
 					INNER JOIN #size b ON a.ID = b.ID + 1
 			) AS o_O
-		WHERE IBS_DELTA_ALL <> 0	
+		WHERE IBS_DELTA_ALL <> 0
 
 		ORDER BY IBS_DATE DESC
 
@@ -163,9 +163,9 @@ BEGIN
 		SELECT @MIN_SIZE = MIN(IBS_SIZE)
 		FROM #size
 
-		SELECT 
-			@BSIZE = dbo.FileByteSizeToStr(@BEGIN_SIZE), 
-			@ESIZE = dbo.FileByteSizeToStr(@END_SIZE), 
+		SELECT
+			@BSIZE = dbo.FileByteSizeToStr(@BEGIN_SIZE),
+			@ESIZE = dbo.FileByteSizeToStr(@END_SIZE),
 			@DELTA = dbo.FileByteSizeToStr(@END_SIZE - @BEGIN_SIZE),
 			@PER = @PERCENT
 
@@ -179,14 +179,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#size') IS NOT NULL
 			DROP TABLE #size
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_BANK_SIZE_GRAPH] TO rl_info_bank_size_r;
+GO

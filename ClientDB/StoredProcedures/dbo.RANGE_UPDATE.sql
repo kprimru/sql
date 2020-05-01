@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RANGE_UPDATE]
+ALTER PROCEDURE [dbo].[RANGE_UPDATE]
 	@ID	INT,
 	@VALUE	DECIMAL(8, 4)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE dbo.RangeTable
 		SET RangeValue = @VALUE
 		WHERE RangeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RANGE_UPDATE] TO rl_range_u;
+GO

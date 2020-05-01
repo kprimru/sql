@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[CONS_PATH_SELECT]
+ALTER PROCEDURE [Maintenance].[CONS_PATH_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,14 +22,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT Maintenance.GlobalConsPath() AS CONS_PATH
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[CONS_PATH_SELECT] TO rl_qst_process;
+GO

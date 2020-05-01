@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[KGS_SERVICE_REPORT]
+ALTER PROCEDURE [dbo].[KGS_SERVICE_REPORT]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@LIST	INT
@@ -36,22 +36,22 @@ BEGIN
 		INSERT INTO #client(CL_ID, CL_NUM)
 			SELECT b.ClientID, ROW_NUMBER() OVER(ORDER BY ClientFullName)
 			FROM
-				(	
+				(
 					SELECT DISTINCT ID_CLIENT
-					FROM 
+					FROM
 						dbo.KGSDistrList
 						INNER JOIN dbo.KGSDistr ON KD_ID_LIST = KDL_ID
 						INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON SystemID = KD_ID_SYS
 														AND DISTR = KD_DISTR
 														AND COMP = KD_COMP
 					WHERE KDL_ID = @LIST
-				) AS o_O 
+				) AS o_O
 				INNER JOIN dbo.ClientTable b ON b.ClientID = o_O.ID_CLIENT
-			
+
 
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 			DROP TABLE #usr
-				
+
 		CREATE TABLE #usr
 			(
 				UD_ID_CLIENT	INT,
@@ -71,18 +71,18 @@ BEGIN
 			WHERE UIU_DATE_S BETWEEN @BEGIN AND @END
 
 		DECLARE @SQL	NVARCHAR(MAX)
-			
+
 		SET @SQL = 'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usr (UD_ID_CLIENT)'
 
 		EXEC (@SQL)
 
 		UPDATE #usr
-		SET IB_ETALON = 
+		SET IB_ETALON =
 				(
 					SELECT TOP 1 CalendarDate
-					FROM 
-						dbo.Calendar 
-					WHERE CalendarDate >= 
+					FROM
+						dbo.Calendar
+					WHERE CalendarDate >=
 							(
 								SELECT TOP 1 StatisticDate
 								FROM dbo.StatisticTable
@@ -92,18 +92,18 @@ BEGIN
 								ORDER BY StatisticDate DESC
 							)
 						AND CalendarWork = 1
-					ORDER BY CalendarDate				
+					ORDER BY CalendarDate
 				)
 
-		
 
-		SELECT 
+
+		SELECT
 			CL_NUM,
 			ClientFullName, CA_STR AS ClientAdress,
 			DistrStr AS DIS_STR,
 			IB_DATE, SUM(IB_DOCS) AS SYS_DOCS, MAX(IB_ETALON) AS ETALON,
 			c.SystemOrder
-		FROM 
+		FROM
 			#client a
 			INNER JOIN dbo.ClientTable b ON b.ClientID = a.CL_ID
 			INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = b.ClientID
@@ -118,12 +118,12 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			CL_NUM,
 			ClientFullName, CA_STR AS ClientAdress,
 			DistrStr AS DIS_STR,
 			NULL, NULL, NULL, SystemOrder
-		FROM 
+		FROM
 			#client a
 			INNER JOIN dbo.ClientTable b ON b.ClientID = a.CL_ID
 			INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = b.ClientID
@@ -132,12 +132,12 @@ BEGIN
 			AND NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.SystemBankGet(c.SystemID, c.DistrTypeID) d 
+				FROM dbo.SystemBankGet(c.SystemID, c.DistrTypeID) d
 				INNER JOIN #usr ON UD_ID_CLIENT = CL_ID
 								AND InfoBankID = IB_ID
 								AND DISTR = IB_DISTR
 								AND COMP = IB_COMP
-			)		
+			)
 		ORDER BY ClientFullName, SystemOrder, IB_DATE
 
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
@@ -145,14 +145,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[KGS_SERVICE_REPORT] TO rl_report_kgs_service;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[UPDATE_PERIOD_AUDIT]
+ALTER PROCEDURE [USR].[UPDATE_PERIOD_AUDIT]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@BEGIN		SMALLDATETIME,
@@ -53,7 +53,7 @@ BEGIN
 
 		INSERT INTO #client(ClientID, ClientFullName, ServiceName, ManagerName)
 			SELECT ClientID, ClientFullName + ' (' + ServiceTypeShortName + ')', ServiceName, ManagerName
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ServiceTypeID
@@ -65,7 +65,7 @@ BEGIN
 			DROP TABLE #client_banks
 
 		CREATE TABLE #client_banks
-			(			
+			(
 				ClientID		INT,
 				ClientFullName	VARCHAR(500),
 				ServiceName		VARCHAR(150),
@@ -83,39 +83,39 @@ BEGIN
 			)
 
 		INSERT INTO #client_banks(ClientID, ClientFullName, ServiceName, ManagerName, DistrStr, Period, WBEGIN, WEND, DIS_NUM, DIS_COMP, IB_ID, IB_SHORT, SYS_ORDER, IB_ORDER)
-			SELECT 
+			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
 				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
-			FROM 
+			FROM
 				#client a
-				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT			
+				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 				CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DistrTypeId) c
 				CROSS JOIN @WEEK
 			WHERE InfoBankActive = 1 AND DS_REG = 0 AND Required = 1 AND c.SystemBaseName NOT IN ('RGN', 'RGU')
-			
+
 			UNION ALL
-			
-			SELECT 
+
+			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
 				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
-			FROM 
+			FROM
 				#client a
-				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT			
-				INNER JOIN dbo.DistrConditionView c ON b.SystemID = c.SystemID 
-													AND DISTR = DistrNumber 
+				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
+				INNER JOIN dbo.DistrConditionView c ON b.SystemID = c.SystemID
+													AND DISTR = DistrNumber
 													AND COMP = CompNumber
 				CROSS JOIN @WEEK
 			WHERE DS_REG = 0 AND b.SystemBaseName NOT IN ('RGN', 'RGU')
-			
+
 			UNION ALL
 
-			SELECT 
+			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
 				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
-			FROM 
+			FROM
 				#client a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 				CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DIstrTypeID) c
@@ -124,7 +124,7 @@ BEGIN
 				AND EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							USR.USRActiveView
 							INNER JOIN USR.USRIB ON UI_ID_USR = UF_ID
 						WHERE UD_ID_CLIENT = a.ClientID
@@ -132,7 +132,7 @@ BEGIN
 							AND UI_COMP = COMP
 							AND UI_ID_BASE = c.InfoBankID
 					)
-			
+
 
 		IF OBJECT_ID('tempdb..#ib') IS NOT NULL
 			DROP TABLE #ib
@@ -148,20 +148,20 @@ BEGIN
 
 		INSERT INTO #ib(UD_ID_CLIENT, UI_ID_BASE, UI_DISTR, UI_COMP, UIU_DATE_S)
 			SELECT UD_ID_CLIENT, UI_ID_BASE, UI_DISTR, UI_COMP, UIU_DATE_S
-			FROM 
+			FROM
 				#client a
 				INNER JOIN USR.USRIBDateView WITH(NOEXPAND) ON a.ClientID = UD_ID_CLIENT
 			WHERE UIU_DATE_S BETWEEN @BEGIN AND @END
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = 'CREATE CLUSTERED INDEX [IX_' + CONVERT(NVARCHAR(128), NEWID()) + '] ON #ib (UD_ID_CLIENT, UIU_DATE_S, UI_ID_BASE, UI_DISTR, UI_COMP)'
 		EXEC (@SQL)
 
-		SELECT 
-			a.ClientID, ClientFullName, ServiceName, ManagerName, 
+		SELECT
+			a.ClientID, ClientFullName, ServiceName, ManagerName,
 			DistrStr,
-			IB_SHORT AS InfoBankShortName, 
+			IB_SHORT AS InfoBankShortName,
 			'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 			(
 				SELECT TOP 1 UIU_DATE_S
@@ -208,14 +208,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#ib') IS NOT NULL
 			DROP TABLE #ib
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[UPDATE_PERIOD_AUDIT] TO rl_update_period_audit;
+GO

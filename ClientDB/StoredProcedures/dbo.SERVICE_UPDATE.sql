@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_UPDATE]
+ALTER PROCEDURE [dbo].[SERVICE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100),
 	@POS	INT,
@@ -42,7 +42,7 @@ BEGIN
 		SET ClientLast = GETDATE()
 		WHERE STATUS = 1 AND ClientServiceID = @ID
 
-		DELETE 
+		DELETE
 		FROM dbo.ServiceCity
 		WHERE ID_SERVICE = @ID
 			AND ID_CITY NOT IN
@@ -61,14 +61,16 @@ BEGIN
 					WHERE ID_SERVICE = @ID
 						AND ID_CITY = a.ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_UPDATE] TO rl_personal_service_u;
+GO

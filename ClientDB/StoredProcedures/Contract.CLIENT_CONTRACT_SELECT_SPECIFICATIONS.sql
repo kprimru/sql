@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS]
+ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS]
 	@Contract_Id	UniqueIdentifier
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		INNER JOIN Contract.Specification	AS S ON CS.ID_SPECIFICATION = S.ID
 		WHERE ID_CONTRACT = @Contract_Id
 		ORDER BY CS.DATE DESC;
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS] TO rl_client_contract_r;
+GO

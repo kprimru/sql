@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[CLIENT_MEMO_GET]
+ALTER PROCEDURE [Memo].[CLIENT_MEMO_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,9 +22,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			DATE,
-			CURRENT_CONTRACT, DISTR, ID_DOC_TYPE, ID_SERVICE, ID_VENDOR, START, FINISH, 
+			CURRENT_CONTRACT, DISTR, ID_DOC_TYPE, ID_SERVICE, ID_VENDOR, START, FINISH,
 			MONTH_PRICE, PERIOD_PRICE, PERIOD_START, PERIOD_END, PERIOD_FULL_PRICE,
 			ID_PAY_TYPE, ID_CONTRACT_PAY_TYPE, FRAMEWORK, DOCUMENTS, LETTER_CANCEL,
 			SYSTEMS,
@@ -40,14 +40,16 @@ BEGIN
 			).value('.', 'nvarchar(max)') AS CONDITION
 		FROM Memo.ClientMemo a
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[CLIENT_MEMO_GET] TO rl_client_memo_r;
+GO

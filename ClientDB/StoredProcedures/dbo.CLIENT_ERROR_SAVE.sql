@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ERROR_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_ERROR_SAVE]
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT,
 	@CLIENT	INT,
 	@NOTE	NVARCHAR(MAX)
@@ -33,21 +33,23 @@ BEGIN
 				SELECT @ID, ID_CLIENT, NOTE, 2, UPD_DATE, UPD_USER
 				FROM dbo.ClientError
 				WHERE ID = @ID
-				
+
 			UPDATE dbo.ClientError
 			SET NOTE		=	@NOTE,
 				UPD_DATE	=	GETDATE(),
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ERROR_SAVE] TO rl_client_error_w;
+GO

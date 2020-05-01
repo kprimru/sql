@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[DIN_FILE_PROCESS]
+ALTER PROCEDURE [Din].[DIN_FILE_PROCESS]
 	@SYS	INT,
 	@TYPE	INT,
 	@NET	INT,
@@ -23,7 +23,7 @@ CREATE PROCEDURE [Din].[DIN_FILE_PROCESS]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -35,7 +35,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SET @RES = 0
 
 		IF EXISTS
@@ -54,23 +54,25 @@ BEGIN
 				)
 			BEGIN
 				SET @RES = 1
-				
+
 				EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
-				
+
 				RETURN
 			END
 		END
 
 		INSERT INTO Din.DinFiles(DF_ID_SYS, DF_ID_TYPE, DF_ID_NET, DF_DISTR, DF_COMP, DF_RIC, DF_FILE, DF_MD5, DF_DIN)
 			VALUES(@SYS, @TYPE, @NET, @DISTR, @COMP, @RIC, @FILE, @MD5, @DIN)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[DIN_FILE_PROCESS] TO rl_din_import;
+GO

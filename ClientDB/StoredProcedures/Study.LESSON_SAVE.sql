@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Study].[LESSON_SAVE]
+ALTER PROCEDURE [Study].[LESSON_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
 	@TEACHER	NVARCHAR(128),
@@ -37,7 +37,7 @@ BEGIN
 				SELECT @ID, DATE, TEACHER, THEME, NOTE, 2, UPD_DATE, UPD_USER
 				FROM Study.Lesson
 				WHERE ID = @ID
-				
+
 			UPDATE Study.Lesson
 			SET DATE = @DATE,
 				TEACHER = @TEACHER,
@@ -47,14 +47,16 @@ BEGIN
 				UPD_USER = ORIGINAL_LOGIN()
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Study].[LESSON_SAVE] TO rl_study_personal_u;
+GO

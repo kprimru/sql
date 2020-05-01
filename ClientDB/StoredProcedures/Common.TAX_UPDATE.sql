@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[TAX_UPDATE]
+ALTER PROCEDURE [Common].[TAX_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@NAME		NVARCHAR(128),
 	@CAPTION	NVARCHAR(128),
@@ -38,14 +38,16 @@ BEGIN
 				RATE		=	@RATE,
 				[DEFAULT]	=	@DEFAULT
 		WHERE	ID			=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[TAX_UPDATE] TO rl_tax_u;
+GO

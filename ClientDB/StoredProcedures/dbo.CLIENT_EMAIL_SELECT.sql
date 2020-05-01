@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EMAIL_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_EMAIL_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -29,38 +29,41 @@ BEGIN
 				FROM dbo.ClientTable
 				WHERE ClientID = @CLIENT
 					AND STATUS = 1
-				
+
 				UNION ALL
-				
+
 				SELECT DISTINCT CP_EMAIL
-				FROM 
+				FROM
 					dbo.ClientPersonal
 					INNER JOIN dbo.ClientTable ON ClientID = CP_ID_CLIENT
 				WHERE CP_ID_CLIENT = @CLIENT
 					AND STATUS = 1
-				
+
 				UNION ALL
-				
+
 				SELECT DISTINCT EMAIL
 				FROM dbo.ClientDelivery
 				WHERE ID_CLIENT = @CLIENT
-					
+
 				UNION ALL
-				
+
 				SELECT DISTINCT EMAIL
 				FROM dbo.ClientDutyTable
 				WHERE ClientID = @CLIENT
 					AND STATUS = 1
 			) AS o_O
 		WHERE ISNULL(ML, '') <> ''
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EMAIL_SELECT] TO rl_client_card;
+GRANT EXECUTE ON [dbo].[CLIENT_EMAIL_SELECT] TO rl_client_card_r;
+GO

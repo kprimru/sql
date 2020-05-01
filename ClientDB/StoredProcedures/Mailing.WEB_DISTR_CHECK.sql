@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Mailing].[WEB_DISTR_CHECK]
+ALTER PROCEDURE [Mailing].[WEB_DISTR_CHECK]
 	@STR	NVARCHAR(64),
 	@MSG	NVARCHAR(256) OUTPUT,
 	@STATUS	SMALLINT OUTPUT,
@@ -29,7 +29,7 @@ BEGIN
 
 		DECLARE @DISTR_S	NVARCHAR(64)
 		DECLARE @COMP_S		NVARCHAR(64)
-		
+
 		SET @STR = LTRIM(RTRIM(@STR))
 
 		IF CHARINDEX('/', @STR) <> 0
@@ -42,12 +42,12 @@ BEGIN
 			SET @DISTR_S = @STR
 			SET @COMP_S = '1'
 		END
-		
+
 		DECLARE @ERROR	BIT
 
-		
+
 		SET @ERROR = 0
-		
+
 		BEGIN TRY
 			SET @DISTR = CONVERT(INT, @DISTR_S)
 			SET @COMP = CONVERT(INT, @COMP_S)
@@ -55,12 +55,12 @@ BEGIN
 		BEGIN CATCH
 			SET @ERROR = 1
 		END CATCH
-		
+
 		IF @ERROR = 1
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'Неверно указан номер дистрибутива. Он должен быть указан либо в виде числа, либо в виде пары чисел, разделенных символом "/"'
-			
+
 			RETURN
 		END
 
@@ -74,32 +74,34 @@ BEGIN
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'Вы не зарегистрированы в РИЦ как клиент'
-			
+
 			RETURN
 		END
-		
+
 		SELECT @HOST = MainHostID
 		FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
 		WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-		
+
 		IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'Дистрибутив отключен от сопровождения. Для того, чтобы подключиться к сопровождению, обратитесь к нам.'
-			
+
 			RETURN
 		END
 
-		
+
 		SET @STATUS = 0
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Mailing].[WEB_DISTR_CHECK] TO rl_mailing_web;
+GO

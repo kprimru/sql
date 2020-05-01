@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SATISFACTION_QUESTION_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_SATISFACTION_QUESTION_PROCESS]
 	@CS_ID	UNIQUEIDENTIFIER,
 	@SQ_ID	UNIQUEIDENTIFIER,
 	@NOTE	VARCHAR(500),
@@ -39,14 +39,17 @@ BEGIN
 			UPDATE dbo.ClientSatisfactionQuestion
 			SET CSQ_NOTE = @NOTE
 			WHERE CSQ_ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_QUESTION_PROCESS] TO rl_client_call_i;
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_QUESTION_PROCESS] TO rl_client_call_u;
+GO

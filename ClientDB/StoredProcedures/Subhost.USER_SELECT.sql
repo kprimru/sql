@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[USER_SELECT]
+ALTER PROCEDURE [Subhost].[USER_SELECT]
 	@SH_ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -27,19 +27,21 @@ BEGIN
 		WHERE ID_SUBHOST = @SH_ID
 			AND NAME NOT IN
 				(
-					'Ussuriisk', 
+					'Ussuriisk',
 					'Artem',
 					'Slavyanka',
 					'Nakhodka'
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[USER_SELECT] TO rl_web_subhost;
+GO

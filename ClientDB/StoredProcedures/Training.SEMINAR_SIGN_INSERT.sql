@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_INSERT]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_INSERT]
 	@SCHEDULE	UNIQUEIDENTIFIER,
 	@CLIENT		INT,
 	@SURNAME	VARCHAR(150),
@@ -13,7 +13,7 @@ CREATE PROCEDURE [Training].[SEMINAR_SIGN_INSERT]
 	@POS		VARCHAR(150),
 	@PHONE		VARCHAR(150),
 	@NOTE		VARCHAR(MAX),
-	@RESERVE	BIT,	
+	@RESERVE	BIT,
 	@ID			UNIQUEIDENTIFIER = NULL OUTPUT
 AS
 BEGIN
@@ -48,12 +48,12 @@ BEGIN
 		IF @RESERVE = 0
 		BEGIN
 			IF (
-					SELECT COUNT(*) 
-					FROM 
-						Training.SeminarSign 
+					SELECT COUNT(*)
+					FROM
+						Training.SeminarSign
 						INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 					WHERE SP_ID_SEMINAR = @SCHEDULE AND SSP_CANCEL = 0
-				) >= 
+				) >=
 				(
 					SELECT TSC_LIMIT
 					FROM Training.TrainingSchedule
@@ -63,7 +63,7 @@ BEGIN
 				RAISERROR ('”же записано максимальное количество участников. ћожно записать только в резерв.', 16, 1)
 				RETURN
 			END
-		
+
 			IF @SIGN IS NULL
 			BEGIN
 				INSERT INTO Training.SeminarSign(SP_ID_SEMINAR, SP_ID_CLIENT)
@@ -89,21 +89,23 @@ BEGIN
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
-		BEGIN	
+		BEGIN
 			INSERT INTO Training.SeminarReserve(SR_ID_SUBJECT, SR_ID_CLIENT, SR_SURNAME, SR_NAME, SR_PATRON, SR_POS, SR_PHONE, SR_NOTE)
 				OUTPUT INSERTED.SR_ID INTO @TBL
 				VALUES(@SUBJ, @CLIENT, @SURNAME, @NAME, @PATRON, @POS, @PHONE, @NOTE)
 
 			SELECT @ID = ID FROM @TBL
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_INSERT] TO rl_training_i;
+GO

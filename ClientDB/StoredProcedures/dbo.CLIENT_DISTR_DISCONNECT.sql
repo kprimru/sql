@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_DISCONNECT]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_DISCONNECT]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME
 AS
@@ -24,17 +24,17 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @STATUS UNIQUEIDENTIFIER
-		
+
 		SELECT @STATUS = DS_ID
 		FROM dbo.DistrStatus
 		WHERE DS_REG = 0
-		
+
 		DECLARE @STATUS_OFF UNIQUEIDENTIFIER
-		
+
 		IF EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemID = b.SystemID
 																	AND a.DistrNumber = b.DISTR
@@ -48,32 +48,34 @@ BEGIN
 			SELECT @STATUS_OFF = DS_ID
 			FROM dbo.DistrStatus
 			WHERE DS_REG = 1
-		
+
 		IF (SELECT ID_STATUS FROM dbo.ClientDistr WHERE ID = @ID) <> @STATUS
 		BEGIN
 			RAISERROR('Дистрибутив уже отключен от сопровождения. Операция отменена', 16, 1)
 			RETURN
 		END
-		
+
 		INSERT INTO dbo.ClientDistr(ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE, OFF_DATE, STATUS, BDATE, EDATE, UPD_USER)
 			SELECT ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE, OFF_DATE, 2, BDATE, GETDATE(), UPD_USER
 			FROM dbo.ClientDistr
 			WHERE ID = @ID
-			
+
 		UPDATE dbo.ClientDistr
 		SET ID_STATUS	= @STATUS_OFF,
 			OFF_DATE	= @DATE,
 			BDATE		= GETDATE(),
-			UPD_USER	= ORIGINAL_LOGIN()		
+			UPD_USER	= ORIGINAL_LOGIN()
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_DISCONNECT] TO rl_client_distr_disconnect;
+GO

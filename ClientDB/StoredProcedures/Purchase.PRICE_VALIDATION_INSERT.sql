@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PRICE_VALIDATION_INSERT]
+ALTER PROCEDURE [Purchase].[PRICE_VALIDATION_INSERT]
 	@NAME	VARCHAR(4000),
 	@SHORT	VARCHAR(200),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
@@ -29,17 +29,19 @@ BEGIN
 		INSERT INTO Purchase.PriceValidation(PV_NAME, PV_SHORT)
 			OUTPUT inserted.PV_ID INTO @TBL
 			VALUES(@NAME, @SHORT)
-			
+
 		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PRICE_VALIDATION_INSERT] TO rl_price_validation_i;
+GO

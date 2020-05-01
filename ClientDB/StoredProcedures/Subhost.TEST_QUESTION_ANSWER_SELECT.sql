@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[TEST_QUESTION_ANSWER_SELECT]
+ALTER PROCEDURE [Subhost].[TEST_QUESTION_ANSWER_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM Subhost.TestAnswer
 		WHERE ID_QUESTION = @ID
 		ORDER BY NEWID()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[TEST_QUESTION_ANSWER_SELECT] TO rl_web_subhost;
+GO

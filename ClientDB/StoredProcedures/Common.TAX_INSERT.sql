@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[TAX_INSERT]
+ALTER PROCEDURE [Common].[TAX_INSERT]
 	@NAME		NVARCHAR(128),
 	@CAPTION	NVARCHAR(128),
 	@RATE		DECIMAL(6, 2),
@@ -33,14 +33,16 @@ BEGIN
 			VALUES(@NAME, @CAPTION, @RATE, @DEFAULT)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[TAX_INSERT] TO rl_tax_i;
+GO

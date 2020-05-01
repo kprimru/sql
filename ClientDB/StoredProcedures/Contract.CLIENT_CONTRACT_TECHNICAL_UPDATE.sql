@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]
+ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]
 	@Contract_Id		UniqueIdentifier,
 	@Date				SmallDateTime,
 	@ExpireDate			SmallDateTime,
@@ -32,13 +32,13 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN;
-		
+
 		UPDATE [Contract].[Contract]
 		SET [DateFrom]	= @DateFrom,
 			[SignDate]	= @SignDate,
 			[DateTo]	= @DateTo
 		WHERE [Id] = @Contract_Id;
-		
+
 		UPDATE [Contract].[ClientContractsDetails]
 		SET [ExpireDate]	= @ExpireDate,
 			[Type_Id]		= @Type_Id,
@@ -48,10 +48,10 @@ BEGIN
 			[Comments]		= @Comments
 		WHERE [Contract_Id] = @Contract_Id
 			AND [DATE] = @Date
-		
+
 		IF @@TranCount > 0
 			COMMIT TRAN;
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
@@ -59,9 +59,11 @@ BEGIN
 			ROLLBACK TRAN;
 
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE] TO rl_client_contract_tech;
+GO

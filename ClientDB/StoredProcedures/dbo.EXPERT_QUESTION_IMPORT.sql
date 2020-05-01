@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[EXPERT_QUESTION_IMPORT]
+ALTER PROCEDURE [dbo].[EXPERT_QUESTION_IMPORT]
 	@DATA	NVARCHAR(MAX),
 	@DUTY	INT
 AS
@@ -48,7 +48,7 @@ BEGIN
 						c.value('(fio)[1]', 'NVARCHAR(256)') AS FIO,
 						c.value('(email)[1]', 'NVARCHAR(256)') AS EMAIL,
 						c.value('(phone)[1]', 'NVARCHAR(256)') AS PHONE,
-						c.value('(text)[1]', 'NVARCHAR(MAX)') AS QUEST					
+						c.value('(text)[1]', 'NVARCHAR(MAX)') AS QUEST
 					FROM @XML.nodes('root/quest') a(c)
 				) AS a
 			WHERE NOT EXISTS
@@ -64,12 +64,12 @@ BEGIN
 						AND z.PHONE = a.PHONE
 						AND z.QUEST = a.QUEST
 				)
-			
+
 		INSERT INTO dbo.ClientDutyTable(
-			ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL, 
+			ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL,
 			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-			
-			SELECT 
+
+			SELECT
 				ID_CLIENT, a.DATE, a.FIO, a.PHONE, @DUTY, a.QUEST, a.EMAIL, 0, '', 0, '',
 				(
 					SELECT TOP 1 ID
@@ -82,18 +82,20 @@ BEGIN
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP
 				INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
 			WHERE a.IMPORT IS NULL
-			
+
 		UPDATE dbo.ClientDutyQuestion
 		SET IMPORT = GETDATE()
 		WHERE ID IN (SELECT ID FROM @TBL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[EXPERT_QUESTION_IMPORT] TO rl_import_zve;
+GO

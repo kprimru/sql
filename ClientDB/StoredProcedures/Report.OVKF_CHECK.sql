@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[OVKF_CHECK]
+ALTER PROCEDURE [Report].[OVKF_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -58,14 +58,16 @@ BEGIN
 						AND i.UI_ID_BASE IN (SELECT InfoBankId FROM dbo.InfoBankTable WHERE InfoBankName IN ('ARB', 'BRB', 'PBI', 'CJI', 'CMB'))
 				)
 		ORDER BY SubhostName, ManagerName, ServiceName, ClientFullName, r.SystemOrder, DistrNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[OVKF_CHECK] TO rl_report;
+GO

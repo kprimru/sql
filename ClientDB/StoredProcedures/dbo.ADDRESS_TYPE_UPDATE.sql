@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@NAME		VARCHAR(100),
 	@REQUIRED	BIT
@@ -28,14 +28,16 @@ BEGIN
 		SET		AT_NAME		=	@NAME,
 				AT_REQUIRED	=	@REQUIRED
 		WHERE	AT_ID	=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_UPDATE] TO rl_address_type_u;
+GO

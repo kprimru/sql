@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SUBJECT_SAVE]
+ALTER PROCEDURE [Seminar].[SUBJECT_SAVE]
 	@ID		UNIQUEIDENTIFIER OUTPUT,
 	@NAME	NVARCHAR(512),
 	@READER	NVARCHAR(1024),
-	@NOTE	NVARCHAR(MAX)	
+	@NOTE	NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,11 +30,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Seminar.Subject(NAME, NOTE, READER)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@NAME, @NOTE, @READER)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
@@ -45,14 +45,16 @@ BEGIN
 				READER	=	@READER
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[SUBJECT_SAVE] TO rl_seminar_admin;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[KGS_DISTR_LIST_INSERT]
+ALTER PROCEDURE [dbo].[KGS_DISTR_LIST_INSERT]
 	@NAME	VARCHAR(100),
 	@LIST	NVARCHAR(MAX),
 	@ID		INT = NULL OUTPUT
@@ -26,7 +26,7 @@ BEGIN
 
 		INSERT INTO dbo.KGSDistrList(KDL_NAME)
 			VALUES(@NAME)
-		
+
 		SET @ID = SCOPE_IDENTITY()
 
 		DECLARE @XML	XML
@@ -47,11 +47,11 @@ BEGIN
 			)
 
 		INSERT INTO #distr_list(SYS_ID, DIS_NUM, COMP_NUM)
-			SELECT 			
+			SELECT 
 				c.value('(@SYS)', 'INT'),
 				c.value('(@DISTR)', 'INT'),
 				c.value('(@COMP)', 'TINYINT')
-			FROM @xml.nodes('/root/*') AS a(c)	
+			FROM @xml.nodes('/root/*') AS a(c)
 
 		INSERT INTO dbo.KGSDistr(KD_ID_LIST, KD_ID_SYS, KD_DISTR, KD_COMP)
 			SELECT @ID, SYS_ID, DIS_NUM, COMP_NUM
@@ -67,14 +67,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#distr_list') IS NOT NULL
 			DROP TABLE #distr_list
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[KGS_DISTR_LIST_INSERT] TO rl_kgs_distr_i;
+GO

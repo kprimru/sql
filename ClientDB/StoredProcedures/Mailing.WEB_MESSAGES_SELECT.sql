@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Mailing].[WEB_MESSAGES_SELECT]
+ALTER PROCEDURE [Mailing].[WEB_MESSAGES_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,14 +23,16 @@ BEGIN
 
 		SELECT PSEDO, TXT
 		FROM Seminar.Messages
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Mailing].[WEB_MESSAGES_SELECT] TO rl_mailing_web;
+GO

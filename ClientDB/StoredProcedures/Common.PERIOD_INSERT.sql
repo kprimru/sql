@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_INSERT]
+ALTER PROCEDURE [Common].[PERIOD_INSERT]
 	@TYPE		TINYINT,
-	@NAME		NVARCHAR(256),	
+	@NAME		NVARCHAR(256),
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@ID			UNIQUEIDENTIFIER = NULL OUTPUT
@@ -33,14 +33,16 @@ BEGIN
 			VALUES(@TYPE, @NAME, @START, @FINISH)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_INSERT] TO rl_period_i;
+GO

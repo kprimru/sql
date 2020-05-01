@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[USR_SELECT]
+ALTER PROCEDURE [Subhost].[USR_SELECT]
 	@SH_ID	UNIQUEIDENTIFIER,
 	@USR	NVARCHAR(128) = NULL
 WITH EXECUTE AS OWNER
@@ -25,18 +25,20 @@ BEGIN
 	BEGIN TRY
 
 		EXEC USR.USR_SUBHOST_SELECT @SH_ID
-		
+
 		INSERT INTO Subhost.FilesDownload(ID_SUBHOST, USR, FTYPE)
-			SELECT @SH_ID, @USR, N'USR'		
+			SELECT @SH_ID, @USR, N'USR'
 			WHERE @USR IS NOT NULL
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[USR_SELECT] TO rl_web_subhost;
+GO

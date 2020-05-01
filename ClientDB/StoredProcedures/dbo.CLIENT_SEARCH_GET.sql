@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH_GET]
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH_GET]
 	@CLIENTID	INT,
 	@BEGIN		DATETIME = NULL,
 	@END		DATETIME = NULL,
@@ -35,14 +35,16 @@ BEGIN
 		ORDER BY SearchDate DESC
 
 		SET @RC = @@ROWCOUNT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_GET] TO rl_client_search_r;
+GO

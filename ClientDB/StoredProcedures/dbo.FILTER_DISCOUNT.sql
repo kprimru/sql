@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[FILTER_DISCOUNT]
+ALTER PROCEDURE [dbo].[FILTER_DISCOUNT]
 	@discountid			Int,
 	@contracttypeid		Int,
 	@startdate			SmallDateTime,
@@ -26,11 +26,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			CL.ClientID, ClientFullName, ContractNumber = NUM_S, 
+		SELECT
+			CL.ClientID, ClientFullName, ContractNumber = NUM_S,
 			ContractBegin = DateFrom, ContractTypeName, DiscountValue
 		FROM [dbo].[ClientList@Get?Read]()			R
-		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID 
+		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID
 		INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
 		CROSS APPLY
 		(
@@ -43,19 +43,21 @@ BEGIN
 		LEFT JOIN dbo.DiscountTable D ON D.DiscountID = CD.Discount_Id
 		LEFT JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
 		WHERE
-				(CD.Type_Id = @contracttypeid	OR @contracttypeid IS NULL) 
-			AND (CD.Discount_ID = @discountid	OR @discountid IS NULL) 
+				(CD.Type_Id = @contracttypeid	OR @contracttypeid IS NULL)
+			AND (CD.Discount_ID = @discountid	OR @discountid IS NULL)
 			AND (C.DateFrom >= @startdate		OR @startdate IS NULL)
 			AND (C.DateFrom <= @enddate			OR @enddate IS NULL)
 		ORDER BY DiscountOrder, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FILTER_DISCOUNT] TO rl_filter_discount;
+GO

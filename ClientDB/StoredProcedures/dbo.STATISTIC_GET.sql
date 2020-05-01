@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STATISTIC_GET]
+ALTER PROCEDURE [dbo].[STATISTIC_GET]
 	@DATE		SMALLDATETIME,
-	@SYSTEM_ID	INT	
+	@SYSTEM_ID	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,7 +27,7 @@ BEGIN
 			a.[InfoBankID], a.[InfoBankName], a.[InfoBankFullName],
 			(
 				SELECT TOP 1 b.DOCS
-				FROM dbo.StatisticTable b 
+				FROM dbo.StatisticTable b
 				WHERE	b.InfoBankID = a.InfoBankID
 					AND b.StatisticDate <= @DATE
 				ORDER BY StatisticDate DESC
@@ -35,14 +35,16 @@ BEGIN
 		FROM [dbo].[SystemBanksView] a WITH(NOEXPAND)
 		WHERE a.SystemID = @SYSTEM_ID
 		ORDER BY a.InfoBankOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STATISTIC_GET] TO DBStatistic;
+GO

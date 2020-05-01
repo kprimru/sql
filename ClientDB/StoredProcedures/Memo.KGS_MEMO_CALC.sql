@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[KGS_MEMO_CALC]
+ALTER PROCEDURE [Memo].[KGS_MEMO_CALC]
 	@LIST		NVARCHAR(MAX),
 	@MONTH		UNIQUEIDENTIFIER,
 	@KIND		TINYINT,
@@ -32,21 +32,21 @@ BEGIN
 		SET @XML = CAST(@LIST AS XML)
 
 		DECLARE @TotalRate DECIMAL(8,4)
-		
+
 		DECLARE @DATE SMALLDATETIME
-		
+
 		SELECT @DATE = START
 		FROM Common.Period
 		WHERE ID = @MONTH
-		
+
 		IF @DATE >= '20181001'
 			SET @DATE = '20190101'
-		
+
 		SELECT @TotalRate = TOTAL_RATE
 		FROM Common.TaxDefaultSelect(@DATE)
 
 		/*
-		—“–Œ»Ã —œ»—Œ  — ÷≈Õ¿Ã», œŒ“ŒÃ, ≈—À» Õ”∆ÕŒ Œ“ Œ¡Ÿ≈… —”ÃÃ€ - Õ¿◊»Õ¿≈Ã œ–ŒœŒ–÷»ŒÕ¿À‹ÕŒ –¿«¡»¬¿“‹. 
+		—“–Œ»Ã —œ»—Œ  — ÷≈Õ¿Ã», œŒ“ŒÃ, ≈—À» Õ”∆ÕŒ Œ“ Œ¡Ÿ≈… —”ÃÃ€ - Õ¿◊»Õ¿≈Ã œ–ŒœŒ–÷»ŒÕ¿À‹ÕŒ –¿«¡»¬¿“‹.
 		≈—À» Õ≈ Õ¿ƒŒ - “Œ Õ≈ –¿«¡ﬁ»¬¿≈Ã
 		*/
 
@@ -78,48 +78,48 @@ BEGIN
 			)
 
 		INSERT INTO #result
-			SELECT 
+			SELECT
 				CL_ID AS ID_CLIENT, CL_NUM AS NUM,
-				SystemID, SystemShortName, SystemOrder, 
-				DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder, 
+				SystemID, SystemShortName, SystemOrder,
+				DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
 				DISCOUNT, INFLATION,
-				SystemTypeID, SystemTypeName, 
+				SystemTypeID, SystemTypeName,
 				DISTR, COMP,
 				/*CONVERT(MONEY, ROUND(PRICE * DistrTypeCoef, 2)) AS PRICE_NET, */
 				@MON_CNT,
-				PRICE_TOTAL AS PRICE,  
+				PRICE_TOTAL AS PRICE,
 				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2) - PRICE_TOTAL) AS TAX_PRICE,
 				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) AS TOTAL_PRICE,
 				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) * @MON_CNT AS TOTAL_PERIOD
 			FROM
 				(
-					SELECT 
+					SELECT
 						CL_ID, CL_NUM, DISTR, COMP,
-						SystemID, SystemShortName, SystemOrder, 
-						DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder, 
-						SystemTypeID, SystemTypeName, 
+						SystemID, SystemShortName, SystemOrder,
+						DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
+						SystemTypeID, SystemTypeName,
 						DISCOUNT, INFLATION,
-						PRICE, 
-						
-						CONVERT(MONEY, 
-							ROUND(PRICE * DistrTypeCoef, DistrTypeRound) * 
-							(100 - DISCOUNT) / 100 * 
+						PRICE,
+
+						CONVERT(MONEY,
+							ROUND(PRICE * DistrTypeCoef, DistrTypeRound) *
+							(100 - DISCOUNT) / 100 *
 							(1 + INFLATION / 100.0), 0) AS PRICE_TOTAL
-					FROM 
+					FROM
 						(
-							SELECT 
+							SELECT
 								CL_ID, CL_NUM, DISTR, COMP,
-								b.SystemID, SystemShortName, b.SystemOrder, 
-								DistrTypeID, DistrTypeName, 
-								dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeCoef, 
+								b.SystemID, SystemShortName, b.SystemOrder,
+								DistrTypeID, DistrTypeName,
+								dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeCoef,
 								dbo.DistrCoefRound(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeRound,
-								DistrTypeOrder, 
-								SystemTypeID, SystemTypeName, 
+								DistrTypeOrder,
+								SystemTypeID, SystemTypeName,
 								DISCOUNT, INFLATION,
 								PRICE
 							FROM
 								(
-									SELECT 			
+									SELECT 
 										c.value('@client[1]', 'INT') AS CL_ID,
 										c.value('@num[1]', 'INT') AS CL_NUM,
 										c.value('@sys[1]', 'INT') AS SYS_ID,
@@ -140,10 +140,10 @@ BEGIN
 						) AS o_O
 				) AS o_O
 			ORDER BY CL_NUM, SystemOrder, DistrTypeOrder
-		
+
 		IF @KIND = 1
 		BEGIN
-			SELECT 
+			SELECT
 				*,
 				dbo.DistrString(NULL, DISTR, COMP) AS DISTR_STR
 			FROM #result
@@ -161,16 +161,16 @@ BEGIN
 					TAX_PRICE	MONEY,
 					TOTAL_PRICE	MONEY
 				)
-				
+
 			INSERT INTO @SPLIT
 				SELECT *
 				FROM Memo.MemoSplit(@LIST, @MONTH, @MON_CNT, @PRICE)
-				
-			SELECT		
-				a.ID_CLIENT, a.NUM, 
+
+			SELECT
+				a.ID_CLIENT, a.NUM,
 				a.SystemID, a.SystemShortName, a.SystemOrder,
 				a.DistrTypeID, a.DistrTypeName, a.DistrTypeCoef, a.DistrTypeOrder,
-				a.DISCOUNT, a.INFLATION, 
+				a.DISCOUNT, a.INFLATION,
 				a.SystemTypeID, a.SystemTypeName,
 				a.DISTR, a.COMP,
 				CASE
@@ -186,7 +186,7 @@ BEGIN
 							ELSE @MON_CNT
 						END
 				END AS MON_CNT,
-				b.PRICE, b.TAX_PRICE, b.TOTAL_PRICE, 
+				b.PRICE, b.TAX_PRICE, b.TOTAL_PRICE,
 				CASE
 					WHEN @MON_CNT = 1 OR @CURVED = 2 THEN b.TOTAL_PRICE
 					ELSE
@@ -201,21 +201,23 @@ BEGIN
 						END
 				END AS TOTAL_PERIOD,
 				dbo.DistrString(NULL, DISTR, COMP) AS DISTR_STR
-			FROM 
+			FROM
 				#result a
-				INNER JOIN @SPLIT b ON a.SystemID = b.SystemID 
-									AND a.DistrTypeID = b.DistrTypeID 
+				INNER JOIN @SPLIT b ON a.SystemID = b.SystemID
+									AND a.DistrTypeID = b.DistrTypeID
 									AND TP = @CURVED
 			ORDER BY NUM, SystemOrder, DistrTypeOrder
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[KGS_MEMO_CALC] TO rl_kgs_complect_calc;
+GO

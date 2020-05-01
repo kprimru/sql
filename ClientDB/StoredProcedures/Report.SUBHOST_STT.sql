@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SUBHOST_STT]
+ALTER PROCEDURE [Report].[SUBHOST_STT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,22 +22,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			SH_NAME AS [Подхост], DATE AS [Дата загрузки], USR AS [Пользователь], 
-			dbo.FileByteSizeToStr(DATALENGTH(BIN)) AS [Размер], 
+		SELECT
+			SH_NAME AS [Подхост], DATE AS [Дата загрузки], USR AS [Пользователь],
+			dbo.FileByteSizeToStr(DATALENGTH(BIN)) AS [Размер],
 			PROCESS AS [Дата обработки]
-		FROM 
+		FROM
 			Subhost.STTFiles a
 			INNER JOIN dbo.Subhost b ON SH_ID = ID_SUBHOST
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SUBHOST_STT] TO rl_report;
+GO

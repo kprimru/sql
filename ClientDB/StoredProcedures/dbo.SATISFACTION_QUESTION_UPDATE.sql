@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SATISFACTION_QUESTION_UPDATE]
+ALTER PROCEDURE [dbo].[SATISFACTION_QUESTION_UPDATE]
 	@ID	UNIQUEIDENTIFIER,
 	@TEXT	VARCHAR(500),
 	@SINGLE	BIT,
 	@BOLD	BIT,
 	@ORDER	INT,
-	@ACTIVE	BIT	
+	@ACTIVE	BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,20 +28,22 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SatisfactionQuestion
-		SET SQ_TEXT = @TEXT, 
-			SQ_SINGLE = @SINGLE, 
-			SQ_BOLD = @BOLD, 
-			SQ_ORDER = @ORDER, 
+		SET SQ_TEXT = @TEXT,
+			SQ_SINGLE = @SINGLE,
+			SQ_BOLD = @BOLD,
+			SQ_ORDER = @ORDER,
 			SQ_ACTIVE = @ACTIVE
 		WHERE SQ_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SATISFACTION_QUESTION_UPDATE] TO rl_satisfaction_u;
+GO

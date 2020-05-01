@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_SUBHOST_SELECT]
+ALTER PROCEDURE [USR].[USR_SUBHOST_SELECT]
 	@SH_ID	VARCHAR(50)
 AS
 BEGIN
@@ -18,9 +18,9 @@ BEGIN
 	DECLARE
 		@REG			VarChar(50),
 		@Date			SmallDateTime;
-		
+
 	DECLARE @Complects Table(Id Int Primary Key Clustered);
-	
+
 	DECLARE @Distrs Table
 	(
 		[Host_Id]		SmallInt	NOT NULL,
@@ -36,7 +36,7 @@ BEGIN
 
 	BEGIN TRY
 		SET @Date = DATEADD(MONTH, -1, GETDATE());
-		
+
 		INSERT INTO @Distrs
 		SELECT HostId, DistrNumber, CompNumber
 		FROM [dbo].[SubhostDistrs@Get](@SH_ID, NULL);
@@ -49,8 +49,8 @@ BEGIN
 																	AND U.UD_DISTR = D.Distr
 																	AND U.UD_COMP = D.Comp
 		OPTION (RECOMPILE);
-		
-		SELECT 
+
+		SELECT
 			C.Id AS UD_ID, UF_DATA, UF_NAME
 		FROM @Complects C
 		CROSS APPLY
@@ -64,14 +64,16 @@ BEGIN
 			ORDER BY UF_CREATE DESC
 		) AS F
 		OPTION(RECOMPILE);
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[USR_SUBHOST_SELECT] TO rl_usr_subhost_save;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SUBHOST_EXPORT_DATA_NEW]
+ALTER PROCEDURE [dbo].[SUBHOST_EXPORT_DATA_NEW]
 	@SH		NVARCHAR(32)
 AS
 BEGIN
@@ -62,7 +62,7 @@ BEGIN
 			@DistrType				Xml,
 			@ClientStatus			Xml,
 			@DistrCoef				Xml;
-		
+
 		DECLARE @Distr Table
 		(
 			HostID	SmallInt	NOT NULL,
@@ -70,7 +70,7 @@ BEGIN
 			Comp	TinyInt		NOT NULL,
 			Primary Key Clustered(Distr, HostID, Comp)
 		);
-		
+
 		DECLARE @DistrTypeCoef Table
 		(
 			ID_NET	SmallInt			NOT NULL,
@@ -79,10 +79,10 @@ BEGIN
 			RND		SmallInt			NOT NULL,
 			Primary Key Clustered(ID_NET, START)
 		);
-		
+
 		INSERT INTO @Distr
 		SELECT HostID, DistrNumber, CompNumber
-		FROM 
+		FROM
 			dbo.RegNodeTable a
 			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 		WHERE (Comment LIKE @SH_REG OR Comment LIKE @SH_REG_ADD) AND SystemReg = 1
@@ -90,29 +90,29 @@ BEGIN
 		UNION
 
 		SELECT b.HostID, DistrNumber, CompNumber
-		FROM 
+		FROM
 			dbo.RegNodeTable a
 			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 			INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
 		WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
 
-		UNION 
+		UNION
 
 		SELECT HostID, DistrNumber, CompNumber
-		FROM 
+		FROM
 			dbo.RegNodeTable a
 			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 		WHERE Complect IN
 			(
 				SELECT Complect
-				FROM 
+				FROM
 					dbo.RegNodeTable a
 					INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 					INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
 				WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
 			);
-		
-		SET @Stat = 
+
+		SET @Stat =
 			(
 				SELECT --TOP 10
 					[IB]	= InfoBankName,
@@ -121,15 +121,15 @@ BEGIN
 				FROM
 				(
 					SELECT StatisticDate, InfoBankName, Docs
-					FROM 
-						dbo.StatisticTable a 
+					FROM
+						dbo.StatisticTable a
 						INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.InfoBankID = b.InfoBankID
 					WHERE StatisticDate >= dbo.DateOf(DATEADD(MONTH, -1, GETDATE()))
 				) AS a
 			FOR XML RAW('ITEM'), ROOT('STAT')
 		)
-						
-		SET @Reg = 
+
+		SET @Reg =
 			(
 				SELECT --TOP 10
 					[Sys]		= SystemBaseName,
@@ -152,7 +152,7 @@ BEGIN
 				INNER JOIN @Distr D ON D.HostID = S.HostID AND D.Distr = R.DistrNumber AND D.Comp = R.CompNumber
 				FOR XML RAW('ITEM'), ROOT('REG')
 			)
-				
+
 		SET @ProtTxt =
 			(
 				SELECT --TOP 10
@@ -168,7 +168,7 @@ BEGIN
 				WHERE DATE >= dbo.DateOf(DATEADD(MONTH, -1, GETDATE()))
 				FOR XML RAW('ITEM'), ROOT('PROT_TEXT')
 			);
-			
+
 		SET @Prot =
 			(
 				SELECT --TOP 10
@@ -187,8 +187,8 @@ BEGIN
 				INNER JOIN dbo.Hosts H ON H.HostID = D.HostID
 				WHERE RPR_DATE >= dbo.DateOf(DATEADD(MONTH, -1, GETDATE()))
 				FOR XML RAW('ITEM'), ROOT('PROT')
-			);	
-		
+			);
+
 		SET @Price =
 			(
 				SELECT --TOP 10
@@ -200,8 +200,8 @@ BEGIN
 				INNER JOIN dbo.SystemTable c ON c.SystemID = a.ID_SYSTEM
 				WHERE START >= dbo.DateOf(DATEADD(MONTH, -6, GETDATE()))
 				FOR XML RAW('ITEM'), ROOT('PRICE')
-			);	
-		
+			);
+
 		SET @Black  =
 			(
 				SELECT --TOP 10
@@ -215,7 +215,7 @@ BEGIN
 				WHERE P_DELETE = 0
 				FOR XML RAW('ITEM'), ROOT('BLACK')
 			);
-		
+
 		SET @Expert =
 			(
 				SELECT --TOP 10
@@ -229,7 +229,7 @@ BEGIN
 				WHERE UNSET_DATE IS NULL
 				FOR XML RAW('ITEM'), ROOT('EXPERT')
 			);
-			
+
 		SET @Hotline =
 			(
 				SELECT --TOP 10
@@ -243,7 +243,7 @@ BEGIN
 				WHERE UNSET_DATE IS NULL
 				FOR XML RAW('ITEM'), ROOT('HOTLINE')
 			);
-			
+
 		SET @Net =
 			(
 				SELECT
@@ -257,9 +257,9 @@ BEGIN
 					[Odoff]		= NT_ODOFF
 				FROM Din.NetType
 				FOR XML RAW('ITEM'), ROOT('NET')
-			); 
-			
-		SET @Type = 
+			);
+
+		SET @Type =
 			(
 				SELECT
 					[Name]	= SST_NAME,
@@ -269,23 +269,23 @@ BEGIN
 				FROM Din.SystemType
 				FOR XML RAW('ITEM'), ROOT('SYS_TYPE')
 			);
-			
-		SET @InfoBank = 
+
+		SET @InfoBank =
 			(
 				SELECT
-					[Name]		= InfoBankName, 
-					[Short]		= InfoBankShortName, 
-					[Full]		= InfoBankFullName, 
-					[Order]		= InfoBankOrder, 
-					[Active]	= InfoBankActive, 
-					[Daily]		= InfoBankDaily, 
-					[Actual]	= InfoBankActual, 
+					[Name]		= InfoBankName,
+					[Short]		= InfoBankShortName,
+					[Full]		= InfoBankFullName,
+					[Order]		= InfoBankOrder,
+					[Active]	= InfoBankActive,
+					[Daily]		= InfoBankDaily,
+					[Actual]	= InfoBankActual,
 					[Start]		= InfoBankStart
 				FROM dbo.InfoBankTable
 				FOR XML RAW('ITEM'), ROOT('INFO_BANK')
 			);
-			
-		SET @Host = 
+
+		SET @Host =
 			(
 				SELECT
 					[Short]	= HostShort,
@@ -294,24 +294,24 @@ BEGIN
 				FROM dbo.Hosts
 				FOR XML RAW('ITEM'), ROOT('HOST')
 			);
-			
-		SET @System = 
+
+		SET @System =
 			(
 				SELECT
-					[Short]		= SystemShortName, 
-					[Name]		= SystemName, 
-					[RegName]	= SystemBaseName, 
-					[Number]	= SystemNumber, 
-					[Host]		= HostReg, 
-					[Ric]		= SystemRic, 
-					[Order]		= SystemOrder, 
-					[VMI]		= SystemVMI, 
-					[Full]		= SystemFullName, 
-					[Din]		= SystemDin, 
-					[Active]	= SystemActive, 
-					[Start]		= SystemStart, 
-					[End]		= SystemEnd, 
-					[Demo]		= SystemDemo, 
+					[Short]		= SystemShortName,
+					[Name]		= SystemName,
+					[RegName]	= SystemBaseName,
+					[Number]	= SystemNumber,
+					[Host]		= HostReg,
+					[Ric]		= SystemRic,
+					[Order]		= SystemOrder,
+					[VMI]		= SystemVMI,
+					[Full]		= SystemFullName,
+					[Din]		= SystemDin,
+					[Active]	= SystemActive,
+					[Start]		= SystemStart,
+					[End]		= SystemEnd,
+					[Demo]		= SystemDemo,
 					[Complect]	= SystemComplect,
 					[Reg]		= SystemReg,
 					[BaseCheck]	= SystemBaseCheck
@@ -319,19 +319,19 @@ BEGIN
 				INNER JOIN dbo.Hosts H ON S.HostID = H.HostID
 				FOR XML RAW('ITEM'), ROOT('SYSTEM')
 			);
-			
-		SET @SystemBank = 
+
+		SET @SystemBank =
 			(
 				SELECT
-					[System]	= SystemBaseName, 
-					[InfoBank]	= InfoBankName, 
+					[System]	= SystemBaseName,
+					[InfoBank]	= InfoBankName,
 					[Required]	= Required
 				FROM dbo.SystemBanksView WITH(NOEXPAND)
 				FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK')
 			);
-			
+
 		-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable
-		SET @SystemBankNew = 
+		SET @SystemBankNew =
 			(
 				SELECT
 					SystemBaseName,
@@ -360,8 +360,8 @@ BEGIN
 				) SD
 				FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK_NEW')
 			);
-			
-		SET @Weight = 
+
+		SET @Weight =
 			(
 				SELECT
 					[Date]		= W.[Date],
@@ -375,7 +375,7 @@ BEGIN
 				FROM dbo.Weight W
 				FOR XML RAW('ITEM'), ROOT('WEIGHT')
 			);
-			
+
 		SET @DistrStatus =
 			(
 				SELECT
@@ -385,7 +385,7 @@ BEGIN
 				FROM dbo.DistrStatus
 				FOR XML RAW('ITEM'), ROOT('DISTR_STATUS')
 			);
-		
+
 		SET @Compliance =
 			(
 				SELECT
@@ -395,7 +395,7 @@ BEGIN
 				FROM dbo.ComplianceTypeTable
 				FOR XML RAW('ITEM'), ROOT('COMPLIANCE')
 			);
-			
+
 		SET @USRKind =
 			(
 				SELECT
@@ -405,7 +405,7 @@ BEGIN
 				FROM dbo.USRFileKindTable
 				FOR XML RAW('ITEM'), ROOT('USR_KIND')
 			);
-			
+
 		SET @PersonalType =
 			(
 				SELECT
@@ -429,8 +429,8 @@ BEGIN
 				FROM dbo.ServiceStatusTable
 				FOR XML RAW('ITEM'), ROOT('CLIENT_STATUS')
 			);
-			
-		SET @DistrType = 
+
+		SET @DistrType =
 			(
 				SELECT
 					[Name]		= DistrTypeName,
@@ -442,7 +442,7 @@ BEGIN
 				FOR XML RAW('ITEM'), ROOT('DISTR_TYPE')
 			);
 
-		-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable		
+		-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable
 		INSERT INTO @DistrTypeCoef
 		SELECT ID_NET, START, COEF, RND
 		FROM
@@ -452,15 +452,15 @@ BEGIN
 			INNER JOIN Common.Period P ON C.ID_MONTH = P.ID
 		) AS A
 		WHERE RN = 1;
-			
-		SET @DistrCoef = 
+
+		SET @DistrCoef =
 		(
 			SELECT
 				NT_NET,
 				NT_TECH,
 				NT_ODON,
 				NT_ODOFF,
-				PERIODIC = 
+				PERIODIC =
 				(
 					SELECT
 						COEF,
@@ -487,8 +487,8 @@ BEGIN
 			) C
 			FOR XML RAW ('ITEM'), ROOT('DISTR_TYPE_COEF')
 		);
-			
-		SET @References = 
+
+		SET @References =
 			(
 				SELECT
 				(
@@ -510,7 +510,7 @@ BEGIN
 							@DistrType,
 							@ClientStatus,
 							@DistrCoef
-						FOR XML PATH('REFERENCES')	
+						FOR XML PATH('REFERENCES')
 					)
 				)
 			);
@@ -521,7 +521,7 @@ BEGIN
 					[SetId],
 					[RefName],
 					[SetName],
-					[ITEMS] = 
+					[ITEMS] =
 						(
 							SELECT
 								[Code] = T.[ServiceCode]
@@ -541,8 +541,8 @@ BEGIN
 				@ServiceStatusNamedSet
 			FOR XML PATH('NAMED_SETS')
 		)
-		
-		SET @Data = 
+
+		SET @Data =
 			(
 				SELECT
 				(
@@ -560,16 +560,16 @@ BEGIN
 					FOR XML PATH('DATA')
 				)
 			);
-				
+
 		SELECT [DATA] = Cast(@Data AS NVarChar(Max))
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISCOUNT_DBF_FILTER]
+ALTER PROCEDURE [dbo].[DISCOUNT_DBF_FILTER]
 	@SERVICE	INT,
 	@MANAGER	INT,
 	@SYSTEM		INT,
@@ -42,7 +42,7 @@ BEGIN
 			SET @DISC_START = NULL
 			SET @DISC_END = NULL
 		END
-		
+
 		IF @FIXED = 0
 		BEGIN
 			SET @FIX_START = NULL
@@ -52,33 +52,33 @@ BEGIN
 		DECLARE @MONTH UNIQUEIDENTIFIER
 
 		SELECT @MONTH = Common.PeriodCurrent(2)
-		
+
 		DECLARE @MONTH_DATE	SMALLDATETIME
-		
+
 		SELECT @MONTH_DATE = START
 		FROM Common.Period
 		WHERE ID = @MONTH
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
 			DISCOUNT,	DF_FIXED_PRICE, REAL_DISCOUNT
 		FROM
 			(
-				SELECT 
+				SELECT
 					ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
 					CASE WHEN DSS_REPORT = 0 THEN NULL ELSE CONVERT(INT, DF_DISCOUNT) END AS DISCOUNT,
 					CASE WHEN DSS_REPORT = 0 THEN NULL ELSE DF_FIXED_PRICE END AS DF_FIXED_PRICE,
 					CASE
 						WHEN DSS_REPORT = 0 THEN 100
-						WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN 
-							CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
-						WHEN DF_ID_PRICE = 6 THEN CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)) 
+						WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
+							CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2))
+						WHEN DF_ID_PRICE = 6 THEN CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2))
 						WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN DF_DISCOUNT
 						ELSE 0
 					END AS REAL_DISCOUNT, SystemOrder, DISTR, COMP
-				FROM 
+				FROM
 					(
-						SELECT 
+						SELECT
 							ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
 							DF_ID_PRICE, DSS_REPORT,
 							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
@@ -86,9 +86,9 @@ BEGIN
 							PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
 						FROM
 							dbo.ClientView a WITH(NOEXPAND)
-							INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT	
-							INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName				
-																		AND DIS_NUM = b.DISTR 
+							INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
+							INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
+																		AND DIS_NUM = b.DISTR
 																		AND DIS_COMP_NUM = b.COMP
 							INNER JOIN Price.SystemPrice g ON ID_SYSTEM = SystemID AND g.ID_MONTH = @MONTH
 						WHERE b.DS_REG = 0
@@ -107,14 +107,16 @@ BEGIN
 		WHERE (REAL_DISCOUNT >= @REAL_START OR @REAL_START IS NULL)
 			AND (REAL_DISCOUNT <= @REAL_END OR @REAL_END IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, DISTR, COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISCOUNT_DBF_FILTER] TO rl_discount_dbf_filter;
+GO

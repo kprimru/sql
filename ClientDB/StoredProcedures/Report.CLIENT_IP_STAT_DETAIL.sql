@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL]
+ALTER PROCEDURE [Report].[CLIENT_IP_STAT_DETAIL]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -115,19 +115,19 @@ BEGIN
 			N'
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						(
 							SELECT DISTINCT WeekId, HostID, Distr, Comp
 							FROM
 								dbo.ClientStatDetail z
-								INNER JOIN Common.Period y ON z.WeekId = y.ID				
+								INNER JOIN Common.Period y ON z.WeekId = y.ID
 							WHERE z.HostID = a.HostID
 								AND z.Distr = a.DistrNumber
 								AND z.Comp = a.CompNumber
-								AND DATEADD(MONTH, 3, START) >= GETDATE()				
+								AND DATEADD(MONTH, 3, START) >= GETDATE()
 						) AS o_O
 				) AS [Кол-во недель со входами]
-			FROM 	
+			FROM 
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN dbo.ClientStatDetail CSD ON CSD.HostID=a.HostID AND CSD.Distr=a.DistrNumber AND CSD.Comp=a.CompNumber
 				LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
@@ -137,14 +137,16 @@ BEGIN
 
 		--select (@SQL)
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[CLIENT_IP_STAT_DETAIL] TO rl_report;
+GO

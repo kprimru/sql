@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[OFFER_OTHER_SET]
+ALTER PROCEDURE [Price].[OFFER_OTHER_SET]
 	@NOTE	VARBINARY(MAX)
 AS
 BEGIN
@@ -23,19 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE Price.OfferOther
-		SET NOTE = @NOTE	
+		SET NOTE = @NOTE
 
 		IF @@ROWCOUNT = 0
 			INSERT INTO Price.OfferOther(NOTE)
 				VALUES(@NOTE)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[OFFER_OTHER_SET] TO rl_offer_admin;
+GO

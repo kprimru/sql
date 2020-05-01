@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_CLAIM_WARNING]
+ALTER PROCEDURE [dbo].[STUDY_CLAIM_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,7 +21,7 @@ BEGIN
 		PersNote 	VarChar(Max),
 		PRIMARY KEY CLUSTERED (Id)
 	);
-			
+
 	DECLARE @ZVE Table
 	(
 		Client_Id	Int,
@@ -40,7 +40,7 @@ BEGIN
 		FROM dbo.ClientStudyClaim a
 		CROSS APPLY
 		(
-			SELECT PERS_NOTE = 
+			SELECT PERS_NOTE =
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT z.NOTE + ', '
@@ -52,7 +52,7 @@ BEGIN
 				), 1, 2, ''))
 		) P
 		WHERE a.STATUS IN (1, 9);
-		
+
 		INSERT INTO @ZVE
 		SELECT C.Client_Id, Distrs
 		FROM
@@ -68,7 +68,7 @@ BEGIN
 					FROM
 						(
 							SELECT DISTINCT g.DistrStr, SystemOrder, DISTR, COMP
-							FROM 
+							FROM
 								dbo.RegNodeMainDistrView f WITH(NOEXPAND)
 								INNER JOIN dbo.ClientDistrView g WITH(NOEXPAND) ON f.MainHostID = g.HostID AND f.MainDistrNumber = g.DISTR AND f.MainCompNumber = g.COMP
 							WHERE g.ID_CLIENT = C.Client_Id
@@ -84,19 +84,19 @@ BEGIN
 		) AS D
 		OPTION(RECOMPILE)
 
-		SELECT 
+		SELECT
 			A.ID, ID_CLIENT AS ClientID, DATE, STUDY_DATE, MEETING_DATE, b.ClientFullName + ISNULL(' (' + t.ClientTypeName + ')', '') AS ClientFullName, a.STATUS,
-			NOTE = Cast(NOTE AS VarChar(4000)), REPEAT, TeacherName, ServiceName + ' (' + ManagerName + ')' AS ServiceName, CALL_DATE, TEACHER_NOTE, 
+			NOTE = Cast(NOTE AS VarChar(4000)), REPEAT, TeacherName, ServiceName + ' (' + ManagerName + ')' AS ServiceName, CALL_DATE, TEACHER_NOTE,
 			I.PersNote AS PERS_NOTE,
 			L.UPD_USER AS AUTHOR_FILTER,
 			L.UPD_USER + ' ' + ServiceName + ' (' + ManagerName + ')' AS AUTHOR,
-			CASE a.STATUS 
+			CASE a.STATUS
 				WHEN 1 THEN 'Активна'
 				WHEN 4 THEN 'Отменена'
 				WHEN 5 THEN 'Выполнена'
 				WHEN 9 THEN 'Длительная'
-			END AS STATUS_STR,			
-			Z.Distrs AS ZVE_DISTR		
+			END AS STATUS_STR,
+			Z.Distrs AS ZVE_DISTR
 		FROM @IDs I
 		INNER JOIN dbo.ClientStudyClaim a ON I.ID = A.ID
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON b.ClientID = ID_CLIENT
@@ -116,14 +116,18 @@ BEGIN
 		) L
 		ORDER BY DATE DESC
 		OPTION(RECOMPILE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_client_study_claim_warning;
+GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_study_warning;
+GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_study_warning_manager;
+GO

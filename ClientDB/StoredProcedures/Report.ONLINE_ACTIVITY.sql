@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[ONLINE_ACTIVITY]
+ALTER PROCEDURE [Report].[ONLINE_ACTIVITY]
 	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -25,22 +25,22 @@ BEGIN
 
 		DECLARE @SQL NVARCHAR(MAX)
 
-		SET @SQL = 'SELECT 
-			ISNULL(ServiceName, SubhostName) AS [Си/подхост], ISNULL(ClientFullName, Comment) AS [Клиент], a.DistrStr AS [Дистрибутив], 
+		SET @SQL = 'SELECT
+			ISNULL(ServiceName, SubhostName) AS [Си/подхост], ISNULL(ClientFullName, Comment) AS [Клиент], a.DistrStr AS [Дистрибутив],
 			LGN AS [Логин],
 			CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Дата регистрации],
 			SST_SHORT AS [Тип системы], NT_SHORT AS [Сеть],'
-			
+
 		SELECT @SQL = @SQL + N'
 			CASE
 				(
 					SELECT MAX(CONVERT(INT, ACTIVITY))
-					FROM 
+					FROM
 						dbo.OnlineActivity z
 					WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
 						AND z.ID_HOST = a.HostID
 						AND z.DISTR = a.DistrNumber
-						AND z.COMP = a.CompNumber					
+						AND z.COMP = a.CompNumber
 				) WHEN 1 THEN ''+''
 				ELSE ''''
 			END AS [' + CONVERT(NVARCHAR(128), NAME) + '],'
@@ -53,25 +53,25 @@ BEGIN
 		'
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					(
 						SELECT DISTINCT ID_WEEK, ID_HOST, DISTR, COMP
 						FROM
 							dbo.OnlineActivity z
-							INNER JOIN Common.Period y ON z.ID_WEEK = y.ID				
+							INNER JOIN Common.Period y ON z.ID_WEEK = y.ID
 						WHERE z.ID_HOST = a.HostID
 							AND z.DISTR = a.DistrNumber
 							AND z.COMP = a.CompNumber
 							AND DATEADD(MONTH, 3, START) >= GETDATE()
-							AND ACTIVITY = 1				
+							AND ACTIVITY = 1
 					) AS o_O
 			) AS [Кол-во недель с активностью]
-		FROM 	
+		FROM 
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			CROSS APPLY
 				(
 					SELECT DISTINCT LGN
-					FROM 
+					FROM
 						dbo.OnlineActivity q
 						INNER JOIN Common.Period p ON q.ID_WEEK = p.ID
 					WHERE DATEADD(MONTH, 3, START) >= GETDATE()
@@ -87,14 +87,16 @@ BEGIN
 		--PRINT (@SQL)
 
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[ONLINE_ACTIVITY] TO rl_report;
+GO

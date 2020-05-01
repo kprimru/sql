@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALENDAR_TYPE_INSERT]
+ALTER PROCEDURE [dbo].[CALENDAR_TYPE_INSERT]
 	@NAME	VARCHAR(256),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -27,19 +27,21 @@ BEGIN
 
 		INSERT INTO dbo.CalendarType(NAME)
 			OUTPUT INSERTED.ID INTO @TBL
-			VALUES(@NAME)	
+			VALUES(@NAME)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
 
+GRANT EXECUTE ON [dbo].[CALENDAR_TYPE_INSERT] TO rl_calendar_type_i;
+GO

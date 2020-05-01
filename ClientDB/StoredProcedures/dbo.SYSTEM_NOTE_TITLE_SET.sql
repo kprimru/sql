@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_NOTE_TITLE_SET]
+ALTER PROCEDURE [dbo].[SYSTEM_NOTE_TITLE_SET]
 	@ID		INT,
 	@NOTE	VARBINARY(MAX)
 AS
@@ -30,14 +30,16 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO dbo.SystemNote(ID_SYSTEM, NOTE_WTITLE)
 				VALUES(@ID, @NOTE)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NOTE_TITLE_SET] TO rl_system_u;
+GO

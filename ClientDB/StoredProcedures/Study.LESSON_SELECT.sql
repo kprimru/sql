@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Study].[LESSON_SELECT]
+ALTER PROCEDURE [Study].[LESSON_SELECT]
 	@TEACHER	NVARCHAR(128),
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ID, 
+			ID,
 			CASE WHEN RN = 1 THEN DATE ELSE NULL END AS DATE_S,
 			CASE WHEN RN = 1 THEN TEACHER ELSE NULL END AS TEACHER_S, THEME, NOTE
 		FROM
@@ -40,14 +40,16 @@ BEGIN
 					AND (THEME LIKE @TXT OR NOTE LIKE @TXT OR @TXT IS NULL)
 			) AS o_O
 		ORDER BY DATE DESC, TEACHER, THEME, NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Study].[LESSON_SELECT] TO rl_study_personal_r;
+GO

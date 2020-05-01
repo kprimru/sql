@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[BLANK_QUESTION_ANSWER_SELECT]
+ALTER PROCEDURE [Poll].[BLANK_QUESTION_ANSWER_SELECT]
 	@QUESTION	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM Poll.Answer
 		WHERE ID_QUESTION = @QUESTION
 		ORDER BY ORD
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[BLANK_QUESTION_ANSWER_SELECT] TO rl_blank_r;
+GO

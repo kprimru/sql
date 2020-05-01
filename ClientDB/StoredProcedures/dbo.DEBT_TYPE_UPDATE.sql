@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DEBT_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[DEBT_TYPE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@SHORT	NVARCHAR(32),
 	@NAME	VARCHAR(128)
@@ -28,14 +28,16 @@ BEGIN
 		SET SHORT = @SHORT,
 			NAME = @NAME
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DEBT_TYPE_UPDATE] TO rl_debt_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_STUDY_PEOPLE]
+ALTER PROCEDURE [dbo].[GET_STUDY_PEOPLE]
 	@clientstudyid INT
 AS
 BEGIN
@@ -22,23 +22,25 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			StudyPeopleCount, (StudentFam + ' ' + StudentName + ' ' + StudentOtch) AS StudentFullName,
 			StudentPositionName, a.StudentPositionID, StudyNumber, Sertificat, StudentName, StudentFam, StudentOtch, StudyPeopleID, Department,
 			SertificatCount, SertificatType
-		FROM 
+		FROM
 			dbo.StudyPeopleTable a LEFT OUTER JOIN
 			dbo.StudentPositionTable b ON a.StudentPositionID = b.StudentPositionID
 		WHERE ClientStudyID = @clientstudyid
 		ORDER BY StudentFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_STUDY_PEOPLE] TO rl_client_study_r;
+GO

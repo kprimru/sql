@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_INNOVATION_PERSONAL]
+ALTER PROCEDURE [dbo].[CLIENT_INNOVATION_PERSONAL]
 	@ID			UNIQUEIDENTIFIER,
 	@INNOVATION	UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
@@ -41,14 +41,16 @@ BEGIN
 				POSITION	=	@POSITION,
 				NOTE		=	@NOTE
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INNOVATION_PERSONAL] TO rl_client_innovation_u;
+GO

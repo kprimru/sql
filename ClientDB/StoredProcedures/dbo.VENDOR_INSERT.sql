@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[VENDOR_INSERT]
+ALTER PROCEDURE [dbo].[VENDOR_INSERT]
 	@SHORT		NVARCHAR(64),
 	@FULL		NVARCHAR(512),
 	@DIRECTOR	NVARCHAR(512),
@@ -32,14 +32,16 @@ BEGIN
 			VALUES(@SHORT, @FULL, @DIRECTOR)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[VENDOR_INSERT] TO rl_vendor_i;
+GO

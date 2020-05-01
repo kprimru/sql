@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_LIST_PREPARE]
+ALTER PROCEDURE [dbo].[SERVICE_LIST_PREPARE]
 	@SERVICE	NVARCHAR(MAX),
 	@MANAGER	NVARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -28,24 +28,26 @@ BEGIN
 			(
 				SELECT ID
 				FROM dbo.TableIDFromXML(@SERVICE)
-		
+
 				UNION
-		
+
 				SELECT ServiceID
-				FROM 
+				FROM
 					dbo.TableIDFromXML(@MANAGER)
 					INNER JOIN dbo.ServiceTable ON ManagerID = ID
 			) AS a
 			INNER JOIN dbo.ServiceTable b ON b.ServiceID = a.ID
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_LIST_PREPARE] TO public;
+GO

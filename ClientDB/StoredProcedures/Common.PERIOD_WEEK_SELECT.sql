@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_WEEK_SELECT]
+ALTER PROCEDURE [Common].[PERIOD_WEEK_SELECT]
 	@FILTER	NVARCHAR(200) = NULL
 AS
 BEGIN
@@ -27,15 +27,17 @@ BEGIN
 		WHERE TYPE = 1
 			AND ACTIVE = 1
 			AND (NAME LIKE @FILTER OR @FILTER IS NULL)
-		ORDER BY START 
-		
+		ORDER BY START
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_WEEK_SELECT] TO rl_period_r;
+GO

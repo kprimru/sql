@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[SUBHOST_SELECT]
+ALTER PROCEDURE [Subhost].[SUBHOST_SELECT]
 	@SH	NVARCHAR(16)
 WITH EXECUTE AS OWNER
 AS
@@ -24,14 +24,16 @@ BEGIN
 	BEGIN TRY
 
 		EXEC dbo.SUBHOST_SELECT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[SUBHOST_SELECT] TO rl_web_subhost;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[MAIN_COMPLECT]
+ALTER PROCEDURE [Report].[MAIN_COMPLECT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -44,16 +44,16 @@ BEGIN
 			SELECT 'BUD'
 			UNION
 			SELECT 'MBP'
-			UNION 
+			UNION
 			SELECT 'BUDU'
-			
+
 
 		SELECT DISTINCT
 			Comment AS [Клиент],
 			a.Complect AS [Номер комплекта],
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT 
+					SELECT
 						dbo.DistrString(SystemShortName, DistrNumber, CompNumber) + '(' +
 						C.NT_SHORT + ')' + ', '
 					FROM Reg.RegNodeSearchView C  WITH(NOEXPAND)
@@ -65,7 +65,7 @@ BEGIN
 		FROM Reg.RegNodeSearchView A WITH(NOEXPAND)
 		WHERE A.DS_REG = 0
 			--AND DistrType NOT IN ('NCT', 'ADM', 'NEK')
-			AND 
+			AND
 			(
 				SELECT COUNT(*)
 				FROM Reg.RegNodeSearchView D WITH(NOEXPAND)
@@ -73,14 +73,16 @@ BEGIN
 				WHERE d.Complect = a.Complect AND d.DS_REG = 0
 			) > 1
 		ORDER BY Comment
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[MAIN_COMPLECT] TO rl_report;
+GO

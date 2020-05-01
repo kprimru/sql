@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[REG_PROTOCOL_FILTER]
+ALTER PROCEDURE [dbo].[REG_PROTOCOL_FILTER]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@SYS	INT,
 	@DISTR	INT,
 	@COMP	TINYINT,
 	@OPER	NVARCHAR(256),
-	@TEXT	NVARCHAR(256)	
+	@TEXT	NVARCHAR(256)
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -29,18 +29,18 @@ BEGIN
 	BEGIN TRY
 
 		SET @END = DATEADD(DAY, 1, @END)
-		
+
 		DECLARE @HST INT
-		
+
 		IF @SYS IS NOT NULL
 			SELECT @HST = HostID
 			FROM dbo.SystemTable
 			WHERE SystemID = @SYS
-		
-		SELECT 
-			RPR_DATE, HostShort, dbo.DistrString(NULL, RPR_DISTR, RPR_COMP) AS DIS_STR, 
+
+		SELECT
+			RPR_DATE, HostShort, dbo.DistrString(NULL, RPR_DISTR, RPR_COMP) AS DIS_STR,
 			RPR_OPER, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER, RPR_INSERT
-		FROM 
+		FROM
 			dbo.RegProtocol a
 			INNER JOIN dbo.Hosts b ON a.RPR_ID_HOST = b.HostID
 		WHERE (RPR_DATE >= @BEGIN OR @BEGIN IS NULL)
@@ -51,14 +51,16 @@ BEGIN
 			AND (RPR_OPER LIKE @OPER OR @OPER IS NULL)
 			AND (RPR_TEXT LIKE @TEXT OR @TEXT IS NULL)
 		ORDER BY RPR_DATE DESC, HostOrder, RPR_DISTR, RPR_COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_PROTOCOL_FILTER] TO rl_reg_protocol;
+GO

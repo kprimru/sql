@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(Bit)]
+ALTER FUNCTION [Common].[Is Equal(Bit)]
 (
 	@V1	Bit,
 	@V2	Bit

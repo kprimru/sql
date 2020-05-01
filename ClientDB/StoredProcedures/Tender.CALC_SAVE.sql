@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[CALC_SAVE]
+ALTER PROCEDURE [Tender].[CALC_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@TENDER		UNIQUEIDENTIFIER,
 	@DIRECTION	UNIQUEIDENTIFIER,
@@ -41,14 +41,17 @@ BEGIN
 				UPD_DATE		=	GETDATE(),
 				UPD_USER		=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[CALC_SAVE] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[CALC_SAVE] TO rl_tender_u;
+GO

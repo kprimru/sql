@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[PERSONAL_FULL_SELECT]
+ALTER PROCEDURE [dbo].[PERSONAL_FULL_SELECT]
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -20,7 +20,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT PersonalShortName, DepartmentName
 		FROM dbo.PersonalTable
 
@@ -45,14 +45,16 @@ BEGIN
 		FROM dbo.DutyTable
 
 		ORDER BY PersonalShortName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERSONAL_FULL_SELECT] TO rl_personal_other_r;
+GO

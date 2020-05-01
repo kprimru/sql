@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_CLIENT_IMPORT]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_CLIENT_IMPORT]
 	@SALARY		UNIQUEIDENTIFIER,
 	@PERIOD		UNIQUEIDENTIFIER,
 	@SERVICE	INT
@@ -30,14 +30,16 @@ BEGIN
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			WHERE ClientServiceID = @SERVICE
 				AND STATUS = 1
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_CLIENT_IMPORT] TO rl_salary;
+GO

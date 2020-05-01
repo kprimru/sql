@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SUBHOST_REG_SELECT]	
+ALTER PROCEDURE [dbo].[SUBHOST_REG_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,16 +22,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT SubhostName, CASE SubhostName WHEN '' THEN 'Владивосток' ELSE SubhostName END AS SubhostCaption
-		FROM Reg.RegNodeSearchView a WITH(NOEXPAND) 			
+		FROM Reg.RegNodeSearchView a WITH(NOEXPAND) 
 		ORDER BY SubhostName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_REG_SELECT] TO public;
+GO

@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[NAMED_SET_ADD]
+ALTER PROCEDURE [dbo].[NAMED_SET_ADD]
 	@SET_NAME	NVARCHAR(128),
 	@REF_NAME	NVARCHAR(128),
 	@VALUES		NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,13 +23,13 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.NamedSets(RefName, SetName)
 		VALUES (@REF_NAME, @SET_NAME)
-		
+
 		DECLARE @ITEM	NVARCHAR(128)
 		DECLARE @ID		UNIQUEIDENTIFIER
-		
+
 		SELECT @ID=SetId
 		FROM dbo.NamedSets
 		WHERE RefName=@REF_NAME AND SetName=@SET_NAME
@@ -48,14 +48,16 @@ BEGIN
 			INSERT INTO dbo.NamedSetsItems(SetID, SetItem)
 			VALUES (@ID, @ITEM)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[NAMED_SET_ADD] TO rl_named_sets_i;
+GO

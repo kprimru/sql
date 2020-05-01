@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[ROLE_ADD]
+ALTER PROCEDURE [Security].[ROLE_ADD]
 	@RoleID			INT,
 	@RoleName		VARCHAR(50),
 	@RoleCaption	VARCHAR(50),
@@ -34,10 +34,10 @@ BEGIN
 				WHERE Name = @RoleName
 			)
 		BEGIN
-			DECLARE @ERROR VARCHAR(MAX)		
-			
+			DECLARE @ERROR VARCHAR(MAX)
+
 			SET @ERROR = 'Пользователь или роль "' + @RoleName + '" уже существуют в базе данных'
-			
+
 			RAISERROR (@ERROR, 16, 1)
 
 			RETURN
@@ -50,14 +50,16 @@ BEGIN
 
 		IF @RoleName IS NOT NULL AND @RoleName != ''
 			EXEC ('CREATE ROLE ' + @RoleName)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[ROLE_ADD] TO rl_role_i;
+GO

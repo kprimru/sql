@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_CLAIM_SELECT_NEW]
+ALTER PROCEDURE [dbo].[STUDY_CLAIM_SELECT_NEW]
 	@CLIENT	INT
 AS
 BEGIN
@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ID, NULL AS ID_MASTER, 
+		SELECT
+			ID, NULL AS ID_MASTER,
 			ID AS ID_CLAIM, NULL AS ID_CLAIM_WORK,
 			DATE, STUDY_DATE, CALL_DATE, NOTE, NULL AS TP,
-			TeacherName, TEACHER_NOTE, MEETING_DATE, MEETING_NOTE, STATUS, 
-			CASE STATUS 
+			TeacherName, TEACHER_NOTE, MEETING_DATE, MEETING_NOTE, STATUS,
+			CASE STATUS
 				WHEN 1 THEN 'Активна'
 				WHEN 4 THEN 'Отменена'
 				WHEN 5 THEN 'Выполнена'
@@ -45,33 +45,35 @@ BEGIN
 				WHERE z.ID_MASTER = a.ID OR z.ID = a.ID
 				ORDER BY UPD_DATE
 			) AS CREATE_USER
-		FROM 
+		FROM
 			dbo.ClientStudyClaim a
 			LEFT OUTER JOIN dbo.TeacherTable b ON a.ID_TEACHER = TeacherID
-		WHERE ID_CLIENT = @CLIENT 
+		WHERE ID_CLIENT = @CLIENT
 			AND STATUS IN (1, 4, 5, 9)
-			
+
 		UNION
 
-		SELECT 
-			a.ID, a.ID_CLAIM, 
+		SELECT
+			a.ID, a.ID_CLAIM,
 			a.ID_CLAIM, a.ID,
 			a.DATE, NULL, NULL AS CALL_DATE, NULL, CASE TP WHEN 0 THEN 'Звонок' WHEN 1 THEN 'Визит' ELSE 'o_O' END AS TP,
 			TEACHER, a.NOTE, MEETING_DATE, MEETING_NOTE, NULL, NULL, NULL, '' AS CREATE_USER
-		FROM 
+		FROM
 			dbo.ClientStudyClaimWork a
 			INNER JOIN dbo.ClientStudyClaim b ON a.ID_CLAIM = b.ID
 		WHERE b.ID_CLIENT = @CLIENT AND a.STATUS = 1
 
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_CLAIM_SELECT_NEW] TO rl_client_study_claim_r;
+GO

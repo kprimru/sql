@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_DELETE]
+ALTER PROCEDURE [USR].[USR_DELETE]
 	@ID INT
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM USR.USRUpdates
 		WHERE UIU_ID_IB IN
 			(
@@ -30,34 +30,34 @@ BEGIN
 				FROM USR.USRIB
 				WHERE UI_ID_USR = @ID
 			)
-		
-		DELETE 
+
+		DELETE
 		FROM USR.USRIB
 		WHERE UI_ID_USR = @ID
-		
-		DELETE 
+
+		DELETE
 		FROM USR.USRPackage
 		WHERE UP_ID_USR = @ID
-		
-		DELETE 
+
+		DELETE
 		FROM USR.USRFileData
 		WHERE UF_ID = @ID
-		
-		DELETE 
+
+		DELETE
 		FROM USR.USRFileTech
 		WHERE UF_ID = @ID
-		
-		DELETE 
+
+		DELETE
 		FROM USR.USRFile
 		WHERE UF_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

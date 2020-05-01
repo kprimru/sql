@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_TYPE_INSERT]	
+ALTER PROCEDURE [dbo].[STUDY_TYPE_INSERT]
 	@NAME	NVARCHAR(128),
 	@PSEDO	NVARCHAR(64),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
@@ -31,14 +31,16 @@ BEGIN
 			VALUES(@NAME, @PSEDO)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_TYPE_INSERT] TO rl_study_type_i;
+GO

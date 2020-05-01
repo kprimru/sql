@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[HOTLINE_PERSONAL_SELECT]
+ALTER PROCEDURE [dbo].[HOTLINE_PERSONAL_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -33,14 +33,16 @@ BEGIN
 				FROM dbo.GET_STRING_TABLE_FROM_LIST(RIC_PERSONAL, ',')
 			) AS b
 		ORDER BY PERSONAL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOTLINE_PERSONAL_SELECT] TO rl_hotline_filter;
+GO

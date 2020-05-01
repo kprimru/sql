@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[JOURNAL_FILTER]
+ALTER PROCEDURE [dbo].[JOURNAL_FILTER]
 	@YEAR		UNIQUEIDENTIFIER,
 	@SERVICE	INT
 	WITH EXECUTE AS OWNER
@@ -38,7 +38,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		CREATE TABLE #client
 			(
 				ClientID				INT PRIMARY KEY,
@@ -46,7 +46,7 @@ BEGIN
 				[Название организации]	NVARCHAR(512),
 				[Главная книга]			SMALLINT
 			)
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = 'ALTER TABLE #client ADD '
@@ -57,21 +57,21 @@ BEGIN
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
 
 		EXEC (@SQL)
-			
+
 		INSERT INTO #client(ClientID, [Название организации], [СИ])
 			SELECT DISTINCT ClientID, ClientFullName, ServiceName
-			FROM 
+			FROM
 				dbo.ClientJournal
 				INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID
-			WHERE STATUS = 1 
+			WHERE STATUS = 1
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (
-						(START >= @BEGIN /*AND ID_JOURNAL = @MAIN*/) 
+						(START >= @BEGIN /*AND ID_JOURNAL = @MAIN*/)
 						--OR (START >= DATEADD(YEAR, -1, @BEGIN) AND ID_JOURNAL <> @MAIN)
 					)
-			
+
 		UPDATE #client
-		SET [Главная книга] = 
+		SET [Главная книга] =
 				(
 					SELECT COUNT(DISTINCT ID_JOURNAL)
 					FROM dbo.ClientJournal
@@ -80,11 +80,11 @@ BEGIN
 						AND ID_JOURNAL = @MAIN
 						AND START >= @BEGIN
 				)
-					
+
 		SET @SQL = 'UPDATE #client
 		SET '
 
-		SELECT @SQL = @SQL + '[' + NAME + '] = 
+		SELECT @SQL = @SQL + '[' + NAME + '] =
 				(
 					SELECT COUNT(DISTINCT ID_JOURNAL)
 					FROM dbo.ClientJournal
@@ -97,23 +97,25 @@ BEGIN
 		WHERE DEF <> 1
 
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-				
+
 		EXEC (@SQL)
-					
+
 		SELECT *
 		FROM #client
 		ORDER BY [СИ], [Название организации]
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[JOURNAL_FILTER] TO rl_journal_report;
+GO

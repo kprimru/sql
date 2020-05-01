@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]
 	@BEGIN DATETIME,
 	@END DATETIME,
-	@MANAGER INT = NULL,	
-	@SERVICE INT = NULL,	
+	@MANAGER INT = NULL,
+	@SERVICE INT = NULL,
 	@NAME BIT = 1,
 	@ADDRESS BIT = 1,
 	@INN BIT = 1,
@@ -26,7 +26,7 @@ CREATE PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -38,7 +38,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SET @BEGIN = CONVERT(DATETIME, CONVERT(VARCHAR(20), @BEGIN, 112), 112)
 		SET @END = CONVERT(DATETIME, CONVERT(VARCHAR(20), @END, 112), 112)
 
@@ -46,15 +46,15 @@ BEGIN
 
 		DECLARE @LIST TABLE (ClientID INT PRIMARY KEY)
 
-		INSERT INTO @LIST(ClientID) 
+		INSERT INTO @LIST(ClientID)
 			SELECT DISTINCT a.ClientID
-			FROM 
+			FROM
 				dbo.ClientChangeTable a
 				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 			WHERE ChangeDate > @BEGIN
 				AND ChangeDate < @end
 				AND (a.ClientID = @CLIENT OR @CLIENT IS NULL)
-				AND (ServiceID = @SERVICE OR @SERVICE IS NULL) 
+				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
@@ -62,9 +62,9 @@ BEGIN
 
 		CREATE TABLE #temp
 			(
-				ClientID INT, 
-				FLName VARCHAR(100), 
-				OldVal VARCHAR(500), 
+				ClientID INT,
+				FLName VARCHAR(100),
+				OldVal VARCHAR(500),
 				NewVal VARCHAR(500),
 				DT DATETIME,
 				USR VARCHAR(50)
@@ -73,10 +73,10 @@ BEGIN
 		IF @NAME = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Название' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
@@ -91,11 +91,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Название' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
@@ -107,26 +107,26 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
 							WHERE e.ClientID = a.ClientID
 								AND ChangeDate <= @END
 							ORDER BY ChangeDate DESC
-						) AS NewVal, NULL					
+						) AS NewVal, NULL
 					FROM
 						@LIST AS a
 
 		IF @ADDRESS = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Адрес' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
@@ -141,11 +141,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Адрес' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
@@ -157,9 +157,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -174,10 +174,10 @@ BEGIN
 		IF @INN = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'ИНН' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
@@ -192,11 +192,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'ИНН' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
@@ -208,9 +208,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -224,10 +224,10 @@ BEGIN
 		IF @DIR = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Директор' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
@@ -242,11 +242,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Директор' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
@@ -258,9 +258,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -274,10 +274,10 @@ BEGIN
 		IF @DIR_PHONE = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.директора' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -292,11 +292,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.директора' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -308,9 +308,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -324,10 +324,10 @@ BEGIN
 		IF @BUH = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Гл.бух' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
@@ -342,11 +342,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Гл.бух' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
@@ -358,9 +358,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -374,10 +374,10 @@ BEGIN
 		IF @BUH_PHONE = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.гл.бух' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -392,11 +392,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.гл.бух' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -408,9 +408,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -424,10 +424,10 @@ BEGIN
 		IF @RES = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Ответственный' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
@@ -442,11 +442,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Ответственный' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
@@ -458,9 +458,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -474,10 +474,10 @@ BEGIN
 		IF @RES_PHONE = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.ответств.' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -492,11 +492,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Тел.ответств.' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -508,9 +508,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -524,10 +524,10 @@ BEGIN
 		IF @RES_POS = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Должность.ответств.' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
@@ -542,11 +542,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Должность.ответств.' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
@@ -558,9 +558,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -570,14 +570,14 @@ BEGIN
 						) AS NewVal, NULL
 					FROM
 						@LIST AS a
-		
+
 		IF @STATUS = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Статус' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
@@ -592,11 +592,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Статус' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
@@ -608,9 +608,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -624,10 +624,10 @@ BEGIN
 		IF @SCHANGE = 1
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-					SELECT 
+					SELECT
 						ClientID, 'Смена СИ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-					FROM 
+					FROM
 						dbo.ClientChangeTable a CROSS APPLY
 						(
 							SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -642,11 +642,11 @@ BEGIN
 						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-					SELECT 
+					SELECT
 						ClientID, 'Смена СИ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
 								(
 									SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
@@ -658,9 +658,9 @@ BEGIN
 						) AS OldVal,
 						(
 							SELECT TOP 1 CL_NAME
-							FROM 
+							FROM
 								dbo.ClientChangeTable e CROSS APPLY
-								(	
+								(
 									SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
 									FROM NewValue.nodes('/VALUES') x(z)
 								) AS o_O
@@ -670,34 +670,36 @@ BEGIN
 						) AS NewVal, NULL
 					FROM
 						@LIST AS a
-		
+
 
 		SELECT
-			ClientFullName, ManagerName, ServiceName, 
+			ClientFullName, ManagerName, ServiceName,
 			(
-				SELECT TOP 1 
+				SELECT TOP 1
 					DistrStr
-				FROM 
+				FROM
 					dbo.ClientDistrView e WITH(NOEXPAND)
 				WHERE e.ID_CLIENT = a.ClientID
 				ORDER BY DS_INDEX, SystemOrder
 			) AS DisStr, FLName, OldVal, NewVal, dt AS ChangeDate, USR AS ChangeUser
-		FROM	
+		FROM
 			#temp AS a INNER JOIN
-			dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
+			dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 		WHERE OldVal <> NewVal
 		ORDER BY ClientFullName
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CHANGE_SELECT] TO rl_report_change;
+GO

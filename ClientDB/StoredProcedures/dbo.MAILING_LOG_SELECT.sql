@@ -10,11 +10,11 @@ SET STATISTICS TIME ON
 
 EXEC [dbo].[MAILING_LOG_SELECT]
 	@DateFrom = '20200207'
-	
+
 EXEC [dbo].[MAILING_LOG_SELECT]
 	@Address = 'marina.zdor@mail.ru'
 */
-CREATE PROCEDURE [dbo].[MAILING_LOG_SELECT]
+ALTER PROCEDURE [dbo].[MAILING_LOG_SELECT]
 	@DateFrom	DateTime		= NULL,
 	@DateTo		DateTime		= NULL,
 	@Type		SmallInt		= NULL,
@@ -57,14 +57,16 @@ BEGIN
 			AND (L.Error LIKE @Error OR @Error IS NULL)
 		ORDER BY Date DESC
 		OPTION(RECOMPILE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MAILING_LOG_SELECT] TO rl_mailing_log_r;
+GO

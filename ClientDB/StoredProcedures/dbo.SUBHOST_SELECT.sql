@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SUBHOST_SELECT]
+ALTER PROCEDURE [dbo].[SUBHOST_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR SH_NAME LIKE @FILTER
 			OR SH_REG LIKE @FILTER
 		ORDER BY SH_REG
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_SELECT] TO rl_subhost_r;
+GO

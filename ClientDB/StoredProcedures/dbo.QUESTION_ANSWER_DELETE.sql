@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[QUESTION_ANSWER_DELETE]
+ALTER PROCEDURE [dbo].[QUESTION_ANSWER_DELETE]
 	@ID	INT
 AS
 BEGIN
@@ -24,15 +24,17 @@ BEGIN
 
 		DELETE
 		FROM dbo.AnswerTable
-		WHERE AnswerID = @ID	
-		
+		WHERE AnswerID = @ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[QUESTION_ANSWER_DELETE] TO rl_question_u;
+GO

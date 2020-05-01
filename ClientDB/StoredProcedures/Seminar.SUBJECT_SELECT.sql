@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SUBJECT_SELECT]
+ALTER PROCEDURE [Seminar].[SUBJECT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,14 +24,16 @@ BEGIN
 		SELECT ID, NAME
 		FROM Seminar.Subject
 		ORDER BY LAST DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[SUBJECT_SELECT] TO rl_seminar;
+GO

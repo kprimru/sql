@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_DELETE]
   @ID	INT
 AS
 BEGIN
@@ -25,39 +25,41 @@ BEGIN
 		INSERT INTO dbo.ClientTable(
 				ID_MASTER, STATUS,
 				ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-				StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
-				OriClient, ClientActivity, ClientPlace, ClientNote, 
-				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
-				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
+				StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
+				OriClient, ClientActivity, ClientPlace, ClientNote,
+				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
+				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook,
 				ClientEmail, PurchaseTypeID, ClientLast, UPD_USER)
 			SELECT
 				@ID, 2,
 				ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
-				StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id, 
-				OriClient, ClientActivity, ClientPlace, ClientNote, 
-				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd, 
-				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook, 
+				StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
+				OriClient, ClientActivity, ClientPlace, ClientNote,
+				ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
+				DayID, ServiceStart, ServiceTime, ClientNewspaper, ClientMainBook,
 				ClientEmail, PurchaseTypeID, ClientLast, UPD_USER
 			FROM dbo.ClientTable
 			WHERE ClientID = @ID
-				
+
 		UPDATE dbo.ClientTable
 		SET STATUS		=	3,
 			ClientLast	=	GETDATE(),
 			UPD_USER	=	ORIGINAL_LOGIN()
 		WHERE ClientID = @ID
-			
+
 		UPDATE dbo.ClientDistr
 		SET STATUS = 2
 		WHERE ID_CLIENT = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELETE] TO rl_client_d;
+GO

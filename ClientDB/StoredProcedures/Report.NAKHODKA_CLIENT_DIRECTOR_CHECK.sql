@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[NAKHODKA_CLIENT_DIRECTOR_CHECK]
+ALTER PROCEDURE [Report].[NAKHODKA_CLIENT_DIRECTOR_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -58,12 +58,12 @@ BEGIN
 				WHERE DCP.PER_ID_CLIENT = DC.CL_ID AND DCP.PER_ID_REPORT_POS = 1
 			) P
 			WHERE DD.SYS_REG_NAME = D.SystemBaseName AND DD.DIS_NUM = D.DISTR AND DD.DIS_COMP_NUM = D.COMP
-			
+
 		) P
 		WHERE C.STATUS = 1 AND C.StatusId = 2
-		
+
 		SELECT
-			[Клиент|В ДК] = ClientFullName, 
+			[Клиент|В ДК] = ClientFullName,
 			[Клиент|В DBF] = CL_FULL_NAME,
 			[ФИО Рук-ля|Ошибка] = Cast(CASE WHEN CP_FIO != DBF_FIO THEN 1 ELSE 0 END AS Bit),
 			[ФИО Рук-ля|В ДК] = CP_FIO,
@@ -73,14 +73,16 @@ BEGIN
 			[Осн.дистрибутив] = DistrStr
 		FROM @Result
 		ORDER BY CLientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[NAKHODKA_CLIENT_DIRECTOR_CHECK] TO rl_report;
+GO

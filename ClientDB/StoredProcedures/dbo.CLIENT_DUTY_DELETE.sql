@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_DELETE]
 	@ID	INT
 AS
 BEGIN
@@ -32,14 +32,16 @@ BEGIN
 			UPD_DATE = GETDATE(),
 			UPD_USER = ORIGINAL_LOGIN()
 		WHERE ClientDutyID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_DELETE] TO rl_client_duty_d;
+GO

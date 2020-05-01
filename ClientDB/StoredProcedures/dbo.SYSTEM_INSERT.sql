@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_INSERT]	
+ALTER PROCEDURE [dbo].[SYSTEM_INSERT]
 	@SHORT	VARCHAR(20),
 	@NAME	VARCHAR(200),
 	@BASE	VARCHAR(50),
@@ -49,13 +49,13 @@ BEGIN
 				FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
 			)
 		BEGIN
-			DECLARE @BN	VARCHAR(MAX)	
+			DECLARE @BN	VARCHAR(MAX)
 
 			SELECT @BN = InfoBankShortName + ', '
-			FROM 
+			FROM
 				dbo.InfoBankTable
-				INNER JOIN 
-					(		
+				INNER JOIN
+					(
 						SELECT Item
 						FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
 
@@ -66,7 +66,7 @@ BEGIN
 					) AS o_O ON InfoBankID = Item
 			ORDER BY InfoBankShortName
 
-			SET @BN = LEFT(@BN, LEN(@BN) - 1)		
+			SET @BN = LEFT(@BN, LEN(@BN) - 1)
 
 			SET @BN = 'ИБ указаны как обязательные и как необязательные' + @BN
 
@@ -80,9 +80,9 @@ BEGIN
 				HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName, SystemActive,
 				SystemDemo, SystemComplect, SystemReg, SystemSalaryWeight)
 			VALUES(@SHORT, @NAME, @BASE, @NUMBER, @HOST, @RIC, @ORDER, @VMI, @FULL, @ACTIVE, @DEMO, @COMPLECT, @REG, @WEIGHT)
-		
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 
 		INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
 			SELECT @ID, Item, 0
@@ -91,15 +91,17 @@ BEGIN
 		INSERT INTO dbo.SystemBankTable(SystemID, InfoBankID, Required)
 			SELECT @ID, Item, 1
 			FROM dbo.GET_TABLE_FROM_LIST(@IB_REQ, ',')
-			
-			
+
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_INSERT] TO rl_system_i;
+GO

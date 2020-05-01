@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_INSERT]
+ALTER PROCEDURE [Price].[PRICE_INSERT]
 	@MONTH	UNIQUEIDENTIFIER,
 	@SYSTEM	INT,
 	@PRICE	MONEY
@@ -32,14 +32,16 @@ BEGIN
 					FROM Price.SystemPrice
 					WHERE ID_SYSTEM = @SYSTEM AND ID_MONTH = @MONTH
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[PRICE_INSERT] TO rl_price_import;
+GO

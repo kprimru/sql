@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[HST_TOTAL_REPORT]
+ALTER PROCEDURE [dbo].[HST_TOTAL_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@TYPE		NVARCHAR(MAX)
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SET @END = DATEADD(DAY, 1, @END)
-		
+
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
 
@@ -37,21 +37,21 @@ BEGIN
 			HST_COUNT INT,
 			USR_COUNT INT
 		);
-		
-		INSERT INTO #cl(ClientID, Service, Manager, HST_COUNT, USR_COUNT)	
-		SELECT 
-			a.ClientID, ServiceName, ManagerName, 
+
+		INSERT INTO #cl(ClientID, Service, Manager, HST_COUNT, USR_COUNT)
+		SELECT
+			a.ClientID, ServiceName, ManagerName,
 			(
 				SELECT COUNT(DISTINCT SearchGet)
-				FROM 
+				FROM
 					dbo.ClientSearchTable z
 				WHERE z.ClientID = a.ClientID
-					AND SearchGetDay >= @BEGIN 
+					AND SearchGetDay >= @BEGIN
 					AND SearchGetDay < @END
 			) AS HST_COUNT,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					USR.USRData z
 					INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
 				WHERE UD_ACTIVE = 1
@@ -60,27 +60,27 @@ BEGIN
 					AND	UF_DATE BETWEEN @BEGIN AND @END
 					AND z.UD_ID_CLIENT = a.CLientID
 			) AS USR_COUNT
-		FROM 
+		FROM
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 			INNER JOIN dbo.TableIDFromXML(@TYPE) c ON ID = ClientKind_Id;
 
-			SELECT 
+			SELECT
 				Service, Manager, CL_COUNT, HST_COUNT, CL_KORR_COUNT, HST_KORR_COUNT,
 				ROUND(100 * CONVERT(FLOAT, HST_COUNT) / CL_COUNT, 2) AS PRC,
 				CASE CL_KORR_COUNT WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, HST_KORR_COUNT) / CL_KORR_COUNT, 2) END AS KORR_PRC,
 				CASE WHEN ROUND(100 * CONVERT(FLOAT, HST_COUNT) / CL_COUNT, 2) < 80 THEN 1 ELSE 0 END AS PRC_BAD,
 				CASE CL_KORR_COUNT WHEN 0 THEN 1 ELSE CASE WHEN ROUND(100 * CONVERT(FLOAT, HST_KORR_COUNT) / CL_KORR_COUNT, 2) < 80 THEN 1 ELSE 0 END END AS PRC_KORR_BAD,
-				CL_TOTAL, CL_KORR_TOTAL, HST_TOTAL,	HST_KORR_TOTAL,	
+				CL_TOTAL, CL_KORR_TOTAL, HST_TOTAL,	HST_KORR_TOTAL,
 				ROUND(100 * CONVERT(FLOAT, HST_TOTAL) / CL_TOTAL, 2) AS TOTAL_PRC,
 				CASE CL_KORR_TOTAL WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, HST_KORR_TOTAL) / CL_KORR_TOTAL, 2) END AS TOTAL_KORR_PRC,
-				MAN_CL_TOTAL, MAN_CL_KORR_TOTAL, MAN_HST_TOTAL,	MAN_HST_KORR_TOTAL,	
+				MAN_CL_TOTAL, MAN_CL_KORR_TOTAL, MAN_HST_TOTAL,	MAN_HST_KORR_TOTAL,
 				ROUND(100 * CONVERT(FLOAT, MAN_HST_TOTAL) / MAN_CL_TOTAL, 2) AS MAN_TOTAL_PRC,
 				CASE MAN_CL_KORR_TOTAL WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, MAN_HST_KORR_TOTAL) / MAN_CL_KORR_TOTAL, 2) END AS MAN_TOTAL_KORR_PRC
 			FROM
 				(
-					SELECT 
-						Service, Manager, 
+					SELECT
+						Service, Manager,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
@@ -165,15 +165,17 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[HST_TOTAL_REPORT] TO rl_usr_cfg_report;
+GO

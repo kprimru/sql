@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[OLD_SMART_COMPLECT]
+ALTER PROCEDURE [Report].[OLD_SMART_COMPLECT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT
-			Comment AS [Название], 
+			Comment AS [Название],
 			Complect AS [Комплект],
 			DistrNumber AS [Дистрибутив],
 			rns.DistrTypeName AS [Сеть],
@@ -31,7 +31,7 @@ BEGIN
 			cv.ServiceName AS [СИ],
 			rns.SST_SHORT AS [Тип дистрибутива],
 			rns.SystemBaseName AS [Система],
-			CASE 
+			CASE
 				WHEN SST_SHORT IN ('ДД2', 'С.И') AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
 				THEN -0.25
 				WHEN SST_SHORT = 'ДЗ2' AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
@@ -41,7 +41,7 @@ BEGIN
 				WHEN SST_SHORT IN ('ДЗ2') AND rns.SystemBaseName IN ('UMKZ')
 				THEN -0.6
 			END AS [Изменение веса]
-			
+
 		FROM
 			Reg.RegNodeSearchView rns WITH(NOEXPAND)
 			INNER JOIN dbo.ClientDistrView cdv WITH(NOEXPAND) ON rns.DistrNumber = cdv.DISTR
@@ -49,14 +49,16 @@ BEGIN
 		WHERE
 			rns.DS_INDEX = 0 AND
 			rns.SystemBaseName IN ('BBKZ', 'UBKZ', 'UMKZ')
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[OLD_SMART_COMPLECT] TO rl_report;
+GO

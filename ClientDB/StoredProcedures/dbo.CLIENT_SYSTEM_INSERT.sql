@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SYSTEM_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_SYSTEM_INSERT]
 	@CLIENT	INT,
 	@SYSTEM	INT,
 	@DISTR	INT,
@@ -43,14 +43,16 @@ BEGIN
 			INSERT INTO dbo.ClientSystemDatesTable(IDMaster, SystemBegin, SystemEnd)
 			VALUES (@ID, @BEGIN, @END)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SYSTEM_INSERT] TO rl_client_system_i;
+GO

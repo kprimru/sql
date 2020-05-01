@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[USER_INSERT]
+ALTER PROCEDURE [Subhost].[USER_INSERT]
 	@SH_ID	UNIQUEIDENTIFIER,
 	@LGN	NVARCHAR(128),
 	@PASS	NVARCHAR(128) =NULL OUTPUT
@@ -28,14 +28,16 @@ BEGIN
 
 			INSERT INTO Subhost.Users(NAME, PASS, ID_SUBHOST)
 				SELECT @LGN, @PASS, @SH_ID
-				
+
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[USER_INSERT] TO rl_web_subhost;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_WEIGHT_BALANS]
+ALTER PROCEDURE [Salary].[SERVICE_WEIGHT_BALANS]
 	@SERVICE		INT,
 	@MONTH			UNIQUEIDENTIFIER,
 	@CURRENT		BIT,
@@ -33,7 +33,7 @@ BEGIN
 
 		IF @DYNAMIC = 1
 			SELECT c.NAME, SUM(WEIGHT_NEW - WEIGHT_OLD) AS WEIGHT_DELTA
-			FROM 
+			FROM
 				Salary.Service a
 				INNER JOIN Salary.ServiceDistr b ON a.ID = b.ID_SALARY
 				INNER JOIN Common.Period c ON a.ID_MONTH = c.ID AND c.TYPE = 2
@@ -46,7 +46,7 @@ BEGIN
 			BEGIN
 				IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 					DROP TABLE #distr
-				
+
 				CREATE TABLE #distr
 					(
 						CHECKED			BIT,
@@ -66,34 +66,36 @@ BEGIN
 						ServiceID		INT,
 						ServiceName		NVARCHAR(128)
 					)
-					
+
 				INSERT INTO #distr
 					EXEC Salary.SERVICE_SALARY_DISTR_IMPORT_SELECT @MONTH, @SERVICE
-				
+
 				SELECT CLIENT, DISTR_STR, OPER, OPER_NOTE, WEIGHT_NEW - WEIGHT_OLD AS WEIGHT_DELTA
 				FROM #distr
 				WHERE CHECKED = 1
-				
+
 				IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 					DROP TABLE #distr
 			END
 			ELSE
 			BEGIN
 				SELECT CLIENT, DISTR_STR, OPER, OPER_NOTE, WEIGHT_NEW - WEIGHT_OLD AS WEIGHT_DELTA
-				FROM 
+				FROM
 					Salary.Service a
 					INNER JOIN Salary.ServiceDistr b ON a.ID = b.ID_SALARY
 				WHERE a.ID_SERVICE = @SERVICE AND a.ID_MONTH = @MONTH
 			END
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_WEIGHT_BALANS] TO rl_service_weight;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_REPORT]
 	@SERVICE	INT,
 	@MANAGER	INT,
 	@TYPE		VARCHAR(MAX),
@@ -27,14 +27,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ClientID, ClientFullName, ServiceTypeShortName, 
+		SELECT
+			ClientID, ClientFullName, ServiceTypeShortName,
 			ServiceName + '(' + ManagerName + ')' AS ServiceManager,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT SystemShortName + ', '
-					FROM 
-						dbo.ClientDistrView d WITH(NOEXPAND)					
+					FROM
+						dbo.ClientDistrView d WITH(NOEXPAND)
 					WHERE a.ClientID = d.ID_CLIENT
 						AND DS_REG = 0
 					ORDER BY SystemOrder FOR XML PATH('')
@@ -50,7 +50,7 @@ BEGIN
 					ORDER BY EventDate DESC FOR XML PATH('')
 				)
 			), 1, 2, '')) AS EventList
-		FROM 
+		FROM
 			dbo.ClientTable a
 			INNER JOIN dbo.ServiceTable b ON ServiceID = ClientServiceID
 			INNER JOIN dbo.ManagerTable c ON b.ManagerID = c.ManagerID
@@ -60,14 +60,16 @@ BEGIN
 			AND (ClientServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND StatusID = @STATUS
 		ORDER BY ManagerName, ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_REPORT] TO rl_report_event;
+GO

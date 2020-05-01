@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[HOTLINE_ALIEN]
+ALTER PROCEDURE [Report].[HOTLINE_ALIEN]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SubhostName, Comment, DistrStr, FIRST_DATE, FIO, EMAIL, PHONE, CHAT, LGN, RIC_PERSONAL
-		FROM 
+		FROM
 			dbo.HotlineChat a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber AND SystemRic = 20
 			INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON b.HostID = c.HostID AND a.DISTR = c.DistrNumber AND a.COMP = c.CompNumber
@@ -37,17 +37,19 @@ BEGIN
 				OR
 				--c.SubhostName = 'Л1' AND RIC_PERSONAL NOT LIKE '%Славянка%'
 				--OR
-				c.SubhostName = 'М' AND RIC_PERSONAL NOT LIKE '%Артем%'	
+				c.SubhostName = 'М' AND RIC_PERSONAL NOT LIKE '%Артем%'
 			)
 		ORDER BY FIRST_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[HOTLINE_ALIEN] TO rl_report;
+GO

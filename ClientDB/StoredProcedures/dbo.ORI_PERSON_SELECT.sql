@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ORI_PERSON_SELECT]
+ALTER PROCEDURE [dbo].[ORI_PERSON_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.OriPersonTable
 		WHERE ClientID = @CLIENT
 		ORDER BY OriPersonName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORI_PERSON_SELECT] TO rl_ori_person_r;
+GO

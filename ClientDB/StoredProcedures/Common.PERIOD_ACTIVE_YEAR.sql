@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[PERIOD_ACTIVE_YEAR]
+ALTER PROCEDURE [Common].[PERIOD_ACTIVE_YEAR]
 	@ID			UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -24,8 +24,8 @@ BEGIN
 
 		DECLARE @Year Int;
 		DECLARE @Active Bit;
-		
-		SELECT 
+
+		SELECT
 			@Year = DatePart(Year, START),
 			@Active = ACTIVE
 		FROM Common.Period
@@ -34,14 +34,16 @@ BEGIN
 		UPDATE	Common.Period
 		SET		ACTIVE		=	CASE @Active WHEN 1 THEN 0 ELSE 1 END
 		WHERE	DatePart(Year, START) = @Year
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[PERIOD_ACTIVE_YEAR] TO rl_period_u;
+GO

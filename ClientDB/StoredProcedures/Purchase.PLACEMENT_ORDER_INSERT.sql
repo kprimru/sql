@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[PLACEMENT_ORDER_INSERT]
+ALTER PROCEDURE [Purchase].[PLACEMENT_ORDER_INSERT]
 	@NAME	VARCHAR(150),
 	@NUM	SMALLINT,
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
@@ -29,17 +29,19 @@ BEGIN
 		INSERT INTO Purchase.PlacementOrder(PO_NAME, PO_NUM)
 			OUTPUT inserted.PO_ID INTO @TBL
 			VALUES(@NAME, @NUM)
-			
+
 		SELECT @ID = ID
 		FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[PLACEMENT_ORDER_INSERT] TO rl_placement_order_i;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[SEMINAR_SIGN_CANCEL]
+ALTER PROCEDURE [Training].[SEMINAR_SIGN_CANCEL]
 	@ID		UNIQUEIDENTIFIER,
 	@STATUS	TINYINT = NULL
 AS
@@ -24,21 +24,21 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @SCHEDULE UNIQUEIDENTIFIER
-		
+
 		SELECT @SCHEDULE = SP_ID_SEMINAR
-		FROM 
-			Training.SeminarSign 
+		FROM
+			Training.SeminarSign
 			INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 		WHERE SSP_ID = @ID
-		
+
 		IF @STATUS = 0
 			IF (
-					SELECT COUNT(*) 
-					FROM 
-						Training.SeminarSign 
+					SELECT COUNT(*)
+					FROM
+						Training.SeminarSign
 						INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 					WHERE SP_ID_SEMINAR = @SCHEDULE AND SSP_CANCEL = 0
-				) >= 
+				) >=
 				(
 					SELECT TSC_LIMIT
 					FROM Training.TrainingSchedule
@@ -57,14 +57,16 @@ BEGIN
 			UPDATE Training.SeminarSignPersonal
 			SET SSP_CANCEL = @STATUS
 			WHERE SSP_ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[SEMINAR_SIGN_CANCEL] TO rl_training_cancel;
+GO

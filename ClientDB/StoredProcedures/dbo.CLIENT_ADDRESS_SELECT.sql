@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ADDRESS_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_SELECT]
 	@ID	INT
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 				ELSE CA_STR
 			END AS CA_STR,
 			/*ISNULL(ST_STR + ', ', '') + ISNULL(CA_HOME + ', ', '') + ISNULL(CA_OFFICE, '') AS CA_STR, */
-			CA_NAME, CA_MAP, 
+			CA_NAME, CA_MAP,
 			CASE
 				WHEN CA_MAP IS NULL THEN 'Нет'
 				ELSE 'Есть'
@@ -42,14 +42,16 @@ BEGIN
 			LEFT OUTER JOIN dbo.ClientAddressFullView z ON z.CA_ID = a.CA_ID
 		WHERE a.CA_ID_CLIENT = @ID
 		ORDER BY AT_REQUIRED DESC, CA_NAME, ST_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_SELECT] TO rl_client_card;
+GO

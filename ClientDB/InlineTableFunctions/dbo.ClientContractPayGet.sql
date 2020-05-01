@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[ClientContractPayGet]
+ALTER FUNCTION [dbo].[ClientContractPayGet]
 (
 	@ClientId		Int,
 	@Date			SmallDateTime
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT TOP (1) ContractPayName, ContractPayDay, ContractPayMonth
 	FROM
@@ -27,9 +27,9 @@ RETURN
 				AND (@Date IS NULL OR @Date BETWEEN ContractBegin AND ContractEnd)
 			ORDER BY ContractEnd DESC
 		) AS A
-		
+
 		UNION ALL
-	
+
 		SELECT Ord, ContractPayName, ContractPayDay, ContractPayMonth
 		FROM
 		(

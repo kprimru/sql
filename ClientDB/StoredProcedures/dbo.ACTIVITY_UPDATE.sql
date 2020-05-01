@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACTIVITY_UPDATE]
+ALTER PROCEDURE [dbo].[ACTIVITY_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(500),
 	@CODE	VARCHAR(20),
@@ -30,14 +30,16 @@ BEGIN
 				AC_CODE		=	@CODE,
 				AC_SHORT	=	@SHORT
 		WHERE	AC_ID		=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTIVITY_UPDATE] TO rl_activity_u;
+GO

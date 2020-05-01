@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_PRINT_CONTRACT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_PRINT_CONTRACT_SELECT]
 	@LIST	VARCHAR(MAX)
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 			SELECT ID
 			FROM dbo.TableIDFromXML(@LIST)
 
-		SELECT 
-			CL_ID, 
+		SELECT
+			CL_ID,
 			ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
 			ContractConditions, ContractPayName, ContractYear, ContractFixed
-		FROM 
+		FROM
 			@CLIENT a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.CL_ID = b.ClientID
 			/*
 			INNER JOIN dbo.ContractTable z ON z.ClientID = a.CL_ID
 			INNER JOIN dbo.ContractTypeTable y ON y.ContractTypeID = z.ContractTypeID
-			INNER JOIN dbo.ContractPayTable x ON x.ContractPayID = z.ContractPayID			
+			INNER JOIN dbo.ContractPayTable x ON x.ContractPayID = z.ContractPayID
 			*/
 			CROSS APPLY
 			(
@@ -68,14 +68,14 @@ BEGIN
 				WHERE	CC.Client_Id = a.CL_ID
 					AND DateFrom <= GetDate() AND (DateTo >= GetDate() OR DateTo IS NULL)
 			) D
-			
+
 		UNION ALL
-		
-		SELECT 
-			CL_ID, 
+
+		SELECT
+			CL_ID,
 			ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
 			ContractConditions, ContractPayName, ContractYear, ContractFixed
-		FROM 
+		FROM
 			@CLIENT a
 			CROSS APPLY
 			(
@@ -113,22 +113,22 @@ BEGIN
 				WHERE	CC.Client_Id = a.CL_ID
 					AND DateFrom <= GetDate() AND (DateTo >= GetDate() OR DateTo IS NULL)
 			)
-			
+
 		UNION ALL
-			
-		SELECT 
-			CL_ID, 
+
+		SELECT
+			CL_ID,
 			ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
 			ContractConditions, ContractPayName, ContractYear, ContractFixed
-		FROM 
+		FROM
 			@CLIENT a
-			INNER JOIN 
+			INNER JOIN
 				(
-					SELECT 
+					SELECT
 						ClientID, ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
 						ContractConditions, ContractPayName, ContractYear, ContractFixed,
 						ROW_NUMBER() OVER(PARTITION BY CLientID ORDER BY ContractBegin DESC) AS RN
-					FROM 
+					FROM
 						dbo.ContractTable z
 						INNER JOIN dbo.ContractTypeTable y ON y.ContractTypeID = z.ContractTypeID
 						INNER JOIN dbo.ContractPayTable x ON x.ContractPayID = z.ContractPayID
@@ -140,16 +140,18 @@ BEGIN
 				INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
 				WHERE	CC.Client_Id = a.CL_ID
 			)
-			
+
 		ORDER BY CL_ID, ContractBegin
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PRINT_CONTRACT_SELECT] TO rl_client_p;
+GO

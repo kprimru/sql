@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[ClientList@Get?Write]()
+ALTER FUNCTION [dbo].[ClientList@Get?Write]()
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT WCL_ID = ClientID
 	FROM [dbo].[ClientList@Get]('WRITE')

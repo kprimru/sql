@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALL_DIRECTION_UPDATE]
+ALTER PROCEDURE [dbo].[CALL_DIRECTION_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(50),
 	@DEF	BIT
@@ -33,14 +33,16 @@ BEGIN
 		SET		NAME	=	@NAME,
 				DEF		=	@DEF
 		WHERE	ID		=	@ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CALL_DIRECTION_UPDATE] TO rl_call_direction_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[HOTLINE_SUBHOST_STAT]
+ALTER PROCEDURE [Report].[HOTLINE_SUBHOST_STAT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			SH_CAPTION AS [Подхост],
 			ComplectCount AS [Количество комплектов],
 			QUEST_CLIENT AS [Количество комплектов с которыми был сеанс чата],
@@ -30,7 +30,7 @@ BEGIN
 			CONVERT(DECIMAL(8, 2), ROUND(100.0 * QUEST_CLIENT / ComplectCount, 2)) AS [% внедрения]
 		FROM
 			(
-				SELECT 
+				SELECT
 					SH_CAPTION,
 					(
 						SELECT COUNT(DISTINCT COMPLECT)
@@ -41,7 +41,7 @@ BEGIN
 					) AS ComplectCount,
 					(
 						SELECT COUNT(DISTINCT b.COMPLECT)
-						FROM 
+						FROM
 							dbo.HotlineChat a
 							INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber AND c.HostID = b.HostID
@@ -51,7 +51,7 @@ BEGIN
 					) AS QUEST_CLIENT,
 					(
 						SELECT COUNT(*)
-						FROM 
+						FROM
 							dbo.HotlineChat a
 							INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber AND c.HostID = b.HostID
@@ -73,14 +73,16 @@ BEGIN
 					) AS SH
 			) AS o_O
 		WHERE ComplectCount <> 0
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[HOTLINE_SUBHOST_STAT] TO rl_report;
+GO

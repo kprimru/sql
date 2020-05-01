@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[USR_JOURNAL_CLEAR]
+ALTER PROCEDURE [Maintenance].[USR_JOURNAL_CLEAR]
 	@DATE	SMALLDATETIME = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -26,17 +26,19 @@ BEGIN
 		IF @DATE IS NULL
 			TRUNCATE TABLE USR.ProcessJournal
 		ELSE
-			DELETE 
+			DELETE
 			FROM USR.ProcessJournal
 			WHERE PR_DATE < @DATE
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[USR_JOURNAL_CLEAR] TO rl_maintenance;
+GO

@@ -6,11 +6,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[CHANGE_PASS]
+ALTER PROCEDURE [dbo].[CHANGE_PASS]
 	@login varchar(50),
     @password varchar(50)
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -25,15 +25,18 @@ BEGIN
 
 	BEGIN TRY
 
-	    EXEC('ALTER LOGIN ' + @login + ' WITH PASSWORD = ''' + @password + '''')    
-	    
+	    EXEC('ALTER LOGIN ' + @login + ' WITH PASSWORD = ''' + @password + '''')
+
 	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CHANGE_PASS] TO DBChief;
+GRANT EXECUTE ON [dbo].[CHANGE_PASS] TO DBTech;
+GO

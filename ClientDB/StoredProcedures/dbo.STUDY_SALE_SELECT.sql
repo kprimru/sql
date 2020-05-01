@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_SALE_SELECT]
+ALTER PROCEDURE [dbo].[STUDY_SALE_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -26,14 +26,16 @@ BEGIN
 		FROM dbo.StudySale
 		WHERE ID_CLIENT = @CLIENT
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_SALE_SELECT] TO rl_client_study_r;
+GO

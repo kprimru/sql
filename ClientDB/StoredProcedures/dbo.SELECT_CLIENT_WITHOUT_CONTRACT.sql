@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SELECT_CLIENT_WITHOUT_CONTRACT]
+ALTER PROCEDURE [dbo].[SELECT_CLIENT_WITHOUT_CONTRACT]
 	@managerid INT = NULL,
 	@statusid INT = 2
 AS
@@ -29,7 +29,7 @@ BEGIN
 			IF (@managerid = 19) OR (@managerid = 11)
 				INSERT INTO @t
 					SELECT 19 AS Item
-					UNION 
+					UNION
 					SELECT 11 AS Item
 			ELSE
 				INSERT INTO @t
@@ -44,21 +44,23 @@ BEGIN
 		  end
 		else
 		  begin
-		    
+
 			SELECT ClientID, ClientFullName, ServiceName
 			FROM dbo.ClientTable LEFT OUTER JOIN
 					   dbo.ServiceTable ON ClientTable.ClientServiceID = ServiceTable.ServiceID
 			WHERE (NOT EXISTS(SELECT ContractNumber FROM dbo.ContractTable WHERE ContractTable.ClientID = ClientTable.CLientID)) AND StatusID = @statusid
 			ORDER BY ServiceName, ClientFullName
 		  end
-		  
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SELECT_CLIENT_WITHOUT_CONTRACT] TO rl_contract_audit;
+GO

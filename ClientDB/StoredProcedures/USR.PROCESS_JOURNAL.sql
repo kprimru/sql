@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESS_JOURNAL]
+ALTER PROCEDURE [USR].[PROCESS_JOURNAL]
 	@DATE	DATETIME,
 	@BEGIN	DATETIME,
 	@END	DATETIME,
@@ -34,14 +34,14 @@ BEGIN
 			INSERT INTO USR.ProcessJournal(PR_DATE, PR_BEGIN, PR_END, PR_RES, PR_TEXT, PR_FILE, PR_COMPLECT)
 				VALUES(@DATE, @BEGIN, @END, @RES, @TXT, @FILE, @COMP)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

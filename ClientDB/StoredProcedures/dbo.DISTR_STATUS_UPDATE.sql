@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_STATUS_UPDATE]
+ALTER PROCEDURE [dbo].[DISTR_STATUS_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(64),
 	@REG	TINYINT,
@@ -32,14 +32,16 @@ BEGIN
 			DS_IMAGE = @IMAGE,
 			DS_INDEX = @INDEX
 		WHERE DS_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_UPDATE] TO rl_distr_status_u;
+GO

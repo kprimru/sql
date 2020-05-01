@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientWorkView]
+ALTER VIEW [dbo].[ClientWorkView]
 AS
 	SELECT ClientID, 'История посещений' AS TP, EventDate AS DT, EventComment AS NOTE, EventCreateUser AS AUTHOR
 	FROM dbo.EventTable

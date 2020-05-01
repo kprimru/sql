@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALL_DIRECTION_INSERT]
+ALTER PROCEDURE [dbo].[CALL_DIRECTION_INSERT]
 	@NAME	VARCHAR(50),
 	@DEF	BIT,
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
@@ -28,21 +28,23 @@ BEGIN
 
 		IF @DEF = 1
 			UPDATE dbo.CallDirection
-			SET DEF = 0	
+			SET DEF = 0
 
 		INSERT INTO dbo.CallDirection(NAME, DEF)
 			OUTPUT INSERTED.ID INTO @TBL
-			VALUES(@NAME, @DEF)	
+			VALUES(@NAME, @DEF)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CALL_DIRECTION_INSERT] TO rl_call_direction_i;
+GO

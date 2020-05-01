@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TRUST_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_TRUST_INSERT]
 	@CALL		UNIQUEIDENTIFIER,
 	@TNAME		BIT,
 	@NAME		VARCHAR(500),
@@ -47,7 +47,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)	
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 
 		INSERT INTO	dbo.ClientTrust(
 					CT_ID_CALL, CT_TNAME, CT_NAME, CT_TADDRESS, CT_ADDRESS,
@@ -64,14 +64,16 @@ BEGIN
 					@TRUST, @NOTE)
 
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TRUST_INSERT] TO rl_client_trust_i;
+GO

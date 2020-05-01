@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_PREPARE]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_PREPARE]
 	@CLIENT	INT,
 	@TXT	VARCHAR(100) = NULL OUTPUT,
 	@COLOR	INT = NULL OUTPUT
@@ -26,14 +26,16 @@ BEGIN
 
 		SET @COLOR = 0
 		SET @TXT = NULL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_PREPARE] TO rl_client_rival_r;
+GO

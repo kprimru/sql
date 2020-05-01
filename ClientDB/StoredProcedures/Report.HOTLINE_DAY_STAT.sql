@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[HOTLINE_DAY_STAT]
+ALTER PROCEDURE [Report].[HOTLINE_DAY_STAT]
 	@PARAM	NVARCHAR(MAX)
 AS
 BEGIN
@@ -22,11 +22,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + DATENAME(WEEKDAY, DATE_S) + ')' AS [День], 
+		SELECT
+			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + DATENAME(WEEKDAY, DATE_S) + ')' AS [День],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
@@ -35,7 +35,7 @@ BEGIN
 			) AS [Базис],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
@@ -44,7 +44,7 @@ BEGIN
 			) AS [Подхост|Находка],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
@@ -53,7 +53,7 @@ BEGIN
 			) AS [Подхост|Уссурийск],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
@@ -62,7 +62,7 @@ BEGIN
 			) AS [Подхост|Артем],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
@@ -71,26 +71,28 @@ BEGIN
 			) AS [Подхост|Славянка],
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					dbo.HotlineChatView a WITH(NOEXPAND)
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-			) AS [Всего]	
+			) AS [Всего]
 		FROM
 			(
 				SELECT DISTINCT DATE_S
 				FROM dbo.HotlineChatView WITH(NOEXPAND)
 			) AS z
 		ORDER BY DATE_S DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[HOTLINE_DAY_STAT] TO rl_report;
+GO

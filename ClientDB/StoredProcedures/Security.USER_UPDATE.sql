@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_UPDATE]
+ALTER PROCEDURE [Security].[USER_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@ROLES	VARCHAR(MAX)
@@ -31,7 +31,7 @@ BEGIN
 		FROM sys.database_principals
 		WHERE principal_id = @ID
 
-		
+
 		IF @OLD_NAME <> @NAME
 		BEGIN
 			EXEC('ALTER LOGIN [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
@@ -40,7 +40,7 @@ BEGIN
 
 		DECLARE RL_DROP CURSOR LOCAL FOR
 			SELECT RoleName
-			FROM 
+			FROM
 				dbo.RoleTable a
 				INNER JOIN sys.database_principals b ON a.RoleName = b.name
 				INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
@@ -53,12 +53,12 @@ BEGIN
 					)
 
 		OPEN RL_DROP
-		
+
 		DECLARE @RL	VARCHAR(50)
 
 		FETCH NEXT FROM RL_DROP INTO @RL
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_droprolemember @RL, @NAME
 
@@ -71,11 +71,11 @@ BEGIN
 		DECLARE RL_ADD CURSOR LOCAL FOR
 			SELECT ID
 			FROM dbo.TableStringFromXML(@ROLES)
-			WHERE 
+			WHERE
 				NOT EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.RoleTable a
 							INNER JOIN sys.database_principals b ON a.RoleName = b.name
 							INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
@@ -83,10 +83,10 @@ BEGIN
 					)
 
 		OPEN RL_ADD
-		
+
 		FETCH NEXT FROM RL_ADD INTO @RL
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_addrolemember @RL, @NAME
 
@@ -95,14 +95,16 @@ BEGIN
 
 		CLOSE RL_ADD
 		DEALLOCATE RL_ADD
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_UPDATE] TO rl_user_i;
+GO

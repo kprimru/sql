@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[OFFER_MASTER_PRINT]
+ALTER PROCEDURE [Tender].[OFFER_MASTER_PRINT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			QUERY_DATE, SUPPORT_START, SUPPORT_FINISH, '' AS TPL,
 			'В ' + d.CLIENT AS CLIENT_HEADER, d.CLIENT AS CLIENT_FULL_NAME,
 			b.FULL_NAME AS VENDOR_SHORT, b.DIRECTOR AS VENDOR_DIRECTOR, b.OFFICIAL AS VENDOR_FULL, c.NAME AS NDS_DATA,
@@ -33,21 +33,21 @@ BEGIN
 						SELECT ID
 						FROM
 							dbo.TableGuidFromXML(a.SUPPORT_TYPES)
-						
+
 						UNION
-						
+
 						SELECT ID
 						FROM
 							dbo.TableGuidFromXML(a.DELIVERY_TYPES)
-						
+
 						UNION
-						
+
 						SELECT ID
 						FROM
 							dbo.TableGuidFromXML(a.EXCHANGE_TYPES)
-						
+
 						UNION
-						
+
 						SELECT ID
 						FROM
 							dbo.TableGuidFromXML(a.ACTUAL_TYPES)
@@ -58,17 +58,17 @@ BEGIN
 			CASE
 				WHEN DELIVERY = 1 THEN 'допоставку экземпляров систем'
 				ELSE ''
-			END + 
+			END +
 			CASE
 				WHEN ACTUAL = 1 AND DELIVERY = 1 THEN ', актуализацию экземпляров систем'
 				WHEN ACTUAL = 1 AND DELIVERY = 0 THEN 'актуализацию экземпляров систем'
 				ELSE ''
-			END + 	
+			END + 
 			CASE
 				WHEN EXCHANGE = 1 AND (DELIVERY = 1 OR ACTUAL = 1) THEN ', замену экземпляров систем'
 				WHEN EXCHANGE = 1 AND DELIVERY = 0 AND ACTUAL = 0 THEN 'замену экземпляров систем'
 				ELSE ''
-			END + 	
+			END + 
 			CASE
 				WHEN SUPPORT = 1 AND (ACTUAL = 1 OR EXCHANGE = 1 OR DELIVERY = 1) THEN ' и оказания информационных услуг'
 				WHEN SUPPORT = 1 AND ACTUAL = 0 AND EXCHANGE = 0 AND DELIVERY = 0 THEN 'оказания информационных услуг'
@@ -104,20 +104,20 @@ BEGIN
 				FROM Tender.OfferDetail
 				WHERE ID_OFFER = @ID
 			) AS TOTAL_ALL
-		FROM 
+		FROM
 			Tender.Offer a
 			INNER JOIN dbo.Vendor b ON a.ID_VENDOR = b.ID
 			INNER JOIN Common.Tax c ON a.ID_TAX = c.ID
 			INNER JOIN Tender.Tender d ON a.ID_TENDER = d.ID
 		WHERE a.ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

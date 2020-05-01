@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TENDER_SELECT]
+ALTER PROCEDURE [Purchase].[TENDER_SELECT]
 	@CLIENT		INT,
 	@DELETED	BIT
 AS
@@ -23,12 +23,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			TD_ID, TD_STATUS, TD_NOTICE_NUM, TD_NOTICE_DATE, TN_NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT TS_NAME + ', '
-					FROM 
+					FROM
 						Purchase.TenderTradeSite
 						INNER JOIN Purchase.TradeSite ON TS_ID = TTS_ID_TS
 					WHERE TTS_ID_TENDER = TN_ID
@@ -38,7 +38,7 @@ BEGIN
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT PK_NAME + ', '
-					FROM 
+					FROM
 						Purchase.TenderPurchaseKind
 						INNER JOIN Purchase.PurchaseKind ON PK_ID = TPK_ID_PK
 					WHERE TPK_ID_TENDER = TN_ID
@@ -54,14 +54,16 @@ BEGIN
 		WHERE (TD_STATUS = 1 OR @DELETED = 1 AND TD_STATUS = 3)
 			AND TD_ID_CLIENT = @CLIENT
 		ORDER BY TD_NOTICE_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TENDER_SELECT] TO rl_tender_r;
+GO

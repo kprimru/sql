@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[USR_OLD_SELECT]
+ALTER PROCEDURE [Maintenance].[USR_OLD_SELECT]
 	@LAST_COUNT	SMALLINT,
 	@MIN_DATE	SMALLDATETIME,
 	@MODE		TINYINT
@@ -45,7 +45,7 @@ BEGIN
 				) AS o_O
 			WHERE RN > @LAST_COUNT
 				AND UF_DATE < @MIN_DATE
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usr (UF_ID_COMPLECT) INCLUDE (UF_DATE)'
 		EXEC (@SQL)
@@ -72,7 +72,7 @@ BEGIN
 					FROM #usr b
 					WHERE a.UF_ID_COMPLECT = b.UF_ID_COMPLECT
 				) AS UD_MAX
-			FROM 
+			FROM
 				#usr a
 				INNER JOIN USR.USRActiveView b ON b.UD_ID = a.UF_ID_COMPLECT
 				INNER JOIN dbo.SystemTable s ON s.SystemID = b.UF_ID_SYSTEM
@@ -80,14 +80,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 			DROP TABLE #usr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[USR_OLD_SELECT] TO rl_maintenance;
+GO

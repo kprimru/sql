@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- получение просроченных договоров
 
-CREATE PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE] 
+ALTER PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE]
 	@curdate VARCHAR(20),
 	@managerid INT = NULL,
 	@statusid INT = 2
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		IF @managerid IS NULL
-			SELECT ClientTable.ClientID, ClientFullName, 
+			SELECT ClientTable.ClientID, ClientFullName,
 			   Max(ContractBegin) AS ContractBeginStr,
 			   Max(ContractEnd) AS ContractEndStr, ServiceName
 			FROM dbo.ContractTable LEFT OUTER JOIN
@@ -45,38 +45,40 @@ BEGIN
 			IF (@managerid = 19) OR (@managerid = 11)
 				INSERT INTO @t
 					SELECT 19 AS Item
-					UNION 
+					UNION
 					SELECT 11 AS Item
 			ELSE
 				INSERT INTO @t
 					SELECT @managerid AS Item
-			
 
-			SELECT ClientTable.ClientID, ClientFullName, 
+
+			SELECT ClientTable.ClientID, ClientFullName,
 			   Max(ContractBegin) AS ContractBeginStr,
 			   Max(ContractEnd) AS ContractEndStr, ServiceName
 			FROM dbo.ContractTable LEFT OUTER JOIN
 					   dbo.ClientTable ON ClientTable.ClientID = ContractTable.ClientID LEFT OUTER JOIN
 					   dbo.ServiceTable ON ClientTable.ClientServiceID = ServiceTable.ServiceID
-			WHERE NOT EXISTS(SELECT ContractNumber FROM dbo.ContractTable WHERE (ContractBegin <= @curdate AND ContractEnd >= @curdate) AND ContractTable.CLientID = ClientTable.ClientID) 
+			WHERE NOT EXISTS(SELECT ContractNumber FROM dbo.ContractTable WHERE (ContractBegin <= @curdate AND ContractEnd >= @curdate) AND ContractTable.CLientID = ClientTable.ClientID)
 				AND ManagerID IN
-					(	
+					(
 						SELECT Item
 						FROM @t
-					)			
+					)
 				AND StatusID = @statusid
 				AND STATUS = 1
 			GROUP BY ClientTable.ClientID, CLientFullName, ServiceName
 			ORDER BY ServiceName, ClientFullName
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_CONTRACT_OUT_DATE] TO rl_contract_audit;
+GO

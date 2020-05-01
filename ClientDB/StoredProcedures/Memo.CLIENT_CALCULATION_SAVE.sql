@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[CLIENT_CALCULATION_SAVE]
+ALTER PROCEDURE [Memo].[CLIENT_CALCULATION_SAVE]
 	@ID			UNIQUEIDENTIFIER,
 	@CLIENT		INT,
 	@NOTE		NVARCHAR(MAX),
@@ -34,14 +34,16 @@ BEGIN
 			SET NOTE = @NOTE,
 				SYSTEMS = @SYSTEMS
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[CLIENT_CALCULATION_SAVE] TO rl_client_memo_u;
+GO

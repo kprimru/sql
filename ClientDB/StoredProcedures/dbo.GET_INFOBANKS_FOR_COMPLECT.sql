@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT] 
+ALTER PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT]
 	@SYSID INT
 AS
 BEGIN
@@ -28,19 +28,21 @@ BEGIN
 			InfoBankID IN
 				(
 					SELECT InfoBankID
-					FROM dbo.SystemBankTable 
+					FROM dbo.SystemBankTable
 					--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --ДОФ будем добавлять программно
 					WHERE  (SystemID = @SYSID) AND  (Required IN (1, 2) )
 				)
 			AND InfoBankActive = 1
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_INFOBANKS_FOR_COMPLECT] TO public;
+GO

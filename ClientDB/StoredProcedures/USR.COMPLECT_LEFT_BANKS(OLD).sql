@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[COMPLECT_LEFT_BANKS(OLD)]
+ALTER PROCEDURE [USR].[COMPLECT_LEFT_BANKS(OLD)]
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL,
 	@IB			NVARCHAR(MAX) = NULL,
@@ -31,13 +31,13 @@ BEGIN
 					ID					INT,
 					Complect			VARCHAR(30),
 					InfoBankName		VARCHAR(MAX),
-					InfoBankShortName	VARCHAR(MAX),	
+					InfoBankShortName	VARCHAR(MAX),
 					PRIMARY KEY CLUSTERED(ID, Complect)
 				)
 
 		DECLARE @res	TABLE
 				(
-					ClientFullName	VARCHAR(MAX), 
+					ClientFullName	VARCHAR(MAX),
 					Complect		VARCHAR(MAX),
 					ServiceName		VARCHAR(MAX),
 					ManagerName		VARCHAR(MAX),
@@ -49,7 +49,7 @@ BEGIN
 		INSERT INTO @out_ib
 		SELECT ID, Complect, ibt1.InfoBankName, InfoBankShortName
 		FROM dbo.ComplectInfoBankCache cib
-		INNER JOIN dbo.InfoBankTable ibt1 ON ibt1.InfoBankName = cib.InfoBankName 
+		INNER JOIN dbo.InfoBankTable ibt1 ON ibt1.InfoBankName = cib.InfoBankName
 		WHERE NOT EXISTS
 			(
 				SELECT Complect, ibt.InfoBankID, InfoBankName
@@ -60,7 +60,7 @@ BEGIN
 				INNER JOIN InfoBankTable ibt ON ibt.InfoBankID = uib.UI_ID_BASE
 				WHERE cib.Complect = rns.Complect AND cib.InfoBankID = ibt.InfoBankID AND DS_REG = 0 AND SubhostName NOT IN ('Ó1', 'Í1', 'Ì', 'Ë1')
 			)
-				
+
 
 		INSERT INTO @res
 		SELECT
@@ -69,13 +69,13 @@ BEGIN
 				SELECT InfoBankName + ', '
 				FROM @out_ib res2
 				WHERE res.Complect = Res2.Complect
-				FOR XML PATH('')	
+				FOR XML PATH('')
 				)), 1, 2, '')) AS Banks,
 			REVERSE(STUFF(REVERSE((
 				SELECT InfoBankShortName + ', '
 				FROM @out_ib res2
 				WHERE res.Complect = Res2.Complect
-				FOR XML PATH('')	
+				FOR XML PATH('')
 				)), 1, 2, '')) AS RusBanks,
 			av.UF_DATE
 		FROM
@@ -84,12 +84,12 @@ BEGIN
 		INNER JOIN dbo.ClientDistrView cdv WITH(NOEXPAND) ON rns.DistrNumber = cdv.DISTR AND rns.CompNumber = cdv.COMP AND rns.HostID = cdv.HostID
 		INNER JOIN dbo.ClientView cv WITH(NOEXPAND) ON cv.ClientID = cdv.ID_CLIENT
 		INNER JOIN USR.USRActiveView av ON av.UD_DISTR = rns.DistrNumber AND av.UD_COMP = rns.CompNumber
-		
-		WHERE 
+
+		WHERE
 				(@MANAGER IS NULL OR cv.ManagerID = @MANAGER) AND
 				(@SERVICE IS NULL OR cv.ServiceID = @SERVICE) AND
 				(@DATE IS NULL OR av.UF_DATE >= @DATE) AND
-				(@CLIENT IS NULL OR cdv.ID_CLIENT = @CLIENT) 
+				(@CLIENT IS NULL OR cdv.ID_CLIENT = @CLIENT)
 		GROUP BY cv.ClientFullName, res.Complect, cv.ServiceName, cv.ManagerName, av.UF_DATE
 		ORDER BY res.Complect
 
@@ -112,9 +112,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[COMPLECT_LEFT_BANKS(OLD)] TO rl_complect_info_bank;
+GO

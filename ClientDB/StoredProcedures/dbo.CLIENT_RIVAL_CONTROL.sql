@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_RIVAL_CONTROL]
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_CONTROL]
 	@CR_ID	INT,
 	@CONTROL	BIT,
 	@DATE	SMALLDATETIME
@@ -28,14 +28,16 @@ BEGIN
 		SET CR_CONTROL = @CONTROL,
 			CR_CONTROL_DATE = @DATE
 		WHERE CR_ID = @CR_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_CONTROL] TO rl_client_rival_control;
+GO

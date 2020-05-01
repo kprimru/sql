@@ -14,13 +14,13 @@ AS
 RETURN
 (
 	SELECT COMPLECT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_NET
-	FROM 
+	FROM
 		Reg.RegDistr a
 		INNER JOIN Reg.RegHistory b ON b.ID_DISTR = a.ID
-		INNER JOIN Din.SystemType ON ID_TYPE = SST_ID				
+		INNER JOIN Din.SystemType ON ID_TYPE = SST_ID
 	WHERE b.ID_STATUS = @STATUS
 		AND SST_COMPLECT = 1
-		AND b.DATE = 
+		AND b.DATE =
 			(
 				SELECT MAX(DATE)
 				FROM Reg.RegHistory c

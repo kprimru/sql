@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH_REPORT]
 	--@STATMONTH INT,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -32,7 +32,7 @@ BEGIN
 			DROP TABLE #searchcltable
 
 		CREATE TABLE #searchcltable
-			(				
+			(
 				ClientID INT,
 				SearchMonth nvarchar(51),
 				MaxSearchDate datetime,
@@ -45,7 +45,7 @@ BEGIN
 			DROP TABLE #searchcltable3
 
 		CREATE TABLE #searchcltable3
-			(				
+			(
 				ROW INT,
 				ClientID INT,
 				SearchMonth nvarchar(51),
@@ -76,26 +76,26 @@ BEGIN
 
 		INSERT INTO #client
 			SELECT a.ClientID
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN @TP ON TP = ClientKind_Id
 			WHERE (ServiceID = @SERVICEID OR @SERVICEID IS NULL)
-				AND	(ManagerID = @MANAGERID OR @MANAGERID IS NULL)	
-		
-		SELECT 
-			ManagerName, ServiceName, ClientFullName, 		
+				AND	(ManagerID = @MANAGERID OR @MANAGERID IS NULL)
+
+		SELECT
+			ManagerName, ServiceName, ClientFullName, 
 			CONVERT(NVARCHAR(32),
 				(
 					SELECT MAX(SearchGetDay)
 					FROM dbo.ClientSearchTable z
 					WHERE z.ClientID = a.CL_ID
 				)
-				, 104) as MaxDateHistoryGet, 
+				, 104) as MaxDateHistoryGet,
 			REVERSE(STUFF(REVERSE(
-				( 
+				(
 					SELECT RIGHT('0' + CONVERT(NVARCHAR(8), DATEPART(MONTH, MaxSearchDate)), 2) + '.' + DATENAME (Year,  MaxSearchDate ) +', '
-					FROM 
+					FROM
 						(
 							SELECT DISTINCT SearchMonth AS MaxSearchDate
 							FROM dbo.ClientSearchTable z
@@ -105,7 +105,7 @@ BEGIN
 					ORDER BY DATEPART(YEAR, MaxSearchDate) DESC, DATEPART(MONTH, MaxSearchDate) DESC FOR XML PATH('')
 				)
 			), 1, 2, '')) AS DateSearchHistory,
-			
+
 			DistinctDaysSearch,
 			DistinctTEXTSearch,
 			CASE
@@ -113,42 +113,44 @@ BEGIN
 				ELSE
 					CAST(
 						(
-							CAST(DistinctTEXTSearch AS DECIMAL(10,2)) / 
+							CAST(DistinctTEXTSearch AS DECIMAL(10,2)) /
 							CAST(DistinctDaysSearch AS DECIMAL(10,2))
 						) AS DECIMAL(7,2)
 					)
 			END AS KoefSearchDay,
-			
-			CONVERT(NVARCHAR(32), 
+
+			CONVERT(NVARCHAR(32),
 			(
 				SELECT MIN(ConnectDate)
 				FROM dbo.ClientConnectView z WITH(NOEXPAND)
 				WHERE z.ClientID = a.CL_ID
 			), 104)  AS ClientConnectStr
-		FROM 
+		FROM
 			#client a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.CL_ID = b.ClientID
 			OUTER APPLY
 				(
-					SELECT 
+					SELECT
 						COUNT(DISTINCT SearchDay) AS DistinctDaysSearch,
 						COUNT(SearchText) AS DistinctTEXTSearch
 					FROM dbo.ClientSearchTable z
 					WHERE z.ClientID = a.CL_ID
-						AND SearchDay BETWEEN @BEGIN AND @END 
+						AND SearchDay BETWEEN @BEGIN AND @END
 				) AS c
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_REPORT] TO rl_report_search_history;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SOJ_CHECK]
+ALTER PROCEDURE [Report].[SOJ_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -28,20 +28,20 @@ BEGIN
 			UF_DATE		DateTime,
 			Primary Key Clustered (UF_ID)
 		);
-		
+
 		INSERT INTO @LastUSR
 		SELECT UF_ID, UF_DATE
 		FROM USR.USRActiveView;
 		--WHERE UF_DATE >= '20200101';
 
-		SELECT 
+		SELECT
 			[Рук-ль/Подхост]	= ISNULL(ManagerName, SubhostName),
 			[СИ]				= ServiceName,
 			[Клиент]			= ISNULL(ClientFullName, Comment),
-			[Дистрибутив]		= D.DistrStr, 
+			[Дистрибутив]		= D.DistrStr,
 			[Сеть]				= NT_SHORT,
 			[Тип]				= SST_SHORT,
-			[Посл.пополнение]	= 
+			[Посл.пополнение]	=
 				(
 					SELECT TOP (1) U.UF_DATE
 					FROM @LastUSR				U
@@ -59,14 +59,16 @@ BEGIN
 			AND R.DS_REG = 0
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 0 END, SubhostName, ManagerName, ServiceName, ClientFullName, Comment, R.SystemOrder, DistrNumber
 		OPTION (RECOMPILE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SOJ_CHECK] TO rl_report;
+GO

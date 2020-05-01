@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientStudyConnectView]
+ALTER VIEW [dbo].[ClientStudyConnectView]
 AS
-	SELECT 
+	SELECT
 		ClientID, DATE, HostID, DISTR, COMP,
 		(
 			SELECT TOP 1 RPR_TEXT
@@ -18,9 +18,9 @@ AS
 						AND RPR_DATE = DATE
 						AND RPR_OPER IN ('Включение', 'НОВАЯ', 'Изм. парам.', 'Сопровождение подключено')
 					ORDER BY RPR_DATE DESC
-								
+
 					UNION ALL
-								
+
 					SELECT TOP 1 1 AS TP, COMMENT
 					FROM Reg.ProtocolText z
 					WHERE z.DISTR = a.DISTR AND z.COMP = a.COMP AND ID_HOST = HostID
@@ -32,8 +32,8 @@ AS
 		) AS RPR_TEXT
 	FROM
 		(
-			SELECT 
-				ClientID, 
+			SELECT
+				ClientID,
 				dbo.DateOf(
 					(
 						SELECT TOP 1 RPR_DATE
@@ -44,15 +44,15 @@ AS
 								WHERE RPR_DISTR = DISTR AND RPR_COMP = COMP AND RPR_ID_HOST = HostID
 									AND RPR_OPER IN ('Включение', 'НОВАЯ', 'Изм. парам.', 'Сопровождение подключено')
 								ORDER BY RPR_DATE DESC
-								
+
 								UNION ALL
-								
+
 								SELECT TOP 1 1 AS TP, DATE
 								FROM Reg.ProtocolText z
 								WHERE z.DISTR = b.DISTR AND z.COMP = b.COMP AND ID_HOST = HostID
 									AND COMMENT IN ('Включение', 'НОВАЯ', 'Изм. парам.')
 								ORDER BY DATE DESC
-								
+
 							) AS o_O
 						ORDER BY TP
 					)
@@ -60,11 +60,11 @@ AS
 				HostID, DISTR, COMP
 			FROM
 				(
-					SELECT 
+					SELECT
 						ClientID,
 						(
 							SELECT TOP 1 ID
-							FROM 
+							FROM
 								dbo.ClientDistrView WITH(NOEXPAND)
 							WHERE ID_CLIENT = ClientID AND DS_REG = 0
 							ORDER BY SystemOrder
@@ -72,5 +72,5 @@ AS
 					FROM dbo.ClientTable
 					WHERE STATUS = 1
 				) AS a
-				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID = b.ID	
+				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID = b.ID
 		) AS a

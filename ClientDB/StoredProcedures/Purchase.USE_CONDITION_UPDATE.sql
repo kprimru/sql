@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[USE_CONDITION_UPDATE]
+ALTER PROCEDURE [Purchase].[USE_CONDITION_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(MAX),
 	@SHORT	VARCHAR(200)
@@ -28,14 +28,16 @@ BEGIN
 		SET UC_NAME		=	@NAME,
 			UC_SHORT	=	@SHORT
 		WHERE UC_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[USE_CONDITION_UPDATE] TO rl_use_condition_u;
+GO

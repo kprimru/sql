@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[SIGN_PERIOD_SELECT]
+ALTER PROCEDURE [Purchase].[SIGN_PERIOD_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR SP_NAME LIKE @FILTER
 			OR SP_SHORT LIKE @FILTER
 		ORDER BY SP_SHORT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[SIGN_PERIOD_SELECT] TO rl_sign_period_r;
+GO

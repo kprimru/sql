@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_STT_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 
 		INSERT INTO #stt(FL_NAME, FL_SIZE, FL_DATE, DATE, RN)
 			SELECT FL_NAME, dbo.FileByteSizeToStr(FL_SIZE), FL_DATE, DATE, ROW_NUMBER() OVER(PARTITION BY FL_NAME ORDER BY DATE DESC)
-			FROM 
+			FROM
 				dbo.ClientStat a
 				INNER JOIN dbo.SystemTable b ON a.SYS_NUM = b.SystemNumber
 				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.HostID = b.HostID AND c.DISTR = a.DISTR AND c.COMP = a.COMP
@@ -58,14 +58,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#stt') IS NOT NULL
 			DROP TABLE #stt
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STT_SELECT] TO rl_client_stat_report;
+GO

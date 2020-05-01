@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[COMPLECT_LEFT_BANKS]
+ALTER PROCEDURE [USR].[COMPLECT_LEFT_BANKS]
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL,
 	@IB			NVARCHAR(MAX) = NULL,
@@ -31,7 +31,7 @@ BEGIN
 			ClientId		Int				NOT NULL,
 			Primary Key Clustered(ClientId)
 		);
-		
+
 		DECLARE @ClientsComplects Table
 		(
 			ClientId		Int				NOT NULL,
@@ -53,7 +53,7 @@ BEGIN
 		(
 			Id				SmallInt		NOT NULL PRIMARY KEY CLUSTERED
 		);
-		
+
 		IF @IB IS NOT NULL
 			INSERT INTO @InfoBanks
 			SELECT DISTINCT ID
@@ -87,7 +87,7 @@ BEGIN
 		) U
 		WHERE	R.Service = 0
 			AND	(U.UF_DATE >= @DATE OR @DATE IS NULL);
-			
+
 		UPDATE C
 		SET InfoBanks		= I.InfoBankName
 		FROM @ClientsComplects					C
@@ -118,14 +118,16 @@ BEGIN
 		INNER JOIN dbo.ClientView	C	WITH(NOEXPAND)	ON C.ClientID = CC.ClientID
 		WHERE CC.InfoBanks IS NOT NULL
 		ORDER BY ManagerName, ServiceName, ClientFullName, Complect
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[COMPLECT_LEFT_BANKS] TO rl_complect_info_bank;
+GO

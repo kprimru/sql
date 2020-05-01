@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SELECT_CLIENT_DUTY]
+ALTER PROCEDURE [dbo].[SELECT_CLIENT_DUTY]
 	@clientid INT
 AS
 BEGIN
@@ -22,17 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ClientDutyID, 
-			Convert(varchar(20), Convert(datetime, ClientDutyDateTime, 112), 104) AS ClientDutyDateStr, 
-			ClientDutyDate, ClientDutyTime, ClientDutyDateTime, 
+		SELECT
+			ClientDutyID,
+			Convert(varchar(20), Convert(datetime, ClientDutyDateTime, 112), 104) AS ClientDutyDateStr,
+			ClientDutyDate, ClientDutyTime, ClientDutyDateTime,
 			ClientDutyPhone, ClientDutyPos, ClientDutyContact,
 			ISNULL(ClientDutyContact + CHAR(10) + CHAR(13), '') + ISNULL(ClientDutyPos + CHAR(10) + CHAR(13), '') + ISNULL(ClientDutyPhone, '') AS DUTY_CONTACT,
-			DutyName, DutyTable.DutyID, ManagerTable.ManagerID, ManagerName, 
+			DutyName, DutyTable.DutyID, ManagerTable.ManagerID, ManagerName,
 			CallTypeName, CallTypeTable.CallTypeID,
 			REVERSE(STUFF(REVERSE((
 				SELECT SystemShortName + ','
-				FROM 
+				FROM
 					dbo.ClientDutyIBTable INNER JOIN
 					dbo.SystemTable ON SystemTable.SystemID = ClientDutyIBTable.SystemID
 				WHERE ClientDutyTable.ClientDutyID = ClientDutyIBTable.ClientDutyID
@@ -40,7 +40,7 @@ BEGIN
 			)),1,1,'')) AS IBList,
 			REVERSE(STUFF(REVERSE((
 				SELECT Convert(VARCHAR(10), SystemTable.SystemID) + ','
-				FROM 
+				FROM
 					dbo.ClientDutyIBTable INNER JOIN
 					dbo.SystemTable ON SystemTable.SystemID = ClientDutyIBTable.SystemID
 				WHERE ClientDutyTable.ClientDutyID = ClientDutyIBTable.ClientDutyID
@@ -48,21 +48,23 @@ BEGIN
 			)),1,1,'')) AS CheckedIB,
 			ClientDutyGive, ClientDutyAnswer,
 			ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyUncomplete, ClientDutyComment
-		FROM 
-			dbo.ClientDutyTable LEFT OUTER JOIN 
+		FROM
+			dbo.ClientDutyTable LEFT OUTER JOIN
 			dbo.DutyTable ON ClientDutyTable.DutyID = DutyTable.DutyID LEFT OUTER JOIN
 			dbo.ManagerTable ON ManagerTable.ManagerID = ClientDutyTable.ManagerID LEFT OUTER JOIN
 			dbo.CallTypeTable ON CallTypeTable.CallTypeID = ClientDutyTable.CallTypeID
 		WHERE ClientID = @clientid AND STATUS = 1
 		ORDER BY ClientDutyDateTime DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SELECT_CLIENT_DUTY] TO rl_client_duty_r;
+GO

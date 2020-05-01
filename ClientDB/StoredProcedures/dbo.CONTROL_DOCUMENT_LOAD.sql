@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONTROL_DOCUMENT_LOAD]
+ALTER PROCEDURE [dbo].[CONTROL_DOCUMENT_LOAD]
 	@LIST	NVARCHAR(MAX),
 	@NEW	INT = NULL OUTPUT
 AS
@@ -21,19 +21,19 @@ BEGIN
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
-	BEGIN TRY	
+	BEGIN TRY
 
 		DECLARE @xml XML
-		
+
 		SET @xml = CAST(@LIST AS XML)
-		
+
 		INSERT INTO dbo.ControlDocument(DATE, RIC, SYS_NUM, DISTR, COMP, IB, IB_NUM, DOC_NAME)
 			SELECT DATE, RIC, SYS_NUM, DISTR, COMP, IB, IB_NUM, DOC_NAME
 			FROM
 				(
-					SELECT 
-						CONVERT(DATETIME, c.value('(@date)', 'VARCHAR(64)'), 120) AS DATE, 
-						c.value('(@ric)', 'SMALLINT') AS RIC, 
+					SELECT
+						CONVERT(DATETIME, c.value('(@date)', 'VARCHAR(64)'), 120) AS DATE,
+						c.value('(@ric)', 'SMALLINT') AS RIC,
 						c.value('(@sys)', 'INT') AS SYS_NUM,
 						c.value('(@distr)', 'INT') AS DISTR,
 						c.value('(@comp)', 'TINYINT') AS COMP,
@@ -55,16 +55,18 @@ BEGIN
 						AND ISNULL(a.IB_NUM, -1) = ISNULL(b.IB_NUM, -1)
 						AND a.DOC_NAME = b.DOC_NAME
 				)
-				
+
 		SELECT @NEW = @@ROWCOUNT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTROL_DOCUMENT_LOAD] TO rl_control_document_import;
+GO

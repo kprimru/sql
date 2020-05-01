@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_COMPLIANCE_LAST]
+ALTER PROCEDURE [USR].[USR_COMPLIANCE_LAST]
 	@DATE		SMALLDATETIME,
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL
@@ -49,20 +49,20 @@ BEGIN
 
 		INSERT INTO #ib
 			(
-				UD_ID, UD_NAME, CL_ID, UF_ID, 
-				UI_ID_BASE, UI_DISTR, UI_COMP, 
+				UD_ID, UD_NAME, CL_ID, UF_ID,
+				UI_ID_BASE, UI_DISTR, UI_COMP,
 				UIU_DATE
 			)
-			SELECT 
+			SELECT
 				UD_ID, dbo.DistrString(s.SystemShortName, b.UD_DISTR, b.UD_COMP), UD_ID_CLIENT, UF_ID,
-				UI_ID_BASE, UI_DISTR, UI_COMP, 
+				UI_ID_BASE, UI_DISTR, UI_COMP,
 				UI_LAST
 			FROM
 				[dbo].[ClientList@Get?Read]() a
 				INNER JOIN USR.USRActiveView b ON UD_ID_CLIENT = WCL_ID
 				INNER JOIN dbo.SystemTable s ON s.SystemID = UF_ID_SYSTEM
 				INNER JOIN USR.USRIB c ON UF_ID = UI_ID_USR
-				INNER JOIN dbo.ClientTable d ON UD_ID_CLIENT = ClientID 
+				INNER JOIN dbo.ClientTable d ON UD_ID_CLIENT = ClientID
 				INNER JOIN dbo.ServiceTable e ON ServiceID = ClientServiceID
 				INNER JOIN dbo.ClientDistrView g WITH(NOEXPAND) ON c.UI_DISTR = g.DISTR
 																AND c.UI_COMP = g.COMP
@@ -74,10 +74,10 @@ BEGIN
 				AND UI_LAST >= @DATE
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-				
+
 			UNION
-				
-			SELECT 
+
+			SELECT
 				UD_ID, dbo.DistrString(s.SystemShortName, b.UD_DISTR, b.UD_COMP), UD_ID_CLIENT, UF_ID,
 				UI_ID_BASE, UI_DISTR, UI_COMP,
 				UI_LAST
@@ -100,7 +100,7 @@ BEGIN
 				AND UI_LAST >= @DATE
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-		
+
 		IF OBJECT_ID('tempdb..#comp') IS NOT NULL
 			DROP TABLE #comp
 
@@ -121,7 +121,7 @@ BEGIN
 				ISNULL(
 				(
 					SELECT TOP 1 ComplianceTypeName
-					FROM 
+					FROM
 						USR.USRFile b
 						INNER JOIN USR.USRIB c ON b.UF_ID = c.UI_ID_USR
 						INNER JOIN dbo.ComplianceTypeTable d ON d.ComplianceTypeID = c.UI_ID_COMP
@@ -139,7 +139,7 @@ BEGIN
 									AND z.UI_COMP = a.UI_COMP
 									AND z.UI_ID_USR = a.UF_ID
 			INNER JOIN USR.USRUpdates y ON y.UIU_ID_IB = z.UI_ID;
-				
+
 		--ToDo сделать через OUTER APPLY
 		UPDATE a
 		SET PREV_UPDATE =
@@ -163,7 +163,7 @@ BEGIN
 						)
 			)
 		FROM #ib a;
-		
+
 		--ToDo сделать через OUTER APPLY
 		UPDATE a
 		SET FIRST_DATE =
@@ -196,17 +196,17 @@ BEGIN
 						)
 			)
 		FROM #ib a;
-		
+
 		DECLARE @SQL NVARCHAR(MAX)
 		SET @SQL = 'CREATE INDEX [' + CONVERT(VARCHAR(50), NEWID()) + '] ON #ib (UD_ID, UI_ID_BASE, UI_DISTR, UI_COMP) INCLUDE (UIU_DATE)'
 
 		EXEC (@SQL)
 
-		SELECT 
+		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName, UD_NAME, InfoBankShortName,
-			rnsw.Complect, 
-			--dbo.DistrString(NULL, UI_DISTR, UI_COMP) AS DistrNumber, 
-			CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), FIRST_DATE, 112), 112) AS FIRST_DATE, 
+			rnsw.Complect,
+			--dbo.DistrString(NULL, UI_DISTR, UI_COMP) AS DistrNumber,
+			CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), FIRST_DATE, 112), 112) AS FIRST_DATE,
 			CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), UIU_DATE, 112), 112) AS UIU_DATE
 		FROM
 		(
@@ -222,7 +222,7 @@ BEGIN
 						AND c.UI_DISTR = a.UI_DISTR
 						AND c.UI_COMP = a.UI_COMP
 						AND c.UI_ID_COMP = @COMP
-						AND PREV_UPDATE = c.UI_LAST						
+						AND PREV_UPDATE = c.UI_LAST
 						AND a.UF_ID <> b.UF_ID
 				)
 
@@ -235,12 +235,12 @@ BEGIN
 					SELECT *
 					FROM USR.USRFile b
 					INNER JOIN USR.USRIB c ON c.UI_ID_USR = b.UF_ID
-					INNER JOIN dbo.ComplianceTypeTable d ON d.ComplianceTypeID = c.UI_ID_COMP						
+					INNER JOIN dbo.ComplianceTypeTable d ON d.ComplianceTypeID = c.UI_ID_COMP
 					WHERE b.UF_ID_COMPLECT = a.UD_ID
 						AND c.UI_ID_BASE = a.UI_ID_BASE
 						AND c.UI_DISTR = a.UI_DISTR
-						AND c.UI_COMP = a.UI_COMP						
-						AND PREV_UPDATE = c.UI_LAST						
+						AND c.UI_COMP = a.UI_COMP
+						AND PREV_UPDATE = c.UI_LAST
 						AND a.UF_ID <> b.UF_ID
 				)
 		) AS o_O
@@ -258,14 +258,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#comp') IS NOT NULL
 			DROP TABLE #comp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

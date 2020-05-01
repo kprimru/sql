@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[POLL_ANSWER_SELECT]
+ALTER PROCEDURE [Poll].[POLL_ANSWER_SELECT]
 	@ID_ANSWER	UNIQUEIDENTIFIER,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -28,7 +28,7 @@ BEGIN
 
 		IF @ID_ANSWER IS NOT NULL
 			SELECT x.ID, ClientFullName, ClientID, ServiceName, ManagerName, x.DATE
-			FROM 
+			FROM
 				Poll.ClientPollQuestion z
 				INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
 				INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
@@ -39,7 +39,7 @@ BEGIN
 			ORDER BY x.DATE DESC, ClientFullName
 		ELSE
 			SELECT x.ID, ClientFullName, ClientID, ServiceName, ManagerName, x.DATE
-			FROM 
+			FROM
 				Poll.ClientPollQuestion z
 				INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
 				INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
@@ -49,14 +49,16 @@ BEGIN
 				AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 				AND (DATE <= @END OR @END IS NULL)
 			ORDER BY x.DATE DESC, ClientFullName
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[POLL_ANSWER_SELECT] TO rl_blank_report;
+GO

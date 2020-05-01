@@ -4,6 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ActCalcStatus]
+ALTER VIEW [dbo].[ActCalcStatus]
 AS
 	SELECT 1 AS ST, 'Заявка создана' AS ST_TEXT

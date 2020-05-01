@@ -5,13 +5,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[SYSTEM_BANKS_SELECT]
+ALTER PROCEDURE [dbo].[SYSTEM_BANKS_SELECT]
 	@SYSID		INT,
 	@DTYPEID	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -26,14 +26,14 @@ BEGIN
 		SELECT InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder
 		FROM dbo.SystemInfoBanksView WITH(NOEXPAND)
 		WHERE System_Id = @SYSID AND DistrType_Id = @DTYPEID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

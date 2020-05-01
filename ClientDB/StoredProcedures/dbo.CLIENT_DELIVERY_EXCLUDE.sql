@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DELIVERY_EXCLUDE]
+ALTER PROCEDURE [dbo].[CLIENT_DELIVERY_EXCLUDE]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME,
 	@LIST	NVARCHAR(MAX) = NULL
@@ -32,14 +32,16 @@ BEGIN
 			UPDATE dbo.ClientDelivery
 			SET FINISH = @DATE
 			WHERE ID IN (SELECT ID FROM dbo.TableGUIDFromXML(@LIST))
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELIVERY_EXCLUDE] TO rl_client_delivery_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CALL_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_CALL_DELETE]
 	@ID			UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -24,12 +24,12 @@ BEGIN
 
 		DELETE FROM dbo.ClientDutyControl
 		WHERE CDC_ID_CALL = @ID
-		
+
 		DELETE FROM dbo.ClientTrust
 		WHERE CT_ID_CALL = @ID
 
 		DELETE FROM dbo.ClientSatisfactionAnswer
-		WHERE CSA_ID_QUESTION IN 
+		WHERE CSA_ID_QUESTION IN
 			(
 				SELECT CSQ_ID
 				FROM dbo.ClientSatisfactionQuestion
@@ -56,40 +56,42 @@ BEGIN
 
 		DELETE FROM dbo.ClientCall
 		WHERE CC_ID = @ID
-		
-		DELETE FROM Poll.ClientPollAnswer 
-		WHERE ID_QUESTION IN 
+
+		DELETE FROM Poll.ClientPollAnswer
+		WHERE ID_QUESTION IN
 			(
-				SELECT ID 
-				FROM Poll.ClientPollQuestion 
-				WHERE ID_POLL IN 
+				SELECT ID
+				FROM Poll.ClientPollQuestion
+				WHERE ID_POLL IN
 					(
-						SELECT ID 
-						FROM Poll.ClientPoll 
+						SELECT ID
+						FROM Poll.ClientPoll
 						WHERE ID_CALL = @ID
 					)
 			)
-			
-		DELETE 
-		FROM Poll.ClientPollQuestion 
-		WHERE ID_POLL IN 
+
+		DELETE
+		FROM Poll.ClientPollQuestion
+		WHERE ID_POLL IN
 			(
-				SELECT ID 
-				FROM Poll.ClientPoll 
+				SELECT ID
+				FROM Poll.ClientPoll
 				WHERE ID_CALL = @ID
 			)
-		
-		DELETE 
-		FROM Poll.ClientPoll 
+
+		DELETE
+		FROM Poll.ClientPoll
 		WHERE ID_CALL = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CALL_DELETE] TO rl_client_call_d;
+GO

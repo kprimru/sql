@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[STT_OLD_SELECT]
+ALTER PROCEDURE [Maintenance].[STT_OLD_SELECT]
 	@LAST_COUNT	SMALLINT,
 	@MIN_DATE	SMALLDATETIME,
 	@MODE		TINYINT
@@ -46,7 +46,7 @@ BEGIN
 				) AS o_O
 			WHERE RN > @LAST_COUNT
 				AND DATE < @MIN_DATE
-			
+
 		DECLARE @SQL NVARCHAR(MAX)
 		SET @SQL = 'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usr (FL_NAME) INCLUDE (DATE)'
 		EXEC (@SQL)
@@ -68,20 +68,22 @@ BEGIN
 					FROM #stt b
 					WHERE a.FL_NAME = b.FL_NAME
 				) AS FL_SIZE
-			FROM 
-				#stt a			
+			FROM
+				#stt a
 			ORDER BY FL_NAME
 
 		IF OBJECT_ID('tempdb..#stt') IS NOT NULL
 			DROP TABLE #stt
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[STT_OLD_SELECT] TO rl_maintenance;
+GO

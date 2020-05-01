@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[SEARCH_SAVE]
+ALTER PROCEDURE [Security].[SEARCH_SAVE]
 	@TYPE	NVARCHAR(64),
 	@SHORT	VARCHAR(250),
 	@SEARCH	XML
@@ -26,14 +26,16 @@ BEGIN
 
 		INSERT INTO Security.ClientSearch(CS_TYPE, CS_SHORT, CS_SEARCH)
 			VALUES(@TYPE, @SHORT, @SEARCH)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[SEARCH_SAVE] TO public;
+GO

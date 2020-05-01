@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH_FILE_CHECK]
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH_FILE_CHECK]
 	@MD5	VARCHAR(100),
 	@FILE	VARBINARY(MAX)
 AS
@@ -64,14 +64,16 @@ BEGIN
 			WHERE 1 = 0
 			ORDER BY CSF_DATE DESC
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_FILE_CHECK] TO rl_client_search_import;
+GO

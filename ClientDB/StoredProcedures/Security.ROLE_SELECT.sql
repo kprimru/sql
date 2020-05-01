@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[ROLE_SELECT]
+ALTER PROCEDURE [Security].[ROLE_SELECT]
 	@SearchString	VARCHAR(100) = NULL
 WITH EXECUTE AS OWNER
 AS
@@ -28,7 +28,7 @@ BEGIN
 
 		CREATE TABLE #temprole
 			(
-				RoleID INT, 
+				RoleID INT,
 				RoleMasterID INT
 			)
 
@@ -39,15 +39,15 @@ BEGIN
 				FROM Security.Roles
 				WHERE RoleName IS NOT NULL AND
 					(
-						(RoleCaption LIKE @SearchString) 
-						OR (RoleName LIKE @SearchString) 
+						(RoleCaption LIKE @SearchString)
+						OR (RoleName LIKE @SearchString)
 						OR (RoleNote LIKE @SearchString)
 					)
 
 			WHILE EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						Security.Roles a INNER JOIN
 						#temprole b ON b.RoleMasterID = a.RoleID
 					WHERE a.RoleMasterID IS NOT NULL AND a.RoleMasterID NOT IN
@@ -59,7 +59,7 @@ BEGIN
 			BEGIN
 				INSERT INTO #temprole(RoleID, RoleMasterID)
 					SELECT a.RoleID, a.RoleMasterID
-					FROM 
+					FROM
 						Security.Roles a INNER JOIN
 						#temprole b ON b.RoleMasterID = a.RoleID
 			END
@@ -68,9 +68,9 @@ BEGIN
 			INSERT INTO #temprole(RoleID, RoleMasterID)
 				SELECT RoleID, RoleMasterID
 				FROM Security.Roles
-				
+
 		SELECT a.RoleID, RoleMasterID, RoleName, RoleCaption, RoleNote
-		FROM 
+		FROM
 			Security.Roles a INNER JOIN
 			(
 				SELECT DISTINCT RoleID
@@ -80,14 +80,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#temprole') IS NOT NULL
 			DROP TABLE #temprole
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[ROLE_SELECT] TO rl_role_r;
+GO

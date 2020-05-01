@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[CLIENT_COMPLECT_SELECT]
+ALTER PROCEDURE [USR].[CLIENT_COMPLECT_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -27,14 +27,16 @@ BEGIN
 		INNER JOIN dbo.SystemTable s ON s.SystemID = f.UF_ID_SYSTEM
 		WHERE UD_ID_CLIENT = @CLIENT AND UD_ACTIVE = 1
 		ORDER BY UD_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[CLIENT_COMPLECT_SELECT] TO rl_client_od_ud_graph;
+GO

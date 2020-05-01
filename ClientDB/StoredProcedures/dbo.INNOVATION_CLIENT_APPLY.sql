@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INNOVATION_CLIENT_APPLY]
+ALTER PROCEDURE [dbo].[INNOVATION_CLIENT_APPLY]
 	@INNOVATION	UNIQUEIDENTIFIER,
 	@SYS_LIST	NVARCHAR(MAX),
 	@CL_LIST	NVARCHAR(MAX) = NULL,
@@ -28,16 +28,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		CREATE TABLE #client
 			(
 				ID INT PRIMARY KEY
 			)
-			
+
 		IF @CL_LIST IS NOT NULL AND @CL_LIST <> ''
 			INSERT INTO #client(ID)
 				SELECT ID
-				FROM dbo.TableIDFromXML(@CL_LIST) 
+				FROM dbo.TableIDFromXML(@CL_LIST)
 		ELSE IF @SYS_LIST IS NOT NULL OR @NET_LIST IS NOT NULL OR @TYPE_LIST IS NOT NULL
 			INSERT INTO #client(ID)
 				SELECT ClientID
@@ -47,7 +47,7 @@ BEGIN
 					AND EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								dbo.ClientDistrView b WITH(NOEXPAND)
 								INNER JOIN dbo.TableIDFromXML(@SYS_LIST) c ON c.ID = b.SystemID
 								INNER JOIN dbo.TableIDFromXML(@NET_LIST) d ON d.ID = b.DistrTypeID
@@ -60,7 +60,7 @@ BEGIN
 				FROM dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				WHERE STATUS = 1
-			
+
 		INSERT INTO dbo.ClientInnovation(ID_CLIENT, ID_INNOVATION)
 			SELECT ID, @INNOVATION
 			FROM #client a
@@ -71,14 +71,16 @@ BEGIN
 					WHERE b.ID_CLIENT = a.ID
 						AND ID_INNOVATION = @INNOVATION
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INNOVATION_CLIENT_APPLY] TO rl_innovation_u;
+GO

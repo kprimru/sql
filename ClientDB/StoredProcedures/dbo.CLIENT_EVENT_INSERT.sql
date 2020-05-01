@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_INSERT]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_INSERT]
 	@CLIENT		INT,
 	@DATE		SMALLDATETIME,
 	@TYPE		INT,
@@ -36,12 +36,12 @@ BEGIN
 				SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
 			IF @DATE > dbo.DateOf(GETDATE())
 				SET @TXT = 'Нельзя ввести дату посещения позже текущей'
-			
-			IF @TXT <> '' 
+
+			IF @TXT <> ''
 			BEGIN
 				RAISERROR (@TXT, 16, 1)
-			
-				RETURN	
+
+				RETURN
 			END
 		END
 
@@ -53,14 +53,16 @@ BEGIN
 		UPDATE dbo.EventTable
 		SET MasterID = @ID
 		WHERE EventID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_INSERT] TO rl_client_event_i;
+GO

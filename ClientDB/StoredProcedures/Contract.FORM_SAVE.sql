@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[FORM_SAVE]
+ALTER PROCEDURE [Contract].[FORM_SAVE]
 	@ID UNIQUEIDENTIFIER OUTPUT,
 	@NUM	NVARCHAR(128),
 	@NAME	NVARCHAR(1024),
@@ -28,11 +28,11 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
-			
+
 			INSERT INTO Contract.Forms(NUM, NAME, FILE_PATH)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@NUM, @NAME, @PATH)
-				
+
 			SELECT @ID = ID FROM @TBL
 		END
 		ELSE
@@ -42,15 +42,17 @@ BEGIN
 				NUM = @NUM,
 				FILE_PATH = @PATH
 			WHERE ID = @ID
-		END	
-		
+		END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[FORM_SAVE] TO rl_contract_form_u;
+GO

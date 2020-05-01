@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[CLIENT_POLL_DELETE]
+ALTER PROCEDURE [Poll].[CLIENT_POLL_DELETE]
 	@ID		UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -21,18 +21,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DELETE FROM Poll.ClientPollAnswer WHERE ID_QUESTION IN (SELECT ID FROM Poll.ClientPollQuestion WHERE ID_POLL = @ID)
 		DELETE FROM Poll.ClientPollQuestion WHERE ID_POLL = @ID
 		DELETE FROM Poll.ClientPoll WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[CLIENT_POLL_DELETE] TO rl_client_poll_d;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_STATE_CLEAR]
+ALTER PROCEDURE [dbo].[SERVICE_STATE_CLEAR]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,19 +30,21 @@ BEGIN
 				WHERE STATUS <> 1
 					AND DATE <= DATEADD(MONTH, -1, GETDATE())
 			)
-			
+
 		DELETE
 		FROM dbo.ServiceState
 		WHERE STATUS <> 1
 			AND DATE <= DATEADD(MONTH, -1, GETDATE())
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_STATE_CLEAR] TO rl_service_state_u;
+GO

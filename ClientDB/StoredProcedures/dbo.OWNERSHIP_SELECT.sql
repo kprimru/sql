@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[OWNERSHIP_SELECT]
+ALTER PROCEDURE [dbo].[OWNERSHIP_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -25,16 +25,18 @@ BEGIN
 		SELECT OwnershipID, OwnershipName
 		FROM dbo.OwnershipTable
 		WHERE @FILTER IS NULL
-			OR OwnershipName LIKE @FILTER 
+			OR OwnershipName LIKE @FILTER
 		ORDER BY OwnershipName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[OWNERSHIP_SELECT] TO rl_ownership_r;
+GO

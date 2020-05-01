@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[ClientServiceDate]
+ALTER FUNCTION [dbo].[ClientServiceDate]
 (
 	@CLIENT	INT,
 	@DATE	SMALLDATETIME
@@ -14,14 +14,14 @@ AS
 BEGIN
 	DECLARE @RES INT
 
-	SELECT @RES = 
+	SELECT @RES =
 		(
 			SELECT TOP 1 ServiceID
-			FROM 
+			FROM
 				(
 					SELECT ServiceID, ServiceName, DATE
-					FROM 
-						dbo.ClientService a			
+					FROM
+						dbo.ClientService a
 						INNER JOIN dbo.ServiceTable c ON a.ID_SERVICE = c.ServiceID
 					WHERE ID_CLIENT = @CLIENT
 				) AS o_O

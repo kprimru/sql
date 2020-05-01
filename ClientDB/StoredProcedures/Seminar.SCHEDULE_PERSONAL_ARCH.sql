@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[SCHEDULE_PERSONAL_ARCH]
+ALTER PROCEDURE [Seminar].[SCHEDULE_PERSONAL_ARCH]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -26,14 +26,14 @@ BEGIN
 			SELECT @ID, ID_SCHEDULE, ID_CLIENT, PSEDO, EMAIL, SURNAME, NAME, PATRON, POSITION, PHONE, NOTE, ID_STATUS, ADDRESS, MSG_SEND, 2, UPD_DATE, UPD_USER
 			FROM Seminar.Personal
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

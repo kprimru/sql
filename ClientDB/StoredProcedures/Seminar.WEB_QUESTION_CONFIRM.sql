@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[WEB_QUESTION_CONFIRM]
+ALTER PROCEDURE [Seminar].[WEB_QUESTION_CONFIRM]
 	@SCHEDULE	UNIQUEIDENTIFIER,
 	@DISTR_S	NVARCHAR(256),
 	@PSEDO		NVARCHAR(256),
@@ -38,43 +38,45 @@ BEGIN
 
 		IF @STATUS = 0
 		BEGIN
-		
+
 			INSERT INTO Seminar.Questions(ID_SCHEDULE, ID_CLIENT, PSEDO, EMAIL, QUESTION, ADDRESS)
-				SELECT 
+				SELECT
 					@SCHEDULE, ID_CLIENT, @PSEDO, @EMAIL, @QUESTION, @ADDRESS
 				FROM dbo.ClientDistrView WITH(NOEXPAND)
-				WHERE HostID = @HOST 
-					AND DISTR = @DISTR 
+				WHERE HostID = @HOST
+					AND DISTR = @DISTR
 					AND COMP = @COMP
-					
+
 			IF @@ROWCOUNT = 0
 			BEGIN
 				SET @STATUS = 1
 				SET @MSG = 'Вы не зарегистрированы в нашей базе как клиент.'
 			END
-			
+
 			SELECT @Body = 'Поступил вопрос от клиента "' + ClientFullName + '", сотрудник "' + @PSEDO + ' (' + @EMAIL + ')".' + Char(10) + Char(13) +
 				'Текст вопроса: ' + @QUESTION
 			FROM dbo.ClientDistrView WITH(NOEXPAND)
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = ID_CLIENT
-			WHERE HostID = @HOST 
-				AND DISTR = @DISTR 
+			WHERE HostID = @HOST
+				AND DISTR = @DISTR
 				AND COMP = @COMP
-			
+
 			EXEC [Common].[MAIL_SEND]
 				@Recipients	= 'gazeta@kprim.ru;bateneva@bazis;denisov@bazis',
 				--@Recipients	= 'denisov@bazis',
 				@Subject	= 'Вопрос для семинара',
 				@Body		= @Body;
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Seminar].[WEB_QUESTION_CONFIRM] TO rl_seminar_web;
+GO

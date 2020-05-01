@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_MESSAGE_DELAY]
+ALTER PROCEDURE [dbo].[CLIENT_MESSAGE_DELAY]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,18 +23,18 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @CUR_DELAY INT
-		
+
 		SELECT @CUR_DELAY = DELAY_MIN
 		FROM dbo.ClientMessage
 		WHERE ID = @ID
-		
+
 		IF @CUR_DELAY <= Maintenance.GlobalMessageDelayMax()
-		BEGIN	
+		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_MASTER, ID_CLIENT, TP, SENDER, DATE, NOTE, RECEIVE_USER, RECEIVE_DATE, RECEIVE_HOST, HARD_READ, DELAY_MIN, REMIND_DATE, HIDE, STATUS, UPD_DATE, UPD_USER)
 				SELECT ID, ID_CLIENT, TP, SENDER, DATE, NOTE, RECEIVE_USER, RECEIVE_DATE, RECEIVE_HOST, HARD_READ, DELAY_MIN, REMIND_DATE, HIDE, 2, UPD_DATE, UPD_USER
 				FROM dbo.ClientMessage
 				WHERE ID = @ID
-				
+
 			UPDATE dbo.ClientMessage
 			SET DELAY_MIN = DELAY_MIN + Maintenance.GlobalMessageDelay(),
 				REMIND_DATE = DATEADD(MINUTE, Maintenance.GlobalMessageDelay(), GETDATE()),
@@ -42,14 +42,16 @@ BEGIN
 				UPD_DATE = GETDATE()
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_MESSAGE_DELAY] TO rl_client_message_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [IP].[LIST_INCLUDE]
+ALTER PROCEDURE [IP].[LIST_INCLUDE]
 	@TP		TINYINT,
 	@HOST	SMALLINT,
 	@DISTR	INT,
@@ -34,14 +34,16 @@ BEGIN
 					FROM IP.Lists
 					WHERE ID_HOST = @HOST AND DISTR = @DISTR AND COMP = @COMP AND TP = @TP AND UNSET_DATE IS NULL
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [IP].[LIST_INCLUDE] TO rl_ip_list;
+GO

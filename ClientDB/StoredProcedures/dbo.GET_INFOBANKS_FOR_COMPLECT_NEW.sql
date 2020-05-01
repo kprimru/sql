@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT_NEW] 
+ALTER PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT_NEW]
 	@SYSID INT,
     @SYSTYPE INT
 AS
 BEGIN
 	SET NOCOUNT ON
-  
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,20 +22,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		select I.InfoBankID, I.InfoBankName, I.InfoBankShortName,I.InfobankPath  FROM dbo.SystemsBanks SB
 
 		INNER JOIN dbo.InfoBankTable I ON SB.InfoBank_Id = I.InfoBankID
-		WHERE (SB.Required in (0,1)) AND SB.System_ID = @SYSID AND SB.DistrType_Id = @SYSTYPE AND 
+		WHERE (SB.Required in (0,1)) AND SB.System_ID = @SYSID AND SB.DistrType_Id = @SYSTYPE AND
 		 I.InfoBankActive=1  AND I.InfobankPath <> ''
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_INFOBANKS_FOR_COMPLECT_NEW] TO public;
+GO

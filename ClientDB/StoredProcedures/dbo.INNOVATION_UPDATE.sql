@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INNOVATION_UPDATE]
+ALTER PROCEDURE [dbo].[INNOVATION_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	NVARCHAR(256),
 	@NOTE	NVARCHAR(MAX),
@@ -32,14 +32,16 @@ BEGIN
 			START	=	@START,
 			FINISH	=	@FINISH
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INNOVATION_UPDATE] TO rl_innovation_u;
+GO

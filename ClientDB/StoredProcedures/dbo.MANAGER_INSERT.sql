@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[MANAGER_INSERT]	
+ALTER PROCEDURE [dbo].[MANAGER_INSERT]
 	@NAME	VARCHAR(100),
 	@LOGIN	VARCHAR(100),
 	@FULL	VARCHAR(250),
@@ -29,14 +29,16 @@ BEGIN
 			VALUES(@NAME, @LOGIN, @FULL)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MANAGER_INSERT] TO rl_personal_manager_i;
+GO

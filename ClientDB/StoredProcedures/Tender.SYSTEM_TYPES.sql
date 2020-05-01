@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[SYSTEM_TYPES]
+ALTER PROCEDURE [Tender].[SYSTEM_TYPES]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,14 +23,17 @@ BEGIN
 
 		SELECT ID, NAME
 		FROM Tender.SystemType
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[SYSTEM_TYPES] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[SYSTEM_TYPES] TO rl_tender_u;
+GO

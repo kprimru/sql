@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[REGION_INSERT]	
+ALTER PROCEDURE [dbo].[REGION_INSERT]
 	@NAME	VARCHAR(100),
 	@PREFIX	VARCHAR(20),
 	@SUFFIX	VARCHAR(20),
@@ -31,16 +31,18 @@ BEGIN
 		INSERT INTO dbo.Region(RG_NAME, RG_PREFIX, RG_SUFFIX, RG_NUM)
 			OUTPUT INSERTED.RG_ID INTO @TBL
 			VALUES(@NAME, @PREFIX, @SUFFIX, @NUM)
-		
+
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_INSERT] TO rl_region_i;
+GO

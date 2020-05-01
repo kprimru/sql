@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Maintenance].[BACKUP_CREATE]
+ALTER PROCEDURE [Maintenance].[BACKUP_CREATE]
 	@PATH	NVARCHAR(512)
 WITH EXECUTE AS OWNER
 AS
@@ -28,24 +28,26 @@ BEGIN
 		SET @PATH = @PATH + N'ClientDB' + CONVERT(NVARCHAR(100), GETDATE(), 112) + N'.bak'
 
 		SET @SQL = N'BACKUP DATABASE  [' + DB_NAME() + N'] TO  DISK = ''' + @PATH + N'''
-				WITH  
-					INIT ,  
-					NOUNLOAD ,  
+				WITH
+					INIT ,
+					NOUNLOAD ,
 					NAME = ''ClientDB FULL BACKUP'',
-					SKIP ,  
-					STATS = 10,  
-					NOFORMAT 
+					SKIP ,
+					STATS = 10,
+					NOFORMAT
 			'
 
 		EXEC (@SQL)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Maintenance].[BACKUP_CREATE] TO rl_maintenance;
+GO

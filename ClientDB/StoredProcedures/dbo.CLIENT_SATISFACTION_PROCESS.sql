@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SATISFACTION_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_SATISFACTION_PROCESS]
 	@CALL	UNIQUEIDENTIFIER,
 	@TYPE	UNIQUEIDENTIFIER,
 	@NOTE	VARCHAR(MAX),
@@ -52,14 +52,17 @@ BEGIN
 
 			SELECT @ID = @CS_ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_PROCESS] TO rl_client_call_i;
+GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_PROCESS] TO rl_client_call_u;
+GO

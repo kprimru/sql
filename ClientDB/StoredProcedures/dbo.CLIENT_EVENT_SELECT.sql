@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_EVENT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_EVENT_SELECT]
 	@CLIENT	INT,
 	@BEGIN	SMALLDATETIME = NULL,
 	@END	SMALLDATETIME = NULL,
@@ -13,7 +13,7 @@ CREATE PROCEDURE [dbo].[CLIENT_EVENT_SELECT]
 	@TYPE	NVARCHAR(MAX) = NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -27,10 +27,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			EventID, EventDate, EventComment, 
+		SELECT
+			EventID, EventDate, EventComment,
 			EventTypeName, a.EventTypeID,
-			EventCreate, EventCreateUser, 
+			EventCreate, EventCreateUser,
 			EventLastUpdate, EventLastUpdateUser,
 			EventCreateUser + ' ' + CONVERT(VARCHAR(20), EventCreate, 104) + ' ' + CONVERT(VARCHAR(20), EventCreate, 108) AS EventCreateData,
 			EventLastUpdateUser + ' ' + CONVERT(VARCHAR(20), EventLastUpdate, 104) + ' ' + CONVERT(VARCHAR(20), EventLastUpdate, 108) AS EventLastUpdateData,
@@ -44,7 +44,7 @@ BEGIN
 		FROM
 			dbo.EventTable a INNER JOIN
 			dbo.EventTypeTable b ON a.EventTypeID = b.EventTypeID
-		WHERE ClientID = @CLIENT 
+		WHERE ClientID = @CLIENT
 			AND EventActive = 1
 			AND (EventDate >= @BEGIN OR @BEGIN IS NULL)
 			AND (EventDate <= @END OR @END IS NULL)
@@ -54,9 +54,9 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			EventID, EventDate, EventComment, 
+			EventID, EventDate, EventComment,
 			EventTypeName, a.EventTypeID,
-			EventCreate, EventCreateUser, 
+			EventCreate, EventCreateUser,
 			EventLastUpdate, EventLastUpdateUser,
 			EventCreateUser + ' ' + CONVERT(VARCHAR(20), EventCreate, 104) + ' ' + CONVERT(VARCHAR(20), EventCreate, 108) AS EventCreateData,
 			EventLastUpdateUser + ' ' + CONVERT(VARCHAR(20), EventLastUpdate, 104) + ' ' + CONVERT(VARCHAR(20), EventLastUpdate, 108) AS EventLastUpdateData,
@@ -70,7 +70,7 @@ BEGIN
 		FROM
 			dbo.EventTable a INNER JOIN
 			dbo.EventTypeTable b ON a.EventTypeID = b.EventTypeID
-		WHERE ClientID = @CLIENT 
+		WHERE ClientID = @CLIENT
 			AND (b.EventTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)) OR @TYPE IS NULL)
 			AND @DELETED = 1
 			AND EventActive = 0
@@ -81,7 +81,7 @@ BEGIN
 					WHERE a.MasterID = d.MasterID
 						AND d.EventActive = 1
 				)
-			AND EventID = 
+			AND EventID =
 				(
 					SELECT MAX(EventID)
 					FROM dbo.EventTable e
@@ -90,16 +90,18 @@ BEGIN
 			AND (EventDate >= @BEGIN OR @BEGIN IS NULL)
 			AND (EventDate <= @END OR @END IS NULL)
 			AND (EventComment LIKE @TEXT OR @TEXT IS NULL)
-			
+
 		ORDER BY EventDate DESC, EventLastUpdate DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EVENT_SELECT] TO rl_client_event_r;
+GO

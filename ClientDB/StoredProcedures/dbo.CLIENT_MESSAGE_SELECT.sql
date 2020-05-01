@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_MESSAGE_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_MESSAGE_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DISTINCT SENDER, DATE, NOTE, 
+		SELECT DISTINCT SENDER, DATE, NOTE,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT
@@ -30,7 +30,7 @@ BEGIN
 						ISNULL(' ' +
 							CONVERT(VARCHAR(20), RECEIVE_DATE, 104) + ' ' +
 							CONVERT(VARCHAR(20), RECEIVE_DATE, 108)
-							, '') + 
+							, '') +
 						ISNULL(' ' + RECEIVE_HOST, '') + ', '
 					FROM dbo.ClientMessage b
 					WHERE a.SENDER = b.SENDER AND a.DATE = b.DATE AND a.NOTE = b.NOTE AND b.STATUS = 1
@@ -40,14 +40,16 @@ BEGIN
 		FROM dbo.ClientMessage a
 		WHERE ID_CLIENT = @CLIENT AND STATUS = 1
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_MESSAGE_SELECT] TO rl_client_message_r;
+GO

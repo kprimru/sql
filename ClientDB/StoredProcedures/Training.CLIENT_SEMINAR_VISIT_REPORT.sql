@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[CLIENT_SEMINAR_VISIT_REPORT]
+ALTER PROCEDURE [Training].[CLIENT_SEMINAR_VISIT_REPORT]
 	@BEGIN SMALLDATETIME,
 	@END SMALLDATETIME,
 	@SERVICE INT,
@@ -31,21 +31,21 @@ BEGIN
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
 
-		SELECT 
+		SELECT
 			a.ClientID, ClientFullName, ManagerName, ServiceName, ConnectDate,
 			(
 				SELECT MAX(UF_DATE)
-				FROM 
-					USR.USRActiveView z		
+				FROM
+					USR.USRActiveView z
 				WHERE z.UD_ID_CLIENT = a.ClientID
 			) AS LAST_UPDATE
-		FROM 
+		FROM
 			dbo.ClientView a WITH(NOEXPAND)
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id	
+			INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
 			--INNER JOIN dbo.ServiceTable b ON ClientServiceID = ServiceID
 			--INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
-			LEFT OUTER JOIN 
+			LEFT OUTER JOIN
 				(
 					SELECT ClientID, MIN(ConnectDate) AS ConnectDate
 					FROM dbo.ClientConnectView WITH(NOEXPAND)
@@ -57,22 +57,24 @@ BEGIN
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
-						dbo.ClientStudy z		
+					FROM
+						dbo.ClientStudy z
 					WHERE z.ID_CLIENT = a.ClientID
 						AND ID_PLACE = @LESSON
 						AND DATE BETWEEN @BEGIN AND @END
 						AND STATUS = 1
 				)
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[CLIENT_SEMINAR_VISIT_REPORT] TO rl_seminar_visit_report;
+GO

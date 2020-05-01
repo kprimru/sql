@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INNOVATION_DELETE]
+ALTER PROCEDURE [dbo].[INNOVATION_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.ClientInnovationControl
 		WHERE ID_PERSONAL IN
 			(
@@ -35,7 +35,7 @@ BEGIN
 						WHERE ID_INNOVATION = @ID
 					)
 			)
-		
+
 		DELETE
 		FROM dbo.ClientInnovationPersonal
 		WHERE ID_INNOVATION IN
@@ -44,22 +44,24 @@ BEGIN
 				FROM dbo.ClientInnovation
 				WHERE ID_INNOVATION = @ID
 			)
-			
+
 		DELETE
 		FROM dbo.ClientInnovation
 		WHERE ID_INNOVATION = @ID
-		
+
 		DELETE
 		FROM dbo.Innovation
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INNOVATION_DELETE] TO rl_innovation_d;
+GO

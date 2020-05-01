@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_SELECT]
+ALTER PROCEDURE [Task].[TASK_SELECT]
 	@USER		NVARCHAR(128),
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -30,15 +30,15 @@ BEGIN
 
 		IF @USER IS NULL OR (IS_MEMBER('rl_task_all') = 0 AND IS_MEMBER('db_owner') = 0)
 			SET @USER = ORIGINAL_LOGIN()
-			
+
 		IF @STATUS IS NULL
-			SET @STATUS = 
+			SET @STATUS =
 				(
 					SELECT ID AS ITEM
 					FROM Task.TaskStatus
 					FOR XML PATH(''), ROOT('LIST')
 				)
-			
+
 		IF OBJECT_ID('tempdb..#task') IS NOT NULL
 			DROP TABLE #task
 
@@ -56,34 +56,34 @@ BEGIN
 			)
 
 		INSERT INTO #task(ID, DATE, WD, TM, HR, SHORT, RN, ID_STATUS, REC_TP)
-		SELECT 
-			ID, DATE, WD, TM, HOUR_INT, SHORT, 
+		SELECT
+			ID, DATE, WD, TM, HOUR_INT, SHORT,
 			ROW_NUMBER() OVER(PARTITION BY WD, HOUR_INT ORDER BY DATE, TM),
 			INT_VAL, REC_TP
 		FROM
 			(
-				SELECT 
-					a.ID, DATE, DATEPART(WEEKDAY, DATE) AS WD, LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS TM, 
-					CASE 
-						WHEN DATEPART(HOUR, TIME) > 20 THEN NULL 
-						WHEN DATEPART(HOUR, TIME) < 8 THEN NULL 
+				SELECT
+					a.ID, DATE, DATEPART(WEEKDAY, DATE) AS WD, LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS TM,
+					CASE
+						WHEN DATEPART(HOUR, TIME) > 20 THEN NULL
+						WHEN DATEPART(HOUR, TIME) < 8 THEN NULL
 						ELSE DATEPART(HOUR, TIME)
-					END AS HOUR_INT, 
-					ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') + 
+					END AS HOUR_INT,
+					ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
 					ISNULL(ClientFullName + CHAR(10), '') +
-					CASE 
-						WHEN @SHORT = 1 THEN SHORT 
-						ELSE SHORT + CHAR(10) + NOTE 
-					END + CHAR(10) + '/' + SENDER + '/' AS SHORT, 			
+					CASE
+						WHEN @SHORT = 1 THEN SHORT
+						ELSE SHORT + CHAR(10) + NOTE
+					END + CHAR(10) + '/' + SENDER + '/' AS SHORT, 
 					INT_VAL, 1 AS REC_TP
-				FROM 
-					Task.Tasks a 
+				FROM
+					Task.Tasks a
 					INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
 					INNER JOIN dbo.TableGUIDFromXML(@STATUS) d ON d.ID = b.ID
 					LEFT OUTER JOIN dbo.ClientTable c ON c.ClientID = ID_CLIENT
 				WHERE a.STATUS = 1
-					AND DATE BETWEEN @BEGIN AND @END						
-					AND 
+					AND DATE BETWEEN @BEGIN AND @END
+					AND
 						(
 							-- личные
 							@PERSONAL = 1
@@ -91,20 +91,20 @@ BEGIN
 								(
 									RECEIVER = @USER
 									OR
-									RECEIVER IN 
+									RECEIVER IN
 										(
-											SELECT ServiceLogin 
-											FROM 
+											SELECT ServiceLogin
+											FROM
 												dbo.ServiceTable z
-												INNER JOIN dbo.ManagerTable y ON z.ManagerID = y.ManagerID 
+												INNER JOIN dbo.ManagerTable y ON z.ManagerID = y.ManagerID
 											WHERE ManagerLogin = @USER
 										)
 								)
-								
-							OR 	
-											
-							@CLIENT = 1 
-							AND ID_CLIENT IN 
+
+							OR 
+
+							@CLIENT = 1
+							AND ID_CLIENT IN
 								(
 									SELECT ClientID
 									FROM dbo.ClientView WITH(NOEXPAND)
@@ -112,49 +112,49 @@ BEGIN
 										OR ManagerLogin = @USER
 								)
 						)
-						
+
 				UNION ALL
-				
-				SELECT 
-					a.ID, dbo.DateOf(a.DATE), DATEPART(WEEKDAY, a.DATE) AS WD, LEFT(CONVERT(VARCHAR(20), DATE, 108), 5) TM, 
-					CASE 
-						WHEN DATEPART(HOUR, DATE) > 20 THEN NULL 
-						WHEN DATEPART(HOUR, DATE) < 8 THEN NULL 
+
+				SELECT
+					a.ID, dbo.DateOf(a.DATE), DATEPART(WEEKDAY, a.DATE) AS WD, LEFT(CONVERT(VARCHAR(20), DATE, 108), 5) TM,
+					CASE
+						WHEN DATEPART(HOUR, DATE) > 20 THEN NULL
+						WHEN DATEPART(HOUR, DATE) < 8 THEN NULL
 						ELSE DATEPART(HOUR, DATE)
-					END AS HOUR_INT, 			
+					END AS HOUR_INT, 
 					'Контакт' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') +
-					a.NOTE  + CHAR(10) + a.UPD_USER, 
-					
+					a.NOTE  + CHAR(10) + a.UPD_USER,
+
 					NULL, 2
-				FROM 
+				FROM
 					dbo.ClientContact a
 					INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.ClientID
 				WHERE a.STATUS = 1
-					AND a.DATE BETWEEN @BEGIN AND @END			
-					AND 
+					AND a.DATE BETWEEN @BEGIN AND @END
+					AND
 						(
-							ID_CLIENT IN 
+							ID_CLIENT IN
 							(
 								SELECT ClientID
 								FROM dbo.ClientView WITH(NOEXPAND)
 								WHERE ServiceLogin = @USER
 									OR ManagerLogin = @USER
 							)
-							
-							OR 
-							
+
+							OR
+
 							a.UPD_USER = @USER
 						)
 		) AS o_O
-			
-			
+
+
 		UPDATE #task
 		SET HR = NULL
-		WHERE HR < 8 OR HR > 20	
-		
+		WHERE HR < 8 OR HR > 20
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		CREATE TABLE #result
 			(
 				START	INT,
@@ -162,11 +162,11 @@ BEGIN
 				TXT		VARCHAR(20),
 				RN		INT
 			)
-			
+
 		INSERT INTO #result(START, FINISH, TXT, RN)
 			SELECT START, FINISH, TXT, ISNULL(RN, 1)
 			FROM
-				(		
+				(
 					SELECT 8 AS START, 9 AS FINISH, '8:00 - 9:00' AS TXT
 					UNION ALL
 					SELECT 9 AS START, 10 AS FINISH, '9:00 - 10:00' AS TXT
@@ -195,7 +195,7 @@ BEGIN
 					UNION ALL
 					SELECT NULL AS START, NULL AS FINISH, '-' AS TXT
 				) AS a
-				LEFT OUTER JOIN 
+				LEFT OUTER JOIN
 				(
 					SELECT DISTINCT HR, RN
 					FROM #task z
@@ -210,9 +210,9 @@ BEGIN
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = N'ALTER TABLE #result ADD '
-		SELECT @SQL = @SQL + 
+		SELECT @SQL = @SQL +
 			'DAY_' + CONVERT(VARCHAR(20), RN) + ' NVARCHAR(MAX), ID_' + CONVERT(VARCHAR(20), RN) + ' UNIQUEIDENTIFIER, STAT_' + CONVERT(VARCHAR(20), RN) + ' TINYINT, TP_' + CONVERT(VARCHAR(20), RN) + ' TINYINT,'
-		FROM 
+		FROM
 			(
 				SELECT CONVERT(VARCHAR(20), DATEPART(DAY, CalendarDate)) + ' ' + dbo.MonthString(CalendarDate) AS CAPT, ROW_NUMBER() OVER(ORDER BY CalendarDate) AS RN
 				FROM dbo.Calendar
@@ -227,66 +227,68 @@ BEGIN
 		UPDATE a
 		SET '
 
-		SELECT @SQL = @SQL + N'		
-			DAY_' + CONVERT(VARCHAR(20), RN) + ' = 
+		SELECT @SQL = @SQL + N'
+			DAY_' + CONVERT(VARCHAR(20), RN) + ' =
 			(
 				SELECT SHORT
 				FROM #task b
-				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR) 
+				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR)
 					AND a.RN = b.RN AND b.DATE = DATEADD(DAY, ' + CONVERT(VARCHAR(20), RN - 1) + ', ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''')
-			),		
-			STAT_' + CONVERT(VARCHAR(20), RN) + ' = 
+			),
+			STAT_' + CONVERT(VARCHAR(20), RN) + ' =
 			(
 				SELECT ID_STATUS
 				FROM #task b
-				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR) 
+				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR)
 					AND a.RN = b.RN AND b.DATE = DATEADD(DAY, ' + CONVERT(VARCHAR(20), RN - 1) + ', ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''')
-			),	
-			ID_' + CONVERT(VARCHAR(20), RN) + ' = 
+			),
+			ID_' + CONVERT(VARCHAR(20), RN) + ' =
 			(
 				SELECT ID
 				FROM #task b
-				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR) 
+				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR)
 					AND a.RN = b.RN AND b.DATE = DATEADD(DAY, ' + CONVERT(VARCHAR(20), RN - 1) + ', ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''')
 			),
-			TP_' + CONVERT(VARCHAR(20), RN) + ' = 
+			TP_' + CONVERT(VARCHAR(20), RN) + ' =
 			(
 				SELECT REC_TP
 				FROM #task b
-				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR) 
+				WHERE (a.START IS NULL AND b.HR IS NULL OR a.START = b.HR)
 					AND a.RN = b.RN AND b.DATE = DATEADD(DAY, ' + CONVERT(VARCHAR(20), RN - 1) + ', ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''')
 			),'
-		FROM 
+		FROM
 			(
 				SELECT CONVERT(VARCHAR(20), DATEPART(DAY, CalendarDate)) + ' ' + dbo.MonthString(CalendarDate) AS CAPT, ROW_NUMBER() OVER(ORDER BY CalendarDate) AS RN
 				FROM dbo.Calendar
 				WHERE CalendarDate BETWEEN @BEGIN AND @END
 			) AS o_O
-			
+
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
-		SET @SQL = @SQL + N'	
+
+		SET @SQL = @SQL + N'
 		FROM #result a'
 
 		EXEC  (@SQL)
 
 		SELECT *
 		FROM #result
-		ORDER BY START	
-		
+		ORDER BY START
+
 		IF OBJECT_ID('tempdb..#task') IS NOT NULL
 			DROP TABLE #task
-			
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_SELECT] TO rl_task_r;
+GO

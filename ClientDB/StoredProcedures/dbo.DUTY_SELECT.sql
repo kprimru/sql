@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DUTY_SELECT]
+ALTER PROCEDURE [dbo].[DUTY_SELECT]
 	@FILTER	VARCHAR(100) = NULL,
 	@ACTIVE BIT = 1
 AS
@@ -25,7 +25,7 @@ BEGIN
 
 		SELECT DutyID, DutyName, DutyLogin
 		FROM dbo.DutyTable
-		WHERE 
+		WHERE
 			(@ACTIVE = 0 OR DutyActive = 1)
 			AND
 				(
@@ -34,14 +34,16 @@ BEGIN
 					OR DutyLogin LIKE @FILTER
 				)
 		ORDER BY DutyName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DUTY_SELECT] TO rl_personal_duty_r;
+GO

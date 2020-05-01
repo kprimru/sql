@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SATISFACTION_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[SATISFACTION_TYPE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(50),
 	@RESULT	BIT
@@ -28,14 +28,16 @@ BEGIN
 		SET		STT_NAME	=	@NAME,
 				STT_RESULT	=	@RESULT
 		WHERE	STT_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SATISFACTION_TYPE_UPDATE] TO rl_satisfaction_type_u;
+GO

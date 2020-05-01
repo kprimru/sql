@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[RIC_490_TRAFFIC]
+ALTER PROCEDURE [Report].[RIC_490_TRAFFIC]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			NAME AS [Месяц], TOTAL_SIZE AS [Объем], CNT AS [Кол-во пополнений],
 			CONVERT(NVARCHAR(8), AVG_TIME / 3600) + ':' + CONVERT(NVARCHAR(8), (AVG_TIME - (AVG_TIME / 3600) * 3600) / 60) AS [Среднее время]
-		FROM	
-			(		
-				SELECT 
+		FROM
+			(
+				SELECT
 					d.NAME, dbo.FileByteSizeToStr(SUM(CSD_ANS_SIZE + CSD_CACHE_SIZE)) AS TOTAL_SIZE, COUNT(*) AS CNT,
 					dbo.MonthOf(CSD_DATE) AS MON,
 					AVG(DATEPART(HOUR, CSD_DATE) * 3600 + DATEPART(MINUTE, CSD_DATE) * 60 + DATEPART(SECOND, CSD_DATE)) AS AVG_TIME
@@ -47,7 +47,7 @@ BEGIN
 						ORDER BY CSD_DATE FOR XML PATH('')
 					) AS [Даты пополнения]
 					*/
-				FROM 
+				FROM
 					IP.ClientStatDetailView a
 					INNER JOIN dbo.SystemTable b ON a.CSD_SYS = b.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND a.CSD_DISTR = c.DistrNumber AND a.CSD_COMP = c.CompNumber
@@ -56,14 +56,16 @@ BEGIN
 				GROUP BY d.NAME, dbo.MonthOf(CSD_DATE)
 			) AS o_O
 		ORDER BY MON DESC
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[RIC_490_TRAFFIC] TO rl_report;
+GO

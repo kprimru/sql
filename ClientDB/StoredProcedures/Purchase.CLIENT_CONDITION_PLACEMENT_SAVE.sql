@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[CLIENT_CONDITION_PLACEMENT_SAVE]
+ALTER PROCEDURE [Purchase].[CLIENT_CONDITION_PLACEMENT_SAVE]
 	@CLIENT				INT,
 	@PO_ID				UNIQUEIDENTIFIER,
 	@CHECKED			BIT,
@@ -52,31 +52,31 @@ BEGIN
 		IF @CHECKED = 0 AND @CPO_ID IS NOT NULL
 		BEGIN
 			/* удаляем */
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderClaimCancelReason
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderClaimProvision
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderContractExecutionProvision
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderDocument
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderUseCondition
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrderOtherProvision
 			WHERE ID_CPO = @CPO_ID
 
-			DELETE 
+			DELETE
 			FROM Purchase.ClientConditionPlacementOrder
 			WHERE CPO_ID = @CPO_ID
 		END
@@ -84,10 +84,10 @@ BEGIN
 		BEGIN
 			/* изменяем */
 			UPDATE Purchase.ClientConditionPlacementOrder
-			SET	CPO_USE_CONDITION		=	@USE_CONDITION,			
-				CPO_CLAIM_CANCEL_REASON	=	@CLAIM_CANCEL,			
-				CPO_CLAIM_PROVISION		=	@CLAIM_PROVISION,			
-				CPO_CONTRACT_PROVISION	=	@CON_PROVISION,			
+			SET	CPO_USE_CONDITION		=	@USE_CONDITION,
+				CPO_CLAIM_CANCEL_REASON	=	@CLAIM_CANCEL,
+				CPO_CLAIM_PROVISION		=	@CLAIM_PROVISION,
+				CPO_CONTRACT_PROVISION	=	@CON_PROVISION,
 				CPO_DOCUMENT			=	@DOCUMENT,
 				CPO_OTHER_PROVISION		=	@OTHER_PROVISION
 			WHERE CPO_ID = @CPO_ID
@@ -98,13 +98,13 @@ BEGIN
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 
 			INSERT INTO Purchase.ClientConditionPlacementOrder(
-										CPO_ID_CC, CPO_ID_PO, 
-										CPO_USE_CONDITION, CPO_CLAIM_CANCEL_REASON, CPO_CLAIM_PROVISION, 
+										CPO_ID_CC, CPO_ID_PO,
+										CPO_USE_CONDITION, CPO_CLAIM_CANCEL_REASON, CPO_CLAIM_PROVISION,
 										CPO_CONTRACT_PROVISION, CPO_DOCUMENT, CPO_OTHER_PROVISION)
 			OUTPUT inserted.CPO_ID INTO @TBL
 				VALUES(
-							@CC_ID, @PO_ID, 
-							@USE_CONDITION, @CLAIM_CANCEL, @CLAIM_PROVISION, 
+							@CC_ID, @PO_ID,
+							@USE_CONDITION, @CLAIM_CANCEL, @CLAIM_PROVISION,
 							@CON_PROVISION, @DOCUMENT, @OTHER_PROVISION)
 
 			SELECT @CPO_ID = ID
@@ -114,12 +114,12 @@ BEGIN
 		ELSE IF @CHECKED = 0 AND @CPO_ID IS NULL
 		BEGIN
 			/* ничего не надо делать.*/
-			
+
 		END
 		*/
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderDocument
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_DC NOT IN
 				(
 					SELECT ID
@@ -138,7 +138,7 @@ BEGIN
 				)
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderClaimProvision
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_CP NOT IN
 				(
 					SELECT ID
@@ -157,7 +157,7 @@ BEGIN
 				)
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderClaimCancelReason
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_CCR NOT IN
 				(
 					SELECT ID
@@ -176,7 +176,7 @@ BEGIN
 				)
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderUseCondition
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_UC NOT IN
 				(
 					SELECT ID
@@ -195,13 +195,13 @@ BEGIN
 				)
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderContractExecutionProvision
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_CEP NOT IN
 				(
 					SELECT ID
 					FROM dbo.TableGUIDFromXML(@CON_PROVISION_ID)
-				)	
-		
+				)
+
 		INSERT INTO Purchase.ClientConditionPlacementOrderContractExecutionProvision(ID_CPO, ID_CEP)
 			SELECT @CPO_ID, ID
 			FROM dbo.TableGUIDFromXML(@CON_PROVISION_ID) a
@@ -214,7 +214,7 @@ BEGIN
 				)
 
 		DELETE FROM Purchase.ClientConditionPlacementOrderOtherProvision
-		WHERE ID_CPO = @CPO_ID 
+		WHERE ID_CPO = @CPO_ID
 			AND ID_OP NOT IN
 				(
 					SELECT ID
@@ -231,14 +231,16 @@ BEGIN
 					WHERE ID_CPO = @CPO_ID
 						AND ID_OP = a.ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[CLIENT_CONDITION_PLACEMENT_SAVE] TO rl_condition_card_u;
+GO

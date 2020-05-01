@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_ADDRESS_SAVE]
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_SAVE]
 	@CLIENT		INT,
 	@TYPE		UNIQUEIDENTIFIER,
 	@NAME		VARCHAR(150),
@@ -34,14 +34,16 @@ BEGIN
 
 		INSERT INTO dbo.ClientAddress(CA_ID_CLIENT, CA_ID_TYPE, CA_NAME, CA_INDEX, CA_ID_STREET, CA_HOME, CA_OFFICE, CA_HINT, CA_NOTE, CA_ID_DISTRICT)
 			VALUES(@CLIENT, @TYPE, @NAME, @INDEX, @STREET, @HOME, @OFFICE, @HINT, @NOTE, @DISTRICT)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_SAVE] TO rl_client_save;
+GO

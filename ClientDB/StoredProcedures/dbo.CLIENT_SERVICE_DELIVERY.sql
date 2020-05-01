@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_SERVICE_DELIVERY]
+ALTER PROCEDURE [dbo].[CLIENT_SERVICE_DELIVERY]
 	@CLIENT		NVARCHAR(MAX),
 	@SERVICE	INT,
 	@DATE		SMALLDATETIME
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @CLIENT_W	NVARCHAR(MAX)
-		
+
 		SET @CLIENT_W = dbo.ClientFilterWrite(@CLIENT)
 
 		UPDATE dbo.ClientService
@@ -39,9 +39,9 @@ BEGIN
 			AND ID_SERVICE <> @SERVICE
 
 		DECLARE @MANAGER VARCHAR(100)
-		
+
 		SELECT @MANAGER = ManagerName
-		FROM 
+		FROM
 			dbo.ServiceTable a
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 		WHERE ServiceID = @SERVICE
@@ -56,24 +56,26 @@ BEGIN
 					WHERE STATUS = 1
 						AND a.ID = ID_CLIENT
 				)
-				
+
 		UPDATE dbo.ClientTable
 		SET ClientServiceID = @SERVICE
-		WHERE ClientID IN 
+		WHERE ClientID IN
 			(
 				SELECT ID
 				FROM dbo.TableIDFromXML(@CLIENT_W)
 			) AND ClientServiceID <> @SERVICE
-			
+
 		EXEC dbo.CLIENT_REINDEX NULL, @CLIENT_W
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SERVICE_DELIVERY] TO rl_client_service_delivery;
+GO

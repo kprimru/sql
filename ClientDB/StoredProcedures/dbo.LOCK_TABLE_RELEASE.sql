@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[LOCK_TABLE_RELEASE]	
+ALTER PROCEDURE [dbo].[LOCK_TABLE_RELEASE]
 	@DATA	VARCHAR(64)
 WITH EXECUTE AS OWNER
 AS
@@ -24,28 +24,30 @@ BEGIN
 	BEGIN TRY
 
 		DELETE
-		FROM dbo.Locks		
-		WHERE LC_SPID = @@SPID 
-			AND LC_LOGIN = ORIGINAL_LOGIN()		
+		FROM dbo.Locks
+		WHERE LC_SPID = @@SPID
+			AND LC_LOGIN = ORIGINAL_LOGIN()
 			AND EXISTS
 				(
 					SELECT *
-					FROM sys.dm_exec_sessions 
-					WHERE 
+					FROM sys.dm_exec_sessions
+					WHERE
 						LC_SPID		=	session_id AND
 						LC_HOST		=	host_name AND
 						LC_LOGIN		=	original_login_name AND
 						LC_LOGIN_TIME	=	login_time
 				)
 			AND LC_DATA = @DATA
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LOCK_TABLE_RELEASE] TO public;
+GO

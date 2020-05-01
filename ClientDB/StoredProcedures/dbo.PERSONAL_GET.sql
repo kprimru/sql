@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[PERSONAL_GET]
+ALTER PROCEDURE [dbo].[PERSONAL_GET]
 	@ID	INT
 AS
 BEGIN
@@ -23,16 +23,19 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PersonalID, DepartmentName, PersonalShortName, PersonalFullName
-		FROM dbo.PersonalTable	
+		FROM dbo.PersonalTable
 		WHERE PersonalID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERSONAL_GET] TO rl_personal_other_d;
+GRANT EXECUTE ON [dbo].[PERSONAL_GET] TO rl_personal_other_r;
+GO

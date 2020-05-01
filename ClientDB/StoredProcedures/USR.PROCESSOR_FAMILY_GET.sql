@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[PROCESSOR_FAMILY_GET]
+ALTER PROCEDURE [USR].[PROCESSOR_FAMILY_GET]
 	@ID		INT
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT PF_NAME
 		FROM USR.ProcessorFamily
 		WHERE PF_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[PROCESSOR_FAMILY_GET] TO rl_proc_family_r;
+GO

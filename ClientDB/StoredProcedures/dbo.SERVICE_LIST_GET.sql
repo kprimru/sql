@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_LIST_GET]	
+ALTER PROCEDURE [dbo].[SERVICE_LIST_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,7 +22,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ServiceID, ServiceName
-		FROM dbo.ServiceTable 
+		FROM dbo.ServiceTable
 		WHERE ServiceDismiss IS NULL
 		ORDER BY ServiceName
 
@@ -30,9 +30,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_LIST_GET] TO public;
+GO

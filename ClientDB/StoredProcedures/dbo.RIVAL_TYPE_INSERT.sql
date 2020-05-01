@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[RIVAL_TYPE_INSERT]	
+ALTER PROCEDURE [dbo].[RIVAL_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@ID	INT = NULL OUTPUT
 AS
@@ -25,16 +25,18 @@ BEGIN
 
 		INSERT INTO dbo.RivalTypeTable(RivalTypeName)
 			VALUES(@NAME)
-			
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RIVAL_TYPE_INSERT] TO rl_rival_i;
+GO

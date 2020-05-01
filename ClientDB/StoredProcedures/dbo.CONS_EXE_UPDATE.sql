@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONS_EXE_UPDATE]
+ALTER PROCEDURE [dbo].[CONS_EXE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@ACTIVE	BIT,
@@ -31,15 +31,17 @@ BEGIN
 			ConsExeVersionActive = @ACTIVE,
 			ConsExeVersionBegin = @BEGIN,
 			ConsExeVersionEnd = @END
-		WHERE ConsExeVersionID = @ID	
-		
+		WHERE ConsExeVersionID = @ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONS_EXE_UPDATE] TO rl_cons_exe_u;
+GO

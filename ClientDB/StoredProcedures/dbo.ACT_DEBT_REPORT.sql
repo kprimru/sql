@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_DEBT_REPORT]
+ALTER PROCEDURE [dbo].[ACT_DEBT_REPORT]
 	@MONTH		UNIQUEIDENTIFIER,
 	@MANAGER	INT,
 	@SERVICE	INT
@@ -33,12 +33,12 @@ BEGIN
 		FROM Common.Period
 		WHERE ID = @MONTH
 
-		SELECT 
+		SELECT
 			z.ClientID, z.CLientFullName, z.ServiceName, z.ManagerName, ContractPayName, PayTypeName, a.DistrStr/*, b.AD_TOTAL_PRICE, c.ID_PRICE,
 			ISNULL(c.ID_PRICE, 0) - b.AD_TOTAL_PRICE AS DELTA*/
-		FROM 
+		FROM
 			(
-				SELECT 
+				SELECT
 					a.ClientID, a.ClientFullName, ServiceID, ServiceName, ManagerID, ManagerName, ContractPayName, ContractPayDay, ContractPayMonth,
 					PayTypeName, PayTypeMonth, DATEADD(MONTH, PayTypeMonth, @PR_DATE) AS MON_DATE
 				FROM
@@ -54,14 +54,16 @@ BEGIN
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_DEBT_REPORT] TO rl_act_debt_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_SYSTEMS_FOR_COMPLECT] 
+ALTER PROCEDURE [dbo].[GET_SYSTEMS_FOR_COMPLECT]
 @typeid INT = 1
 AS
 BEGIN
@@ -23,35 +23,37 @@ BEGIN
 	BEGIN TRY
 
 		if @typeid=1 --DEMO
-		BEGIN 
+		BEGIN
 			SELECT SystemID, SystemShortName, SystemName, SystemBaseName, SystemOrder
-			FROM [dbo].SystemTable 
+			FROM [dbo].SystemTable
 			WHERE (SystemActive=1)AND(SystemDemo=1)AND(NOT (SystemBaseName in ('BUH', 'BUDU','BUHU', 'RLAW249', 'RLAW011', 'BUHUL', 'RGU', 'RGN')))
 			ORDER BY SystemOrder DESC
 		END ELSE
 		if @typeid=2 --COMPLECT
-		BEGIN 
+		BEGIN
 			SELECT SystemID, SystemShortName, SystemName, SystemBaseName, SystemOrder
-			FROM [dbo].SystemTable 
+			FROM [dbo].SystemTable
 			WHERE (SystemActive=1)AND(SystemComplect=1)AND(NOT (SystemBaseName in ('BUH', 'BUHU', 'RLAW249', 'RLAW011', 'RGU' )))
 			ORDER BY SystemOrder DESC
 		END
 		ELSE
 		BEGIN --???
 			SELECT SystemID, SystemShortName, SystemName, SystemBaseName, SystemOrder
-			FROM [dbo].SystemTable 
+			FROM [dbo].SystemTable
 			WHERE (SystemActive=1)
 			ORDER BY SystemOrder DESC
 
-		END	
-		
+		END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_SYSTEMS_FOR_COMPLECT] TO public;
+GO

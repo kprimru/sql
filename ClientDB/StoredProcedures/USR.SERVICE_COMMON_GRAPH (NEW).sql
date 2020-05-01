@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[SERVICE_COMMON_GRAPH (NEW)]
+ALTER PROCEDURE [USR].[SERVICE_COMMON_GRAPH (NEW)]
 	@Service	Int,
 	@Start		SmallDateTime,
 	@Finish		SmallDateTime,
@@ -12,7 +12,7 @@ CREATE PROCEDURE [USR].[SERVICE_COMMON_GRAPH (NEW)]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,17 +24,17 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @SQL NVARCHAR(MAX);
-		
+
 		DECLARE
 			@MonthStart		SmallDateTime,
 			@MonthFinish	SmallDateTime;
-		
+
 		DECLARE @Weeks TABLE
 		(
 			Id		Int,
-			Start	SmallDateTime, 
+			Start	SmallDateTime,
 			Finish	SmallDateTime,
 			PRIMARY KEY CLUSTERED(Id)
 		);
@@ -42,7 +42,7 @@ BEGIN
 		INSERT INTO @Weeks
 		SELECT WEEK_ID, WBEGIN, WEND
 		FROM dbo.WeekDates(@Start, @Finish);
-		
+
 		-- вычисляем начало и окончания месяца (по дата окончания)
 		SET @MonthStart		= Cast(Convert(Char(6), @Finish, 112) + '01' AS SmallDateTime);
 		SET @MonthFinish	= Cast(Convert(Char(6), DateAdd(Month, 1, @Finish), 112) + '01' AS SmallDateTime);
@@ -57,7 +57,7 @@ BEGIN
 			--
 			TypeDailyDays		TinyInt,
 			TypeDays			TinyInt,
-			DayOrder			SmallInt,			
+			DayOrder			SmallInt,
 			ServiceDay			VarChar(50),
 			DayTime				DateTime,
 			--
@@ -78,7 +78,7 @@ BEGIN
 		);
 
 		INSERT INTO @Clients(ClientId, Complect, TypeDailyDays, TypeDays, DayOrder, ServiceDay, DayTime, DistrTypeBaseCheck)
-		SELECT 
+		SELECT
 			c.ClientID, Complect, ClientTypeDailyDay, ClientTypeDay, DayOrder,
 			ISNULL(d.DayShort, '') + ' ' + ISNULL(LEFT(CONVERT(VARCHAR(20), ServiceStart, 108), 5), ''), ServiceStart,
 			0
@@ -86,7 +86,7 @@ BEGIN
 		INNER JOIN [dbo].[ServiceStatusConnected]() ss ON c.StatusId = ss.ServiceStatusId
 		INNER JOIN
 		(
-			SELECT Item 
+			SELECT Item
 			FROM dbo.GET_TABLE_FROM_LIST(@Types, ',')
 		) AS s ON c.ServiceTypeID = s.Item
 		CROSS APPLY
@@ -132,7 +132,7 @@ BEGIN
 			Complect				VarChar(100),
 			TypeDailyDays			TinyInt,
 			TypeDays				TinyInt,
-			DayOrder				SmallInt,			
+			DayOrder				SmallInt,
 			ServiceDay				VarChar(50),
 			DayTime					DateTime,
 			ResVersion				VARCHAR(150),
@@ -144,35 +144,35 @@ BEGIN
 			LastSTT					VARCHAR(20),
 			PRIMARY KEY CLUSTERED(ClientID, Complect)
 		);
-			
+
 		/* формируем костяк для итоговой таблицы.*/
 		INSERT INTO #res(
-				ID, ClientID, ClientFullName, SystemList, ClientTypeName, TypeDailyDays, TypeDays, ServiceType, 
+				ID, ClientID, ClientFullName, SystemList, ClientTypeName, TypeDailyDays, TypeDays, ServiceType,
 				DayOrder, ServiceDay, DayTime, ResVersion, ConsExe, ConsExeActual, ResActual, ClientEvent, DistrTypeBaseCheck, LastSTT)
-			SELECT 
+			SELECT
 				ROW_NUMBER() OVER(ORDER BY ClientFullName),
-				a.ClientID, ClientFullName, 
+				a.ClientID, ClientFullName,
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT
-							SystemShortName + 
+							SystemShortName +
 								CASE
 									WHEN RN = 1 THEN ' (' + CONVERT(VARCHAR(20), SystemDistrNumber) + CASE CompNumber WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), CompNumber) END + ')'
 									ELSE ''
 								END + ', '
-						FROM 
+						FROM
 							(
-								SELECT 
-									ROW_NUMBER() OVER(ORDER BY SystemOrder, DISTR, COMP) AS RN, 
+								SELECT
+									ROW_NUMBER() OVER(ORDER BY SystemOrder, DISTR, COMP) AS RN,
 									SystemShortName, DISTR AS SystemDistrNumber, COMP AS CompNumber, SystemOrder
 								FROM
-									dbo.ClientDistrView y WITH(NOEXPAND) 
+									dbo.ClientDistrView y WITH(NOEXPAND)
 								WHERE DS_REG = 0 AND y.ID_CLIENT = a.ClientID
 							) AS t
 						ORDER BY SystemOrder FOR XML PATH('')
 					)
 				), 1, 2, '')),
-				ClientTypeName, ClientTypeDailyDay, 
+				ClientTypeName, ClientTypeDailyDay,
 				ClientTypeDay, ServiceTypeShortName, DayOrder,
 				ISNULL(c.DayShort, '') + ' ' + ISNULL(LEFT(CONVERT(VARCHAR(20), ServiceStart, 108), 5), ''), ServiceStart,
 				/* вписываем через запятую все технологические модули, версии cons.exe для
@@ -182,28 +182,28 @@ BEGIN
 				(
 					REVERSE(STUFF(REVERSE((
 						SELECT DISTINCT ResVersionShort + ', '
-						FROM 
+						FROM
 							@Clients z INNER JOIN
-							dbo.ResVersionTable ON ResVersionID = ResVersion 
+							dbo.ResVersionTable ON ResVersionID = ResVersion
 						WHERE z.ClientID = a.ClientID
 						FOR XML PATH(''))
-					), 1, 2, '')) 				
+					), 1, 2, '')) 
 				),
 				(
 					REVERSE(STUFF(REVERSE((
 						SELECT DISTINCT ConsExeVersionName + ', '
-						FROM 
+						FROM
 							@Clients z INNER JOIN
 							dbo.ConsExeVersionTable ON ConsExeVersionID = ConsExeVersion
 						WHERE z.ClientID = a.ClientID
 						FOR XML PATH(''))
-					), 1, 2, '')) 				
+					), 1, 2, '')) 
 				),
-				CASE 
+				CASE
 					WHEN NOT EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								@Clients z INNER JOIN
 								dbo.ConsExeVersionTable ON ConsExeVersionID = ConsExeVersion
 							WHERE z.ClientID = a.ClientID
@@ -211,21 +211,21 @@ BEGIN
 						) THEN 1
 					ELSE 0
 				END,
-				CASE 
+				CASE
 					WHEN NOT EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								@Clients z INNER JOIN
-								dbo.ResVersionTable ON ResVersionID = ResVersion 
+								dbo.ResVersionTable ON ResVersionID = ResVersion
 							WHERE z.ClientID = a.ClientID
 								AND IsLatest = 0
 						) THEN 1
 					ELSE 0
 				END,
 				REVERSE(STUFF(REVERSE((
-					SELECT 
-						CONVERT(VARCHAR(20), EventDate, 104) + '    ' + 
+					SELECT
+						CONVERT(VARCHAR(20), EventDate, 104) + '    ' +
 						EventComment + CHAR(10) + CHAR(10)
 					FROM
 						dbo.EventTable z INNER JOIN
@@ -233,7 +233,7 @@ BEGIN
 					WHERE z.ClientID = a.ClientID
 						AND EventDate >= @Start AND EventDate <= @Finish
 						AND EventActive = 1
-						AND EventTypeName NOT IN ('КГС 223', 'КГС 94') 
+						AND EventTypeName NOT IN ('КГС 223', 'КГС 94')
 					ORDER BY EventDate FOR XML PATH('')
 				)), 1, 2, '')),
 				(
@@ -241,13 +241,13 @@ BEGIN
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
 					WHERE z.ID_CLIENT = a.ClientID
 						AND DS_REG = 0
-				),			
+				),
 				ISNULL(CONVERT(VARCHAR(20), dbo.DateOf(
 					(
 						SELECT MAX(DATE)
-						FROM 
+						FROM
 							dbo.ClientStat z
-							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.DISTR = y.DISTR AND z.COMP = y.COMP 
+							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.DISTR = y.DISTR AND z.COMP = y.COMP
 							INNER JOIN dbo.SystemTable x ON x.HostID = y.HostID AND x.SystemNumber = z.SYS_NUM
 						WHERE y.ID_CLIENT = a.ClientID
 							AND DATE >= @MonthStart AND DATE < @MonthFinish
@@ -255,9 +255,9 @@ BEGIN
 					CONVERT(VARCHAR(20), dbo.DateOf(
 					(
 						SELECT MAX(DATE)
-						FROM 
+						FROM
 							#ip z
-							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.DISTR = y.DISTR AND z.COMP = y.COMP 
+							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.DISTR = y.DISTR AND z.COMP = y.COMP
 							INNER JOIN dbo.SystemTable x ON x.SystemID = y.SystemID AND x.SystemNumber = z.SYS
 						WHERE y.ID_CLIENT = a.ClientID
 					)), 104) + ' (И)')
@@ -273,24 +273,24 @@ BEGIN
 			INNER JOIN dbo.ServiceTypeTable d ON d.ServiceTypeID = a.ServiceTypeID
 			INNER JOIN
 			(
-				SELECT Item 
+				SELECT Item
 				FROM dbo.GET_TABLE_FROM_LIST(@Types, ',')
 			) AS o_O ON d.ServiceTypeID = Item
 			LEFT JOIN dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeID
 			LEFT JOIN dbo.DayTable c ON a.DayID = c.DayID
 			WHERE ClientServiceID  = @SERVICE AND STATUS = 1
 			ORDER BY ClientFullName;
-			
+
 		IF OBJECT_ID('tempdb..#update') IS NOT NULL
 			DROP TABLE #update
 
 		CREATE TABLE #update
 			(
 				ClientID			INT,
-				UF_PATH				TINYINT,		
+				UF_PATH				TINYINT,
 				UpdateDateTime		DATETIME,
 				WD					CHAR(2)
-			)	
+			)
 
 		IF OBJECT_ID('tempdb..#usrdata') IS NOT NULL
 			DROP TABLE #usrdata
@@ -305,7 +305,7 @@ BEGIN
 				UIU_DATE			SMALLDATETIME,
 				UIU_DATE_S			SMALLDATETIME,
 				UIU_DOCS			INT,
-				InfoBankID			INT			
+				InfoBankID			INT
 			)
 
 		INSERT INTO #usrdata(UD_ID_CLIENT, UF_PATH, UI_DISTR, UI_COMP, UIU_DATE, UIU_DATE_S, UIU_DOCS, InfoBankID)
@@ -322,9 +322,9 @@ BEGIN
 		SET @SQL = N'CREATE STATISTICS [ST_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #usrdata (UIU_DATE) WITH FULLSCAN'
 
 		EXEC (@SQL)
-		
+
 		INSERT INTO #update(ClientID, UF_PATH, UpdateDateTime, WD)
-			SELECT 
+			SELECT
 				UD_ID_CLIENT, 1,
 				CONVERT(DATETIME, LEFT(CONVERT(VARCHAR(50), c.UIU_DATE_S, 121), 10) + ' ' +
 					(
@@ -334,20 +334,20 @@ BEGIN
 							AND t.UIU_DATE_S = c.UIU_DATE_S
 					) + ':00', 121),
 				DayShort
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT UD_ID_CLIENT, UF_PATH, UIU_DATE_S
-					FROM 
+					FROM
 						#usrdata d
 				) AS c
 				INNER JOIN dbo.DayTable ON DayOrder = DATEPART(WEEKDAY, UIU_DATE_S)
-			
+
 		INSERT INTO #update(ClientID, UF_PATH, UpdateDateTime, WD)
-			SELECT 
+			SELECT
 				UD_ID_CLIENT, UF_PATH,
 				UF_DATE,
 				DayShort
-			FROM 
+			FROM
 				#client
 				INNER JOIN USR.USRData ON UD_ID_CLIENT = CL_ID
 				INNER JOIN USR.USRFile ON UF_ID_COMPLECT = UD_ID
@@ -357,10 +357,10 @@ BEGIN
 		SET @SQL = N'CREATE INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #update (ClientID) INCLUDE(UpdateDateTime)'
 
 		EXEC (@SQL)
-			
+
 		IF OBJECT_ID('tempdb..#compl') IS NOT NULL
 			DROP TABLE #compl
-		
+
 		IF OBJECT_ID('tempdb..#actual') IS NOT NULL
 			DROP TABLE #actual
 
@@ -369,28 +369,28 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#lost') IS NOT NULL
 			DROP TABLE #lost
-			
+
 		IF OBJECT_ID('tempdb..#search') IS NOT NULL
 			DROP TABLE #search
-		
+
 		CREATE TABLE #compl
 			(
 				ClientID	INT,
 				WeekID		INT,
 				Comp		VARCHAR(MAX)
 			)
-			
+
 		INSERT INTO #compl(ClientID, WeekID, Comp)
-			SELECT CL_ID, Week_ID, 
+			SELECT CL_ID, Week_ID,
 				REVERSE(STUFF(REVERSE(
 						(
 							SELECT InfoBankShortName + ', '
-							FROM 
+							FROM
 								(
 									SELECT DISTINCT InfoBankShortName, InfoBankOrder
-									FROM 
+									FROM
 										USR.USRIBComplianceView WITH(NOEXPAND)
-										INNER JOIN dbo.InfoBankTable ON InfoBankID = UI_ID_BASE									
+										INNER JOIN dbo.InfoBankTable ON InfoBankID = UI_ID_BASE
 									WHERE UI_LAST >= WBEGIN AND UI_LAST <= WEND
 										AND CL_ID = UD_ID_CLIENT
 										AND InfoBankActive = 1
@@ -415,37 +415,37 @@ BEGIN
 			SELECT DISTINCT
 				a.ClientID, Week_ID,
 				REVERSE(STUFF(REVERSE(
-					(	
+					(
 						SELECT InfoBankShortName + ', '
-						FROM 
+						FROM
 							(
 								SELECT DISTINCT InfoBankShortName, InfoBankOrder
 								FROM
 									#usrdata z
-									INNER JOIN dbo.InfoBankTable y ON z.InfoBankID = y.InfoBankID 
+									INNER JOIN dbo.InfoBankTable y ON z.InfoBankID = y.InfoBankID
 									INNER JOIN dbo.StatisticTable x ON x.InfoBankID = y.InfoBankID
 								WHERE UD_ID_CLIENT = a.ClientID
-									AND UIU_DATE_S >= WBEGIN 
+									AND UIU_DATE_S >= WBEGIN
 									AND UIU_DATE_S <= WEND
-									AND Docs = z.UIU_DOCS 
+									AND Docs = z.UIU_DOCS
 									AND InfoBankActual = 1
 									AND InfoBankActive = 1
 									AND z.UIU_DATE_S = CONVERT(SMALLDATETIME, CONVERT(VARCHAR(20), b.UpdateDateTime, 112), 112)
-									AND 
+									AND
 										(
 											SELECT TOP 1 CalendarDate
 											FROM dbo.Calendar
-											WHERE CalendarIndex = 
+											WHERE CalendarIndex =
 													(
 														SELECT TOP 1 CalendarIndex
-														FROM 
+														FROM
 															dbo.Calendar INNER JOIN
 															dbo.DayTable ON DayID = CalendarWeekDayID
 														WHERE CalendarDate >= StatisticDate
 															AND DayOrder = 1
 															AND CalendarWork = 1
 														ORDER BY CalendarDate
-													) + 
+													) +
 													CASE InfoBankDaily
 														WHEN 1 THEN TypeDailyDays
 														ELSE TypeDays
@@ -455,14 +455,14 @@ BEGIN
 										) < UIU_DATE_S
 									/*
 										CASE InfoBankDaily
-											WHEN 1 THEN dbo.WorkDaysAdd(StatisticDate, TypeDailyDays) 
-											ELSE dbo.WorkDaysAdd(StatisticDate, TypeDays) 
+											WHEN 1 THEN dbo.WorkDaysAdd(StatisticDate, TypeDailyDays)
+											ELSE dbo.WorkDaysAdd(StatisticDate, TypeDays)
 										END < UIU_DATE_S
 									*/
 							) AS o_O
 						ORDER BY InfoBankOrder FOR XML PATH('')
 					)), 1, 2, ''))
-			FROM 
+			FROM
 				#res a
 				INNER JOIN #update b ON a.ClientID = b.ClientID AND UF_PATH <> 3
 				CROSS JOIN @Weeks
@@ -478,7 +478,7 @@ BEGIN
 			)
 
 		INSERT INTO #skip(ClientID, WeekID)
-			SELECT 
+			SELECT
 				CL_ID, Week_ID
 			FROM #client CROSS JOIN @Weeks
 			WHERE NOT EXISTS
@@ -488,7 +488,7 @@ BEGIN
 					WHERE CL_ID = UD_ID_CLIENT
 						AND UIU_DATE_S >= WBEGIN AND UIU_DATE_S <= WEND
 				)
-		
+
 		SET @SQL = N'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #skip (ClientID)'
 
 		EXEC (@SQL)
@@ -501,35 +501,35 @@ BEGIN
 			)
 
 		INSERT INTO #lost(ClientID, WeekID, LostList)
-			SELECT 
+			SELECT
 				CL_ID, Week_ID,
 				REVERSE(STUFF(REVERSE(
-					(										
+					(
 						SELECT InfoBankShortName + ', '
-						FROM 
+						FROM
 							(
-								SELECT DISTINCT 
-									InfoBankShortName, 
+								SELECT DISTINCT
+									InfoBankShortName,
 									InfoBankOrder,
 									z.SystemOrder
-								FROM 
+								FROM
 									(
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
-										WHERE z.ID_CLIENT = CL_ID 
+										WHERE z.ID_CLIENT = CL_ID
 											AND z.SystemBaseName NOT IN (/*'RGU', 'RGN', */'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
 											AND z.DS_REG = 0
 											AND InfoBankActive = 1
 											AND Required = 1
 											AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 											AND	InfoBankStart <= WBEGIN
-											
+
 										UNION
-											
+
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 										WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'CMT'
@@ -539,11 +539,11 @@ BEGIN
 											AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 											AND InfoBankName NOT IN ('PKG', 'PSG', 'PPVS')
 											AND	InfoBankStart <= WBEGIN
-											
+
 										UNION
-											
+
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 										WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'QSA'
@@ -553,11 +553,11 @@ BEGIN
 											AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 											AND InfoBankName NOT IN ('PKV')
 											AND	InfoBankStart <= WBEGIN
-											
+
 										UNION
-											
+
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 										WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName IN ('ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
@@ -566,12 +566,12 @@ BEGIN
 											AND Required = 1
 											AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
 											AND InfoBankName NOT IN ('BRB')
-											AND	InfoBankStart <= WBEGIN									
-											
+											AND	InfoBankStart <= WBEGIN
+
 										UNION
-										
+
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 										WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'CMT'
@@ -584,21 +584,21 @@ BEGIN
 											AND NOT EXISTS
 												(
 													SELECT *
-													FROM 
+													FROM
 														dbo.ClientDistrView t WITH(NOEXPAND)
 														CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
-													WHERE t.ID_CLIENT = z.ID_CLIENT 
+													WHERE t.ID_CLIENT = z.ID_CLIENT
 														AND t.SystemID = q.SystemID
-														AND t.DS_REG = 0 
-														AND InfoBankActive = 1 
+														AND t.DS_REG = 0
+														AND InfoBankActive = 1
 														AND Required = 1
 														AND q.SystemBaseName = 'BUD'
 												)
-												
+
 										UNION
-										
+
 										SELECT ID_CLIENT, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
-										FROM 
+										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 										WHERE z.ID_CLIENT = CL_ID AND z.SystemBaseName = 'QSA'
@@ -611,13 +611,13 @@ BEGIN
 											AND NOT EXISTS
 												(
 													SELECT *
-													FROM 
+													FROM
 														dbo.ClientDistrView t WITH(NOEXPAND)
 														CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
-													WHERE t.ID_CLIENT = z.ID_CLIENT 
+													WHERE t.ID_CLIENT = z.ID_CLIENT
 														AND t.SystemID = q.SystemID
-														AND t.DS_REG = 0 
-														AND InfoBankActive = 1 
+														AND t.DS_REG = 0
+														AND InfoBankActive = 1
 														AND Required = 1
 														AND q.SystemBaseName = 'BUD'
 												)
@@ -627,14 +627,14 @@ BEGIN
 											SELECT *
 											FROM #usrdata p
 											WHERE UIU_DATE_S >= WBEGIN AND UIU_DATE_S <= WEND
-												AND z.InfoBankID = p.InfoBankID											
+												AND z.InfoBankID = p.InfoBankID
 												AND CL_ID = UD_ID_CLIENT
 												AND UI_DISTR = DISTR
 												AND UI_COMP = COMP
 										)
 							) AS asdasd
 						ORDER BY SystemOrder, InfoBankOrder FOR XML PATH('')
-					)), 1, 2, ''))				
+					)), 1, 2, ''))
 			FROM #client CROSS JOIN @Weeks
 			WHERE NOT EXISTS
 				(
@@ -648,7 +648,7 @@ BEGIN
 				ClientID	INT,
 				LastFile	SMALLDATETIME
 			)
-			
+
 		INSERT INTO #search(ClientID, LastFile)
 			SELECT CL_ID, dbo.DateOf(MAX(SearchGet))
 			FROM
@@ -664,43 +664,43 @@ BEGIN
 		IF OBJECT_ID('tempdb..#total') IS NOT NULL
 			DROP TABLE #total
 
-		SELECT 
+		SELECT
 			ID, ClientID, CLientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, DayOrder, DayTime,
 			ClientEvent, UpdateDayTime, UpdateDay, ResVersion, ConsExe, ResActual, ConsExeActual, UpdateDateTime,
-			ActualError, REPLACE(Actual, '&#x0A;', CHAR(10)) AS Actual, 
-			ComplianceError, REPLACE(Compliance, '&#x0A;', CHAR(10)) AS Compliance, 
-			UpdateSkipError, REPLACE(UpdateSkip, '&#x0A;', CHAR(10)) AS UpdateSkip, 
-			UpdateLostError,  REPLACE(UpdateLost, '&#x0A;', CHAR(10)) AS UpdateLost, 
-			CASE 
-				WHEN UpdateSkipError = 1 THEN 'Нарушена' 
-				ELSE NULL 
+			ActualError, REPLACE(Actual, '&#x0A;', CHAR(10)) AS Actual,
+			ComplianceError, REPLACE(Compliance, '&#x0A;', CHAR(10)) AS Compliance,
+			UpdateSkipError, REPLACE(UpdateSkip, '&#x0A;', CHAR(10)) AS UpdateSkip,
+			UpdateLostError,  REPLACE(UpdateLost, '&#x0A;', CHAR(10)) AS UpdateLost,
+			CASE
+				WHEN UpdateSkipError = 1 THEN 'Нарушена'
+				ELSE NULL
 			END AS UpdatePeriod,
 			LastSearch,
 			UF_PATH,
 			LastSTT
 		INTO #total
 		FROM
-			(		
+			(
 				SELECT DISTINCT
 					ID, a.ClientID, CLientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, DayOrder, DayTime,
 					ClientEvent, LastSTT,
-						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' + 
+						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' +
 						/*DATENAME(WEEKDAY, UpdateDateTime) + ' ' + */
 						WD + ' ' +
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 108), 5) AS UpdateDayTime,
-					DATEPART(WEEKDAY, UpdateDateTime) AS UpdateDay, 
+					DATEPART(WEEKDAY, UpdateDateTime) AS UpdateDay,
 					CASE DistrTypeBaseCheck
 						WHEN 0 THEN ''
 						ELSE ResVersion
-					END AS ResVersion, 
+					END AS ResVersion,
 					CASE DistrTypeBaseCheck
 						WHEN 0 THEN ''
 						ELSE ConsExe
-					END AS ConsExe, 
+					END AS ConsExe,
 					CASE DistrTypeBaseCheck
 						WHEN 0 THEN 1
 						ELSE ResActual
-					END AS ResActual, 
+					END AS ResActual,
 					CASE DistrTypeBaseCheck
 						WHEN 0 THEN 1
 						ELSE ConsExeActual
@@ -713,8 +713,8 @@ BEGIN
 								FROM #compl z
 								WHERE z.ClientID = a.ClientID
 									AND Comp IS NOT NULL
-							) THEN 1 
-						ELSE 0 
+							) THEN 1
+						ELSE 0
 					END AS ComplianceError,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN ''
@@ -724,15 +724,15 @@ BEGIN
 								FROM #compl z
 								WHERE z.ClientID = a.ClientID
 									AND Comp IS NOT NULL
-							) THEN '' + 						
+							) THEN '' + 
 								(
-									SELECT 
+									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
-									FROM 
+									FROM
 										@Weeks INNER JOIN
 										#compl z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
-									ORDER BY Week_ID FOR XML PATH('')							
+									ORDER BY Week_ID FOR XML PATH('')
 								)
 						ELSE 'Совпадает'
 					END AS Compliance,
@@ -744,8 +744,8 @@ BEGIN
 								FROM #actual z
 								WHERE z.ClientID = a.ClientID
 									AND Actual IS NOT NULL
-							) THEN 1 
-						ELSE 0 
+							) THEN 1
+						ELSE 0
 					END AS ActualError,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN ''
@@ -755,15 +755,15 @@ BEGIN
 								FROM #actual z
 								WHERE z.ClientID = a.ClientID
 									AND Actual IS NOT NULL
-							) THEN '' + 
+							) THEN '' +
 								(
-									SELECT 
-										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Actual + CHAR(10), '') 
-									FROM 
+									SELECT
+										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Actual + CHAR(10), '')
+									FROM
 										@Weeks INNER JOIN
 										#actual z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
-									ORDER BY Week_ID FOR XML PATH('')							
+									ORDER BY Week_ID FOR XML PATH('')
 								)
 						ELSE 'Актуально'
 					END AS Actual,
@@ -774,8 +774,8 @@ BEGIN
 								SELECT *
 								FROM #skip z
 								WHERE z.ClientID = a.ClientID
-							) THEN 1 
-						ELSE 0 
+							) THEN 1
+						ELSE 0
 					END AS UpdateSkipError,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN ''
@@ -784,15 +784,15 @@ BEGIN
 								SELECT *
 								FROM #skip z
 								WHERE z.ClientID = a.ClientID
-							) THEN '' + 						
+							) THEN '' + 
 								(
-									SELECT 
+									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
-									FROM 
+									FROM
 										@Weeks INNER JOIN
 										#skip z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
-									ORDER BY Week_ID FOR XML PATH('')							
+									ORDER BY Week_ID FOR XML PATH('')
 								)
 						ELSE ''
 					END AS UpdateSkip,
@@ -804,8 +804,8 @@ BEGIN
 								FROM #lost z
 								WHERE z.ClientID = a.ClientID
 									AND LostList IS NOT NULL
-							) THEN 1 
-						ELSE 0 
+							) THEN 1
+						ELSE 0
 					END AS UpdateLostError,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN ''
@@ -815,15 +815,15 @@ BEGIN
 								FROM #lost z
 								WHERE z.ClientID = a.ClientID
 									AND LostList IS NOT NULL
-							) THEN '' + 						
+							) THEN '' + 
 								(
-									SELECT 
+									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')
-									FROM 
+									FROM
 										@Weeks INNER JOIN
 										#lost z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
-									ORDER BY Week_ID FOR XML PATH('')							
+									ORDER BY Week_ID FOR XML PATH('')
 								)
 						ELSE ''
 					END AS UpdateLost,
@@ -832,12 +832,12 @@ BEGIN
 						FROM #search z
 						WHERE z.ClientID = a.ClientID
 					) AS LastSearch
-				FROM 
+				FROM
 					#res a LEFT OUTER JOIN
 					#update b ON a.ClientID = b.ClientID
 			) AS o_O
 		ORDER BY ID, ClientFullName, UpdateDateTime
-		
+
 		SELECT *, (SELECT COUNT(*) FROM #total b WHERE a.ID = b.ID) AS ROW_CNT
 		FROM #total a
 		ORDER BY ID, ClientFullName, UpdateDateTime
@@ -853,7 +853,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 			DROP TABLE #usr
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
 
@@ -864,24 +864,24 @@ BEGIN
 			DROP TABLE #actual
 
 		IF OBJECT_ID('tempdb..#skip') IS NOT NULL
-			DROP TABLE #skip	
-		
+			DROP TABLE #skip
+
 		IF OBJECT_ID('tempdb..#lost') IS NOT NULL
 			DROP TABLE #lost
-			
+
 		IF OBJECT_ID('tempdb..#search') IS NOT NULL
 			DROP TABLE #search
-			
+
 		IF OBJECT_ID('tempdb..#total') IS NOT NULL
 			DROP TABLE #total
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

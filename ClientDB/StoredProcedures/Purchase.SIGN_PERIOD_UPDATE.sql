@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[SIGN_PERIOD_UPDATE]
+ALTER PROCEDURE [Purchase].[SIGN_PERIOD_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	VARCHAR(1000),
 	@SHORT	VARCHAR(100)
@@ -28,14 +28,16 @@ BEGIN
 		SET SP_NAME		=	@NAME,
 			SP_SHORT	=	@SHORT
 		WHERE SP_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[SIGN_PERIOD_UPDATE] TO rl_sign_period_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CHAT_SUBHOST_EXTENDED]
+ALTER PROCEDURE [Report].[CHAT_SUBHOST_EXTENDED]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			SH_CAPTION AS [Подхост], ClientName AS [Клиент], DistrStr AS [Дистрибутив], RPR_DATE_S AS [Дата регистрации], NT_SHORT AS [Сеть], SST_SHORT AS [Тип системы],
 			(
 				SELECT COUNT(*)
 				FROM dbo.HotlineChatView a WITH(NOEXPAND)
-				INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber			
+				INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 				WHERE a.DISTR = DistrNumber AND a.COMP = CompNumber AND c.HostID = o_O.HostID
 			) AS [Кол-во диалогов]
 		FROM
@@ -63,14 +63,16 @@ BEGIN
 					) AS P
 			) AS o_O
 		ORDER BY SH_NAME, SystemOrder, DistrNumber, CompNumber, ClientName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[CHAT_SUBHOST_EXTENDED] TO rl_report;
+GO

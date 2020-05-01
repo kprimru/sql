@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(VarChar)]
+ALTER FUNCTION [Common].[Is Equal(VarChar)]
 (
 	@V1	VarChar(Max),
 	@V2	VarChar(Max)

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CHECK]
+ALTER PROCEDURE [dbo].[CLIENT_CHECK]
 	@ID	INT
 AS
 BEGIN
@@ -39,7 +39,7 @@ BEGIN
 		DECLARE	@PAPPER		BIT
 		DECLARE @GRAPH		BIT
 
-		SELECT 
+		SELECT
 			@STATUS = ST_CA_STATUS, @CATEGORY = ST_CA_CATEGORY,
 			@INN = ST_CA_INN, @SERVICE = ST_CA_SERVICE,
 			@ACTIVITY = ST_CA_ACTIVITY, @PAPPER = ST_CA_PAPPER,
@@ -79,13 +79,13 @@ BEGIN
 
 		IF @PAPPER = 1
 			INSERT INTO #check(TP, ER)
-				SELECT TP, ER 
+				SELECT TP, ER
 				FROM dbo.ClientCheckView
 				WHERE ClientID = @ID AND TP = 'PAPPER'
 
 		IF @GRAPH = 1
 			INSERT INTO #check(TP, ER)
-				SELECT TP, ER 
+				SELECT TP, ER
 				FROM dbo.ClientCheckView
 				WHERE ClientID = @ID AND TP = 'GRAPH'
 
@@ -94,14 +94,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#check') IS NOT NULL
 			DROP TABLE #check
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CHECK] TO rl_client_card_check;
+GO

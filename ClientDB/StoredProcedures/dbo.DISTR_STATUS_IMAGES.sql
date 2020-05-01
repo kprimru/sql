@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_STATUS_IMAGES]
+ALTER PROCEDURE [dbo].[DISTR_STATUS_IMAGES]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,14 +24,16 @@ BEGIN
 		SELECT DS_IMAGE
 		FROM dbo.DistrStatus
 		ORDER BY DS_INDEX
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_IMAGES] TO public;
+GO

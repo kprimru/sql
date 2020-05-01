@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[USR_BASE_COMPLIANCE]
+ALTER PROCEDURE [USR].[USR_BASE_COMPLIANCE]
 	@MANAGER	INT = NULL,
 	@SERVICE	INT = NULL
 AS
@@ -27,7 +27,7 @@ BEGIN
 		DECLARE	@SSTATUS	INT
 
 		SET @CSTATUS = 2
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
 
@@ -58,22 +58,22 @@ BEGIN
 
 		INSERT INTO #client_system(CL_ID, DIS_STR, IB_ID, DIS_NUM, DIS_COMP, IB_NAME, SYS_ORDER, IB_ORDER)
 			SELECT ID_CLIENT, DistrStr, InfoBankID, DISTR, COMP, InfoBankShortName, c.SystemOrder, InfoBankOrder
-			FROM 
-				#client a 
+			FROM
+				#client a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON b.ID_CLIENT = a.CL_ID
 				CROSS APPLY dbo.SystemBankGet(b.SystemID, b.DistrTypeID) c
 			WHERE b.DS_REG = 0 AND InfoBankActive = 1
-			
+
 			UNION
-			
+
 			SELECT ID_CLIENT, DistrStr, InfoBankID, DISTR, COMP, InfoBankShortName, c.SystemOrder, InfoBankOrder
-			FROM 
-				#client a 
+			FROM
+				#client a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON b.ID_CLIENT = a.CL_ID
-				INNER JOIN dbo.DistrConditionView c ON c.SystemID = b.SystemID 
-													AND DISTR = DistrNumber 
+				INNER JOIN dbo.DistrConditionView c ON c.SystemID = b.SystemID
+													AND DISTR = DistrNumber
 													AND COMP = CompNumber
-			WHERE b.DS_REG = 0 
+			WHERE b.DS_REG = 0
 
 		DECLARE @SQL VARCHAR(MAX)
 
@@ -86,16 +86,16 @@ BEGIN
 		FROM dbo.ComplianceTypeTable
 		WHERE ComplianceTypeName = '#HOST'
 
-		SELECT 
-			CLientFullName,	MNAME, SNAME, dbo.DistrString(s.SystemShortName, b.UD_DISTR, b.UD_COMP) AS UD_NAME, 
+		SELECT
+			CLientFullName,	MNAME, SNAME, dbo.DistrString(s.SystemShortName, b.UD_DISTR, b.UD_COMP) AS UD_NAME,
 			DIS_STR, IB_NAME, UI_LAST, UF_CREATE
-		FROM 
+		FROM
 			#client_system a
 			INNER JOIN #client z ON a.CL_ID = z.CL_ID
 			INNER JOIN USR.USRActiveView b ON a.CL_ID = b.UD_ID_CLIENT
 			INNER JOIN dbo.SystemTable s ON b.UF_ID_SYSTEM = s.SystemID
 			INNER JOIN USR.USRIB ON UF_ID = UI_ID_USR AND UI_DISTR = DIS_NUM AND UI_COMP = DIS_COMP AND UI_ID_BASE = IB_ID
-			INNER JOIN dbo.ClientTable ON ClientID = UD_ID_CLIENT		
+			INNER JOIN dbo.ClientTable ON ClientID = UD_ID_CLIENT
 		WHERE UI_ID_COMP = @COMP AND STATUS = 1
 		ORDER BY MName, SName, ClientFullName, UD_NAME, SYS_ORDER, DIS_NUM, DIS_COMP, IB_ORDER
 
@@ -104,14 +104,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client_system') IS NOT NULL
 			DROP TABLE #client_system
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[USR_BASE_COMPLIANCE] TO rl_usr_compliance_base;
+GO

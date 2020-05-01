@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Din].[SYSTEM_TYPE_SELECT]
+ALTER PROCEDURE [Din].[SYSTEM_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -30,14 +30,17 @@ BEGIN
 			OR SST_REG LIKE @FILTER
 			OR SST_NOTE LIKE @FILTER
 		ORDER BY SST_NAME, SST_NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Din].[SYSTEM_TYPE_SELECT] TO rl_din_import;
+GRANT EXECUTE ON [Din].[SYSTEM_TYPE_SELECT] TO rl_din_system_type_r;
+GO

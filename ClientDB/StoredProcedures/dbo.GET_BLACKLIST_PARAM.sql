@@ -5,14 +5,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[GET_BLACKLIST_PARAM]
+ALTER PROCEDURE [dbo].[GET_BLACKLIST_PARAM]
 	@PARAMNAME	VarChar(50),
 	@paramValue VarChar(2048) OUTPUT
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -25,20 +25,26 @@ BEGIN
 
 	BEGIN TRY
 
-		SET @paramValue = 
+		SET @paramValue =
 			(
 				SELECT PARAMVALUE
 				FROM dbo.BLACK_LIST_PARAMS
 				WHERE PARAMNAME = @PARAMNAME
 			);
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_BLACKLIST_PARAM] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[GET_BLACKLIST_PARAM] TO BL_EDITOR;
+GRANT EXECUTE ON [dbo].[GET_BLACKLIST_PARAM] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[GET_BLACKLIST_PARAM] TO BL_READER;
+GRANT EXECUTE ON [dbo].[GET_BLACKLIST_PARAM] TO BL_RGT;
+GO

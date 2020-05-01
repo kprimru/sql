@@ -4,15 +4,15 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_GRAPH_SAVE]
+ALTER PROCEDURE [dbo].[SERVICE_GRAPH_SAVE]
 	@CLIENT	INT,
 	@DAY	INT,
 	@START	DATETIME,
 	@LENGTH	SMALLINT
 AS
 BEGIN
-	SET NOCOUNT ON;						
-			
+	SET NOCOUNT ON;
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,7 +24,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-			
+
 		UPDATE dbo.ClientTable
 		SET DayID					=	@DAY,
 			ServiceStart			=	@START,
@@ -32,14 +32,16 @@ BEGIN
 			ClientLast				=	GETDATE(),
 			UPD_USER				=	ORIGINAL_LOGIN()
 		WHERE ClientID = @CLIENT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_GRAPH_SAVE] TO rl_service_graph_u;
+GO

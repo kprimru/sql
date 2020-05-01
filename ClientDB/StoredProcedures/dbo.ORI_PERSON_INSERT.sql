@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ORI_PERSON_INSERT]	
+ALTER PROCEDURE [dbo].[ORI_PERSON_INSERT]
 	@CLIENT	INT,
 	@NAME	VARCHAR(250),
 	@PHONE	VARCHAR(250),
@@ -28,16 +28,18 @@ BEGIN
 
 		INSERT INTO dbo.OriPersonTable(ClientID, OriPersonName, OriPersonPhone, OriPersonPlace)
 			VALUES(@CLIENT, @NAME, @PHONE, @PLACE)
-		
+
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORI_PERSON_INSERT] TO rl_ori_person_i;
+GO

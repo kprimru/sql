@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CALL_NOTE]
+ALTER PROCEDURE [Report].[CALL_NOTE]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,22 +22,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			CC_DATE AS [Дата звонка], ClientFullName AS [Клиент], CC_PERSONAL AS [Сотрудник], 
+		SELECT
+			CC_DATE AS [Дата звонка], ClientFullName AS [Клиент], CC_PERSONAL AS [Сотрудник],
 			CC_NOTE AS [Примечание], CC_USER AS [Кто звонил], CC_SERVICE AS [СИ]
-		FROM 
+		FROM
 			dbo.ClientCall a
 			INNER JOIN dbo.ClientView b ON a.CC_ID_CLIENT = b.ClientID
 		WHERE CC_NOTE <> ''
 		ORDER BY CC_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[CALL_NOTE] TO rl_report;
+GO

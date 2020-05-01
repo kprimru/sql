@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[FEEDBACK_SAVE]
+ALTER PROCEDURE [Subhost].[FEEDBACK_SAVE]
 	@EMAIL	NVARCHAR(256),
 	@NOTE	NVARCHAR(MAX)
 AS
@@ -25,16 +25,18 @@ BEGIN
 
 		INSERT INTO Subhost.Feedback(EMAIL, NOTE)
 			VALUES(@EMAIL, @NOTE)
-			
+
 		EXEC Maintenance.MAIL_SEND @NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[FEEDBACK_SAVE] TO rl_web_subhost;
+GO

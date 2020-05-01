@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[CALL_SUBJECT_SELECT]
+ALTER PROCEDURE [Tender].[CALL_SUBJECT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,14 +25,17 @@ BEGIN
 		FROM Tender.Call
 		WHERE STATUS = 1
 		ORDER BY SUBJECT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[CALL_SUBJECT_SELECT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[CALL_SUBJECT_SELECT] TO rl_tender_u;
+GO

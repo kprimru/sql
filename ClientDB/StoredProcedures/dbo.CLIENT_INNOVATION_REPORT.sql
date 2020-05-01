@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_INNOVATION_REPORT]	
+ALTER PROCEDURE [dbo].[CLIENT_INNOVATION_REPORT]
 	@INNOVATION	UNIQUEIDENTIFIER,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -38,39 +38,39 @@ BEGIN
 			)
 
 		INSERT INTO #client(ServiceName, ManagerName, ClientID, InnovationPersonal, InnovationControl)
-			SELECT 
-				ServiceName, ManagerName, ClientID, 
+			SELECT
+				ServiceName, ManagerName, ClientID,
 				(
-					SELECT COUNT(*) 
-					FROM dbo.ClientInnovationPersonal c 
+					SELECT COUNT(*)
+					FROM dbo.ClientInnovationPersonal c
 					WHERE c.ID_INNOVATION = b.ID
-				), 
+				),
 				(
 					SELECT MIN(d.RESULT)
-					FROM 
-						dbo.ClientInnovationPersonal c 
+					FROM
+						dbo.ClientInnovationPersonal c
 						LEFT OUTER JOIN dbo.ClientInnovationControl d ON d.ID_PERSONAL = c.ID
 					WHERE c.ID_INNOVATION = b.ID
 				)
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
-				INNER JOIN dbo.ClientInnovation b ON a.ClientID = b.ID_CLIENT			
+				INNER JOIN dbo.ClientInnovation b ON a.ClientID = b.ID_CLIENT
 			WHERE b.ID_INNOVATION = @INNOVATION
 				AND (a.ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			ORDER BY ManagerName, ServiceName
 
-		SELECT 
-			ManagerName, ServiceName, 
+		SELECT
+			ManagerName, ServiceName,
 			CL_COUNT, CL_PERSONAL, CL_OK, CL_FAIL, ROUND(100 * CONVERT(FLOAT, CL_PERSONAL) / CL_COUNT, 2) AS CL_PERCENT,
 			MAN_COUNT, MAN_PERSONAL, MAN_OK, MAN_FAIL, ROUND(100 * CONVERT(FLOAT, MAN_PERSONAL) / MAN_COUNT, 2) AS MAN_PERCENT,
 			TOTAL_COUNT, TOTAL_PERSONAL, TOTAL_OK, TOTAL_FAIL, ROUND(100 * CONVERT(FLOAT, TOTAL_PERSONAL) / TOTAL_COUNT, 2) AS TOTAL_PERCENT
 		FROM
 			(
-				SELECT DISTINCT 
-					ManagerName, ServiceName, 
+				SELECT DISTINCT
+					ManagerName, ServiceName,
 					(
-						SELECT COUNT(DISTINCT ClientID) 
-						FROM #client b 
+						SELECT COUNT(DISTINCT ClientID)
+						FROM #client b
 						WHERE a.ServiceName = b.ServiceName
 					) AS CL_COUNT,
 					(
@@ -92,8 +92,8 @@ BEGIN
 							AND b.InnovationControl = 0
 					) AS CL_FAIL,
 					(
-						SELECT COUNT(DISTINCT ClientID) 
-						FROM #client b 
+						SELECT COUNT(DISTINCT ClientID)
+						FROM #client b
 						WHERE a.ManagerName = b.ManagerName
 					) AS MAN_COUNT,
 					(
@@ -115,8 +115,8 @@ BEGIN
 							AND b.InnovationControl = 0
 					) AS MAN_FAIL,
 					(
-						SELECT COUNT(DISTINCT ClientID) 
-						FROM #client b 				
+						SELECT COUNT(DISTINCT ClientID)
+						FROM #client b 
 					) AS TOTAL_COUNT,
 					(
 						SELECT COUNT(*)
@@ -139,14 +139,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INNOVATION_REPORT] TO rl_innovation_report;
+GO

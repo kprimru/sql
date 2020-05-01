@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANK_GET]
+ALTER PROCEDURE [dbo].[INFO_BANK_GET]
 	@ID	INT
 AS
 BEGIN
@@ -22,20 +22,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, 
-			InfoBankOrder, InfoBankPath, InfoBankActive, InfoBankDaily, 
+		SELECT
+			InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName,
+			InfoBankOrder, InfoBankPath, InfoBankActive, InfoBankDaily,
 			InfoBankActual, InfoBankStart
 		FROM dbo.InfoBankTable
 		WHERE InfoBankID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_BANK_GET] TO rl_info_bank_r;
+GO

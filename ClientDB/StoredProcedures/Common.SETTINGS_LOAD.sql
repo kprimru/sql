@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[SETTINGS_LOAD]
+ALTER PROCEDURE [Common].[SETTINGS_LOAD]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -34,14 +34,16 @@ BEGIN
 			SELECT CAST(SETTINGS AS NVARCHAR(MAX)) AS SETTINGS
 			FROM Common.Settings
 			WHERE USR_NAME = ORIGINAL_LOGIN()
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[SETTINGS_LOAD] TO public;
+GO

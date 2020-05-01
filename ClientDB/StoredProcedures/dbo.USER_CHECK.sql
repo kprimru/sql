@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[USER_CHECK]
+ALTER PROCEDURE [dbo].[USER_CHECK]
 	@USER   VARCHAR(128),
 	@LOGIN   VARCHAR(128),
     @OKUSER INT = 0 OUTPUT,
     @OKLOGIN INT = 0 OUTPUT
-WITH EXECUTE AS OWNER    
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -32,14 +32,16 @@ BEGIN
 		IF NOT EXISTS (SELECT * FROM sys.database_principals AS u
 		   LEFT OUTER JOIN sys.server_principals AS s ON s.sid = u.sid
 		   WHERE (Upper(s.name)=Upper(@LOGIN))) SET @OKLOGIN=1
-		   
+
 		  EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_CHECK] TO BL_ADMIN;
+GO

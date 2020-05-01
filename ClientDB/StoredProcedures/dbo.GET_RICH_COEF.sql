@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GET_RICH_COEF]
+ALTER PROCEDURE [dbo].[GET_RICH_COEF]
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -21,17 +21,19 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT RichCoefStart, RichCoefEnd, RichCoefID, RichCoefVal 
-		FROM dbo.RichCoefTable 
+		SELECT RichCoefStart, RichCoefEnd, RichCoefID, RichCoefVal
+		FROM dbo.RichCoefTable
 		ORDER BY RichCoefVal
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GET_RICH_COEF] TO rl_report_month_xl;
+GO

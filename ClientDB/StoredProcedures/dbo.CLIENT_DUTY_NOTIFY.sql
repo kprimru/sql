@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_NOTIFY]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_NOTIFY]
 	@DUTY			INT,
 	@NOTIFY			TINYINT,
 	@NOTIFY_NOTE	NVARCHAR(MAX),
@@ -26,11 +26,11 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @ID UNIQUEIDENTIFIER
-		
+
 		SELECT @ID = ID
 		FROM dbo.ClientDutyNotify
 		WHERE ID_DUTY = @DUTY
-		
+
 		IF @ID IS NULL
 			INSERT INTO dbo.ClientDutyNotify(ID_DUTY, NOTIFY, NOTIFY_NOTE, NOTIFY_TYPE)
 				VALUES(@DUTY, @NOTIFY, @NOTIFY_NOTE, @NOTIFY_TYPE)
@@ -40,14 +40,16 @@ BEGIN
 				NOTIFY_NOTE = @NOTIFY_NOTE,
 				NOTIFY_TYPE = @NOTIFY_TYPE
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_NOTIFY] TO rl_client_duty_result;
+GO

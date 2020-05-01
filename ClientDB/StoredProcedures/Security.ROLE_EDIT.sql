@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[ROLE_EDIT]
+ALTER PROCEDURE [Security].[ROLE_EDIT]
 	@RoleID			INT,
 	@RoleMasterID	INT,
 	@RoleName		VARCHAR(50),
@@ -42,15 +42,15 @@ BEGIN
 					WHERE Name = @RoleName
 				)
 			BEGIN
-				DECLARE @ERROR VARCHAR(MAX)		
-			
+				DECLARE @ERROR VARCHAR(MAX)
+
 				SET @ERROR = 'Пользователь или роль "' + @RoleName + '" уже существуют в базе данных'
-		
+
 				RAISERROR (@ERROR, 16, 1)
 
 				RETURN
 			END
-			
+
 			EXEC ('ALTER ROLE [' + @OldName + '] WITH NAME = [' + @RoleName + ']')
 		END
 
@@ -60,14 +60,16 @@ BEGIN
 				RoleMasterID	=	@RoleMasterID,
 				RoleNote	=	@RoleNote
 		WHERE	RoleID = @RoleID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[ROLE_EDIT] TO rl_role_u;
+GO

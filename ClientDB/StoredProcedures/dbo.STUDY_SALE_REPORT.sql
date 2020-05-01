@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_SALE_REPORT]
+ALTER PROCEDURE [dbo].[STUDY_SALE_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@MON_CNT	SMALLINT
@@ -24,15 +24,15 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ClientID, ClientFullName, 
+		SELECT
+			ClientID, ClientFullName,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT TeacherName + ', '
-					FROM 
+					FROM
 						(
 							SELECT DISTINCT TeacherName
-							FROM 
+							FROM
 								dbo.ClientStudy z
 								INNER JOIN dbo.TeacherTable y ON z.ID_TEACHER = y.TeacherID
 							WHERE STATUS = 1
@@ -41,22 +41,22 @@ BEGIN
 								AND (DATE <= @END OR @END IS NULL)
 								AND ID_PLACE IN (1, 2)
 								AND z.ID_CLIENT = a.ID_CLIENT
-						) AS o_O		
+						) AS o_O
 					ORDER BY TeacherName FOR XML PATH('')
 				)
-			), 1, 2, '')) AS TeacherName, 
+			), 1, 2, '')) AS TeacherName,
 			a.DATE,
-			
+
 			REVERSE(STUFF(REVERSE(
 					(
 						SELECT --y.RPR_OPER
-						
-							DistrStr + '(' + CONVERT(VARCHAR(20), dbo.DateOf(RPR_DATE), 104) +'): ' + 
-								CASE y.RPR_OPER 
+
+							DistrStr + '(' + CONVERT(VARCHAR(20), dbo.DateOf(RPR_DATE), 104) +'): ' +
+								CASE y.RPR_OPER
 									WHEN 'НОВАЯ' THEN 'Допродажа: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
 									WHEN 'Включение' THEN 'Восстановление: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
-									WHEN 'Изм. парам.' THEN 'Замена: ' + 
-										CASE 
+									WHEN 'Изм. парам.' THEN 'Замена: ' +
+										CASE
 											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN 'с ' + OLD.SystemShortName + ' ' + OLD.NT_SHORT + ' на ' + NEW.SystemShortName + ' ' + NEW.NT_SHORT
 											WHEN OLD.SystemShortName = NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN OLD.SystemShortName + ' с '+ OLD.NT_SHORT + ' на ' + NEW.NT_SHORT
 											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT = NEW.NT_SHORT THEN OLD.NT_SHORT + ' c ' + OLD.SystemShortName + ' на ' + NEW.SystemShortName
@@ -64,7 +64,7 @@ BEGIN
 										END
  									ELSE ''
 								END	+ CHAR(10)
-						FROM 
+						FROM
 							dbo.ClientDistrView z
 							INNER JOIN dbo.RegProtocol y ON z.HostID = y.RPR_ID_HOST AND z.DISTR = y.RPR_DISTR AND z.COMP = y.RPR_COMP
 							OUTER APPLY
@@ -98,27 +98,29 @@ BEGIN
 					AND TEACHED = 1
 					AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 					AND (DATE <= @END OR @END IS NULL)
-					AND ID_PLACE IN (1, 2)				
+					AND ID_PLACE IN (1, 2)
 				GROUP BY ID_CLIENT
 			) AS a
-			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID	
+			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID
 		WHERE EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ClientDistrView z
 					INNER JOIN dbo.RegProtocol y ON z.HostID = y.RPR_ID_HOST AND z.DISTR = y.RPR_DISTR AND z.COMP = y.RPR_COMP
 				WHERE z.ID_CLIENT = ClientID AND y.RPR_OPER IN ('НОВАЯ', 'Включение', 'Изм. парам.') AND RPR_DATE > a.DATE AND RPR_DATE < DATEADD(MONTH, @MON_CNT, a.DATE)
 			)
-		ORDER BY DATE DESC	
-		
+		ORDER BY DATE DESC
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_SALE_REPORT] TO rl_study_sale_report;
+GO

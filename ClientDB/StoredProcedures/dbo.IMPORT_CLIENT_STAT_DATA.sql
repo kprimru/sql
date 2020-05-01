@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[IMPORT_CLIENT_STAT_DATA]
+ALTER PROCEDURE [dbo].[IMPORT_CLIENT_STAT_DATA]
 	@DATA		NVARCHAR(MAX),
 	@OUT_DATA	NVARCHAR(512) = NULL OUTPUT
 AS
@@ -26,11 +26,11 @@ BEGIN
 		DECLARE @XML XML
 
 		SET @XML = CAST(@DATA AS XML)
-		
+
 		DECLARE @REFRESH	INT
-		
+
 		SET @REFRESH = 0
-		
+
 		INSERT INTO dbo.ClientStatDetail([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
 			SELECT
 				[UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [Enter0], [Enter1], [Enter2], [Enter3], SessionTimeSum, SessionTimeAVG
@@ -82,18 +82,20 @@ BEGIN
 						AND z.COMP = a.COMP
 						AND z.WeekId = a.WeekId
 				)
-		
+
 		SET @REFRESH = @REFRESH + @@ROWCOUNT
-		
+
 		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @REFRESH) + ' записей'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[IMPORT_CLIENT_STAT_DATA] TO rl_import_data;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[TAX_SELECT]
+ALTER PROCEDURE [Common].[TAX_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -29,14 +29,16 @@ BEGIN
 			OR CAPTION LIKE @FILTER
 			OR CONVERT(VARCHAR(50), RATE) LIKE @FILTER
 		ORDER BY RATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[TAX_SELECT] TO rl_tax_r;
+GO

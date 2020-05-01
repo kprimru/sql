@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[CALL_GET]
+ALTER PROCEDURE [Tender].[CALL_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -24,15 +24,18 @@ BEGIN
 
 		SELECT DATE, SUBJECT, SURNAME, NAME, PATRON, PHONE, NOTE
 		FROM Tender.Call
-		WHERE ID = @ID	
-		
+		WHERE ID = @ID
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[CALL_GET] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[CALL_GET] TO rl_tender_u;
+GO

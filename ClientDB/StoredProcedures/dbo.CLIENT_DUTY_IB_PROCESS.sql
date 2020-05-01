@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_IB_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_IB_PROCESS]
 	@ClientDutyID INT,
 	@IB VARCHAR(MAX)
 AS
@@ -29,8 +29,8 @@ BEGIN
 			SELECT *
 			FROM dbo.GET_TABLE_FROM_LIST(@IB, ',')
 
-		DELETE 
-		FROM dbo.ClientDutyIBTable 
+		DELETE
+		FROM dbo.ClientDutyIBTable
 		WHERE ClientDutyID = @ClientDutyID
 			AND NOT EXISTS
 				(
@@ -41,7 +41,7 @@ BEGIN
 
 		INSERT INTO dbo.ClientDutyIBTable(ClientDutyID, SystemID)
 			SELECT @ClientDutyID, SysID
-			FROM @table	
+			FROM @table
 			WHERE NOT EXISTS
 				(
 					SELECT *
@@ -49,14 +49,17 @@ BEGIN
 					WHERE SysID = SystemID
 						AND ClientDutyID = @ClientDutyID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_IB_PROCESS] TO rl_client_duty_i;
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_IB_PROCESS] TO rl_client_duty_u;
+GO

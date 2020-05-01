@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[STUDY_GET]
+ALTER PROCEDURE [dbo].[STUDY_GET]
 	@ID		UNIQUEIDENTIFIER,
 	@CLAIM	UNIQUEIDENTIFIER
 AS
@@ -23,26 +23,28 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			DATE, ID_PLACE, ID_TEACHER, NEED, RECOMEND, NOTE, TEACHED, ID_TYPE, RIVAL,
-			('<LIST>' + 
+			('<LIST>' +
 				(
 					SELECT CONVERT(VARCHAR(50), ID_SYSTEM)AS ITEM
-					FROM dbo.ClientStudySystem b 
+					FROM dbo.ClientStudySystem b
 					WHERE a.ID = b.ID_STUDY
 					FOR XML PATH('')
-				) 
+				)
 			+ '</LIST>') AS SYSTEM_LIST
 		FROM dbo.ClientStudy a
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STUDY_GET] TO rl_client_study_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SEMINAR_GRAPH]
+ALTER PROCEDURE [dbo].[SEMINAR_GRAPH]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@SCOUNT	INT = NULL OUTPUT,
@@ -42,7 +42,7 @@ BEGIN
 				WHERE StudyDate BETWEEN @BEGIN AND @END
 				GROUP BY dbo.MonthOf(StudyDate)
 			) AS b ON a.SMONTH = b.SMONTH
-			INNER JOIN 
+			INNER JOIN
 			(
 				SELECT dbo.MonthOf(StudyDate) AS SMONTH, COUNT(DISTINCT StudyDate) AS CNT
 				FROM dbo.ClientSeminarView WITH(NOEXPAND)
@@ -50,31 +50,33 @@ BEGIN
 				GROUP BY dbo.MonthOf(StudyDate)
 			) AS c ON a.SMONTH = c.SMONTH
 		ORDER BY a.SMONTH
-			
-			
-		SELECT @SCOUNT = COUNT(DISTINCT StudyDate) 
+
+
+		SELECT @SCOUNT = COUNT(DISTINCT StudyDate)
 		FROM dbo.ClientSeminarView WITH(NOEXPAND)
 		WHERE StudyDate BETWEEN @BEGIN AND @END
 
-		SELECT @CCOUNT = COUNT(DISTINCT ClientID) 
-		FROM dbo.ClientSeminarView WITH(NOEXPAND)
-		WHERE StudyDate BETWEEN @BEGIN AND @END	
-			
-		SELECT @PCOUNT = COUNT(*) 
+		SELECT @CCOUNT = COUNT(DISTINCT ClientID)
 		FROM dbo.ClientSeminarView WITH(NOEXPAND)
 		WHERE StudyDate BETWEEN @BEGIN AND @END
-		
-		SELECT @UCOUNT = COUNT(DISTINCT StudentFam + '+' + StudentName + '+' + StudentOtch) 
+
+		SELECT @PCOUNT = COUNT(*)
 		FROM dbo.ClientSeminarView WITH(NOEXPAND)
 		WHERE StudyDate BETWEEN @BEGIN AND @END
-		
+
+		SELECT @UCOUNT = COUNT(DISTINCT StudentFam + '+' + StudentName + '+' + StudentOtch)
+		FROM dbo.ClientSeminarView WITH(NOEXPAND)
+		WHERE StudyDate BETWEEN @BEGIN AND @END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SEMINAR_GRAPH] TO rl_seminar_graph;
+GO

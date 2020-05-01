@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Common].[Is Equal(DateTime)]
+ALTER FUNCTION [Common].[Is Equal(DateTime)]
 (
 	@V1	DateTime,
 	@V2	DateTime

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_HISTORY_SELECT]
+ALTER PROCEDURE [Price].[PRICE_HISTORY_SELECT]
 	@SYSTEM	INT,
 	@MONTH	UNIQUEIDENTIFIER
 AS
@@ -33,21 +33,23 @@ BEGIN
 		FROM
 			(
 				SELECT START, NAME, PRICE, ROW_NUMBER() OVER(PARTITION BY PRICE ORDER BY START) AS RN
-				FROM 
+				FROM
 					Price.SystemPrice a
 					INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
 				WHERE ID_SYSTEM = @SYSTEM AND START <= @START
-			) AS o_O 
+			) AS o_O
 		WHERE RN = 1
 		ORDER BY START DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Price].[PRICE_HISTORY_SELECT] TO rl_price_history;
+GO

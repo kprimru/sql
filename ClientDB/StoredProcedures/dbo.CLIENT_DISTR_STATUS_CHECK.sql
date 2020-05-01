@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHECK]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHECK]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,11 +22,11 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @STAT UNIQUEIDENTIFIER
-		
+
 		SELECT @STAT = DS_ID
 		FROM dbo.DistrStatus
 		WHERE DS_REG = 2
-		
+
 		UPDATE a
 		SET ID_STATUS = @STAT
 		FROM dbo.ClientDistr a
@@ -34,14 +34,14 @@ BEGIN
 		INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.SystemBaseName = b.SystemBaseName AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
 		INNER JOIN dbo.DistrStatus d ON d.DS_ID = a.ID_STATUS
 		WHERE d.DS_REG = 1 AND c.DS_REG = 2 AND a.STATUS = 1
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

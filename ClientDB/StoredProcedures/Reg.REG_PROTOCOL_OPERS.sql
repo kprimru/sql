@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[REG_PROTOCOL_OPERS]
+ALTER PROCEDURE [Reg].[REG_PROTOCOL_OPERS]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -46,20 +46,22 @@ BEGIN
 			AND RPR_OPER NOT LIKE 'Изменен состав ИБ%'
 			AND RPR_OPER NOT LIKE 'Дистрибутив переведен из%'
 			AND RPR_OPER NOT LIKE 'Система%'
-			
+
 		UNION
-		
+
 		SELECT 'Изменен email'
-			
+
 		ORDER BY RPR_OPER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Reg].[REG_PROTOCOL_OPERS] TO rl_reg_protocol_filter;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_PREPARE]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_PREPARE]
 	@CLIENT	INT,
 	@TEXT	VARCHAR(100) = NULL OUTPUT,
 	@COLOR	INT = NULL OUTPUT
@@ -36,14 +36,16 @@ BEGIN
 					AND ClientDutyComplete = 0
 			)
 			SET @COLOR = 2
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_PREPARE] TO rl_client_duty_r;
+GO

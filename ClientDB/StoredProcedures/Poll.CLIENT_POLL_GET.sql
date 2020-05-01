@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[CLIENT_POLL_GET]
+ALTER PROCEDURE [Poll].[CLIENT_POLL_GET]
 	@ID	UNIQUEIDENTIFIER,
 	@CALL	UNIQUEIDENTIFIER = NULL
 AS
@@ -25,13 +25,13 @@ BEGIN
 
 		IF @CALL IS NOT NULL
 			SELECT ID, DATE, ID_BLANK, NOTE
-			FROM Poll.ClientPoll		
+			FROM Poll.ClientPoll
 			WHERE ID_CALL = @CALL
 		ELSE
 			SELECT ID, DATE, ID_BLANK, NOTE
 			FROM Poll.ClientPoll
 			WHERE ID = @ID
-			
+
 		/*
 		SELECT ID, DATE, ID_BLANK, NOTE
 		FROM Poll.ClientPoll
@@ -39,14 +39,16 @@ BEGIN
 			AND (ID_CALL = @CALL OR @CALL IS NULL)
 			AND (ID_CALL IS NOT NULL OR @ID IS NOT NULL)
 			*/
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[CLIENT_POLL_GET] TO rl_client_poll_r;
+GO

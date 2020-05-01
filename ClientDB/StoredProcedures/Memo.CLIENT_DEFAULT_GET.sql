@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[CLIENT_DEFAULT_GET]
+ALTER PROCEDURE [Memo].[CLIENT_DEFAULT_GET]
 	@ID	INT
 AS
 BEGIN
@@ -23,19 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT TOP 1 PayTypeID, ContractPayID
-		FROM 
+		FROM
 			dbo.ClientTable a
 			INNER JOIN dbo.ContractTable b ON a.ClientID = b.CLientID
 		WHERE a.CLientID = @ID
 		ORDER BY ContractBegin DESC, ContractID DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[CLIENT_DEFAULT_GET] TO rl_client_memo_r;
+GO

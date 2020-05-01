@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[SERVICE_COMMON_NEW_GRAPH_PRINT]
+ALTER PROCEDURE [USR].[SERVICE_COMMON_NEW_GRAPH_PRINT]
 	@SERVICE	INT,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -12,7 +12,7 @@ CREATE PROCEDURE [USR].[SERVICE_COMMON_NEW_GRAPH_PRINT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,7 +24,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF OBJECT_ID('tempdb..#utotal') IS NOT NULL
 			DROP TABLE #utotal
 
@@ -51,7 +51,7 @@ BEGIN
 				UpdateDateTime	SMALLDATETIME,
 				ComplianceError	BIT,
 				Compliance		NVARCHAR(MAX),
-				UpdateSkipError	BIT, 
+				UpdateSkipError	BIT,
 				UpdateSkip		NVARCHAR(MAX),
 				UpdateLostError	BIT,
 				UpdateLost		NVARCHAR(MAX),
@@ -65,9 +65,9 @@ BEGIN
 		INSERT INTO #utotal
 			EXEC USR.SERVICE_COMMON_NEW_GRAPH @SERVICE, @BEGIN, @END, @TYPE
 
-		SELECT 
-			ID, ClientID, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, 
-			ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError, 
+		SELECT
+			ID, ClientID, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay,
+			ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError,
 			UpdateLost, UpdateLostError, UpdatePeriod, LastSTT, LastUpdate, ClientEvent,
 			REPLACE(REVERSE(STUFF(REVERSE(
 				(
@@ -87,26 +87,28 @@ BEGIN
 				)), 1, 1, '')), '|', CHAR(10)) AS UpdatesControl
 		FROM
 			(
-				SELECT DISTINCT 
-					ID, ClientID, Complect, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, 
-					ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError, 
+				SELECT DISTINCT
+					ID, ClientID, Complect, ComplectStr, ClientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay,
+					ResVersion, ResActual, ConsExe, ConsExeActual, Compliance, ComplianceError, UpdateSkip, UpdateSkipError,
 					UpdateLost, UpdateLostError,UpdatePeriod, LastSTT, LastUpdate, ClientEvent
 				FROM #utotal
 			) AS a
 		ORDER BY ID
-		
+
 
 		IF OBJECT_ID('tempdb..#utotal') IS NOT NULL
 			DROP TABLE #utotal
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [USR].[SERVICE_COMMON_NEW_GRAPH_PRINT] TO rl_report_graf_common;
+GO

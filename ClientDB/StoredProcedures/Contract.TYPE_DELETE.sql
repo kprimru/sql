@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[TYPE_DELETE]
+ALTER PROCEDURE [Contract].[TYPE_DELETE]
 	@ID		UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -25,15 +25,17 @@ BEGIN
 		DELETE
 		FROM Contract.Type
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-		
+
 END
+GRANT EXECUTE ON [Contract].[TYPE_DELETE] TO rl_contract_type_d;
+GO

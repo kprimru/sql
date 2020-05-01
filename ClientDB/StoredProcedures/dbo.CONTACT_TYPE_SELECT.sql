@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONTACT_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[CONTACT_TYPE_SELECT]
 	@FILTER NVARCHAR(256) = NULL
 AS
 BEGIN
@@ -25,14 +25,16 @@ BEGIN
 		SELECT ID, NAME
 		FROM dbo.ClientContactType
 		ORDER BY NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTACT_TYPE_SELECT] TO rl_contact_type_r;
+GO

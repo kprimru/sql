@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[LETTER_SET_DATA]
+ALTER PROCEDURE [dbo].[LETTER_SET_DATA]
 	@id INT,
 	@data VARBINARY(MAX)
 AS
@@ -26,14 +26,16 @@ BEGIN
 		UPDATE dbo.LetterTable
 		SET LetterData = @data
 		WHERE LetterID = @id
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LETTER_SET_DATA] TO rl_letter_u;
+GO

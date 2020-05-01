@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[LETTER_DELETE]
+ALTER PROCEDURE [dbo].[LETTER_DELETE]
 	@id INT
 AS
 BEGIN
@@ -24,16 +24,18 @@ BEGIN
 	BEGIN TRY
 
 		DELETE
-		FROM dbo.LetterTable	
+		FROM dbo.LetterTable
 		WHERE LetterID = @id
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LETTER_DELETE] TO rl_letter_d;
+GO

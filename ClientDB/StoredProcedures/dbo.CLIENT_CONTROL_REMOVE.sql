@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTROL_REMOVE]
+ALTER PROCEDURE [dbo].[CLIENT_CONTROL_REMOVE]
 	@CLIENT	INT
 AS
 BEGIN
@@ -47,21 +47,21 @@ BEGIN
 				WHERE CC_ID_CLIENT = @CLIENT
 					AND CC_REMOVE_DATE IS NULL
 					AND (CC_BEGIN IS NULL OR CC_BEGIN <= GETDATE())
-					AND 
+					AND
 						(
-							CC_TYPE = 5 
+							CC_TYPE = 5
 							AND IS_MEMBER('rl_client_control_lawyer_set') = 1
-							
+
 							OR
-							
+
 							CC_TYPE <> 5
 							AND IS_MEMBER('rl_client_control_lawyer_set') = 0
-							
+
 							OR
-							
+
 							IS_MEMBER('db_owner') = 1
 						)
-						
+
 				IF @@ROWCOUNT = 0
 					UPDATE dbo.ClientControl
 					SET CC_REMOVE_DATE = GETDATE(),
@@ -69,30 +69,30 @@ BEGIN
 					WHERE CC_ID_CLIENT = @CLIENT
 						AND CC_REMOVE_DATE IS NULL
 						--AND (CC_BEGIN IS NULL OR CC_BEGIN <= GETDATE())
-						AND 
+						AND
 							(
-								CC_TYPE = 5 
+								CC_TYPE = 5
 								AND IS_MEMBER('rl_client_control_lawyer_set') = 1
-								
+
 								OR
-								
+
 								CC_TYPE <> 5
 								AND IS_MEMBER('rl_client_control_lawyer_set') = 0
-								
+
 								OR
-								
+
 								IS_MEMBER('db_owner') = 1
 							)
 			END
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

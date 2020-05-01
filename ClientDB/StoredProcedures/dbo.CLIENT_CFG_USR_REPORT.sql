@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CFG_USR_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_CFG_USR_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@SERVICE	INT,
@@ -47,11 +47,11 @@ BEGIN
 			)
 
 		INSERT INTO #result(ClientID, ClientFullName, ManagerName, ServiceName, USR_COUNT, CFG_COUNT)
-			SELECT 
+			SELECT
 				a.ClientID, a.ClientFullName, ManagerName, ServiceName,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						USR.USRData z
 						INNER JOIN USR.USRFile y ON UF_ID_COMPLECT = z.UD_ID
 					WHERE z.UD_ID_CLIENT = a.ClientID
@@ -62,12 +62,12 @@ BEGIN
 				) AS USR_COUNT,
 				(
 					SELECT COUNT(DISTINCT SearchGet)
-					FROM 
+					FROM
 						dbo.ClientSearchTable z
 					WHERE z.ClientID = a.ClientID
 						AND SearchGetDay BETWEEN @BEGIN AND @END
 				) AS CFG_COUNT
-			FROM 
+			FROM
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN dbo.TableIDFromXML(@TYPE) ON ID = ClientKind_Id
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
@@ -83,32 +83,32 @@ BEGIN
 						AND SystemBaseCheck = 1
 				)
 			ORDER BY ManagerName, ServiceName, ClientFullName
-		/*	
+		/*
 		IF @HIDE = 1
 			DELETE FROM #result WHERE USR_COUNT = 0
 			*/
-			
-		SELECT 
-			ClientID, ClientFullName, ManagerName, ServiceName, USR_COUNT, CFG_COUNT, 
+
+		SELECT
+			ClientID, ClientFullName, ManagerName, ServiceName, USR_COUNT, CFG_COUNT,
 			ClientCount, ACTIVE_COUNT, ERROR_COUNT,
-			CASE ACTIVE_COUNT 
+			CASE ACTIVE_COUNT
 				WHEN 0 THEN 0
-				ELSE ROUND(100 * CONVERT(FLOAT, ERROR_COUNT) / ACTIVE_COUNT, 2) 
+				ELSE ROUND(100 * CONVERT(FLOAT, ERROR_COUNT) / ACTIVE_COUNT, 2)
 			END AS ERROR_PERCENT,
 			ACTIVE_COUNT - ERROR_COUNT AS NORMAL_COUNT,
-			100 - CASE ACTIVE_COUNT 
+			100 - CASE ACTIVE_COUNT
 				WHEN 0 THEN 0
-				ELSE ROUND(100 * CONVERT(FLOAT, ERROR_COUNT) / ACTIVE_COUNT, 2) 
+				ELSE ROUND(100 * CONVERT(FLOAT, ERROR_COUNT) / ACTIVE_COUNT, 2)
 			END AS NORMAL_PERCENT,
 			LAST_UPDATE
 		FROM
 			(
-				SELECT 
+				SELECT
 					ClientID, ClientFullName, ManagerName, ServiceName, USR_COUNT, CFG_COUNT,
 					(
 						SELECT COUNT(*)
 						FROM #result b
-						WHERE a.ServiceName = b.ServiceName			
+						WHERE a.ServiceName = b.ServiceName
 					) AS ClientCount,
 					(
 						SELECT COUNT(*)
@@ -136,14 +136,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CFG_USR_REPORT] TO rl_usr_cfg_report;
+GO

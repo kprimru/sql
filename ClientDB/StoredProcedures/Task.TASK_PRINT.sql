@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_PRINT]
+ALTER PROCEDURE [Task].[TASK_PRINT]
 	@USER		NVARCHAR(128),
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -29,37 +29,37 @@ BEGIN
 	BEGIN TRY
 
 		IF @USER IS NULL OR (IS_MEMBER('rl_task_all') = 0 AND IS_MEMBER('db_owner') = 0)
-			SET @USER = ORIGINAL_LOGIN()	
-			
+			SET @USER = ORIGINAL_LOGIN()
+
 		IF @STATUS IS NULL
-			SET @STATUS = 
+			SET @STATUS =
 				(
 					SELECT ID AS ITEM
 					FROM Task.TaskStatus
 					FOR XML PATH(''), ROOT('LIST')
 				)
-				
-		SELECT 
-			a.ID, DATE, 
-			CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR, 
+
+		SELECT
+			a.ID, DATE,
+			CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
 			LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS TIME_STR, TIME,
-			
-			ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') + 
+
+			ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
 			ISNULL(ClientFullName + CHAR(10), '') +
-			CASE 
-				WHEN @SHORT = 1 THEN SHORT 
-				ELSE SHORT + CHAR(10) + NOTE 
-			END + CHAR(10) + '/' + SENDER + '/' AS NOTE, 
-				
+			CASE
+				WHEN @SHORT = 1 THEN SHORT
+				ELSE SHORT + CHAR(10) + NOTE
+			END + CHAR(10) + '/' + SENDER + '/' AS NOTE,
+
 			INT_VAL, b.NAME AS ST_NAME, ClientFullName
-		FROM 
-			Task.Tasks a 
+		FROM
+			Task.Tasks a
 			INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
 			INNER JOIN dbo.TableGUIDFromXML(@STATUS) d ON d.ID = b.ID
 			LEFT OUTER JOIN dbo.ClientTable c ON c.ClientID = ID_CLIENT
 		WHERE a.STATUS = 1
-			AND DATE BETWEEN @BEGIN AND @END			
-			AND 
+			AND DATE BETWEEN @BEGIN AND @END
+			AND
 				(
 					-- личные
 					@PERSONAL = 1
@@ -67,20 +67,20 @@ BEGIN
 						(
 							RECEIVER = @USER
 							OR
-							RECEIVER IN 
+							RECEIVER IN
 								(
-									SELECT ServiceLogin 
-									FROM 
+									SELECT ServiceLogin
+									FROM
 										dbo.ServiceTable z
-										INNER JOIN dbo.ManagerTable y ON z.ManagerID = y.ManagerID 
+										INNER JOIN dbo.ManagerTable y ON z.ManagerID = y.ManagerID
 									WHERE ManagerLogin = @USER
 								)
 						)
-							
-					OR 	
-										
-					@CLIENT = 1 
-					AND ID_CLIENT IN 
+
+					OR 
+
+					@CLIENT = 1
+					AND ID_CLIENT IN
 						(
 							SELECT ClientID
 							FROM dbo.ClientView WITH(NOEXPAND)
@@ -88,46 +88,48 @@ BEGIN
 								OR ManagerLogin = @USER
 						)
 			)
-			
+
 		UNION ALL
-				
-				SELECT 
-					a.ID, dbo.DateOf(a.DATE), 
-					CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR, 
+
+				SELECT
+					a.ID, dbo.DateOf(a.DATE),
+					CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
 					LEFT(CONVERT(VARCHAR(20), DATE, 108), 5) AS TIME_STR, DATE,
-					
-					'Контакт' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') + a.NOTE  + CHAR(10) + a.UPD_USER AS NOTE, 
-				
+
+					'Контакт' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') + a.NOTE  + CHAR(10) + a.UPD_USER AS NOTE,
+
 					NULL, '', ClientFullName
-				FROM 
+				FROM
 					dbo.ClientContact a
 					INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.ClientID
 				WHERE a.STATUS = 1
-					AND a.DATE BETWEEN @BEGIN AND @END			
-					AND 
+					AND a.DATE BETWEEN @BEGIN AND @END
+					AND
 						(
-							ID_CLIENT IN 
+							ID_CLIENT IN
 							(
 								SELECT ClientID
 								FROM dbo.ClientView WITH(NOEXPAND)
 								WHERE ServiceLogin = @USER
 									OR ManagerLogin = @USER
 							)
-							
-							OR 
-							
+
+							OR
+
 							a.UPD_USER = @USER
 						)
-			
+
 		ORDER BY DATE, TIME, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_PRINT] TO rl_task_r;
+GO

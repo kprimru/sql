@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[KGS_DISTR_LIST_UPDATE]
+ALTER PROCEDURE [dbo].[KGS_DISTR_LIST_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100),
 	@LIST	NVARCHAR(MAX)
@@ -47,7 +47,7 @@ BEGIN
 			)
 
 		INSERT INTO #distr_list(SYS_ID, DIS_NUM, COMP_NUM)
-			SELECT 			
+			SELECT 
 				c.value('(@SYS)', 'INT'),
 				c.value('(@DISTR)', 'INT'),
 				c.value('(@COMP)', 'TINYINT')
@@ -79,14 +79,16 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#distr_list') IS NOT NULL
 			DROP TABLE #distr_list
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[KGS_DISTR_LIST_UPDATE] TO rl_kgs_distr_u;
+GO

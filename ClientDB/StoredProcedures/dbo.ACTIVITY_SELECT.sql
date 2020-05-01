@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACTIVITY_SELECT]
+ALTER PROCEDURE [dbo].[ACTIVITY_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -28,19 +28,21 @@ BEGIN
 			OR AC_NAME LIKE @FILTER
 			OR AC_CODE LIKE @FILTER
 			OR AC_SHORT LIKE @FILTER
-		ORDER BY 
-			dbo.StringDelimiterPartInt(AC_CODE, '.', 1), 
-			dbo.StringDelimiterPartInt(AC_CODE, '.', 2), 
-			dbo.StringDelimiterPartInt(AC_CODE, '.', 3), 
+		ORDER BY
+			dbo.StringDelimiterPartInt(AC_CODE, '.', 1),
+			dbo.StringDelimiterPartInt(AC_CODE, '.', 2),
+			dbo.StringDelimiterPartInt(AC_CODE, '.', 3),
 			dbo.StringDelimiterPartInt(AC_CODE, '.', 4)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTIVITY_SELECT] TO rl_activity_r;
+GO

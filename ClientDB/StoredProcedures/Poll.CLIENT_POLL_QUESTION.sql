@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Poll].[CLIENT_POLL_QUESTION]
+ALTER PROCEDURE [Poll].[CLIENT_POLL_QUESTION]
 	@ID		UNIQUEIDENTIFIER,
 	@BLANK	UNIQUEIDENTIFIER
 AS
@@ -23,24 +23,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ID, NAME, TP, ANS_MIN, ANS_MAX,
 			CONVERT(NVARCHAR(MAX),
 				CASE TP
-					WHEN 0 THEN 
+					WHEN 0 THEN
 						(
 							SELECT CONVERT(NVARCHAR(MAX), ID_ANSWER)
-							FROM 
+							FROM
 								Poll.ClientPoll z
 								INNER JOIN Poll.ClientPollQuestion y ON z.ID = y.ID_POLL
 								INNER JOIN Poll.ClientPollAnswer x ON x.ID_QUESTION = y.ID
 							WHERE z.ID = @ID AND y.ID_QUESTION = a.ID
 						)
 					WHEN 1 THEN
-						('<LIST>' + 
+						('<LIST>' +
 							(
 								SELECT '{' + CONVERT(NVARCHAR(MAX), ID_ANSWER) + '}' AS ITEM
-								FROM 
+								FROM
 									Poll.ClientPoll z
 									INNER JOIN Poll.ClientPollQuestion y ON z.ID = y.ID_POLL
 									INNER JOIN Poll.ClientPollAnswer x ON x.ID_QUESTION = y.ID
@@ -51,7 +51,7 @@ BEGIN
 					WHEN 2 THEN
 						(
 							SELECT CONVERT(NVARCHAR(MAX), TEXT_ANSWER)
-							FROM 
+							FROM
 								Poll.ClientPoll z
 								INNER JOIN Poll.ClientPollQuestion y ON z.ID = y.ID_POLL
 								INNER JOIN Poll.ClientPollAnswer x ON x.ID_QUESTION = y.ID
@@ -60,7 +60,7 @@ BEGIN
 					WHEN 3 THEN
 						(
 							SELECT CONVERT(NVARCHAR(MAX), INT_ANSWER)
-							FROM 
+							FROM
 								Poll.ClientPoll z
 								INNER JOIN Poll.ClientPollQuestion y ON z.ID = y.ID_POLL
 								INNER JOIN Poll.ClientPollAnswer x ON x.ID_QUESTION = y.ID
@@ -82,9 +82,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Poll].[CLIENT_POLL_QUESTION] TO rl_client_poll_r;
+GO

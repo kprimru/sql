@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_UPDATE]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_UPDATE]
 	@ID	INT,
 	@CLIENT	INT,
 	@DT	DATETIME,
@@ -22,9 +22,9 @@ CREATE PROCEDURE [dbo].[CLIENT_DUTY_UPDATE]
 	@GIVE	VARCHAR(100),
 	@ANSWER	DATETIME,
 	@IB	VARCHAR(MAX),
-	@CLAIM_DATE SMALLDATETIME = NULL, 
-	@CLAIM_NUM VARCHAR(50) = NULL, 
-	@CLAIM_ANSWER SMALLDATETIME = NULL, 
+	@CLAIM_DATE SMALLDATETIME = NULL,
+	@CLAIM_NUM VARCHAR(50) = NULL,
+	@CLAIM_ANSWER SMALLDATETIME = NULL,
 	@CLAIM_COMMENT VARCHAR(500) = NULL,
 	@GRANT_TYPE	UNIQUEIDENTIFIER = NULL,
 	@SURNAME	VARCHAR(150),
@@ -53,30 +53,30 @@ BEGIN
 			SELECT @ID, ClientID, ClientDutyDateTime, ClientDutyDate, ClientDutyTime, ClientDutyContact, ClientDutySurname, ClientDutyName, ClientDutyPatron, ClientDutyPos, ClientDutyPhone, DutyID, ManagerID, CallTypeID, ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, ClientDutyComplete, ClientDutyComment, ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer, ClientDutyClaimDate, ClientDutyClaimNum, ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, CREATE_DATE, CREATE_USER, UPDATE_DATE, UPDATE_USER, 2, UPD_DATE, UPD_USER, ID_DIRECTION, EMAIL, LINK
 			FROM dbo.ClientDutyTable
 			WHERE ClientDutyID = @ID
-		
+
 		UPDATE dbo.ClientDutyTable
-		SET	ClientDutyDateTime = @DT, 
-			ClientDutyContact = @CONTACT, 
+		SET	ClientDutyDateTime = @DT,
+			ClientDutyContact = @CONTACT,
 			ClientDutySurname = @SURNAME,
 			ClientDutyName = @NAME,
 			ClientDutyPatron = @PATRON,
-			ClientDutyPos = @POS, 
-			ClientDutyPhone = @PHONE, 
-			DutyID = @DUTY, 
-			CallTypeID = @CALL_TYPE, 
-			ClientDutyQuest = @QUEST, 
-			ClientDutyDocs = @DOCS, 
-			ClientDutyNPO = @NPO, 
-			ClientDutyComplete = @COMPLETE, 
-			ClientDutyComment = @COMMENT, 
-			ClientDutyUncomplete = @UNCOMPLETE, 
+			ClientDutyPos = @POS,
+			ClientDutyPhone = @PHONE,
+			DutyID = @DUTY,
+			CallTypeID = @CALL_TYPE,
+			ClientDutyQuest = @QUEST,
+			ClientDutyDocs = @DOCS,
+			ClientDutyNPO = @NPO,
+			ClientDutyComplete = @COMPLETE,
+			ClientDutyComment = @COMMENT,
+			ClientDutyUncomplete = @UNCOMPLETE,
 			ClientDutyGive = @GIVE,
 			ClientDutyAnswer = @ANSWER,
-			ClientDutyClaimDate = @CLAIM_DATE, 
-			ClientDutyClaimNum = @CLAIM_NUM, 
-			ClientDutyClaimAnswer = @CLAIM_ANSWER, 
+			ClientDutyClaimDate = @CLAIM_DATE,
+			ClientDutyClaimNum = @CLAIM_NUM,
+			ClientDutyClaimAnswer = @CLAIM_ANSWER,
 			ClientDutyClaimComment = @CLAIM_COMMENT,
-			ID_GRANT_TYPE = @GRANT_TYPE,		
+			ID_GRANT_TYPE = @GRANT_TYPE,
 			UPDATE_DATE = GETDATE(),
 			UPDATE_USER = ORIGINAL_LOGIN(),
 			UPD_DATE = GETDATE(),
@@ -86,16 +86,18 @@ BEGIN
 			LINK	=	@LINK
 		WHERE ClientDutyID = @ID
 
-			
+
 		EXEC dbo.CLIENT_DUTY_IB_PROCESS @ID, @IB
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_UPDATE] TO rl_client_duty_u;
+GO

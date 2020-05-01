@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALENDAR_REINDEX]
+ALTER PROCEDURE [dbo].[CALENDAR_REINDEX]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,19 +24,19 @@ BEGIN
 		DECLARE @INDEX	INT
 		DECLARE	@MIN_DT	SMALLDATETIME
 		DECLARE	@MAX_DT	SMALLDATETIME
-		
-		SELECT 
-			@MIN_DT = MIN(CalendarDate), 
-			@MAX_DT = MAX(CalendarDate), 
+
+		SELECT
+			@MIN_DT = MIN(CalendarDate),
+			@MAX_DT = MAX(CalendarDate),
 			@INDEX = 1
-		FROM 
+		FROM
 			dbo.Calendar
-		
+
 		WHILE @MIN_DT <= @MAX_DT
 		BEGIN
 			IF (
-					SELECT CalendarWork 
-					FROM dbo.Calendar 
+					SELECT CalendarWork
+					FROM dbo.Calendar
 					WHERE CalendarDate = @MIN_DT
 				) = 1
 				SET @INDEX = @INDEX + 1
@@ -47,14 +47,14 @@ BEGIN
 
 			SET @MIN_DT = DATEADD(DAY, 1, @MIN_DT)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

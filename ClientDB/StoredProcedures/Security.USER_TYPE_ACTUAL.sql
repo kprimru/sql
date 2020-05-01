@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_TYPE_ACTUAL]
+ALTER PROCEDURE [Security].[USER_TYPE_ACTUAL]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,20 +22,22 @@ BEGIN
 	BEGIN TRY
 
 		SELECT UT_ROLE
-		FROM 
+		FROM
 			Security.UserType
 			INNER JOIN sys.database_principals a ON UT_ROLE = a.name
 			INNER JOIN sys.database_role_members b ON a.principal_id = b.role_principal_id
 			INNER JOIN sys.database_principals c ON c.principal_id = b.member_principal_id
 		WHERE c.name = ORIGINAL_LOGIN()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_TYPE_ACTUAL] TO public;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_CREATE]
+ALTER PROCEDURE [Security].[USER_CREATE]
 	@NAME	VARCHAR(50),
 	@PASS	VARCHAR(50),
 	@ROLES	VARCHAR(MAX),
@@ -26,7 +26,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @ERROR VARCHAR(MAX)		
+		DECLARE @ERROR VARCHAR(MAX)
 
 		IF (CHARINDEX('''', @NAME) <> 0)
 			OR (CHARINDEX('''', @PASS) <> 0)
@@ -46,22 +46,22 @@ BEGIN
 			)
 		BEGIN
 			SET @ERROR = 'Пользователь "' + @NAME + '" уже есть на сервере'
-			
+
 			RAISERROR (@ERROR, 16, 1)
 
 			RETURN
 		END
 		*/
-		
+
 
 		IF EXISTS(
 				SELECT *
 				FROM sys.database_principals
 				WHERE name = @NAME
 			)
-		BEGIN		
+		BEGIN
 			SET @ERROR = 'Пользователь или роль "' + @NAME + '" уже существуют в базе данных'
-			
+
 			RAISERROR (@ERROR, 16, 1)
 
 			RETURN
@@ -76,7 +76,7 @@ BEGIN
 					WHERE name = @NAME
 				)
 			/* авторизация Windows*/
-				EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')		
+				EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')
 		END
 		ELSE
 		BEGIN
@@ -87,7 +87,7 @@ BEGIN
 					WHERE name = @NAME
 				)
 			/* авторизация SQL		*/
-				EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')		
+				EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')
 		END
 
 		EXEC('CREATE USER [' + @NAME + '] FOR LOGIN [' + @NAME + ']')
@@ -97,12 +97,12 @@ BEGIN
 			FROM dbo.TableStringFromXML(@ROLES)
 
 		OPEN RL
-		
+
 		DECLARE @RL	VARCHAR(50)
 
 		FETCH NEXT FROM RL INTO @RL
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_addrolemember @RL, @NAME
 
@@ -111,14 +111,16 @@ BEGIN
 
 		CLOSE RL
 		DEALLOCATE RL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_CREATE] TO rl_user_i;
+GO

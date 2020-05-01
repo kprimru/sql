@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Training].[TRAINING_SCHEDULE_SELECT]
+ALTER PROCEDURE [Training].[TRAINING_SCHEDULE_SELECT]
 	@SUBJECT	UNIQUEIDENTIFIER	=	NULL,
 	@DATE		SMALLDATETIME		=	NULL,
 	@CLIENT		VARCHAR(100)		=	NULL,
@@ -44,16 +44,16 @@ BEGIN
 					AND STATUS = 1
 		END
 
-		SELECT 
+		SELECT
 			TSC_ID, TS_NAME, TSC_DATE, CONVERT(VARCHAR(20), TSC_DATE, 104) + ' ' + TS_NAME AS TSC_LOOKUP,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					Training.SeminarSign
 					INNER JOIN Training.SeminarSignPersonal ON SP_ID = SSP_ID_SIGN
 				WHERE SP_ID_SEMINAR = TSC_ID
 			) AS TSC_COUNT, TSC_LIMIT
-		FROM 
+		FROM
 			Training.TrainingSchedule
 			INNER JOIN Training.TrainingSubject ON TS_ID = TSC_ID_TS
 		WHERE (TS_ID = @SUBJECT OR @SUBJECT IS NULL)
@@ -63,19 +63,19 @@ BEGIN
 					EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								#client
 								INNER JOIN Training.SeminarSign ON SP_ID_CLIENT = ID
 							WHERE SP_ID_SEMINAR = TSC_ID
 						) OR (@CLIENT IS NULL AND @SERVICE IS NULL)
-				)		
+				)
 			AND
-				(				
+				(
 					EXISTS
 						(
 							SELECT SSP_ID
-							FROM 
-								Training.SeminarSign 
+							FROM
+								Training.SeminarSign
 								INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
 							WHERE SP_ID_SEMINAR = TSC_ID
 								AND (ISNULL(SSP_SURNAME + ' ', '') + ISNULL(SSP_NAME + ' ', '') + ISNULL(SSP_PATRON, '') + ISNULL(SSP_POS, '')) LIKE @PERSONAL
@@ -89,14 +89,16 @@ BEGIN
 						) OR @PERSONAL IS NULL
 				)
 		ORDER BY TSC_DATE DESC, TS_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Training].[TRAINING_SCHEDULE_SELECT] TO rl_training_r;
+GO

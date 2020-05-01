@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[FILE_DISCOUNT_SELECT]
+ALTER PROCEDURE [Subhost].[FILE_DISCOUNT_SELECT]
 	@SUBHOST	NVARCHAR(16),
 	@USR		NVARCHAR(128)
 WITH EXECUTE AS OWNER
@@ -29,10 +29,10 @@ BEGIN
 			RAISERROR ('Вашему подхосту недоступен данный отчет', 16, 1)
 			RETURN
 		END
-		
+
 		IF OBJECT_ID('tempdb..#r') IS NOT NULL
 			DROP TABLE #r
-			
+
 		CREATE TABLE #r
 			(
 				CL_ID		INT,
@@ -47,33 +47,35 @@ BEGIN
 				DIS_NUM		INT,
 				DIS_COMP	TINYINT
 			)
-			
+
 		INSERT INTO #r
 			EXEC [PC275-SQL\DELTA].DBF_NAH.dbo.DISTR_FINANCING_REPORT
-		
-		SELECT 
+
+		SELECT
 			CL_PSEDO AS 'Клиент', DIS_STR AS 'Дистрибутив', SST_CAPTION AS 'Тип системы',
 			SN_NAME AS 'Тип сети', DISCOUNT AS 'Скидка', DF_FIXED AS 'Фикс.сумма',
 			REAL_DISC AS 'Реальная скидка'
 		FROM #r
 		ORDER BY CL_PSEDO, SYS_ORDER, DIS_NUM, DIS_COMP
-		
+
 		IF OBJECT_ID('tempdb..#r') IS NOT NULL
 			DROP TABLE #r
-		
+
 		INSERT INTO Subhost.FilesDownload(ID_SUBHOST, USR, FTYPE)
 			SELECT SH_ID, @USR, N'DISCOUNT'
 			FROM dbo.Subhost
 			WHERE SH_REG = @SUBHOST
 				AND @USR IS NOT NULL
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[FILE_DISCOUNT_SELECT] TO rl_web_subhost;
+GO

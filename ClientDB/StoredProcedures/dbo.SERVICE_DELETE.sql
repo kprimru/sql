@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_DELETE]
+ALTER PROCEDURE [dbo].[SERVICE_DELETE]
 	@ID	INT
 AS
 BEGIN
@@ -29,14 +29,16 @@ BEGIN
 		DELETE
 		FROM dbo.ServiceTable
 		WHERE ServiceID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_DELETE] TO rl_personal_service_d;
+GO

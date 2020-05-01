@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CALENDAR_WORK_SAVE]
+ALTER PROCEDURE [dbo].[CALENDAR_WORK_SAVE]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME,
 	@TP		UNIQUEIDENTIFIER,
@@ -34,7 +34,7 @@ BEGIN
 		ELSE
 		BEGIN
 			EXEC dbo.CALENDAR_WORK_ARCH @ID
-		
+
 			UPDATE dbo.CalendarDate
 			SET DATE		=	@DATE,
 				ID_TYPE		=	@TP,
@@ -43,15 +43,17 @@ BEGIN
 				UPD_DATE	=	GETDATE(),
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
-		END	
-		
+		END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CALENDAR_WORK_SAVE] TO rl_work_calendar_u;
+GO

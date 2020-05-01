@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[DISTR_TYPE_SELECT_OFFLINE]
+ALTER PROCEDURE [dbo].[DISTR_TYPE_SELECT_OFFLINE]
 	@FILTER	VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
@@ -28,15 +28,17 @@ BEGIN
 			OR DistrTypeName LIKE @FILTER)
 			AND (DistrTypeBaseCheck = 1)
 		ORDER BY DistrTypeOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
 
+GRANT EXECUTE ON [dbo].[DISTR_TYPE_SELECT_OFFLINE] TO rl_distr_type_r;
+GO

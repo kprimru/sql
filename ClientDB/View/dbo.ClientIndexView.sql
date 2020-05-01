@@ -4,14 +4,14 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[ClientIndexView]
+ALTER VIEW [dbo].[ClientIndexView]
 AS
-	SELECT 
+	SELECT
 		a.ClientID,
 		CONVERT(VARCHAR(20), ClientID) + ' ' +
-		ClientFullName + ' ' + 
+		ClientFullName + ' ' +
 		--ClientShortName + ' ' +
-		ISNULL(ClientOfficial, '') + ' ' + 
+		ISNULL(ClientOfficial, '') + ' ' +
 		ISNULL(
 			(
 				SELECT NAME + ','
@@ -36,7 +36,7 @@ AS
 		)), 1, 2, '')), '') + ' ' +
 		ISNULL(e.Name, '') + ' ' +
 		ISNULL(ServiceTypeName, '') + ' ' +
-		ISNULL(ServiceTypeShortName, '') + ' ' + 
+		ISNULL(ServiceTypeShortName, '') + ' ' +
 		ISNULL(ClientActivity, '') + ' ' +
 		ClientINN + ' ' +
 		ISNULL(REVERSE(STUFF(REVERSE((
@@ -46,26 +46,26 @@ AS
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + ' ' +
 		ISNULL(REVERSE(STUFF(REVERSE((
-			SELECT 
+			SELECT
 				ISNULL(g.CP_SURNAME, '') + ' ' +
 				ISNULL(g.CP_NAME, '') + ' ' +
 				ISNULL(g.CP_PATRON, '') + ' ' +
 				ISNULL(g.CP_POS, '') + ' ' +
 				ISNULL(g.CP_PHONE, '') + ' ' +
-				ISNULL(g.CP_PHONE_S, '') + ' ' + 
-				ISNULL(g.CP_NOTE, '') + ' '	+		
+				ISNULL(g.CP_PHONE_S, '') + ' ' +
+				ISNULL(g.CP_NOTE, '') + ' '	+
 				ISNULL(g.CP_EMAIL, '') + ' '
-			FROM dbo.ClientPersonal g 
+			FROM dbo.ClientPersonal g
 			WHERE a.ClientID = g.CP_ID_CLIENT
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + '' +
 		ISNULL(REVERSE(STUFF(REVERSE((
-			SELECT 
+			SELECT
 				ISNULL(i.SURNAME, '') + ' ' +
 				ISNULL(i.NAME, '') + '' +
 				ISNULL(i.PATRON, '') + ' ' +
 				ISNULL(i.POS, '') + ' ' +
-				ISNULL(i.PHONE, '') + ' '	
+				ISNULL(i.PHONE, '') + ' '
 			FROM dbo.ClientPersonalOtherView i
 			WHERE a.ClientID = i.ClientID
 			/*ORDER BY SystemOrder */FOR XML PATH('')

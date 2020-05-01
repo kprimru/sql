@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INNOVATION_SELECT]
+ALTER PROCEDURE [dbo].[INNOVATION_SELECT]
 	@FILTER	NVARCHAR(256) = NULL
 AS
 BEGIN
@@ -28,14 +28,16 @@ BEGIN
 			OR NAME LIKE @FILTER
 			OR NOTE LIKE @FILTER
 		ORDER BY START DESC, NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INNOVATION_SELECT] TO rl_innovation_r;
+GO

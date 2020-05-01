@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[MANAGER_PAY]
+ALTER PROCEDURE [Report].[MANAGER_PAY]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -32,10 +32,10 @@ BEGIN
 					INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.ServiceStatusId = s.ServiceStatusId
 					WHERE z.ManagerID = a.ManagerID
 				)
-				
+
 		DECLARE @ID		INT
 		DECLARE @NAME	NVARCHAR(128)
-			
+
 		DECLARE @MAN_XML NVARCHAR(MAX)
 		DECLARE @MONTH	UNIQUEIDENTIFIER
 
@@ -43,15 +43,15 @@ BEGIN
 		FROM Common.Period
 		WHERE TYPE = 2 AND GETDATE() BETWEEN START AND FINISH
 
-				
+
 		OPEN MANAGER
-				
+
 		IF OBJECT_ID('tempdb..#man') IS NOT NULL
 			DROP TABLE #man
-			
+
 		IF OBJECT_ID('tempdb..#tmp') IS NOT NULL
 			DROP TABLE #tmp
-			
+
 		CREATE TABLE #tmp
 			(
 				ServiceStr			NVARCHAR(128),
@@ -64,7 +64,7 @@ BEGIN
 				PAY_TOTAL			INT,
 				PAY_PERCENT			INT
 			)
-			
+
 		CREATE TABLE #man
 			(
 				MANAGER				NVARCHAR(128),
@@ -77,7 +77,7 @@ BEGIN
 				PAY_TOTAL			INT,
 				PAY_PERCENT			INT
 			)
-				
+
 		FETCH NEXT FROM MANAGER INTO @ID, @NAME
 
 		WHILE @@FETCH_STATUS = 0
@@ -90,7 +90,7 @@ BEGIN
 			INSERT INTO #man(MANAGER, CL_COUNT, PAY_BILL, PAY_INVOICE, PAY_COUNT, PAY_TOTAL_BILL, PAY_TOTAL_INVOICE, PAY_TOTAL, PAY_PERCENT)
 				SELECT @NAME, SUM(CL_COUNT), SUM(PAY_BILL), SUM(PAY_INVOICE), SUM(PAY_COUNT), SUM(PAY_TOTAL_BILL), SUM(PAY_TOTAL_INVOICE), SUM(PAY_TOTAL),
 					CASE
-						WHEN 
+						WHEN
 							(
 								SELECT SUM(PAY_COUNT)
 								FROM #tmp
@@ -107,25 +107,25 @@ BEGIN
 							)
 					END
 				FROM #tmp
-				
+
 			DELETE FROM #tmp
-				
+
 			FETCH NEXT FROM MANAGER INTO @ID, @NAME
 		END
-						
+
 		CLOSE MANAGER
 		DEALLOCATE MANAGER
 
-		SELECT 
-			MANAGER AS [Руководитель], 
-			CL_COUNT AS [Кол-во клиентов], PAY_BILL AS [Оплачивают|По счету], PAY_INVOICE AS [Оплачивают|По счет-фактуре], PAY_COUNT AS [Оплачивают|Всего], 
+		SELECT
+			MANAGER AS [Руководитель],
+			CL_COUNT AS [Кол-во клиентов], PAY_BILL AS [Оплачивают|По счету], PAY_INVOICE AS [Оплачивают|По счет-фактуре], PAY_COUNT AS [Оплачивают|Всего],
 			PAY_TOTAL_BILL AS [Оплатили|По счету], PAY_TOTAL_INVOICE AS [Оплатили|По счет-фактуре], PAY_TOTAL AS [Оплатили|Всего], PAY_PERCENT AS [Процент]
 		FROM #man
 		ORDER BY MANAGER
 
 		IF OBJECT_ID('tempdb..#man') IS NOT NULL
 			DROP TABLE #man
-			
+
 		IF OBJECT_ID('tempdb..#tmp') IS NOT NULL
 			DROP TABLE #tmp
 
@@ -133,9 +133,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[MANAGER_PAY] TO rl_report;
+GO

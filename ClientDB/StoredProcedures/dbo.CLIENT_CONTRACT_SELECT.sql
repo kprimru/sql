@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_SELECT]
 	@CLIENT	INT
 AS
 BEGIN
@@ -22,16 +22,16 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ContractID, ContractDate,
-			ContractNumber, ContractYear, 
+			ContractNumber, ContractYear,
 			ContractNumber + ISNULL(' от ' + CONVERT(VARCHAR(20), ContractDate, 104), '') AS ContractNumberStr,
-			ContractTypeName, 
+			ContractTypeName,
 			ContractBegin, ContractEnd,
 			ContractConditions,
 			ContractPayName, DiscountValue, ContractFixed,
 			ID_FOUNDATION, NAME, FOUND_END, FOUND_NOTE,
-			CASE 
+			CASE
 				WHEN EXISTS
 					(
 						SELECT *
@@ -45,9 +45,9 @@ BEGIN
 						WHERE ID_CONTRACT = ContractID
 							AND STATUS = 1
 					))
-				ELSE 'Нет изменяющих документов' 
+				ELSE 'Нет изменяющих документов'
 			END AS DOCUMENT_LIST
-		FROM 
+		FROM
 			dbo.ContractTable a
 			INNER JOIN dbo.ContractTypeTable b ON a.ContractTypeID = b.ContractTypeID
 			LEFT OUTER JOIN dbo.ContractPayTable c ON a.ContractPayID = c.ContractPayID
@@ -55,14 +55,16 @@ BEGIN
 			LEFT OUTER JOIN dbo.ContractFoundation ON ID_FOUNDATION = ID
 		WHERE ClientID = @CLIENT
 		ORDER BY ContractBegin DESC, ContractID DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_SELECT] TO rl_client_contract_r;
+GO

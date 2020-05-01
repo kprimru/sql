@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Reg].[REG_FILE_LOAD]
+ALTER PROCEDURE [Reg].[REG_FILE_LOAD]
 	@REG	NVARCHAR(512) = NULL,
 	@UPDATE	BIT = 1
 WITH EXECUTE AS OWNER
@@ -55,16 +55,16 @@ BEGIN
 			IF CHARINDEX('\', @REG) > 0
 			BEGIN
 				SET @REG = REVERSE(@REG)
-				
+
 				SET @REG = LEFT(@REG, CHARINDEX('\', @REG) - 1)
 
 				SET @REG = REVERSE(@REG)
 			END
-					
+
 			IF LEN(@REG) = 24 AND LEFT(@REG, 3) = 'REG'
-				SELECT @PROCESS_DATE =  
+				SELECT @PROCESS_DATE =
 					CONVERT(DATETIME,
-						SUBSTRING(A, 1, 4) + '-' + SUBSTRING(A, 5, 2) + '-' + SUBSTRING(A, 7, 2) + ' ' + 
+						SUBSTRING(A, 1, 4) + '-' + SUBSTRING(A, 5, 2) + '-' + SUBSTRING(A, 7, 2) + ' ' +
 						SUBSTRING(A, 9, 2) + ':' + SUBSTRING(A, 11, 2) + ':' + SUBSTRING(A, 13, 2) + '.' + SUBSTRING(A, 15, 3),
 						121)
 				FROM
@@ -85,21 +85,21 @@ BEGIN
 
 		SET @sql = '
 					BULK INSERT #tp
-					FROM ''' + @SAVE + '''	
-					WITH 
+					FROM ''' + @SAVE + '''
+					WITH
 						(
 							CODEPAGE = 1251,
-							LASTROW = 1	
+							LASTROW = 1
 						)
-					'	
+					'
 
 		EXEC sp_executesql @sql
 
 		DECLARE @COLCOUNT SMALLINT
 
 		SELECT @COLCOUNT = LEN(RW) - LEN(REPLACE(RW, ';', ''))
-		FROM #tp	
-			
+		FROM #tp
+
 		IF OBJECT_ID('tempdb..#tp') IS NOT NULL
 			DROP TABLE #tp
 
@@ -303,12 +303,12 @@ BEGIN
 				DROP TABLE #reg_ex2
 		END
 
-		CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON #reg (SYS_NAME, DISTR, COMP)	
+		CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON #reg (SYS_NAME, DISTR, COMP)
 
 		IF @REG IS NULL
 		BEGIN
 			SET @CMD = 'DEL ' + @SAVE
-			
+
 			EXEC master..xp_cmdshell @CMD, NO_OUTPUT
 		END
 
@@ -319,13 +319,13 @@ BEGIN
 		UPDATE #reg
 		SET ODON = 0
 		WHERE ODON IS NULL
-		
+
 		UPDATE #reg
 		SET ODOFF = 0
 		WHERE ODOFF IS NULL
-			
+
 		SELECT @ERROR = TP + ': ' + MSG + CHAR(10)
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT 'Неизвестная система' AS TP, SYS_NAME AS MSG
 				FROM #reg
@@ -335,11 +335,11 @@ BEGIN
 							FROM dbo.SystemTable
 							WHERE SYS_NAME = SystemBaseName
 						)
-			
+
 				UNION ALL
 
 				SELECT DISTINCT 'Не указан хост системы', SystemShortName
-				FROM 
+				FROM
 					dbo.SystemTable
 					INNER JOIN #reg ON SYS_NAME = SystemBaseName
 				WHERE HostID IS NULL
@@ -357,8 +357,8 @@ BEGIN
 
 				UNION ALL
 
-				SELECT DISTINCT 'Неизвестная сетевитость', 'Сеть ' + CONVERT(VARCHAR(20), NET) + ' Тех ' + CONVERT(VARCHAR(20), TECH_TYPE) + ' ОДОН ' + CONVERT(VARCHAR(20), ODOn) + ' ОДОфф ' + CONVERT(VARCHAR(20), ODOff)  
-				FROM #reg 
+				SELECT DISTINCT 'Неизвестная сетевитость', 'Сеть ' + CONVERT(VARCHAR(20), NET) + ' Тех ' + CONVERT(VARCHAR(20), TECH_TYPE) + ' ОДОН ' + CONVERT(VARCHAR(20), ODOn) + ' ОДОфф ' + CONVERT(VARCHAR(20), ODOff)
+				FROM #reg
 				WHERE NOT EXISTS
 					(
 						SELECT *
@@ -378,13 +378,13 @@ BEGIN
 						WHERE DS_REG = SERVICE
 					)
 			) AS o_O
-					
+
 		IF @ERROR IS NOT NULL
 		BEGIN
 			PRINT @ERROR
-		
+
 			EXEC Maintenance.MAIL_SEND @ERROR
-		
+
 			IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 				DROP TABLE #reg
 
@@ -394,7 +394,7 @@ BEGIN
 		/* заполняем новыми дистрибутивами основную таблицу*/
 		INSERT INTO Reg.RegDistr(ID_HOST, DISTR, COMP, STATUS, CREATE_DATE)
 			SELECT HostID, DISTR, COMP, 1, @PROCESS_DATE
-			FROM 
+			FROM
 				#reg a
 				INNER JOIN dbo.SystemTable ON SystemBaseName = SYS_NAME
 			WHERE NOT EXISTS
@@ -415,7 +415,7 @@ BEGIN
 			AND EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						#reg b
 						INNER JOIN dbo.SystemTable ON SystemBaseName = SYS_NAME
 					WHERE a.ID_HOST = HostID
@@ -430,23 +430,23 @@ BEGIN
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						#reg b
 						INNER JOIN dbo.SystemTable ON SystemBaseName = SYS_NAME
 					WHERE a.ID_HOST = HostID
 						AND a.DISTR = b.DISTR
 						AND a.COMP = b.COMP
-				)		
+				)
 
 		/* добавляем записи в таблицу истории, делая все предыдущие записи этого дистрибутива неактивными*/
 		INSERT INTO Reg.RegHistory(
 						ID_DISTR, DATE, ID_SYSTEM, ID_NET, ID_TYPE, SUBHOST, TRAN_COUNT, TRAN_LEFT,
 						ID_STATUS, REG_DATE, FIRST_REG, COMPLECT, COMMENT, OFFLINE
 					)
-			SELECT 
+			SELECT
 				z.ID, @PROCESS_DATE, b.SystemID, c.NT_ID, d.SST_ID, SUBHOST, TRANS_COUNT, TRANS_LEFT,
 				e.DS_ID, CONVERT(SMALLDATETIME, REG_DATE, 104), CONVERT(SMALLDATETIME, FIRST_REG, 104), COMPLECT, COMMENT, OFFLINE
-			FROM 
+			FROM
 				#reg a
 				INNER JOIN dbo.SystemTable b ON b.SystemBaseName = a.SYS_NAME
 				INNER JOIN Din.NetType c ON c.NT_NET = a.NET AND c.NT_TECH = a.TECH_TYPE AND c.NT_ODON = a.ODON AND c.NT_ODOFF = a.ODOFF
@@ -489,10 +489,10 @@ BEGIN
 			INSERT INTO Task.Tasks(DATE, TIME, RECEIVER, ID_CLIENT, ID_STATUS, SHORT, NOTE, EXPIRE)
 				SELECT dbo.DateOf(GETDATE()), NULL, NULL, ID_CLIENT, (SELECT ID FROM Task.TaskStatus WHERE PSEDO = N'ACTIVE'), 'Скидка', 'Изменился состав комплекта, проверьте правильность финансовых условий', NULL
 				FROM
-					(						
+					(
 						SELECT DISTINCT ID_CLIENT
-						FROM 
-							dbo.ClientDistrView a WITH(NOEXPAND)						
+						FROM
+							dbo.ClientDistrView a WITH(NOEXPAND)
 							INNER JOIN dbo.SystemTable c ON a.HostID = c.HostID
 							INNER JOIN #reg d ON d.SYS_NAME = c.SystemBaseName
 											AND d.DISTR = a.DISTR
@@ -511,22 +511,22 @@ BEGIN
 							AND EXISTS
 								(
 									SELECT *
-									FROM dbo.DBFDistrView b 
+									FROM dbo.DBFDistrView b
 									WHERE a.SystemBaseName = b.SYS_REG_NAME AND a.DISTR = b.DIS_NUM AND a.COMP = b.DIS_COMP_NUM
 										AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
 								)
 					) AS o_O
-			
+
 			DECLARE @EMSG NVARCHAR(MAX)
-				
-			SELECT @EMSG = 
-				(			
+
+			SELECT @EMSG =
+				(
 					SELECT ISNULL(COMMENT, '') + ': ' + ISNULL(DISTR_STR, '') + CHAR(10)
 					FROM
 						(
-							SELECT DISTINCT b.COMMENT, c.SystemShortName + ' ' + CONVERT(VARCHAR(20), DistrNumber) + 
+							SELECT DISTINCT b.COMMENT, c.SystemShortName + ' ' + CONVERT(VARCHAR(20), DistrNumber) +
 								CASE CompNumber WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), CompNumber) END AS DISTR_STR
-							FROM 
+							FROM
 								#reg a
 								INNER JOIN dbo.RegNodeTable b ON a.SYS_NAME = b.SystemName
 																AND a.DISTR = b.DistrNumber
@@ -539,15 +539,15 @@ BEGIN
 						) AS y
 					ORDER BY COMMENT, DISTR_STR FOR XML PATH('')
 				)
-				
+
 			SELECT @EMSG = 'Был включен/зарегистрирован дистрибутив, внесенный в черный список ИнтернетПополнения: ' + CHAR(10) + @EMSG
-				
+
 			IF @EMSG IS NOT NULL
 			BEGIN
 				EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'Денисов', @EMSG, 0
 				EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss', @EMSG, 0
 			END
-			
+
 			IF EXISTS
 				(
 					SELECT *
@@ -556,15 +556,15 @@ BEGIN
 				)
 			BEGIN
 				DECLARE @MSG NVARCHAR(MAX)
-				
-				SELECT @MSG = 
-					(			
+
+				SELECT @MSG =
+					(
 						SELECT ISNULL(COMMENT, '') + ': ' + ISNULL(DISTR_STR, '') + CHAR(10)
 						FROM
 							(
-								SELECT b.COMMENT, SystemShortName + ' ' + CONVERT(VARCHAR(20), DistrNumber) + 
+								SELECT b.COMMENT, SystemShortName + ' ' + CONVERT(VARCHAR(20), DistrNumber) +
 									CASE CompNumber WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), CompNumber) END + ' (' + d.NT_SHORT + ')' AS DISTR_STR
-								FROM 
+								FROM
 									#reg a
 									INNER JOIN dbo.RegNodeTable b ON a.SYS_NAME = b.SystemName
 																	AND a.DISTR = b.DistrNumber
@@ -576,19 +576,19 @@ BEGIN
 							) AS y
 						ORDER BY COMMENT, DISTR_STR FOR XML PATH('')
 					)
-					
+
 				SELECT @MSG = 'Зарегистрированы ОДД: ' + CHAR(10) + @MSG
-				
+
 				IF @MSG IS NOT NULL
 					EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss', @MSG, 0
 			END
-		
+
 			DECLARE @CLIENT INT
-		
+
 			IF EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND)
 						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																		AND a.DISTR = b.DistrNumber
@@ -597,16 +597,16 @@ BEGIN
 						INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
 					WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
 				)
-			BEGIN					
+			BEGIN
 				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-				BEGIN			
-					DECLARE CL CURSOR LOCAL FOR 
+				BEGIN
+					DECLARE CL CURSOR LOCAL FOR
 						SELECT DISTINCT ID_CLIENT
 						FROM dbo.ClientDistrView WITH(NOEXPAND)
 						WHERE ID IN
 							(
 								SELECT a.ID
-								FROM 
+								FROM
 									dbo.ClientDistrView a WITH(NOEXPAND)
 									INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																					AND a.DISTR = b.DistrNumber
@@ -615,13 +615,13 @@ BEGIN
 									INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
 								WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
 							)
-							
+
 					OPEN CL
-							
-					
-					
+
+
+
 					FETCH NEXT FROM CL INTO @CLIENT
-					
+
 					WHILE @@FETCH_STATUS = 0
 					BEGIN
 						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
@@ -634,19 +634,19 @@ BEGIN
 										AND ID_MASTER IS NULL
 										AND UPD_USER = 'Автомат'
 								)
-						
+
 						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-					
+
 						FETCH NEXT FROM CL INTO @CLIENT
-					END				
-					
+					END
+
 					CLOSE CL
 					DEALLOCATE CL
 				END
-								
-			END		
-		
-			DELETE 
+
+			END
+
+			DELETE
 			FROM dbo.RegNodeTable
 			WHERE NOT EXISTS
 				(
@@ -711,11 +711,11 @@ BEGIN
 								AND DISTR = DistrNumber
 								AND COMP = CompNumber
 						)
-						
+
 			IF EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.ClientDistrView a WITH(NOEXPAND)
 						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																		AND a.DISTR = b.DistrNumber
@@ -729,34 +729,34 @@ BEGIN
 					WHERE ID IN
 						(
 							SELECT a.ID
-							FROM 
+							FROM
 								dbo.ClientDistrView a WITH(NOEXPAND)
 								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																				AND a.DISTR = b.DistrNumber
 																				AND a.COMP = b.CompNumber
 							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
 						)
-						
+
 				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-				BEGIN			
-					DECLARE CL CURSOR LOCAL FOR 
+				BEGIN
+					DECLARE CL CURSOR LOCAL FOR
 						SELECT ID_CLIENT
 						FROM dbo.ClientDistrView WITH(NOEXPAND)
 						WHERE ID IN
 							(
 								SELECT a.ID
-								FROM 
+								FROM
 									dbo.ClientDistrView a WITH(NOEXPAND)
 									INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																					AND a.DISTR = b.DistrNumber
 																					AND a.COMP = b.CompNumber
 								WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
 							)
-							
-					OPEN CL		
-					
+
+					OPEN CL
+
 					FETCH NEXT FROM CL INTO @CLIENT
-					
+
 					WHILE @@FETCH_STATUS = 0
 					BEGIN
 						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
@@ -769,29 +769,29 @@ BEGIN
 										AND ID_MASTER IS NULL
 										AND UPD_USER = 'Автомат'
 								)
-						
+
 						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-					
+
 						FETCH NEXT FROM CL INTO @CLIENT
-					END				
-					
+					END
+
 					CLOSE CL
 					DEALLOCATE CL
 				END
-						
+
 				UPDATE a
 				SET a.ID_SYSTEM	= ISNULL(b.ID_SYSTEM, a.ID_SYSTEM),
 					a.ID_NET	= ISNULL(b.ID_NET, a.ID_NET),
 					a.ON_DATE	= b.DATE,
 					a.BDATE		= GETDATE(),
 					a.UPD_USER	= ORIGINAL_LOGIN()
-				FROM 
+				FROM
 					dbo.ClientDistr a
 					INNER JOIN
 						(
-							SELECT 
-								a.ID, CONVERT(SMALLDATETIME, RegisterDate, 104) AS DATE, 
-								CASE 
+							SELECT
+								a.ID, CONVERT(SMALLDATETIME, RegisterDate, 104) AS DATE,
+								CASE
 									WHEN a.DistrTypeID = b.DistrTypeID THEN NULL
 									ELSE b.DistrTypeID
 								END AS ID_NET,
@@ -799,7 +799,7 @@ BEGIN
 									WHEN a.SystemID = b.SystemID THEN NULL
 									ELSE b.SystemID
 								END AS ID_SYSTEM
-							FROM 
+							FROM
 								dbo.ClientDistrView a WITH(NOEXPAND)
 								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																				AND a.DISTR = b.DistrNumber
@@ -809,26 +809,26 @@ BEGIN
 				WHERE a.ID IN
 					(
 						SELECT a.ID
-						FROM 
+						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																			AND a.DISTR = b.DistrNumber
 																			AND a.COMP = b.CompNumber
 						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
-					)			
-			END		
-		END	
+					)
+			END
+		END
 
 		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 			DROP TABLE #reg
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

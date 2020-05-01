@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[CLIENT_NOT_CALL]
+ALTER PROCEDURE [Report].[CLIENT_NOT_CALL]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -34,20 +34,22 @@ BEGIN
 			NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ClientSatisfaction
 					INNER JOIN dbo.ClientCall ON CC_ID = CS_ID_CALL
 				WHERE CC_ID_CLIENT = ClientID
 			)
 		ORDER BY ManagerName, ServiceName, ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[CLIENT_NOT_CALL] TO rl_report;
+GO

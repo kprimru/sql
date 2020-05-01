@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalRicLogin]
+ALTER FUNCTION [Maintenance].[GlobalRicLogin]
 ()
 RETURNS VARCHAR(500)
 AS
@@ -14,7 +14,7 @@ BEGIN
 	SELECT @RES = GS_VALUE
 	FROM Maintenance.GlobalSettings
 	WHERE GS_NAME = 'RIC_LOGIN'
-		
+
 	RETURN @RES
 END
 

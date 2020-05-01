@@ -4,15 +4,15 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [Reg].[RegNodeSearchView]
+ALTER VIEW [Reg].[RegNodeSearchView]
 WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		a.ID,
 		SystemID, SystemShortName, SystemOrder, HostID,
 		DistrNumber, CompNumber,
 		dbo.DistrString(SystemShortName, DistrNumber, CompNumber) AS DistrStr,
-		DistrType, SST_ID, SST_SHORT, NT_ID, NT_SHORT, NT_TECH, TransferCount, TransferLeft, Comment, Complect, RegisterDate, 
+		DistrType, SST_ID, SST_SHORT, NT_ID, NT_SHORT, NT_TECH, TransferCount, TransferLeft, Comment, Complect, RegisterDate,
 		DS_ID, DS_INDEX, DS_REG, DS_NAME,
 		dbo.SubhostByComment(Comment, DistrNumber) AS SubhostName,
 		SystemBaseName,

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTACT_WARNING]
+ALTER PROCEDURE [dbo].[CLIENT_CONTACT_WARNING]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -14,7 +14,7 @@ BEGIN
 	DECLARE @ClientKind Table (Id SmallInt Primary Key Clustered);
 	DECLARE @ContactType Table (Id UniqueIdentifier Primary Key Clustered);
 	DECLARE @ClientWrite Table (Id Int Primary Key Clustered);
-	
+
 	DECLARE @ControlDate	SmallDateTime;
 
 	DECLARE
@@ -29,15 +29,15 @@ BEGIN
 
 	BEGIN TRY
 		SET @ControlDate = dbo.DateOf(DateAdd(DAY, -180, GetDate()))
-	
+
 		INSERT INTO @Statuses
 		SELECT ServiceStatusId
 		FROM [dbo].[ServiceStatusConnected]();
-		
+
 		INSERT INTO @ManagerExclude
 		SELECT Cast(SetItem AS Int)
 		FROM dbo.NamedSetItemsSelect('dbo.ManagerTable', 'Не учитывать в контроле посещения');
-		
+
 		INSERT INTO @ClientKind
 		SELECT Cast(SetItem AS SmallInt)
 		FROM dbo.NamedSetItemsSelect('dbo.ClientKind', 'DefaultChecked');
@@ -45,7 +45,7 @@ BEGIN
 		INSERT INTO @ContactType
 		SELECT Cast(SetItem AS UniqueIdentifier)
 		FROM dbo.NamedSetItemsSelect('dbo.ClientContactType', 'Посещение');
-		
+
 		INSERT INTO @ClientWrite
 		SELECT WCL_ID
 		FROM dbo.[ClientList@Get?Write]() a;
@@ -69,14 +69,16 @@ BEGIN
 			AND (LAST_DATE IS NULL OR LAST_DATE < @ControlDate)
 		ORDER BY ISNULL(LAST_DATE, GETDATE()) DESC, LAST_DATE DESC, ManagerId, ServiceId
 		OPTION(RECOMPILE);
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTACT_WARNING] TO rl_contact_warning;
+GO

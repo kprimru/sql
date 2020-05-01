@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[OFFER_DETAIL_SELECT]
+ALTER PROCEDURE [Tender].[OFFER_DETAIL_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,17 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 		
-			ID, ID_CLIENT, CLIENT, ADDRESS, 
+		SELECT 
+			ID, ID_CLIENT, CLIENT, ADDRESS,
 			CLIENT + ' (' + ADDRESS + ')' AS CL_STR,
 			ID_SYSTEM, ID_OLD_SYSTEM, DISTR, ID_NET, ID_OLD_NET,
-			CASE 
-				WHEN d.SystemID IS NULL OR d.SystemID = b.SystemID THEN b.SystemShortName 
-				ELSE 'с ' + d.SystemShortName + ' на ' + b.SystemShortName 
+			CASE
+				WHEN d.SystemID IS NULL OR d.SystemID = b.SystemID THEN b.SystemShortName
+				ELSE 'с ' + d.SystemShortName + ' на ' + b.SystemShortName
 			END AS SYS_STR,
-			CASE 
+			CASE
 				WHEN e.DistrTypeID IS NULL OR e.DistrTypeID = c.DistrTypeID THEN c.DistrTypeName
-				ELSE 'с ' + e.DistrTypeName + ' на ' + c.DistrTypeName 
+				ELSE 'с ' + e.DistrTypeName + ' на ' + c.DistrTypeName
 			END AS NET_STR,
 			DELIVERY_BASE, DELIVERY,
 			EXCHANGE_BASE, EXCHANGE,
@@ -40,7 +40,7 @@ BEGIN
 			SUPPORT_BASE, SUPPORT,
 			SUPPORT_TOTAL,
 			MON_CNT
-		FROM 
+		FROM
 			Tender.OfferDetail a
 			INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
 			INNER JOIN dbo.DistrTypeTable c ON a.ID_NET = c.DistrTypeID
@@ -48,14 +48,17 @@ BEGIN
 			LEFT OUTER JOIN dbo.DistrTypeTable e ON a.ID_OLD_NET = e.DistrTypeID
 		WHERE a.ID_OFFER = @ID
 		ORDER BY CLIENT, ADDRESS, b.SystemOrder, DISTR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[OFFER_DETAIL_SELECT] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[OFFER_DETAIL_SELECT] TO rl_tender_u;
+GO

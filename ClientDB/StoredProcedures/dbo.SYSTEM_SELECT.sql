@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_SELECT]
+ALTER PROCEDURE [dbo].[SYSTEM_SELECT]
 	@FILTER			VARCHAR(100) = NULL,
 	@SYSTEM_ACTIVE	BIT = NULL
 AS
@@ -23,20 +23,20 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.SystemID, SystemShortName, a.SystemBaseName, SystemNumber, HostShort, a.HostID,
 			dbo.FileByteSizeToStr(
 				(
 					SELECT SUM(IBS_SIZE)
-					FROM 
+					FROM
 						dbo.InfoBankSizeView y WITH(NOEXPAND)
 						INNER JOIN dbo.SystemBankTable z ON z.InfoBankID = IBF_ID_IB
 					WHERE z.SystemID = a.SystemID
-						AND IBS_DATE = 
+						AND IBS_DATE =
 							(
 								SELECT MAX(IBS_DATE)
 								FROM dbo.InfoBankSizeView t WITH(NOEXPAND)
-								WHERE t.IBF_ID_IB = y.IBF_ID_IB							
+								WHERE t.IBF_ID_IB = y.IBF_ID_IB
 							)
 				)
 			) AS IBS_SIZE,
@@ -59,14 +59,16 @@ BEGIN
 			(@SYSTEM_ACTIVE IS NULL
 			OR SystemActive = @SYSTEM_ACTIVE)
 		ORDER BY SystemOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_SELECT] TO rl_system_r;
+GO

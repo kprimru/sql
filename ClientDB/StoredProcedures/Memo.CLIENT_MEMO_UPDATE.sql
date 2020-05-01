@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[CLIENT_MEMO_UPDATE]
+ALTER PROCEDURE [Memo].[CLIENT_MEMO_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@CLIENT	INT,
 	@CONTRACT	NVARCHAR(512),
@@ -61,17 +61,19 @@ BEGIN
 			LETTER_CANCEL		=	@CANCEL,
 			SYSTEMS				=	@SYSTEM
 		WHERE ID = @ID
-		
+
 		DELETE FROM Memo.ClientMemoConditions
 		WHERE ID_MEMO = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[CLIENT_MEMO_UPDATE] TO rl_client_memo_u;
+GO

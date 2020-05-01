@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Purchase].[TALK_HISTORY_UPDATE]
+ALTER PROCEDURE [Purchase].[TALK_HISTORY_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@CLIENT	INT,
 	@DATE	SMALLDATETIME,
@@ -42,14 +42,16 @@ BEGIN
 			TH_UPDATE	=	GETDATE(),
 			TH_USER		=	ORIGINAL_LOGIN()
 		WHERE TH_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Purchase].[TALK_HISTORY_UPDATE] TO rl_talk_history_u;
+GO

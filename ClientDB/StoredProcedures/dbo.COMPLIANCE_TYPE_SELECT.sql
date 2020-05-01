@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[COMPLIANCE_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[COMPLIANCE_TYPE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
@@ -22,20 +22,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ComplianceTypeID, ComplianceTypeName, ComplianceTypeShortName	
+		SELECT ComplianceTypeID, ComplianceTypeName, ComplianceTypeShortName
 		FROM dbo.ComplianceTypeTable
 		WHERE @FILTER IS NULL
-			OR ComplianceTypeName LIKE @FILTER 
+			OR ComplianceTypeName LIKE @FILTER
 			OR ComplianceTypeShortName LIKE @FILTER
 		ORDER BY ComplianceTypeOrder
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COMPLIANCE_TYPE_SELECT] TO rl_compliance_type_r;
+GO

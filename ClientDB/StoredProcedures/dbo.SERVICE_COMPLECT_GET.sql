@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SERVICE_COMPLECT_GET]
+ALTER PROCEDURE [dbo].[SERVICE_COMPLECT_GET]
 	@ID_SERVICE INT
 AS
 BEGIN
@@ -42,14 +42,16 @@ BEGIN
 			AND R.COMPLECT IS NOT NULL
 			AND C.ServiceID = @ID_SERVICE
 		ORDER BY R.COMPLECT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SERVICE_COMPLECT_GET] TO public;
+GO

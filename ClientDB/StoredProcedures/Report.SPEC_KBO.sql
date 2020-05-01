@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[SPEC_KBO]
+ALTER PROCEDURE [Report].[SPEC_KBO]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,9 +22,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ISNULL(ManagerName, SubhostName) AS 'Руководитель', 
-			CASE WHEN ManagerName IS NULL THEN NULL ELSE ServiceName END AS 'СИ', 
+		SELECT
+			ISNULL(ManagerName, SubhostName) AS 'Руководитель',
+			CASE WHEN ManagerName IS NULL THEN NULL ELSE ServiceName END AS 'СИ',
 			a.DistrStr AS 'Дистрибутив', NT_SHORT AS 'Сеть', ClientName AS 'Клиент', SST_SHORT AS 'Тип',
 			REVERSE(STUFF(REVERSE(
 				(
@@ -32,7 +32,7 @@ BEGIN
 					FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 					WHERE a.Complect = b.Complect
 						AND b.DS_REG = 0
-						AND b.SystemShortName <> a.SystemShortName					
+						AND b.SystemShortName <> a.SystemShortName
 					ORDER BY SystemOrder FOR XML PATH('')
 			)), 1, 1, '')) AS [Дополнительные системы]
 		FROM dbo.RegNodeComplectClientView a
@@ -48,14 +48,16 @@ BEGIN
 						AND z.SystemBaseName = 'BORG'
 				)
 		ORDER BY ISNULL(ManagerName, ''), 1, 2, 4
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[SPEC_KBO] TO rl_report;
+GO

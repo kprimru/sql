@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Maintenance].[GlobalControlDocumentUser]
+ALTER FUNCTION [Maintenance].[GlobalControlDocumentUser]
 ()
 RETURNS VARCHAR(500)
 AS
@@ -14,6 +14,6 @@ BEGIN
 	SELECT @RES = GS_VALUE
 	FROM Maintenance.GlobalSettings
 	WHERE GS_NAME = 'CONTROL_DOCUMENT_USER'
-		
+
 	RETURN @RES
 END

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_UPDATE]
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(100),
 	@DAY	INT,
@@ -32,14 +32,16 @@ BEGIN
 			ClientTypeDay = @DAY,
 			ClientTypePapper = @PAPPER
 		WHERE ClientTypeID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_UPDATE] TO rl_client_type_u;
+GO

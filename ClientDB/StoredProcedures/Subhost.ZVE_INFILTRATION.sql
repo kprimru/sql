@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Subhost].[ZVE_INFILTRATION]
+ALTER PROCEDURE [Subhost].[ZVE_INFILTRATION]
 	@SUBHOST	NVARCHAR(16),
 	@EMPTY		BIT
 WITH RECOMPILE
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ClientName, DistrStr, NT_SHORT, SST_SHORT,
 			CNT
 		FROM
@@ -32,9 +32,9 @@ BEGIN
 				SELECT SH_CAPTION, SH_NAME, ClientName, DistrStr, HostID, DistrNumber, CompNumber, NT_SHORT, SST_SHORT, SystemOrder,
 					(
 						SELECT COUNT(*)
-						FROM 
+						FROM
 							dbo.ClientDutyQuestion a
-							INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber			
+							INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 						WHERE a.DISTR = DistrNumber AND a.COMP = CompNumber AND c.HostID = CLIENT.HostID
 					) AS CNT
 				FROM
@@ -58,21 +58,23 @@ BEGIN
 					) AS CLIENT
 			) AS o_O
 		WHERE SH_NAME = @SUBHOST
-			AND 
+			AND
 				(
-					@EMPTY = 0 
+					@EMPTY = 0
 					OR
-					@EMPTY = 1 AND CNT = 0					
+					@EMPTY = 1 AND CNT = 0
 				)
 		ORDER BY SystemOrder, DistrNumber, CompNumber, ClientName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Subhost].[ZVE_INFILTRATION] TO rl_web_subhost;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Tender].[OFFER_GET]
+ALTER PROCEDURE [Tender].[OFFER_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -22,8 +22,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DATE, ID_VENDOR, ID_TAX, 
+		SELECT
+			DATE, ID_VENDOR, ID_TAX,
 			ACTUAL, ACTUAL_START, ACTUAL_FINISH, ACTUAL_DATE, ACTUAL_TYPES, ACTUAL_COEF,
 			EXCHANGE, EXCHANGE_TYPES, EXCHANGE_COEF,
 			DELIVERY, DELIVERY_TYPES, DELIVERY_COEF,
@@ -31,14 +31,17 @@ BEGIN
 			QUERY_DATE
 		FROM Tender.Offer
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Tender].[OFFER_GET] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[OFFER_GET] TO rl_tender_u;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Contract].[CONTRACT_ADDITIONAL_SELECT]
+ALTER PROCEDURE [Contract].[CONTRACT_ADDITIONAL_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,18 +23,20 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ID, NUM, REG_DATE, DATE, RETURN_DATE, a.NOTE
-		FROM 
+		FROM
 			Contract.Additional a
 		WHERE ID_CONTRACT = @ID
 		ORDER BY NUM, DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CONTRACT_ADDITIONAL_SELECT] TO rl_contract_register_r;
+GO

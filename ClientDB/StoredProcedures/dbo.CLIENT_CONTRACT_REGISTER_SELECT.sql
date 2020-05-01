@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_REGISTER_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_REGISTER_SELECT]
 	@ID	INT
 WITH EXECUTE AS OWNER
 AS
@@ -28,14 +28,16 @@ BEGIN
 		INNER JOIN dbo.Vendor	V ON C.ID_VENDOR = V.ID
 		ORDER BY
 			SORT_INDEX, DATE DESC, NUM DESC
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_REGISTER_SELECT] TO rl_client_contract_u;
+GO

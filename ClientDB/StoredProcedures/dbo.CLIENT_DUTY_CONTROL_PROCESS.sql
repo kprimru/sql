@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_DUTY_CONTROL_PROCESS]
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_CONTROL_PROCESS]
 	@CALL	UNIQUEIDENTIFIER,
 	@ANSWER	TINYINT,
 	@SATISF	TINYINT,
@@ -39,14 +39,16 @@ BEGIN
 		ELSE
 			INSERT INTO dbo.ClientDutyControl(CDC_ID_CALL, CDC_ANSWER, CDC_SATISF, CDC_NOTE)
 				VALUES(@CALL, @ANSWER, @SATISF, @NOTE)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_CONTROL_PROCESS] TO rl_duty_control;
+GO

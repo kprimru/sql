@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ACT_CONTRACT_CHECK]
+ALTER PROCEDURE [dbo].[ACT_CONTRACT_CHECK]
 	@PERIOD		UNIQUEIDENTIFIER,
 	@MANAGER	INT,
 	@SERVICE	INT
@@ -26,7 +26,7 @@ BEGIN
 
 		DECLARE @MON	SMALLDATETIME
 
-		SELECT @MON = START 
+		SELECT @MON = START
 		FROM Common.Period
 		WHERE ID = @PERIOD
 
@@ -34,9 +34,9 @@ BEGIN
 			SET @MANAGER = NULL
 
 		SELECT ClientID, CLientFullName, ServiceName, ManagerName, DistrStr, CL_PSEDO, CL_FULL_NAME, CK_NAME
-		FROM 
+		FROM
 			[PC275-SQL\DELTA].DBF.dbo.ContractTable
-			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ContractKind ON CO_ID_KIND = CK_ID	
+			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ContractKind ON CO_ID_KIND = CK_ID
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrFinancingView ON COD_ID_DISTR = DIS_ID
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON CL_ID = CO_ID_CLIENT
@@ -51,7 +51,7 @@ BEGIN
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						[PC275-SQL\DELTA].DBF.dbo.ActDistrTable
 						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ActTable ON ACT_ID = AD_ID_ACT
 						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
@@ -61,14 +61,16 @@ BEGIN
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, DISTR, COMP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CONTRACT_CHECK] TO rl_act_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INFO_BANK_SIZE_LOAD2]
+ALTER PROCEDURE [dbo].[INFO_BANK_SIZE_LOAD2]
 	@Data	NVARCHAR(MAX)
 AS
 BEGIN
@@ -18,9 +18,9 @@ BEGIN
 	DECLARE
 		@Xml			Xml,
 		@ToDay			SmallDateTime;
-		
+
 	DECLARE @Ib Table
-	(				
+	(
 		[InfoBankName]		VarChar(100)	NOT NULL,
 		[InfoBankFile]		VarChar(100)	NOT NULL,
 		[InfoBankFileSize]	BigInt			NOT NULL
@@ -38,7 +38,7 @@ BEGIN
 		SET @ToDay	= dbo.DateOf(GetDate());
 
 		INSERT INTO @Ib([InfoBankName], [InfoBankFile], [InfoBankFileSize])
-		SELECT 
+		SELECT
 			c.value('(@Ib)[1]',		'VarChar(100)'),
 			c.value('(@File)[1]',	'VarChar(100)'),
 			c.value('(@Size)[1]',	'BigInt')
@@ -83,14 +83,16 @@ BEGIN
 					AND IBS_DATE = @ToDay
 			)
 		OPTION(RECOMPILE);
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INFO_BANK_SIZE_LOAD2] TO rl_info_bank_size_u;
+GO

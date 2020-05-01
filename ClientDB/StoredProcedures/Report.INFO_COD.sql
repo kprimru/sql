@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[INFO_COD]
+ALTER PROCEDURE [Report].[INFO_COD]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,22 +22,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DistrStr AS [Осн. дистрибутив], 
-			Client AS [Клиента], Manager AS [Рук-ль / подхост], 
-			ServiceName AS [СИ], 
-			UF_CREATE AS [USR получен], UF_INFO_COD AS [Дата файла info.cod]		
+		SELECT
+			DistrStr AS [Осн. дистрибутив],
+			Client AS [Клиента], Manager AS [Рук-ль / подхост],
+			ServiceName AS [СИ],
+			UF_CREATE AS [USR получен], UF_INFO_COD AS [Дата файла info.cod]
 		FROM
 			(
-				SELECT DISTINCT 	
-					CASE 
-						WHEN ServiceName IS NULL THEN 0 
-						ELSE 1 
-					END AS TP, 
+				SELECT DISTINCT 
+					CASE
+						WHEN ServiceName IS NULL THEN 0
+						ELSE 1
+					END AS TP,
 					T.UF_INFO_COD, g.DistrStr, UD_DISTR, UD_COMP,
-					ISNULL(ClientFullName, g.Comment) AS Client, ServiceName, 
+					ISNULL(ClientFullName, g.Comment) AS Client, ServiceName,
 					ISNULL(ManagerName, SubhostName) AS Manager, d.SystemOrder, a.UF_CREATE
-				FROM 
+				FROM
 					USR.USRActiveView a
 					INNER JOIN USR.USRFile b ON a.UF_ID = b.UF_ID
 					INNER JOIN USR.USRFileTech t ON t.UF_ID = b.UF_ID
@@ -49,16 +49,18 @@ BEGIN
 					AND t.UF_INFO_COD IS NOT NULL
 					AND g.ID IS NOT NULL
 			) AS o_O
-		ORDER BY 
+		ORDER BY
 			TP, Manager, ServiceName, Client, SystemOrder, UD_DISTR, UD_COMP
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Report].[INFO_COD] TO rl_report;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Salary].[SERVICE_SALARY_PRINT]
+ALTER PROCEDURE [Salary].[SERVICE_SALARY_PRINT]
 	@PERIOD	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -23,25 +23,25 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ID, ServiceName, ServicePositionName, Name, CL_COUNT, INSURANCE, 
+			ID, ServiceName, ServicePositionName, Name, CL_COUNT, INSURANCE,
 			MANAGER_RATE, STUDY_COUNT, PRICE_DELTA, WEIGHT_DELTA
 		FROM
 			(
-				SELECT 
+				SELECT
 					ID, ServiceName, ServicePositionName, Name, CL_COUNT, INSURANCE,
 					MANAGER_RATE, STUDY_COUNT, PRICE_DELTA, WEIGHT_DELTA
 				FROM
 					(
-						SELECT 
+						SELECT
 							ID, ServiceName, ServicePositionName, NAME, BASE_PRICE, CL_COUNT, INSURANCE,
 							MANAGER_RATE,
 							STUDY_COUNT,
-							PRICE_DELTA,						
+							PRICE_DELTA,
 							WEIGHT_DELTA
 						FROM
 							(
-								SELECT 
-									a.ID, c.ServiceName, d.ServicePositionName, MANAGER_RATE, INSURANCE, 3500 AS BASE_PRICE, b.NAME, 
+								SELECT
+									a.ID, c.ServiceName, d.ServicePositionName, MANAGER_RATE, INSURANCE, 3500 AS BASE_PRICE, b.NAME,
 									ISNULL((
 										SELECT COUNT(*)
 										FROM Salary.ServiceStudy z
@@ -62,7 +62,7 @@ BEGIN
 										FROM Salary.ServiceClient z
 										WHERE ID_SALARY = a.ID
 									) AS CL_COUNT
-								FROM 
+								FROM
 									Salary.Service a
 									INNER JOIN Common.Period b ON a.ID_MONTH  = b.ID
 									INNER JOIN dbo.ServiceTable c ON a.ID_SERVICE = c.ServiceID
@@ -72,14 +72,16 @@ BEGIN
 					) AS a
 			) AS a
 		ORDER BY ServiceName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Salary].[SERVICE_SALARY_PRINT] TO rl_salary;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[HOTLINE_FILTER]
+ALTER PROCEDURE [dbo].[HOTLINE_FILTER]
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@CLIENT		NVARCHAR(256),
@@ -31,12 +31,12 @@ BEGIN
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
 		SELECT ServiceStatusIndex, ManagerName, ServiceName, ClientFullName, DistrStr,
-			FIRST_DATE, CHAT, 
+			FIRST_DATE, CHAT,
 			RIC_PERSONAL, FIRST_ANS,
 			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS REACTION,
 			DATEDIFF(SECOND, START, FIRST_ANS) AS ANSWER_TIME,
 			FIO, PROFILE
-		FROM 
+		FROM
 			dbo.HotlineChatView a WITH(NOEXPAND)
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
 			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
@@ -47,24 +47,26 @@ BEGIN
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			AND (CHAT LIKE @TEXT OR @TEXT IS NULL)
 			AND (
-					@PERSONAL IS NULL 
-					OR 
+					@PERSONAL IS NULL
+					OR
 					EXISTS
 						(
-							SELECT * 
+							SELECT *
 							FROM dbo.TableStringFromXML(@PERSONAL) z
 							WHERE a.RIC_PERSONAL LIKE '%' + z.ID + '%'
 						)
 				)
-		ORDER BY FIRST_DATE DESC	
-		
+		ORDER BY FIRST_DATE DESC
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOTLINE_FILTER] TO rl_hotline_filter;
+GO

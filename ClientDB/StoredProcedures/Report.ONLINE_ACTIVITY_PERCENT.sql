@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[ONLINE_ACTIVITY_PERCENT]
+ALTER PROCEDURE [Report].[ONLINE_ACTIVITY_PERCENT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -68,14 +68,14 @@ BEGIN
 			AND NT_TECH NOT IN (0, 1)
 			AND r.DS_REG = 0
 		ORDER BY R.SubhostName, C.ManagerName, C.ServiceName, C.ClientFullName, R.Comment, R.SystemOrder, R.DistrNumber, R.CompNumber
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

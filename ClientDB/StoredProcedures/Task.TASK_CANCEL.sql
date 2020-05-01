@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Task].[TASK_CANCEL]
+ALTER PROCEDURE [Task].[TASK_CANCEL]
 	@ID		UNIQUEIDENTIFIER,
 	@NOTE	NVARCHAR(MAX)
 AS
@@ -27,7 +27,7 @@ BEGIN
 			SELECT @ID, DATE, TIME, SENDER, RECEIVER, ID_CLIENT, ID_STATUS, SHORT, NOTE, EXPIRE, EXEC_DATE, EXEC_NOTE, NOTIFY, NOTIFY_DAY, 2, UPD_DATE, UPD_USER
 			FROM Task.Tasks
 			WHERE ID = @ID
-			
+
 		UPDATE Task.Tasks
 		SET EXEC_DATE = GETDATE(),
 			EXEC_NOTE = @NOTE,
@@ -35,14 +35,16 @@ BEGIN
 			UPD_USER  = ORIGINAL_LOGIN(),
 			ID_STATUS = (SELECT ID FROM Task.TaskStatus WHERE PSEDO = N'CANCEL')
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Task].[TASK_CANCEL] TO rl_task_w;
+GO

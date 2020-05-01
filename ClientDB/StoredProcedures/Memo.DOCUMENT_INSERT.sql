@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Memo].[DOCUMENT_INSERT]	
+ALTER PROCEDURE [Memo].[DOCUMENT_INSERT]
 	@NAME	NVARCHAR(512),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
@@ -28,16 +28,18 @@ BEGIN
 		INSERT INTO Memo.Document(NAME)
 			OUTPUT inserted.ID INTO @TBL
 			VALUES(@NAME)
-			
+
 		SELECT @ID = ID FROM @TBL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Memo].[DOCUMENT_INSERT] TO rl_memo_document_i;
+GO

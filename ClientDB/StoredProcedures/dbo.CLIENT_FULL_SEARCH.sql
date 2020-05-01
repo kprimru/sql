@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_FULL_SEARCH]
+ALTER PROCEDURE [dbo].[CLIENT_FULL_SEARCH]
 	@NAME			VARCHAR(100) = NULL,
 	@ADDRESS		VARCHAR(100) = NULL,
 	@SYS			INT = NULL,
@@ -38,7 +38,7 @@ CREATE PROCEDURE [dbo].[CLIENT_FULL_SEARCH]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -79,11 +79,11 @@ BEGIN
 		INSERT INTO @rclient(RCL_ID)
 		SELECT WCL_ID
 		FROM [dbo].[ClientList@Get?Read]();
-			
+
 		DECLARE @CUR_DATE SMALLDATETIME;
-		
+
 		SET @CUR_DATE = dbo.DateOf(GETDATE());
-			
+
 		IF @SIMPLE IS NULL
 		BEGIN
 			IF (@SYS IS NOT NULL) OR (@DISTR IS NOT NULL)
@@ -93,7 +93,7 @@ BEGIN
 				WHERE ((SystemID = @SYS) OR (@SYS IS NULL))
 					AND ((CONVERT(VARCHAR(20), DISTR) LIKE @DISTR) OR (@DISTR IS NULL));
 			ELSE IF @NAME IS NOT NULL AND @HIST = 0
-				INSERT INTO @client(CL_ID)							
+				INSERT INTO @client(CL_ID)
 				SELECT ClientID
 				FROM dbo.ClientTable
 				WHERE ClientFullName LIKE @NAME
@@ -113,7 +113,7 @@ BEGIN
 				FROM dbo.ClientTable
 				WHERE ClientServiceID = @SERVICE
 					AND STATUS = 1;
-			ELSE		
+			ELSE
 				INSERT INTO @client(CL_ID)
 				SELECT RCL_ID
 				FROM @rclient;
@@ -126,8 +126,8 @@ BEGIN
 					FROM @rclient
 				)
 			OPTION (RECOMPILE);
-			
-		
+
+
 			IF (@SYS IS NOT NULL) OR (@DISTR IS NOT NULL)
 			BEGIN
 				IF @ACTIVE_SYS = 1
@@ -150,7 +150,7 @@ BEGIN
 								AND (CONVERT(VARCHAR(20), DISTR) LIKE @DISTR OR @DISTR IS NULL)
 						)
 					OPTION (RECOMPILE);
-			END	
+			END
 
 			IF @DIR IS NOT NULL
 				DELETE FROM @client
@@ -158,19 +158,19 @@ BEGIN
 					(
 						SELECT CP_ID_CLIENT
 						FROM dbo.ClientPersonal
-						WHERE ISNULL(CP_SURNAME + ' ', '') + ISNULL(CP_NAME + ' ', '') + ISNULL(CP_PATRON, '') LIKE @DIR 
-							OR CP_PHONE LIKE @DIR 
+						WHERE ISNULL(CP_SURNAME + ' ', '') + ISNULL(CP_NAME + ' ', '') + ISNULL(CP_PATRON, '') LIKE @DIR
+							OR CP_PHONE LIKE @DIR
 							OR CP_PHONE_S LIKE @DIR
 							OR CP_POS LIKE @DIR
-							
+
 						UNION
-						
+
 						SELECT ClientID
 						FROM dbo.ClientPersonalOtherView
 						WHERE @PERSONAL_DEEP = 1
 							AND (
-									ISNULL(SURNAME + ' ', '') + ISNULL(NAME + ' ', '') + ISNULL(PATRON, '') LIKE @DIR 
-									OR PHONE LIKE @DIR 
+									ISNULL(SURNAME + ' ', '') + ISNULL(NAME + ' ', '') + ISNULL(PATRON, '') LIKE @DIR
+									OR PHONE LIKE @DIR
 									OR POS LIKE @DIR
 								)
 					)
@@ -214,9 +214,9 @@ BEGIN
 							OR ClientShortName LIKE @NAME
 							OR ClientOfficial LIKE @NAME
 							OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
-							
+
 						UNION
-						
+
 						SELECT ID_MASTER
 						FROM dbo.ClientTable
 						WHERE (ClientFullName LIKE @NAME
@@ -238,7 +238,7 @@ BEGIN
 					)
 				OPTION (RECOMPILE);
 
-		
+
 
 			IF @STATUS IS NOT NULL
 				DELETE FROM @client
@@ -267,7 +267,7 @@ BEGIN
 				WHERE CL_ID NOT IN
 					(
 						SELECT ClientID
-						FROM 
+						FROM
 							dbo.ClientTable
 							INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 						WHERE ManagerID = @MANAGER AND STATUS = 1
@@ -343,7 +343,7 @@ BEGIN
 				WHERE CL_ID NOT IN
 					(
 						SELECT ClientID
-						FROM 
+						FROM
 							(
 								SELECT ClientID, MAX(DisconnectDate) AS DisconnectDate
 								FROM dbo.ClientDisconnectView WITH(NOEXPAND)
@@ -358,7 +358,7 @@ BEGIN
 				WHERE CL_ID NOT IN
 					(
 						SELECT ClientID
-						FROM 
+						FROM
 							(
 								SELECT ClientID, MAX(DisconnectDate) AS DisconnectDate
 								FROM dbo.ClientDisconnectView WITH(NOEXPAND)
@@ -378,7 +378,7 @@ BEGIN
 			INSERT INTO @search(WRD)
 			SELECT DISTINCT '%' + Word + '%'
 			FROM dbo.SplitString(@SIMPLE);
-			
+
 			IF @STATUS IS NOT NULL
 				DELETE FROM @client
 				WHERE CL_ID NOT IN
@@ -401,7 +401,7 @@ BEGIN
 					)
 				OPTION(RECOMPILE);
 
-			DELETE 
+			DELETE
 			FROM @client
 			WHERE CL_ID IN
 				(
@@ -409,16 +409,16 @@ BEGIN
 					FROM dbo.ClientIndex z WITH(NOLOCK)
 					WHERE EXISTS
 						(
-							SELECT * 
+							SELECT *
 							FROM @search
 							WHERE NOT (DATA LIKE WRD)
 						)
 				)
 			OPTION(RECOMPILE);
 		END;
-			
+
 		INSERT INTO @names(CL_ID, NAMES)
-		SELECT t.CL_ID, 
+		SELECT t.CL_ID,
 			REVERSE(STUFF(REVERSE(
 			(
 				SELECT NAME + '; '
@@ -429,15 +429,15 @@ BEGIN
 		FROM @client t
 		OPTION(RECOMPILE);
 
-		SELECT 
-			a.ClientID, 
+		SELECT
+			a.ClientID,
 			ClientFullName,
-			NAMES AS ClientParallelName, 
-			CONVERT(VARCHAR(255), CA_STR) AS ClientAdress, 
-			ServiceName, ManagerName,				
-			ServiceStatusIndex, OriClient,		
-				
-			CONVERT(BIT, CASE 
+			NAMES AS ClientParallelName,
+			CONVERT(VARCHAR(255), CA_STR) AS ClientAdress,
+			ServiceName, ManagerName,
+			ServiceStatusIndex, OriClient,
+
+			CONVERT(BIT, CASE
 				WHEN EXISTS
 					(
 						SELECT *
@@ -452,7 +452,7 @@ BEGIN
 				WHEN EXISTS
 					(
 						SELECT *
-						FROM dbo.ClientTrustView WITH(NOEXPAND)	
+						FROM dbo.ClientTrustView WITH(NOEXPAND)
 						WHERE CT_TRUST = 0 AND CT_MAKE IS NULL AND CC_ID_CLIENT = a.ClientID
 					) THEN 1
 				ELSE 0
@@ -469,7 +469,7 @@ BEGIN
 			CONVERT(BIT, 0) AS IPLock,
 			(
 				SELECT TOP 1 DATE
-				FROM 
+				FROM
 					dbo.ClientSeminarDateView z WITH(NOEXPAND)
 				WHERE z.ID_CLIENT = t.CL_ID
 				ORDER BY DATE DESC
@@ -477,7 +477,7 @@ BEGIN
 			DayName,
 			DayOrder,
 			ServiceStart,
-			CONVERT(BIT, CASE 
+			CONVERT(BIT, CASE
 				WHEN EXISTS
 					(
 						SELECT *
@@ -505,30 +505,32 @@ BEGIN
 					) THEN 1
 				ELSE 0
 			END) AS ClientControlNew
-		FROM 
+		FROM
 			@client t
 			INNER JOIN dbo.ClientTable a ON t.CL_ID = a.ClientID
 			INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 			INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
-			INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID 
+			INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID
 			LEFT OUTER JOIN dbo.ClientAddressView e ON a.ClientID = e.CA_ID_CLIENT AND e.AT_REQUIRED = 1
 			LEFT OUTER JOIN @names f ON f.CL_ID = t.CL_ID
-			LEFT OUTER JOIN dbo.DayTable g ON g.DayID = a.DayID		
+			LEFT OUTER JOIN dbo.DayTable g ON g.DayID = a.DayID
 		ORDER BY ClientFullName
 		OPTION (RECOMPILE);
-		
+
 		SELECT @COUNT = COUNT(*), @PCOUNT = SUM(ClientNewsPaper), @BCOUNT = SUM(ClientMainBook)
 		FROM @client
 		INNER JOIN dbo.ClientTable ON CL_ID = ClientID
 		OPTION (RECOMPILE);
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_FULL_SEARCH] TO rl_client_list;
+GO

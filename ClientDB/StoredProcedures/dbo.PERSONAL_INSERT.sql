@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[PERSONAL_INSERT]	
+ALTER PROCEDURE [dbo].[PERSONAL_INSERT]
 	@DEP	VARCHAR(50),
 	@SHORT	VARCHAR(50),
 	@FULL	VARCHAR(500),
@@ -29,14 +29,16 @@ BEGIN
 			VALUES(@DEP, @SHORT, @FULL)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERSONAL_INSERT] TO rl_personal_other_i;
+GO

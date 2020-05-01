@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [USR].[COMPLIANCE_GRAPH_REPORT]
+ALTER PROCEDURE [USR].[COMPLIANCE_GRAPH_REPORT]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@MANAGER	INT,
@@ -30,9 +30,9 @@ BEGIN
 		DECLARE @WEEK TABLE
 			(
 				WEEK_ID	INT IDENTITY(1, 1),
-				WBEGIN SMALLDATETIME, 
+				WBEGIN SMALLDATETIME,
 				WEND SMALLDATETIME
-			)	
+			)
 
 		DECLARE @TBEGIN SMALLDATETIME
 		DECLARE @TEND SMALLDATETIME
@@ -44,7 +44,7 @@ BEGIN
 		BEGIN
 			SET @TBEGIN = @BEGIN
 			SET @TEND = DATEADD(DAY, 7 - DATEPART(WEEKDAY, @BEGIN), @BEGIN)
-			
+
 			IF @TEND >= @END
 				SET @TEND = @END
 
@@ -74,13 +74,13 @@ BEGIN
 
 		INSERT INTO #client(CL_ID)
 			SELECT ClientID
-			FROM 
+			FROM
 				dbo.ClientTable
 				INNER JOIN dbo.ServiceTable ON ServiceID = ClientServiceID
 			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 				AND STATUS = 1
-		
+
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
 
@@ -95,33 +95,33 @@ BEGIN
 			)
 
 		INSERT INTO #res(WEEK_ID, WBEGIN, WEND, ER_COUNT, ALL_COUNT, PER)
-			SELECT 
+			SELECT
 				WEEK_ID, WBEGIN, WEND, ER_COUNT, ALL_COUNT,
 				ROUND(
-				CASE ALL_COUNT 
+				CASE ALL_COUNT
 					WHEN 0 THEN 0
 					ELSE 100 * CONVERT(DECIMAL(8, 4), ER_COUNT) / ALL_COUNT
 				END, 2) AS PER
 			FROM
 				(
-					SELECT 
-						WEEK_ID, WBEGIN, WEND, 
+					SELECT
+						WEEK_ID, WBEGIN, WEND,
 						(
 							SELECT COUNT(DISTINCT UD_ID)
-							FROM 
-								#client 
+							FROM
+								#client
 								INNER JOIN USR.USRComplianceView WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
-							WHERE UF_DATE BETWEEN WBEGIN AND WEND						
+							WHERE UF_DATE BETWEEN WBEGIN AND WEND
 								AND UF_COMPLIANCE = '#HOST'
 						) AS ER_COUNT,
 						(
 							SELECT COUNT(DISTINCT UD_ID)
-							FROM 
+							FROM
 								#client
 								INNER JOIN USR.USRComplianceView WITH(NOEXPAND) ON UD_ID_CLIENT = CL_ID
 							WHERE UF_DATE BETWEEN WBEGIN AND WEND
 						) AS ALL_COUNT
-					FROM @WEEK	
+					FROM @WEEK
 				) AS o_O
 			ORDER BY WEEK_ID
 
@@ -130,20 +130,22 @@ BEGIN
 		SELECT @PER_AVG = AVG(PER) FROM #res
 
 		SELECT * FROM #res ORDER BY WEEK_ID
-		
+
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [USR].[COMPLIANCE_GRAPH_REPORT] TO rl_report_compliance_graph;
+GO

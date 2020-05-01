@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Report].[EMAIL_EMPTY]
+ALTER PROCEDURE [Report].[EMAIL_EMPTY]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -22,24 +22,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			a.ClientFullName AS [Название клиента],
 			b.ServiceName AS [СИ],
 			b.ManagerName AS [Руководитель]
-		FROM 
+		FROM
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 		WHERE ISNULL(RTRIM(LTRIM(ClientEMail)), '') = ''
 		ORDER BY ManagerName, ServiceName, a.ClientFullName
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

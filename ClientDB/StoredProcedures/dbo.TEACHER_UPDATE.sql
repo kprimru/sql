@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[TEACHER_UPDATE]
+ALTER PROCEDURE [dbo].[TEACHER_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(250),
 	@LOGIN	VARCHAR(100),
@@ -32,14 +32,16 @@ BEGIN
 			TeacherReport = @REPORT,
 			TeacherNorma = @NORMA
 		WHERE TeacherID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TEACHER_UPDATE] TO rl_personal_teacher_u;
+GO
