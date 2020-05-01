@@ -75,6 +75,7 @@ WHERE O.type = 'P'
 	AND OBJECT_DEFINITION(O.[object_id]) NOT LIKE '%EXEC ^[Debug^].^[Execution@Start^]%' ESCAPE '^'
 	AND O.[name] NOT LIKE 'dt[_]%'
 	AND O.[name] NOT LIKE 'sp[_]%'
+	AND O.[name] NOT IN ('Execution@Finish', 'Execution@Start', 'ReRaise Error')
 ORDER BY S.[name], O.[name]
 --*/
 
