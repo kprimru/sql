@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SEND_MONTH_REPORT]
+ALTER PROCEDURE [dbo].[SEND_MONTH_REPORT]
 	@BEGIN	SMALLDATETIME = NULL,
 	@END	SMALLDATETIME = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
-		
+
 	IF @BEGIN IS NULL
 		SET @BEGIN = DATEADD(DAY, -7, CONVERT(DATETIME, CONVERT(VARCHAR(20), GETDATE(), 112), 112))
 
@@ -26,9 +26,9 @@ BEGIN
 
 	SET @SQL = N'
 
-	SELECT 
-		CONVERT(VARCHAR(1), 0) AS Subhost, LEFT(ClientFullName, 50) AS ClientFullName, 
-		LEFT(CONVERT(VARCHAR(3), CSD_SYS) + ''_'' + CONVERT(VARCHAR(6), CSD_DISTR) + 
+	SELECT
+		CONVERT(VARCHAR(1), 0) AS Subhost, LEFT(ClientFullName, 50) AS ClientFullName,
+		LEFT(CONVERT(VARCHAR(3), CSD_SYS) + ''_'' + CONVERT(VARCHAR(6), CSD_DISTR) +
 			CASE CSD_COMP
 				WHEN 1 THEN ''''
 				ELSE ''_'' + CONVERT(VARCHAR(2), CSD_COMP)
@@ -38,13 +38,13 @@ BEGIN
 	FROM
 		[PC275-SQL\ALPHA].ClientDB.dbo.ClientTable a INNER JOIN
 		[PC275-SQL\ALPHA].ClientDB.dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID INNER JOIN
-		[PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable c ON c.ManagerID = b.ManagerID INNER JOIN	
+		[PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable c ON c.ManagerID = b.ManagerID INNER JOIN
 		[PC275-SQL\ALPHA].ClientDB.dbo.ClientDistrView d WITH(NOEXPAND) ON d.ID_CLIENT = a.ClientID INNER JOIN
 		[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable e ON e.SystemID = d.SystemID INNER JOIN
-		[PC275-SQL\DELTA].DBF.dbo.RegNodeTable f ON f.RN_SYS_NAME = e.SystemBaseName 
+		[PC275-SQL\DELTA].DBF.dbo.RegNodeTable f ON f.RN_SYS_NAME = e.SystemBaseName
 							AND f.RN_DISTR_NUM = d.DISTR
 							AND f.RN_COMP_NUM = d.COMP INNER JOIN
-		IPLogs.dbo.ClientStatDetail g ON CSD_SYS = e.SystemNumber 
+		IPLogs.dbo.ClientStatDetail g ON CSD_SYS = e.SystemNumber
 							AND CSD_DISTR = d.DISTR
 							AND CSD_COMP = d.COMP
 	WHERE SystemRic = 20 AND ISNULL(g.CSD_START, g.CSD_END) >= ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''' AND ISNULL(g.CSD_END, g.CSD_START) < ''' + CONVERT(VARCHAR(20), @END, 112) + '''
@@ -52,10 +52,10 @@ BEGIN
 
 	UNION ALL
 
-	SELECT 
+	SELECT
 		CONVERT(VARCHAR(1), 1) AS Subhost, LEFT((Comment), 50),
 		LEFT(
-			CONVERT(VARCHAR(3), CSD_SYS) + ''_'' + CONVERT(VARCHAR(6), CSD_DISTR) + 
+			CONVERT(VARCHAR(3), CSD_SYS) + ''_'' + CONVERT(VARCHAR(6), CSD_DISTR) +
 			CASE CSD_COMP
 				WHEN 1 THEN ''''
 				ELSE ''_'' + CONVERT(VARCHAR(2), CSD_COMP)
@@ -63,9 +63,9 @@ BEGIN
 		NULL,
 		COUNT(ISNULL(CSD_START, GETDATE())) AS UpdateCount, MAX(ISNULL(ISNULL(CSD_START, CSD_END), GETDATE())) AS UpdateLast
 	FROM
-		IPLogs.dbo.ClientStatDetail z LEFT OUTER JOIN		
+		IPLogs.dbo.ClientStatDetail z LEFT OUTER JOIN
 		[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable a ON CSD_SYS = SystemNumber  LEFT OUTER JOIN
-		[PC275-SQL\ALPHA].ClientDB.dbo.RegNodeTable b ON a.SystemBaseName = b.SystemName							
+		[PC275-SQL\ALPHA].ClientDB.dbo.RegNodeTable b ON a.SystemBaseName = b.SystemName
 							AND CSD_DISTR = DistrNumber
 							AND	CSD_COMP = CompNumber
 	WHERE SystemRic = 20 AND ISNULL(z.CSD_START, z.CSD_END) >= ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''' AND ISNULL(z.CSD_END, z.CSD_START) < ''' + CONVERT(VARCHAR(20), @END, 112) + '''
@@ -75,13 +75,13 @@ BEGIN
 				FROM
 					[PC275-SQL\ALPHA].ClientDB.dbo.ClientTable a INNER JOIN
 					[PC275-SQL\ALPHA].ClientDB.dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID INNER JOIN
-					[PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable c ON c.ManagerID = b.ManagerID INNER JOIN	
+					[PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable c ON c.ManagerID = b.ManagerID INNER JOIN
 					[PC275-SQL\ALPHA].ClientDB.dbo.ClientDistrView d WITH(NOEXPAND) ON d.ID_CLIENT = a.ClientID INNER JOIN
 					[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable e ON e.SystemID = d.SystemID INNER JOIN
-					[PC275-SQL\DELTA].DBF.dbo.RegNodeTable f ON f.RN_SYS_NAME = e.SystemBaseName 
+					[PC275-SQL\DELTA].DBF.dbo.RegNodeTable f ON f.RN_SYS_NAME = e.SystemBaseName
 										AND f.RN_DISTR_NUM = d.DISTR
 										AND	f.RN_COMP_NUM = d.COMP INNER JOIN
-					IPLogs.dbo.ClientStatDetail g ON CSD_SYS = e.SystemNumber 
+					IPLogs.dbo.ClientStatDetail g ON CSD_SYS = e.SystemNumber
 										AND CSD_DISTR = d.DISTR
 										AND CSD_COMP = d.COMP
 				WHERE ISNULL(g.CSD_START, g.CSD_END) >= ''' + CONVERT(VARCHAR(20), @BEGIN, 112) + ''' AND ISNULL(g.CSD_END, g.CSD_START) < ''' + CONVERT(VARCHAR(20), @END, 112) + '''

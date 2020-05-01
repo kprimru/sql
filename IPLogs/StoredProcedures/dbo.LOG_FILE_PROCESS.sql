@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[LOG_FILE_PROCESS]
+ALTER PROCEDURE [dbo].[LOG_FILE_PROCESS]
 	@FILENAME	NVARCHAR(512),
 	@FILESIZE	BIGINT,
 	@SERVER		INT = NULL
@@ -23,7 +23,7 @@ BEGIN
 	BEGIN
 		IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
 			DROP TABLE #logfile
-		
+
 		CREATE TABLE #logfile
 			(
 				LOG_ROW	NVARCHAR(MAX)
@@ -33,29 +33,29 @@ BEGIN
 		BULK INSERT #logfile
 		FROM ''' + @filename + '''
 		WITH
-			(				
-				ROWTERMINATOR = ''\n'',				
+			(
+				ROWTERMINATOR = ''\n'',
 				CODEPAGE = 1251
 			)')
 
 		SET @TEXT = N''
-	
+
 		SELECT @TEXT = @TEXT + LOG_ROW + CHAR(10)
 		FROM #logfile
 
 		IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
-			DROP TABLE #logfile	
-		
+			DROP TABLE #logfile
+
 		DECLARE
 			@LOG_SYS	SmallInt,
 			@LOG_DISTR	Int,
 			@LOG_COMP	TinyInt,
 			@LOG_DATE	DateTime;
-			
+
 		SELECT
-			@LOG_SYS = dbo.LOG_SYS(@FILENAME), @LOG_DISTR = dbo.LOG_DISTR(@FILENAME), 
+			@LOG_SYS = dbo.LOG_SYS(@FILENAME), @LOG_DISTR = dbo.LOG_DISTR(@FILENAME),
 			@LOG_COMP = dbo.LOG_COMP(@FILENAME), @LOG_DATE = dbo.LOG_DATE(@FILENAME);
-			
+
 		/*
 		обновляем кэш в ДК
 		*/
@@ -64,11 +64,11 @@ BEGIN
 		WHERE SYS = @LOG_SYS
 			AND DISTR = @LOG_DISTR
 			AND COMP = @LOG_COMP;
-			
+
 		IF @@ROWCOUNT = 0
 			INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
 			SELECT @LOG_SYS, @LOG_DISTR, @LOG_COMP, @LOG_DATE
-		
+
 		IF @RESULT = 1
 		BEGIN
 			UPDATE dbo.LogFiles
@@ -80,11 +80,11 @@ BEGIN
 			INSERT INTO dbo.LogFiles(
 					LF_ID_FILE, LF_TEXT, LF_SHORT, LF_DATE, LF_TYPE, LF_SYS, LF_DISTR, LF_COMP
 					)
-			SELECT 
-				@FILEID, @TEXT, 
+			SELECT
+				@FILEID, @TEXT,
 				dbo.LOG_FILE(@FILENAME), dbo.LOG_DATE(@FILENAME),
-				dbo.LOG_TYPE(@FILENAME), dbo.LOG_SYS(@FILENAME), 
+				dbo.LOG_TYPE(@FILENAME), dbo.LOG_SYS(@FILENAME),
 				dbo.LOG_DISTR(@FILENAME), dbo.LOG_COMP(@FILENAME)
-		END		
+		END
 	END
 END

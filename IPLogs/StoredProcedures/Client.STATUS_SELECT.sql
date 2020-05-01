@@ -4,13 +4,15 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[STATUS_SELECT]
+ALTER PROCEDURE [Client].[STATUS_SELECT]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ServiceStatusID, ServiceStatusName, ServiceStatusIndex, ServiceImage
+	SELECT ServiceStatusID, ServiceStatusName, ServiceStatusIndex
 	FROM [PC275-SQL\ALPHA].ClientDB.dbo.ServiceStatusTable
 	ORDER BY ServiceStatusIndex
 END
+GRANT EXECUTE ON [Client].[STATUS_SELECT] TO rl_common;
+GO

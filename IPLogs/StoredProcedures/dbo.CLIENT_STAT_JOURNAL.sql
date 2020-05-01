@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_JOURNAL]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_JOURNAL]
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME,
 	@ERROR	BIT,
@@ -18,8 +18,8 @@ BEGIN
 
 	SET @END = DATEADD(DAY, 1, @END)
 
-	SELECT 
-		CONVERT(BIT, CASE 
+	SELECT
+		CONVERT(BIT, CASE
 			WHEN e.DISTR IS NULL THEN 0
 			ELSE 1
 		END) AS BLACK_LIST,
@@ -29,7 +29,7 @@ BEGIN
 			WHEN 2 THEN 3
 			ELSE NULL
 		END AS SERVICE_STATUS,
-		b.SystemShortName + ' ' + CONVERT(VARCHAR(20), CSD_DISTR) + 
+		b.SystemShortName + ' ' + CONVERT(VARCHAR(20), CSD_DISTR) +
 		CASE CSD_COMP
 			WHEN 1 THEN ''
 			ELSE '/' + CONVERT(VARCHAR(20), CSD_COMP)
@@ -40,18 +40,18 @@ BEGIN
 		ISNULL(dbo.TimeSecToStr(DATEDIFF(SECOND, CSD_START, CSD_END)), '') AS TIME_LEN,
 		ISNULL(dbo.FileSizeToStr(CSD_ANS_SIZE + CSD_CACHE_SIZE), '') AS DOWNLOAD_SIZE,
 		CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +
-			ISNULL(( 
+			ISNULL((
 				SELECT TOP 1 RC_TEXT
 				FROM dbo.ReturnCode
-				WHERE RC_NUM = CSD_CODE_CLIENT 
+				WHERE RC_NUM = CSD_CODE_CLIENT
 					AND RC_TYPE = 'CLIENT'
 				ORDER BY RC_ID
 			), 'неизвестный код') + ')' AS CODE_CLIENT,
 		CONVERT(VARCHAR(20), CSD_CODE_SERVER) + ' (' +
-			ISNULL(( 
+			ISNULL((
 				SELECT TOP 1 RC_TEXT
 				FROM dbo.ReturnCode
-				WHERE RC_NUM = CSD_CODE_SERVER 
+				WHERE RC_NUM = CSD_CODE_SERVER
 					AND RC_TYPE = 'SERVER'
 				ORDER BY RC_ID
 			), 'неизвестный код') + ')' AS CODE_SERVER,
@@ -63,7 +63,7 @@ BEGIN
 					WHERE RC_NUM = CSD_CODE_SERVER
 						AND RC_TYPE = 'SERVER'
 						AND RC_ERROR = 1
-				
+
 					UNION ALL
 
 					SELECT *
@@ -79,7 +79,7 @@ BEGIN
 					WHERE RC_NUM = CSD_CODE_SERVER
 						AND RC_TYPE = 'SERVER'
 						AND RC_WARNING = 1
-				
+
 					UNION ALL
 
 					SELECT *
@@ -112,38 +112,38 @@ BEGIN
 		/*OUTER APPLY
 			(
 				SELECT TOP 1 d.SystemShortName, d.SystemID, Comment, Service
-				FROM 
+				FROM
 					[PC275-SQL\ALPHA].ClientDB.dbo.RegNodeTable c
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable b ON c.SystemName = b.SystemBaseName
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable d ON d.HostID = b.HostID
-				WHERE d.SystemNumber = a.CSD_SYS 
-					AND c.DistrNumber = a.CSD_DISTR 
+				WHERE d.SystemNumber = a.CSD_SYS
+					AND c.DistrNumber = a.CSD_DISTR
 					AND c.CompNumber = a.CSD_COMP
 					AND b.SystemRic = 20 AND d.SystemRic = 20
 			) AS b*/
 		LEFT OUTER JOIN
 			(
-				SELECT --TOP 1 
+				SELECT --TOP 1
 					DISTINCT
 					d.SystemShortName, d.SystemID, Comment, Service, d.SystemNumber, c.DistrNumber, c.CompNumber--,
 					--ROW_NUMBER() OVER(PARTITION BY b.HostID, DistrNumber, CompNumber ORDER BY Comment) AS RN
-				FROM 
+				FROM
 					[PC275-SQL\ALPHA].ClientDB.dbo.RegNodeTable c
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable b ON c.SystemName = b.SystemBaseName
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable d ON d.HostID = b.HostID
-				WHERE /*d.SystemNumber = a.CSD_SYS 
-					AND c.DistrNumber = a.CSD_DISTR 
+				WHERE /*d.SystemNumber = a.CSD_SYS
+					AND c.DistrNumber = a.CSD_DISTR
 					AND c.CompNumber = a.CSD_COMP
 					AND */b.SystemRic = 20 AND d.SystemRic = 20
-			) AS b ON b.SystemNumber = a.CSD_SYS 
-					AND b.DistrNumber = a.CSD_DISTR 
+			) AS b ON b.SystemNumber = a.CSD_SYS
+					AND b.DistrNumber = a.CSD_DISTR
 					AND b.CompNumber = a.CSD_COMP
 					--AND b.RN = 1
-		LEFT OUTER JOIN 
+		LEFT OUTER JOIN
 			(
 				SELECT DISTINCT ID_SYS, DISTR, COMP
 				FROM [PC275-SQL\ALPHA].ClientDB.dbo.BLACK_LIST_REG
-				WHERE DATE_DELETE IS NULL 
+				WHERE DATE_DELETE IS NULL
 			) AS e ON e.ID_SYS = b.SystemID
 					AND e.DISTR = a.CSD_DISTR
 					AND e.COMP = a.CSD_COMP
@@ -176,3 +176,5 @@ BEGIN
 			))
 	ORDER BY ISNULL(CSD_START, CSD_END) DESC, Comment
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_JOURNAL] TO rl_client_stat;
+GO

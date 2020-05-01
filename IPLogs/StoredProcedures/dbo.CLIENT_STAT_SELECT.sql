@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_STAT_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_STAT_SELECT]
 	@CLIENT			INT = NULL,
 	@CLIENT_TYPE	NVARCHAR(20) = NULL,
 	@BEGIN			DATETIME = NULL,
@@ -40,7 +40,7 @@ BEGIN
 		SELECT ID, MASTER_ID, NODE_NAME, NODE_VALUE, NODE_LINK, SRV, STAT
 		FROM #stat
 		ORDER BY ID
-	
+
 		RETURN
 	END
 
@@ -85,7 +85,7 @@ BEGIN
 			CSD_PROXY_METOD	NVARCHAR(128),
 			CSD_PROXY_INTERFACE	NVARCHAR(128)
 		)
-	
+
 	INSERT INTO #client
 		(
 			CSD_ID,
@@ -97,7 +97,7 @@ BEGIN
 			CSD_END, CSD_REDOWNLOAD,
 			CSD_LOG_PATH, CSD_LOG_FILE, CSD_LOG_RESULT, CSD_LOG_LETTER,
 			CSD_USR,
-			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE, 
+			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE,
 			CSD_ID_SERVER, CSD_RES_VERSION, CSD_DOWNLOAD_SPEED,
 			CSD_STT_SEND, CSD_STT_RESULT, CSD_INET_EXT, CSD_PROXY_METOD, CSD_PROXY_INTERFACE
 		)
@@ -114,7 +114,7 @@ BEGIN
 			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE,
 			(
 				SELECT FL_ID_SERVER
-				FROM 
+				FROM
 					dbo.Files
 					INNER JOIN dbo.ClientStat ON CS_ID_FILE = FL_ID
 				WHERE CS_ID = CSD_ID_CS
@@ -125,20 +125,20 @@ BEGIN
 		WHERE @CLIENT_TYPE = 'OIS' AND EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					[PC275-SQL\ALPHA].ClientDB.dbo.ClientDistrView b WITH(NOEXPAND) INNER JOIN
 					[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable c ON b.SystemID = c.SystemID
-				WHERE ID_CLIENT = @CLIENT 
-					AND SystemNumber = CSD_SYS 
+				WHERE ID_CLIENT = @CLIENT
+					AND SystemNumber = CSD_SYS
 					AND CSD_DISTR = DISTR
 					AND CSD_COMP = COMP
 			)
 			AND (ISNULL(CSD_START, CSD_END) >= @BEGIN OR @BEGIN IS NULL)
-			AND (ISNULL(CSD_START, CSD_END) <= @END OR @END IS NULL)		
+			AND (ISNULL(CSD_START, CSD_END) <= @END OR @END IS NULL)
 
-		UNION ALL 
+		UNION ALL
 
-		SELECT 
+		SELECT
 			CSD_ID,
 			CSD_SYS, CSD_DISTR, CSD_COMP,
 			CSD_IP, CSD_SESSION,
@@ -151,7 +151,7 @@ BEGIN
 			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE,
 			(
 				SELECT FL_ID_SERVER
-				FROM 
+				FROM
 					dbo.Files
 					INNER JOIN dbo.ClientStat ON CS_ID_FILE = FL_ID
 				WHERE CS_ID = CSD_ID_CS
@@ -162,12 +162,12 @@ BEGIN
 		WHERE @CLIENT_TYPE = 'DBF' AND EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					[PC275-SQL\DELTA].DBF.dbo.TODistrTable b INNER JOIN
 					[PC275-SQL\DELTA].DBF.dbo.DistrView c ON c.DIS_ID = b.TD_ID_DISTR INNER JOIN
-					[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable d ON SystemBaseName = SYS_REG_NAME 
-				WHERE TD_ID_TO = @CLIENT 
-					AND CSD_SYS = SystemNumber 
+					[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable d ON SystemBaseName = SYS_REG_NAME
+				WHERE TD_ID_TO = @CLIENT
+					AND CSD_SYS = SystemNumber
 					AND CSD_DISTR = DIS_NUM
 					AND CSD_COMP = DIS_COMP_NUM
 			)
@@ -189,7 +189,7 @@ BEGIN
 			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE,
 			(
 				SELECT FL_ID_SERVER
-				FROM 
+				FROM
 					dbo.Files
 					INNER JOIN dbo.ClientStat ON CS_ID_FILE = FL_ID
 				WHERE CS_ID = CSD_ID_CS
@@ -200,14 +200,14 @@ BEGIN
 		WHERE @CLIENT_TYPE = 'REG' AND @CLIENT <> -1 AND EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					[PC275-SQL\ALPHA].ClientDB.dbo.RegNodeTable b INNER JOIN
 					[PC275-SQL\ALPHA].ClientDB.dbo.SystemTable c ON b.SystemName = c.SystemBaseName
-				WHERE ID = @CLIENT 
-					AND SystemNumber = CSD_SYS 
-					AND CSD_DISTR = DistrNumber 
+				WHERE ID = @CLIENT
+					AND SystemNumber = CSD_SYS
+					AND CSD_DISTR = DistrNumber
 					AND CSD_COMP = CompNumber
-			) 
+			)
 			AND (ISNULL(CSD_START, CSD_END) >= @BEGIN OR @BEGIN IS NULL)
 			AND (ISNULL(CSD_START, CSD_END) <= @END OR @END IS NULL)
 
@@ -226,7 +226,7 @@ BEGIN
 			CSD_CODE_CLIENT, CSD_CODE_SERVER, CSD_IP_MODE,
 			(
 				SELECT FL_ID_SERVER
-				FROM 
+				FROM
 					dbo.Files
 					INNER JOIN dbo.ClientStat ON CS_ID_FILE = FL_ID
 				WHERE CS_ID = CSD_ID_CS
@@ -234,12 +234,12 @@ BEGIN
 			CSD_STT_SEND, CSD_STT_RESULT, CSD_INET_EXT, CSD_PROXY_METOD, CSD_PROXY_INTERFACE
 		FROM
 			dbo.ClientStatDetail a
-		WHERE @CLIENT_TYPE = 'REG' AND @CLIENT = -1 
+		WHERE @CLIENT_TYPE = 'REG' AND @CLIENT = -1
 			AND CSD_DISTR = 490 AND CSD_COMP IN (1, 7)
 			AND (ISNULL(CSD_START, CSD_END) >= @BEGIN OR @BEGIN IS NULL)
 			AND (ISNULL(CSD_START, CSD_END) <= @END OR @END IS NULL)
-		
-	
+
+
 	SELECT @TRAF = dbo.FileSizeToStr(SZ)
 	FROM
 		(
@@ -249,7 +249,7 @@ BEGIN
 
 	--SET @SQL = 'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #client (CSD_ID)'
 	--EXEC (@SQL)
-		
+
 	DECLARE @srv NVARCHAR(50)
 	DECLARE @clt NVARCHAR(50)
 	DECLARE @rep NVARCHAR(50)
@@ -274,11 +274,11 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, SRV, STAT
 		)
-		SELECT NULL, CSD_ID, @cpl, 
+		SELECT NULL, CSD_ID, @cpl,
 			(
 				SELECT TOP 1
 					SystemShortName + ' ' +
-					CONVERT(VARCHAR(20), CSD_DISTR) + 
+					CONVERT(VARCHAR(20), CSD_DISTR) +
 					CASE CSD_COMP
 						WHEN 1 THEN ''
 						ELSE '/' + CONVERT(VARCHAR(10), CSD_COMP)
@@ -292,19 +292,19 @@ BEGIN
 				FROM dbo.Servers
 				WHERE SRV_ID = CSD_ID_SERVER
 			),
-			CASE 
+			CASE
 				WHEN CSD_CODE_SERVER <> 0 OR (CSD_CODE_CLIENT <> 0 AND CSD_CODE_CLIENT <> 70) OR CSD_LOG_LETTER <> '-' THEN 2
 				WHEN CSD_CODE_SERVER = 0 AND (CSD_CODE_CLIENT = 0 OR CSD_CODE_CLIENT = 70) AND CSD_LOG_LETTER = '-' AND CSD_USR = '-' THEN 4
 				ELSE 0
 			END
 		FROM #client
 		ORDER BY CSD_START DESC
-	
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -315,7 +315,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -327,19 +327,19 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
 			), CSD_ID, NULL, 'Время получения архива с файлами запросов (сек)',  dbo.TimeSecToStr(CSD_QST_TIME)
 		FROM #client
-	
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -351,7 +351,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -363,7 +363,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -375,20 +375,20 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
 			), CSD_ID, NULL, 'Размер архива с файлами в кэше',  dbo.FileSizeToStr(CSD_CACHE_SIZE)
 		FROM #client
-	
+
 
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -400,31 +400,31 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'IP-адрес',  CSD_IP
 		FROM #client
-	
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Время скачивания',  dbo.TimeSecToStr(CSD_DOWNLOAD_TIME)
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -436,7 +436,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -448,19 +448,19 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			), CSD_ID, NULL, 'Время окончания сессии',  CONVERT(VARCHAR(20), CSD_END, 104) + ' ' + CONVERT(VARCHAR(20), CSD_END, 114) 
+			), CSD_ID, NULL, 'Время окончания сессии',  CONVERT(VARCHAR(20), CSD_END, 104) + ' ' + CONVERT(VARCHAR(20), CSD_END, 114)
 		FROM #client
 
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -472,97 +472,97 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Режим запуска пополнения',  CSD_IP_MODE
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Версия тех.модуля',  CSD_RES_VERSION
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Отправка STT',  CASE CSD_STT_SEND WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Результат STT',  CASE CSD_STT_RESULT WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Использование /INET_EXT',  CASE CSD_INET_EXT WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Метод определения параметров прокси',  CSD_PROXY_METOD
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
 			), CSD_ID, NULL, 'Настройка прокси в интерфейсе',  CSD_PROXY_INTERFACE
 		FROM #client
-		
+
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @cpl
-			), CSD_ID, @rep, 'Результат',  '', 
-			CASE 
+			), CSD_ID, @rep, 'Результат',  '',
+			CASE
 				WHEN CSD_CODE_SERVER <> 0 OR (CSD_CODE_CLIENT <> 0 AND CSD_CODE_CLIENT <> 70) OR CSD_LOG_LETTER <> '-' THEN 2
 				WHEN CSD_CODE_SERVER = 0 AND CSD_CODE_CLIENT = 0 AND CSD_LOG_LETTER = '-' AND CSD_USR = '-' THEN 4
 				ELSE 0
@@ -573,7 +573,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -585,53 +585,53 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
 			), CSD_ID, NULL, 'Размер файла отчета',  dbo.FileSizeToStr(CSD_REPORT_SIZE)
-		FROM #client	
-
-	INSERT INTO #stat
-		(
-			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
-		)
-		SELECT 
-			(
-				SELECT ID
-				FROM #stat
-				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			), CSD_ID, NULL, 'Лог-файл', 'Открыть', 
-			CASE CSD_LOG_FILE 
-				WHEN '-' THEN 'Нет' 
-				ELSE 
-					(
-						SELECT SRV_PATH 
-						FROM dbo.Servers 
-						WHERE SRV_ID = CSD_ID_SERVER
-					) + CSD_LOG_PATH + '\' + CSD_LOG_FILE 
-			END, CASE CSD_LOG_FILE WHEN '-' THEN 0 ELSE 6 END
-			
 		FROM #client
 
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			), CSD_ID, NULL, 'Лог файл результата', 'Открыть', 
-			CASE CSD_LOG_RESULT 
-				WHEN '-' THEN 'Нет' 
-				ELSE (
-						SELECT SRV_PATH 
-						FROM dbo.Servers 
+			), CSD_ID, NULL, 'Лог-файл', 'Открыть',
+			CASE CSD_LOG_FILE
+				WHEN '-' THEN 'Нет'
+				ELSE
+					(
+						SELECT SRV_PATH
+						FROM dbo.Servers
 						WHERE SRV_ID = CSD_ID_SERVER
-					) + CSD_LOG_PATH + '\' + CSD_LOG_RESULT 
+					) + CSD_LOG_PATH + '\' + CSD_LOG_FILE
+			END, CASE CSD_LOG_FILE WHEN '-' THEN 0 ELSE 6 END
+
+		FROM #client
+
+	INSERT INTO #stat
+		(
+			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+		)
+		SELECT
+			(
+				SELECT ID
+				FROM #stat
+				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
+			), CSD_ID, NULL, 'Лог файл результата', 'Открыть',
+			CASE CSD_LOG_RESULT
+				WHEN '-' THEN 'Нет'
+				ELSE (
+						SELECT SRV_PATH
+						FROM dbo.Servers
+						WHERE SRV_ID = CSD_ID_SERVER
+					) + CSD_LOG_PATH + '\' + CSD_LOG_RESULT
 			END, CASE CSD_LOG_RESULT WHEN '-' THEN 0 ELSE 6 END
 		FROM #client
 
@@ -639,19 +639,19 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			), CSD_ID, NULL, 'Отчет (письмо)', 'Открыть', 
-			CASE CSD_LOG_LETTER 
-				WHEN '-' THEN 'Нет' 
+			), CSD_ID, NULL, 'Отчет (письмо)', 'Открыть',
+			CASE CSD_LOG_LETTER
+				WHEN '-' THEN 'Нет'
 				ELSE (
-						SELECT SRV_PATH 
-						FROM dbo.Servers 
+						SELECT SRV_PATH
+						FROM dbo.Servers
 						WHERE SRV_ID = CSD_ID_SERVER
-					) + CSD_LOG_PATH + '\' + CSD_LOG_LETTER 
+					) + CSD_LOG_PATH + '\' + CSD_LOG_LETTER
 			END, CASE CSD_LOG_LETTER WHEN '-' THEN 0 ELSE 6 END
 		FROM #client
 
@@ -659,17 +659,17 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			), CSD_ID, NULL, 'Код клиента', 
+			), CSD_ID, NULL, 'Код клиента',
 			CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +
-			ISNULL(( 
+			ISNULL((
 				SELECT TOP 1 RC_TEXT
 				FROM dbo.ReturnCode
-				WHERE RC_NUM = CSD_CODE_CLIENT 
+				WHERE RC_NUM = CSD_CODE_CLIENT
 					AND RC_TYPE = 'CLIENT'
 				ORDER BY RC_ID
 			), 'неизвестный код') + ')'
@@ -679,18 +679,18 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
 				WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			), CSD_ID, NULL, 'Код сервера',	
+			), CSD_ID, NULL, 'Код сервера',
 			CONVERT(VARCHAR(20), CSD_CODE_SERVER) + ' (' +
 			ISNULL(
-				( 
+				(
 					SELECT  TOP 1 RC_TEXT
 					FROM dbo.ReturnCode
-					WHERE RC_NUM = CSD_CODE_SERVER 
+					WHERE RC_NUM = CSD_CODE_SERVER
 						AND RC_TYPE = 'SERVER'
 					ORDER BY RC_ID
 				), 'неизвестный код') + ')'
@@ -700,7 +700,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -713,7 +713,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -721,7 +721,7 @@ BEGIN
 			), CSD_ID, NULL, 'Файл cons_err.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
 			(
 				SELECT SRV_REPORT
-				FROM dbo.Servers 
+				FROM dbo.Servers
 				WHERE SRV_ID = CSD_ID_SERVER
 			) + CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 8 END
 		FROM #client
@@ -730,7 +730,7 @@ BEGIN
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -738,16 +738,16 @@ BEGIN
 			), CSD_ID, NULL, 'Файл cons_inet.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
 			(
 				SELECT SRV_REPORT
-				FROM dbo.Servers 
+				FROM dbo.Servers
 				WHERE SRV_ID = CSD_ID_SERVER
 			) + CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 9 END
 		FROM #client
-	/*	
+	/*
 	INSERT INTO #stat
 		(
 			MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
 		)
-		SELECT 
+		SELECT
 			(
 				SELECT ID
 				FROM #stat
@@ -755,7 +755,7 @@ BEGIN
 			), CSD_ID, NULL, 'Файл cons_inet_listfiles.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
 			(
 				SELECT SRV_REPORT
-				FROM dbo.Servers 
+				FROM dbo.Servers
 				WHERE SRV_ID = CSD_ID_SERVER
 			) + CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 10 END
 		FROM #client
@@ -764,7 +764,7 @@ BEGIN
 	SELECT ID, MASTER_ID, NODE_NAME, NODE_VALUE, NODE_LINK, SRV, STAT
 	FROM #stat
 	ORDER BY ID
-	
+
 
 	IF OBJECT_ID('tempdb..#client') IS NOT NULL
 		DROP TABLE #client
@@ -772,3 +772,5 @@ BEGIN
 	IF OBJECT_ID('tempdb..#stat') IS NOT NULL
 		DROP TABLE #stat
 END
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_SELECT] TO rl_client_stat;
+GO

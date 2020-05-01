@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[USER_ROLE_PROCESS]
+ALTER PROCEDURE [dbo].[USER_ROLE_PROCESS]
 	@USER	NVARCHAR(128),
 	@ROLE	NVARCHAR(128),
 	@EXIST	BIT
@@ -22,12 +22,12 @@ BEGIN
 			EXEC sp_dropsrvrolemember @USER, 'securityadmin'
 			EXEC sp_droprolemember 'db_securityadmin', @USER
 			EXEC sp_droprolemember 'db_accessadmin', @USER
-		END		
+		END
 	END
 	ELSE IF @EXIST = 0
 	BEGIN
 		EXEC sp_droprolemember @ROLE, @USER
-	
+
 		IF @ROLE = 'rl_admin'
 		BEGIN
 			EXEC sp_addsrvrolemember @USER, 'securityadmin'
@@ -36,3 +36,5 @@ BEGIN
 		END
 	END
 END
+GRANT EXECUTE ON [dbo].[USER_ROLE_PROCESS] TO rl_admin;
+GO
