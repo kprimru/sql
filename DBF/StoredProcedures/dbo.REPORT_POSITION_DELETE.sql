@@ -10,7 +10,7 @@ GO
 Описание:	  
 */    
 
-CREATE PROCEDURE [dbo].[REPORT_POSITION_DELETE] 
+ALTER PROCEDURE [dbo].[REPORT_POSITION_DELETE] 
 	@positionreportid SMALLINT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_POSITION_DELETE] TO rl_report_position_d;
+GO

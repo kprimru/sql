@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_TYPE_EDIT]
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@psedo VARCHAR(50),	
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_EDIT] TO rl_invoice_type_w;
+GO

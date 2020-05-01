@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[USER_ROLE_TABLE_SELECT]	
+ALTER PROCEDURE [dbo].[USER_ROLE_TABLE_SELECT]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -101,3 +101,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_ROLE_TABLE_SELECT] TO rl_user;
+GO

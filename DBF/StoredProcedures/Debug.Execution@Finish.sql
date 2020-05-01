@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Debug].[Execution@Finish]
+ALTER PROCEDURE [Debug].[Execution@Finish]
 	@DebugContext	Xml,
 	@Error			VarChar(512)
 WITH EXECUTE AS OWNER

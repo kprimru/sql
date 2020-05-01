@@ -11,7 +11,7 @@ GO
 Описание:	  Очистить таблицу полей отчета
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_INIT]	
+ALTER PROCEDURE [dbo].[REPORT_FIELD_INIT]	
 AS
 BEGIN
 	SET NOCOUNT ON;

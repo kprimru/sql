@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_ADD] 
 	@systemid SMALLINT,
 	@periodid SMALLINT,
 	@weight DECIMAL(8, 4),
@@ -64,3 +64,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_ADD] TO rl_system_weight_w;
+GO

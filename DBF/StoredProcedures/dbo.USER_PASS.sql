@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_PASS]
+ALTER PROCEDURE [dbo].[USER_PASS]
 	@username VARCHAR(100),
 	@pass VARCHAR(100)
 AS
@@ -41,3 +41,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_PASS] TO rl_user;
+GO

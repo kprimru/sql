@@ -17,7 +17,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_DETAIL_ADD]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_DETAIL_ADD]
 	@csdidcons INT,
 	@csdiddistr INT,
 	@csdnum SMALLINT,
@@ -77,3 +77,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_DETAIL_ADD] TO rl_consignment_w;
+GO

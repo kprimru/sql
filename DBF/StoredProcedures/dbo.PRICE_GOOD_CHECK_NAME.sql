@@ -12,7 +12,7 @@ GO
                с указанным названием. 
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GOOD_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[PRICE_GOOD_CHECK_NAME] 
 	@name VARCHAR(50)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GOOD_CHECK_NAME] TO rl_price_good_w;
+GO

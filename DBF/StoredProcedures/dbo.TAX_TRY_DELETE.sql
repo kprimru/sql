@@ -13,7 +13,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[TAX_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TAX_TRY_DELETE] 
 	@taxid SMALLINT
 AS
 BEGIN
@@ -81,3 +81,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_TRY_DELETE] TO rl_tax_d;
+GO

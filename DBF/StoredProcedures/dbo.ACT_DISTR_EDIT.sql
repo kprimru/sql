@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_DISTR_EDIT]
+ALTER PROCEDURE [dbo].[ACT_DISTR_EDIT]
 	-- Список параметров процедуры
 	@adid INT,
 	@price MONEY,
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_DISTR_EDIT] TO rl_act_w;
+GO

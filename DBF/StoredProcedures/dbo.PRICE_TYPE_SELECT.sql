@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PRICE_TYPE_SELECT]   
+ALTER PROCEDURE [dbo].[PRICE_TYPE_SELECT]   
 	@active BIT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_SELECT] TO rl_price_type_r;
+GO

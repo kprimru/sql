@@ -8,7 +8,7 @@ GO
 Автор:		  коллектив авторов
 Описание:
 */
-CREATE PROCEDURE [dbo].[REPORT_CREATE]
+ALTER PROCEDURE [dbo].[REPORT_CREATE]
 /*
 1:
 	REPORT_SYSTEM_SUBHOST
@@ -156,3 +156,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_CREATE] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[REPORT_CREATE] TO rl_reg_report_r;
+GO

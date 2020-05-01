@@ -10,7 +10,7 @@ GO
 Описание:      Добавить дистрибутив клиенту
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_ADD] 
 	@clientid INT,
 	@distrid INT,
 	@registerdate SMALLDATETIME,
@@ -48,3 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_ADD] TO rl_client_distr_w;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_ADD] TO rl_client_w;
+GO

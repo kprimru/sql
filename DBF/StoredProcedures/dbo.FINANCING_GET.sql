@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_GET] 
+ALTER PROCEDURE [dbo].[FINANCING_GET] 
 	@financingid SMALLINT = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_GET] TO rl_financing_r;
+GO

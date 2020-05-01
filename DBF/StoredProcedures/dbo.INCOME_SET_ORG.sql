@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INCOME_SET_ORG]
+ALTER PROCEDURE [dbo].[INCOME_SET_ORG]
 	@inid INT,
 	@orgid SMALLINT
 AS
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_SET_ORG] TO rl_income_w;
+GO

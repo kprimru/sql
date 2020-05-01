@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_UNPAY_SYSTEM_NEW]
+ALTER PROCEDURE [dbo].[REPORT_UNPAY_SYSTEM_NEW]
 	@prid SMALLINT
 AS
 BEGIN

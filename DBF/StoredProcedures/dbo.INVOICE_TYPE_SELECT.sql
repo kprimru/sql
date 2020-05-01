@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_TYPE_SELECT]
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_SELECT] TO rl_invoice_type_r;
+GO

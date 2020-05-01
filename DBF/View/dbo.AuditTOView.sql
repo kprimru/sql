@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditTOView]
+ALTER VIEW [dbo].[AuditTOView]
 AS
 SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' AS TO_ERROR
 	FROM 

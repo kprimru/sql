@@ -12,7 +12,7 @@ GO
 					из всех ТО клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT] 
 	@clientid INT
 AS
 BEGIN
@@ -43,3 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT] TO rl_client_personal_w;
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT] TO rl_client_w;
+GO

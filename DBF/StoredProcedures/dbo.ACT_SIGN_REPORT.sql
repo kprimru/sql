@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_SIGN_REPORT]
+ALTER PROCEDURE [dbo].[ACT_SIGN_REPORT]
 	--@actbegin SMALLDATETIME,
 	--@actend SMALLDATETIME,
 	@actdate SMALLDATETIME,
@@ -64,4 +64,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[ACT_SIGN_REPORT] TO rl_act_r;
+GO

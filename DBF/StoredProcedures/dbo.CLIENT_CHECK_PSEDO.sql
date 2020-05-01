@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_CHECK_PSEDO] 
+ALTER PROCEDURE [dbo].[CLIENT_CHECK_PSEDO] 
 	@psedo VARCHAR(100),
 	@clientid INT
 AS
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CHECK_PSEDO] TO rl_client_r;
+GO

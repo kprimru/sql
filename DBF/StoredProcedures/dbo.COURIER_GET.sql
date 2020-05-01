@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COURIER_GET] 
+ALTER PROCEDURE [dbo].[COURIER_GET] 
 	@courierid SMALLINT  
 AS
 
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COURIER_GET] TO rl_courier_r;
+GO

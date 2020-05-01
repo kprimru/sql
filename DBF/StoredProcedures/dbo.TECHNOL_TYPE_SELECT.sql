@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_SELECT] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_SELECT] TO rl_technol_type_r;
+GO

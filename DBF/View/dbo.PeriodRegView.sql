@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[PeriodRegView]
+ALTER VIEW [dbo].[PeriodRegView]
 AS
 SELECT	
 		REG_ID,

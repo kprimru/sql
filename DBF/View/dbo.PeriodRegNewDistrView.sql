@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[PeriodRegNewDistrView]
+ALTER VIEW [dbo].[PeriodRegNewDistrView]
 AS
 	SELECT
 		b.PR_ID AS REG_ID_PERIOD,

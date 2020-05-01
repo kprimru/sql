@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INCOME_OUT_AUTO_CONVEY]
+ALTER PROCEDURE [dbo].[INCOME_OUT_AUTO_CONVEY]
 	@incomeid INT,
 	@startperiodid SMALLINT = NULL,
 	@bill BIT = 1,
@@ -204,3 +204,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_OUT_AUTO_CONVEY] TO rl_income_w;
+GO

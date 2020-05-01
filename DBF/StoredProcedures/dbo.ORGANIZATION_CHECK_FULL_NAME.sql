@@ -13,7 +13,7 @@ GO
                полным названием. 
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_CHECK_FULL_NAME] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CHECK_FULL_NAME] 
 	@organizationname VARCHAR(100)
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_CHECK_FULL_NAME] TO rl_organization_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_GET] 
+ALTER PROCEDURE [dbo].[SUBHOST_GET] 
 	@subhostid SMALLINT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_GET] TO rl_subhost_r;
+GO

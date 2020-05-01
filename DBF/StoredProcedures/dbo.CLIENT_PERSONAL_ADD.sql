@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_ADD] 
 	@clientid INT,
 	@surname VARCHAR(100),
 	@name VARCHAR(100),
@@ -51,3 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_ADD] TO rl_client_personal_w;
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_ADD] TO rl_client_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать данные о спарвочнике, либо список всех справочников
 */
 
-CREATE PROCEDURE [dbo].[REFERENCE_SELECT] 
+ALTER PROCEDURE [dbo].[REFERENCE_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REFERENCE_SELECT] TO rl_ref_r;
+GO

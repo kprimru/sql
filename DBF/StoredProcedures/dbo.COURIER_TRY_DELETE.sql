@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[COURIER_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[COURIER_TRY_DELETE] 
 	@courierid SMALLINT
 AS
 BEGIN
@@ -65,3 +65,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COURIER_TRY_DELETE] TO rl_courier_d;
+GRANT EXECUTE ON [dbo].[COURIER_TRY_DELETE] TO rl_courier_type_d;
+GO

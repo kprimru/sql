@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CONSIGNMENT_SIGN_REPORT]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_SIGN_REPORT]
 	--@actbegin SMALLDATETIME,
 	--@actend SMALLDATETIME,
 	@consdate SMALLDATETIME,
@@ -79,3 +79,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_SIGN_REPORT] TO rl_consignment_w;
+GO

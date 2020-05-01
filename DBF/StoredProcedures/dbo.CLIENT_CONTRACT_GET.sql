@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_GET] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_GET] 
 	@ccid INT
 AS
 
@@ -51,3 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_GET] TO rl_client_contract_r;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_GET] TO rl_client_r;
+GO

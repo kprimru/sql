@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_SEARCH] 
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH] 
 	@psedo VARCHAR(100),
 	@inn VARCHAR(50),
 	@tonum INT,
@@ -292,3 +292,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_client_fin_r;
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_client_r;
+GO

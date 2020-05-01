@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[STREET_GET]  
+ALTER PROCEDURE [dbo].[STREET_GET]  
 	@streetid INT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_GET] TO rl_street_r;
+GO

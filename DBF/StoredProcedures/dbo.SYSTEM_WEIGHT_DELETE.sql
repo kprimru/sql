@@ -12,7 +12,7 @@ GO
                 סבûעמגמי עוננטעמנטט
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_DELETE] 
 	@swid INT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_DELETE] TO rl_system_weight_d;
+GO

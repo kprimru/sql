@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BOOK_SALE_DETAIL_PRINT]
+ALTER PROCEDURE [dbo].[BOOK_SALE_DETAIL_PRINT]
 	@orgid SMALLINT,
 	@begindate SMALLDATETIME,
 	@enddate SMALLDATETIME
@@ -82,4 +82,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[BOOK_SALE_DETAIL_PRINT] TO rl_book_sale_p;
+GO

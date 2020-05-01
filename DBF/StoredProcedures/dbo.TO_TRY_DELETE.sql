@@ -11,7 +11,7 @@ GO
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
 
-CREATE PROCEDURE [dbo].[TO_TRY_DELETE]	
+ALTER PROCEDURE [dbo].[TO_TRY_DELETE]	
 	@toid INT   
 AS
 BEGIN	
@@ -65,3 +65,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_TRY_DELETE] TO rl_to_d;
+GO

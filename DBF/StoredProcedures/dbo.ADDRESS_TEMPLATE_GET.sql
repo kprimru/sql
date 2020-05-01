@@ -12,7 +12,7 @@ GO
 Дата:			15.07.2009
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_GET] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_GET] 
 	@atlid SMALLINT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_GET] TO rl_address_template_r;
+GO

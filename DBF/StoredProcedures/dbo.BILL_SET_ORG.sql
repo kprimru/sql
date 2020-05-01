@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_SET_ORG]
+ALTER PROCEDURE [dbo].[BILL_SET_ORG]
 	@billid INT,
 	@orgid SMALLINT
 AS
@@ -41,4 +41,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[BILL_SET_ORG] TO rl_bill_w;
+GO

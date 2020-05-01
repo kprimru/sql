@@ -31,3 +31,5 @@ BEGIN
 	
 	RETURN @result
 END
+GRANT EXECUTE ON [dbo].[___GetWeight] TO rl_reg_node_report_r;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[DISTR_EXCHANGE]
+ALTER PROCEDURE [dbo].[DISTR_EXCHANGE]
 	@distrid INT,
 	@newsysid INT
 AS
@@ -131,3 +131,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCHANGE] TO rl_client_distr_w;
+GRANT EXECUTE ON [dbo].[DISTR_EXCHANGE] TO rl_distr_w;
+GO

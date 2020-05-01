@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_EDIT]
+ALTER PROCEDURE [dbo].[TO_EDIT]
 	@toid INT,
 	@toname VARCHAR(250),
 	@tonum INT,
@@ -87,3 +87,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_EDIT] TO rl_client_w;
+GRANT EXECUTE ON [dbo].[TO_EDIT] TO rl_to_w;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_ACT_SELECT]
+ALTER PROCEDURE [dbo].[REPORT_ACT_SELECT]
 	@begindate SMALLDATETIME,
 	@enddate SMALLDATETIME,
 	@system VARCHAR(MAX),
@@ -188,3 +188,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_ACT_SELECT] TO rl_report_act_r;
+GO

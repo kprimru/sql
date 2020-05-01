@@ -12,7 +12,7 @@ GO
                названием рег. 
 */
 
-CREATE PROCEDURE [dbo].[HOST_CHECK_REG_NAME] 
+ALTER PROCEDURE [dbo].[HOST_CHECK_REG_NAME] 
 	@hostregname VARCHAR(20)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_CHECK_REG_NAME] TO rl_host_w;
+GO

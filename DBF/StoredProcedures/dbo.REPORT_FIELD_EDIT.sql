@@ -11,7 +11,7 @@ GO
 Описание:	  Изменить данные о поле в таблице отчета
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_EDIT]
+ALTER PROCEDURE [dbo].[REPORT_FIELD_EDIT]
 	@fieldid SMALLINT,
 	@fieldname VARCHAR(50),
 	@fieldcaption VARCHAR(100),

@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PRICE_SHOW] 
+ALTER PROCEDURE [dbo].[PRICE_SHOW] 
 	@pricetypeid INT,
 	@periodid INT
 AS
@@ -56,3 +56,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_SHOW] TO rl_price_list_r;
+GRANT EXECUTE ON [dbo].[PRICE_SHOW] TO rl_price_r;
+GRANT EXECUTE ON [dbo].[PRICE_SHOW] TO rl_price_val_r;
+GO

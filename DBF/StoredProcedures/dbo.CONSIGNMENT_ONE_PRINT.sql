@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_ONE_PRINT]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_ONE_PRINT]
 	@consid INT	
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_ONE_PRINT] TO rl_consignment_p;
+GO

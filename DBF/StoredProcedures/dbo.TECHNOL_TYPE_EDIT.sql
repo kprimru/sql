@@ -12,7 +12,7 @@ GO
                признаке с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_EDIT] 
 	@id SMALLINT,
 	@name VARCHAR(20),  
 	@reg SMALLINT,  
@@ -60,3 +60,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_EDIT] TO rl_technol_type_w;
+GO

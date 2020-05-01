@@ -13,7 +13,7 @@ GO
                на указанную дату
 */
 
-CREATE PROCEDURE [dbo].[PRICE_DOC_COUNT_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_DOC_COUNT_EDIT] 
 	@systemid SMALLINT,
 	@periodid SMALLINT,
 	@doccount INT
@@ -61,3 +61,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_DOC_COUNT_EDIT] TO rl_price_list_w;
+GO

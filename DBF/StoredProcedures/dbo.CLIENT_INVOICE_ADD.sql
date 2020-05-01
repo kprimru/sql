@@ -11,7 +11,7 @@ GO
 Описание:		добавить счет-фактуру (только полевые данные, без таблицы)
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_ADD]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ADD]
 	@INS_ID_ORG SMALLINT,
 	@INS_DATE SMALLDATETIME,
 	@INS_NUM INT,
@@ -119,3 +119,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ADD] TO rl_invoice_w;
+GO

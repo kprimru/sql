@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[INVOICE_DEFAULT_GET]
 	@clientid INT
 AS
 BEGIN
@@ -138,3 +138,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_DEFAULT_GET] TO rl_invoice_r;
+GO

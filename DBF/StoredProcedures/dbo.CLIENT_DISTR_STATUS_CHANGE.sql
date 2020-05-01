@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHANGE]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHANGE]
 	@tdid VARCHAR(MAX),
 	@status SMALLINT
 AS
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_STATUS_CHANGE] TO rl_client_distr_w;
+GO

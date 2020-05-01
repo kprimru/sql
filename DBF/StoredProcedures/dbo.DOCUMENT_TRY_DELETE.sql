@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOCUMENT_TRY_DELETE]
+ALTER PROCEDURE [dbo].[DOCUMENT_TRY_DELETE]
 	@docid SMALLINT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_TRY_DELETE] TO rl_document_d;
+GO

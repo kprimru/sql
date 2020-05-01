@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_HOST_GET]
+ALTER PROCEDURE [dbo].[SYSTEM_HOST_GET]
 	@distrid INT
 AS
 BEGIN
@@ -55,3 +55,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH	
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_distr_w;
+GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_host_r;
+GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_system_r;
+GO

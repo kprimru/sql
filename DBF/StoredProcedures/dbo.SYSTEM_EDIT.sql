@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_EDIT] 
 	@id SMALLINT,
 	@prefix VARCHAR(20),
 	@name VARCHAR(250),
@@ -71,3 +71,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_EDIT] TO rl_system_w;
+GO

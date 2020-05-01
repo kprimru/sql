@@ -12,7 +12,7 @@ GO
                в справочник
 */
 
-CREATE PROCEDURE [dbo].[HOST_ADD]
+ALTER PROCEDURE [dbo].[HOST_ADD]
 	@hostname VARCHAR(250),
 	@hostregname VARCHAR(20), 
 	@active BIT = 1, 
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_ADD] TO rl_host_w;
+GO

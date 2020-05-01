@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[AUDIT_VMI_SELECT]	
+ALTER PROCEDURE [dbo].[AUDIT_VMI_SELECT]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -122,3 +122,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AUDIT_VMI_SELECT] TO rl_audit_vmi;
+GO

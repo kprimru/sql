@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[ConsignmentView]
+ALTER VIEW [dbo].[ConsignmentView]
 AS
 	SELECT     
 		CSG_ID, CSG_ID_CLIENT, CSG_DATE, CSG_NUM, CSG_ID_INVOICE, -- PR_DATE, PR_ID,

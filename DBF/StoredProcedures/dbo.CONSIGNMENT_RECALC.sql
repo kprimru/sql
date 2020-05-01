@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_RECALC]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_RECALC]
 	@consid INT
 AS
 BEGIN
@@ -140,3 +140,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_RECALC] TO rl_consignment_w;
+GO

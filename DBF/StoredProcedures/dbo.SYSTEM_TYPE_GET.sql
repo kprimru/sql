@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_GET] 
 	@systemtypeid SMALLINT = NULL
 AS
 BEGIN
@@ -54,3 +54,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_GET] TO rl_system_type_r;
+GO

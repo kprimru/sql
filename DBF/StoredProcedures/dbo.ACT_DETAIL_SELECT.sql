@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_DETAIL_SELECT]
+ALTER PROCEDURE [dbo].[ACT_DETAIL_SELECT]
 	@actid INT
 AS
 BEGIN
@@ -61,3 +61,5 @@ END
 
 
 
+GRANT EXECUTE ON [dbo].[ACT_DETAIL_SELECT] TO rl_act_r;
+GO

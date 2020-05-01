@@ -12,7 +12,7 @@ GO
                 סבûעמגמי עוננטעמנטט
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_DELETE] 
 	@subhostcityid INT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_DELETE] TO rl_subhost_city_d;
+GO

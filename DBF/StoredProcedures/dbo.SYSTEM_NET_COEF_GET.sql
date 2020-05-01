@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_GET] 
 	@ID INT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_GET] TO rl_system_net_w;
+GO

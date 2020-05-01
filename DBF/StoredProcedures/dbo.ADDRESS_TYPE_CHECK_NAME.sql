@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_CHECK_NAME] 
 	@addresstypename VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_CHECK_NAME] TO rl_address_type_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:      Выбрать данные о дистрибутиве клиента с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_LIST_GET]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_LIST_GET]
 	@cdid VARCHAR(MAX)
 AS
 BEGIN
@@ -63,3 +63,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_LIST_GET] TO rl_client_distr_r;
+GO

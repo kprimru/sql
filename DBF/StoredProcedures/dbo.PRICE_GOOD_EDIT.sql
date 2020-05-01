@@ -12,7 +12,7 @@ GO
                с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GOOD_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_GOOD_EDIT] 
 	@id SMALLINT,
 	@name VARCHAR(50),	
 	@active BIT = 1
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GOOD_EDIT] TO rl_price_good_w;
+GO

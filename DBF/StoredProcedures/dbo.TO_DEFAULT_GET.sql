@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[TO_DEFAULT_GET]
 	@clientid INT
 AS
 BEGIN
@@ -65,3 +65,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_DEFAULT_GET] TO rl_to_r;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  Изменить данные о типе прейскуранта
                с указанным кодом
 */
-CREATE PROCEDURE [dbo].[PRICE_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_EDIT] 
 	@pricetypeid SMALLINT,
 	@pricetypename VARCHAR(50),
 	@group SMALLINT,
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_EDIT] TO rl_price_type_w;
+GO

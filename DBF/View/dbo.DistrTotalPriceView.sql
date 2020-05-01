@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[DistrTotalPriceView]
+ALTER VIEW [dbo].[DistrTotalPriceView]
 AS
 SELECT 
 		CD_ID_CLIENT, DSS_REPORT, a.DIS_ID, PR_ID, PR_DATE, SO_ID,

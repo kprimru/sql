@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_EDIT]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_EDIT]
 	@invid INT,
 	@INS_ID_ORG SMALLINT,
 	@INS_DATE smalldatetime,
@@ -95,3 +95,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_EDIT] TO rl_invoice_w;
+GO

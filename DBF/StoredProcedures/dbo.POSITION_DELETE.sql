@@ -12,7 +12,7 @@ GO
                с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[POSITION_DELETE] 
+ALTER PROCEDURE [dbo].[POSITION_DELETE] 
 	@positionid INT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_DELETE] TO rl_position_d;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ORGANIZATION_CALC_ADD] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_ADD] 
 	@name	varchar(128),
 	@org	smallint,
 	@bank SMALLINT,
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_CALC_ADD] TO rl_organization_calc_w;
+GO

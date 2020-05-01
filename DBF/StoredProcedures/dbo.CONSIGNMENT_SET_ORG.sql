@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CONSIGNMENT_SET_ORG]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_SET_ORG]
 	@consid INT,
 	@orgid SMALLINT
 AS
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_SET_ORG] TO rl_consignment_w;
+GO

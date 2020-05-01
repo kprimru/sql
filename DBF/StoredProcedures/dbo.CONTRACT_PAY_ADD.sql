@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_PAY_ADD] 
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_ADD] 
 	@name VARCHAR(100),
 	@day TINYINT,
 	@month TINYINT,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_PAY_ADD] TO rl_contract_pay_w;
+GO

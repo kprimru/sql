@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_DELETE] 
 	@distrid INT
 AS
 BEGIN
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_DELETE] TO rl_distr_d;
+GO

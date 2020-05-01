@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_SERVICE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_TRY_DELETE] 
 	@dsid SMALLINT
 AS
 BEGIN
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_SERVICE_TRY_DELETE] TO rl_distr_service_d;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DISTR_PRICE_GET]
+ALTER PROCEDURE [dbo].[DISTR_PRICE_GET]
 	@distrid INT,
 	@periodid SMALLINT
 AS
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_PRICE_GET] TO rl_income_w;
+GO

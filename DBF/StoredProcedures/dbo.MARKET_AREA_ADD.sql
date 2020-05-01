@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить тип сбытовой территории
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_ADD] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_ADD] 
 	@marketareaname VARCHAR(150),
 	@marketareashortname VARCHAR(50),
 	@active BIT = 1,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MARKET_AREA_ADD] TO rl_market_area_w;
+GO

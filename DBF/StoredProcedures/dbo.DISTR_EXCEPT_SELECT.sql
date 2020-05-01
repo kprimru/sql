@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EXCEPT_SELECT]    
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_SELECT]    
 	@active BIT = NULL
 AS
 BEGIN
@@ -45,3 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_SELECT] TO rl_distr_except_r;
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_SELECT] TO rl_reg_node_report_r;
+GO

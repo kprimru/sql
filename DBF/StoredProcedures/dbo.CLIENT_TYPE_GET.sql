@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_GET] 
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_GET] 
 	@id SMALLINT  
 AS
 
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_GET] TO rl_client_type_r;
+GO

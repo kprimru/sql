@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditPriceView]
+ALTER VIEW [dbo].[AuditPriceView]
 AS
 SELECT 'Система "' + SYS_SHORT_NAME + '" отсутствует в прейскуранте' AS ER_MSG
 FROM dbo.SystemTable a

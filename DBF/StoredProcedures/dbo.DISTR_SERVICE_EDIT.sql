@@ -14,7 +14,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_SERVICE_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_EDIT] 
 	@dsid SMALLINT,
 	@dsname VARCHAR(100),
 	@statusid SMALLINT,
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_SERVICE_EDIT] TO rl_distr_service_w;
+GO

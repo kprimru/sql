@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить период в справочник
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_ADD] 
+ALTER PROCEDURE [dbo].[PERIOD_ADD] 
 	@periodname VARCHAR(20),
 	@perioddate SMALLDATETIME,
 	@periodenddate SMALLDATETIME,
@@ -52,3 +52,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_ADD] TO rl_period_w;
+GO

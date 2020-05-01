@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_CHECK_SHORT_NAME] 
+ALTER PROCEDURE [dbo].[SYSTEM_CHECK_SHORT_NAME] 
 	@systemname VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_CHECK_SHORT_NAME] TO rl_system_w;
+GO

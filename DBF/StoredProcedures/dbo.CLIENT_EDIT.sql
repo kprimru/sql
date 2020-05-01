@@ -10,7 +10,7 @@ GO
 Описание:	  Изменение данных указанного клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_EDIT] 
 	@clientid INT,
 	@num INT,
 	@psedo VARCHAR(100),  
@@ -87,3 +87,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_EDIT] TO rl_client_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_GET_LAST_NUM]
+ALTER PROCEDURE [dbo].[INVOICE_GET_LAST_NUM]
 	@date SMALLDATETIME,
 	@orgid SMALLINT
 AS
@@ -52,3 +52,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_GET_LAST_NUM] TO rl_invoice_w;
+GO

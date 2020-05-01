@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SALDO_RECALC_ALL]
+ALTER PROCEDURE [dbo].[SALDO_RECALC_ALL]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -66,3 +66,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SALDO_RECALC_ALL] TO rl_saldo_w;
+GO

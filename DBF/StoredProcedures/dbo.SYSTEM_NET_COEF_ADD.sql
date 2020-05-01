@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_ADD] 
 	@NET		SMALLINT,
 	@PERIOD		SMALLINT,
 	@COEF		DECIMAL(8, 4),
@@ -66,3 +66,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_ADD] TO rl_system_net_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[BANK_EDIT] 
+ALTER PROCEDURE [dbo].[BANK_EDIT] 
 	@bankid  SMALLINT,
 	@bankname VARCHAR(150),
 	@cityid INT,
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BANK_EDIT] TO rl_bank_w;
+GO

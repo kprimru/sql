@@ -8,7 +8,7 @@ GO
 Автор:         Денисов Алексей
 Описание:      Выбрать данные о всех дистрибутивах клиента
 */
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -64,3 +64,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_client_distr_r;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_income_r;
+GO

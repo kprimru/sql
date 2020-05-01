@@ -14,7 +14,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[UNIT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[UNIT_TRY_DELETE] 
 	@unitid SMALLINT
 AS
 BEGIN
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[UNIT_TRY_DELETE] TO rl_unit_d;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TAX_GET] 
+ALTER PROCEDURE [dbo].[TAX_GET] 
 	@taxid INT = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_GET] TO rl_tax_r;
+GO

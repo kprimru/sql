@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOCUMENT_EDIT]
+ALTER PROCEDURE [dbo].[DOCUMENT_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@psedo VARCHAR(50),	
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_EDIT] TO rl_document_w;
+GO

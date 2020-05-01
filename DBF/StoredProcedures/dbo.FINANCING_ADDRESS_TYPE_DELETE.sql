@@ -14,7 +14,7 @@ GO
 				-1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_DELETE] 
 	@fatid SMALLINT
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_ADDRESS_TYPE_DELETE] TO rl_financing_address_type_d;
+GO

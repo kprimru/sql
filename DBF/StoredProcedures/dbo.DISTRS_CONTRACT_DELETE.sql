@@ -12,7 +12,7 @@ GO
 				из договора
 */
 
-CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]
+ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]
 	@cd_id INT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTRS_CONTRACT_DELETE] TO rl_client_contract_w;
+GO

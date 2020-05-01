@@ -13,7 +13,7 @@ GO
 Описание:		get-процедура для формы редактирования счетов (бывш. фактич. счета)
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT_GET]
+ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT_GET]
 	@bfmid INT
 	
 AS
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_BILL_FACT_EDIT_GET] TO rl_bill_w;
+GO

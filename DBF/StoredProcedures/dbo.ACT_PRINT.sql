@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_PRINT]
+ALTER PROCEDURE [dbo].[ACT_PRINT]
 	@actid INT,
 	@contract INT = NULL,
 	@group BIT = 0,
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_PRINT] TO rl_act_p;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_SIGN]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_SIGN]
 	@consid INT,
 	@consdate SMALLDATETIME
 AS
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_SIGN] TO rl_consignment_w;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-CREATE PROCEDURE [dbo].[TO_ADDRESS_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_TRY_DELETE] 
 	@addressid INT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_ADDRESS_TRY_DELETE] TO rl_client_d;
+GO

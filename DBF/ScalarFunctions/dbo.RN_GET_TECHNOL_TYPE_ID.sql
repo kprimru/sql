@@ -11,7 +11,7 @@ GO
 -- Описание:	  Выделяет ID технологического 
 --                признака из регузла
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
+ALTER FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
 (
   @regdata INT
 )

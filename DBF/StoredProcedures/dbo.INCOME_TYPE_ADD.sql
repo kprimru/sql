@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[INCOME_TYPE_ADD]
+ALTER PROCEDURE [dbo].[INCOME_TYPE_ADD]
 	@name VARCHAR(50),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -40,3 +40,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_TYPE_ADD] TO rl_income_type_w;
+GO

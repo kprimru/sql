@@ -9,7 +9,7 @@ GO
 Дата:		23-04-2009
 Описание:	счет-фактура на аванс за период
 */
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_PREPAY_CREATE]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_PREPAY_CREATE]
 	@clientid INT,
 	@periodid SMALLINT,
 	@invdate SMALLDATETIME,
@@ -244,3 +244,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_PREPAY_CREATE] TO rl_invoice_w;
+GO

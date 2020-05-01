@@ -11,7 +11,7 @@ GO
 				договора по заданному контракту
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_DISTRS_AVAILABLE_GET]
+ALTER PROCEDURE [dbo].[CONTRACT_DISTRS_AVAILABLE_GET]
 	@co_id INT
 AS
 BEGIN
@@ -60,3 +60,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_DISTRS_AVAILABLE_GET] TO rl_client_contract_w;
+GRANT EXECUTE ON [dbo].[CONTRACT_DISTRS_AVAILABLE_GET] TO rl_client_w;
+GO

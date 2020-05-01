@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REGION_SELECT]   
+ALTER PROCEDURE [dbo].[REGION_SELECT]   
 	@active BIT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_SELECT] TO rl_region_r;
+GO

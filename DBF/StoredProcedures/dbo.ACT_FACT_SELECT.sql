@@ -10,7 +10,7 @@ GO
 Описание:		все акты, автомотически сгенерированные
 				за раз
 */
-CREATE PROCEDURE [dbo].[ACT_FACT_SELECT]
+ALTER PROCEDURE [dbo].[ACT_FACT_SELECT]
 	@date VARCHAR(100)
 AS
 BEGIN
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_FACT_SELECT] TO rl_act_p;
+GO

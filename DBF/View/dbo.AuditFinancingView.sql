@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditFinancingView]
+ALTER VIEW [dbo].[AuditFinancingView]
 AS
 	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не указаны фин.установки' AS FIN_ERROR
 	FROM 

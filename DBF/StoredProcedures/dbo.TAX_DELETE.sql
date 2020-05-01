@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить налог из справочника
 */
 
-CREATE PROCEDURE [dbo].[TAX_DELETE] 
+ALTER PROCEDURE [dbo].[TAX_DELETE] 
 	@taxid SMALLINT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_DELETE] TO rl_tax_d;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[REG_NODE_MOVE_CHECK]
+ALTER PROCEDURE [dbo].[REG_NODE_MOVE_CHECK]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -85,3 +85,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_NODE_MOVE_CHECK] TO rl_reg_node_history_w;
+GO

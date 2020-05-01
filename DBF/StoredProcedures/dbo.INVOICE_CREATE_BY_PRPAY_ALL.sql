@@ -8,7 +8,7 @@ GO
 Автор:			Денисов Алексей/Богдан Владимир
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY_ALL]
+ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY_ALL]
 	@invdate SMALLDATETIME,
 	@print BIT = 1
 AS
@@ -104,3 +104,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_PRPAY_ALL] TO rl_invoice_w;
+GO

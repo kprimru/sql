@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TRIGGER [dbo].[IncomeDistrSync]
+ALTER TRIGGER [dbo].[IncomeDistrSync]
    ON  [dbo].[IncomeDistrTable] 
    AFTER INSERT, UPDATE, DELETE
 AS 

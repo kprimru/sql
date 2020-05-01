@@ -16,7 +16,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PERIOD_TRY_DELETE] 
 	@periodid SMALLINT
 AS
 BEGIN
@@ -113,3 +113,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_TRY_DELETE] TO rl_period_d;
+GO

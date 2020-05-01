@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_SELECT]   
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_SELECT] TO rl_client_type_r;
+GO

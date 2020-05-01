@@ -11,7 +11,7 @@ GO
 -- Описание:	  Делает проверку ИНН по контрольной сумме
 -- =============================================
 
-CREATE FUNCTION [dbo].[INN_CHECK]
+ALTER FUNCTION [dbo].[INN_CHECK]
 (
 	@str varchar(15)
 )

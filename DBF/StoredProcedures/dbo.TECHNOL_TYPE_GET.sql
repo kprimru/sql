@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_GET] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_GET] 
 	@technoltypeid SMALLINT = NULL
 AS
 
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_GET] TO rl_technol_type_r;
+GO

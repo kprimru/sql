@@ -13,7 +13,7 @@ GO
                указанным кодом в справочнике
 */
 
-CREATE PROCEDURE [dbo].[UNIT_EDIT] 
+ALTER PROCEDURE [dbo].[UNIT_EDIT] 
 	@unitid SMALLINT,
 	@name VARCHAR(100),
 	@okei VARCHAR(50),
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[UNIT_EDIT] TO rl_unit_w;
+GO

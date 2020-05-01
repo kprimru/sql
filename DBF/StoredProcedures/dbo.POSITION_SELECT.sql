@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[POSITION_SELECT]   
+ALTER PROCEDURE [dbo].[POSITION_SELECT]   
 	@active BIT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_SELECT] TO rl_position_r;
+GO

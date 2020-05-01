@@ -9,7 +9,7 @@ GO
 Дата создания:	26-06-2009
 Описание:		добавить счет-фактуру на первичную оплату (?)
 */
-CREATE PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY]
+ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY]
 	@client_id INT,
 	@invdate SMALLDATETIME,
 	@print BIT = 1,
@@ -293,3 +293,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_PRPAY] TO rl_invoice_w;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [Subhost].[SubhostCompensationView]
+ALTER VIEW [Subhost].[SubhostCompensationView]
 AS
 	SELECT 
 		SCP_ID, 

@@ -13,7 +13,7 @@ GO
 Описание:		строка таблицы счета-фактуры
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_ROW_GET]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_GET]
 	@rowid INT
 AS
 BEGIN
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ROW_GET] TO rl_invoice_r;
+GO

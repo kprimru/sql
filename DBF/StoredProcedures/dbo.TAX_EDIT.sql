@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TAX_EDIT] 
+ALTER PROCEDURE [dbo].[TAX_EDIT] 
 	@id INT,
 	@name VARCHAR(100),
 	@percent DECIMAL(8, 4), 
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_EDIT] TO rl_tax_w;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить поле из справочника полей
 */
 
-CREATE PROCEDURE [dbo].[FIELD_DELETE] 
+ALTER PROCEDURE [dbo].[FIELD_DELETE] 
 	@fieldid INT
 AS
 BEGIN

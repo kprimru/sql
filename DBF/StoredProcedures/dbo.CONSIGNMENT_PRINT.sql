@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CONSIGNMENT_PRINT]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_PRINT]
 	@soid SMALLINT,
 	@prid SMALLINT,
 	@clid INT,
@@ -269,3 +269,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_PRINT] TO rl_consignment_p;
+GO

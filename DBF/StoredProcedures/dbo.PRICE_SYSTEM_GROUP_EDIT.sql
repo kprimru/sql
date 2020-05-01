@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_EDIT]
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_EDIT]
 	@sysid SMALLINT,
 	@pgdid SMALLINT,
 	@prid SMALLINT,

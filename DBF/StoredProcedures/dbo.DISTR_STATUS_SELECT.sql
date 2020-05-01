@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_SELECT]  
+ALTER PROCEDURE [dbo].[DISTR_STATUS_SELECT]  
 	@active BIT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_SELECT] TO rl_distr_status_r;
+GO

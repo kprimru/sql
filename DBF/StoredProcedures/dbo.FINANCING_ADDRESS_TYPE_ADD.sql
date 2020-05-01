@@ -13,7 +13,7 @@ GO
 
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_ADD] 
 	@addrtypeid TINYINT,
 	@fatnote varchar(100),
 	@fatdoc varchar(50),
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_ADDRESS_TYPE_ADD] TO rl_financing_address_type_w;
+GO

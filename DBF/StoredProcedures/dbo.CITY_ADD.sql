@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CITY_ADD] 
+ALTER PROCEDURE [dbo].[CITY_ADD] 
 	@cityname VARCHAR(100),
 	@cityprefix VARCHAR(50),
 	@phone VARCHAR(50),
@@ -63,3 +63,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_ADD] TO rl_city_w;
+GO

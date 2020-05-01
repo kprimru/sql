@@ -13,7 +13,7 @@ GO
 				название не меняем.
 И все же период включаем как ограничение сверху.
 */
-CREATE PROCEDURE [dbo].[CLIENT_BILL_PERIOD_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_BILL_PERIOD_SELECT]
 	@clientid INT,
 	@periodid SMALLINT,
 	@doctype VARCHAR(50),
@@ -169,3 +169,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_BILL_PERIOD_SELECT] TO rl_bill_r;
+GO

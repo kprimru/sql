@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_EDIT] 
 	@addresstypeid TINYINT,
 	@addresstypename VARCHAR(100),
 	@active BIT = 1
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_EDIT] TO rl_address_type_w;
+GO

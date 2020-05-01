@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[OrganizationView]
+ALTER VIEW [dbo].[OrganizationView]
 AS
 	SELECT 
 		ORG_ID, ORG_SHORT_NAME, ORG_PSEDO, ORG_FULL_NAME,

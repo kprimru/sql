@@ -10,7 +10,7 @@ GO
 Описание:
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TYPE_GET] 
+ALTER PROCEDURE [dbo].[REPORT_TYPE_GET] 
   @rtid int = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_TYPE_GET] TO rl_report_type_r;
+GO

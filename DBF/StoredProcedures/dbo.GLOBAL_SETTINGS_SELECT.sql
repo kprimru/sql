@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[GLOBAL_SETTINGS_SELECT]
+ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_SELECT] TO rl_global_settings_r;
+GO

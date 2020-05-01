@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[DistrHistoryView]
+ALTER VIEW [dbo].[DistrHistoryView]
 AS
 	SELECT 
 		DDH_ID, DIS_STR, c.CL_ID AS CL_OLD_ID, c.CL_PSEDO AS CL_OLD_PSEDO, 

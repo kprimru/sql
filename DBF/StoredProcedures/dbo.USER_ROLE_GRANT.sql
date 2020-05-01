@@ -15,7 +15,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_ROLE_GRANT]
+ALTER PROCEDURE [dbo].[USER_ROLE_GRANT]
 	@user VARCHAR(100),
 	@role VARCHAR(MAX)
 AS
@@ -115,3 +115,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_ROLE_GRANT] TO rl_user;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_ADDRESS_DELETE] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_DELETE] 
   @addressid int
 
 AS
@@ -42,3 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_DELETE] TO rl_client_address_d;
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_DELETE] TO rl_client_d;
+GO

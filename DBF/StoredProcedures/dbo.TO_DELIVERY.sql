@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_DELIVERY]
+ALTER PROCEDURE [dbo].[TO_DELIVERY]
 	@toid INT,
 	@clientid INT
 AS
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_DELIVERY] TO rl_to_w;
+GO

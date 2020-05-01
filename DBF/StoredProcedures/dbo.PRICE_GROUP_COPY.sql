@@ -13,7 +13,7 @@ GO
                указанный тип-период
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GROUP_COPY] 	
+ALTER PROCEDURE [dbo].[PRICE_GROUP_COPY] 	
 	@sourceperiodid SMALLINT,	
 	@destperiodid SMALLINT,
 	@groupid SMALLINT,

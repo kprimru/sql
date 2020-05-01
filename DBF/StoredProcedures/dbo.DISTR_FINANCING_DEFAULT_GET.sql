@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[DISTR_FINANCING_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[DISTR_FINANCING_DEFAULT_GET]
 	@distrid INT
 AS
 BEGIN
@@ -91,3 +91,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_FINANCING_DEFAULT_GET] TO rl_distr_financing_r;
+GO

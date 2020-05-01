@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_DISTR_GET]
+ALTER PROCEDURE [dbo].[TO_DISTR_GET]
 	@tdid VARCHAR(MAX)
 AS
 BEGIN
@@ -64,3 +64,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_DISTR_GET] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_DISTR_GET] TO rl_to_distr_r;
+GO

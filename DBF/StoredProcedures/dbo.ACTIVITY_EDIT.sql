@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ACTIVITY_EDIT] 
+ALTER PROCEDURE [dbo].[ACTIVITY_EDIT] 
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@active BIT = 1
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTIVITY_EDIT] TO rl_activity_w;
+GO

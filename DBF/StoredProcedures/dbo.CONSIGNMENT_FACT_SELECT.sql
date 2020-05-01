@@ -9,7 +9,7 @@ GO
 Дата создания:  25.05.2009	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CONSIGNMENT_FACT_SELECT]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_FACT_SELECT]
 	@date VARCHAR(100),
 	@courid VARCHAR(1000) = NULL
 AS
@@ -78,3 +78,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_FACT_SELECT] TO rl_consignment_p;
+GO

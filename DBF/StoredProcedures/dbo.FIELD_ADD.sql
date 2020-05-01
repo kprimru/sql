@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить новое поле в справочник полей
 */
 
-CREATE PROCEDURE [dbo].[FIELD_ADD] 
+ALTER PROCEDURE [dbo].[FIELD_ADD] 
 	@fieldname VARCHAR(50),
 	@fieldwidth INT,
 	@fieldcaption VARCHAR(50),

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_RECALC_BY_ACT]
+ALTER PROCEDURE [dbo].[INVOICE_RECALC_BY_ACT]
 	@actid INT
 AS
 BEGIN
@@ -247,3 +247,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_RECALC_BY_ACT] TO rl_act_w;
+GO

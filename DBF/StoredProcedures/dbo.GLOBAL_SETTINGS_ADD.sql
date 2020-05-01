@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
+ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
 	-- Список параметров процедуры
 	@gsname VARCHAR(50),
 	@gsvalue VARCHAR(50),
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_ADD] TO rl_global_settings_w;
+GO

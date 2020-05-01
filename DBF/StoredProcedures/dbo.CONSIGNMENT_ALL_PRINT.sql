@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_ALL_PRINT]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_ALL_PRINT]
 	@consdate SMALLDATETIME,	
 	@courid VARCHAR(MAX),
 	@check BIT
@@ -105,3 +105,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_ALL_PRINT] TO rl_consignment_p;
+GO

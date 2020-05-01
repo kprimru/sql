@@ -11,7 +11,7 @@ GO
 -- Описание:	  Возвращает 0, если название страны 
 --                корректно (присутствует в справочнике)
 -- =============================================
-CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT]
+ALTER FUNCTION [dbo].[IS_COUNTRY_CORRECT]
 (
 	@country varchar(100)
 )

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TAX_SELECT] 
+ALTER PROCEDURE [dbo].[TAX_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_SELECT] TO rl_tax_r;
+GO

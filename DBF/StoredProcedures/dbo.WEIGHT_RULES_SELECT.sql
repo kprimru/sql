@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[WEIGHT_RULES_SELECT]
+ALTER PROCEDURE [dbo].[WEIGHT_RULES_SELECT]
 	@PR_ID		SMALLINT,
 	@SYS_ID		VARCHAR(MAX) = NULL,
 	@SST_ID		VARCHAR(MAX) = NULL,
@@ -152,3 +152,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[WEIGHT_RULES_SELECT] TO rl_weight_rules;
+GO

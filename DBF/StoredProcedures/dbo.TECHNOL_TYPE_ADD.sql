@@ -12,7 +12,7 @@ GO
                в справочник
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_ADD]
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_ADD]
 	@name VARCHAR(50),  
 	@reg SMALLINT,  
 	@coef DECIMAL(10, 4),
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_ADD] TO rl_technol_type_w;
+GO

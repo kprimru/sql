@@ -13,7 +13,7 @@ GO
 -- Описание:	  Возвращает название подхоста 
 --                по комментарию из рег.узла
 -- =============================================
-CREATE FUNCTION [dbo].[GET_HOST_BY_COMMENT]
+ALTER FUNCTION [dbo].[GET_HOST_BY_COMMENT]
 (
   @comment varchar(200)
 )

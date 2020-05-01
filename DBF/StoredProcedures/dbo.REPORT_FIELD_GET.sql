@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_GET]  
+ALTER PROCEDURE [dbo].[REPORT_FIELD_GET]  
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -41,3 +41,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_FIELD_GET] TO rl_all_r;
+GO

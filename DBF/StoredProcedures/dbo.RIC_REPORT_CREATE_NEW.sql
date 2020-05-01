@@ -16,7 +16,7 @@ GO
 --					таблицу dbo.VMIReportTable
 -- ====================================================
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW] 
+ALTER PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW] 
 	@PR_ID	SMALLINT
 WITH RECOMPILE
 AS
@@ -197,4 +197,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[RIC_REPORT_CREATE_NEW] TO rl_vmi_report_w;
+GO

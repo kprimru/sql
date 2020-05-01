@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[DISTR_FINANCING_SELECT]
+ALTER PROCEDURE [dbo].[DISTR_FINANCING_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -80,3 +80,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_FINANCING_SELECT] TO rl_distr_financing_r;
+GO

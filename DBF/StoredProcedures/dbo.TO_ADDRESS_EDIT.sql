@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_ADDRESS_EDIT]
+ALTER PROCEDURE [dbo].[TO_ADDRESS_EDIT]
 	@taid INT,	
 	@index VARCHAR(20),
 	@streetid SMALLINT,	
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_ADDRESS_EDIT] TO rl_client_w;
+GO

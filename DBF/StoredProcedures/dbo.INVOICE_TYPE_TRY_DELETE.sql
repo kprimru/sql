@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_TYPE_TRY_DELETE]
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_TRY_DELETE]
 	@intid SMALLINT
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_TRY_DELETE] TO rl_invoice_type_d;
+GO

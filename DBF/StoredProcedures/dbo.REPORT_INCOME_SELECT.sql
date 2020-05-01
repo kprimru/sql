@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_INCOME_SELECT]
+ALTER PROCEDURE [dbo].[REPORT_INCOME_SELECT]
 	@indate SMALLDATETIME,
 	@orgid SMALLINT = 1,
 	@courlist VARCHAR(MAX) = NULL
@@ -130,3 +130,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_INCOME_SELECT] TO rl_report_income_r;
+GO

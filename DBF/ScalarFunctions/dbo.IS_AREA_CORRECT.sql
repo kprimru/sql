@@ -12,7 +12,7 @@ GO
 --                корректно, то есть присутствует 
 --                в справочнике
 -- =============================================
-CREATE FUNCTION [dbo].[IS_AREA_CORRECT]
+ALTER FUNCTION [dbo].[IS_AREA_CORRECT]
 (
 	@area varchar(100)	
 )

@@ -11,7 +11,7 @@ GO
 -- Описание:	  Возвращает 0, если регион корректен 
 --                (название присутствует в справочнике)
 -- =============================================
-CREATE FUNCTION [dbo].[IS_REGION_CORRECT]
+ALTER FUNCTION [dbo].[IS_REGION_CORRECT]
 (
 	@region varchar(100)
 )

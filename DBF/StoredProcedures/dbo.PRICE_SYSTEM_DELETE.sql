@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить систему из прейскуранта
 */
 
-CREATE PROCEDURE [dbo].[PRICE_SYSTEM_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_DELETE] 
 	@pricesystemid INT
 AS
 BEGIN
@@ -43,3 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_SYSTEM_DELETE] TO rl_price_list_w;
+GRANT EXECUTE ON [dbo].[PRICE_SYSTEM_DELETE] TO rl_price_val_w;
+GO

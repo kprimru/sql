@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[VERIFY_FIN_BILL_ACT]	
+ALTER PROCEDURE [dbo].[VERIFY_FIN_BILL_ACT]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -108,3 +108,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[VERIFY_FIN_BILL_ACT] TO rl_audit_fin;
+GO

@@ -11,7 +11,7 @@ GO
 -- Описание:		Выделяет ID количества сетевый станций
 --					из строки регузла
 -- ================================================
-CREATE FUNCTION [dbo].[RN_GET_NET_ID]
+ALTER FUNCTION [dbo].[RN_GET_NET_ID]
 (
   @netcount VARCHAR(50)
 )

@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[PRIMARY_PAY_GET_PRICE_BY_DISTR]
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_GET_PRICE_BY_DISTR]
 	@distrid INT
 AS
 BEGIN
@@ -73,3 +73,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRIMARY_PAY_GET_PRICE_BY_DISTR] TO rl_primary_pay_r;
+GO

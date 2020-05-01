@@ -14,7 +14,7 @@ GO
 				дистрибутивов для данной ТО
 */
 
-CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_ADD]
+ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_ADD]
 	@co_id INT,
 	@distrs VARCHAR(1000)
 AS
@@ -68,3 +68,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTRS_CONTRACT_ADD] TO rl_client_contract_w;
+GO

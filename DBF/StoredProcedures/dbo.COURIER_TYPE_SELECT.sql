@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COURIER_TYPE_SELECT]   
+ALTER PROCEDURE [dbo].[COURIER_TYPE_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COURIER_TYPE_SELECT] TO rl_courier_type_r;
+GO

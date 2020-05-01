@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_GET]
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_GET]
 	@reporttemplateid INT
 AS
 BEGIN
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_GET] TO rl_report_r;
+GO

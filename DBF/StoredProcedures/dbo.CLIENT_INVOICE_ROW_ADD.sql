@@ -9,7 +9,7 @@ GO
 Дата создания:	31.03.2009
 Описание:		добавление строки таблицы счета-фактуры
 */
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_ROW_ADD]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_ADD]
 	@INR_ID_INVOICE INT,
 	@INR_ID_DISTR INT,
 	@INR_GOOD VARCHAR(100),
@@ -72,3 +72,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ROW_ADD] TO rl_invoice_w;
+GO

@@ -12,7 +12,7 @@ GO
                финансирования с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_EDIT] 
+ALTER PROCEDURE [dbo].[FINANCING_EDIT] 
 	@financingid SMALLINT,
 	@financingname VARCHAR(100),
 	@active BIT = 1
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_EDIT] TO rl_financing_w;
+GO

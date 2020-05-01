@@ -15,7 +15,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOC_SALE_OBJECT_DEF_ADD]
+ALTER PROCEDURE [dbo].[DOC_SALE_OBJECT_DEF_ADD]
 	@soid SMALLINT,
 	@docid SMALLINT,
 	@goodid SMALLINT,
@@ -60,3 +60,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOC_SALE_OBJECT_DEF_ADD] TO rl_doc_sale_object_def_w;
+GO

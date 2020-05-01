@@ -15,7 +15,7 @@ GO
 --					ג מעקוע
 -- ================================================
 
-CREATE FUNCTION [dbo].[GET_CLIENT_DISTR]
+ALTER FUNCTION [dbo].[GET_CLIENT_DISTR]
 (
 	@toid int,
 	@prid smallint

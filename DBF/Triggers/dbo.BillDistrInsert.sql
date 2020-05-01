@@ -10,7 +10,7 @@ GO
 Описание:	
 */
 
-CREATE TRIGGER [dbo].[BillDistrInsert]
+ALTER TRIGGER [dbo].[BillDistrInsert]
    ON  [dbo].[BillDistrTable] 
    AFTER INSERT
 AS 

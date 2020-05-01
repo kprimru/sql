@@ -12,7 +12,7 @@ GO
                указанным кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[PRICE_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_DELETE] 
 	@pricetypeid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_DELETE] TO rl_price_type_d;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_DEFAULT] 
+ALTER PROCEDURE [dbo].[DISTR_DEFAULT] 
 	@sysid INT
 AS
 BEGIN
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_DEFAULT] TO rl_distr_r;
+GO

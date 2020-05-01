@@ -68,4 +68,6 @@ GO
 
 		return 0
 	END
-	
+	DENY EXECUTE ON [dbo].[sp_alterdiagram] TO guest;
+GRANT EXECUTE ON [dbo].[sp_alterdiagram] TO public;
+GO

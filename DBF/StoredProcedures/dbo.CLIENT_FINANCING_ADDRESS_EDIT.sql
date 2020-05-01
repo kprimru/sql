@@ -17,7 +17,7 @@ GO
 Дата:			17.07.2009
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_EDIT] 
 	@cfaid INT,
 	@atlid SMALLINT,
 	@clid INT,
@@ -68,3 +68,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ADDRESS_EDIT] TO rl_client_fin_template_w;
+GO

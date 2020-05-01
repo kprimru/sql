@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_ROLE_SELECT]
+ALTER PROCEDURE [dbo].[USER_ROLE_SELECT]
 	@username VARCHAR(100)
 AS
 BEGIN
@@ -96,3 +96,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_ROLE_SELECT] TO rl_user;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOCUMENT_DELETE]
+ALTER PROCEDURE [dbo].[DOCUMENT_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -41,3 +41,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_DELETE] TO rl_document_d;
+GO

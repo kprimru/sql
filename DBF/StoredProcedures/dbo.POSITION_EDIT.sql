@@ -12,7 +12,7 @@ GO
 Описание:	  Изменить данные о должности с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[POSITION_EDIT] 
+ALTER PROCEDURE [dbo].[POSITION_EDIT] 
 	@positionid INT,
 	@positionname VARCHAR(150),
 	@positionactive BIT
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_EDIT] TO rl_position_w;
+GO

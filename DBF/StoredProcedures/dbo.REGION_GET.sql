@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REGION_GET] 
+ALTER PROCEDURE [dbo].[REGION_GET] 
 	@regionid SMALLINT = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_GET] TO rl_region_r;
+GO

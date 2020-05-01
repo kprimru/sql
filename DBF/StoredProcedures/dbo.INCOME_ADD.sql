@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INCOME_ADD]
+ALTER PROCEDURE [dbo].[INCOME_ADD]
 	@clientid INT,
 	@indate SMALLDATETIME,
 	@sum MONEY,
@@ -65,3 +65,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_ADD] TO rl_income_w;
+GO

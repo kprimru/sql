@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_CHECK_NAME] 
 	@netname VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_CHECK_NAME] TO rl_system_net_w;
+GO

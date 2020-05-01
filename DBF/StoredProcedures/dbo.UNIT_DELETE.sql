@@ -13,7 +13,7 @@ GO
                с указанным кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[UNIT_DELETE] 
+ALTER PROCEDURE [dbo].[UNIT_DELETE] 
 	@unitid SMALLINT
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[UNIT_DELETE] TO rl_unit_d;
+GO

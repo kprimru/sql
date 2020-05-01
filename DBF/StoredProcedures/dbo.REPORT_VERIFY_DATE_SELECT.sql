@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_VERIFY_DATE_SELECT]
+ALTER PROCEDURE [dbo].[REPORT_VERIFY_DATE_SELECT]
 	@begindate SMALLDATETIME,
 	@enddate SMALLDATETIME,
 	@clientid INT,
@@ -97,3 +97,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_VERIFY_DATE_SELECT] TO rl_report_verify_r;
+GO

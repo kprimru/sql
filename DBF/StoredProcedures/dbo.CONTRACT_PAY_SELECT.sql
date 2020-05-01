@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_PAY_SELECT]   
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_PAY_SELECT] TO rl_contract_pay_r;
+GO

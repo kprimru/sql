@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_GET]  
+ALTER PROCEDURE [dbo].[DISTR_STATUS_GET]  
 	@dsid SMALLINT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_GET] TO rl_distr_status_r;
+GO

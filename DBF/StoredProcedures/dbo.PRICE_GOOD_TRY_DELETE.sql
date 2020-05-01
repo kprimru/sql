@@ -13,7 +13,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GOOD_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_GOOD_TRY_DELETE] 
 	@id SMALLINT
 AS
 BEGIN
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GOOD_TRY_DELETE] TO rl_price_good_d;
+GO

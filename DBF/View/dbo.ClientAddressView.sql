@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[ClientAddressView]
+ALTER VIEW [dbo].[ClientAddressView]
 AS
 SELECT
 	a.CA_ID, a.CA_ID_TYPE, a.CA_ID_CLIENT, a.CA_INDEX, a.CA_HOME, a.CA_STR, a.CA_FREE,

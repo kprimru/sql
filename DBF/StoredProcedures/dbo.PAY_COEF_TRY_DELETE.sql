@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[PAY_COEF_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PAY_COEF_TRY_DELETE] 
 	@id SMALLINT
 AS
 BEGIN
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PAY_COEF_TRY_DELETE] TO rl_pay_coef_d;
+GO

@@ -15,7 +15,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_TYPE_GET]
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_GET]
 	@intid SMALLINT
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_GET] TO rl_invoice_type_r;
+GO

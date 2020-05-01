@@ -12,7 +12,7 @@ GO
                 с указанным названием. 
 */
 
-CREATE PROCEDURE [dbo].[TAX_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[TAX_CHECK_NAME] 
 	@taxname VARCHAR(100)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TAX_CHECK_NAME] TO rl_tax_w;
+GO

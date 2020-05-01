@@ -12,7 +12,7 @@ GO
 					из истории отчётов (по периоду)
 */
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]
+ALTER PROCEDURE [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -54,3 +54,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET] TO rl_vmi_history_r;
+GO

@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[PeriodRegNewView_New]
+ALTER VIEW [dbo].[PeriodRegNewView_New]
 AS
 SELECT	
 		RNN_ID = A.REG_ID,

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CITY_GET]  
+ALTER PROCEDURE [dbo].[CITY_GET]  
   @cityid int = NULL
 AS
 
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_GET] TO rl_city_r;
+GO

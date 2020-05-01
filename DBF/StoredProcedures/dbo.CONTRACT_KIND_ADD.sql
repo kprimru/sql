@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_KIND_ADD]   
+ALTER PROCEDURE [dbo].[CONTRACT_KIND_ADD]   
 	@NAME	VARCHAR(100),
 	@HEADER VARCHAR(100),
 	@CENTER	VARCHAR(100),
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_KIND_ADD] TO rl_contract_kind_w;
+GO

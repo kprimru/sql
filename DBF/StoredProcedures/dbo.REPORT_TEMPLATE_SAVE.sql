@@ -17,7 +17,7 @@ GO
 					списки идентификаторов
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
 	@reporttemplatename VARCHAR(150),
 	--  @reporttemplatetext VARCHAR(1000),
 	@reporttype SMALLINT,
@@ -100,3 +100,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_SAVE] TO rl_report_w;
+GO

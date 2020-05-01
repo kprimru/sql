@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PAY_COEF_ADD] 
+ALTER PROCEDURE [dbo].[PAY_COEF_ADD] 
 	@min SMALLINT,
 	@max SMALLINT,
 	@value DECIMAL(8, 4),
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PAY_COEF_ADD] TO rl_pay_coef_w;
+GO

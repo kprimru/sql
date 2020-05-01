@@ -12,7 +12,7 @@ GO
                указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[REGION_EDIT] 
+ALTER PROCEDURE [dbo].[REGION_EDIT] 
 	@regionid SMALLINT,
 	@regionname VARCHAR(100),
 	@active BIT = 1
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_EDIT] TO rl_region_w;
+GO

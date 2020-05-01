@@ -14,7 +14,7 @@ GO
 Дата:			15-July-2009
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]   
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_SELECT] TO rl_address_template_r;
+GO

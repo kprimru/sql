@@ -14,7 +14,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE] 
 	@marketareaid INT
 AS
 BEGIN
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MARKET_AREA_TRY_DELETE] TO rl_market_area_d;
+GO

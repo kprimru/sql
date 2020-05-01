@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[BillDistrView]
+ALTER VIEW [dbo].[BillDistrView]
 AS
 SELECT     
 		BL_ID, BL_ID_CLIENT, PR_ID, PR_DATE,

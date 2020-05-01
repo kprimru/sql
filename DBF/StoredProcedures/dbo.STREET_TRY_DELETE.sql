@@ -15,7 +15,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[STREET_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[STREET_TRY_DELETE] 
 	@streetid INT
 AS
 BEGIN
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_TRY_DELETE] TO rl_street_d;
+GO

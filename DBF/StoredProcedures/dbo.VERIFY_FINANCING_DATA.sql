@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[VERIFY_FINANCING_DATA]
+ALTER PROCEDURE [dbo].[VERIFY_FINANCING_DATA]
 	@clientid INT,
 	@report BIT,
 	@prlist VARCHAR(MAX),
@@ -248,3 +248,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[VERIFY_FINANCING_DATA] TO rl_fin_r;
+GO

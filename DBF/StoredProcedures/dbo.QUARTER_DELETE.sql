@@ -10,7 +10,7 @@ GO
 Описание:	  Удалить регион с указанным 
                кодом из справочника
 */
-CREATE PROCEDURE [dbo].[QUARTER_DELETE] 
+ALTER PROCEDURE [dbo].[QUARTER_DELETE] 
 	@id SMALLINT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[QUARTER_DELETE] TO rl_quarter_d;
+GO

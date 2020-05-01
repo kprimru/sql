@@ -10,7 +10,7 @@ GO
 Описание:      Выбрать данные о всех дистрибутивах клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_PAY_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_PAY_SELECT]
 	@clientid INT,
 	@periodid SMALLINT
 AS
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_PAY_SELECT] TO rl_client_distr_r;
+GO

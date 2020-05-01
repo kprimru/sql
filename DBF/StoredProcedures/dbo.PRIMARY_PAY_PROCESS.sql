@@ -13,7 +13,7 @@ GO
 				перезаписать, если нет - добавить)
 */
 
-CREATE PROCEDURE [dbo].[PRIMARY_PAY_PROCESS]
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_PROCESS]
 	@ppid INT,
 	@distrid INT,
 	@paydate SMALLDATETIME,
@@ -81,3 +81,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRIMARY_PAY_PROCESS] TO rl_primary_pay_w;
+GO

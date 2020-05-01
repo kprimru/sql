@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_BILL_FACT_PRINT]
+ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_PRINT]
 	@bfmid INT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_BILL_FACT_PRINT] TO rl_bill_p;
+GO

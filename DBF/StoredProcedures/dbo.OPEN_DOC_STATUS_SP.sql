@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[OPEN_DOC_STATUS_SP]
+ALTER PROCEDURE [dbo].[OPEN_DOC_STATUS_SP]
 	@docid VARCHAR(20),
 	@action TINYINT,
 	@hostname VARCHAR(128),
@@ -109,3 +109,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO rl_all_r;
+GO

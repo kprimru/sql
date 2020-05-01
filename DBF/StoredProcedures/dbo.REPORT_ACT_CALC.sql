@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[REPORT_ACT_CALC]
+ALTER PROCEDURE [dbo].[REPORT_ACT_CALC]
 	@periodid SMALLINT = NULL
 AS
 BEGIN
@@ -271,3 +271,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_ACT_CALC] TO rl_report_act_r;
+GO

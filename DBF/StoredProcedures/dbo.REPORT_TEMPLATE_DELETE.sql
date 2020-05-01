@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить отчет с указанным кодом.
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_DELETE]
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_DELETE]
 	@reporttemplateid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_DELETE] TO rl_report_w;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:	
 */
 
-CREATE TRIGGER [dbo].[ActDistrInsert]
+ALTER TRIGGER [dbo].[ActDistrInsert]
    ON  [dbo].[ActDistrTable] 
    AFTER INSERT
 AS 

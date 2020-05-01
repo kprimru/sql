@@ -14,7 +14,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_TRY_DELETE] 
 	@swid INT
 AS
 BEGIN
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_TRY_DELETE] TO rl_system_weight_d;
+GO

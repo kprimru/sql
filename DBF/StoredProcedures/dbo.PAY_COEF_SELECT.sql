@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PAY_COEF_SELECT]   
+ALTER PROCEDURE [dbo].[PAY_COEF_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PAY_COEF_SELECT] TO rl_pay_coef_r;
+GO

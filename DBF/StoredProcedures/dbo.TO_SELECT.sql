@@ -10,7 +10,7 @@ GO
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
 
-CREATE PROCEDURE [dbo].[TO_SELECT]	
+ALTER PROCEDURE [dbo].[TO_SELECT]	
 	@clientid INT,
 	@distr INT = NULL
 WITH EXECUTE AS OWNER  
@@ -83,3 +83,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_SELECT] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_SELECT] TO rl_to_r;
+GO

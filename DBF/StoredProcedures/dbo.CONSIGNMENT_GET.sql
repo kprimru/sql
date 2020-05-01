@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_GET]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_GET]
 	@csgid INT	
 AS
 BEGIN
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_GET] TO rl_consignment_r;
+GO

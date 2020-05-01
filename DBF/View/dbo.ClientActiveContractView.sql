@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[ClientActiveContractView]
+ALTER VIEW [dbo].[ClientActiveContractView]
 AS
 	SELECT CO_ID_CLIENT, CO_ID, CO_NUM, CO_DATE
 	FROM 

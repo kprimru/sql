@@ -12,7 +12,7 @@ GO
                организацию с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_DELETE] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_DELETE] 
 	@organizationid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_DELETE] TO rl_organization_d;
+GO

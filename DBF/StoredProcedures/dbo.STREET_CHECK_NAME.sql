@@ -13,7 +13,7 @@ GO
                пункте. 
 */
 
-CREATE PROCEDURE [dbo].[STREET_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[STREET_CHECK_NAME] 
 	@streetname VARCHAR(100),
 	@cityid SMALLINT,
 	@prefix VARCHAR(10) = NULL
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_CHECK_NAME] TO rl_street_w;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[BANK_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[BANK_TRY_DELETE] 
 	@bankid INT
 AS
 BEGIN
@@ -66,3 +66,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BANK_TRY_DELETE] TO rl_bank_d;
+GO

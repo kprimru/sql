@@ -12,7 +12,7 @@ GO
 				названием подхоста на РЦ.
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CHECK_LST_NAME] 
+ALTER PROCEDURE [dbo].[SUBHOST_CHECK_LST_NAME] 
 	@subhostlstname VARCHAR(100)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CHECK_LST_NAME] TO rl_subhost_w;
+GO

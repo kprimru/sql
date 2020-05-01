@@ -12,7 +12,7 @@ GO
                с указанным кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_DELETE] 
 	@systemtypeid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_DELETE] TO rl_system_type_d;
+GO

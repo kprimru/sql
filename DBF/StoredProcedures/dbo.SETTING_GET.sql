@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SETTING_GET]
+ALTER PROCEDURE [dbo].[SETTING_GET]
 	@sname VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SETTING_GET] TO rl_global_settings_r;
+GO

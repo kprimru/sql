@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ROLE_SELECT] 
+ALTER PROCEDURE [dbo].[ROLE_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ROLE_SELECT] TO rl_role_r;
+GO

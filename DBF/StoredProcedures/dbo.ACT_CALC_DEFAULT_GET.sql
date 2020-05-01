@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_CALC_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[ACT_CALC_DEFAULT_GET]
 	@clientid INT,
 	@dt SMALLDATETIME = NULL
 AS
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CALC_DEFAULT_GET] TO rl_act_w;
+GO

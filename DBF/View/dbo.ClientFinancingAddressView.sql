@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[ClientFinancingAddressView]
+ALTER VIEW [dbo].[ClientFinancingAddressView]
 AS
 SELECT 
 	CASE ISNULL(FAT_ID_ADDR_TYPE, 0)

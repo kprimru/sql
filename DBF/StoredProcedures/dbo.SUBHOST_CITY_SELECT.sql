@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_SELECT]
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_SELECT]
 	@active BIT
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_SELECT] TO rl_subhost_city_r;
+GO

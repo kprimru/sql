@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_GET] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_GET] 
 	@tpid INT
 AS
 BEGIN
@@ -44,3 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_GET] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_GET] TO rl_to_personal_r;
+GO

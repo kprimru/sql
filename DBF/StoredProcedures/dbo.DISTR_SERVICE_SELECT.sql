@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_SERVICE_SELECT]   
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_SELECT]   
 	@active BIT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_SERVICE_SELECT] TO rl_distr_service_r;
+GO

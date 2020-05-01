@@ -13,7 +13,7 @@ GO
                клиента в справочник
 */
 
-CREATE PROCEDURE [dbo].[UNIT_ADD]
+ALTER PROCEDURE [dbo].[UNIT_ADD]
 	@name VARCHAR(100),
 	@okei VARCHAR(50),
 	@active BIT = 1,
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[UNIT_ADD] TO rl_unit_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_UNSIGN_REPORT]
+ALTER PROCEDURE [dbo].[ACT_UNSIGN_REPORT]
 	@actdate SMALLDATETIME
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_UNSIGN_REPORT] TO rl_act_r;
+GO

@@ -12,7 +12,7 @@ GO
                указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT] 
 	@systemnetcountid SMALLINT,
 	@systemnetid SMALLINT,
 	@netcount INT,
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_EDIT] TO rl_system_net_count_w;
+GO

@@ -7,7 +7,7 @@ GO
 /*
 	Полка
 */
-CREATE FUNCTION [Ric].[StageValue]
+ALTER FUNCTION [Ric].[StageValue]
 (
 	@PR_ID	SMALLINT
 )

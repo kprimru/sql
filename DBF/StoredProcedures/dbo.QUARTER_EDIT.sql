@@ -12,7 +12,7 @@ GO
                указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[QUARTER_EDIT] 
+ALTER PROCEDURE [dbo].[QUARTER_EDIT] 
 	@id		SMALLINT,
 	@name	VARCHAR(50),
 	@begin	SMALLDATETIME,
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[QUARTER_EDIT] TO rl_quarter_w;
+GO

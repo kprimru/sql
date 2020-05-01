@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EXCEPT_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_EDIT] 
 	@distrid INT,
 	@systemid INT,
 	@distrnum INT,
@@ -51,3 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_EDIT] TO rl_distr_except_w;
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_EDIT] TO rl_reg_node_report_r;
+GO

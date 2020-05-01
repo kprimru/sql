@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[AREA_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[AREA_CHECK_NAME] 
 	@areaname VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_CHECK_NAME] TO rl_area_w;
+GO

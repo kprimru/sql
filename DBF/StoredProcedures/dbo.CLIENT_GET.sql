@@ -12,7 +12,7 @@ GO
 				либо детальный выбор по указанному клиенту
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_GET] 
+ALTER PROCEDURE [dbo].[CLIENT_GET] 
 	@clientid INT
 AS
 BEGIN
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_GET] TO rl_client_r;
+GO

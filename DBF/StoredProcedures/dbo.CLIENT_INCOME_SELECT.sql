@@ -8,7 +8,7 @@ GO
 Автор:			Денисов Алексей/Богдан Владимир
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CLIENT_INCOME_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_INCOME_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INCOME_SELECT] TO rl_income_r;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Debug].[Execution@Start]
+ALTER PROCEDURE [Debug].[Execution@Start]
 	@Proc_Id		Int,
 	@Params			Xml,
 	@DebugContext	Xml OUT

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_GET] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_GET] 
 	@subhostcityid INT = NULL
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_GET] TO rl_subhost_city_r;
+GO

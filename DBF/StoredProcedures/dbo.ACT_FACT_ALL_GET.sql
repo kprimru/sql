@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[ACT_FACT_ALL_GET]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_FACT_ALL_GET] TO rl_act_p;
+GO

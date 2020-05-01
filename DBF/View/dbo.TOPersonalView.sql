@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[TOPersonalView]
+ALTER VIEW [dbo].[TOPersonalView]
 AS
 
 SELECT	TP_ID,

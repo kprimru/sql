@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DISTR_LOAD_FROM_REG]
+ALTER PROCEDURE [dbo].[DISTR_LOAD_FROM_REG]
 	@count INT OUTPUT,
 	@update INT OUTPUT
 AS
@@ -128,3 +128,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_LOAD_FROM_REG] TO rl_distr_financing_w;
+GO

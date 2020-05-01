@@ -9,7 +9,7 @@ GO
 Описание:	
 */
 
-CREATE TRIGGER [dbo].[IncomeDistrInsert]
+ALTER TRIGGER [dbo].[IncomeDistrInsert]
    ON  [dbo].[IncomeDistrTable]
    AFTER INSERT
 AS 

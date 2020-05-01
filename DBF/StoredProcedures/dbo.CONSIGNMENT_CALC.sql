@@ -16,7 +16,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_CALC]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_CALC]
 	-- Список параметров процедуры
 	@clientid INT,
 	@periodid SMALLINT,
@@ -174,3 +174,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_CALC] TO rl_consignment_w;
+GO

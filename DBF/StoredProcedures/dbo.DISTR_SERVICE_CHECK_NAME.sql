@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_SERVICE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_CHECK_NAME] 
 	@dsname VARCHAR(100)
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_SERVICE_CHECK_NAME] TO rl_distr_service_w;
+GO

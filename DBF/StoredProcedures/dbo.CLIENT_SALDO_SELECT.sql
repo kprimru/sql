@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_SALDO_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_SALDO_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SALDO_SELECT] TO rl_saldo_r;
+GO

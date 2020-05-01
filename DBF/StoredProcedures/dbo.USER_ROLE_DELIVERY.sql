@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_ROLE_DELIVERY]
+ALTER PROCEDURE [dbo].[USER_ROLE_DELIVERY]
 	@sourceuser VARCHAR(100),
 	@destuser VARCHAR(100)
 WITH EXECUTE AS OWNER
@@ -189,3 +189,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_ROLE_DELIVERY] TO rl_admin_permission_w;
+GO

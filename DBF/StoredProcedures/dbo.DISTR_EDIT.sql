@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_EDIT] 
 	@distrid INT,
 	@systemid INT,
 	@distrnum INT,
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EDIT] TO rl_distr_w;
+GO

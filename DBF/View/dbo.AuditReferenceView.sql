@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditReferenceView]
+ALTER VIEW [dbo].[AuditReferenceView]
 AS
 	SELECT 
 		'Справочник отчетных должностей' AS REF_NAME, 

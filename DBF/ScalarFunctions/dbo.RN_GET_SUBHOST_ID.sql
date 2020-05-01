@@ -10,7 +10,7 @@ GO
 -- Дата создания: 29.10.2008
 -- Описание:	  Выделяет ID подхоста
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_SUBHOST_ID]
+ALTER FUNCTION [dbo].[RN_GET_SUBHOST_ID]
 (
   @comment VARCHAR(150),
   @subsign BIT

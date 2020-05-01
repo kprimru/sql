@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [dbo].[GET_DISTR_STR]
+ALTER FUNCTION [dbo].[GET_DISTR_STR]
 (	
     --27.01.09 добавлен параметр система.
     @sys varchar(20),

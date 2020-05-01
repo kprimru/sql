@@ -12,7 +12,7 @@ GO
                 с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[PRICE_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_EDIT] 
 	@priceid SMALLINT,
 	@pricename VARCHAR(50),
 	@pricetypeid SMALLINT,
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_EDIT] TO rl_price_w;
+GO

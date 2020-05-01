@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_TRY_DELETE] 
 	@personalid INT
 AS
 BEGIN
@@ -46,3 +46,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_TRY_DELETE] TO rl_client_d;
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_TRY_DELETE] TO rl_to_personal_d;
+GO

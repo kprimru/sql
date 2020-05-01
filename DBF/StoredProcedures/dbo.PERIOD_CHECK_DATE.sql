@@ -13,7 +13,7 @@ GO
                с указанным названием. 
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_CHECK_DATE] 
+ALTER PROCEDURE [dbo].[PERIOD_CHECK_DATE] 
 	@perioddate SMALLDATETIME
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_CHECK_DATE] TO rl_period_w;
+GO

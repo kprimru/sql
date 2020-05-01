@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_DISTR_GET]
+ALTER PROCEDURE [dbo].[BILL_DISTR_GET]
 	@bdid INT
 AS
 BEGIN
@@ -40,4 +40,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[BILL_DISTR_GET] TO rl_bill_r;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:	  Добавить должность в справочник
 */
 
-CREATE PROCEDURE [dbo].[POSITION_ADD] 
+ALTER PROCEDURE [dbo].[POSITION_ADD] 
 	@positionname VARCHAR(150),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_ADD] TO rl_position_w;
+GO

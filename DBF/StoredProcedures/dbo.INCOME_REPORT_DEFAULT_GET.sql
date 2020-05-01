@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INCOME_REPORT_DEFAULT_GET]	
+ALTER PROCEDURE [dbo].[INCOME_REPORT_DEFAULT_GET]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,3 +40,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_REPORT_DEFAULT_GET] TO rl_report_income_r;
+GO

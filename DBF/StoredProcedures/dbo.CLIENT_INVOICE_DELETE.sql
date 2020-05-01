@@ -13,7 +13,7 @@ GO
 				а потом саму счет-фактуру
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_DELETE]
 	@invid INT
 AS
 BEGIN
@@ -86,3 +86,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_DELETE] TO rl_invoice_d;
+GO

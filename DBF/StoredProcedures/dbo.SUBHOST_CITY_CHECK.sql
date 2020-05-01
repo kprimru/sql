@@ -12,7 +12,7 @@ GO
                и города
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_CHECK] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_CHECK] 
 	@subhostid SMALLINT,
 	@cityid SMALLINT
 AS
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_CHECK] TO rl_subhost_city_w;
+GO

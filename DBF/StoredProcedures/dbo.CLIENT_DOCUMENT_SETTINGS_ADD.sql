@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD]
+ALTER PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD]
 	@clientid INT,
 	@actcontract VARCHAR(100),
 	@actpos VARCHAR(200),
@@ -60,3 +60,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD] TO rl_client_w;
+GO

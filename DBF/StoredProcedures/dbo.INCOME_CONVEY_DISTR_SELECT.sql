@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INCOME_CONVEY_DISTR_SELECT]
+ALTER PROCEDURE [dbo].[INCOME_CONVEY_DISTR_SELECT]
 	@incomeid INT
 AS
 BEGIN
@@ -81,3 +81,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_CONVEY_DISTR_SELECT] TO rl_income_w;
+GO

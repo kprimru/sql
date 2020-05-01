@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PAY_COEF_GET] 
+ALTER PROCEDURE [dbo].[PAY_COEF_GET] 
 	@id SMALLINT  
 AS
 
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PAY_COEF_GET] TO rl_pay_coef_r;
+GO

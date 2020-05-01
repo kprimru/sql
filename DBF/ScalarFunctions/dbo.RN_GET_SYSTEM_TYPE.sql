@@ -11,7 +11,7 @@ GO
 -- Дата создания: 29.10.2008
 -- Описание:	  Выделяет ID типа системы
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_SYSTEM_TYPE]
+ALTER FUNCTION [dbo].[RN_GET_SYSTEM_TYPE]
 (
   @systype VARCHAR(20)
 )

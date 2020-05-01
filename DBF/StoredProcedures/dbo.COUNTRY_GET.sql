@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_GET] 
+ALTER PROCEDURE [dbo].[COUNTRY_GET] 
 	@countryid SMALLINT = NULL,
 	@active BIT = NULL
 AS
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COUNTRY_GET] TO rl_country_r;
+GO

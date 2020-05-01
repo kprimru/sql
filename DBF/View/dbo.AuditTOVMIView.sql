@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditTOVMIView]
+ALTER VIEW [dbo].[AuditTOVMIView]
 AS
 	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, TO_VMI_COMMENT, '”становлены только дополнительные системы' AS TO_ERROR
 	FROM 

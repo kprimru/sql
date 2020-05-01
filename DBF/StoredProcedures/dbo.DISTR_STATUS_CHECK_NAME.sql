@@ -12,7 +12,7 @@ GO
 				(выбор данных по имени)
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_CHECK_NAME] 
 	@dsname VARCHAR(100)  
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_CHECK_NAME] TO rl_distr_status_w;
+GO

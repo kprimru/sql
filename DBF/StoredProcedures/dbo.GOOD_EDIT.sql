@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[GOOD_EDIT]
+ALTER PROCEDURE [dbo].[GOOD_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(150),
 	@active BIT = 1
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GOOD_EDIT] TO rl_good_w;
+GO

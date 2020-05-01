@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_EDIT] 
 	@contracttypeid SMALLINT,
 	@contracttypename VARCHAR(100),
 	@active BIT = 1
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_TYPE_EDIT] TO rl_contract_type_w;
+GO

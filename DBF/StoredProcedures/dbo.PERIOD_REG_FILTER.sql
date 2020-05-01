@@ -10,7 +10,7 @@ GO
 Описание:	
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_REG_FILTER] 
+ALTER PROCEDURE [dbo].[PERIOD_REG_FILTER] 
 	@regidperiods		VARCHAR(MAX),
 	@regidsystems		VARCHAR(MAX),
 	@regdistrnum		INT,
@@ -245,3 +245,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_REG_FILTER] TO rl_reg_node_r;
+GO

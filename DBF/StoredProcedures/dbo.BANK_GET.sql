@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[BANK_GET]  
+ALTER PROCEDURE [dbo].[BANK_GET]  
 	@bankid INT = NULL
 AS
 
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BANK_GET] TO rl_bank_r;
+GO

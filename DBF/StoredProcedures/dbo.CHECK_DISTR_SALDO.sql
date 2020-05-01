@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CHECK_DISTR_SALDO]
+ALTER PROCEDURE [dbo].[CHECK_DISTR_SALDO]
 	@cdid VARCHAR(MAX)
 AS
 BEGIN
@@ -44,4 +44,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[CHECK_DISTR_SALDO] TO rl_client_distr_w;
+GO

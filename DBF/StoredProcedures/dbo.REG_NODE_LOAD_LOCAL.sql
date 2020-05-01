@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  Процедура создания копии рег.узла
 */
-CREATE PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 	
+ALTER PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 	
 	@filename VARCHAR(MAX)
 WITH EXECUTE AS OWNER
 AS
@@ -120,3 +120,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_NODE_LOAD_LOCAL] TO rl_reg_node_w;
+GO

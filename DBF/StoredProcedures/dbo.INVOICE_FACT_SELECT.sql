@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_FACT_SELECT]
+ALTER PROCEDURE [dbo].[INVOICE_FACT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,3 +40,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_FACT_SELECT] TO rl_invoice_p;
+GO

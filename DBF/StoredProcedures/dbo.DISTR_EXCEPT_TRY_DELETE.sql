@@ -13,7 +13,7 @@ GO
                склада, -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EXCEPT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_TRY_DELETE] 
 	@distrid INT
 AS
 BEGIN
@@ -49,3 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_TRY_DELETE] TO rl_distr_except_d;
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_TRY_DELETE] TO rl_reg_node_report_r;
+GO

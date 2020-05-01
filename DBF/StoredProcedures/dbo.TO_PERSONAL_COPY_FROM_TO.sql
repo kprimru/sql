@@ -13,7 +13,7 @@ GO
 Дата:			10-July-2009
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_COPY_FROM_TO] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_COPY_FROM_TO] 
 	@toperid INT,
 	@toid INT,
 	@returnvalue BIT = 1
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_COPY_FROM_TO] TO rl_to_personal_w;
+GO

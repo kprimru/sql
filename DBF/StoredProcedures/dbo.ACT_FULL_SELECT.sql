@@ -8,7 +8,7 @@ GO
 Автор:			Денисов Алексей/Богдан Владимир
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_FULL_SELECT]
+ALTER PROCEDURE [dbo].[ACT_FULL_SELECT]
 	@periodid SMALLINT,
 	@soid SMALLINT,
 	@preview BIT = 0
@@ -177,3 +177,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_FULL_SELECT] TO rl_act_r;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REPORT_POSITION_ADD] 
+ALTER PROCEDURE [dbo].[REPORT_POSITION_ADD] 
 	@positionreportname VARCHAR(100),
 	@positionreportpsedo VARCHAR(50),
 	@active BIT = 1,
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_POSITION_ADD] TO rl_report_position_w;
+GO

@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[CLIENT_ADDRESS_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_EDIT] 
 	@addressid INT,
 	@streetid INT,
 	@index VARCHAR(100),
@@ -77,3 +77,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_EDIT] TO rl_client_address_w;
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_EDIT] TO rl_client_w;
+GO

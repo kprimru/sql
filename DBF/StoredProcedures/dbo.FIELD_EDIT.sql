@@ -11,7 +11,7 @@ GO
 Описание:	  Изменить данные о поле в справочнике полей
 */
 
-CREATE PROCEDURE [dbo].[FIELD_EDIT] 
+ALTER PROCEDURE [dbo].[FIELD_EDIT] 
 	@fieldid INT,
 	@fieldname VARCHAR(50),
 	@fieldwidth INT,

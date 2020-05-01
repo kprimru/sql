@@ -12,7 +12,7 @@ GO
                указанным кодом в справочнике
 */
 
-CREATE PROCEDURE [dbo].[HOST_EDIT] 
+ALTER PROCEDURE [dbo].[HOST_EDIT] 
 	@hostid SMALLINT,
 	@hostname VARCHAR(250),
 	@hostregname VARCHAR(20),
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_EDIT] TO rl_host_w;
+GO

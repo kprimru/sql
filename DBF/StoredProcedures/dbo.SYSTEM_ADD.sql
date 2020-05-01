@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_ADD] 
 	@prefix VARCHAR(20),
 	@name VARCHAR(250),
 	@shortname VARCHAR(50),
@@ -72,3 +72,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_ADD] TO rl_system_w;
+GO

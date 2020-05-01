@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_KIND_EDIT]   
+ALTER PROCEDURE [dbo].[CONTRACT_KIND_EDIT]   
 	@ID		SMALLINT,
 	@NAME	VARCHAR(100),
 	@HEADER VARCHAR(100),
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_KIND_EDIT] TO rl_contract_kind_w;
+GO

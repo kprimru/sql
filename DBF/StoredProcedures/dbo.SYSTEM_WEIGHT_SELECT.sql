@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_SELECT]
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_SELECT]
 	@active BIT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_SELECT] TO rl_system_weight_r;
+GO

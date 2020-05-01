@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[SaldoDetailView]
+ALTER VIEW [dbo].[SaldoDetailView]
 AS
 SELECT 
 	SL_ID, SL_DATE, SL_TP,

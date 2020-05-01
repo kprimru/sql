@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_EDIT]
+ALTER PROCEDURE [dbo].[TO_PERSONAL_EDIT]
 	@tpid INT,
 	@rpid TINYINT,
 	@posid SMALLINT,
@@ -57,3 +57,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_EDIT] TO rl_client_w;
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_EDIT] TO rl_to_personal_w;
+GO

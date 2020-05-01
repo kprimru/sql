@@ -14,7 +14,7 @@ GO
 --                (присутствует в справочнике). 
 --                При этом префикс не учитывается
 -- =============================================
-CREATE FUNCTION [dbo].[IS_CITY_CORRECT]
+ALTER FUNCTION [dbo].[IS_CITY_CORRECT]
 (
 	@citystr varchar(100)
 )

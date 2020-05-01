@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SALDO_RECALC]
+ALTER PROCEDURE [dbo].[SALDO_RECALC]
 	@clientid INT
 AS
 BEGIN
@@ -220,3 +220,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SALDO_RECALC] TO rl_saldo_w;
+GO

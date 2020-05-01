@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_SELECT] 
+ALTER PROCEDURE [dbo].[SYSTEM_SELECT] 
     @active BIT = NULL
 AS
 BEGIN
@@ -48,3 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_SELECT] TO rl_system_d;
+GRANT EXECUTE ON [dbo].[SYSTEM_SELECT] TO rl_system_r;
+GO

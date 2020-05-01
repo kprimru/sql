@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[SALDO_DISTR_GET]
+ALTER FUNCTION [dbo].[SALDO_DISTR_GET]
 (
 	-- Список параметров функции
 	@clientid INT,

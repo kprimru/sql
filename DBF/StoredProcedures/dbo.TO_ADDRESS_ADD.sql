@@ -10,7 +10,7 @@ GO
 Описание:	  Добавить сотрудника клиенту
 */
 
-CREATE PROCEDURE [dbo].[TO_ADDRESS_ADD] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_ADD] 
 	@toid INT,
 	@streetid SMALLINT,
 	@index VARCHAR(20),
@@ -52,3 +52,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_ADDRESS_ADD] TO rl_client_w;
+GO

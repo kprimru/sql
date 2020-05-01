@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[GET_PERIOD_BY_DATE]
+ALTER FUNCTION [dbo].[GET_PERIOD_BY_DATE]
 (
 	-- Список параметров функции
 	@date SMALLDATETIME

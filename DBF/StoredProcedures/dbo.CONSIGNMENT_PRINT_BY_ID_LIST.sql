@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CONSIGNMENT_PRINT_BY_ID_LIST]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_PRINT_BY_ID_LIST]
 	@consid VARCHAR(MAX)
 AS
 BEGIN
@@ -267,3 +267,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_PRINT_BY_ID_LIST] TO rl_consignment_p;
+GO

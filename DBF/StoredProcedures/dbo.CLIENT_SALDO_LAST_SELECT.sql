@@ -8,7 +8,7 @@ GO
 Автор:			Денисов Алексей/Богдан Владимир
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CLIENT_SALDO_LAST_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_SALDO_LAST_SELECT] 
 	@clientid INT,
 	@date SMALLDATETIME = NULL	
 WITH RECOMPILE
@@ -66,3 +66,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_SALDO_LAST_SELECT] TO rl_saldo_r;
+GO

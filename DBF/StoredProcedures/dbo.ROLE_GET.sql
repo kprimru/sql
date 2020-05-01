@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ROLE_GET]
+ALTER PROCEDURE [dbo].[ROLE_GET]
 	@roleid INT
 AS
 BEGIN
@@ -79,3 +79,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ROLE_GET] TO rl_role_r;
+GO

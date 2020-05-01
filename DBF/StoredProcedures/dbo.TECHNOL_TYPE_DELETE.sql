@@ -12,7 +12,7 @@ GO
                кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_DELETE] 
 	@technoltypeid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_DELETE] TO rl_technol_type_d;
+GO

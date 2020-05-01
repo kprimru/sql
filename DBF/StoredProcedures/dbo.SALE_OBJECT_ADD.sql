@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SALE_OBJECT_ADD]
+ALTER PROCEDURE [dbo].[SALE_OBJECT_ADD]
 	@soname VARCHAR(50),
 	@taxid SMALLINT,
 	--@sobill VARCHAR(50),
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SALE_OBJECT_ADD] TO rl_sale_object_w;
+GO

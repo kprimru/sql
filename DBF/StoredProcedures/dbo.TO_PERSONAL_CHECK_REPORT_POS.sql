@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_CHECK_REPORT_POS] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_CHECK_REPORT_POS] 
 	@toid INT,
 	@reportposid SMALLINT
 AS
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_CHECK_REPORT_POS] TO rl_to_personal_w;
+GO

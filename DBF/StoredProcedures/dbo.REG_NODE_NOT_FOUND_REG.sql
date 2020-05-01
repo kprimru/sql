@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[REG_NODE_NOT_FOUND_REG]
+ALTER PROCEDURE [dbo].[REG_NODE_NOT_FOUND_REG]
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_NODE_NOT_FOUND_REG] TO rl_audit_reg_node_r;
+GO

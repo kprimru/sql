@@ -65,4 +65,6 @@ GO
 			update dbo.sysdiagrams set [name] = @new_diagramname where diagram_id = @DiagId
 		return 0
 	END
-	
+	DENY EXECUTE ON [dbo].[sp_renamediagram] TO guest;
+GRANT EXECUTE ON [dbo].[sp_renamediagram] TO public;
+GO

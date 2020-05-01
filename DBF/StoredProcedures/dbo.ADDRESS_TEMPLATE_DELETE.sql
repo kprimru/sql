@@ -12,7 +12,7 @@ GO
 Дата:			16.07.2009
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_DELETE] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_DELETE] 
 	@atlid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_DELETE] TO rl_address_template_d;
+GO

@@ -11,7 +11,7 @@ GO
 -- Дата создания: 29.10.2008
 -- Описание:	  Выделяет дату регистрации
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_DATE]
+ALTER FUNCTION [dbo].[RN_GET_DATE]
 (
   @regdate VARCHAR(20)
 )

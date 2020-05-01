@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DISTR_GET_TAX]
+ALTER PROCEDURE [dbo].[DISTR_GET_TAX]
 	@distrid INT
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_GET_TAX] TO rl_client_fin_r;
+GO

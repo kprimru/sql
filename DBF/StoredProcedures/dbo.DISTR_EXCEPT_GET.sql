@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EXCEPT_GET]  
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_GET]  
 	@distrid INT = NULL  
 AS
 BEGIN
@@ -45,3 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_GET] TO rl_distr_except_r;
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_GET] TO rl_reg_node_report_r;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_CALC]
+ALTER PROCEDURE [dbo].[ACT_CALC]
 	-- Список параметров процедуры
 	@clientid INT,
 	@periodid SMALLINT,
@@ -116,4 +116,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[ACT_CALC] TO rl_act_w;
+GO

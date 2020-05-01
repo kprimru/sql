@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_LIST_DELETE]
+ALTER PROCEDURE [dbo].[INVOICE_LIST_DELETE]
 	@id VARCHAR(MAX)
 AS
 BEGIN
@@ -144,3 +144,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_LIST_DELETE] TO rl_invoice_d;
+GO

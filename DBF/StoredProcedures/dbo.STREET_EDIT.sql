@@ -12,7 +12,7 @@ GO
                с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[STREET_EDIT] 
+ALTER PROCEDURE [dbo].[STREET_EDIT] 
 	@streetid INT,
 	@streetname VARCHAR(150),
 	@streetprefix VARCHAR(10),
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_EDIT] TO rl_street_w;
+GO

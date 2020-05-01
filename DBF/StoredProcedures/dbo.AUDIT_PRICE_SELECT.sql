@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[AUDIT_PRICE_SELECT]	
+ALTER PROCEDURE [dbo].[AUDIT_PRICE_SELECT]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -41,3 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_financing_r;
+GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_price;
+GO

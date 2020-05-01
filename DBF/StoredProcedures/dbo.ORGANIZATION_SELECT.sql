@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_SELECT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_SELECT] 
     @active BIT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_SELECT] TO rl_organization_r;
+GO

@@ -12,7 +12,7 @@ GO
                кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[HOST_DELETE] 
+ALTER PROCEDURE [dbo].[HOST_DELETE] 
 	@hostid SMALLINT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_DELETE] TO rl_host_d;
+GO

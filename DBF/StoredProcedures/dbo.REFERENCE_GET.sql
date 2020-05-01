@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать данные о спарвочнике, либо список всех справочников
 */
 
-CREATE PROCEDURE [dbo].[REFERENCE_GET] 
+ALTER PROCEDURE [dbo].[REFERENCE_GET] 
 	@refname VARCHAR(50) = NULL  
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REFERENCE_GET] TO rl_all_r;
+GO

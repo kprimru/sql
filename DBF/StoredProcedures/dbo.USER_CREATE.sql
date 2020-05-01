@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_CREATE]
+ALTER PROCEDURE [dbo].[USER_CREATE]
 	@domainname VARCHAR(100),
 	@sqlname VARCHAR(100),
 	@pass VARCHAR(100)
@@ -94,3 +94,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_CREATE] TO rl_user;
+GO

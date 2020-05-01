@@ -12,7 +12,7 @@ GO
                 кодом из справочника
 */
 
-CREATE PROCEDURE [dbo].[REGION_DELETE] 
+ALTER PROCEDURE [dbo].[REGION_DELETE] 
 	@regionid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_DELETE] TO rl_region_d;
+GO

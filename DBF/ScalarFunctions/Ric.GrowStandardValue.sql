@@ -7,7 +7,7 @@ GO
 /*
 	Показатель нормального роста
 */
-CREATE FUNCTION [Ric].[GrowStandardValue]
+ALTER FUNCTION [Ric].[GrowStandardValue]
 (
 	@PR_ID	SMALLINT
 )

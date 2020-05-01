@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_REPORT]
+ALTER PROCEDURE [dbo].[CLIENT_REPORT]
 	@ctlist VARCHAR(MAX)
 AS
 BEGIN
@@ -75,3 +75,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_REPORT] TO rl_client_r;
+GO

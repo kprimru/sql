@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[REPORT_NEW_SYSTEM_NEW]		
+ALTER PROCEDURE [dbo].[REPORT_NEW_SYSTEM_NEW]		
 	@subhostlist VARCHAR(MAX),
 	@systemlist VARCHAR(MAX),
 	@systemtypelist VARCHAR(MAX),
@@ -305,3 +305,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_NEW_SYSTEM_NEW] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[REPORT_NEW_SYSTEM_NEW] TO rl_reg_report_r;
+GO

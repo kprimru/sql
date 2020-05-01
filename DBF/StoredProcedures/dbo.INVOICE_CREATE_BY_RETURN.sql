@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_CREATE_BY_RETURN]
+ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_RETURN]
 	@inid INT,
 	@invdate SMALLDATETIME,
 	@reserve BIT,
@@ -362,3 +362,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_RETURN] TO rl_invoice_w;
+GO

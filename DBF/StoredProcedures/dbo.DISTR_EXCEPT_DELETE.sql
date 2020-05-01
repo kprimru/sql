@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_EXCEPT_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_DELETE] 
 	@id INT
 AS
 BEGIN
@@ -44,3 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_DELETE] TO rl_distr_except_d;
+GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_DELETE] TO rl_reg_node_report_r;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_PRINT]
+ALTER PROCEDURE [dbo].[INVOICE_PRINT]
 	@numlist VARCHAR(MAX),
 	@invyear VARCHAR(5),
 	@begindate SMALLDATETIME,
@@ -143,3 +143,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_PRINT] TO rl_invoice_p;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_DEBT_SELECT]
+ALTER PROCEDURE [dbo].[REPORT_DEBT_SELECT]
 	@date SMALLDATETIME
 WITH RECOMPILE
 AS
@@ -126,3 +126,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_DEBT_SELECT] TO rl_report_debt_r;
+GO

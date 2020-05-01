@@ -13,7 +13,7 @@ GO
 				из таблицы счета-фактуры
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_ROW_DELETE]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_DELETE]
 	@rowlist VARCHAR(200)
 AS
 BEGIN
@@ -89,3 +89,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ROW_DELETE] TO rl_invoice_d;
+GO

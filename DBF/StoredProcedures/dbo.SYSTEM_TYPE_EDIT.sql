@@ -12,7 +12,7 @@ GO
                указанным кодом в справочнике
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_EDIT] 
 	@systemtypeid SMALLINT,
 	@systemtypename VARCHAR(20),
 	@systemtypecaption VARCHAR(100),
@@ -69,3 +69,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_EDIT] TO rl_system_type_w;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_CREATE_ALL]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_CREATE_ALL]
 	@periodid SMALLINT,
 	@consdate SMALLDATETIME,
 	@soid SMALLINT
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_CREATE_ALL] TO rl_consignment_w;
+GO

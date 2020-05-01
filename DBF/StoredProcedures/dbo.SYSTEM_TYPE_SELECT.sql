@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_SELECT] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_SELECT] TO rl_system_type_r;
+GO

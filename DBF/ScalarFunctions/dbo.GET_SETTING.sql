@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[GET_SETTING]
+ALTER FUNCTION [dbo].[GET_SETTING]
 (
 	-- Список параметров функции
 	@sname VARCHAR(500)

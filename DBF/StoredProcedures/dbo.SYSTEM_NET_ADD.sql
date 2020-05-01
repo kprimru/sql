@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_ADD] 
 	@name VARCHAR(20),
 	@fullname VARCHAR(100),
 	@coef DECIMAL(8, 4),
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_ADD] TO rl_system_net_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_ADD] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_ADD] 
 	@subhostid SMALLINT,
 	@cityid SMALLINT,
 	@marketareaid SMALLINT,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_ADD] TO rl_subhost_city_w;
+GO

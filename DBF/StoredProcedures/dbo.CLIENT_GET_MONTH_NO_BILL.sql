@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]
+ALTER PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]
 	@clientid INT
 AS
 BEGIN
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_GET_MONTH_NO_BILL] TO rl_bill_r;
+GO

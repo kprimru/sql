@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_PRIMARY_PAY_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_PRIMARY_PAY_SELECT]
   @clientid INT
 AS
 BEGIN
@@ -52,3 +52,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PRIMARY_PAY_SELECT] TO rl_primary_pay_r;
+GO

@@ -9,7 +9,7 @@ GO
 Описание:		Список адресов и их шаблонов в финансовых документах клиента
 Дата:			17.07.2009
 */
-CREATE PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_SELECT] 
 	@clientid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ADDRESS_SELECT] TO rl_client_fin_template_r;
+GO

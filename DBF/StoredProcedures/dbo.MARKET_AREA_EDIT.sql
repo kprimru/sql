@@ -12,7 +12,7 @@ GO
                территории с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_EDIT] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_EDIT] 
 	@marketareaid INT,
 	@marketareaname VARCHAR(100),
 	@marketareashortname VARCHAR(50),
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MARKET_AREA_EDIT] TO rl_market_area_w;
+GO

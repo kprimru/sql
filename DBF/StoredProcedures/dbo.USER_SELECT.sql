@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_SELECT]
+ALTER PROCEDURE [dbo].[USER_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -72,3 +72,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_SELECT] TO rl_user;
+GO

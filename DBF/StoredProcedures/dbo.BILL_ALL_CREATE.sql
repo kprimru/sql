@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[BILL_ALL_CREATE]
+ALTER PROCEDURE [dbo].[BILL_ALL_CREATE]
 	@periodid SMALLINT,
 	@billdate SMALLDATETIME,
 	@soid SMALLINT = 1,
@@ -116,3 +116,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BILL_ALL_CREATE] TO rl_bill_w;
+GO

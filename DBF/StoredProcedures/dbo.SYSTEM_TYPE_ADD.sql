@@ -12,7 +12,7 @@ GO
                клиента в справочник
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_ADD]
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_ADD]
 	@systemtypename VARCHAR(20),
 	@systemtypecaption VARCHAR(100),
 	@systemtypelst VARCHAR(20),
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_ADD] TO rl_system_type_w;
+GO

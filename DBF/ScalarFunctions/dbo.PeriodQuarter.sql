@@ -7,7 +7,7 @@ GO
 /*
 	По указанному периоду определяем квартал, к которому принадлежит период
 */
-CREATE FUNCTION [dbo].[PeriodQuarter]
+ALTER FUNCTION [dbo].[PeriodQuarter]
 (
 	@PR_ID	SMALLINT
 )

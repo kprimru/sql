@@ -10,7 +10,7 @@ GO
 Правка:			Добавлена группировка по деталь-данным
 Дата:			21.07.2009
 */
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_FACT_GET]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_FACT_GET]
 	@clientid INT,
 	@date VARCHAR(100)
 AS
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_FACT_GET] TO rl_invoice_p;
+GO

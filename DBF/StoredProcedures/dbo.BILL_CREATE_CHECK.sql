@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[BILL_CREATE_CHECK]
+ALTER PROCEDURE [dbo].[BILL_CREATE_CHECK]
 	@clientid INT,
 	@periodid SMALLINT,
 	@soid SMALLINT
@@ -83,3 +83,5 @@ BEGIN
 END
 
 
+GRANT EXECUTE ON [dbo].[BILL_CREATE_CHECK] TO rl_bill_w;
+GO

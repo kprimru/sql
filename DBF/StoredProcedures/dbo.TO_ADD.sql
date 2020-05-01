@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_ADD]
+ALTER PROCEDURE [dbo].[TO_ADD]
 	@clientid INT,
 	@toname VARCHAR(250),
 	@tonum INT,
@@ -76,3 +76,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_ADD] TO rl_client_w;
+GRANT EXECUTE ON [dbo].[TO_ADD] TO rl_to_w;
+GO

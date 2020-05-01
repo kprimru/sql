@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_GET] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_GET] 
 	@marketareaid INT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MARKET_AREA_GET] TO rl_market_area_r;
+GO

@@ -12,7 +12,7 @@ GO
 Дата:			16.07.2009
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_ADD] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_ADD] 
 --	@atlid			SMALLINT,
 	@name			VARCHAR(50),
 	@index			BIT,
@@ -80,3 +80,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_ADD] TO rl_address_template_w;
+GO

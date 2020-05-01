@@ -13,7 +13,7 @@ GO
 --                данные о юридическом адресе клиента.
 -- =============================================
 
-CREATE PROCEDURE [dbo].[CONVERT_ADDRESS_TO_STRING]	
+ALTER PROCEDURE [dbo].[CONVERT_ADDRESS_TO_STRING]	
 	@clientid int
 AS
 BEGIN	

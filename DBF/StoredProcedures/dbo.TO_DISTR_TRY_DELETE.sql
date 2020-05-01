@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_DISTR_TRY_DELETE]
+ALTER PROCEDURE [dbo].[TO_DISTR_TRY_DELETE]
 	@tdid INT	
 AS
 BEGIN
@@ -47,3 +47,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_DISTR_TRY_DELETE] TO rl_client_d;
+GRANT EXECUTE ON [dbo].[TO_DISTR_TRY_DELETE] TO rl_to_distr_d;
+GO

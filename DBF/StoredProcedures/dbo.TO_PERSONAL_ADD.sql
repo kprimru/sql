@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить сотрудника клиенту
 */
 
-CREATE PROCEDURE [dbo].[TO_PERSONAL_ADD] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_ADD] 
 	@toid INT,
 	@rpid TINYINT,
 	@posid SMALLINT,
@@ -57,3 +57,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_ADD] TO rl_client_w;
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_ADD] TO rl_to_personal_w;
+GO

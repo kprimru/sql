@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT] 
 	@contractid INT,
 	@contractnumber VARCHAR(500),
 	@contracttypeid SMALLINT,
@@ -67,3 +67,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_EDIT] TO rl_client_contract_w;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_EDIT] TO rl_client_w;
+GO

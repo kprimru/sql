@@ -12,7 +12,7 @@ GO
                документом в указанной таблице
 */
 
-CREATE PROCEDURE [dbo].[LOCK_DELETE] 
+ALTER PROCEDURE [dbo].[LOCK_DELETE] 
 	@docid INT,
 	@tablename VARCHAR(100)
 AS
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LOCK_DELETE] TO rl_admin_lock_w;
+GO

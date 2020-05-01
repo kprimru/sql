@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[PRIMARY_PAY_DELETE]
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_DELETE]
 	@prpid INT
 AS
 BEGIN
@@ -41,3 +41,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRIMARY_PAY_DELETE] TO rl_primary_pay_w;
+GO

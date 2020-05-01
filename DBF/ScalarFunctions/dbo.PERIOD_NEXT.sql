@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[PERIOD_NEXT]
+ALTER FUNCTION [dbo].[PERIOD_NEXT]
 (
 	-- Список параметров функции
 	@prid SMALLINT

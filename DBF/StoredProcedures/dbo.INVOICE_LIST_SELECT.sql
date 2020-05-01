@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_LIST_SELECT]
+ALTER PROCEDURE [dbo].[INVOICE_LIST_SELECT]
 	@begindate SMALLDATETIME,
 	@enddate SMALLDATETIME,
 	@beginnum INT = NULL,
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_LIST_SELECT] TO rl_invoice_r;
+GO

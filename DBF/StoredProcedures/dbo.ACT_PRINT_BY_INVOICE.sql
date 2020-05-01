@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_PRINT_BY_INVOICE]
+ALTER PROCEDURE [dbo].[ACT_PRINT_BY_INVOICE]
 	@invoiceid INT,
 	@actdate SMALLDATETIME,
 	@actperiod SMALLINT,
@@ -223,4 +223,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[ACT_PRINT_BY_INVOICE] TO rl_invoice_r;
+GO

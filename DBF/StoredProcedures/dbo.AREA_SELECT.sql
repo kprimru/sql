@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[AREA_SELECT]   
+ALTER PROCEDURE [dbo].[AREA_SELECT]   
 	@active BIT = NULL
 AS
 
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_SELECT] TO rl_area_r;
+GO

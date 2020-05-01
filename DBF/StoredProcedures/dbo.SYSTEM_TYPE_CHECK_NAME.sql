@@ -12,7 +12,7 @@ GO
                указанным названием. 
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_CHECK_NAME] 
 	@systemtypename VARCHAR(20)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_CHECK_NAME] TO rl_system_type_w;
+GO

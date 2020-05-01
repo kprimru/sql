@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_DISTR_PAY_NEW]
+ALTER PROCEDURE [dbo].[REPORT_DISTR_PAY_NEW]
 	@prid SMALLINT,
 	@date SMALLDATETIME,
 	@cour VARCHAR(MAX)

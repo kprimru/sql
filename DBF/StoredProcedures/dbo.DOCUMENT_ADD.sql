@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOCUMENT_ADD]
+ALTER PROCEDURE [dbo].[DOCUMENT_ADD]
 	@name VARCHAR(100),	
 	@psedo VARCHAR(50),
 	@active BIT = 1,
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_ADD] TO rl_document_w;
+GO

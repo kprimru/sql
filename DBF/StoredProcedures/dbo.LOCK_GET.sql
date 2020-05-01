@@ -12,7 +12,7 @@ GO
                записях со всеми данными
 */
 
-CREATE PROCEDURE [dbo].[LOCK_GET] 
+ALTER PROCEDURE [dbo].[LOCK_GET] 
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[LOCK_GET] TO rl_admin_lock_r;
+GO

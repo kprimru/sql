@@ -13,7 +13,7 @@ GO
                указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_RENAME]
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_RENAME]
 	@reporttemplateid INT,
 	@reporttemplatename VARCHAR(150)
 AS
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_RENAME] TO rl_report_w;
+GO

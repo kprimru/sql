@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_CHECK_NUM]
+ALTER PROCEDURE [dbo].[TO_CHECK_NUM]
 	@num INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_CHECK_NUM] TO rl_to_w;
+GO

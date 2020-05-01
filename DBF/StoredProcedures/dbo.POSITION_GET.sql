@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[POSITION_GET] 
+ALTER PROCEDURE [dbo].[POSITION_GET] 
 	@positionid INT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[POSITION_GET] TO rl_position_r;
+GO

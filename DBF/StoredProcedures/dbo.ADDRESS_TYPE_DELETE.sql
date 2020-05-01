@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_DELETE] 
 	@addresstypeid TINYINT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_DELETE] TO rl_address_type_d;
+GO

@@ -8,7 +8,7 @@ GO
 Автор:			Денисов Алексей
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_CREATE]
+ALTER PROCEDURE [dbo].[BILL_CREATE]
 	@clientid INT,	
 	@periodid SMALLINT,
 	@billdate SMALLDATETIME,
@@ -306,3 +306,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BILL_CREATE] TO rl_bill_w;
+GO

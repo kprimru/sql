@@ -13,7 +13,7 @@ GO
 -- Описание:	  Выделяет ID системы из строки 
 --                регузла
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_SYS_ID]
+ALTER FUNCTION [dbo].[RN_GET_SYS_ID]
 (
   @regname VARCHAR(50)
 )

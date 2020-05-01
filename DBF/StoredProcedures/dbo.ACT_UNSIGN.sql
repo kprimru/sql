@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_UNSIGN]
+ALTER PROCEDURE [dbo].[ACT_UNSIGN]
 	@actid INT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_UNSIGN] TO rl_act_w;
+GO

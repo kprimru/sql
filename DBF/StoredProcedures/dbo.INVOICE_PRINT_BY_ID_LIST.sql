@@ -11,7 +11,7 @@ GO
 Правка:			21.07.2009
 Описание:		Добавлена группировка по деталь-данным
 */
-CREATE PROCEDURE [dbo].[INVOICE_PRINT_BY_ID_LIST]
+ALTER PROCEDURE [dbo].[INVOICE_PRINT_BY_ID_LIST]
 	@invid VARCHAR(MAX),
 	@preview BIT = 1,
 	@group BIT = 0
@@ -435,3 +435,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_PRINT_BY_ID_LIST] TO rl_invoice_p;
+GO

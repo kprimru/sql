@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[InvoiceProtocolView]
+ALTER VIEW [dbo].[InvoiceProtocolView]
 AS
 	SELECT 
 		INS_ID, INS_ID_CLIENT, 

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[COURIER_REPORT]
+ALTER PROCEDURE [dbo].[COURIER_REPORT]
 	@courlist VARCHAR(MAX),
 	@count SMALLINT
 AS
@@ -158,3 +158,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COURIER_REPORT] TO rl_client_w;
+GO

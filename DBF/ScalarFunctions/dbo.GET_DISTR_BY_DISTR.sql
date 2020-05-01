@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[GET_DISTR_BY_DISTR]
+ALTER FUNCTION [dbo].[GET_DISTR_BY_DISTR]
 (
 	-- Список параметров функции
 	@distrnum INT,

@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_HISTORY_ADD]
+ALTER PROCEDURE [dbo].[RIC_REPORT_HISTORY_ADD]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -63,3 +63,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RIC_REPORT_HISTORY_ADD] TO rl_vmi_history_w;
+GO

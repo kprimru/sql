@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить тип финансирования в справочник
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_ADD] 
+ALTER PROCEDURE [dbo].[FINANCING_ADD] 
 	@financingname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_ADD] TO rl_financing_w;
+GO

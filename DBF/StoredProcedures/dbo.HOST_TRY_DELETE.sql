@@ -13,7 +13,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[HOST_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[HOST_TRY_DELETE] 
 	@hostid SMALLINT
 AS
 BEGIN
@@ -57,3 +57,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_TRY_DELETE] TO rl_host_d;
+GO

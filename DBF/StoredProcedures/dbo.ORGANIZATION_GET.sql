@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_GET] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_GET] 
 	@id SMALLINT = NULL
 AS
 BEGIN
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_GET] TO rl_organization_r;
+GO

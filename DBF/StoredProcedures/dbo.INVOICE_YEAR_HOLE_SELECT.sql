@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[INVOICE_YEAR_HOLE_SELECT]
+ALTER PROCEDURE [dbo].[INVOICE_YEAR_HOLE_SELECT]
 	@year VARCHAR(5),
 	@orgid SMALLINT
 AS
@@ -83,3 +83,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_YEAR_HOLE_SELECT] TO rl_invoice_r;
+GO

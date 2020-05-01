@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[REPORT_INCOME]
+ALTER PROCEDURE [dbo].[REPORT_INCOME]
 	@date SMALLDATETIME,
 	@orgid SMALLINT
 AS
@@ -51,3 +51,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_INCOME] TO rl_report_income_r;
+GO

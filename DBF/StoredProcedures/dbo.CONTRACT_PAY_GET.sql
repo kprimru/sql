@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_PAY_GET] 
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_GET] 
 	@id SMALLINT = NULL  
 AS
 
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_PAY_GET] TO rl_contract_pay_r;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[USER_GROUP_EDIT]
+ALTER PROCEDURE [dbo].[USER_GROUP_EDIT]
 	@groupname VARCHAR(100),	
 	@groupnote VARCHAR(500),
 	@grouproles VARCHAR(MAX)
@@ -81,3 +81,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[USER_GROUP_EDIT] TO rl_user;
+GO

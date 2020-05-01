@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[REPORT_DISTR_PAY]
+ALTER PROCEDURE [dbo].[REPORT_DISTR_PAY]
 	@prid SMALLINT,
 	@date SMALLDATETIME,
 	@cour VARCHAR(MAX)
@@ -142,3 +142,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REPORT_DISTR_PAY] TO rl_report_income_r;
+GO

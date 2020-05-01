@@ -11,7 +11,7 @@ GO
 Описание:      Изменить данные о дистрибутиве клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_EDIT] 
 	@id INT,
 	@distrid INT,  
 	@regdate SMALLDATETIME,
@@ -48,3 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_EDIT] TO rl_client_distr_w;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_EDIT] TO rl_client_w;
+GO

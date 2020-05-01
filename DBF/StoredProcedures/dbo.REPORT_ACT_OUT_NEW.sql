@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_ACT_OUT_NEW]
+ALTER PROCEDURE [dbo].[REPORT_ACT_OUT_NEW]
 	@periodid SMALLINT = NULL
 AS
 BEGIN

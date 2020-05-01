@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[PeriodRegExceptView]
+ALTER VIEW [dbo].[PeriodRegExceptView]
 AS
 	SELECT   
 		REG_ID,  

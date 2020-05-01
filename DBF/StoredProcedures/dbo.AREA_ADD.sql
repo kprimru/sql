@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[AREA_ADD]
+ALTER PROCEDURE [dbo].[AREA_ADD]
 	@areaname VARCHAR(100),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_ADD] TO rl_area_w;
+GO

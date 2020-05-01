@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_TYPE_ADD]
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_ADD]
 	@name VARCHAR(100),	
 	@psedo VARCHAR(50),
 	@sale BIT,
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_ADD] TO rl_invoice_type_w;
+GO

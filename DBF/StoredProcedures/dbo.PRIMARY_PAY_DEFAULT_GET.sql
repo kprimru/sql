@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[PRIMARY_PAY_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_DEFAULT_GET]
 	@distrid INT,
 	@periodid SMALLINT
 AS
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRIMARY_PAY_DEFAULT_GET] TO rl_primary_pay_r;
+GO

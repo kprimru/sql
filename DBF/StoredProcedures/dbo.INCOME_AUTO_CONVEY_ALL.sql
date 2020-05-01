@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INCOME_AUTO_CONVEY_ALL]
+ALTER PROCEDURE [dbo].[INCOME_AUTO_CONVEY_ALL]
 	@bill BIT = 1,
 	@prepay BIT = 1,			
 	@report BIT = 1,

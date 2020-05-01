@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CLIENT_ACT_FACT_GET]
+ALTER PROCEDURE [dbo].[CLIENT_ACT_FACT_GET]
 	@clientid INT,
 	@date VARCHAR(100)
 AS
@@ -61,3 +61,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ACT_FACT_GET] TO rl_act_p;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:		все счета-фактуры клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -77,3 +77,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_SELECT] TO rl_invoice_r;
+GO

@@ -12,7 +12,7 @@ GO
                 указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_EDIT] 
+ALTER PROCEDURE [dbo].[SUBHOST_EDIT] 
 	@subhostid SMALLINT,
 	@subhostfullname VARCHAR(250),
 	@subhostshortname VARCHAR(50),  
@@ -67,3 +67,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_EDIT] TO rl_subhost_w;
+GO

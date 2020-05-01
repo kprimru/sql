@@ -12,7 +12,7 @@ GO
                справочник
 */
 
-CREATE PROCEDURE [dbo].[PRICE_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_ADD] 
 	@pricetypename VARCHAR(20),
 	@group SMALLINT,
 	@coef BIT = null,
@@ -54,3 +54,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_ADD] TO rl_price_type_w;
+GO

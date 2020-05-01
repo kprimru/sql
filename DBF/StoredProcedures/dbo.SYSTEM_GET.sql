@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_GET] 
 	@id INT = NULL
 AS
 BEGIN
@@ -49,3 +49,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_d;
+GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_r;
+GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_w;
+GO

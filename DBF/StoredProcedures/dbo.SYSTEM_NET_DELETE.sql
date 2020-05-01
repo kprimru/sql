@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_DELETE] 
 	@systemnetid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_DELETE] TO rl_system_net_d;
+GO

@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить поле из таблицы данных об отчете
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_DELETE]
+ALTER PROCEDURE [dbo].[REPORT_FIELD_DELETE]
 	@fieldid SMALLINT
 AS
 BEGIN

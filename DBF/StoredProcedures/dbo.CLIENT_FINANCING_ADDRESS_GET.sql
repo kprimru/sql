@@ -16,7 +16,7 @@ GO
 				его данные, иначе можно указать шаблон по умолчанию в поле ATL_ID
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_GET] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_GET] 
 	@cfaid INT,
 	@fatid SMALLINT
 
@@ -67,3 +67,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ADDRESS_GET] TO rl_client_fin_template_r;
+GO

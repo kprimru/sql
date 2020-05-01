@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ACTION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTION_TRY_DELETE] 
 	@ID SMALLINT
 AS
 BEGIN
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTION_TRY_DELETE] TO rl_action_d;
+GO

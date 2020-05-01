@@ -9,7 +9,7 @@ GO
 Описание:	
 */
 
-CREATE TRIGGER [dbo].[ConsignmentDetailInsert]
+ALTER TRIGGER [dbo].[ConsignmentDetailInsert]
    ON  [dbo].[ConsignmentDetailTable] 
    AFTER INSERT
 AS 

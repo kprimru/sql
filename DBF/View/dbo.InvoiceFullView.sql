@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[InvoiceFullView]
+ALTER VIEW [dbo].[InvoiceFullView]
 AS
 SELECT 
 		INS_ID,

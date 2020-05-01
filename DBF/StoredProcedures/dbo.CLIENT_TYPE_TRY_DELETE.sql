@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CLIENT_TYPE_TRY_DELETE] 
 	@id SMALLINT
 AS
 BEGIN
@@ -61,3 +61,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_TYPE_TRY_DELETE] TO rl_client_type_d;
+GO

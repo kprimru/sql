@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_EDIT] 
+ALTER PROCEDURE [dbo].[COUNTRY_EDIT] 
 	@countryid SMALLINT,
 	@countryname VARCHAR(100),
 	@active BIT = 1
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COUNTRY_EDIT] TO rl_country_w;
+GO

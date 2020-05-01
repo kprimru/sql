@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_GET] 
 	@systemnetcountid SMALLINT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_GET] TO rl_system_net_count_r;
+GO

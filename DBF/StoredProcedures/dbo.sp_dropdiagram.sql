@@ -44,4 +44,6 @@ GO
 	
 		return 0;
 	END
-	
+	DENY EXECUTE ON [dbo].[sp_dropdiagram] TO guest;
+GRANT EXECUTE ON [dbo].[sp_dropdiagram] TO public;
+GO

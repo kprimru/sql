@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_DISTR_DELETE]
+ALTER PROCEDURE [dbo].[ACT_DISTR_DELETE]
 	@actid VARCHAR(MAX)
 AS
 BEGIN
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_DISTR_DELETE] TO rl_act_d;
+GO

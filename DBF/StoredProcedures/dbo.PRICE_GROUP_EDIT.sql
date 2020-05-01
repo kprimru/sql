@@ -12,7 +12,7 @@ GO
                с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GROUP_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_GROUP_EDIT] 
 	@id SMALLINT,
 	@name VARCHAR(50),	
 	@active BIT = 1
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GROUP_EDIT] TO rl_price_group_w;
+GO

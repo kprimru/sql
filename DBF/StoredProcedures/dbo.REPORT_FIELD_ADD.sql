@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить данные о поле в отчете
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_ADD]
+ALTER PROCEDURE [dbo].[REPORT_FIELD_ADD]
 	@fieldname VARCHAR(50),
 	@fieldcaption VARCHAR(100),
 	@order INT

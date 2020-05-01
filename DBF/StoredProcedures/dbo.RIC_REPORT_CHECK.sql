@@ -12,7 +12,7 @@ GO
 Дата:			10-06-2009
 */
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_CHECK] 
+ALTER PROCEDURE [dbo].[RIC_REPORT_CHECK] 
 	@periodid SMALLINT
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[RIC_REPORT_CHECK] TO rl_vmi_report_w;
+GO

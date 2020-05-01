@@ -9,7 +9,7 @@ GO
 Дата создания:  25.05.2009	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_FACT_SELECT]
+ALTER PROCEDURE [dbo].[BILL_FACT_SELECT]
 	@date VARCHAR(100),
 	@courid VARCHAR(MAX) = NULL
 AS
@@ -77,4 +77,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[BILL_FACT_SELECT] TO rl_bill_p;
+GO

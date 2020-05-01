@@ -12,7 +12,7 @@ GO
                типа сети с указанным ID из справочника
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_DELETE] 
 	@systemnetcountid SMALLINT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_DELETE] TO rl_system_net_count_d;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_WEIGHT_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_GET] 
 	@swid INT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_GET] TO rl_system_weight_r;
+GO

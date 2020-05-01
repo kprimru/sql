@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[REPORT_SYSTEM_SUBHOST_LIST]
+ALTER PROCEDURE [dbo].[REPORT_SYSTEM_SUBHOST_LIST]
 	@statuslist VARCHAR(MAX),
 	@subhostlist VARCHAR(MAX),
 	@systemlist VARCHAR(MAX),

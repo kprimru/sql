@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[BILL_DETAIL_SELECT]
+ALTER PROCEDURE [dbo].[BILL_DETAIL_SELECT]
 	@billid INT,
 	@soid SMALLINT
 AS
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BILL_DETAIL_SELECT] TO rl_bill_r;
+GO

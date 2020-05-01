@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ACTIVITY_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[ACTIVITY_CHECK_NAME] 
 	@activityname VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACTIVITY_CHECK_NAME] TO rl_activity_w;
+GO

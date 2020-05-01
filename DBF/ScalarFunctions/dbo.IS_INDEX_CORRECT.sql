@@ -13,7 +13,7 @@ GO
 -- Описание:	  Возвращает 0, если индекс корректен 
 --                (состоит из 6 цифр)
 -- =============================================
-CREATE FUNCTION [dbo].[IS_INDEX_CORRECT]
+ALTER FUNCTION [dbo].[IS_INDEX_CORRECT]
 (
 	@index varchar(50)
 )

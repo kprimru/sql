@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[PRICE_ADD] 
+ALTER PROCEDURE [dbo].[PRICE_ADD] 
 	@pricename VARCHAR(50),
 	@pricetypeid INT, 
 	@pricecoefmul NUMERIC(8, 4),
@@ -47,3 +47,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_ADD] TO rl_price_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CITY_SELECT]  
+ALTER PROCEDURE [dbo].[CITY_SELECT]  
 	@active bit = NULL
 AS
 
@@ -50,3 +50,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_SELECT] TO rl_city_r;
+GO

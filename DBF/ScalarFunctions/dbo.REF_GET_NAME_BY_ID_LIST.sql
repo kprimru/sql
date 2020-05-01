@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
+ALTER FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
 (
 	-- Список параметров функции
 	@refname VARCHAR(100),

@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INCOME_DELETE]
+ALTER PROCEDURE [dbo].[INCOME_DELETE]
 	@inid INT
 
 AS
@@ -58,3 +58,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_DELETE] TO rl_income_d;
+GO

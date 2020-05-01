@@ -12,7 +12,7 @@ GO
                справочник
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GOOD_ADD] 
+ALTER PROCEDURE [dbo].[PRICE_GOOD_ADD] 
 	@name VARCHAR(50),	
 	@active BIT = 1,  
 	@returnvalue BIT = 1  
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GOOD_ADD] TO rl_price_good_w;
+GO

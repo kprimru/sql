@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить в справочник статус дистрибутива
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_ADD] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_ADD] 
 	@dsname VARCHAR(50),
 	@dsreg TINYINT,
 	@active BIT = 1,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_ADD] TO rl_distr_status_w;
+GO

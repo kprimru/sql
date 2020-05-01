@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[GLOBAL_SETTINGS_GET]
+ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_GET]
 	@gsid SMALLINT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_GET] TO rl_global_settings_r;
+GO

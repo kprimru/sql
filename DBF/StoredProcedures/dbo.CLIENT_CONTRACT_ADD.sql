@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_ADD] 
 	@clientid INT,
 	@contractnumber VARCHAR(500),
 	@contracttypeid SMALLINT,
@@ -54,3 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_ADD] TO rl_client_contract_w;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_ADD] TO rl_client_w;
+GO

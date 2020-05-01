@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[DistrFinancingView]
+ALTER VIEW [dbo].[DistrFinancingView]
 AS
 	SELECT 
 		DF_ID, SN_NAME, SN_ID, SN_COEF, SN_ROUND, PP_ID, PP_NAME, PT_ID, PT_NAME, 

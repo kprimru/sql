@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TEMPLATE_EDIT] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_EDIT] 
 	@atlid			SMALLINT,
 	@name			VARCHAR(50),
 	@index			BIT,
@@ -65,3 +65,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_EDIT] TO rl_address_template_w;
+GO

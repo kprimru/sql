@@ -8,7 +8,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[CLIENT_DELETE] 
+ALTER PROCEDURE [dbo].[CLIENT_DELETE] 
 	@clientid INT
 AS
 BEGIN
@@ -56,3 +56,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_DELETE] TO rl_client_d;
+GO

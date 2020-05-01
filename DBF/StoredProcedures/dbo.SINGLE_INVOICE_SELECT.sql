@@ -12,7 +12,7 @@ GO
 Описание:		все счета-фактуры клиента
 */
 
-CREATE PROCEDURE [dbo].[SINGLE_INVOICE_SELECT]	
+ALTER PROCEDURE [dbo].[SINGLE_INVOICE_SELECT]	
 AS
 BEGIN
 	SET NOCOUNT ON;

@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить регион в справочник
 */
 
-CREATE PROCEDURE [dbo].[REGION_ADD] 
+ALTER PROCEDURE [dbo].[REGION_ADD] 
 	@regionname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_ADD] TO rl_region_w;
+GO

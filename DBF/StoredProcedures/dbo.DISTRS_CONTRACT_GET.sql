@@ -12,7 +12,7 @@ Description:	Выдаёт список дистрибутивов
 			договора по заданному контракту
 */
 
-CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_GET]
+ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_GET]
 	@co_id INT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTRS_CONTRACT_GET] TO rl_client_contract_r;
+GO

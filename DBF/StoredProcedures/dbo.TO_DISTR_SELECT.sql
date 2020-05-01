@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[TO_DISTR_SELECT]
+ALTER PROCEDURE [dbo].[TO_DISTR_SELECT]
 	@toid INT
 AS
 BEGIN
@@ -55,3 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TO_DISTR_SELECT] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_DISTR_SELECT] TO rl_to_distr_r;
+GO

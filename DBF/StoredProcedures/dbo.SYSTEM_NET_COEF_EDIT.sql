@@ -9,7 +9,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  
 */
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_EDIT] 
 	@ID			INT,
 	@NET		SMALLINT,
 	@PERIOD		SMALLINT,
@@ -75,3 +75,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_EDIT] TO rl_system_net_w;
+GO

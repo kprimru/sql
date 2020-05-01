@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INCOME_CONVEY_DISTR]
+ALTER PROCEDURE [dbo].[INCOME_CONVEY_DISTR]
 	@incomeid INT,
 	@distrid INT,
 	@incomedate SMALLDATETIME,
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_CONVEY_DISTR] TO rl_income_w;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[UNIT_GET] 
+ALTER PROCEDURE [dbo].[UNIT_GET] 
 	@unitid SMALLINT = NULL
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[UNIT_GET] TO rl_unit_r;
+GO

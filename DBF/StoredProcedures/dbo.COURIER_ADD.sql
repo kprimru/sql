@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COURIER_ADD] 
+ALTER PROCEDURE [dbo].[COURIER_ADD] 
 	@couriername VARCHAR(150),
 	@type SMALLINT,
 	@active BIT = 1,
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COURIER_ADD] TO rl_courier_w;
+GO

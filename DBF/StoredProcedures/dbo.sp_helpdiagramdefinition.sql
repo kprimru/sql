@@ -43,4 +43,6 @@ GO
 		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ; 
 		return 0
 	END
-	
+	DENY EXECUTE ON [dbo].[sp_helpdiagramdefinition] TO guest;
+GRANT EXECUTE ON [dbo].[sp_helpdiagramdefinition] TO public;
+GO

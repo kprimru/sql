@@ -11,7 +11,7 @@ GO
 					сотрудников клиента
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_COPY_FROM_TO] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_COPY_FROM_TO] 
 	@toperid INT,
 	@returnvalue BIT = 1
 AS
@@ -51,3 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_COPY_FROM_TO] TO rl_client_personal_w;
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_COPY_FROM_TO] TO rl_client_w;
+GO

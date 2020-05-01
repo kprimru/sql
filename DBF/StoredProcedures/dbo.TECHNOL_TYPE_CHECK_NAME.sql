@@ -12,7 +12,7 @@ GO
                признака с указанным названием. 
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_CHECK_NAME] 
 	@technoltypename VARCHAR(50)
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_CHECK_NAME] TO rl_technol_type_w;
+GO

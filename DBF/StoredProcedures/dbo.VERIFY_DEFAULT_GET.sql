@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[VERIFY_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[VERIFY_DEFAULT_GET]
 	@clientid INT,
 	@date SMALLDATETIME
 AS
@@ -68,3 +68,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[VERIFY_DEFAULT_GET] TO rl_report_verify_r;
+GO

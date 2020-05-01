@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[ContractDistrsView]
+ALTER VIEW [dbo].[ContractDistrsView]
 AS
 	SELECT DIS_ID, CO_ID, DIS_STR, DSS_NAME
 	FROM         

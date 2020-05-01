@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_CONTRACT_DEFAULT] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_DEFAULT] 
 	@client INT
 AS
 BEGIN
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_DEFAULT] TO rl_client_contract_r;
+GO

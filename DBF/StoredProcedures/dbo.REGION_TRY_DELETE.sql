@@ -15,7 +15,7 @@ GO
                 -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[REGION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[REGION_TRY_DELETE] 
 	@regionid SMALLINT
 AS
 BEGIN
@@ -59,3 +59,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REGION_TRY_DELETE] TO rl_region_d;
+GO

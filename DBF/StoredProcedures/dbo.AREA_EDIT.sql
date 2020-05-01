@@ -9,7 +9,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  */
 
-CREATE PROCEDURE [dbo].[AREA_EDIT] 
+ALTER PROCEDURE [dbo].[AREA_EDIT] 
 	@areaid SMALLINT,
 	@areaname VARCHAR(100),
 	@active BIT = 1
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_EDIT] TO rl_area_w;
+GO

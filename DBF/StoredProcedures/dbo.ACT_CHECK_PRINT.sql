@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_CHECK_PRINT]
+ALTER PROCEDURE [dbo].[ACT_CHECK_PRINT]
 	@actid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_CHECK_PRINT] TO rl_act_p;
+GO

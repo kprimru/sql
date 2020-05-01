@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[AREA_GET] 
+ALTER PROCEDURE [dbo].[AREA_GET] 
   @areaid SMALLINT = NULL
 AS
 
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_GET] TO rl_area_r;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания: 10.05.2012
 Описание:	  Добавить квартал в справочник
 */
-CREATE PROCEDURE [dbo].[QUARTER_ADD] 
+ALTER PROCEDURE [dbo].[QUARTER_ADD] 
 	@name	VARCHAR(50),
 	@begin	SMALLDATETIME,
 	@end	SMALLDATETIME,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[QUARTER_ADD] TO rl_quarter_w;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DISTR_DOC_PROCESS]
+ALTER PROCEDURE [dbo].[DISTR_DOC_PROCESS]
 	@distrid INT,
 	@docid SMALLINT,
 	@print BIT,
@@ -64,3 +64,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_DOC_PROCESS] TO rl_distr_financing_w;
+GO

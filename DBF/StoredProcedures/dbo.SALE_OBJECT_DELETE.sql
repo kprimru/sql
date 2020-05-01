@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SALE_OBJECT_DELETE]
+ALTER PROCEDURE [dbo].[SALE_OBJECT_DELETE]
 	@soid SMALLINT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SALE_OBJECT_DELETE] TO rl_sale_object_d;
+GO

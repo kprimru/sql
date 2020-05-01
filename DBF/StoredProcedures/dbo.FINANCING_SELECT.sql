@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_SELECT] 
+ALTER PROCEDURE [dbo].[FINANCING_SELECT] 
 	@active BIT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_SELECT] TO rl_financing_r;
+GO

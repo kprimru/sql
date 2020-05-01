@@ -10,7 +10,7 @@ GO
 Описание:			o_O
 */
 
-CREATE PROCEDURE [dbo].[ACT_PRINT_BY_ID_LIST]
+ALTER PROCEDURE [dbo].[ACT_PRINT_BY_ID_LIST]
 	@actidlist	VARCHAR(MAX),
 	@preview	BIT = 1,
 	@contract	INT = null,
@@ -440,3 +440,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_PRINT_BY_ID_LIST] TO rl_act_p;
+GO

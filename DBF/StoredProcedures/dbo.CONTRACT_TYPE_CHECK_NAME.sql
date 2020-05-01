@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_CHECK_NAME] 
 	@contracttypename VARCHAR(100)
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_TYPE_CHECK_NAME] TO rl_contract_type_w;
+GO

@@ -12,7 +12,7 @@ GO
 				  кол-вом станций. 
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] 
 	@netcount INT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] TO rl_system_net_count_w;
+GO

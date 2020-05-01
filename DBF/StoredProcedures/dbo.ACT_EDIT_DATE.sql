@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_EDIT_DATE]
+ALTER PROCEDURE [dbo].[ACT_EDIT_DATE]
 	@actid INT,
 	@actdate SMALLDATETIME
 AS
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_EDIT_DATE] TO rl_act_w;
+GO

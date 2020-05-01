@@ -11,7 +11,7 @@ GO
 				в историю регузла (PeriodRegtable) и
 				в новые системы (PeriodRegNewTable)
 */
-CREATE PROCEDURE [dbo].[REG_NODE_MOVE]
+ALTER PROCEDURE [dbo].[REG_NODE_MOVE]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -145,3 +145,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[REG_NODE_MOVE] TO rl_reg_node_history_w;
+GO

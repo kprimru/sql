@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_ADD] 
+ALTER PROCEDURE [dbo].[COUNTRY_ADD] 
 	@countryname VARCHAR(100), 
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[COUNTRY_ADD] TO rl_country_w;
+GO

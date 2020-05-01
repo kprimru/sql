@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[SALE_OBJECT_SELECT]
+ALTER PROCEDURE [dbo].[SALE_OBJECT_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SALE_OBJECT_SELECT] TO rl_sale_object_r;
+GO

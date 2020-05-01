@@ -11,7 +11,7 @@ GO
 Описание:	  По коду улицы получить полную строку адреса
 */
 
-CREATE PROCEDURE [dbo].[GET_FULL_ADDRESS_BY_STREET] 
+ALTER PROCEDURE [dbo].[GET_FULL_ADDRESS_BY_STREET] 
 	@streetid INT
 AS
 BEGIN

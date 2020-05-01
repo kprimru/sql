@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[DistrView]
+ALTER VIEW [dbo].[DistrView]
 WITH SCHEMABINDING
 AS
 	SELECT
@@ -19,3 +19,8 @@ AS
 	FROM dbo.SystemTable
 	INNER JOIN dbo.DistrTable ON SYS_ID = DIS_ID_SYSTEM
 	INNER JOIN dbo.HostTable ON SYS_ID_HOST = HST_ID
+GRANT SELECT ON [dbo].[DistrView] TO rl_client_fin_r;
+GRANT SELECT ON [dbo].[DistrView] TO rl_client_r;
+GRANT SELECT ON [dbo].[DistrView] TO rl_fin_r;
+GRANT SELECT ON [dbo].[DistrView] TO rl_to_r;
+GO

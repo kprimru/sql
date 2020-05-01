@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[DISTR_FINANCING_PROCESS]
+ALTER PROCEDURE [dbo].[DISTR_FINANCING_PROCESS]
 	@clientfinancingid INT,
 	@distrid INT,
 	@netid SMALLINT,
@@ -92,3 +92,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_FINANCING_PROCESS] TO rl_distr_financing_w;
+GO

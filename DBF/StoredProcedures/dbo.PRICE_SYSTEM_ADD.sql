@@ -14,7 +14,7 @@ GO
                стоимостью
 */
 
-CREATE PROCEDURE [dbo].[PRICE_SYSTEM_ADD]  
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_ADD]  
 	@pricetypeid SMALLINT, 
 	@periodid SMALLINT,
 	@systemid SMALLINT,
@@ -57,3 +57,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_SYSTEM_ADD] TO rl_price_list_w;
+GRANT EXECUTE ON [dbo].[PRICE_SYSTEM_ADD] TO rl_price_val_w;
+GO

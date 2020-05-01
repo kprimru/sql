@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_GET]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_GET]
 	@invid INT
 AS
 BEGIN
@@ -49,3 +49,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_GET] TO rl_invoice_w;
+GO

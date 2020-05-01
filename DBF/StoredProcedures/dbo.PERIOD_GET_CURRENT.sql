@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_GET_CURRENT]  
+ALTER PROCEDURE [dbo].[PERIOD_GET_CURRENT]  
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_GET_CURRENT] TO rl_all_r;
+GO

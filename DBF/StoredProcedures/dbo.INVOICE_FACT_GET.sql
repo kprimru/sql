@@ -10,7 +10,7 @@ GO
 Описание:		выбор данных счетов-фактур, сформированных вместе
 				по всем клиентам в один момент времени
 */
-CREATE PROCEDURE [dbo].[INVOICE_FACT_GET]
+ALTER PROCEDURE [dbo].[INVOICE_FACT_GET]
 	-- Список параметров процедуры
 	@date VARCHAR(100)
 AS
@@ -76,3 +76,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_FACT_GET] TO rl_invoice_p;
+GO

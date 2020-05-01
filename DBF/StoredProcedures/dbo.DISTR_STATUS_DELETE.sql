@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить статус дистриубтива
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_DELETE] 
 	@distrstatusid SMALLINT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_DELETE] TO rl_distr_status_d;
+GO

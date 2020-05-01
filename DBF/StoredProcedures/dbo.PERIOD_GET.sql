@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_GET] 
+ALTER PROCEDURE [dbo].[PERIOD_GET] 
 	@periodid SMALLINT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_GET] TO rl_period_r;
+GO

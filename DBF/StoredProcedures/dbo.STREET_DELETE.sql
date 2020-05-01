@@ -12,7 +12,7 @@ GO
                из справочника
 */
 
-CREATE PROCEDURE [dbo].[STREET_DELETE] 
+ALTER PROCEDURE [dbo].[STREET_DELETE] 
 	@streetid INT
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[STREET_DELETE] TO rl_street_d;
+GO

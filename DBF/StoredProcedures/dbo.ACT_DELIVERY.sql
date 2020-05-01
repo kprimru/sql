@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[ACT_DELIVERY]
+ALTER PROCEDURE [dbo].[ACT_DELIVERY]
 	@actid INT,
 	@clientid INT
 AS
@@ -78,3 +78,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_DELIVERY] TO rl_act_w;
+GO

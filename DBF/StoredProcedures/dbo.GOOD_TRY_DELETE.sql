@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[GOOD_TRY_DELETE]
+ALTER PROCEDURE [dbo].[GOOD_TRY_DELETE]
 	@gdid SMALLINT
 AS
 BEGIN
@@ -46,3 +46,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[GOOD_TRY_DELETE] TO rl_good_d;
+GO

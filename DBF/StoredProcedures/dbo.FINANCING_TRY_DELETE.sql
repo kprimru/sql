@@ -15,7 +15,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[FINANCING_TRY_DELETE] 
 	@financingid SMALLINT
 AS
 BEGIN
@@ -60,3 +60,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[FINANCING_TRY_DELETE] TO rl_financing_d;
+GO

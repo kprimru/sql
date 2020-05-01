@@ -12,7 +12,7 @@ GO
 -- Описание:	  Возвращает 0, если название улицы 
 --                корректно (присутствует в справочнике)
 -- =============================================
-CREATE FUNCTION [dbo].[IS_STREET_CORRECT]
+ALTER FUNCTION [dbo].[IS_STREET_CORRECT]
 (
 	-- Add the parameters for the function here
 	@street varchar(100)

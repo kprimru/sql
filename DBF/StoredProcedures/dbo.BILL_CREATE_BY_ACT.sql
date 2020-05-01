@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[BILL_CREATE_BY_ACT]
+ALTER PROCEDURE [dbo].[BILL_CREATE_BY_ACT]
 	@actid INT,
 	@billdate SMALLDATETIME
 AS
@@ -83,3 +83,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BILL_CREATE_BY_ACT] TO rl_bill_w;
+GO

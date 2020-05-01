@@ -15,7 +15,7 @@ GO
 --                -1 в противном случае
 -- =============================================
 
-CREATE PROCEDURE [dbo].[CITY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CITY_TRY_DELETE] 
   @cityid int
 
 AS
@@ -77,3 +77,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CITY_TRY_DELETE] TO rl_city_d;
+GO

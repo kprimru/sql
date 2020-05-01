@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[CLIENT_BILL_SELECT_NEW]
+ALTER PROCEDURE [dbo].[CLIENT_BILL_SELECT_NEW]
 	@clientid INT
 AS
 BEGIN

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GROUP_GET] 
+ALTER PROCEDURE [dbo].[PRICE_GROUP_GET] 
 	@id SMALLINT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_GROUP_GET] TO rl_price_group_r;
+GO

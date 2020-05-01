@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[PERIOD_REG_NEW_FILTER]
+ALTER PROCEDURE [dbo].[PERIOD_REG_NEW_FILTER]
   @rnnidperiods		varchar(MAX),
   @rnnidsystems		varchar(MAX),
   @rnndistrnum		int,
@@ -190,4 +190,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[PERIOD_REG_NEW_FILTER] TO rl_reg_node_r;
+GO

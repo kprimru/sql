@@ -11,7 +11,7 @@ GO
 -- Описание:		Выделяет ID статуса дистрибутива
 --					из строки регузла
 -- ================================================
-CREATE FUNCTION [dbo].[RN_GET_STATUS_ID]
+ALTER FUNCTION [dbo].[RN_GET_STATUS_ID]
 (
   @status VARCHAR(50)
 )

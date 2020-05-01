@@ -11,7 +11,7 @@ GO
 Описание:	  Изменить данные о статусе дистрибутива
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_EDIT] 
 	@dsid SMALLINT,
 	@dsname VARCHAR(50),  
 	@dsreg TINYINT,
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_EDIT] TO rl_distr_status_w;
+GO

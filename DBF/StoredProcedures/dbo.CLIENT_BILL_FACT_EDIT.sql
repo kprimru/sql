@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT]
+ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT]
 	@bfmid INT,
 	@bfmnum VARCHAR(50),
 	@bfmidperiod SMALLINT,
@@ -85,3 +85,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_BILL_FACT_EDIT] TO rl_bill_w;
+GO

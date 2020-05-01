@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditDistrView]
+ALTER VIEW [dbo].[AuditDistrView]
 AS
 	SELECT 
 		DIS_ID, DIS_STR, 

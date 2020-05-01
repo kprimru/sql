@@ -14,7 +14,7 @@ GO
 Описание:		строки таблицы счета-фактуры
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_INVOICE_ROW_SELECT]
+ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_SELECT]
 	@invid INT
 AS
 BEGIN
@@ -53,3 +53,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ROW_SELECT] TO rl_invoice_r;
+GO

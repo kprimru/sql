@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_PRINT]
+ALTER PROCEDURE [dbo].[BILL_PRINT]
 	@soid SMALLINT,
 	@prid SMALLINT,
 	@clid INT,
@@ -801,3 +801,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[BILL_PRINT] TO rl_bill_p;
+GO

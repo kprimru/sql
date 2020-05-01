@@ -15,7 +15,7 @@ GO
                период
 */
 
-CREATE PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_LIST_GET]  
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_LIST_GET]  
 	@pricegroupid SMALLINT, 
 	@periodid SMALLINT,
 	@sysid SMALLINT = NULL

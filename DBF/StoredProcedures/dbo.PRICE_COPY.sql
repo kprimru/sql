@@ -13,7 +13,7 @@ GO
                указанный тип-период
 */
 
-CREATE PROCEDURE [dbo].[PRICE_COPY] 
+ALTER PROCEDURE [dbo].[PRICE_COPY] 
 	@sourcepriceid SMALLINT,
 	@sourceperiodid SMALLINT,
 	@destpriceid SMALLINT,
@@ -127,3 +127,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_COPY] TO rl_price_copy;
+GRANT EXECUTE ON [dbo].[PRICE_COPY] TO rl_price_list_w;
+GO

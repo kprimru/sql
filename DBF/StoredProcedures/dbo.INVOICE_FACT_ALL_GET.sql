@@ -13,7 +13,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[INVOICE_FACT_ALL_GET]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -45,3 +45,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INVOICE_FACT_ALL_GET] TO rl_invoice_p;
+GO

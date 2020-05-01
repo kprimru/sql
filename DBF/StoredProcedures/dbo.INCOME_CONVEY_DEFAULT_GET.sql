@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[INCOME_CONVEY_DEFAULT_GET]
+ALTER PROCEDURE [dbo].[INCOME_CONVEY_DEFAULT_GET]
 	@incomeid INT
 AS
 BEGIN
@@ -68,3 +68,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[INCOME_CONVEY_DEFAULT_GET] TO rl_income_w;
+GO

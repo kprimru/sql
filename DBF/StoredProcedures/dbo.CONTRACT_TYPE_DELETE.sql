@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_DELETE] 
 	@contracttypeid SMALLINT
 AS
 BEGIN
@@ -40,3 +40,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_TYPE_DELETE] TO rl_contract_type_d;
+GO

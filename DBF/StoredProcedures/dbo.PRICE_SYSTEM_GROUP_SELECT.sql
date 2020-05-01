@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_SELECT]
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_SELECT]
 	@group SMALLINT,
 	@period SMALLINT
 WITH EXECUTE AS OWNER
@@ -142,3 +142,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PRICE_SYSTEM_GROUP_SELECT] TO rl_price_val_r;
+GO

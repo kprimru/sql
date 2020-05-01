@@ -11,7 +11,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[AREA_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[AREA_TRY_DELETE] 
 	@areaid SMALLINT
 AS
 BEGIN
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[AREA_TRY_DELETE] TO rl_area_d;
+GO

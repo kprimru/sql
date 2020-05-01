@@ -12,7 +12,7 @@ GO
                указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_EDIT] 
+ALTER PROCEDURE [dbo].[PERIOD_EDIT] 
 	@periodid SMALLINT,
 	@periodname VARCHAR(20),
 	@perioddate SMALLDATETIME,
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PERIOD_EDIT] TO rl_period_w;
+GO

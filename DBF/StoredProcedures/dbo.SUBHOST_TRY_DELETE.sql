@@ -14,7 +14,7 @@ GO
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_TRY_DELETE] 
 	@subhostid SMALLINT
 AS
 BEGIN
@@ -84,3 +84,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_TRY_DELETE] TO rl_subhost_d;
+GO

@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[ACT_ALL_PRINT]
+ALTER PROCEDURE [dbo].[ACT_ALL_PRINT]
 	@actdate SMALLDATETIME,
 	@soid	SmallInt,
 	@cour VARCHAR(MAX),
@@ -107,3 +107,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ACT_ALL_PRINT] TO rl_act_p;
+GO

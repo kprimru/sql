@@ -14,7 +14,7 @@ GO
 				из таблицы накладных
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_DETAILS_DELETE]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_DETAILS_DELETE]
 	@rowlist VARCHAR(200)
 AS
 BEGIN
@@ -66,3 +66,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_DETAILS_DELETE] TO rl_consignment_d;
+GO

@@ -12,7 +12,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_EDIT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT] 
 	@id SMALLINT,
 	@psedo VARCHAR(50),
 	@fullname VARCHAR(250),
@@ -94,3 +94,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[ORGANIZATION_EDIT] TO rl_organization_w;
+GO

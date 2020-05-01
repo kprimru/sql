@@ -10,7 +10,7 @@ GO
 Описание:	  Добавить клиента и получить ID добавленной записи
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_ADD] 
 	@num INT,
 	@psedo VARCHAR(50),  
 	@fullname VARCHAR(500),   
@@ -85,3 +85,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_ADD] TO rl_client_w;
+GO

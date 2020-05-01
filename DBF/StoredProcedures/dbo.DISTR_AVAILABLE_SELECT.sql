@@ -12,7 +12,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DISTR_AVAILABLE_SELECT]
+ALTER PROCEDURE [dbo].[DISTR_AVAILABLE_SELECT]
 	@disid INT = NULL
 AS
 BEGIN
@@ -55,3 +55,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DISTR_AVAILABLE_SELECT] TO rl_client_distr_w;
+GO

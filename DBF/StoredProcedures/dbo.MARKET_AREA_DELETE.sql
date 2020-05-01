@@ -12,7 +12,7 @@ GO
                территорию с указанным кодом
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_DELETE] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_DELETE] 
 	@marketareaid INT
 AS
 BEGIN
@@ -44,3 +44,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[MARKET_AREA_DELETE] TO rl_market_area_d;
+GO

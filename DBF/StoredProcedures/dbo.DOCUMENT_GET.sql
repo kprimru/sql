@@ -14,7 +14,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[DOCUMENT_GET]
+ALTER PROCEDURE [dbo].[DOCUMENT_GET]
 	@id SMALLINT
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[DOCUMENT_GET] TO rl_document_r;
+GO

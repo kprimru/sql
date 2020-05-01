@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_SELECT] 
+ALTER PROCEDURE [dbo].[SUBHOST_SELECT] 
     @active BIT = NULL
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_SELECT] TO rl_subhost_r;
+GO

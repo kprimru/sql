@@ -11,7 +11,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_MERGE]
+ALTER PROCEDURE [dbo].[CLIENT_MERGE]
 	@oldclient INT,
 	@newclient INT
 AS
@@ -123,3 +123,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[CLIENT_MERGE] TO rl_client_w;
+GO

@@ -10,7 +10,7 @@ GO
 Описание:		
 */
 
-CREATE PROCEDURE [dbo].[PLUG_SET_CONS]
+ALTER PROCEDURE [dbo].[PLUG_SET_CONS]
 	@consid INT
 AS
 BEGIN
@@ -48,3 +48,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[PLUG_SET_CONS] TO rl_invoice_w;
+GO

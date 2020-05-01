@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE VIEW [dbo].[AuditClientView]
+ALTER VIEW [dbo].[AuditClientView]
 AS
 	SELECT 
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,

@@ -10,7 +10,7 @@ GO
 Описание:	  
 */
 
-CREATE PROCEDURE [dbo].[HOST_GET] 
+ALTER PROCEDURE [dbo].[HOST_GET] 
 	@hostid SMALLINT = NULL
 AS
 BEGIN
@@ -42,3 +42,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[HOST_GET] TO rl_host_r;
+GO

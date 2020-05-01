@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить подхост из справочника
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_DELETE] 
 	@subhostid SMALLINT
 AS
 BEGIN
@@ -43,3 +43,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [dbo].[SUBHOST_DELETE] TO rl_subhost_d;
+GO

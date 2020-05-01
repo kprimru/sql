@@ -9,7 +9,7 @@ GO
 Дата создания:  	
 Описание:		
 */
-CREATE PROCEDURE [dbo].[BILL_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[BILL_FACT_ALL_GET]	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,4 +40,5 @@ BEGIN
 		
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END
+ENDGRANT EXECUTE ON [dbo].[BILL_FACT_ALL_GET] TO rl_bill_p;
+GO
