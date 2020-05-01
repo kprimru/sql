@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CITY_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[CITY_CHECK_NAME]
 	@cityname VARCHAR(100),
 	@areaid SMALLINT,
 	@regionid SMALLINT,
@@ -31,20 +31,20 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CT_ID 
-		FROM dbo.CityTable 
-		WHERE CT_NAME = @cityname 
-			AND CT_ID_AREA = @areaid 
-			AND CT_ID_RG = @regionid 
+		SELECT CT_ID
+		FROM dbo.CityTable
+		WHERE CT_NAME = @cityname
+			AND CT_ID_AREA = @areaid
+			AND CT_ID_RG = @regionid
 			AND CT_ID_COUNTRY = @countryid
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

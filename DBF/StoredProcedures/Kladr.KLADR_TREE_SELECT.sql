@@ -28,7 +28,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#region') IS NOT NULL
 			DROP TABLE #region
-		
+
 		IF OBJECT_ID('tempdb..#area') IS NOT NULL
 			DROP TABLE #area
 
@@ -90,7 +90,7 @@ BEGIN
 				KT_CODE			NVARCHAR(64),
 				KT_ACTUAL		NCHAR(4)
 			)
-			
+
 		DECLARE @MAX_LEVEL	TINYINT
 
 		SET @MAX_LEVEL = 0
@@ -118,7 +118,7 @@ BEGIN
 
 			SET @MAX_LEVEL = 2
 		END
-		
+
 		IF @CITY IS NOT NULL
 		BEGIN
 			INSERT INTO #city(KT_ID, KT_ID_MASTER, KT_NAME, KT_PREFIX, KT_CODE, KT_ACTUAL)
@@ -137,7 +137,7 @@ BEGIN
 				FROM Kladr.KladrTree
 				WHERE KT_LEVEL = 4
 					AND KT_NAME LIKE @PUNKT
-			
+
 			SET @MAX_LEVEL = 4
 		END
 
@@ -186,7 +186,7 @@ BEGIN
 					WHERE #street.KT_CODE LIKE #region.KT_CODE + '%'
 				)
 		END
-		
+
 		IF @AREA IS NOT NULL
 		BEGIN
 			DELETE FROM #city
@@ -273,24 +273,24 @@ BEGIN
 			FROM #city
 
 			UNION ALL
-			
+
 			SELECT KT_ID, KT_ID_MASTER, KT_NAME, KT_PREFIX, KT_CODE, 4, KT_ACTUAL
 			FROM #punkt
 
 			UNION ALL
-			
+
 			SELECT KT_ID, KT_ID_MASTER, KT_NAME, KT_PREFIX, KT_CODE, 5, KT_ACTUAL
-			FROM #street		
-		
+			FROM #street
+
 		DECLARE @I	INT
-		
+
 		SET @I = @MAX_LEVEL
 
-		WHILE @I < 5 
+		WHILE @I < 5
 		BEGIN
 			INSERT INTO #tree(KT_ID, KT_ID_MASTER, KT_NAME, KT_PREFIX, KT_CODE, KT_LEVEL, KT_ACTUAL)
 				SELECT DISTINCT a.KT_ID, a.KT_ID_MASTER, a.KT_NAME, a.KT_PREFIX, a.KT_CODE, a.KT_LEVEL, a.KT_ACTUAL
-				FROM 
+				FROM
 					Kladr.KladrTree a
 					INNER JOIN #tree b ON a.KT_ID_MASTER = b.KT_ID
 				WHERE b.KT_LEVEL = @I
@@ -306,11 +306,11 @@ BEGIN
 
 		SET @I = @MAX_LEVEL
 
-		WHILE @I > 1 
+		WHILE @I > 1
 		BEGIN
 			INSERT INTO #tree(KT_ID, KT_ID_MASTER, KT_NAME, KT_PREFIX, KT_CODE, KT_LEVEL, KT_ACTUAL)
 				SELECT DISTINCT a.KT_ID, a.KT_ID_MASTER, a.KT_NAME, a.KT_PREFIX, a.KT_CODE, a.KT_LEVEL, a.KT_ACTUAL
-				FROM 
+				FROM
 					Kladr.KladrTree a
 					INNER JOIN #tree b ON a.KT_ID = b.KT_ID_MASTER
 				WHERE b.KT_LEVEL = @I
@@ -331,7 +331,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#region') IS NOT NULL
 			DROP TABLE #region
-		
+
 		IF OBJECT_ID('tempdb..#area') IS NOT NULL
 			DROP TABLE #area
 
@@ -346,14 +346,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tree') IS NOT NULL
 			DROP TABLE #tree
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

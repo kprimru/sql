@@ -8,14 +8,14 @@ GO
 /*
 јвтор:		  ƒенисов јлексей
 ƒата создани€: 25.08.2008
-ќписание:	  ¬озвращает 0, если регион можно 
-               удалить из справочника (на него 
-               не ссылаетс€ ни одна запись 
-               из населенного пункта), 
+ќписание:	  ¬озвращает 0, если регион можно
+               удалить из справочника (на него
+               не ссылаетс€ ни одна запись
+               из населенного пункта),
                 -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[REGION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[REGION_TRY_DELETE]
 	@regionid SMALLINT
 AS
 BEGIN
@@ -42,7 +42,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.CityTable WHERE CT_ID_RG = @regionid)
 		BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'ƒанный регион указан у одного или нескольких населенных пунктов. ' + 
+			SET @txt = @txt + 'ƒанный регион указан у одного или нескольких населенных пунктов. ' +
 							  '”даление невозможно, пока выбранный регион будет указан хот€ ' +
 							  'бы у одного населенного пункта.'
 		END
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[DISTR_DOC_PROCESS]
@@ -48,19 +48,19 @@ BEGIN
 		ELSE
 		BEGIN
 			UPDATE dbo.DistrDocumentTable
-			SET DD_PRINT = @print, 
+			SET DD_PRINT = @print,
 				DD_ID_GOOD = @goodid,
 				DD_ID_UNIT = @unitid
 			WHERE DD_ID = @ddid
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

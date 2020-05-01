@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_SERVICE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_CHECK_NAME]
 	@dsname VARCHAR(100)
 AS
 BEGIN
@@ -31,15 +31,15 @@ BEGIN
 
 		SELECT DSS_ID
 		FROM dbo.DistrServiceStatusTable
-		WHERE DSS_NAME = @dsname 
+		WHERE DSS_NAME = @dsname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
-Описание:	  Удалить регион с указанным 
+Описание:	  Удалить регион с указанным
                кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_DELETE] 
+ALTER PROCEDURE [dbo].[PERIOD_DELETE]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.PeriodTable 
+		DELETE
+		FROM dbo.PeriodTable
 		WHERE PR_ID = @periodid
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -24,14 +24,14 @@ BEGIN
 		SELECT ORG_ID, ORG_PSEDO, NULL AS PR_ID, NULL AS PR_DATE
 		FROM dbo.OrganizationTable
 		WHERE ORG_ID = 7
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -12,9 +12,9 @@ GO
                с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[PRICE_GOOD_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_GOOD_EDIT]
 	@id SMALLINT,
-	@name VARCHAR(50),	
+	@name VARCHAR(50),
 	@active BIT = 1
 AS
 BEGIN
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PriceGoodTable 
+		UPDATE dbo.PriceGoodTable
 		SET PGD_NAME = @name,
 			PGD_ACTIVE = @active
 		WHERE PGD_ID = @id
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -26,14 +26,14 @@ BEGIN
 		UPDATE dbo.ClientTable
 		SET CL_1C = @NEW_NAME
 		WHERE CL_1C = @OLD_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -50,7 +50,7 @@ ALTER PROCEDURE [dbo].[REPORT_CREATE]
 AS
 BEGIN
 	SET NOCOUNT ON
-		
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -69,14 +69,14 @@ BEGIN
 				@distrstats, @subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes, @total
-		ELSE	
+		ELSE
 		--------- Кол-во систем разной сетевитости ---------
 		IF @reporttype = 2
 			EXEC dbo.REPORT_SYSTEM_NAME_HOST_NET
 				@distrstats, @subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes,
-				@total, @totalric			
+				@total, @totalric
 		ELSE
 		--------------- Кол-во новых систем  ---------------
 		IF @reporttype = 3
@@ -92,21 +92,21 @@ BEGIN
 				@subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes
-				
+
 		ELSE
 		IF @reporttype = 5
-		BEGIN		
+		BEGIN
 			SELECT TOP 1 @periods = Item FROM dbo.GET_TABLE_FROM_LIST(@periods, ',') INNER JOIN dbo.PeriodTable ON Item = PR_ID ORDER BY PR_DATE DESC
-			EXEC dbo.REPORT_SYSTEM_SUBHOST_LIST 
+			EXEC dbo.REPORT_SYSTEM_SUBHOST_LIST
 				@distrstats, @subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes
 		END
 		ELSE
 		IF @reporttype = 6
-		BEGIN		
+		BEGIN
 			SELECT TOP 1 @periods = Item FROM dbo.GET_TABLE_FROM_LIST(@periods, ',') INNER JOIN dbo.PeriodTable ON Item = PR_ID ORDER BY PR_DATE DESC
-			EXEC dbo.REPORT_SUBHOST_SYSTEM_LIST 
+			EXEC dbo.REPORT_SUBHOST_SYSTEM_LIST
 				@distrstats, @subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes
@@ -150,9 +150,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

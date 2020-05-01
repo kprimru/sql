@@ -30,22 +30,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление строки с/ф',
-				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') + 
-				CASE ISNULL(INR_COUNT, 1) 
+				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') +
+				CASE ISNULL(INR_COUNT, 1)
 					WHEN 1 THEN ''
 					ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - '
 				END + dbo.MoneyFormat(INR_SALL)
-			FROM 
+			FROM
 				dbo.InvoiceRowTable a
 				INNER JOIN dbo.InvoiceSaleTable ON INR_ID_INVOICE = INS_ID
 			WHERE INS_ID = @invid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @invid
 
@@ -74,15 +74,15 @@ BEGIN
 		WHERE INR_ID_INVOICE = @invid
 
 		DELETE FROM	dbo.InvoiceSaleTable
-		WHERE INS_ID = @invid	
-		
+		WHERE INS_ID = @invid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

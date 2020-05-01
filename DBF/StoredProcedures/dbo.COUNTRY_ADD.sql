@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COUNTRY_ADD] 
-	@countryname VARCHAR(100), 
+ALTER PROCEDURE [dbo].[COUNTRY_ADD]
+	@countryname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
 	@returnvalue BIT = 1
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.CountryTable(CNT_NAME, CNT_ACTIVE, CNT_OLD_CODE) 
+		INSERT INTO dbo.CountryTable(CNT_NAME, CNT_ACTIVE, CNT_OLD_CODE)
 		VALUES (@countryname, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

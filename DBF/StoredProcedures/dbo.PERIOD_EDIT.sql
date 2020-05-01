@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
-Описание:	  Изменить данные о периоде с 
+Описание:	  Изменить данные о периоде с
                указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_EDIT] 
+ALTER PROCEDURE [dbo].[PERIOD_EDIT]
 	@periodid SMALLINT,
 	@periodname VARCHAR(20),
 	@perioddate SMALLDATETIME,
@@ -36,8 +36,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PeriodTable 
-		SET PR_NAME = @periodname, 
+		UPDATE dbo.PeriodTable
+		SET PR_NAME = @periodname,
 			PR_DATE = @perioddate,
 			PR_END_DATE = @periodenddate,
 			PR_BREPORT	=	@breport,
@@ -49,9 +49,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

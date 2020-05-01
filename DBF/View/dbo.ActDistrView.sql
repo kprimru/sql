@@ -7,13 +7,13 @@ GO
 
 ALTER VIEW [dbo].[ActDistrView]
 AS
-	SELECT     
+	SELECT
 		ACT_ID, ACT_ID_CLIENT, AD_ID_PERIOD, PR_ID, PR_DATE,
 		AD_ID, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE, --AD_SIGN, AD_DATE,
-		DIS_ID, DIS_STR, 
+		DIS_ID, DIS_STR,
 		TX_ID, TX_NAME, TX_PERCENT, TX_CAPTION
-                          
-	FROM         
+
+	FROM
 		dbo.ActTable INNER JOIN
         dbo.ActDistrTable ON ACT_ID = AD_ID_ACT INNER JOIN
         dbo.TaxTable ON AD_ID_TAX = TX_ID INNER JOIN

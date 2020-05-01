@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_SEARCH] 
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH]
 	@psedo VARCHAR(100),
 	@inn VARCHAR(50),
 	@tonum INT,
@@ -60,7 +60,7 @@ BEGIN
 
 		IF @psedo IS NOT NULL
 			SET @psedo = '%' + @psedo
-		
+
 		SET @where = ''
 		SET @sql = '
 
@@ -72,12 +72,12 @@ BEGIN
 			SET @sql = @sql + '0'
 
 		SET @sql = @sql + ' AS CL_NAH
-		FROM 
+		FROM
 			dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 		WHERE EXISTS
 			(
 				SELECT *
-				FROM	
+				FROM
 					dbo.ClientTable b '
 
 		IF (@tonum IS NOT NULL) OR (@courid IS NOT NULL)
@@ -87,7 +87,7 @@ BEGIN
 
 		IF (@disnum IS NOT NULL) OR (@sysid IS NOT NULL)
 		BEGIN
-			SET @sql = @sql + 'LEFT OUTER JOIN	
+			SET @sql = @sql + 'LEFT OUTER JOIN
 					dbo.ClientDistrTable d ON d.CD_ID_CLIENT = b.CL_ID LEFT OUTER JOIN
 					dbo.DistrView e WITH(NOEXPAND) ON e.DIS_ID = d.CD_ID_DISTR '
 		END
@@ -113,7 +113,7 @@ BEGIN
 			IF (@tonum IS NULL) AND (@courid IS NULL) AND (@fam IS NULL) AND (@name IS NULL) AND (@otch IS NULL) AND (@phone IS NULL)
 				SET @sql = @sql + 'LEFT OUTER JOIN dbo.TOTable c ON c.TO_ID_CLIENT = b.CL_ID '
 			SET @sql = @sql + 'LEFT OUTER JOIN dbo.TOAddressTable q ON c.TO_ID = q.TA_ID_TO '
-			SET @sql = @sql + 'LEFT OUTER JOIN dbo.StreetTable w ON q.TA_ID_STREET = w.ST_ID '	
+			SET @sql = @sql + 'LEFT OUTER JOIN dbo.StreetTable w ON q.TA_ID_STREET = w.ST_ID '
 		END
 
 		IF (@cityid IS NOT NULL)
@@ -169,7 +169,7 @@ BEGIN
 
 		IF @tonum IS NOT NULL
 		BEGIN
-			SET @where = @where + ' AND c.TO_NUM = @tonum'		
+			SET @where = @where + ' AND c.TO_NUM = @tonum'
 		END
 
 		IF @courid IS NOT NULL
@@ -201,7 +201,7 @@ BEGIN
 		BEGIN
 			SET @where = @where + ' AND f.CO_ID_PAY = @copay'
 		END
-		
+
 		IF @fam IS NOT NULL
 		BEGIN
 			SET @where = @where + ' AND g.TP_SURNAME LIKE @fam'
@@ -249,8 +249,8 @@ BEGIN
 
 		IF @insnum IS NOT NULL
 		BEGIN
-			SET @where = @where + ' AND @insnum = 
-										CASE CHARINDEX(''/'', @insnum) 
+			SET @where = @where + ' AND @insnum =
+										CASE CHARINDEX(''/'', @insnum)
 											WHEN 0 THEN CONVERT(VARCHAR(20), j.INS_NUM)
 											ELSE CONVERT(VARCHAR(20), j.INS_NUM) + ''/'' + CONVERT(VARCHAR(20), j.INS_NUM_YEAR)
 										END '
@@ -264,8 +264,8 @@ BEGIN
 		IF @paydate IS NOT NULL
 		BEGIN
 			SET @where = @where + ' AND k.IN_DATE = @paydate'
-		END	
-			
+		END
+
 		IF @org IS NOT NULL
 		BEGIN
 			SET @where = @where + ' AND b.CL_ID_ORG = @org'
@@ -277,18 +277,18 @@ BEGIN
 		ORDER BY CL_PSEDO'
 
 		PRINT @sql
-					
-		EXEC sp_executesql @sql, 
-		N'@psedo VARCHAR(100), @inn VARCHAR(50), @tonum INT, @courid INT, @disnum INT, @sysid INT, @conum VARCHAR(100), @typeid INT, @fam VARCHAR(100), @name VARCHAR(100), @otch VARCHAR(100), @phone VARCHAR(100), @adtypeid SMALLINT, @streetid INT, @home VARCHAR(50), @billnum VARCHAR(50), @insnum VARCHAR(20), @paynum VARCHAR(20), @paydate SMALLDATETIME, @cityid SMALLINT, @fullname VARCHAR(250), @org SMALLINT, @copay SMALLINT', 
+
+		EXEC sp_executesql @sql,
+		N'@psedo VARCHAR(100), @inn VARCHAR(50), @tonum INT, @courid INT, @disnum INT, @sysid INT, @conum VARCHAR(100), @typeid INT, @fam VARCHAR(100), @name VARCHAR(100), @otch VARCHAR(100), @phone VARCHAR(100), @adtypeid SMALLINT, @streetid INT, @home VARCHAR(50), @billnum VARCHAR(50), @insnum VARCHAR(20), @paynum VARCHAR(20), @paydate SMALLDATETIME, @cityid SMALLINT, @fullname VARCHAR(250), @org SMALLINT, @copay SMALLINT',
 		@psedo, @inn, @tonum, @courid, @disnum, @sysid, @conum, @typeid, @fam, @name, @otch, @phone, @adtypeid, @streetid, @home, @billnum, @insnum, @paynum, @paydate, @cityid, @fullname, @org, @copay
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

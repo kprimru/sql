@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_EDIT] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_EDIT]
 	@atlid			SMALLINT,
 	@name			VARCHAR(50),
 	@index			BIT,
@@ -59,9 +59,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

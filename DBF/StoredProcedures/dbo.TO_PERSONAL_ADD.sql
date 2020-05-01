@@ -6,12 +6,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-/* 
+/*
 Автор:		  Денисов Алексей
 Описание:	  Добавить сотрудника клиенту
 */
 
-ALTER PROCEDURE [dbo].[TO_PERSONAL_ADD] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_ADD]
 	@toid INT,
 	@rpid TINYINT,
 	@posid SMALLINT,
@@ -37,7 +37,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.TOPersonalTable(
-									TP_ID_TO, TP_ID_RP, TP_ID_POS, TP_SURNAME, 
+									TP_ID_TO, TP_ID_RP, TP_ID_POS, TP_SURNAME,
 									TP_NAME, TP_OTCH, TP_PHONE, TP_LAST
 									)
 		VALUES (
@@ -46,14 +46,14 @@ BEGIN
 
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

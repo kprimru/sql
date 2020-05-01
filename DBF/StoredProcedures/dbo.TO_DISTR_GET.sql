@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_GET]
@@ -50,17 +50,17 @@ BEGIN
 			)
 
 		IF LEN(@dislist) > 0
-			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)	
+			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
 
 		SELECT @dislist AS DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

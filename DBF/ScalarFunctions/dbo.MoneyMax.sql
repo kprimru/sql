@@ -7,7 +7,7 @@ GO
 ALTER FUNCTION [dbo].[MoneyMax]
 (
 	@A	MONEY,
-	@B	MONEY	
+	@B	MONEY
 )
 RETURNS MONEY
 AS

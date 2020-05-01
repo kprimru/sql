@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_CHECK_SHORT_NAME] 
+ALTER PROCEDURE [dbo].[SYSTEM_CHECK_SHORT_NAME]
 	@systemname VARCHAR(100)
 AS
 BEGIN
@@ -30,15 +30,15 @@ BEGIN
 
 		SELECT SYS_ID
 		FROM dbo.SystemTable
-		WHERE SYS_SHORT_NAME = @systemname 
+		WHERE SYS_SHORT_NAME = @systemname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

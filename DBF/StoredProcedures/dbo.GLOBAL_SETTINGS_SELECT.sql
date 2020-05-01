@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_SELECT]
@@ -32,14 +32,14 @@ BEGIN
 		SELECT GS_ID, GS_NAME, GS_VALUE
 		FROM dbo.GlobalSettingsTable
 		WHERE GS_ACTIVE = ISNULL(@active, GS_ACTIVE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

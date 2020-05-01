@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[REPORT_POSITION_EDIT] 
+ALTER PROCEDURE [dbo].[REPORT_POSITION_EDIT]
 	@positionreportid INT,
 	@positionreportname VARCHAR(100),
 	@positionreportpsedo VARCHAR(50)
@@ -30,19 +30,19 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ReportPositionTable 
-		SET 
-			RP_NAME = @positionreportname, 
-			RP_PSEDO = @positionreportpsedo 
+		UPDATE dbo.ReportPositionTable
+		SET
+			RP_NAME = @positionreportname,
+			RP_PSEDO = @positionreportpsedo
 		WHERE RP_ID = @positionreportid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

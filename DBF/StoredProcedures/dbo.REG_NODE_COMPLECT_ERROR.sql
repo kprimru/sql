@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REG_NODE_COMPLECT_ERROR]
@@ -27,11 +27,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			RN_COMPLECT, DIS_STR, TO_NAME, TO_NUM, CL_ID, CL_PSEDO, TO_ID, DS_NAME
-		FROM 
+		FROM
 			dbo.RegNodeTable a INNER JOIN
-			dbo.DistrView WITH(NOEXPAND) ON 
+			dbo.DistrView WITH(NOEXPAND) ON
 						RN_SYS_NAME = SYS_REG_NAME AND
 						DIS_NUM = RN_DISTR_NUM AND
 						DIS_COMP_NUM = RN_COMP_NUM INNER JOIN
@@ -39,32 +39,32 @@ BEGIN
 			dbo.TOTable ON TO_ID = TD_ID_TO INNER JOIN
 			dbo.ClientTable ON CL_ID = TO_ID_CLIENT INNER JOIN
 			dbo.DistrStatusTable ON DS_REG = RN_SERVICE
-		WHERE RN_COMPLECT IS NOT NULL 			
+		WHERE RN_COMPLECT IS NOT NULL 
 			AND
 				(
 					SELECT COUNT(DISTINCT TO_ID)
-					FROM 
+					FROM
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TO_ID = TD_ID_TO INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
-						dbo.RegNodeTable b ON 
+						dbo.RegNodeTable b ON
 										RN_DISTR_NUM = DIS_NUM AND
 										RN_COMP_NUM = DIS_COMP_NUM AND
 										RN_SYS_NAME = SYS_REG_NAME
-					WHERE b.RN_COMPLECT = a.RN_COMPLECT  
+					WHERE b.RN_COMPLECT = a.RN_COMPLECT
 				) > 1
 			AND EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.TOTable INNER JOIN
 						dbo.TODistrTable ON TO_ID = TD_ID_TO INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR INNER JOIN
-						dbo.RegNodeTable b ON 
+						dbo.RegNodeTable b ON
 										RN_DISTR_NUM = DIS_NUM AND
 										RN_COMP_NUM = DIS_COMP_NUM AND
 										RN_SYS_NAME = SYS_REG_NAME
-					WHERE b.RN_COMPLECT = a.RN_COMPLECT  
+					WHERE b.RN_COMPLECT = a.RN_COMPLECT
 						AND b.RN_SERVICE = 0
 				)
 		ORDER BY RN_COMPLECT, TO_NUM
@@ -73,9 +73,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

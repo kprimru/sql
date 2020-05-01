@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Удалить хост с указанным 
+Описание:	  Удалить хост с указанным
                кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[HOST_DELETE] 
+ALTER PROCEDURE [dbo].[HOST_DELETE]
 	@hostid SMALLINT
 AS
 BEGIN
@@ -36,9 +36,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

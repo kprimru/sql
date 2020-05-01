@@ -9,11 +9,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
-Описание:	  Удалить технологический признак 
+Описание:	  Удалить технологический признак
                с указанным кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[UNIT_DELETE] 
+ALTER PROCEDURE [dbo].[UNIT_DELETE]
 	@unitid SMALLINT
 AS
 BEGIN
@@ -31,17 +31,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.UnitTable 
+		DELETE
+		FROM dbo.UnitTable
 		WHERE UN_ID = @unitid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

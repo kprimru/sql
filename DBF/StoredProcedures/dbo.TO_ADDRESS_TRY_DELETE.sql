@@ -11,7 +11,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-ALTER PROCEDURE [dbo].[TO_ADDRESS_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_TRY_DELETE]
 	@addressid INT
 AS
 BEGIN
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

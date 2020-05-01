@@ -10,14 +10,14 @@ AS
 		CL_ID, DIS_ID, CL_PSEDO, DIS_STR, SN_ID, SN_NAME, SL_DATE,
 		ISNULL(
         	(
-    			SELECT TOP 1 SL_REST 
+    			SELECT TOP 1 SL_REST
 	        	FROM dbo.SaldoView b
-		        WHERE b.SL_ID_DISTR = a.SL_ID_DISTR	
+		        WHERE b.SL_ID_DISTR = a.SL_ID_DISTR
     		    	AND b.SL_ID_CLIENT = a.SL_ID_CLIENT
 					AND b.SL_DATE <= a.SL_DATE
         		ORDER BY SL_DATE DESC, SL_TP, SL_ID DESC
 		    ), 0) AS SL_REST
-	FROM 
+	FROM
 		dbo.SaldoTable a INNER JOIN
 	    dbo.ClientTable ON CL_ID = SL_ID_CLIENT INNER JOIN
     	dbo.DistrView DITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN

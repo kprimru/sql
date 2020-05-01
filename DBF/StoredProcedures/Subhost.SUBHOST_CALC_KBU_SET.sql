@@ -39,12 +39,12 @@ BEGIN
 					VALUES(@PR_ID, @SH_ID, @SYS_ID, @KBU, 1)
 		END
 		ELSE
-		BEGIN	
-			DELETE 
-			FROM Subhost.SubhostKbuTable		
+		BEGIN
+			DELETE
+			FROM Subhost.SubhostKbuTable
 			WHERE SK_ID_PERIOD = @PR_ID
 				AND SK_ID_HOST = @SH_ID
-				AND SK_ID_SYSTEM = @SYS_ID		
+				AND SK_ID_SYSTEM = @SYS_ID
 		END
 
 		DECLARE @tprice TABLE
@@ -58,15 +58,15 @@ BEGIN
 		INSERT INTO @tprice
 			SELECT *
 			FROM dbo.GET_MONEY_TABLE_FROM_LIST(@PRICES, ';')
-			
+
 		DECLARE PT CURSOR LOCAL FOR
 			SELECT PT_ID
-			FROM 
-				dbo.PriceTypeTable 
+			FROM
+				dbo.PriceTypeTable
 				INNER JOIN dbo.PriceGroupTable ON PG_ID = PT_ID_GROUP
 			WHERE PT_ID_GROUP IN (4, 5, 6, 7)
 			ORDER BY PG_ORDER, PT_ORDER
-		
+
 		OPEN PT
 
 		DECLARE @pt SMALLINT
@@ -74,15 +74,15 @@ BEGIN
 		FETCH NEXT FROM PT INTO @pt
 
 		DECLARE @ps SMALLINT
-		
+
 		SET @ps = 1
 
 		DECLARE @PRICE MONEY
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			SELECT @PRICE = PS_VAL 
-			FROM @tprice 
+			SELECT @PRICE = PS_VAL
+			FROM @tprice
 			WHERE ID = @ps
 
 			IF @PRICE <> 0
@@ -93,7 +93,7 @@ BEGIN
 					AND SPS_ID_SYSTEM = @SYS_ID
 					AND SPS_ID_HOST = @SH_ID
 					AND SPS_ID_TYPE = @pt
-				
+
 				IF @@ROWCOUNT = 0
 					INSERT INTO Subhost.SubhostPriceSystemTable(SPS_ID_SYSTEM, SPS_ID_PERIOD, SPS_ID_HOST, SPS_ID_TYPE, SPS_PRICE, SPS_ACTIVE)
 						VALUES(@SYS_ID, @PR_ID, @SH_ID, @pt, @PRICE, 1)
@@ -105,7 +105,7 @@ BEGIN
 					AND SPS_ID_HOST = @SH_ID
 					AND SPS_ID_SYSTEM = @SYS_ID
 					AND SPS_ID_TYPE = @pt
-			
+
 			SET @ps = @ps + 1
 
 			FETCH NEXT FROM PT INTO @pt
@@ -113,14 +113,14 @@ BEGIN
 
 		CLOSE PT
 		DEALLOCATE PT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

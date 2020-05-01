@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_ADD]
@@ -23,7 +23,7 @@ ALTER PROCEDURE [dbo].[INCOME_ADD]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -35,33 +35,33 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @orgid SMALLINT
 
 		SELECT @orgid = CL_ID_ORG
-		FROM dbo.ClientTable 
+		FROM dbo.ClientTable
 		WHERE CL_ID = @clientid
 
 		INSERT INTO dbo.IncomeTable
 			(
-				IN_ID_CLIENT, IN_DATE, IN_SUM, IN_PAY_DATE, 
+				IN_ID_CLIENT, IN_DATE, IN_SUM, IN_PAY_DATE,
 				IN_PAY_NUM, IN_ID_ORG, IN_PRIMARY
 			)
 		VALUES
 			(
 				@clientid, @indate, @sum, @paydate, @paynum, @orgid, @primary
-			)	
-		
-		IF @returnvalue = 1 
+			)
+
+		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

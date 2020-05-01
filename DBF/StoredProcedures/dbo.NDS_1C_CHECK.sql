@@ -11,7 +11,7 @@ ALTER PROCEDURE [dbo].[NDS_1C_CHECK]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,7 +23,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @ID	UNIQUEIDENTIFIER
 
 		SELECT @ID = ID
@@ -31,7 +31,7 @@ BEGIN
 		WHERE ID_ORG = @ORG
 			AND ID_TAX = @TAX
 			AND ID_PERIOD = @PERIOD
-		
+
 		DECLARE @PR_BEGIN	SMALLDATETIME
 		DECLARE @PR_END		SMALLDATETIME
 
@@ -39,17 +39,17 @@ BEGIN
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PERIOD
 
-		
+
 		SELECT CLIENT, 'Отсутствует клиент в ДБФ' AS ERR
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT CLIENT
 				FROM dbo.NDS1CDetail
-				WHERE ID_MASTER = @ID				
-					AND 
+				WHERE ID_MASTER = @ID
+					AND
 						(
 							(TP IN ('51', '50') AND  ISNULL(PRICE2, 0) <> 0)
-							OR 
+							OR
 							(TP = '76' AND ISNULL(PRICE , 0) <> 0)
 						)
 			) AS c
@@ -59,26 +59,26 @@ BEGIN
 				FROM dbo.ClientTable
 				WHERE CL_1C = CLIENT
 			)
-			
+
 		UNION ALL
-		
+
 		SELECT CL_1C, 'Отсутствует клиент в 1С'
 		FROM
 			(
 				SELECT DISTINCT CL_1C
-				FROM 
+				FROM
 					(
 						SELECT CL_1C
-						FROM 
+						FROM
 							dbo.BookSale
 							INNER JOIN dbo.InvoiceSaleTable ON INS_ID = ID_INVOICE
 							INNER JOIN dbo.ClientTable ON INS_ID_CLIENT = CL_ID
 						WHERE DATE BETWEEN @PR_BEGIN AND @PR_END
-						
+
 						UNION
-						
+
 						SELECT CL_1C
-						FROM 
+						FROM
 							dbo.BookPurchase
 							INNER JOIN dbo.InvoiceSaleTable ON INS_ID = ID_AVANS
 							INNER JOIN dbo.ClientTable ON INS_ID_CLIENT = CL_ID
@@ -89,17 +89,17 @@ BEGIN
 			(
 				SELECT *
 				FROM dbo.NDS1CDetail
-				WHERE ID_MASTER = @ID 
+				WHERE ID_MASTER = @ID
 					AND TP IN ('76', '51', '50')
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

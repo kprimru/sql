@@ -24,8 +24,8 @@ BEGIN
 
 		SELECT COUNT(*) AS CNT
 		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
-		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью' 
-			AND 
+		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
+			AND
 				(
 					ISNULL(CONFIRM_NEED,0) = 0
 					OR
@@ -33,11 +33,11 @@ BEGIN
 				)
 			AND STATUS = 1
 			AND (@DT IS NULL OR CONVERT(DATETIME, CONVERT(NVARCHAR(128), DATE, 120), 120) > @DT)
-			
+
 		SELECT @DT = MAX(DATE)
 		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
-		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью' 
-			AND 
+		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
+			AND
 				(
 					ISNULL(CONFIRM_NEED,0) = 0
 					OR
@@ -45,14 +45,14 @@ BEGIN
 				)
 			AND STATUS = 1
 			--AND (@DT IS NULL OR DATE > @DT)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

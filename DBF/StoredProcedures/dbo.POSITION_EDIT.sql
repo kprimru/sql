@@ -12,7 +12,7 @@ GO
 Описание:	  Изменить данные о должности с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[POSITION_EDIT] 
+ALTER PROCEDURE [dbo].[POSITION_EDIT]
 	@positionid INT,
 	@positionname VARCHAR(150),
 	@positionactive BIT
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PositionTable 
+		UPDATE dbo.PositionTable
 		SET POS_NAME = @positionname ,
 			POS_ACTIVE = @positionactive
 		WHERE POS_ID = @positionid
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

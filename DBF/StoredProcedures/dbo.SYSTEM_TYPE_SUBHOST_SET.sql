@@ -39,18 +39,18 @@ BEGIN
 					VALUES(@SH_ID, @SST_ID, @HOST, @DHOST)
 		END
 		ELSE
-			DELETE 
+			DELETE
 			FROM dbo.SystemTypeSubhost
 			WHERE STS_ID_SUBHOST = @SH_ID
 				AND STS_ID_TYPE = @SST_ID
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

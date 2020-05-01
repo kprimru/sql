@@ -10,8 +10,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SALE_OBJECT_EDIT]
@@ -39,22 +39,22 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SaleObjectTable
-		SET 
-			SO_NAME = @soname, 
-			SO_ID_TAX = @taxid, 
-			--SO_BILL_STR = @sobill, 
+		SET
+			SO_NAME = @soname,
+			SO_ID_TAX = @taxid,
+			--SO_BILL_STR = @sobill,
 			--SO_INV_UNIT = @soinvunit,
 			--SO_OKEI = @sookei,
 			SO_ACTIVE = @active
 		WHERE SO_ID = @soid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DELIVERY]
@@ -30,13 +30,13 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @OLD	INT
-		
+
 		SELECT @OLD = ACT_ID_CLIENT
 		FROM dbo.ActTable
 		WHERE ACT_ID = @actid
-		
+
 		DECLARE @TXT VARCHAR(MAX)
-		
+
 		SELECT @TXT = 'От "' + a.CL_FULL_NAME + '" к "' + b.CL_FULL_NAME + '"'
 		FROM dbo.ClientTable a, dbo.ClientTable b
 		WHERE a.CL_ID = @OLD AND b.CL_ID = @clientid
@@ -52,10 +52,10 @@ BEGIN
 		UPDATE dbo.InvoiceSaleTable
 		SET INS_ID_CLIENT = @clientid,
 			INS_ID_PAYER = (SELECT ISNULL(CL_ID_PAYER, CL_ID) FROM dbo.ClientTable WHERE CL_ID = @clientid)
-		WHERE INS_ID = 
+		WHERE INS_ID =
 			(
-				SELECT ACT_ID_INVOICE 
-				FROM dbo.ActTable 
+				SELECT ACT_ID_INVOICE
+				FROM dbo.ActTable
 				WHERE ACT_ID = @actid
 			)
 
@@ -67,14 +67,14 @@ BEGIN
 				FROM dbo.ActDistrTable
 				WHERE AD_ID_ACT = @actid
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

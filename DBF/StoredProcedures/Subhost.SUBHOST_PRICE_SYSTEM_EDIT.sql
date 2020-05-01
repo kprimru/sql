@@ -7,7 +7,7 @@ GO
 ALTER PROCEDURE [Subhost].[SUBHOST_PRICE_SYSTEM_EDIT]
 	@SPS_ID	INT,
 	@SYS_ID	SMALLINT,
-	@PT_ID	SMALLINT,	
+	@PT_ID	SMALLINT,
 	@SH_ID	SMALLINT,
 	@PR_ID	SMALLINT,
 	@PRICE	MONEY,
@@ -36,14 +36,14 @@ BEGIN
 			SPS_PRICE = @PRICE,
 			SPS_ACTIVE = @ACTIVE
 		WHERE SPS_ID = @SPS_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

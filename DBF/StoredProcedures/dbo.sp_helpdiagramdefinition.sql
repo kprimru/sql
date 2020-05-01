@@ -8,7 +8,7 @@ GO
 	CREATE PROCEDURE dbo.sp_helpdiagramdefinition
 	(
 		@diagramname 	sysname,
-		@owner_id	int	= null 		
+		@owner_id	int	= null 
 	)
 	WITH EXECUTE AS N'dbo'
 	AS
@@ -19,20 +19,20 @@ GO
 		declare @IsDbo 		int
 		declare @DiagId		int
 		declare @UIDFound	int
-	
+
 		if(@diagramname is null)
 		begin
 			RAISERROR (N'E_INVALIDARG', 16, 1);
 			return -1
 		end
-	
+
 		execute as caller;
 		select @theId = DATABASE_PRINCIPAL_ID();
 		select @IsDbo = IS_MEMBER(N'db_owner');
 		if(@owner_id is null)
 			select @owner_id = @theId;
-		revert; 
-	
+		revert;
+
 		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname;
 		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId ))
 		begin
@@ -40,7 +40,7 @@ GO
 			return -3
 		end
 
-		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ; 
+		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ;
 		return 0
 	END
 	DENY EXECUTE ON [dbo].[sp_helpdiagramdefinition] TO guest;

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_UNSIGN_REPORT]
@@ -28,23 +28,23 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CL_ID, CL_PSEDO, COUR_NAME, CSG_DATE, PR_DATE
-		FROM 
+		FROM
 			dbo.ClientCourView INNER JOIN
 			dbo.ConsignmentPeriodView ON CSG_ID_CLIENT = CL_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = CSG_ID_PERIOD
 		WHERE CSG_SIGN IS NULL
 			AND CSG_DATE <= @consdate
 		ORDER BY COUR_NAME, CL_PSEDO, CL_ID, CSG_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

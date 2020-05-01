@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			PT_ID, SYS_SHORT_NAME, PTS_ID_ST, PS_PRICE
 		FROM
 			dbo.PriceTypeTable INNER JOIN
@@ -43,26 +43,26 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			PT_ID, SYS_SHORT_NAME, PTS_ID_ST, SPS_PRICE
 		FROM
 			dbo.PriceTypeTable INNER JOIN
 			dbo.SubhostPriceSystemTable ON PT_ID = SPS_ID_TYPE INNER JOIN
 			dbo.PriceTypeSystemTable ON PTS_ID_PT = PT_ID INNER JOIN
 			dbo.SystemTable ON SYS_ID = SPS_ID_SYSTEM
-		WHERE PT_ID_GROUP = 4 
-			AND SPS_ID_PERIOD = @PR_ID 
+		WHERE PT_ID_GROUP = 4
+			AND SPS_ID_PERIOD = @PR_ID
 			AND SPS_ID_HOST = @SH_ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH		
+	END CATCH
 END
 GRANT EXECUTE ON [dbo].[SUBHOST_DELIVERY_PRICE_SELECT] TO rl_subhost_calc;
 GO

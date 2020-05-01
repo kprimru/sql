@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTIVITY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTIVITY_TRY_DELETE]
 	@activityid SMALLINT
 AS
 BEGIN
@@ -37,7 +37,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_ACTIVITY = @activityid)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'Данный вид деятельности указан у одного или нескольких клиентов. ' + 
+				SET @txt = @txt + 'Данный вид деятельности указан у одного или нескольких клиентов. ' +
 								  'Удаление невозможно, пока выбранный вид дейтельности будет указан хотя ' +
 								  'бы у одного клиента.'
 			END
@@ -48,9 +48,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

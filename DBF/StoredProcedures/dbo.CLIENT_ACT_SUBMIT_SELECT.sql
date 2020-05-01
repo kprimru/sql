@@ -25,19 +25,19 @@ BEGIN
 		FROM dbo.ClientTable
 		WHERE EXISTS
 			(
-				SELECT * 
+				SELECT *
 				FROM dbo.ActDistrView
 				WHERE ACT_ID_CLIENT = CL_ID
 			)
 		ORDER BY CL_PSEDO, CL_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 ALTER PROCEDURE [dbo].[DISTR_FINANCING_SELECT]
 	@clientid INT
@@ -26,33 +26,33 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DF_ID, DIS_STR, DIS_ID, SN_ID, 
+		SELECT
+			DF_ID, DIS_STR, DIS_ID, SN_ID,
 			SN_NAME, PP_ID, PP_NAME, DF_MON_COUNT,
 			DF_FIXED_PRICE, DF_DISCOUNT, PR_DATE AS DF_FIRST_MON, DSS_NAME,
 			(
 				SELECT TOP 1 CO_NUM
-				FROM 
+				FROM
 					dbo.ContractTable INNER JOIN
 					dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
 				WHERE CO_ID_CLIENT = @clientid
 					AND COD_ID_DISTR = DIS_ID
 					AND CO_ACTIVE = 1
 				ORDER BY CO_END_DATE DESC
-			) AS CO_NUM, 
+			) AS CO_NUM,
 			(
 				SELECT TOP 1 CO_END_DATE
-				FROM 
+				FROM
 					dbo.ContractTable INNER JOIN
 					dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
 				WHERE CO_ID_CLIENT = @clientid
 					AND COD_ID_DISTR = DIS_ID
 					AND CO_ACTIVE = 1
 				ORDER BY CO_END_DATE DESC
-			) AS CO_END_DATE, 
+			) AS CO_END_DATE,
 			(
 				SELECT COUR_NAME
-				FROM 
+				FROM
 					dbo.CourierTable INNER JOIN
 					dbo.TOTable ON TO_ID_COUR = COUR_ID INNER JOIN
 					dbo.TODistrTable ON TD_ID_TO = TO_ID
@@ -60,7 +60,7 @@ BEGIN
 			)AS COUR_NAME, DF_EXCHANGE, DF_END, DF_BEGIN,
 			(
 				SELECT TO_NUM
-				FROM 
+				FROM
 					dbo.TODistrView z
 					INNER JOIN dbo.TOTable y ON z.TD_ID_TO = y.TO_ID
 				WHERE z.DIS_ID = a.DIS_ID
@@ -74,9 +74,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

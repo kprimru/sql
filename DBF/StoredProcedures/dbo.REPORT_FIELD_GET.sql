@@ -7,14 +7,14 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[REPORT_FIELD_GET]  
+ALTER PROCEDURE [dbo].[REPORT_FIELD_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -26,18 +26,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-    
-		SELECT RF_ID, RF_NAME, RF_CAPTION, RF_ORDER 
+
+		SELECT RF_ID, RF_NAME, RF_CAPTION, RF_ORDER
 		FROM dbo.ReportFieldTable
 		ORDER BY RF_ORDER
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

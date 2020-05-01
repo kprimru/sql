@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REG_NODE_MOVE_CHECK]
@@ -35,7 +35,7 @@ BEGIN
 
 		DECLARE @ERR NVARCHAR(MAX)
 
-		SELECT @ERR = 
+		SELECT @ERR =
 		(
 			SELECT 'Отсутствует вес системы "' + SYS_SHORT_NAME + ' :: ' + SST_CAPTION + ' :: ' + SNC_SHORT + '"' + CHAR(10)
 			FROM
@@ -60,8 +60,8 @@ BEGIN
 			INNER JOIN dbo.SystemTypeTable ON RN_ID_TYPE = SST_ID
 			INNER JOIN dbo.SystemNetCountTable ON RN_ID_NET = SNC_ID
 			FOR XML PATH('')
-		) 
-		
+		)
+
 		IF @ERR IS NOT NULL
 			RAISERROR(@ERR, 16, 2);
 
@@ -74,14 +74,14 @@ BEGIN
 			SELECT 1 AS RES
 		ELSE
 			SELECT 0 AS RES
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

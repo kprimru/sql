@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_GET]
@@ -15,7 +15,7 @@ ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
-		
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -27,7 +27,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		
+
 		SELECT	RT_NAME,		--RT_TEXT,
 				RT_ID_REPORT_TYPE, RTY_NAME,
 				RT_LIST_STATUS, dbo.REF_GET_NAME_BY_ID_LIST('DISTR_STATUS', RT_LIST_STATUS) AS RT_STATUS_NAME,
@@ -49,9 +49,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

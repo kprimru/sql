@@ -35,14 +35,14 @@ BEGIN
 			WHERE CL_OLD_ID = @CL_ID OR CL_NEW_ID = @CL_ID
 			ORDER BY DDH_DATE
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

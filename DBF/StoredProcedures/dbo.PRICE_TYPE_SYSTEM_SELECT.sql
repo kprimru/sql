@@ -23,19 +23,19 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PTS_ID, SST_ID, SST_CAPTION, PT_ID, PT_NAME, PTS_ACTIVE
-		FROM 
+		FROM
 			dbo.PriceTypeSystemTable INNER JOIN
 			dbo.PriceTypeTable ON PT_ID = PTS_ID_PT INNER JOIN
 			dbo.SystemTypeTable ON SST_ID = PTS_ID_ST
 		WHERE PTS_ACTIVE = ISNULL(@ACTIVE, PTS_ACTIVE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

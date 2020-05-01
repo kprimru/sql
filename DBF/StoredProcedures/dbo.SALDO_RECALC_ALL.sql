@@ -9,8 +9,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SALDO_RECALC_ALL]
@@ -30,8 +30,8 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE CLIENT CURSOR LOCAL FOR 
-			SELECT CL_ID 
+		DECLARE CLIENT CURSOR LOCAL FOR
+			SELECT CL_ID
 			FROM dbo.ClientTable
 			WHERE EXISTS
 					(
@@ -46,7 +46,7 @@ BEGIN
 
 		FETCH NEXT FROM CLIENT INTO @clid
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.SALDO_RECALC @clid
 
@@ -55,14 +55,14 @@ BEGIN
 
 		CLOSE CLIENT
 		DEALLOCATE CLIENT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

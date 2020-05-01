@@ -38,14 +38,14 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO Ric.CalcCoef(CC_ID_PERIOD, CC_PRICE, CC_INCREASE_DISC, CC_PREPAY_RATE, CC_PREPAY, CC_PREPAY_DISC)
 				VALUES(@PR_ID, @PRICE, @INC_DISC, @PREPAY_RATE, @PREPAY, @PREPAY_DISC)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

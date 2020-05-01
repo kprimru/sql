@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GOOD_EDIT]
@@ -35,14 +35,14 @@ BEGIN
 		SET GD_NAME = @name,
 			GD_ACTIVE = @active
 		WHERE GD_ID = @id
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

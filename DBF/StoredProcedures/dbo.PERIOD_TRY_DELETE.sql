@@ -9,14 +9,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если период можно 
-               удалить из справочника (на него 
-               не ссылается ни одна запись 
-               из других таблиц), 
+Описание:	  Возвращает 0, если период можно
+               удалить из справочника (на него
+               не ссылается ни одна запись
+               из других таблиц),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PERIOD_TRY_DELETE]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -40,7 +40,7 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_PERIOD = @periodid) 
+		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_PERIOD = @periodid)
 		  BEGIN
 			SET @res = 1
 			SET @txt = @txt + '--'
@@ -50,7 +50,7 @@ BEGIN
 			SET @res = 1
 			SET @txt = @txt + CHAR(13) + '--'
 		  END
-		 
+
 		-- добавлено 29.04.2009, В.Богдан
 		IF EXISTS(SELECT * FROM dbo.ActDistrTable WHERE AD_ID_PERIOD = @periodid)
 		  BEGIN
@@ -102,14 +102,14 @@ BEGIN
 			END
 
 		SELECT @res AS RES, @txt AS TXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

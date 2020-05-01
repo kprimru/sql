@@ -10,7 +10,7 @@ GO
 Описание:
 */
 
-ALTER PROCEDURE [dbo].[REPORT_TYPE_GET] 
+ALTER PROCEDURE [dbo].[REPORT_TYPE_GET]
   @rtid int = NULL
 AS
 BEGIN
@@ -36,9 +36,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

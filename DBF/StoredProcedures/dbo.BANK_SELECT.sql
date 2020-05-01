@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[BANK_SELECT]    
+ALTER PROCEDURE [dbo].[BANK_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -28,10 +28,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-				BA_ID, BA_BIK, BA_NAME, CT_NAME, CT_ID, 
+		SELECT
+				BA_ID, BA_BIK, BA_NAME, CT_NAME, CT_ID,
 				BA_PHONE, BA_MFO, BA_CALC, BA_LORO
-		FROM 
+		FROM
 			dbo.BankTable bt LEFT OUTER JOIN
 			dbo.CityTable ct ON ct.CT_ID = bt.BA_ID_CITY
 		WHERE BA_ACTIVE = ISNULL(@active, BA_ACTIVE)
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Изменить данные о хосте с 
+Описание:	  Изменить данные о хосте с
                указанным кодом в справочнике
 */
 
-ALTER PROCEDURE [dbo].[HOST_EDIT] 
+ALTER PROCEDURE [dbo].[HOST_EDIT]
 	@hostid SMALLINT,
 	@hostname VARCHAR(250),
 	@hostregname VARCHAR(20),
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

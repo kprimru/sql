@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
-Описание:	  Удалить технологический признак 
+Описание:	  Удалить технологический признак
                с указанным кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_DELETE]
 	@systemtypeid SMALLINT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.SystemTypeTable 
+		DELETE
+		FROM dbo.SystemTypeTable
 		WHERE SST_ID = @systemtypeid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

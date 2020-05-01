@@ -9,7 +9,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  */
 
-ALTER PROCEDURE [dbo].[AREA_DELETE] 
+ALTER PROCEDURE [dbo].[AREA_DELETE]
 	@areaid SMALLINT
 AS
 BEGIN
@@ -27,17 +27,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.AreaTable 
+		DELETE
+		FROM dbo.AreaTable
 		WHERE AR_ID = @areaid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

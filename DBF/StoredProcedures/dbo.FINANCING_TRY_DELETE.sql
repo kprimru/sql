@@ -8,14 +8,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если тип финансирования 
-               с указанным кодом можно удалить из 
-               справочника (ни у одного клиента не 
-               указан этот тип финансирования), 
+Описание:	  Возвращает 0, если тип финансирования
+               с указанным кодом можно удалить из
+               справочника (ни у одного клиента не
+               указан этот тип финансирования),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[FINANCING_TRY_DELETE]
 	@financingid SMALLINT
 AS
 BEGIN
@@ -42,10 +42,10 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_FIN = @financingid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Данный тип финансирования указан у одного или нескольких клиентов. ' + 
+			SET @txt = @txt + 'Данный тип финансирования указан у одного или нескольких клиентов. ' +
 							  'Удаление невозможно, пока выбранный тип финансирования будет указан хотя ' +
 							  'бы у одного клиента.'
-		  END 
+		  END
 
 		SELECT @res AS RES, @txt AS TXT
 
@@ -54,9 +54,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

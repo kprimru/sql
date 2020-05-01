@@ -85,16 +85,16 @@ BEGIN
 
 		SET @END = DATEADD(DAY, 1, @END)
 
-		SELECT 
-			RPR_DATE, 
-			HST_SHORT + ' ' + CONVERT(VARCHAR(20), RPR_DISTR) + 
+		SELECT
+			RPR_DATE,
+			HST_SHORT + ' ' + CONVERT(VARCHAR(20), RPR_DISTR) +
 			CASE RPR_COMP
 				WHEN 1 THEN ''
 				ELSE '/' + CONVERT(VARCHAR(20), RPR_COMP)
-			END AS DIS_STR, 
-			RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT, 
+			END AS DIS_STR,
+			RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT,
 			RPR_USER, RPR_COMPUTER, RPR_INSERT
-		FROM 
+		FROM
 			dbo.RegProtocol
 			INNER JOIN dbo.HostTable ON HST_ID = RPR_ID_HOST
 			INNER JOIN #oper ON OPER_NAME = RPR_OPER
@@ -105,7 +105,7 @@ BEGIN
 			AND (RPR_DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (RPR_DATE < @END OR @END IS NULL)
 			AND (RPR_TEXT LIKE @TEXT OR @TEXT IS NULL)
-		ORDER BY RPR_DATE DESC, RPR_DISTR	
+		ORDER BY RPR_DATE DESC, RPR_DISTR
 
 		IF OBJECT_ID('tempdb..#oper') IS NOT NULL
 			DROP TABLE #oper
@@ -113,14 +113,14 @@ BEGIN
 			DROP TABLE #user
 		IF OBJECT_ID('tempdb..#comp') IS NOT NULL
 			DROP TABLE #comp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

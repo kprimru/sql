@@ -15,9 +15,9 @@ BEGIN
 
 	IF @SH_ID IN (12)
 		SET @RES = 58
-	ELSE 
+	ELSE
 		SET @RES = 59
-	
+
 
 	RETURN @RES
 END

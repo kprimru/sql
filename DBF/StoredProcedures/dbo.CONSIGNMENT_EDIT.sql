@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_EDIT]
@@ -43,30 +43,30 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ConsignmentTable 
-		SET CSG_ID_ORG = @csgidorg, 
-			CSG_ID_CLIENT = @csgidclient, 
-			CSG_CONSIGN_NAME = @csgconsignname, 
+		UPDATE dbo.ConsignmentTable
+		SET CSG_ID_ORG = @csgidorg,
+			CSG_ID_CLIENT = @csgidclient,
+			CSG_CONSIGN_NAME = @csgconsignname,
 			CSG_CONSIGN_ADDRESS = @csgconsignaddress,
 			CSG_CONSIGN_INN = @inn,
-			CSG_CONSIGN_KPP = @kpp,		
-			CSG_CONSIGN_OKPO = @csgconsignokpo, 
-			CSG_CLIENT_NAME = @csgclientname, 
-			CSG_CLIENT_ADDRESS = @csgclientaddress, 
+			CSG_CONSIGN_KPP = @kpp,
+			CSG_CONSIGN_OKPO = @csgconsignokpo,
+			CSG_CLIENT_NAME = @csgclientname,
+			CSG_CLIENT_ADDRESS = @csgclientaddress,
 			CSG_CLIENT_PHONE = @phone,
 			CSG_CLIENT_BANK = @bank,
 			CSG_FOUND = @csgfound,
-			CSG_NUM = @csgnum, 
+			CSG_NUM = @csgnum,
 			CSG_DATE = @csgdate
-		WHERE CSG_ID = @csgid 
+		WHERE CSG_ID = @csgid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

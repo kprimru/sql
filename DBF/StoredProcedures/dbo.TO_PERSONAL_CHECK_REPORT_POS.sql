@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[TO_PERSONAL_CHECK_REPORT_POS] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_CHECK_REPORT_POS]
 	@toid INT,
 	@reportposid SMALLINT
 AS
@@ -29,17 +29,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT TP_ID 
+		SELECT TP_ID
 		FROM dbo.TOPersonalTable
 		WHERE TP_ID_TO = @toid AND TP_ID_RP = @reportposid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

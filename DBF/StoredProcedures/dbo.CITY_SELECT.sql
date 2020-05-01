@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CITY_SELECT]  
+ALTER PROCEDURE [dbo].[CITY_SELECT]
 	@active bit = NULL
 AS
 
@@ -29,10 +29,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-				CT_ID, CT_NAME, CT_PREFIX, RG_NAME, RG_ID, 
+		SELECT
+				CT_ID, CT_NAME, CT_PREFIX, RG_NAME, RG_ID,
 				AR_NAME, AR_ID, CNT_NAME, CNT_ID
-		FROM 
+		FROM
 			dbo.CityTable ct LEFT OUTER JOIN
 			dbo.RegionTable rt ON rt.RG_ID = CT_ID_RG LEFT OUTER JOIN
 			dbo.AreaTable art ON art.AR_ID = CT_ID_AREA LEFT OUTER JOIN
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

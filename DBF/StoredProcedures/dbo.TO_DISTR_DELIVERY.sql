@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_DELIVERY]
@@ -38,23 +38,23 @@ BEGIN
 		INSERT INTO @list
 			SELECT *
 			FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
-		
+
 		UPDATE dbo.TODistrTable
-		SET							
+		SET
 			TD_ID_TO = @toid
 		WHERE TD_ID IN
 			(
 				SELECT TD_ID
 				FROM @list
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

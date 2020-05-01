@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SALE_OBJECT_GET_DEFAULT]	
+ALTER PROCEDURE [dbo].[SALE_OBJECT_GET_DEFAULT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,14 +28,14 @@ BEGIN
 	BEGIN TRY
 
 		SELECT * FROM dbo.SaleObjectTable WHERE SO_ID = 1
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

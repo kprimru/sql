@@ -29,10 +29,10 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#old') IS NOT NULL
 			DROP TABLE #old
-			
+
 		IF OBJECT_ID('tempdb..#new') IS NOT NULL
 			DROP TABLE #new
-			
+
 		CREATE TABLE #old
 			(
 				CL_ID		INT,
@@ -43,12 +43,12 @@ BEGIN
 				ACT_PRICE	MONEY,
 				ACT_NDS		MONEY
 			)
-		
+
 		DECLARE @SQL NVARCHAR(MAX)
-		
+
 		SET @SQL = 'CREATE UNIQUE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #old (CL_ID, SYS_ID)'
 		EXEC (@SQL)
-			
+
 		CREATE TABLE #new
 			(
 				CL_ID		INT,
@@ -59,66 +59,66 @@ BEGIN
 				ACT_PRICE	MONEY,
 				ACT_NDS		MONEY
 			)
-			
+
 		SET @SQL = 'CREATE UNIQUE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #new (CL_ID, SYS_ID)'
 		EXEC (@SQL)
-			
+
 		IF @ACT1 IS NOT NULL AND @ACT2 IS NOT NULL
 		BEGIN
 			INSERT INTO #old(CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, ACT_PRICE, ACT_NDS)
 				SELECT ID_CLIENT, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER, ACT_PRICE, ACT_NDS
-				FROM 
+				FROM
 					 dbo.Act1C a
 					 INNER JOIN dbo.Act1CDetail b ON a.ID = b.ID_MASTER
 					 INNER JOIN dbo.SystemTable c ON ID_SYSTEM = SYS_ID
 				WHERE a.DATE = @ACT1
-				
+
 			INSERT INTO #new(CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, ACT_PRICE, ACT_NDS)
 				SELECT ID_CLIENT, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER, ACT_PRICE, ACT_NDS
-				FROM 
+				FROM
 					 dbo.Act1C a
 					 INNER JOIN dbo.Act1CDetail b ON a.ID = b.ID_MASTER
 					 INNER JOIN dbo.SystemTable c ON ID_SYSTEM = SYS_ID
 				WHERE a.DATE = @ACT2
 		END
 		ELSE
-		BEGIN		
+		BEGIN
 			INSERT INTO #old(CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, ACT_PRICE, ACT_NDS)
 				SELECT ID_CLIENT, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER, ACT_PRICE, ACT_NDS
-				FROM 
+				FROM
 					 dbo.Act1C a
 					 INNER JOIN dbo.Act1CDetail b ON a.ID = b.ID_MASTER
 					 INNER JOIN dbo.SystemTable c ON ID_SYSTEM = SYS_ID
 				WHERE a.DATE = @DATE
-				
+
 			INSERT INTO #new(CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, ACT_PRICE, ACT_NDS)
-				SELECT 
+				SELECT
 					CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER, SUM(AD_PRICE), SUM(AD_TAX_PRICE)
-				FROM 		
-					dbo.ClientTable 
-					INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID 
-					INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID 
-					INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR 			
+				FROM 
+					dbo.ClientTable
+					INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID
+					INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID
+					INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR 
 				WHERE ACT_DATE BETWEEN @begin AND @end
-					AND (ACT_ID_ORG = @org OR @org IS NULL)	
+					AND (ACT_ID_ORG = @org OR @org IS NULL)
 				GROUP BY CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER
 
 				UNION ALL
 
-				SELECT 
+				SELECT
 					CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER, SUM(CSD_PRICE), SUM(CSD_TAX_PRICE)
-				FROM 		
-					dbo.ClientTable 
-					INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID 
-					INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID 
-					INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR 
+				FROM 
+					dbo.ClientTable
+					INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID
+					INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID
+					INNER JOIN dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CSD_ID_DISTR
 				WHERE CSG_DATE BETWEEN @begin AND @end
-					AND (CSG_ID_ORG = @org OR @org IS NULL)	
-				GROUP BY CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER	
+					AND (CSG_ID_ORG = @org OR @org IS NULL)
+				GROUP BY CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT_NAME, SYS_ORDER
 		END
 
-		SELECT 
-			'Дорасчитан' AS TP, CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, 
+		SELECT
+			'Дорасчитан' AS TP, CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER,
 			CONVERT(MONEY, NULL) AS ACT_OLD_PRICE, ACT_PRICE AS ACT_NEW_PRICE,
 			ISNULL(ACT_NDS, ACT_PRICE * CASE SYS_SHORT WHEN 'ГК' THEN 0.1 WHEN 'Лицензия' THEN 0 ELSE 0.18 END) AS ACT_NDS
 		FROM #new a
@@ -128,11 +128,11 @@ BEGIN
 				FROM #old b
 				WHERE a.CL_ID = b.CL_ID AND a.SYS_ID = b.SYS_ID
 			)
-			
+
 		UNION ALL
-		
-		SELECT 
-			'Удален' AS TP, CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER, 
+
+		SELECT
+			'Удален' AS TP, CL_ID, CL_PSEDO, SYS_ID, SYS_SHORT, SYS_ORDER,
 			ACT_PRICE, NULL,
 			NULL
 		FROM #old a
@@ -142,33 +142,33 @@ BEGIN
 				FROM #new b
 				WHERE a.CL_ID = b.CL_ID AND a.SYS_ID = b.SYS_ID
 			)
-			
+
 		UNION ALL
-		
-		SELECT 
-			'Изменилась сумма' AS TP, a.CL_ID, a.CL_PSEDO, a.SYS_ID, a.SYS_SHORT, a.SYS_ORDER, 
+
+		SELECT
+			'Изменилась сумма' AS TP, a.CL_ID, a.CL_PSEDO, a.SYS_ID, a.SYS_SHORT, a.SYS_ORDER,
 			a.ACT_PRICE, b.ACT_PRICE,
 			ISNULL(b.ACT_NDS, b.ACT_PRICE * CASE b.SYS_SHORT WHEN 'ГК' THEN 0.1 WHEN 'Лицензия' THEN 0 ELSE 0.18 END)
-		FROM 
+		FROM
 			#old a
 			INNER JOIN #new b ON a.CL_ID = b.CL_ID AND a.SYS_ID = b.SYS_ID
 		WHERE a.ACT_PRICE <> b.ACT_PRICE
-		
+
 		ORDER BY CL_PSEDO, SYS_ORDER
-			
+
 		IF OBJECT_ID('tempdb..#new') IS NOT NULL
 			DROP TABLE #new
-			
+
 		IF OBJECT_ID('tempdb..#old') IS NOT NULL
 			DROP TABLE #old
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

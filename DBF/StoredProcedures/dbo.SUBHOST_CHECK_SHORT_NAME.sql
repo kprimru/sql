@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает ID подхоста с указанным 
-                полным названием. 
+Описание:	  Возвращает ID подхоста с указанным
+                полным названием.
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CHECK_SHORT_NAME] 
+ALTER PROCEDURE [dbo].[SUBHOST_CHECK_SHORT_NAME]
 	@subhostname VARCHAR(100)
 AS
 BEGIN
@@ -32,15 +32,15 @@ BEGIN
 
 		SELECT SH_ID
 		FROM dbo.SubhostTable
-		WHERE SH_SHORT_NAME = @subhostname 
+		WHERE SH_SHORT_NAME = @subhostname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

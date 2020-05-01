@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[INVOICE_HOLE_SELECT]	
+ALTER PROCEDURE [dbo].[INVOICE_HOLE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -73,7 +73,7 @@ BEGIN
 		END
 
 		SELECT (CONVERT(VARCHAR, INS_NUM) + '/' + INS_NUM_YEAR) AS INS_FULL_NUM, ORG_PSEDO
-		FROM 
+		FROM
 			#holes INNER JOIN
 			dbo.OrganizationTable ON ORG_ID = INS_ID_ORG
 		ORDER BY ORG_PSEDO, INS_NUM_YEAR, INS_NUM
@@ -86,14 +86,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#year') IS NOT NULL
 			DROP TABLE #year
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

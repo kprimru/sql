@@ -8,13 +8,13 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  Процедура создания копии рег.узла
 */
-ALTER PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 	
+ALTER PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 
 	@filename VARCHAR(MAX)
 WITH EXECUTE AS OWNER
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-  
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -26,19 +26,19 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-  
+
 		--Шаг 1. Выгрузить из РЦ данные с ключом /outcsv
 		DECLARE @bcppath VARCHAR(MAX)
-		
+
 		SET @bcppath = dbo.GET_SETTING('BCP_PATH')
-		
+
 		--Шаг 2. Закинуть данные во временную таблицу
 
 		DECLARE @sql NVARCHAR(4000)
 
 		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 			DROP TABLE #reg
-		
+
 		CREATE TABLE #reg
 		(
 			[RN_SYS_NAME] [varchar](20) NULL,
@@ -88,35 +88,35 @@ BEGIN
 		WHERE SUBSTRING(RN_COMMENT, 1, 1) = '"' AND SUBSTRING(RN_COMMENT, LEN(RN_COMMENT), 1) = '"'
 
 		UPDATE #reg
-		SET REG_ODON = 0 
+		SET REG_ODON = 0
 		WHERE REG_ODON IS NULL
 
 		UPDATE #reg
-		SET REG_ODOFF = 0 
+		SET REG_ODOFF = 0
 		WHERE REG_ODOFF IS NULL
 
 		IF (SELECT COUNT(*) FROM #reg) > 0
 		BEGIN
 			TRUNCATE TABLE dbo.RegNodeTable
-			
+
 			INSERT INTO dbo.RegNodeTable
 			SELECT * FROM #reg
 
-			SELECT @@ROWCOUNT AS ROW_COUNT 	
+			SELECT @@ROWCOUNT AS ROW_COUNT 
 
 			EXEC [dbo].[DISTR_BUH_CHANGE]
 		END
-		
+
 		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 			DROP TABLE #reg
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

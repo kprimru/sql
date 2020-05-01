@@ -9,12 +9,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если тип системы 
-               можно удалить, 
+Описание:	  Возвращает 0, если тип системы
+               можно удалить,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[UNIT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[UNIT_TRY_DELETE]
 	@unitid SMALLINT
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		-- добавлено 28.04.2009, В.Богдан	
+		-- добавлено 28.04.2009, В.Богдан
 
 		SELECT @res AS RES, @txt AS TXT
 
@@ -47,9 +47,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,8 +8,8 @@ ALTER VIEW [dbo].[IncomeDateIXView]
 WITH SCHEMABINDING
 AS
 	SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE, COUNT_BIG(*) AS ID_CNT
-	FROM        
-		dbo.IncomeDistrTable 
+	FROM
+		dbo.IncomeDistrTable
 		INNER JOIN dbo.IncomeTable ON ID_ID_INCOME = IN_ID
 		INNER JOIN dbo.PeriodTable ON PR_ID = ID_ID_PERIOD
 		INNER JOIN dbo.DistrTable ON DIS_ID = ID_ID_DISTR

@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 19.11.2008
-Описание:	  Возвращает 0, если подхост можно 
-                удалить из справочника (ни в 
-               одной таблице он не указан), 
+Описание:	  Возвращает 0, если подхост можно
+                удалить из справочника (ни в
+               одной таблице он не указан),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_TRY_DELETE]
 	@swid INT
 AS
 BEGIN
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

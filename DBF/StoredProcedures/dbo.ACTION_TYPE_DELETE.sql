@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTION_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[ACTION_TYPE_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.ActionType
 		WHERE ACTT_ID = @id
 
@@ -36,9 +36,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

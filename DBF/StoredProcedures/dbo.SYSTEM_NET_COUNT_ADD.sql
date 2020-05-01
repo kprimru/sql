@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_ADD]
 	@systemnetid INT,
 	@netcount INT,
 	@TECH SMALLINT,
@@ -35,7 +35,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.SystemNetCountTable(SNC_ID_SN, SNC_NET_COUNT, SNC_TECH, SNC_ACTIVE, SNC_ODON, SNC_ODOFF, SNC_SHORT) 
+		INSERT INTO dbo.SystemNetCountTable(SNC_ID_SN, SNC_NET_COUNT, SNC_TECH, SNC_ACTIVE, SNC_ODON, SNC_ODOFF, SNC_SHORT)
 		VALUES (@systemnetid, @netcount, @tech, @active, @ODON, @ODOFF, @SHORT)
 
 		IF @returnvalue = 1
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

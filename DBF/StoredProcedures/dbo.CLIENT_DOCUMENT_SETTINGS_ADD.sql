@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD]
@@ -38,25 +38,25 @@ BEGIN
 
 		INSERT INTO dbo.ClientDocumentSettingsTable
 				(
-					CDS_ID_CLIENT, CDS_ACT_CONTRACT, 
-					CDS_ACT_POS, CDS_ACT_POS_F, CDS_ACT_NAME, CDS_ACT_NAME_F, 
+					CDS_ID_CLIENT, CDS_ACT_CONTRACT,
+					CDS_ACT_POS, CDS_ACT_POS_F, CDS_ACT_NAME, CDS_ACT_NAME_F,
 					CDS_BILL_REST, CDS_INS_CONTRACT, CDS_INS_NAME
 				)
-		VALUES 
+		VALUES
 				(
-					@clientid, @actcontract, @actpos, @actposf, @actname, 
+					@clientid, @actcontract, @actpos, @actposf, @actname,
 					@actnamef, @billrest, @inscontract, @insname
 				)
 
 		SELECT SCOPE_IDENTITY() AS NEW_IDEN
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

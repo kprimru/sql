@@ -5,16 +5,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_DEFAULT_GET]
 	@clientid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -26,42 +26,42 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 			
+
+		SELECT 
 				(
-					SELECT ISNULL(MAX(INS_NUM) + 1, 1) 
-					FROM dbo.InvoiceSaleTable 
+					SELECT ISNULL(MAX(INS_NUM) + 1, 1)
+					FROM dbo.InvoiceSaleTable
 					WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, GETDATE()),2)
 						AND INS_ID_ORG = (SELECT CL_ID_ORG FROM dbo.ClientTable WHERE CL_ID = @Clientid)
 				) AS INS_NUM,
-				RIGHT(DATEPART(yy, GETDATE()),2) AS INS_NUM_YEAR,			
-				CL_FULL_NAME AS INS_CLIENT_NAME,			
+				RIGHT(DATEPART(yy, GETDATE()),2) AS INS_NUM_YEAR,
+				CL_FULL_NAME AS INS_CLIENT_NAME,
 				(
 					SELECT
-						CASE 
+						CASE
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-							ELSE 
+							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)										
-								FROM	
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+								FROM
 									dbo.ClientTable INNER JOIN
-									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT 
-								WHERE  
+									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
+								WHERE
 									CL_ID = ACT_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
 	*/
-								SELECT 
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																		AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																		AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = z.CL_ID
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -72,30 +72,30 @@ BEGIN
 				CL_FULL_NAME AS INS_CONSIG_NAME,
 				(
 					SELECT
-						CASE 
+						CASE
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-							ELSE 
+							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)										
-								FROM	
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+								FROM
 									dbo.ClientTable INNER JOIN
-									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT 
-								WHERE  
+									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
+								WHERE
 									CL_ID = ACT_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
 	*/
-								SELECT 
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																		AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																		AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = z.CL_ID
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -117,24 +117,24 @@ BEGIN
 				ORG_ID, ORG_SHORT_NAME,
 				(
 					SELECT TOP 1 CO_IDENT
-					FROM 
+					FROM
 						dbo.ContractTable
-					WHERE 
+					WHERE
 						CO_ID_CLIENT = z.CL_ID
 					ORDER BY CO_ACTIVE DESC, CO_END_DATE DESC
 				) AS INS_IDENT
-			FROM 			
+			FROM 
 				dbo.ClientTable z LEFT OUTER JOIN
 				dbo.OrganizationTable ON CL_ID_ORG = ORG_ID
 			WHERE CL_ID = @clientid
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

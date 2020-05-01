@@ -25,14 +25,14 @@ BEGIN
 		UPDATE dbo.TODistrTable
 		SET TD_FORCED = CASE TD_FORCED WHEN 1 THEN 0 ELSE 1 END
 		WHERE TD_ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

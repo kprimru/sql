@@ -10,7 +10,7 @@ ALTER PROCEDURE [dbo].[REPORT_SALDO_1C]
 	@ORG	INT
 AS
 BEGIN
-	SET NOCOUNT ON;		
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -33,20 +33,20 @@ BEGIN
 		IF OBJECT_ID('tempdb..#rest') IS NOT NULL
 			DROP TABLE #rest
 
-		CREATE TABLE #act	
+		CREATE TABLE #act
 			(
 				CL_ID	INT,
 				SYS_ID	INT,
 				ACT_SUM	MONEY
 			)
-			
+
 		CREATE TABLE #income
 			(
 				CL_ID	INT,
 				SYS_ID	INT,
 				IN_SUM	MONEY
 			)
-			
+
 		CREATE TABLE #rest
 			(
 				CL_ID	INT,
@@ -54,34 +54,34 @@ BEGIN
 				REST	MONEY,
 				DATE	SMALLDATETIME
 			)
-			
+
 		DECLARE @SQL	NVARCHAR(MAX)
 	/*
 		INSERT INTO #act(CL_ID, SYS_ID, ACT_SUM)
-			SELECT 
+			SELECT
 				CL_ID, SYS_ID, SUM(AD_PRICE)
-			FROM 		
-				dbo.ClientTable 
-				INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID 
-				INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID 
-				INNER JOIN dbo.DistrView a ON DIS_ID = AD_ID_DISTR 			
+			FROM 
+				dbo.ClientTable
+				INNER JOIN dbo.ActTable ON ACT_ID_CLIENT = CL_ID
+				INNER JOIN dbo.ActDistrTable ON AD_ID_ACT = ACT_ID
+				INNER JOIN dbo.DistrView a ON DIS_ID = AD_ID_DISTR 
 			WHERE ACT_DATE BETWEEN @begin AND @end
-				AND (ACT_ID_ORG = @org OR @org IS NULL)	
+				AND (ACT_ID_ORG = @org OR @org IS NULL)
 			GROUP BY CL_ID, SYS_ID
 
 			UNION ALL
 
-			SELECT 
+			SELECT
 				CL_ID, SYS_ID, SUM(CSD_PRICE)
-			FROM 		
-				dbo.ClientTable 
-				INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID 
-				INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID 
-				INNER JOIN dbo.DistrView a ON DIS_ID = CSD_ID_DISTR 
+			FROM 
+				dbo.ClientTable
+				INNER JOIN dbo.ConsignmentTable ON CSG_ID_CLIENT = CL_ID
+				INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID
+				INNER JOIN dbo.DistrView a ON DIS_ID = CSD_ID_DISTR
 			WHERE CSG_DATE BETWEEN @begin AND @end
-				AND (CSG_ID_ORG = @org OR @org IS NULL)	
+				AND (CSG_ID_ORG = @org OR @org IS NULL)
 			GROUP BY CL_ID, SYS_ID
-			
+
 		INSERT INTO #income(CL_ID, SYS_ID, IN_SUM)
 			SELECT
 				CL_ID, SYS_ID, SUM(ID_PRICE)
@@ -89,11 +89,11 @@ BEGIN
 				dbo.IncomeTable INNER JOIN
 				dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME INNER JOIN
 				dbo.DistrView ON DIS_ID = ID_ID_DISTR INNER JOIN
-				dbo.ClientTable ON CL_ID = IN_ID_CLIENT			
+				dbo.ClientTable ON CL_ID = IN_ID_CLIENT
 			WHERE IN_DATE BETWEEN @BEGIN AND @END
 				AND IN_ID_ORG = @org
 			GROUP BY CL_ID, SYS_ID
-	*/			
+	*/
 		INSERT INTO #rest(CL_ID, SYS_ID, REST, DATE)
 			SELECT
 				SL_ID_CLIENT, SYS_ID, SL_REST, SL_DATE
@@ -102,14 +102,14 @@ BEGIN
 					SELECT SL_ID_CLIENT, SYS_ID, SUM(SL_REST) AS SL_REST, MAX(SL_DATE) AS SL_DATE
 					FROM
 						(
-							SELECT 
-								SYS_ID, SL_ID_CLIENT, SL_ID_DISTR, 
+							SELECT
+								SYS_ID, SL_ID_CLIENT, SL_ID_DISTR,
 								--SL_REST,
 								SL_REST - ROUND((TX_PERCENT * SL_REST / (100 + TX_PERCENT)), 2) AS SL_REST,
 								SL_DATE
 							FROM
 								(
-									SELECT 
+									SELECT
 										SL_ID_CLIENT, SL_ID_DISTR,
 										(
 											SELECT TOP 1 SL_REST
@@ -130,15 +130,15 @@ BEGIN
 									FROM
 										(
 											SELECT DISTINCT CL_ID AS SL_ID_CLIENT, DIS_ID AS SL_ID_DISTR
-											FROM 
+											FROM
 												dbo.ClientTable
 												INNER JOIN dbo.ClientDistrView ON CD_ID_CLIENT = CL_ID
 											WHERE DSS_REPORT = 1 AND CL_ID_ORG = @ORG AND DIS_ACTIVE = 1
-											
+
 											UNION
-											
+
 											SELECT DISTINCT SL_ID_CLIENT, SL_ID_DISTR
-											FROM 
+											FROM
 												dbo.SaldoTable
 												LEFT OUTER JOIN dbo.IncomeDistrTable ON SL_ID_IN_DIS = ID_ID
 												LEFT OUTER JOIN dbo.IncomeTable ON ID_ID_INCOME = IN_ID
@@ -156,22 +156,22 @@ BEGIN
 													)
 												AND NOT EXISTS
 													(
-														SELECT *													
-														FROM 
+														SELECT *
+														FROM
 															dbo.ClientTable
 															INNER JOIN dbo.ClientDistrView ON CD_ID_CLIENT = CL_ID
 														WHERE DSS_REPORT = 1 AND CL_ID_ORG = @ORG AND DIS_ACTIVE = 1
 															AND  CL_ID = SL_ID_CLIENT AND DIS_ID= SL_ID_DISTR
-													)										
+													)
 										) AS a
 								) AS c
 								INNER JOIN dbo.DistrView d WITH(NOEXPAND) ON c.SL_ID_DISTR = d.DIS_ID
-								INNER JOIN dbo.SaleObjectTable ON SYS_ID_SO = SO_ID 
+								INNER JOIN dbo.SaleObjectTable ON SYS_ID_SO = SO_ID
 								INNER JOIN dbo.TaxTable ON TX_ID = SO_ID_TAX
 						) AS e
 					GROUP BY SL_ID_CLIENT, SYS_ID
 				) AS o_O
-				
+
 		SELECT a.CL_ID, CL_PSEDO, CL_INN, a.SYS_ID, SYS_SHORT_NAME, SYS_1C_CODE, SYS_ORDER, /*IN_SUM, ACT_SUM, */REST, DATE
 		FROM
 			(
@@ -182,7 +182,7 @@ BEGIN
 
 				SELECT DISTINCT CL_ID, SYS_ID
 				FROM #income
-				
+
 				UNION
 				*/
 				SELECT DISTINCT CL_ID, SYS_ID
@@ -194,23 +194,23 @@ BEGIN
 			--LEFT OUTER JOIN #act e ON e.CL_ID = a.CL_ID AND e.SYS_ID = a.SYS_ID
 			LEFT OUTER JOIN #rest f ON f.CL_ID = a.CL_ID AND f.SYS_ID = a.SYS_ID
 		ORDER BY SYS_ORDER, CL_PSEDO
-				
+
 		IF OBJECT_ID('tempdb..#act') IS NOT NULL
 			DROP TABLE #act
-			
+
 		IF OBJECT_ID('tempdb..#income') IS NOT NULL
 			DROP TABLE #income
-			
+
 		IF OBJECT_ID('tempdb..#rest') IS NOT NULL
 			DROP TABLE #rest
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

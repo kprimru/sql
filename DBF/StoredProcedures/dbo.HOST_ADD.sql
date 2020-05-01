@@ -8,14 +8,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Добавить хост 
+Описание:	  Добавить хост
                в справочник
 */
 
 ALTER PROCEDURE [dbo].[HOST_ADD]
 	@hostname VARCHAR(250),
-	@hostregname VARCHAR(20), 
-	@active BIT = 1, 
+	@hostregname VARCHAR(20),
+	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
 BEGIN
@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_ACTIVE) 
+		INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_ACTIVE)
 		VALUES (@hostname, @hostregname, @active)
 
 		IF @returnvalue = 1
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

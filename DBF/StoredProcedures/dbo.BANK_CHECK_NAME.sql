@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[BANK_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[BANK_CHECK_NAME]
 	@bankname VARCHAR(100)
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT BA_ID 
-		FROM dbo.BankTable 
+		SELECT BA_ID
+		FROM dbo.BankTable
 		WHERE BA_NAME = @bankname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

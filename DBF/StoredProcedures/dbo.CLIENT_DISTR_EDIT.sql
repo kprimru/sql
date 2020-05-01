@@ -11,9 +11,9 @@ GO
 Описание:      Изменить данные о дистрибутиве клиента
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_DISTR_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_EDIT]
 	@id INT,
-	@distrid INT,  
+	@distrid INT,
 	@regdate SMALLDATETIME,
 	@systemserviceid SMALLINT
 AS
@@ -32,19 +32,19 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ClientDistrTable 
-		SET CD_ID_DISTR = @distrid, 
-			CD_REG_DATE = @regdate, 
-			CD_ID_SERVICE = @systemserviceid 
+		UPDATE dbo.ClientDistrTable
+		SET CD_ID_DISTR = @distrid,
+			CD_REG_DATE = @regdate,
+			CD_ID_SERVICE = @systemserviceid
 		WHERE CD_ID = @id
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

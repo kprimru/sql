@@ -11,10 +11,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_SERVICE_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_EDIT]
 	@dsid SMALLINT,
 	@dsname VARCHAR(100),
 	@statusid SMALLINT,
@@ -37,7 +37,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.DistrServiceStatusTable 
+		UPDATE dbo.DistrServiceStatusTable
 		SET DSS_NAME = @dsname,
 			DSS_ID_STATUS = @statusid,
 			DSS_SUBHOST = @subhost,
@@ -49,9 +49,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
+Дата создания:  
 Описание:		все акты, автомотически сгенерированные
 				за раз
 */
@@ -15,7 +15,7 @@ ALTER PROCEDURE [dbo].[ACT_FACT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -27,27 +27,27 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @d DATETIME
 		SET @d = CONVERT(DATETIME, @date, 121)
 
-		SELECT * 
-		FROM dbo.ActFactMasterTable 
+		SELECT *
+		FROM dbo.ActFactMasterTable
 		WHERE AFM_DATE = @d
 		ORDER BY CL_PSEDO, CL_ID, CO_NUM
 
-		SELECT * 
-		FROM dbo.ActFactDetailTable 
+		SELECT *
+		FROM dbo.ActFactDetailTable
 		WHERE AFD_ID_AFM IN (SELECT AFM_ID FROM dbo.ActFactMasterTable WHERE AFM_DATE = @d)
-		ORDER BY AFD_ID_AFM, TO_NUM, SYS_ORDER	
-		
+		ORDER BY AFD_ID_AFM, TO_NUM, SYS_ORDER
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

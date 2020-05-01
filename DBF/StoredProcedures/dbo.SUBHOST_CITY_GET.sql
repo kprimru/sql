@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CITY_GET] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_GET]
 	@subhostcityid INT = NULL
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SC_ID, SH_SHORT_NAME, SH_ID, CT_NAME, CT_ID, MA_ID, MA_SHORT_NAME, SC_ACTIVE
-		FROM 
+		FROM
 			dbo.SubhostCityTable a INNER JOIN
 			dbo.SubhostTable b ON a.SC_ID_SUBHOST = b.SH_ID INNER JOIN
 			dbo.CityTable c ON c.CT_ID = a.SC_ID_CITY INNER JOIN
@@ -40,9 +40,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

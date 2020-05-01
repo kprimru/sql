@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_PAY_SELECT]   
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_SELECT]
 	@active BIT = NULL
 AS
 
@@ -31,7 +31,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT COP_ID, COP_NAME, COP_DAY, COP_MONTH
-		FROM dbo.ContractPayTable 
+		FROM dbo.ContractPayTable
 		WHERE COP_ACTIVE = ISNULL(@active, COP_ACTIVE)
 		ORDER BY COP_NAME
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

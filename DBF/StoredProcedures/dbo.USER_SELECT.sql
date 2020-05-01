@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_SELECT]
@@ -42,12 +42,12 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO #user 
+		INSERT INTO #user
 			EXEC sp_helpuser
 
 		SELECT DISTINCT UserName
 		FROM #user
-		WHERE UserName NOT IN 
+		WHERE UserName NOT IN
 			(
 				SELECT 'dbo'
 				UNION ALL
@@ -55,20 +55,20 @@ BEGIN
 				UNION ALL
 				SELECT 'guest'
 				UNION ALL
-				SELECT 'INFORMATION_SCHEMA'		
+				SELECT 'INFORMATION_SCHEMA'
 			)
 		ORDER BY UserName
 
 		IF OBJECT_ID('tempdb..#user') IS NOT NULL
 			DROP TABLE #user
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

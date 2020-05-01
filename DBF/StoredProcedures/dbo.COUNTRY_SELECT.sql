@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COUNTRY_SELECT]   
+ALTER PROCEDURE [dbo].[COUNTRY_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -28,8 +28,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CNT_NAME, CNT_ID 
-		FROM dbo.CountryTable 
+		SELECT CNT_NAME, CNT_ID
+		FROM dbo.CountryTable
 		WHERE CNT_ACTIVE = ISNULL(@active, CNT_ACTIVE)
 		ORDER BY CNT_NAME
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

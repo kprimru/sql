@@ -9,7 +9,7 @@ GO
 /*
 Автор:			Денисов Алексей
 Дата создания:	10.02.2009
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[RIC_REPORT_HISTORY_ADD]
@@ -32,7 +32,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.VMIReportHistoryTable
-				
+
 		SELECT
 		/*		(
 					SELECT PR_NAME
@@ -57,9 +57,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

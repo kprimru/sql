@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_EDIT]
@@ -32,20 +32,20 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.GlobalSettingsTable 
-		SET	
-			GS_NAME = @gsname, 
+		UPDATE dbo.GlobalSettingsTable
+		SET
+			GS_NAME = @gsname,
 			GS_VALUE = @gsvalue,
 			GS_ACTIVE = @active
-		WHERE GS_ID = @gsid							
-		
+		WHERE GS_ID = @gsid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

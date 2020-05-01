@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 05.11.2008
-Описание:	  Удалить из справочника сбытовую 
+Описание:	  Удалить из справочника сбытовую
                территорию с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[MARKET_AREA_DELETE] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_DELETE]
 	@marketareaid INT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.MarketAreaTable 
+		DELETE
+		FROM dbo.MarketAreaTable
 		WHERE MA_ID = @marketareaid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -35,14 +35,14 @@ BEGIN
 			AND ID_NEW_PRICE = @NEW_PRICE
 			AND ID_NEW_SYS_TYPE = @NEW_SYS
 			AND ID_NEW_NET  = @NEW_NET
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

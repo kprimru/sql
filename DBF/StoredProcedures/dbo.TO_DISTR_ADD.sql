@@ -7,13 +7,13 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_ADD]
 	@toid INT,
-	@disid VARCHAR(500)	
+	@disid VARCHAR(500)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -47,19 +47,19 @@ BEGIN
 
 		INSERT INTO dbo.TODistrTable(
 									TD_ID_TO, TD_ID_DISTR
-								) 
+								)
 			SELECT @toid, DIS_ID FROM #distr
 
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

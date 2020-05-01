@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[BILL_ALL_CREATE]
@@ -33,7 +33,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @TXT VARCHAR(MAX)
-		
+
 		SELECT @TXT = 'Период: ' + CONVERT(VARCHAR(MAX), PR_DATE, 104)
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @periodid
@@ -42,13 +42,13 @@ BEGIN
 
 		DECLARE CL CURSOR LOCAL FOR
 			SELECT CL_ID
-			FROM 
-				dbo.ClientTable 
-			WHERE 
+			FROM
+				dbo.ClientTable
+			WHERE
 				EXISTS
 					(
-						SELECT * 
-						FROM			
+						SELECT *
+						FROM
 							dbo.ClientDistrTable INNER JOIN
 							dbo.DistrFinancingTable ON DF_ID_DISTR = CD_ID_DISTR INNER JOIN
 							dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
@@ -62,7 +62,7 @@ BEGIN
 
 		FETCH NEXT FROM CL INTO @clid
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.BILL_CREATE @clid,	@periodid, @billdate, @soid, @fin_date
 
@@ -71,18 +71,18 @@ BEGIN
 
 		CLOSE CL
 		DEALLOCATE CL
-		
+
 		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Начало обратного формирования счетов', @TXT, NULL, NULL
-		
+
 		DECLARE CL_REVERSE CURSOR LOCAL FOR
 			SELECT CL_ID
-			FROM 
-				dbo.ClientTable 
-			WHERE 
+			FROM
+				dbo.ClientTable
+			WHERE
 				EXISTS
 					(
-						SELECT * 
-						FROM			
+						SELECT *
+						FROM
 							dbo.ClientDistrTable INNER JOIN
 							dbo.DistrFinancingTable ON DF_ID_DISTR = CD_ID_DISTR INNER JOIN
 							dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
@@ -94,7 +94,7 @@ BEGIN
 
 		FETCH NEXT FROM CL_REVERSE INTO @clid
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.BILL_CREATE @clid,	@periodid, @billdate, @soid, @fin_date
 
@@ -103,16 +103,16 @@ BEGIN
 
 		CLOSE CL_REVERSE
 		DEALLOCATE CL_REVERSE
-		
+
 		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Окончание формирования счетов', @TXT, NULL, NULL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

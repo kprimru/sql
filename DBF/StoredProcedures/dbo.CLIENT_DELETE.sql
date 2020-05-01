@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
-ALTER PROCEDURE [dbo].[CLIENT_DELETE] 
+ALTER PROCEDURE [dbo].[CLIENT_DELETE]
 	@clientid INT
 AS
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 		FROM dbo.ClientFinancing
 		WHERE ID_CLIENT = @clientid
 
-		DELETE 
+		DELETE
 		FROM dbo.DistrDeliveryHistoryTable
 		WHERE DDH_ID_OLD_CLIENT = @clientid OR DDH_ID_NEW_CLIENT = @clientid
 
@@ -38,21 +38,21 @@ BEGIN
 		FROM dbo.ClientDocumentSettingsTable
 		WHERE CDS_ID_CLIENT = @clientid
 
-		DELETE 
+		DELETE
 		FROM dbo.ClientFinancingAddressTable
 		WHERE CFA_ID_CLIENT = @clientid
 
-		DELETE 
-		FROM dbo.ClientTable 
+		DELETE
+		FROM dbo.ClientTable
 		WHERE CL_ID = @clientid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

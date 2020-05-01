@@ -23,14 +23,14 @@ BEGIN
 
 		SELECT ID, ID_OLD_PRICE, ID_NEW_PRICE, ID_OLD_SYS_TYPE, ID_NEW_SYS_TYPE, ID_OLD_NET, ID_NEW_NET, COEF
 		FROM Price.PriceDepend
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

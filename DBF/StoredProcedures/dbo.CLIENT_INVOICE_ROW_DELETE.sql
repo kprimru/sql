@@ -32,7 +32,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @insid INT
-		
+
 
 		IF OBJECT_ID('tempdb..#dbf_invrow') IS NOT NULL
 			DROP TABLE #dbf_invrow
@@ -50,26 +50,26 @@ BEGIN
 			END
 
 		SELECT @insid = INS_ID
-		FROM 
+		FROM
 			dbo.InvoiceSaleTable a
 			INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE = INS_ID
 			INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', '”даление строки с/ф',
-				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') + 
-				CASE ISNULL(INR_COUNT, 1) 
+				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') +
+				CASE ISNULL(INR_COUNT, 1)
 					WHEN 1 THEN ''
 					ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - '
 				END + dbo.MoneyFormat(INR_SALL)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable a
 				INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE = INS_ID
 				INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
-				
+
 
 		DELETE
-		FROM 
+		FROM
 			dbo.InvoiceRowTable
 		WHERE INR_ID IN (SELECT ROW_ID FROM #dbf_invrow)
 
@@ -78,14 +78,14 @@ BEGIN
 
 		EXEC dbo.BOOK_SALE_PROCESS @insid
 		EXEC dbo.BOOK_PURCHASE_PROCESS @insid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

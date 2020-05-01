@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_EXCEPT_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_EDIT]
 	@distrid INT,
 	@systemid INT,
 	@distrnum INT,
@@ -33,9 +33,9 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.DistrExceptTable 
-		SET DE_ID_SYSTEM = @systemid, 
-			DE_DIS_NUM = @distrnum, 
+		UPDATE dbo.DistrExceptTable
+		SET DE_ID_SYSTEM = @systemid,
+			DE_DIS_NUM = @distrnum,
 			DE_COMP_NUM = @compnum,
 			DE_COMMENT = @comment,
 			DE_ACTIVE = @active
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

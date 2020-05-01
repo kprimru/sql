@@ -40,9 +40,9 @@ BEGIN
 		DECLARE @ERROR VARCHAR(MAX)
 
 		SET @ERROR = ''
-		
-		SELECT 
-			@ERROR = @ERROR + 'В основной базе отсутствует клиент "' + 
+
+		SELECT
+			@ERROR = @ERROR + 'В основной базе отсутствует клиент "' +
 			CL_PSEDO + '" (' + CONVERT(VARCHAR(20), CL_NUM) + ')' + CHAR(10)
 		FROM DBF_NAH.dbo.ClientTable a
 		WHERE NOT EXISTS
@@ -58,8 +58,8 @@ BEGIN
 				WHERE a.CL_NUM = -b.CL_NUM
 			)
 
-		SELECT @ERROR = @ERROR + 'Дубликат псевдонимов в базе Находки "' + a.CL_PSEDO + '"' + CHAR(10)	
-		FROM 
+		SELECT @ERROR = @ERROR + 'Дубликат псевдонимов в базе Находки "' + a.CL_PSEDO + '"' + CHAR(10)
+		FROM
 			DBF_NAH.dbo.ClientTable a
 			INNER JOIN DBF.dbo.ClientTable t ON t.CL_NUM = a.CL_NUM
 		WHERE NOT EXISTS
@@ -68,7 +68,7 @@ BEGIN
 				FROM DBF.dbo.ClientTable b
 				WHERE a.CL_NUM = b.CL_NUM
 					AND a.CL_PSEDO = b.CL_PSEDO
-			) AND 
+			) AND
 			EXISTS
 			(
 				SELECT *
@@ -82,7 +82,7 @@ BEGIN
 			) AND NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					DBF.dbo.TOTable z
 				WHERE z.TO_ID_CLIENT = t.CL_ID
 					AND NOT EXISTS
@@ -113,7 +113,7 @@ BEGIN
 				)
 
 		INSERT INTO DBF.dbo.StreetTable(ST_PREFIX, ST_NAME, ST_SUFFIX, ST_ID_CITY, ST_ACTIVE)
-			SELECT 
+			SELECT
 				ST_PREFIX, ST_NAME, ST_SUFFIX,
 				(
 					SELECT TOP 1 CT_ID
@@ -127,7 +127,7 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.StreetTable d INNER JOIN
 						DBF.dbo.CityTable e ON e.CT_ID = ST_ID_CITY
 					WHERE d.ST_NAME = c.ST_NAME
@@ -157,13 +157,13 @@ BEGIN
 			t.CL_OKPO = a.CL_OKPO,
 			t.CL_OKONX = a.CL_OKONX,
 			t.CL_ACCOUNT = a.CL_ACCOUNT,
-			t.CL_PHONE = a.CL_PHONE		
+			t.CL_PHONE = a.CL_PHONE
 		FROM
 			DBF.dbo.ClientTable t INNER JOIN
 			DBF_NAH.dbo.ClientTable a ON a.CL_NUM = t.CL_NUM LEFT OUTER JOIN
 			DBF_NAH.dbo.SubhostTable c ON c.SH_ID = a.CL_ID_SUBHOST LEFT OUTER JOIN
 			DBF_NAH.dbo.OrganizationTable d ON d.ORG_ID = a.CL_ID_ORG
-		WHERE 
+		WHERE
 				(
 					a.CL_PSEDO <> t.CL_PSEDO OR
 					a.CL_FULL_NAME <> t.CL_FULL_NAME OR
@@ -175,7 +175,7 @@ BEGIN
 					ISNULL(a.CL_OKPO, '') <> ISNULL(t.CL_OKPO, '') OR
 					ISNULL(a.CL_OKONX, '') <> ISNULL(t.CL_OKONX, '') OR
 					ISNULL(a.CL_ACCOUNT, '') <> ISNULL(t.CL_ACCOUNT, '') OR
-					ISNULL(a.CL_PHONE, '') <> ISNULL(t.CL_PHONE, '') OR				
+					ISNULL(a.CL_PHONE, '') <> ISNULL(t.CL_PHONE, '') OR
 					ISNULL(a.CL_PHONE, '') <> ISNULL(t.CL_PHONE, '')
 				) AND EXISTS
 				(
@@ -185,7 +185,7 @@ BEGIN
 				) AND NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.TOTable z
 					WHERE z.TO_ID_CLIENT = t.CL_ID
 						AND NOT EXISTS
@@ -196,18 +196,18 @@ BEGIN
 									AND z.TO_NUM = y.TO_NUM
 							)
 				) AND a.CL_NUM > 0
-				
+
 
 		INSERT INTO DBF.dbo.DistrTable(DIS_ID_SYSTEM, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE)
 			SELECT e.SYS_ID, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE
-			FROM 
+			FROM
 				DBF_NAH.dbo.DistrTable a INNER JOIN
 				DBF_NAH.dbo.SystemTable  b ON b.SYS_ID = DIS_ID_SYSTEM INNER JOIN
 				DBF.dbo.SystemTable e ON e.SYS_REG_NAME = b.SYS_REG_NAME
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.DistrTable c INNER JOIN
 						DBF.dbo.SystemTable d ON d.SYS_ID = DIS_ID_SYSTEM
 					WHERE c.DIS_NUM = a.DIS_NUM
@@ -218,9 +218,9 @@ BEGIN
 		UPDATE t
 		SET t.DIS_ACTIVE = a.DIS_ACTIVE
 		--SELECT *
-		FROM 
+		FROM
 			DBF.dbo.DistrTable t INNER JOIN
-			DBF_NAH.dbo.DistrTable a ON 
+			DBF_NAH.dbo.DistrTable a ON
 								a.DIS_NUM = t.DIS_NUM
 							AND a.DIS_COMP_NUM = t.DIS_COMP_NUM INNER JOIN
 			DBF_NAH.dbo.SystemTable b ON a.DIS_ID_SYSTEM = b.SYS_ID INNER JOIN
@@ -234,20 +234,20 @@ BEGIN
 		--ORDER BY t.DIS_NUM
 
 		INSERT INTO DBF.dbo.DistrServiceStatusTable(DSS_NAME, DSS_ID_STATUS, DSS_REPORT, DSS_ACTIVE)
-			SELECT 
+			SELECT
 				DSS_NAME,
 				(
 					SELECT TOP 1 DS_ID
 					FROM DBF.dbo.DistrStatusTable d
 					WHERE d.DS_REG = c.DS_REG
 				), DSS_REPORT, DSS_ACTIVE
-			FROM 
+			FROM
 				DBF_NAH.dbo.DistrServiceStatusTable a INNER JOIN
 				DBF_NAH.dbo.DistrStatusTable c ON a.DSS_ID_STATUS = c.DS_ID
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM DBF.dbo.DistrServiceStatusTable b 
+					FROM DBF.dbo.DistrServiceStatusTable b
 					WHERE a.DSS_NAME = b.DSS_NAME
 				)
 
@@ -260,19 +260,19 @@ BEGIN
 				),
 				(
 					SELECT TOP 1 DIS_ID
-					FROM 
+					FROM
 						DBF.dbo.DistrTable g INNER JOIN
 						DBF.dbo.SystemTable h ON h.SYS_ID = g.DIS_ID_SYSTEM
 					WHERE g.DIS_NUM = c.DIS_NUM
 						AND g.DIS_COMP_NUM = c.DIS_COMP_NUM
 						AND h.SYS_REG_NAME = d.SYS_REG_NAME
-				), CD_REG_DATE, 
+				), CD_REG_DATE,
 				(
 					SELECT TOP 1 DSS_ID
 					FROM DBF.dbo.DistrServiceStatusTable i
 					WHERE i.DSS_NAME = 'Подхост'
 				)
-			FROM 
+			FROM
 				DBF_NAH.dbo.ClientDistrTable a INNER JOIN
 				DBF_NAH.dbo.ClientTable b ON a.CD_ID_CLIENT = b.CL_ID INNER JOIN
 				DBF_NAH.dbo.DistrTable c ON c.DIS_ID = a.CD_ID_DISTR INNER JOIN
@@ -281,7 +281,7 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.ClientDistrTable z INNER JOIN
 						DBF.dbo.DistrTable y ON z.CD_ID_DISTR = y.DIS_ID INNER JOIN
 						DBF.dbo.SystemTable x ON x.SYS_ID = y.DIS_ID_SYSTEM
@@ -300,14 +300,14 @@ BEGIN
 			DBF_NAH.dbo.DistrTable d ON d.DIS_ID = a.CD_ID_DISTR INNER JOIN
 			DBF_NAH.dbo.SystemTable e ON e.SYS_ID = d.DIS_ID_SYSTEM INNER JOIN
 			DBF.dbo.SystemTable f ON f.SYS_REG_NAME = e.SYS_REG_NAME INNER JOIN
-			DBF.dbo.DistrTable g ON g.DIS_NUM = d.DIS_NUM 
+			DBF.dbo.DistrTable g ON g.DIS_NUM = d.DIS_NUM
 								AND g.DIS_COMP_NUM = d.DIS_COMP_NUM
 								AND g.DIS_ID_SYSTEM = f.SYS_ID
-		WHERE /*DBF.dbo.ClientDistrTable.CD_ID_CLIENT <> c.CL_ID 
-			AND */DBF.dbo.ClientDistrTable.CD_ID_DISTR = g.DIS_ID		 
+		WHERE /*DBF.dbo.ClientDistrTable.CD_ID_CLIENT <> c.CL_ID
+			AND */DBF.dbo.ClientDistrTable.CD_ID_DISTR = g.DIS_ID
 			AND d.DIS_DELIVERY = 0
 
-		DELETE 
+		DELETE
 		FROM DBF.dbo.ClientDistrTable
 		WHERE CD_ID_DISTR IN
 			(
@@ -327,15 +327,15 @@ BEGIN
 				)
 
 		INSERT INTO	DBF.dbo.ClientAddressTable(CA_ID_CLIENT, CA_ID_TYPE, CA_INDEX, CA_ID_STREET, CA_HOME, CA_STR, CA_ID_TEMPLATE, CA_FREE)
-			SELECT 
+			SELECT
 				(
 					SELECT TOP 1 CL_ID
 					FROM DBF.dbo.ClientTable f
 					WHERE f.CL_NUM = b.CL_NUM
-				), CA_ID_TYPE, CA_INDEX, 
+				), CA_ID_TYPE, CA_INDEX,
 				(
 					SELECT TOP 1 ST_ID
-					FROM 
+					FROM
 						DBF.dbo.StreetTable g INNER JOIN
 						DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
 					WHERE g.ST_NAME = c.ST_NAME AND h.CT_NAME = d.CT_NAME
@@ -347,7 +347,7 @@ BEGIN
 					FROM DBF.dbo.AddressTemplateTable i
 					WHERE i.ATL_CAPTION = e.ATL_CAPTION
 				), CA_FREE
-			FROM 
+			FROM
 				DBF_NAH.dbo.ClientAddressTable a INNER JOIN
 				DBF_NAH.dbo.ClientTable b ON b.CL_ID = a.CA_ID_CLIENT INNER JOIN
 				DBF_NAH.dbo.StreetTable c ON c.ST_ID = a.CA_ID_STREET INNER JOIN
@@ -356,17 +356,17 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.ClientAddressTable z INNER JOIN
-						DBF.dbo.ClientTable y ON y.CL_ID = z.CA_ID_CLIENT 
+						DBF.dbo.ClientTable y ON y.CL_ID = z.CA_ID_CLIENT
 					WHERE z.CA_ID_TYPE = a.CA_ID_TYPE AND y.CL_NUM = b.CL_NUM
 				) AND b.CL_NUM > 0
 
 		INSERT INTO DBF.dbo.ClientFinancingAddressTable(CFA_ID_CLIENT, CFA_ID_FAT, CFA_ID_ATL)
 				SELECT CA_ID_CLIENT, FAT_ID, CA_ID_TEMPLATE
-				FROM 
+				FROM
 					DBF.dbo.ClientAddressTable a CROSS JOIN
-					DBF.dbo.FinancingAddressTypeTable b 
+					DBF.dbo.FinancingAddressTypeTable b
 				WHERE ISNULL(FAT_ID_ADDR_TYPE, CA_ID_TYPE) = CA_ID_TYPE
 					AND NOT EXISTS
 						(
@@ -381,13 +381,13 @@ BEGIN
 			DBF.dbo.ClientAddressTable.CA_ID_STREET = i.ST_ID,
 			DBF.dbo.ClientAddressTable.CA_HOME = a.CA_HOME,
 			DBF.dbo.ClientAddressTable.CA_STR = a.CA_STR,
-			DBF.dbo.ClientAddressTable.CA_FREE = a.CA_FREE		
-		FROM 
+			DBF.dbo.ClientAddressTable.CA_FREE = a.CA_FREE
+		FROM
 			DBF_NAH.dbo.ClientAddressTable a INNER JOIN
 			DBF_NAH.dbo.ClientTable b ON a.CA_ID_CLIENT = b.CL_ID INNER JOIN
 			DBF_NAH.dbo.StreetTable c ON c.ST_ID = a.CA_ID_STREET INNER JOIN
-			DBF_NAH.dbo.CityTable d ON d.CT_ID = c.ST_ID_CITY INNER JOIN		
-			DBF.dbo.ClientTable f ON f.CL_NUM = b.CL_NUM INNER JOIN		
+			DBF_NAH.dbo.CityTable d ON d.CT_ID = c.ST_ID_CITY INNER JOIN
+			DBF.dbo.ClientTable f ON f.CL_NUM = b.CL_NUM INNER JOIN
 			DBF.dbo.CityTable h ON h.CT_NAME = d.CT_NAME INNER JOIN
 			DBF.dbo.StreetTable i ON i.ST_ID_CITY = h.CT_ID AND i.ST_NAME = c.ST_NAME AND ISNULL(i.ST_PREFIX, '') = ISNULL(c.ST_PREFIX, '') AND ISNULL(i.ST_SUFFIX, '') = ISNULL(c.ST_SUFFIX, '')
 		WHERE DBF.dbo.ClientAddressTable.CA_ID_CLIENT = f.CL_ID AND DBF.dbo.ClientAddressTable.CA_ID_TYPE = a.CA_ID_TYPE
@@ -406,7 +406,7 @@ BEGIN
 					) AND NOT EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							DBF.dbo.TOTable z
 						WHERE z.TO_ID_CLIENT = f.CL_ID
 							AND NOT EXISTS
@@ -424,16 +424,16 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM DBF.dbo.PositionTable b 
+					FROM DBF.dbo.PositionTable b
 					WHERE a.POS_NAME = b.POS_NAME
 				)
 
 		INSERT INTO DBF.dbo.ClientPersonalTable(PER_ID_CLIENT, PER_FAM, PER_NAME, PER_OTCH, PER_ID_POS, PER_ID_REPORT_POS)
-			SELECT 
+			SELECT
 				(
 					SELECT CL_ID
 					FROM
-						DBF.dbo.ClientTable z 
+						DBF.dbo.ClientTable z
 					WHERE z.CL_NUM = b.CL_NUM
 				), PER_FAM, PER_NAME, PER_OTCH,
 				(
@@ -454,9 +454,9 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.ClientPersonalTable e INNER JOIN
-						DBF.dbo.ClientTable f ON e.PER_ID_CLIENT = f.CL_ID INNER JOIN				
+						DBF.dbo.ClientTable f ON e.PER_ID_CLIENT = f.CL_ID INNER JOIN
 						DBF.dbo.ReportPositionTable h ON h.RP_ID = e.PER_ID_REPORT_POS
 					WHERE f.CL_NUM = b.CL_NUM AND d.RP_PSEDO = h.RP_PSEDO
 				) AND b.CL_NUM > 0
@@ -466,15 +466,15 @@ BEGIN
 			DBF.dbo.ClientPersonalTable.PER_NAME = a.PER_NAME,
 			DBF.dbo.ClientPersonalTable.PER_OTCH = a.PER_OTCH,
 			DBF.dbo.ClientPersonalTable.PER_ID_POS = f.POS_ID
-		FROM 
+		FROM
 			DBF_NAH.dbo.ClientPersonalTable a INNER JOIN
 			DBF_NAH.dbo.ClientTable b ON a.PER_ID_CLIENT = b.CL_ID INNER JOIN
 			DBF_NAH.dbo.PositionTable c ON c.POS_ID = a.PER_ID_POS INNER JOIN
 			DBF_NAH.dbo.ReportPositionTable d ON d.RP_ID = a.PER_ID_REPORT_POS INNER JOIN
 			DBF.dbo.ClientTable e ON e.CL_NUM = b.CL_NUM INNER JOIN
 			DBF.dbo.PositionTable f ON f.POS_NAME = c.POS_NAME INNER JOIN
-			DBF.dbo.ReportPositionTable g ON g.RP_PSEDO = d.RP_PSEDO	
-		WHERE DBF.dbo.ClientPersonalTable.PER_ID_CLIENT = e.CL_ID 
+			DBF.dbo.ReportPositionTable g ON g.RP_PSEDO = d.RP_PSEDO
+		WHERE DBF.dbo.ClientPersonalTable.PER_ID_CLIENT = e.CL_ID
 			AND DBF.dbo.ClientPersonalTable.PER_ID_REPORT_POS = g.RP_ID
 			 AND b.CL_NUM > 0
 			AND (
@@ -490,7 +490,7 @@ BEGIN
 					) AND NOT EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							DBF.dbo.TOTable z
 						WHERE z.TO_ID_CLIENT = e.CL_ID
 							AND NOT EXISTS
@@ -515,9 +515,9 @@ BEGIN
 		UPDATE t
 		SET t.TO_ID_CLIENT = e.CL_ID,
 			t.TO_NAME = a.TO_NAME,
-			t.TO_REPORT = a.TO_REPORT, 
-			t.TO_ID_COUR = f.COUR_ID, 
-			t.TO_VMI_COMMENT = a.TO_VMI_COMMENT, 
+			t.TO_REPORT = a.TO_REPORT,
+			t.TO_ID_COUR = f.COUR_ID,
+			t.TO_VMI_COMMENT = a.TO_VMI_COMMENT,
 			t.TO_MAIN = a.TO_MAIN,
 			t.TO_INN = a.TO_INN,
 			t.TO_LAST = a.TO_LAST,
@@ -526,9 +526,9 @@ BEGIN
 			DBF.dbo.TOTable t INNER JOIN
 			DBF_NAH.dbo.TOTable a ON t.TO_NUM = a.TO_NUM INNER JOIN
 			DBF_NAH.dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID INNER JOIN
-			DBF_NAH.dbo.CourierTable c ON c.COUR_ID  = a.TO_ID_COUR INNER JOIN	
-			DBF.dbo.ClientTable e ON e.CL_NUM = b.CL_NUM INNER JOIN	
-			DBF.dbo.CourierTable f ON f.COUR_NAME = c.COUR_NAME 
+			DBF_NAH.dbo.CourierTable c ON c.COUR_ID  = a.TO_ID_COUR INNER JOIN
+			DBF.dbo.ClientTable e ON e.CL_NUM = b.CL_NUM INNER JOIN
+			DBF.dbo.CourierTable f ON f.COUR_NAME = c.COUR_NAME
 		WHERE (
 			t.TO_ID_CLIENT <> e.CL_ID OR
 			t.TO_NAME <> a.TO_NAME OR
@@ -541,22 +541,22 @@ BEGIN
 			) AND b.CL_NUM > 0
 
 		INSERT INTO DBF.dbo.TOAddressTable(TA_ID_TO, TA_INDEX, TA_ID_STREET, TA_HOME)
-			SELECT 
+			SELECT
 				(
 					SELECT TO_ID
 					FROM DBF.dbo.TOTable g
 					WHERE g.TO_NUM = b.TO_NUM
-				), a.TA_INDEX, 
+				), a.TA_INDEX,
 				(
 					SELECT TOP 1 ST_ID
-					FROM 
+					FROM
 						DBF.dbo.StreetTable h INNER JOIN
 						DBF.dbo.CityTable i ON h.ST_ID_CITY = i.CT_ID
 					WHERE h.ST_NAME = c.ST_NAME AND i.CT_NAME = d.CT_NAME
 						AND ISNULL(h.ST_PREFIX, '') = ISNULL(c.ST_PREFIX, '')
 						AND ISNULL(h.ST_SUFFIX, '') = ISNULL(c.ST_SUFFIX, '')
 				), a.TA_HOME
-			FROM 
+			FROM
 				DBF_NAH.dbo.TOAddressTable a INNER JOIN
 				DBF_NAH.dbo.TOTable b ON a.TA_ID_TO = b.TO_ID INNER JOIN
 				DBF_NAH.dbo.StreetTable c ON c.ST_ID = a.TA_ID_STREET INNER JOIN
@@ -564,7 +564,7 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.TOAddressTable e INNER JOIN
 						DBF.dbo.TOTable f ON e.TA_ID_TO = f.TO_ID
 					WHERE f.TO_NUM = b.TO_NUM
@@ -597,22 +597,22 @@ BEGIN
 			DBF_NAH.dbo.TOAddressTable a INNER JOIN
 			DBF_NAH.dbo.TOTable b ON a.TA_ID_TO = b.TO_ID INNER JOIN
 			DBF_NAH.dbo.StreetTable c ON c.ST_ID = a.TA_ID_STREET INNER JOIN
-			DBF_NAH.dbo.CityTable d ON c.ST_ID_CITY = d.CT_ID INNER JOIN	
+			DBF_NAH.dbo.CityTable d ON c.ST_ID_CITY = d.CT_ID INNER JOIN
 			DBF.dbo.CityTable e ON e.CT_NAME = d.CT_NAME INNER JOIN
 			DBF.dbo.StreetTable f ON f.ST_NAME = c.ST_NAME AND f.ST_ID_CITY = e.CT_ID AND ISNULL(f.ST_PREFIX, '') = ISNULL(c.ST_PREFIX, '') AND ISNULL(f.ST_SUFFIX, '') = ISNULL(c.ST_SUFFIX, '') INNER JOIN
 			DBF.dbo.TOTable g ON g.TO_NUM = b.TO_NUM INNER JOIN
-			DBF.dbo.TOAddressTable t ON t.TA_ID_TO = g.TO_ID	
+			DBF.dbo.TOAddressTable t ON t.TA_ID_TO = g.TO_ID
 		WHERE (
 			t.TA_INDEX <> a.TA_INDEX OR
 			t.TA_ID_STREET <> f.ST_ID OR
 			t.TA_HOME <> a.TA_HOME
-			)	
-		
+			)
+
 		INSERT INTO DBF.dbo.TODistrTable(TD_ID_DISTR, TD_ID_TO)
 			SELECT
 				(
 					SELECT TOP 1 DIS_ID
-					FROM 
+					FROM
 						DBF.dbo.DistrTable g INNER JOIN
 						DBF.dbo.SystemTable h ON h.SYS_ID = g.DIS_ID_SYSTEM
 					WHERE g.DIS_NUM = c.DIS_NUM
@@ -624,7 +624,7 @@ BEGIN
 					FROM DBF.dbo.TOTable f
 					WHERE f.TO_NUM = b.TO_NUM
 				)
-			FROM 
+			FROM
 				DBF_NAH.dbo.TODistrTable a INNER JOIN
 				DBF_NAH.dbo.TOTable b ON a.TD_ID_TO = b.TO_ID INNER JOIN
 				DBF_NAH.dbo.DistrTable c ON c.DIS_ID = a.TD_ID_DISTR INNER JOIN
@@ -632,7 +632,7 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.TODistrTable z INNER JOIN
 						DBF.dbo.DistrTable y ON z.TD_ID_DISTR = y.DIS_ID INNER JOIN
 						DBF.dbo.SystemTable x ON x.SYS_ID = y.DIS_ID_SYSTEM
@@ -650,15 +650,15 @@ BEGIN
 			DBF_NAH.dbo.DistrTable d ON d.DIS_ID = a.TD_ID_DISTR INNER JOIN
 			DBF_NAH.dbo.SystemTable e ON e.SYS_ID = d.DIS_ID_SYSTEM INNER JOIN
 			DBF.dbo.SystemTable f ON f.SYS_REG_NAME = e.SYS_REG_NAME INNER JOIN
-			DBF.dbo.DistrTable g ON g.DIS_NUM = d.DIS_NUM 
+			DBF.dbo.DistrTable g ON g.DIS_NUM = d.DIS_NUM
 								AND g.DIS_COMP_NUM = d.DIS_COMP_NUM
 								AND g.DIS_ID_SYSTEM = f.SYS_ID
-		WHERE DBF.dbo.TODistrTable.TD_ID_TO <> c.TO_ID 
+		WHERE DBF.dbo.TODistrTable.TD_ID_TO <> c.TO_ID
 			AND DBF.dbo.TODistrTable.TD_ID_DISTR = g.DIS_ID
 			AND d.DIS_DELIVERY = 0
 			AND d.DIS_ACTIVE = 1
 
-		DELETE 
+		DELETE
 		FROM DBF.dbo.TODistrTable
 		WHERE TD_ID_DISTR IN
 			(
@@ -668,11 +668,11 @@ BEGIN
 			)
 
 		INSERT INTO DBF.dbo.TOPersonalTable(TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, TP_ID_POS, TP_ID_RP, TP_PHONE, TP_LAST)
-			SELECT 
+			SELECT
 				(
 					SELECT TO_ID
 					FROM
-						DBF.dbo.TOTable z 
+						DBF.dbo.TOTable z
 					WHERE z.TO_NUM = b.TO_NUM
 				), TP_SURNAME, TP_NAME, TP_OTCH,
 				(
@@ -693,9 +693,9 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.TOPersonalTable e INNER JOIN
-						DBF.dbo.TOTable f ON e.TP_ID_TO = f.TO_ID INNER JOIN				
+						DBF.dbo.TOTable f ON e.TP_ID_TO = f.TO_ID INNER JOIN
 						DBF.dbo.ReportPositionTable h ON h.RP_ID = e.TP_ID_RP
 					WHERE f.TO_NUM = b.TO_NUM AND d.RP_PSEDO = h.RP_PSEDO
 				)
@@ -707,28 +707,28 @@ BEGIN
 			DBF.dbo.TOPersonalTable.TP_PHONE = a.TP_PHONE,
 			DBF.dbo.TOPersonalTable.TP_ID_POS = f.POS_ID,
 			DBF.dbo.TOPersonalTable.TP_LAST = a.TP_LAST
-		FROM 
+		FROM
 			DBF_NAH.dbo.TOPersonalTable a INNER JOIN
 			DBF_NAH.dbo.TOTable b ON a.TP_ID_TO = b.TO_ID INNER JOIN
 			DBF_NAH.dbo.PositionTable c ON c.POS_ID = a.TP_ID_POS INNER JOIN
 			DBF_NAH.dbo.ReportPositionTable d ON d.RP_ID = a.TP_ID_RP INNER JOIN
 			DBF.dbo.TOTable e ON e.TO_NUM = b.TO_NUM INNER JOIN
 			DBF.dbo.PositionTable f ON f.POS_NAME = c.POS_NAME INNER JOIN
-			DBF.dbo.ReportPositionTable g ON g.RP_PSEDO = d.RP_PSEDO	
-		WHERE DBF.dbo.TOPersonalTable.TP_ID_TO = e.TO_ID 
+			DBF.dbo.ReportPositionTable g ON g.RP_PSEDO = d.RP_PSEDO
+		WHERE DBF.dbo.TOPersonalTable.TP_ID_TO = e.TO_ID
 			AND DBF.dbo.TOPersonalTable.TP_ID_RP = g.RP_ID
 			AND (
 				DBF.dbo.TOPersonalTable.TP_SURNAME <> a.TP_SURNAME OR
 				DBF.dbo.TOPersonalTable.TP_NAME <> a.TP_NAME OR
 				DBF.dbo.TOPersonalTable.TP_OTCH <> a.TP_OTCH OR
 				DBF.dbo.TOPersonalTable.TP_PHONE <> a.TP_PHONE OR
-				DBF.dbo.TOPersonalTable.TP_ID_POS <> f.POS_ID	
+				DBF.dbo.TOPersonalTable.TP_ID_POS <> f.POS_ID
 			)
 
 
 
 		INSERT INTO DBF.dbo.DistrDeliveryHistoryTable(DDH_ID_DISTR, DDH_ID_OLD_CLIENT, DDH_ID_NEW_CLIENT, DDH_USER, DDH_DATE)
-			SELECT 
+			SELECT
 				(
 					SELECT DIS_ID
 					FROM DBF.dbo.DistrView c WITH(NOEXPAND)
@@ -751,7 +751,7 @@ BEGIN
 					WHERE y.CL_ID = a.DDH_ID_NEW_CLIENT
 				) AS DDH_ID_NEW_CLIENT,
 				DDH_USER, DDH_DATE
-			FROM 
+			FROM
 				DBF_NAH.dbo.DistrDeliveryHistoryTable a INNER JOIN
 				DBF_NAH.dbo.DistrView b ON b.DIS_ID = a.DDH_ID_DISTR
 			WHERE NOT EXISTS
@@ -760,7 +760,7 @@ BEGIN
 					FROM DBF.dbo.DistrDeliveryHistoryTable z
 					WHERE a.DDH_USER = z.DDH_USER
 						AND a.DDH_DATE = z.DDH_DATE
-						AND z.DDH_ID_DISTR = 
+						AND z.DDH_ID_DISTR =
 								(
 									SELECT DIS_ID
 									FROM DBF.dbo.DistrView c WITH(NOEXPAND)
@@ -768,7 +768,7 @@ BEGIN
 										AND c.DIS_NUM = b.DIS_NUM
 										AND c.DIS_COMP_NUM = b.DIS_COMP_NUM
 								)
-						AND z.DDH_ID_OLD_CLIENT = 
+						AND z.DDH_ID_OLD_CLIENT =
 								(
 									SELECT t.CL_ID
 									FROM
@@ -776,7 +776,7 @@ BEGIN
 										DBF_NAH.dbo.ClientTable q ON t.CL_NUM = q.CL_NUM
 									WHERE q.CL_ID = a.DDH_ID_OLD_CLIENT
 								)
-						AND z.DDH_ID_NEW_CLIENT = 
+						AND z.DDH_ID_NEW_CLIENT =
 								(
 									SELECT t.CL_ID
 									FROM
@@ -809,11 +809,11 @@ BEGIN
 
 		INSERT INTO DBF.dbo.ContractPayTable(COP_NAME, COP_DAY, COP_ACTIVE)
 			SELECT COP_NAME, COP_DAY, COP_ACTIVE
-			FROM DBF_NAH.dbo.ContractPayTable a 
+			FROM DBF_NAH.dbo.ContractPayTable a
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM DBF.dbo.ContractPayTable b 
+					FROM DBF.dbo.ContractPayTable b
 					WHERE a.COP_NAME = b.COP_NAME
 				)
 
@@ -823,17 +823,17 @@ BEGIN
 					SELECT CL_ID
 					FROM DBF.dbo.ClientTable z
 					WHERE z.CL_NUM = b.CL_NUM
-				), 
-				CO_NUM, 
+				),
+				CO_NUM,
 				(
 					SELECT TOP 1 CTT_ID
-					FROM DBF.dbo.ContractTypeTable z 
+					FROM DBF.dbo.ContractTypeTable z
 					WHERE z.CTT_NAME = c.CTT_NAME
-				), 
-				CO_DATE, CO_BEG_DATE, CO_END_DATE, CO_ACTIVE, 
+				),
+				CO_DATE, CO_BEG_DATE, CO_END_DATE, CO_ACTIVE,
 				(
 					SELECT TOP 1 COP_ID
-					FROM DBF.dbo.ContractPayTable z 
+					FROM DBF.dbo.ContractPayTable z
 					WHERE z.COP_NAME = d.COP_NAME
 				)
 			FROM
@@ -844,9 +844,9 @@ BEGIN
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.ContractTable e INNER JOIN
-						DBF.dbo.ClientTable f ON f.CL_ID = e.CO_ID_CLIENT 
+						DBF.dbo.ClientTable f ON f.CL_ID = e.CO_ID_CLIENT
 					WHERE e.CO_NUM = a.CO_NUM AND f.CL_NUM = b.CL_NUM
 				)
 
@@ -857,7 +857,7 @@ BEGIN
 			DBF.dbo.ContractTable.CO_END_DATE = a.CO_END_DATE,
 			DBF.dbo.ContractTable.CO_ACTIVE = a.CO_ACTIVE,
 			DBF.dbo.ContractTable.CO_ID_PAY = e.COP_ID
-		FROM 
+		FROM
 			DBF_NAH.dbo.ContractTable a INNER JOIN
 			DBF_NAH.dbo.ClientTable b ON a.CO_ID_CLIENT = b.CL_ID INNER JOIN
 			DBF_NAH.dbo.ContractTypeTable c ON c.CTT_ID = a.CO_ID_TYPE LEFT OUTER JOIN
@@ -867,7 +867,7 @@ BEGIN
 			DBF.dbo.ClientTable g ON b.CL_NUM = g.CL_NUM
 		WHERE DBF.dbo.ContractTable.CO_NUM = a.CO_NUM AND b.CL_ID = g.CL_ID
 			AND DBF.dbo.ContractTable.CO_ID_CLIENT = g.CL_ID
-			AND 
+			AND
 				(
 					DBF.dbo.ContractTable.CO_ID_TYPE <> f.CTT_ID OR
 					DBF.dbo.ContractTable.CO_DATE <> a.CO_DATE OR
@@ -883,14 +883,14 @@ BEGIN
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					DBF_NAH.dbo.ContractDistrTable a INNER JOIN
 					DBF_NAH.dbo.ContractTable b ON b.CO_ID = a.COD_ID_CONTRACT INNER JOIN
 					DBF_NAH.dbo.DistrTable c ON c.DIS_ID = a.COD_ID_DISTR INNER JOIN
 					DBF_NAH.dbo.SystemTable d ON d.SYS_ID = c.DIS_ID_SYSTEM INNER JOIN
 					DBF_NAH.dbo.ClientTable e ON e.CL_ID = b.CO_ID_CLIENT INNER JOIN
 					DBF.dbo.SystemTable f ON f.SYS_REG_NAME = d.SYS_REG_NAME INNER JOIN
-					DBF.dbo.DistrTable g ON g.DIS_ID_SYSTEM = f.SYS_ID 
+					DBF.dbo.DistrTable g ON g.DIS_ID_SYSTEM = f.SYS_ID
 										AND g.DIS_NUM = c.DIS_NUM
 										AND g.DIS_COMP_NUM = c.DIS_COMP_NUM INNER JOIN
 					DBF.dbo.ClientTable h ON h.CL_NUM = e.CL_NUM INNER JOIN
@@ -912,13 +912,13 @@ BEGIN
 				DBF.dbo.ContractTable p ON p.CO_NUM = b.CO_NUM INNER JOIN
 				DBF.dbo.ClientTable q ON q.CL_NUM = e.CL_NUM AND p.CO_ID_CLIENT = q.CL_ID INNER JOIN
 				DBF.dbo.SystemTable r ON r.SYS_REG_NAME = d.SYS_REG_NAME INNER JOIN
-				DBF.dbo.DistrTable t ON t.DIS_ID_SYSTEM = r.SYS_ID 
+				DBF.dbo.DistrTable t ON t.DIS_ID_SYSTEM = r.SYS_ID
 									AND t.DIS_NUM = c.DIS_NUM
 									AND t.DIS_COMP_NUM = c.DIS_COMP_NUM
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						DBF.dbo.ContractDistrTable z INNER JOIN
 						DBF.dbo.ContractTable y ON y.CO_ID = z.COD_ID_CONTRACT INNER JOIN
 						DBF.dbo.ClientTable x ON x.CL_ID = y.CO_ID_CLIENT INNER JOIN
@@ -928,14 +928,14 @@ BEGIN
 						AND w.DIS_COMP_NUM = c.DIS_COMP_NUM AND d.SYS_REG_NAME = u.SYS_REG_NAME
 				)
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

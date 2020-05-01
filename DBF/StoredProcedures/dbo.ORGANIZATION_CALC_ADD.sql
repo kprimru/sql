@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_ADD] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_ADD]
 	@name	varchar(128),
 	@org	smallint,
 	@bank SMALLINT,
@@ -30,8 +30,8 @@ BEGIN
 		INSERT INTO dbo.OrganizationCalc
 			(
 				ORGC_NAME, ORGC_ID_ORG, ORGC_ID_BANK, ORGC_ACCOUNT, ORGC_ACTIVE
-			) 
-		VALUES 
+			)
+		VALUES
 			(
 				@name, @org, @bank, @acc, @active
 			)
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

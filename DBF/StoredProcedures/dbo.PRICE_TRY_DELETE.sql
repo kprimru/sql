@@ -10,11 +10,11 @@ GO
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
 Описание:	  Возвращает 0, если прейскурант
-               можно удалить из справочника, 
+               можно удалить из справочника,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[PRICE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_TRY_DELETE]
 	@priceid SMALLINT
 AS
 BEGIN
@@ -39,7 +39,7 @@ BEGIN
 		SET @txt = ''
 
 		-- добавлено 29.04.2009, В.Богдан
-		-- убрано 15.06.2009, А.Денисов. Причина: схемы вообще в печь 
+		-- убрано 15.06.2009, А.Денисов. Причина: схемы вообще в печь
 		/*
 		IF EXISTS(SELECT * FROM SchemaTable WHERE SCH_ID_PRICE = @priceid)
 			BEGIN
@@ -55,9 +55,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,12 +8,12 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TAX_ADD]
 	@name VARCHAR(100),
-	@percent DECIMAL(8, 4),	
+	@percent DECIMAL(8, 4),
 	@caption VARCHAR(50),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.TaxTable(TX_NAME, TX_PERCENT, TX_CAPTION, TX_ACTIVE) 
+		INSERT INTO dbo.TaxTable(TX_NAME, TX_PERCENT, TX_CAPTION, TX_ACTIVE)
 		VALUES (@name, @percent, @caption, @active)
 
 		IF @returnvalue = 1
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

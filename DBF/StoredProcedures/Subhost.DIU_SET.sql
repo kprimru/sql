@@ -45,14 +45,14 @@ BEGIN
 
 		INSERT INTO Subhost.Diu(DIU_ID_SYSTEM, DIU_DISTR, DIU_COMP, DIU_ID_SUBHOST, DIU_DATE, DIU_ACTIVE)
 			VALUES(@SYS, @DISTR, @COMP, @SH, @DATE, 1)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

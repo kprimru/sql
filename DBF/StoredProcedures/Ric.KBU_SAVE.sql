@@ -27,25 +27,25 @@ BEGIN
 
 		DECLARE @QR_ID	SMALLINT
 
-		SELECT @QR_ID = dbo.PeriodQuarter(@PR_ID)	
+		SELECT @QR_ID = dbo.PeriodQuarter(@PR_ID)
 
 		UPDATE Ric.KBU
 		SET RK_KBU = @KBU,
 			RK_STOCK = @STOCK,
 			RK_TOTAL = @TOTAL
 		WHERE RK_ID_QUARTER = @QR_ID
-		
+
 		IF @@ROWCOUNT = 0
 			INSERT INTO Ric.KBU(RK_ID_QUARTER, RK_KBU, RK_STOCK, RK_TOTAL)
 				SELECT @QR_ID, @KBU, @STOCK, @TOTAL
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

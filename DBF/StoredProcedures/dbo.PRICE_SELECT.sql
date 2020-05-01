@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PRICE_SELECT]   
+ALTER PROCEDURE [dbo].[PRICE_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PP_ID, PP_NAME, PT_NAME, PP_COEF_MUL, PP_COEF_ADD
-		FROM 
+		FROM
 			dbo.PriceTable a INNER JOIN
 			dbo.PriceTypeTable b ON a.PP_ID_TYPE = b.PT_ID
 		WHERE PP_ACTIVE = ISNULL(@active, PP_ACTIVE)
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

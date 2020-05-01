@@ -25,13 +25,13 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @SQL NVARCHAR(MAX)
-		
+
 		SET @SQL = N'
-		SELECT 
-			PT_ID, SST_ID, SST_CAPTION, 
+		SELECT
+			PT_ID, SST_ID, SST_CAPTION,
 			CONVERT(NVARCHAR(64), PT_ORDER) + '' '' + PT_NAME AS PT_GR_ORDER,
 			'
-		
+
 		SELECT @SQL = @SQL + '
 			ISNULL((
 				SELECT PS_PRICE
@@ -44,11 +44,11 @@ BEGIN
 			), 0) AS ''NET' + CONVERT(NVARCHAR(32), NT_ID) + ''','
 		FROM dbo.NetType
 		ORDER BY NT_NET, NT_TECH
-		
+
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-		
+
 		SET @SQL = @SQL + N'
-		FROM 
+		FROM
 			Price.PriceType
 			CROSS JOIN dbo.SystemTypeTable
 		WHERE PT_GROUP = @GROUP OR @GROUP IS NULL
@@ -56,14 +56,14 @@ BEGIN
 
 		--PRINT @SQL
 		EXEC sp_executesql @SQL, N'@PERIOD SMALLINT, @SYSTEM SMALLINT, @GROUP NVARCHAR(64)', @PERIOD, @SYSTEM, @GROUP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

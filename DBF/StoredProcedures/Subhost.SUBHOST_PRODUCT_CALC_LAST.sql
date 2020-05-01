@@ -30,11 +30,11 @@ BEGIN
 
 		INSERT INTO Subhost.SubhostProductPrice(SPP_ID_PERIOD, SPP_ID_PRODUCT, SPP_PRICE)
 			SELECT @PR_ID, SP_ID, SPP_PRICE
-			FROM 
+			FROM
 				Subhost.SubhostProduct a
 				INNER JOIN Subhost.SubhostProductPrice b ON a.SP_ID = b.SPP_ID_PRODUCT
-			WHERE SP_ID_GROUP = @GR_ID 
-				AND SPP_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID) 
+			WHERE SP_ID_GROUP = @GR_ID
+				AND SPP_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
 				AND NOT EXISTS
 					(
 						SELECT *
@@ -45,19 +45,19 @@ BEGIN
 
 		INSERT INTO Subhost.SubhostProductCalc(SPC_ID_SUBHOST, SPC_ID_PERIOD, SPC_ID_PROD, SPC_COUNT)
 			SELECT @SH_ID, @PR_ID, SPC_ID_PROD, SPC_COUNT
-			FROM 
+			FROM
 				Subhost.SubhostProductCalc
 				INNER JOIN Subhost.SubhostProduct ON SP_ID = SPC_ID_PROD
-			WHERE SPC_ID_SUBHOST = @SH_ID AND SPC_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID) 
+			WHERE SPC_ID_SUBHOST = @SH_ID AND SPC_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
 				AND SP_ID_GROUP = @GR_ID
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

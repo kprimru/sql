@@ -14,7 +14,7 @@ AS
 BEGIN
   DECLARE @res INT
 
-  IF @tname = 'юдл' 
+  IF @tname = 'юдл'
     SET @res = 1
   ELSE IF @tname = 'я.я'
     SET @res = 2
@@ -34,6 +34,6 @@ BEGIN
     SET @res = 9
   ELSE IF @tname = 'я.й'
     SET @res = 10
-  
+
   RETURN @res
 END

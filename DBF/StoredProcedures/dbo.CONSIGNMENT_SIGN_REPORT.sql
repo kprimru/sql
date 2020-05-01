@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[CONSIGNMENT_SIGN_REPORT]
 	--@actbegin SMALLDATETIME,
@@ -34,18 +34,18 @@ BEGIN
 		DECLARE @cour TABLE (CR_ID SMALLINT)
 
 		IF @courlist IS NULL
-			INSERT INTO @cour 
-				SELECT COUR_ID 
+			INSERT INTO @cour
+				SELECT COUR_ID
 				FROM dbo.CourierTable
 		ELSE
 			INSERT INTO @cour
 				SELECT *
 				FROM dbo.GET_TABLE_FROM_LIST(@courlist, ',')
-		
+
 		/*
-		SELECT 
+		SELECT
 			CL_ID, CL_PSEDO, COUR_NAME, ACT_DATE, ACT_SIGN
-		FROM 
+		FROM
 			dbo.ClientCourView INNER JOIN
 			dbo.ActTable ON ACT_ID_CLIENT = CL_ID INNER JOIN
 			@cour ON CR_ID = COUR_ID
@@ -53,9 +53,9 @@ BEGIN
 		ORDER BY COUR_NAME, CL_PSEDO, CL_ID, ACT_DATE
 		*/
 
-		SELECT 
+		SELECT
 			DISTINCT CSG_ID, CL_ID, CL_PSEDO, COUR_NAME, DSS_NAME, DSS_REPORT, CSG_DATE, CSG_SIGN
-		FROM 		
+		FROM 
 			dbo.TOStatusView a INNER JOIN
 			dbo.DistrServiceStatusTable b ON a.DSS_ID = b.DSS_ID INNER JOIN
 			dbo.CourierTable ON COUR_ID = TO_ID_COUR INNER JOIN
@@ -68,14 +68,14 @@ BEGIN
 			AND (CSG_ID_PERIOD = @consperiod OR CSG_ID_PERIOD IS NULL)
 			AND DSS_ACT = 1
 		ORDER BY COUR_NAME, CL_PSEDO, CL_ID, CSG_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

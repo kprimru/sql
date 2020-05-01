@@ -7,14 +7,14 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_AUTO_CONVEY_ALL]
 	@bill BIT = 1,
-	@prepay BIT = 1,			
+	@prepay BIT = 1,
 	@report BIT = 1,
 	@soid SMALLINT = NULL,
 	@act BIT = 1
@@ -74,7 +74,7 @@ BEGIN
 				ELSE
 					SET @ssoid = @soid
 
-				INSERT INTO #tmp 
+				INSERT INTO #tmp
 					EXEC dbo.INCOME_AUTO_CONVEY @inid, NULL, @bill, 0, @ssoid, NULL, @report, @act
 
 				IF @prepay = 0
@@ -91,7 +91,7 @@ BEGIN
 				ELSE
 					SET @ssoid = @soid
 
-				INSERT INTO #tmp 
+				INSERT INTO #tmp
 					EXEC dbo.INCOME_AUTO_CONVEY @inid, NULL, @bill, @prepay, @ssoid, NULL, @report, @act
 
 				IF @prepay = 0
@@ -99,7 +99,7 @@ BEGIN
 
 				INSERT INTO dbo.IncomeDistrTable(ID_ID_INCOME, ID_ID_DISTR, ID_PRICE, ID_DATE, ID_ID_PERIOD, ID_PREPAY)
 					SELECT @inid, DIS_ID, ID_PRICE, @indate, PR_ID, ID_PREPAY
-					FROM #tmp		
+					FROM #tmp
 			END
 			ELSE
 			BEGIN
@@ -110,7 +110,7 @@ BEGIN
 				ELSE
 					SET @ssoid = @soid
 
-				INSERT INTO #tmp 
+				INSERT INTO #tmp
 					EXEC dbo.INCOME_OUT_AUTO_CONVEY @inid, @ssoid
 
 				IF @prepay = 0
@@ -127,7 +127,7 @@ BEGIN
 				ELSE
 					SET @ssoid = @soid
 
-				INSERT INTO #tmp 
+				INSERT INTO #tmp
 					EXEC dbo.INCOME_OUT_AUTO_CONVEY @inid, @ssoid
 
 				IF @prepay = 0
@@ -135,8 +135,8 @@ BEGIN
 
 				INSERT INTO dbo.IncomeDistrTable(ID_ID_INCOME, ID_ID_DISTR, ID_PRICE, ID_DATE, ID_ID_PERIOD, ID_PREPAY)
 					SELECT @inid, DIS_ID, ID_PRICE, @indate, PR_ID, ID_PREPAY
-					FROM #tmp		
-			END		
+					FROM #tmp
+			END
 
 			FETCH NEXT FROM INC INTO @inid, @indate, @insum
 		END
@@ -147,14 +147,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tmp') IS NOT NULL
 			DROP TABLE #tmp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

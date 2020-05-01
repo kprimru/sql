@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CREATE_ALL]
@@ -37,15 +37,15 @@ BEGIN
 			WHERE EXISTS
 				(
 					SELECT *
-					FROM 		
+					FROM 
 						dbo.ClientDistrTable INNER JOIN
 						dbo.DistrFinancingTable ON DF_ID_DISTR = CD_ID_DISTR INNER JOIN
 						dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
 						dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
 						dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID
-					WHERE CD_ID_CLIENT = CL_ID 
-						AND DSS_REPORT = 1 
-						AND SYS_ID_SO = @soid 
+					WHERE CD_ID_CLIENT = CL_ID
+						AND DSS_REPORT = 1
+						AND SYS_ID_SO = @soid
 						AND DOC_PSEDO = 'CONS'
 						AND DD_PRINT = 1
 				)
@@ -56,7 +56,7 @@ BEGIN
 
 		FETCH NEXT FROM CL INTO @clid
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.CONSIGNMENT_CREATE @clid, @periodid, @consdate, @soid
 
@@ -65,14 +65,14 @@ BEGIN
 
 		CLOSE CL
 		DEALLOCATE CL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -9,10 +9,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_DELETE]
 	@distrid INT
 AS
 BEGIN
@@ -30,29 +30,29 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.DistrDeliveryHistoryTable
 		WHERE DDH_ID_DISTR = @distrid
 
-		DELETE 
+		DELETE
 		FROM dbo.DistrFinancingTable
 		WHERE DF_ID_DISTR = @distrid
 
-		DELETE 
+		DELETE
 		FROM dbo.DistrDocumentTable
 		WHERE DD_ID_DISTR = @distrid
 
-		DELETE 
-		FROM dbo.DistrTable 
+		DELETE
+		FROM dbo.DistrTable
 		WHERE DIS_ID = @distrid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

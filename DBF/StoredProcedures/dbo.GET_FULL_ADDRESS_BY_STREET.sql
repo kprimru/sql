@@ -11,7 +11,7 @@ GO
 Описание:	  По коду улицы получить полную строку адреса
 */
 
-ALTER PROCEDURE [dbo].[GET_FULL_ADDRESS_BY_STREET] 
+ALTER PROCEDURE [dbo].[GET_FULL_ADDRESS_BY_STREET]
 	@streetid INT
 AS
 BEGIN
@@ -37,12 +37,12 @@ BEGIN
 		DECLARE @ArName VARCHAR(150)
 		DECLARE @CntName VARCHAR(150)
 
-		SELECT @StPrefix = ST_PREFIX, 
-			   @StName = ST_NAME, 
-			   @CtName= CT_NAME, 
-			   @CtPrefix = CT_PREFIX, 
-			   @RgName = RG_NAME, 
-			   @ArName = AR_NAME, 
+		SELECT @StPrefix = ST_PREFIX,
+			   @StName = ST_NAME,
+			   @CtName= CT_NAME,
+			   @CtPrefix = CT_PREFIX,
+			   @RgName = RG_NAME,
+			   @ArName = AR_NAME,
 			   @CntName = CNT_NAME
 		FROM dbo.StreetTable a INNER JOIN
 			 dbo.CityTable b ON a.ST_ID_CITY = b.CT_ID LEFT OUTER JOIN
@@ -55,20 +55,20 @@ BEGIN
 
 		SET @ResultStr = ''
 
-		   
+
 		IF @RgName IS NOT NULL AND @RgName <> '(нет)'
 		  SET @ResultStr = @ResultStr + @RgName + ', '
 
 		IF @ArName IS NOT NULL AND @ArName <> '(нет)'
 		  SET @ResultStr = @ResultStr + @ArName + ', '
-		  
-		IF @CtPrefix IS NOT NULL 
+
+		IF @CtPrefix IS NOT NULL
 		  SET @ResultStr = @ResultStr + @CtPrefix
 
 		IF @CtName IS NOT NULL AND @CtName <> '(нет)'
 		  SET @ResultStr = @ResultStr + @CtName + ', '
 
-		IF @StPrefix IS NOT NULL 
+		IF @StPrefix IS NOT NULL
 		  SET @ResultStr = @ResultStr + @StPrefix
 
 		IF @StName IS NOT NULL AND @StName <> '(нет)'
@@ -76,14 +76,14 @@ BEGIN
 
 
 		SELECT @CntName AS CNT_NAME, @ResultStr AS AD_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

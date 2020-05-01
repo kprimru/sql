@@ -46,10 +46,10 @@ BEGIN
 			SELECT ' + @TYPE + ', ' + @PERIOD + ', ' + @VALUE + ', LEFT(' + ISNULL(@DEPAND, 'NULL') + ', 50)
 			FROM ' + @SCHEMA + '.' + @TABLE + '
 			WHERE ' + @TYPE + ' = ' + CONVERT(VARCHAR(20), @TYPEID)
-			
+
 
 		EXEC (@SQL)
-			
+
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
@@ -67,8 +67,8 @@ BEGIN
 
 		INSERT INTO #res(DEPAND, RCOEF, RBEGIN, REND)
 			SELECT TOP 1 DEPAND, VAL, PR_ID, NULL
-			FROM 
-				#tmp 
+			FROM
+				#tmp
 				INNER JOIN dbo.PeriodTable ON PR_ID = PERIOD
 			ORDER BY PR_DATE
 
@@ -76,22 +76,22 @@ BEGIN
 
 		DECLARE @PR_ID	SMALLINT
 
-		SELECT @PR_ID = RBEGIN 
+		SELECT @PR_ID = RBEGIN
 		FROM #res
 
 		WHILE @PR_ID IS NOT NULL
 		BEGIN
 			SET @PR_ID = dbo.PERIOD_NEXT(@PR_ID)
 
-			IF 
+			IF
 				(
-					SELECT RCOEF 
+					SELECT RCOEF
 					FROM #res
 					WHERE ID = @ID
-				) <> 
+				) <>
 				(
-					SELECT VAL 
-					FROM #tmp 
+					SELECT VAL
+					FROM #tmp
 					WHERE PERIOD = @PR_ID
 				)
 			BEGIN
@@ -109,27 +109,27 @@ BEGIN
 		END
 
 		UPDATE #res
-		SET REND = 
+		SET REND =
 			(
 				SELECT PR_ID
 				FROM dbo.PeriodTable
-				WHERE PR_DATE = 
+				WHERE PR_DATE =
 					(
 						SELECT MAX(PR_DATE)
-						FROM 
-							dbo.PeriodTable 
+						FROM
+							dbo.PeriodTable
 							INNER JOIN #TMP ON PERIOD = PR_ID
 					)
 			)
 		WHERE ID = @ID
 
-		SELECT 
-			DEPAND, RCOEF, 
+		SELECT
+			DEPAND, RCOEF,
 			CASE
 				WHEN a.PR_NAME = b.PR_NAME THEN a.PR_NAME
-				ELSE 'с ' + a.PR_NAME + ' по ' + b.PR_NAME 
+				ELSE 'с ' + a.PR_NAME + ' по ' + b.PR_NAME
 			END AS RINTERVAL
-		FROM 
+		FROM
 			#res
 			INNER JOIN dbo.PeriodTable a ON a.PR_ID = RBEGIN
 			INNER JOIN dbo.PeriodTable b ON b.PR_ID = REND
@@ -141,14 +141,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tmp') IS NOT NULL
 			DROP TABLE #tmp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

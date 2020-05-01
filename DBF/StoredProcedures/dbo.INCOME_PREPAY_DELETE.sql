@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[INCOME_PREPAY_DELETE]	
+ALTER PROCEDURE [dbo].[INCOME_PREPAY_DELETE]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,26 +27,26 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.SaldoTable
 		WHERE SL_ID_IN_DIS IN
 				(
-					SELECT ID_ID 
+					SELECT ID_ID
 					FROM dbo.IncomeDistrTable
 					WHERE ID_PREPAY = 1
 				)
 
 		DELETE
-		FROM dbo.IncomeDistrTable 
+		FROM dbo.IncomeDistrTable
 		WHERE ID_PREPAY = 1
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

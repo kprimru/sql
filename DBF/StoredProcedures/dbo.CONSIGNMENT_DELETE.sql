@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_DELETE]
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.SaldoTable
 		WHERE SL_ID_CONSIG_DIS IN
 				(
@@ -39,21 +39,21 @@ BEGIN
 					WHERE CSD_ID_CONS = @csgid
 				)
 
-		DELETE 
+		DELETE
 		FROM dbo.ConsignmentDetailTable
 		WHERE CSD_ID_CONS = @csgid
 
 		DELETE
 		FROM dbo.ConsignmentTable
 		WHERE CSG_ID = @csgid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

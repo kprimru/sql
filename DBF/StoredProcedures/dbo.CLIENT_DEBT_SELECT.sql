@@ -28,9 +28,9 @@ BEGIN
 			FROM dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 			WHERE EXISTS
 				(
-					SELECT * 
-					FROM dbo.SaldoLastView b 
-					WHERE SL_REST < 0 
+					SELECT *
+					FROM dbo.SaldoLastView b
+					WHERE SL_REST < 0
 						AND a.CL_ID = b.CL_ID
 				)
 			ORDER BY CL_PSEDO
@@ -40,20 +40,20 @@ BEGIN
 			FROM dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 			WHERE EXISTS
 				(
-					SELECT * 
-					FROM dbo.SaldoLastView b 
-					WHERE SL_REST < 0 
+					SELECT *
+					FROM dbo.SaldoLastView b
+					WHERE SL_REST < 0
 						AND a.CL_ID = b.CL_ID
 				)
 			ORDER BY CL_PSEDO
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

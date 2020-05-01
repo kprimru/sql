@@ -13,8 +13,8 @@ GO
 				(выбор данных по имени)
 */
 
-ALTER PROCEDURE [dbo].[DISTR_STATUS_CHECK_REG] 
-	@dsname VARCHAR(100)  
+ALTER PROCEDURE [dbo].[DISTR_STATUS_CHECK_REG]
+	@dsname VARCHAR(100)
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -33,15 +33,15 @@ BEGIN
 
 		SELECT DS_ID
 		FROM dbo.DistrStatusTable
-		WHERE DS_REG = @dsname 
+		WHERE DS_REG = @dsname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

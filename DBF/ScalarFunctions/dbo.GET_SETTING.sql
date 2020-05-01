@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER FUNCTION [dbo].[GET_SETTING]
@@ -24,8 +24,8 @@ BEGIN
 	DECLARE @result VARCHAR(500)
 
 	-- Тело функции
-	SELECT @result = GS_VALUE 
-	FROM dbo.GlobalSettingsTable 
+	SELECT @result = GS_VALUE
+	FROM dbo.GlobalSettingsTable
 	WHERE GS_NAME = @sname
 
 	-- Возвращение результата работы функции

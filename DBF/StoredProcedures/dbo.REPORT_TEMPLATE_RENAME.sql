@@ -8,8 +8,8 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.10.2008
-Описание:	  Переименовать отчет. Указать 
-               новое название отчету с 
+Описание:	  Переименовать отчет. Указать
+               новое название отчету с
                указанным кодом
 */
 
@@ -19,7 +19,7 @@ ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_RENAME]
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
+
     DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -31,18 +31,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-    
+
 		UPDATE dbo.ReportTemplateTable
-		SET RT_NAME = @reporttemplatename    
-		WHERE RT_ID = @reporttemplateid    
-		
+		SET RT_NAME = @reporttemplatename
+		WHERE RT_ID = @reporttemplateid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -30,7 +30,7 @@ BEGIN
 		FROM [PC275-SQL\ALPHA].ClientDB.Memo.ClientMemo
 		WHERE ID = @CALC
 
-		SELECT 
+		SELECT
 			DF_ID, DIS_STR, SN_NAME, DF_FIXED_PRICE, DSS_NAME, b.PRICE,
 			CASE
 				WHEN DSS_REPORT = 0 AND b.PRICE IS NOT NULL THEN 2
@@ -43,8 +43,8 @@ BEGIN
 			END AS CHECKED
 		FROM
 			(
-				SELECT 
-					DF_ID, DIS_STR, DIS_ID, SN_ID, 
+				SELECT
+					DF_ID, DIS_STR, DIS_ID, SN_ID,
 					SN_NAME, PP_ID, PP_NAME, DF_MON_COUNT,
 					DF_FIXED_PRICE, DF_DISCOUNT, PR_DATE AS DF_FIRST_MON, DSS_NAME, DSS_REPORT,
 					SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, SYS_ORDER
@@ -55,22 +55,22 @@ BEGIN
 			LEFT OUTER JOIN
 			(
 				SELECT SystemBaseName, DISTR, COMP, b.PRICE
-				FROM 
+				FROM
 					[PC275-SQL\ALPHA].ClientDB.Memo.KGSMemo a
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.Memo.KGSMemoDistr b ON a.ID = b.ID_MEMO
 					INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable c ON b.ID_SYSTEM = c.SystemID
 				WHERE a.ID = @CALC
-				
+
 				UNION ALL
-				
-				SELECT 
-					SystemBaseName, DISTR, COMP, PRICE_TOTAL			
+
+				SELECT
+					SystemBaseName, DISTR, COMP, PRICE_TOTAL
 				FROM
 					(
-						SELECT 
-							SystemBaseName, 
+						SELECT
+							SystemBaseName,
 							CASE CHARINDEX('/', DISTR)
-								WHEN 0 THEN CONVERT(INT, DISTR) 
+								WHEN 0 THEN CONVERT(INT, DISTR)
 								ELSE CONVERT(INT, LEFT(DISTR, CHARINDEX('/', DISTR) - 1))
 							END AS DISTR,
 							CASE CHARINDEX('/', DISTR)
@@ -78,26 +78,26 @@ BEGIN
 								ELSE CONVERT(INT, RIGHT(DISTR, LEN(DISTR) - CHARINDEX('/', DISTR)))
 							END AS COMP,
 							--CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN CONVERT(MONEY, ROUND(ROUND(PRICE * COEF, RND) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 2)) ELSE 0 END AS PRICE_TOTAL
-							CASE 
+							CASE
 								WHEN @DATE IS NULL OR @DATE < '20180208' THEN
 									CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN CONVERT(MONEY, ROUND(ROUND(PRICE * COEF, RND) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 0)) ELSE 0 END
-								ELSE 
+								ELSE
 									CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN CONVERT(MONEY, ROUND(ROUND(PRICE * COEF, RND) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 2)) ELSE 0 END
-									
+
 							END AS PRICE_TOTAL
-						FROM 
+						FROM
 							(
-								SELECT 			
-									c.value('(@sys)', 'INT') AS SYS_ID, 
-									c.value('(@distr)', 'VARCHAR(20)') AS DISTR, 
+								SELECT 
+									c.value('(@sys)', 'INT') AS SYS_ID,
+									c.value('(@distr)', 'VARCHAR(20)') AS DISTR,
 									c.value('(@net)', 'INT') AS NET_ID,
 									c.value('(@type)', 'INT') AS TP_ID,
 									c.value('(@month)', 'UNIQUEIDENTIFIER') AS MON_ID,
 									c.value('(@discount)', 'DECIMAL(6, 2)') AS DISCOUNT,
-									c.value('(@inflation)', 'DECIMAL(6, 2)') AS INFLATION,							
+									c.value('(@inflation)', 'DECIMAL(6, 2)') AS INFLATION,
 									CONVERT(MONEY, c.value('(@delivery)', 'DECIMAL(10, 4)')) AS DELIVERY,
 									ISNULL(c.value('(@mon_cnt)', 'INT'), 0) AS MON_CNT
-								FROM @xml.nodes('/root/item') AS a(c)				
+								FROM @xml.nodes('/root/item') AS a(c)
 							) AS a
 							INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable b ON a.SYS_ID = b.SystemID
 							INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
@@ -108,14 +108,14 @@ BEGIN
 					) AS o_O
 			) b ON a.SYS_REG_NAME = b.SystemBaseName AND a.DIS_NUM = b.DISTR AND a.DIS_COMP_NUM = b.COMP
 		ORDER BY ERR DESC, CHECKED DESC, DSS_REPORT DESC, SYS_ORDER, DIS_STR
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

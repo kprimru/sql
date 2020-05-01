@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Изменить данные о типе системы с 
+Описание:	  Изменить данные о типе системы с
                указанным кодом в справочнике
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_EDIT]
 	@systemtypeid SMALLINT,
 	@systemtypename VARCHAR(20),
 	@systemtypecaption VARCHAR(100),
@@ -23,7 +23,7 @@ ALTER PROCEDURE [dbo].[SYSTEM_TYPE_EDIT]
 	@subid SMALLINT,
 	@host SMALLINT,
 	@dhost SMALLINT,
-	@coef BIT,	
+	@coef BIT,
 	@calc DECIMAL(4, 2),
 	@kbu BIT,
 	@active BIT = 1
@@ -63,9 +63,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 23.09.2008
-Описание:	  Возвращает 0, если кол-во станций 
-               с указанным кодом моджно удалить. 
+Описание:	  Возвращает 0, если кол-во станций
+               с указанным кодом моджно удалить.
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_TRY_DELETE]
 	@systemnetcountid SMALLINT
 AS
 BEGIN
@@ -62,9 +62,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

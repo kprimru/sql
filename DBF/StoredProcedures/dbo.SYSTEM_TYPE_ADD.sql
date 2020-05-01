@@ -8,7 +8,7 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Добавить тип системы 
+Описание:	  Добавить тип системы
                клиента в справочник
 */
 
@@ -43,7 +43,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.SystemTypeTable(SST_NAME, SST_CAPTION, SST_LST, SST_REPORT, SST_ACTIVE, SST_ORDER, SST_ID_MOS, SST_ID_SUB, SST_ID_HOST, SST_ID_DHOST, SST_COEF, SST_CALC, SST_KBU) 
+		INSERT INTO dbo.SystemTypeTable(SST_NAME, SST_CAPTION, SST_LST, SST_REPORT, SST_ACTIVE, SST_ORDER, SST_ID_MOS, SST_ID_SUB, SST_ID_HOST, SST_ID_DHOST, SST_COEF, SST_CALC, SST_KBU)
 		VALUES (@systemtypename, @systemtypecaption, @systemtypelst, @systemtypereport, @active, @order, @mosid, @subid, @host, @dhost, @coef, @calc, @kbu)
 
 		IF @returnvalue = 1
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

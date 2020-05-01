@@ -16,7 +16,7 @@ BEGIN
 
 	SELECT @RES = PR_ID
 	FROM dbo.PeriodTable
-	WHERE PR_DATE =	
+	WHERE PR_DATE =
 		(
 			SELECT DATEADD(MONTH, @DELTA, PR_DATE)
 			FROM dbo.PeriodTable

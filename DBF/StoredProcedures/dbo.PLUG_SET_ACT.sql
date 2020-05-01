@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[PLUG_SET_ACT]
@@ -29,22 +29,22 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.ActTable
-		SET ACT_ID_INVOICE = 
+		SET ACT_ID_INVOICE =
 			(
-				SELECT INS_ID 
+				SELECT INS_ID
 				FROM dbo.InvoiceSaleTable
 				WHERE INS_NUM = '0'
 					AND INS_NUM_YEAR = '0'
 			)
 		WHERE ACT_ID = @actid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_GET] 
+ALTER PROCEDURE [dbo].[FINANCING_GET]
 	@financingid SMALLINT = NULL
 AS
 BEGIN
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT FIN_ID, FIN_NAME, FIN_ACTIVE
-		FROM dbo.FinancingTable 
-		WHERE FIN_ID = @financingid 
+		FROM dbo.FinancingTable
+		WHERE FIN_ID = @financingid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

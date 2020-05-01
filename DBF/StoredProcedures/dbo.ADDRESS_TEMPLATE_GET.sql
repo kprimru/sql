@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 Дата:			15.07.2009
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_GET] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_GET]
 	@atlid SMALLINT
 AS
 BEGIN
@@ -30,20 +30,20 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ATL_ID, ATL_CAPTION,
 			ATL_INDEX, ATL_COUNTRY, ATL_REGION,	ATL_AREA, ATL_CITY_PREFIX, ATL_CITY,
 			ATL_STR_PREFIX, ATL_STREET,	ATL_HOME, ATL_ACTIVE
-		FROM dbo.AddressTemplateTable 
+		FROM dbo.AddressTemplateTable
 		WHERE ATL_ID = @atlid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

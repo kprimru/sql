@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить в справочник статус дистрибутива
 */
 
-ALTER PROCEDURE [dbo].[DISTR_STATUS_ADD] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_ADD]
 	@dsname VARCHAR(50),
 	@dsreg TINYINT,
 	@active BIT = 1,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.DistrStatusTable (DS_NAME, DS_REG, DS_ACTIVE) 
+		INSERT INTO dbo.DistrStatusTable (DS_NAME, DS_REG, DS_ACTIVE)
 		VALUES (@dsname, @dsreg, @active)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

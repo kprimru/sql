@@ -23,18 +23,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT QR_NAME, QR_ID, RK_KBU, RK_STOCK, RK_TOTAL
-		FROM 
+		FROM
 			Ric.KBU
 			INNER JOIN dbo.Quarter ON QR_ID = RK_ID_QUARTER
 		WHERE QR_ID = @QR_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

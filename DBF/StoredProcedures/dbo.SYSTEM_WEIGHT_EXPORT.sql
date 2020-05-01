@@ -24,7 +24,7 @@ BEGIN
 		SELECT SYS_REG_NAME, PR_STR, SW_WEIGHT, SW_PROBLEM
 		FROM
 			(
-				SELECT 
+				SELECT
 					SYS_REG_NAME, PR_STR,
 					(
 						SELECT SW_WEIGHT
@@ -45,21 +45,21 @@ BEGIN
 				FROM
 					(
 						SELECT SYS_REG_NAME, CONVERT(VARCHAR(20), PR_DATE, 112) AS PR_STR, PR_ID, SYS_ID
-						FROM 
+						FROM
 							dbo.SystemTable
 							CROSS JOIN dbo.PeriodTable
 						WHERE SYS_REG_NAME IS NOT NULL AND SYS_REG_NAME <> '-' AND SYS_REG_NAME <> '--' AND SYS_ACTIVE = 1
 					) AS o_O
 			) AS o_O
 		WHERE SW_WEIGHT IS NOT NULL OR SW_PROBLEM IS NOT NULL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

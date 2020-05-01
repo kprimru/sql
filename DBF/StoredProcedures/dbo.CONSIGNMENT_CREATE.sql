@@ -8,9 +8,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CREATE]
@@ -37,7 +37,7 @@ BEGIN
 
 		INSERT INTO dbo.ConsignmentTable
 			(
-				CSG_ID_ORG, 
+				CSG_ID_ORG,
 				CSG_ID_CLIENT,
 				CSG_CONSIGN_NAME,
 				CSG_CONSIGN_ADDRESS,
@@ -48,32 +48,32 @@ BEGIN
 				CSG_CLIENT_ADDRESS,
 				CSG_CLIENT_PHONE,
 				CSG_CLIENT_BANK,
-				CSG_FOUND, 
-				CSG_NUM, 
+				CSG_FOUND,
+				CSG_NUM,
 				CSG_DATE,
 				CSG_ID_PAYER
 			)
-		SELECT 
-			CL_ID_ORG, @clientid, 
+		SELECT
+			CL_ID_ORG, @clientid,
 			CL_FULL_NAME,
 			(
 				SELECT
-					CASE 
+					CASE
 						WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-						ELSE 
-							(	
-								SELECT 
+						ELSE
+							(
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																	AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																	AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = @clientid
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -83,25 +83,25 @@ BEGIN
 			),
 			CL_INN, CL_KPP,
 			CL_OKPO,
-			CL_FULL_NAME, 
+			CL_FULL_NAME,
 			(
 				SELECT
-					CASE 
+					CASE
 						WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-						ELSE 
-							(	
-								SELECT 
+						ELSE
+							(
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																	AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																	AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = @clientid
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -112,22 +112,22 @@ BEGIN
 			CL_PHONE,
 			CASE LTRIM(RTRIM(ISNULL(CL_ACCOUNT, '')))
 				WHEN '' THEN ''
-				ELSE 'р.с ' + CL_ACCOUNT 
-			END + 
+				ELSE 'р.с ' + CL_ACCOUNT
+			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_NAME, '')))
 				WHEN '' THEN ''
 				ELSE ' в ' + BA_NAME
-			END + 
+			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_BIK, '')))
 				WHEN '' THEN ''
 				ELSE ', БИК ' + BA_BIK
-			END + 
+			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_LORO, '')))
 				WHEN '' THEN ''
 				ELSE ' корр/с ' + BA_LORO
 			END,
 			'', NULL, @consdate, CL_ID_PAYER
-		FROM 
+		FROM
 			dbo.ClientTable LEFT OUTER JOIN
 			dbo.BankTable ON BA_ID = CL_ID_BANK
 		WHERE CL_ID = @clientid
@@ -138,7 +138,7 @@ BEGIN
 
 		IF @consid = NULL
 			RETURN
-		
+
 		DECLARE @insid INT
 
 		IF @consdate <= '20101231'
@@ -146,13 +146,13 @@ BEGIN
 			EXEC dbo.INVOICE_CREATE_BY_CONSIGN @consid, @consdate, 1, 0, @insid OUTPUT
 
 			UPDATE dbo.ConsignmentTable
-			SET	CSG_NUM = 
+			SET	CSG_NUM =
 					(
 						SELECT INS_NUM
 						FROM dbo.InvoiceSaleTable
 						WHERE INS_ID = @insid
 					)
-			WHERE CSG_ID = @consid	
+			WHERE CSG_ID = @consid
 		END
 		ELSE
 		BEGIN
@@ -165,14 +165,14 @@ BEGIN
 					), 1)
 			WHERE CSG_ID = @consid
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

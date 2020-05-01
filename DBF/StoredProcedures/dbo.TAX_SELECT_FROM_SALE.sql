@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TAX_SELECT_FROM_SALE]
@@ -29,18 +29,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT TX_PERCENT
-		FROM 
+		FROM
 			dbo.TaxTable INNER JOIN
 			dbo.SaleObjectTable ON SO_ID_TAX = TX_ID
 		WHERE SO_ID = @soid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

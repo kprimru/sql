@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @DATE SMALLDATETIME;
-		
+
 		SELECT @DATE = PR_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ID
@@ -43,22 +43,22 @@ BEGIN
 			FROM dbo.TaxDefaultSelect(@DATE) d
 			INNER JOIN dbo.TaxTable t ON d.TX_ID = t.TX_ID
 		) a
-		
+
 		/*
-		SELECT 
-			a.TX_NAME AS CTX_NAME, a.TX_PERCENT AS CTX_PERCENT, 
+		SELECT
+			a.TX_NAME AS CTX_NAME, a.TX_PERCENT AS CTX_PERCENT,
 			b.TX_NAME AS PTX_NAME, b.TX_PERCENT AS PTX_PERCENT
 		FROM dbo.TaxTable a, dbo.TaxTable b
 		WHERE a.TX_ID = 1 AND b.TX_ID = 2
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -33,14 +33,14 @@ BEGIN
 					--AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
 					AND CD_ID_CLIENT = @CLIENT
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

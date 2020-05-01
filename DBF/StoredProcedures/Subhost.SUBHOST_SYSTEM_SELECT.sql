@@ -12,7 +12,7 @@ ALTER PROCEDURE [Subhost].[SUBHOST_SYSTEM_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,7 +24,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @KBU DECIMAL(8, 4)
 
 		SELECT @KBU = SHC_KBU
@@ -33,8 +33,8 @@ BEGIN
 			AND SHC_ID_PERIOD = @PR_ID
 
 		DECLARE @SYST	TABLE(SYST_ID SMALLINT)
-		
-		
+
+
 		IF @HIDE = 1
 		BEGIN
 			INSERT INTO @SYST(SYST_ID)
@@ -42,25 +42,25 @@ BEGIN
 				FROM Subhost.RegNodeSubhostTable
 				WHERE RNS_ID_PERIOD = @PR_ID
 					AND RNS_ID_HOST = @SH_ID
-				
-				UNION 
-				
+
+				UNION
+
 				SELECT DISTINCT DIU_ID_SYSTEM
 				FROM Subhost.Diu
 				WHERE DIU_ID_SUBHOST = @SH_ID
 					AND DIU_ACTIVE = 1
-				
-				UNION 
-				
+
+				UNION
+
 				SELECT DISTINCT SCP_ID_SYSTEM
 				FROM Subhost.SubhostCompensationTable
 				WHERE SCP_ID_SUBHOST = @SH_ID
 					AND SCP_ID_PERIOD = @PR_ID
-					
-				UNION 
-				
+
+				UNION
+
 				SELECT DISTINCT REG_ID_SYSTEM
-				FROM 
+				FROM
 					dbo.PeriodRegTable
 					INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
 				WHERE REG_ID_HOST = @SH_ID
@@ -69,26 +69,26 @@ BEGIN
 		END
 		ELSE IF @HIDE2 = 1
 		BEGIN
-			INSERT INTO @SYST(SYST_ID)			
+			INSERT INTO @SYST(SYST_ID)
 				SELECT DISTINCT DIU_ID_SYSTEM
 				FROM Subhost.Diu
 				WHERE DIU_ID_SUBHOST = @SH_ID
 					AND DIU_ACTIVE = 1
-					
-				UNION 
-				
+
+				UNION
+
 				SELECT DISTINCT SCP_ID_SYSTEM
 				FROM Subhost.SubhostCompensationTable
 				WHERE SCP_ID_SUBHOST = @SH_ID
 					AND SCP_ID_PERIOD = @PR_ID
-					
-				UNION 
-				
+
+				UNION
+
 				SELECT DISTINCT REG_ID_SYSTEM
-				FROM 
+				FROM
 					dbo.PeriodRegTable
 					INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
-					INNER JOIN 
+					INNER JOIN
 						(
 							SELECT SST_ID
 							FROM
@@ -107,7 +107,7 @@ BEGIN
 									UNION ALL
 
 									SELECT SST_ID, STS_ID_HOST
-									FROM 
+									FROM
 										dbo.SystemTypeTable
 										INNER JOIN dbo.SystemTypeSubhost ON STS_ID_TYPE = SST_ID
 									WHERE STS_ID_SUBHOST = @SH_ID
@@ -128,7 +128,7 @@ BEGIN
 		END
 
 		SELECT SYS_ID, SYS_SHORT_NAME, NULL AS SYS_OLD, NULL AS SYS_NEW, SYS_ORDER, @KBU AS SYS_KBU
-		FROM 
+		FROM
 			dbo.SystemTable
 			INNER JOIN @SYST ON SYST_ID = SYS_ID
 		WHERE SYS_ID_SO = 1
@@ -144,7 +144,7 @@ BEGIN
 		UNION ALL
 
 		SELECT SYS_ID, SYS_SHORT_NAME, NULL AS SYS_OLD, NULL AS SYS_NEW, SYS_ORDER, SK_KBU AS SYS_KBU
-		FROM 
+		FROM
 			dbo.SystemTable INNER JOIN
 			Subhost.SubhostKBUTable ON SK_ID_SYSTEM = SYS_ID
 			INNER JOIN @SYST ON SYST_ID = SYS_ID
@@ -152,15 +152,15 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
-			NULL AS SYS_ID, 
-			'с ' + b.SYS_SHORT_NAME + ' на ' + c.SYS_SHORT_NAME, 
-			b.SYS_SHORT_NAME AS SYS_OLD, c.SYS_SHORT_NAME AS SYS_NEW, 
+		SELECT
+			NULL AS SYS_ID,
+			'с ' + b.SYS_SHORT_NAME + ' на ' + c.SYS_SHORT_NAME,
+			b.SYS_SHORT_NAME AS SYS_OLD, c.SYS_SHORT_NAME AS SYS_NEW,
 			CASE
 				WHEN b.SYS_ORDER > c.SYS_ORDER THEN b.SYS_ORDER + 1
 				ELSE c.SYS_ORDER + 1
 			END, NULL AS SYS_KBU
-		FROM 
+		FROM
 			/*(
 				SELECT SYS_ID_HOST
 				FROM dbo.SystemTable
@@ -183,14 +183,14 @@ BEGIN
 				)
 
 		ORDER BY SYS_ORDER, SYS_SHORT_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

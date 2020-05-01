@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_DELIVERY]
@@ -37,10 +37,10 @@ BEGIN
 		UPDATE dbo.InvoiceSaleTable
 		SET INS_ID_CLIENT = @clientid,
 			INS_ID_PAYER = (SELECT ISNULL(CL_ID_PAYER, CL_ID) FROM dbo.ClientTable WHERE CL_ID = @clientid)
-		WHERE INS_ID = 
+		WHERE INS_ID =
 			(
-				SELECT IN_ID_INVOICE 
-				FROM dbo.IncomeTable 
+				SELECT IN_ID_INVOICE
+				FROM dbo.IncomeTable
 				WHERE IN_ID = @incomeid
 			)
 
@@ -52,14 +52,14 @@ BEGIN
 				FROM dbo.IncomeDistrTable
 				WHERE ID_ID_INCOME = @incomeid
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

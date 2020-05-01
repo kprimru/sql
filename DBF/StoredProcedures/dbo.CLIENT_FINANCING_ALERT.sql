@@ -8,7 +8,7 @@ ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ALERT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -20,20 +20,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT CL_ID, CL_PSEDO
-		FROM 
-			dbo.ClientTable INNER JOIN dbo.ClientFinancing ON ID_CLIENT = CL_ID		
+		FROM
+			dbo.ClientTable INNER JOIN dbo.ClientFinancing ON ID_CLIENT = CL_ID
 		WHERE UNKNOWN_FINANCING = 1
 		ORDER BY CL_PSEDO
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

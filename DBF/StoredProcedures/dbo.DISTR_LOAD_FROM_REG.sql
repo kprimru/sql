@@ -10,7 +10,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[DISTR_LOAD_FROM_REG]
@@ -37,22 +37,22 @@ BEGIN
 
 		CREATE TABLE #distr
 			(
-				SYS_ID SMALLINT, 
-				RN_DISTR_NUM INT, 
+				SYS_ID SMALLINT,
+				RN_DISTR_NUM INT,
 				RN_COMP_NUM SMALLINT
 			)
 
 		INSERT INTO #distr
 			SELECT SYS_ID, RN_DISTR_NUM, RN_COMP_NUM
-			FROM 
+			FROM
 				dbo.RegNodeTable INNER JOIN
-				dbo.SystemTable ON SYS_REG_NAME = RN_SYS_NAME 
+				dbo.SystemTable ON SYS_REG_NAME = RN_SYS_NAME
 			WHERE
 				NOT EXISTS
 					(
-						SELECT * 
-						FROM dbo.DistrTable 
-						WHERE DIS_ID_SYSTEM = SYS_ID 
+						SELECT *
+						FROM dbo.DistrTable
+						WHERE DIS_ID_SYSTEM = SYS_ID
 							AND DIS_NUM = RN_DISTR_NUM
 							AND DIS_COMP_NUM = RN_COMP_NUM
 					)
@@ -66,16 +66,16 @@ BEGIN
 							DD_ID_DISTR, DD_ID_DOC, DD_PRINT, DD_ID_GOOD, DD_ID_UNIT
 						)
 			SELECT DIS_ID, DSD_ID_DOC, DSD_PRINT, DSD_ID_GOOD, DSD_ID_UNIT
-			FROM 
+			FROM
 				dbo.DocumentSaleObjectDefaultTable INNER JOIN
 				dbo.SaleObjectTable ON DSD_ID_SO = SO_ID INNER JOIN
 				dbo.SystemTable ON SYS_ID_SO = SO_ID CROSS JOIN
 				dbo.DistrTable a INNER JOIN
-				#distr b ON a.SYS_ID = b.SYS_ID 
-						AND a.RN_DISTR_NUM = b.RN_DISTR_NUM 
-						AND a.RN_COMP_NUM = b.RN_COMP_NUM		
+				#distr b ON a.SYS_ID = b.SYS_ID
+						AND a.RN_DISTR_NUM = b.RN_DISTR_NUM
+						AND a.RN_COMP_NUM = b.RN_COMP_NUM
 
-		
+
 
 		SELECT @count = @@ROWCOUNT
 
@@ -83,31 +83,31 @@ BEGIN
 
 		UPDATE dbo.DistrTable
 		SET DIS_ACTIVE = 0
-		WHERE 
+		WHERE
 			NOT EXISTS
 				(
-					SELECT * 				
-					FROM 
+					SELECT * 
+					FROM
 						dbo.RegNodeTable INNER JOIN
 						dbo.SystemTable ON SYS_REG_NAME = RN_SYS_NAME
-					WHERE RN_DISTR_NUM = DIS_NUM 
-						AND RN_COMP_NUM = DIS_COMP_NUM 
+					WHERE RN_DISTR_NUM = DIS_NUM
+						AND RN_COMP_NUM = DIS_COMP_NUM
 						AND DIS_ID_SYSTEM = SYS_ID
 				) AND
 			EXISTS
 				(
-					SELECT * 				
-					FROM 
+					SELECT * 
+					FROM
 						dbo.RegNodeTable INNER JOIN
 						dbo.SystemTable a ON SYS_REG_NAME = RN_SYS_NAME
-					WHERE RN_DISTR_NUM = DIS_NUM 
-						AND RN_COMP_NUM = DIS_COMP_NUM 
-						AND DIS_ID_SYSTEM IN 
+					WHERE RN_DISTR_NUM = DIS_NUM
+						AND RN_COMP_NUM = DIS_COMP_NUM
+						AND DIS_ID_SYSTEM IN
 								(
-									SELECT b.SYS_ID 
+									SELECT b.SYS_ID
 									FROM dbo.SystemTable  b
-									WHERE a.SYS_ID_HOST = b.SYS_ID_HOST	
-										AND a.SYS_ID <> b.SYS_ID							
+									WHERE a.SYS_ID_HOST = b.SYS_ID_HOST
+										AND a.SYS_ID <> b.SYS_ID
 								)
 				)
 
@@ -117,14 +117,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

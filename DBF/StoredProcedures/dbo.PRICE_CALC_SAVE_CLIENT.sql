@@ -35,14 +35,14 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO dbo.PriceSystemTable(PS_ID_PERIOD, PS_ID_SYSTEM, PS_ID_TYPE, PS_PRICE)
 				VALUES(@PR_ID, @SYS_ID, 1, @PRICE)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

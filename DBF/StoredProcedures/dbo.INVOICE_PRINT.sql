@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_PRINT]
 	@numlist VARCHAR(MAX),
@@ -54,7 +54,7 @@ BEGIN
 
 
 			SELECT @idlist = @idlist + CONVERT(VARCHAR, INS_ID) + ','
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable INNER JOIN
 				#invnum ON INV_NUM = INS_NUM
 			WHERE INS_NUM_YEAR = @invyear AND INS_ID_ORG = @org
@@ -68,7 +68,7 @@ BEGIN
 
 		-- список сервис-инженеров тожу тут
 		IF (@begindate IS NOT NULL) AND (@enddate IS NOT NULL)
-		BEGIN		
+		BEGIN
 			IF OBJECT_ID('tempdb.#cour') IS NOT NULL
 				DROP TABLE #cour
 
@@ -79,16 +79,16 @@ BEGIN
 
 			IF @cour IS NULL
 				INSERT INTO #cour
-					SELECT COUR_ID 
+					SELECT COUR_ID
 					FROM dbo.CourierTable
 			ELSE
 				INSERT INTO #cour
 					SELECT * FROM dbo.GET_TABLE_FROM_LIST(@cour, ',')
 
 			SELECT @idlist = @idlist + CONVERT(VARCHAR, INS_ID) + ','
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable INNER JOIN
-				#cour ON COUR_ID = 
+				#cour ON COUR_ID =
 				(SELECT TOP 1 TO_ID_COUR FROM dbo.TOTable WHERE TO_ID_CLIENT = INS_ID_CLIENT ORDER BY TO_ID_COUR)
 			WHERE INS_DATE BETWEEN @begindate AND @enddate AND INS_ID_ORG = @org
 
@@ -96,29 +96,29 @@ BEGIN
 				SET @idlist = LEFT(@idlist, LEN(@idlist) - 1)
 
 			--SELECT @idlist
-			
+
 			--SELECT @idlist
-		END	
+		END
 
 		IF @address = 1
 		BEGIN
-			DECLARE INS CURSOR LOCAL FOR 
+			DECLARE INS CURSOR LOCAL FOR
 				SELECT INS_ID
-				FROM 
-					dbo.InvoiceSaleTable INNER JOIN 
-					dbo.GET_TABLE_FROM_LIST(@idlist, ',') ON Item = INS_ID		
+				FROM
+					dbo.InvoiceSaleTable INNER JOIN
+					dbo.GET_TABLE_FROM_LIST(@idlist, ',') ON Item = INS_ID
 
 			OPEN INS
 
 			DECLARE @insid INT
 
-			FETCH NEXT FROM INS INTO @insid 
+			FETCH NEXT FROM INS INTO @insid
 
 			WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.INVOICE_RECALC_ADDRESS @insid
 
-				FETCH NEXT FROM INS INTO @insid 
+				FETCH NEXT FROM INS INTO @insid
 			END
 
 			CLOSE INS
@@ -132,14 +132,14 @@ BEGIN
 			DROP TABLE #invnum
 		IF OBJECT_ID('tempdb.#cour') IS NOT NULL
 			DROP TABLE #cour
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

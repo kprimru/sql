@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_GET] 
+ALTER PROCEDURE [dbo].[PERIOD_GET]
 	@periodid SMALLINT = NULL
 AS
 BEGIN
@@ -30,16 +30,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PR_ID, PR_NAME, PR_DATE, PR_END_DATE, PR_BREPORT, PR_EREPORT, PR_ACTIVE
-		FROM dbo.PeriodTable 
-		WHERE PR_ID = @periodid   
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @periodid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM Subhost.SubhostStudy
 		WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = @PR_ID
 
@@ -41,18 +41,18 @@ BEGIN
 
 		INSERT INTO Subhost.SubhostStudy(
 				SS_ID_SUBHOST, SS_ID_PERIOD, SS_ID_LESSON, SS_COUNT)
-			SELECT 
-				SS_ID_SUBHOST, @PR_ID, SS_ID_LESSON, SS_COUNT			
+			SELECT
+				SS_ID_SUBHOST, @PR_ID, SS_ID_LESSON, SS_COUNT
 			FROM Subhost.SubhostStudy
 			WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

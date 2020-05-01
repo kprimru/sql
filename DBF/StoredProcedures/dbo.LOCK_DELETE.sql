@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 28.10.2008
-Описание:	  Удаление блокировки с указанным 
+Описание:	  Удаление блокировки с указанным
                документом в указанной таблице
 */
 
-ALTER PROCEDURE [dbo].[LOCK_DELETE] 
+ALTER PROCEDURE [dbo].[LOCK_DELETE]
 	@docid INT,
 	@tablename VARCHAR(100)
 AS
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

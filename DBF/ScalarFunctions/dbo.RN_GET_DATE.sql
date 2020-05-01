@@ -21,7 +21,7 @@ BEGIN
   DECLARE @result DATETIME
 
   SET @result = '19000101'
-  
+
   IF ISDATE(@regdate) = 1
     SET @result = CONVERT(DATETIME, @regdate, 104)
   ELSE

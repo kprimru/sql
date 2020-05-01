@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_SERVICE_SELECT]   
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -28,8 +28,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DSS_NAME, DSS_REPORT, DSS_ID 
-		FROM dbo.DistrServiceStatusTable 
+		SELECT DSS_NAME, DSS_REPORT, DSS_ID
+		FROM dbo.DistrServiceStatusTable
 		WHERE DSS_ACTIVE = ISNULL(@active, DSS_ACTIVE)
 		ORDER BY DSS_NAME
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

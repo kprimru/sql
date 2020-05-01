@@ -8,15 +8,15 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[POSITION_GET] 
+ALTER PROCEDURE [dbo].[POSITION_GET]
 	@positionid INT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -28,18 +28,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT POS_ID, POS_NAME, POS_ACTIVE 
-		FROM dbo.PositionTable 
-		WHERE POS_ID = @positionid 
+
+		SELECT POS_ID, POS_NAME, POS_ACTIVE
+		FROM dbo.PositionTable
+		WHERE POS_ID = @positionid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

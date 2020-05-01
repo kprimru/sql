@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_TRY_DELETE]
 	@organizationid SMALLINT
 AS
 BEGIN
@@ -27,16 +27,16 @@ BEGIN
 
 		SET @res = 0
 		SET @txt = ''
-		
+
 		SELECT @res AS RES, @txt AS TXT
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -61,14 +61,14 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO Ric.WeightCorrection(WC_ID_QUARTER, WC_VALUE)
 				SELECT @QR_ID, @WC_VALUE
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

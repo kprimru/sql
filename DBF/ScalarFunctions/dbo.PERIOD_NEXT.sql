@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER FUNCTION [dbo].[PERIOD_NEXT]
@@ -24,12 +24,12 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	-- Тело функции
-	SELECT @result = PR_ID 
+	SELECT @result = PR_ID
 	FROM dbo.PeriodTable
-	WHERE PR_DATE = 
+	WHERE PR_DATE =
 			(
 				SELECT DATEADD(MONTH, 1, PR_DATE)
-				FROM dbo.PeriodTable 
+				FROM dbo.PeriodTable
 				WHERE PR_ID = @prid
 			)
 

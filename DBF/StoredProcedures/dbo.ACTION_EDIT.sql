@@ -30,10 +30,10 @@ BEGIN
 
 		IF @PERIOD IS NULL
 		BEGIN
-			DELETE 
+			DELETE
 			FROM dbo.ActionPeriod
 			WHERE AP_ID_AC = @ID
-		
+
 			UPDATE dbo.Action
 			SET	ACTN_ID_TYPE	= @TYPE,
 				ACTN_NAME	=	@NAME,
@@ -72,14 +72,14 @@ BEGIN
 				ACTN_ACTIVE = @ACTIVE
 			WHERE ACTN_ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -9,7 +9,7 @@ GO
 Описание:		Список адресов и их шаблонов в финансовых документах клиента
 Дата:			17.07.2009
 */
-ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -31,14 +31,14 @@ BEGIN
 		FROM dbo.ClientFinancingAddressView
 		WHERE CL_ID = @clientid
 		ORDER BY FAT_NOTE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

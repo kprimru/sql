@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_AVAILABLE_GET]
@@ -30,29 +30,29 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DIS_STR, DIS_ID
-		FROM dbo.ClientDistrView 
-		WHERE 
-				CD_ID_CLIENT = 
+		FROM dbo.ClientDistrView
+		WHERE
+				CD_ID_CLIENT =
 						(
 							SELECT TO_ID_CLIENT
 							FROM dbo.TOTable
 							WHERE TO_ID = @toid
-						) AND 
+						) AND
 				NOT EXISTS
 						(
-							SELECT * 
+							SELECT *
 							FROM dbo.TODistrView
 							WHERE CD_ID_CLIENT = TO_ID_CLIENT AND
 									CD_ID_DISTR = TD_ID_DISTR
 						)
-						
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

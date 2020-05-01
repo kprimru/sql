@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_SELECT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_SELECT]
     @active BIT = NULL
 AS
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ORG_FULL_NAME, ORG_SHORT_NAME, ORG_ID , ORG_PSEDO
-		FROM dbo.OrganizationTable 
+		FROM dbo.OrganizationTable
 		WHERE ORG_ACTIVE = ISNULL(@active, ORG_ACTIVE)
 		ORDER BY ORG_FULL_NAME, ORG_SHORT_NAME
 
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

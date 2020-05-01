@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[VERIFY_FIN_BILL_INCOME]	
+ALTER PROCEDURE [dbo].[VERIFY_FIN_BILL_INCOME]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -36,18 +36,18 @@ BEGIN
 					BD_ID_DISTR,
 					BD_TOTAL_PRICE, ID_PRICE
 				FROM
-					
+
 					(
-						SELECT 
+						SELECT
 							BL_ID_CLIENT, BL_ID_PERIOD, BD_ID_DISTR, BD_TOTAL_PRICE
 						FROM
 							dbo.BillTable a INNER JOIN
 							dbo.BillDistrTable b ON BL_ID=BD_ID_BILL
-					) 
+					)
 					AS Bills
 					INNER JOIN
 					(
-						SELECT 
+						SELECT
 							IN_ID_CLIENT, ID_ID_PERIOD, ID_ID_DISTR, SUM(ID_PRICE) AS ID_PRICE
 						FROM
 							dbo.IncomeTable a INNER JOIN
@@ -68,9 +68,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

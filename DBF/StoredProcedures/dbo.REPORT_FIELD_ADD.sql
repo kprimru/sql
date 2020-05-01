@@ -31,16 +31,16 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ReportFieldTable(RF_NAME, RF_CAPTION, RF_ORDER) 
+		INSERT INTO dbo.ReportFieldTable(RF_NAME, RF_CAPTION, RF_ORDER)
 							  VALUES(@fieldname, @fieldcaption, @order)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

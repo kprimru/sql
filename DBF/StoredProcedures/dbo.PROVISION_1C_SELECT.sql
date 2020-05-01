@@ -26,20 +26,20 @@ BEGIN
 		SELECT
 			CL_ID, CL_PSEDO, CL_INN,
 			DATE, PAY_NUM, PRICE
-		FROM 
+		FROM
 			dbo.Provision a
 			INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.CL_ID
 		WHERE DATE = @DATE AND ID_ORG = @ORG
 			AND PRICE > 0
 		ORDER BY CL_PSEDO
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

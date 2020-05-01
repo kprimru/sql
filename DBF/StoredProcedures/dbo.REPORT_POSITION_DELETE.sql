@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
-*/    
+Описание:
+*/
 
-ALTER PROCEDURE [dbo].[REPORT_POSITION_DELETE] 
+ALTER PROCEDURE [dbo].[REPORT_POSITION_DELETE]
 	@positionreportid SMALLINT
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.ReportPositionTable 
+		DELETE
+		FROM dbo.ReportPositionTable
 		WHERE RP_ID = @positionreportid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

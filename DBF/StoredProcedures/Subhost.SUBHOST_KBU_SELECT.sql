@@ -28,14 +28,14 @@ BEGIN
 			dbo.SubhostTable ON SK_ID_HOST = SH_ID INNER JOIN
 			dbo.SystemTable ON SYS_ID = SK_ID_SYSTEM
 		WHERE SK_ACTIVE = ISNULL(@ACTIVE, SK_ACTIVE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

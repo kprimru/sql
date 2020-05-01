@@ -10,7 +10,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INCOME_REST_SELECT]
@@ -37,7 +37,7 @@ BEGIN
 			FROM dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 			WHERE EXISTS
 				(
-					SELECT * 
+					SELECT *
 					FROM dbo.IncomeView
 					WHERE IN_ID_CLIENT = CL_ID AND IN_REST <> 0
 				)
@@ -48,19 +48,19 @@ BEGIN
 			FROM dbo.ClientTable LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 			WHERE EXISTS
 				(
-					SELECT * 
+					SELECT *
 					FROM dbo.IncomeView
 					WHERE IN_ID_CLIENT = CL_ID AND IN_REST <> 0
 				)
 			ORDER BY CL_PSEDO, CL_ID
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

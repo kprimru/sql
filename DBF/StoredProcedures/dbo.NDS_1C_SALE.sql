@@ -11,7 +11,7 @@ ALTER PROCEDURE [dbo].[NDS_1C_SALE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -23,7 +23,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @ID	UNIQUEIDENTIFIER
 
 		SELECT @ID = ID
@@ -31,7 +31,7 @@ BEGIN
 		WHERE ID_ORG = @ORG
 			AND ID_TAX = @TAX
 			AND ID_PERIOD = @PERIOD
-			
+
 		DECLARE @PR_BEGIN	SMALLDATETIME
 		DECLARE @PR_END		SMALLDATETIME
 
@@ -44,7 +44,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#c')	 IS NOT NULL
 			DROP TABLE #c
-			
+
 		SELECT CLIENT, /*SUM(PRICE) AS PRICE, */SUM(PRICE2) AS PRICE2
 		INTO #c
 		FROM dbo.NDS1CDetail
@@ -55,15 +55,15 @@ BEGIN
 			INTO #nds
 		FROM
 			(
-				SELECT 
-					NUM, DATE, ISNULL(CL_1C, '!!!Õ≈“  À»≈Õ“¿!!!') AS CL_1C, 
+				SELECT
+					NUM, DATE, ISNULL(CL_1C, '!!!Õ≈“  À»≈Õ“¿!!!') AS CL_1C,
 					(
 						SELECT SUM(ROUND(S_NDS, 2))
 						FROM dbo.BookSaleDetail b
 						WHERE a.ID = b.ID_SALE
 							AND b.ID_TAX = @TAX
 					) AS NDS
-				FROM 
+				FROM
 					dbo.BookSale a
 					INNER JOIN dbo.InvoiceSaleTable c ON c.INS_ID = a.ID_INVOICE
 					LEFT OUTER JOIN dbo.ClientTable ON c.INS_ID_CLIENT = CL_ID
@@ -72,32 +72,32 @@ BEGIN
 					AND CODE = '02'
 			) AS o_O
 		WHERE ISNULL(NDS, 0)  <> 0
-		GROUP BY CL_1C	
-				
+		GROUP BY CL_1C
+
 		SELECT CLIENT, PRICE2 AS [1C_PRICE], NDS AS [DBF_PRICE], PRICE2 - NDS AS [DIFF]
-		FROM 
+		FROM
 			#c a
 			INNER JOIN #nds b ON a.CLIENT = b.CL_1C
 		WHERE a.PRICE2 <> b.NDS
-		
+
 		UNION ALL
-		
+
 		SELECT CL_1C, 0 AS [1C_PRICE], NDS AS [DBF_PRICE], NDS AS [DIFF]
-		FROM 
-			#nds b 
-		WHERE NDS <> 0 AND 
+		FROM
+			#nds b
+		WHERE NDS <> 0 AND
 			NOT EXISTS
 			(
 				SELECT *
 				FROM #c a
 				WHERE a.CLIENT = b.CL_1C
 			)
-		
+
 		UNION ALL
-		
+
 		SELECT CLIENT, PRICE2 AS [1C_PRICE], 0 AS [DBF_PRICE], PRICE2 AS [DIFF]
-		FROM 
-			#c a		
+		FROM
+			#c a
 		WHERE PRICE2 <> 0
 			AND NOT EXISTS
 			(
@@ -105,16 +105,16 @@ BEGIN
 				FROM #nds b
 				WHERE a.CLIENT = b.CL_1C
 			)
-		
+
 		ORDER BY CLIENT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

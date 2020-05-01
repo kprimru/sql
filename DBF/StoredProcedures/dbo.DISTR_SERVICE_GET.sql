@@ -9,15 +9,15 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_SERVICE_GET] 
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_GET]
 	@dsid SMALLINT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -29,21 +29,21 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT DSS_NAME, DSS_ID, DSS_SUBHOST, DS_ID, DS_NAME, DSS_REPORT, DSS_ACTIVE
-		FROM 
+		FROM
 			dbo.DistrServiceStatusTable LEFT OUTER JOIN
 			dbo.DistrStatusTable ON DS_ID = DSS_ID_STATUS
-		WHERE DSS_ID = @dsid 
+		WHERE DSS_ID = @dsid
 		ORDER BY DSS_NAME
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

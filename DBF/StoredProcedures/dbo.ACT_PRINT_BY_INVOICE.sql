@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_PRINT_BY_INVOICE]
 	@invoiceid INT,
@@ -36,7 +36,7 @@ BEGIN
 
 		CREATE TABLE #master
 			(
-				AFM_ID bigint IDENTITY(1,1),						
+				AFM_ID bigint IDENTITY(1,1),
 				CL_ID int,
 				CL_PSEDO varchar(50),
 				CL_FULL_NAME varchar(500),
@@ -76,23 +76,23 @@ BEGIN
 					ORG_ID, ORG_FULL_NAME, ORG_SHORT_NAME,
 					ORG_INN, ORG_KPP, ORG_ACCOUNT, ORG_LORO, ORG_BIK,
 					ORG_DIR_FAM, ORG_DIR_NAME, ORG_DIR_OTCH, ORG_DIR_SHORT,
-					BA_NAME, 
+					BA_NAME,
 					PR_MONTH,
 					PR_END_DATE
 					)
-			SELECT			
+			SELECT
 					CL_ID, CL_PSEDO, CL_FULL_NAME, CL_SHORT_NAME, CL_FOUNDING,
 					NULL, @conum, @codate, CK_HEADER, CK_CENTER, CK_FOOTER,
 					POS_NAME, PER_FAM, PER_NAME, PER_OTCH,
 					ORG_ID, ORG_FULL_NAME, ORG_SHORT_NAME,
 					ORG_INN, ORG_KPP, ISNULL(ORGC_ACCOUNT, ORG_ACCOUNT), BA_LORO, BA_BIK,
 					ORG_DIR_FAM, ORG_DIR_NAME, ORG_DIR_OTCH,
-					(ORG_DIR_FAM + ' ' + LEFT(ORG_DIR_NAME, 1) + '.' + LEFT(ORG_DIR_OTCH, 1) + '.') 
+					(ORG_DIR_FAM + ' ' + LEFT(ORG_DIR_NAME, 1) + '.' + LEFT(ORG_DIR_OTCH, 1) + '.')
 						AS ORG_DIR_SHORT,
-					BA_NAME, 
+					BA_NAME,
 					(
-						SELECT TOP 1 DATENAME(MM, PR_DATE) 
-						FROM dbo.PeriodTable 
+						SELECT TOP 1 DATENAME(MM, PR_DATE)
+						FROM dbo.PeriodTable
 						WHERE PR_ID = @actperiod
 						ORDER BY PR_DATE DESC
 					) AS PR_MONTH,
@@ -100,31 +100,31 @@ BEGIN
 			FROM
 				dbo.InvoiceSaleTable	A	INNER JOIN
 				--dbo.ActDistrTable		Z	ON	Z.AD_ID_ACT		= A.ACT_ID	INNER JOIN
-				dbo.ClientTable			B	ON	A.INS_ID_CLIENT = B.CL_ID	LEFT JOIN			
+				dbo.ClientTable			B	ON	A.INS_ID_CLIENT = B.CL_ID	LEFT JOIN
 				dbo.ClientPersonalTable	E	ON	E.PER_ID_CLIENT	= B.CL_ID	LEFT JOIN
 				dbo.PositionTable		F	ON	E.PER_ID_POS	= F.POS_ID	LEFT JOIN
-				dbo.OrganizationTable	G	ON	B.CL_ID_ORG		= G.ORG_ID	LEFT JOIN	
-				dbo.OrganizationCalc	J	ON  J.ORGC_ID = B.CL_ID_ORG_CALC LEFT OUTER JOIN	
-				dbo.BankTable			H	ON	G.ORG_ID_BANK	= H.BA_ID	
+				dbo.OrganizationTable	G	ON	B.CL_ID_ORG		= G.ORG_ID	LEFT JOIN
+				dbo.OrganizationCalc	J	ON  J.ORGC_ID = B.CL_ID_ORG_CALC LEFT OUTER JOIN
+				dbo.BankTable			H	ON	G.ORG_ID_BANK	= H.BA_ID
 				CROSS APPLY
 					(
 						SELECT TOP 1 CK_HEADER, CK_FOOTER, CK_CENTER
-						FROM 
+						FROM
 							(
 								SELECT TOP 1 2 AS TP, CO_ID
-								FROM 
-									dbo.ContractTable INNER JOIN	
-									dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID 
-									
+								FROM
+									dbo.ContractTable INNER JOIN
+									dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
+
 								WHERE CO_ID_CLIENT = INS_ID_CLIENT
 								ORDER BY CO_DATE DESC, CO_ACTIVE DESC
-								
+
 								UNION ALL
-								
+
 								SELECT TOP 1 3 AS TP, CO_ID
-								FROM 
-									dbo.ContractTable INNER JOIN	
-									dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID 
+								FROM
+									dbo.ContractTable INNER JOIN
+									dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
 								WHERE CO_ID_CLIENT = INS_ID_CLIENT AND CO_ACTIVE = 1
 							) AS o_O
 							INNER JOIN dbo.ContractTable p ON p.CO_ID = o_O.CO_ID
@@ -142,7 +142,7 @@ BEGIN
 		CREATE TABLE #detail
 			(
 				AFD_ID_AFM bigint,
-				PR_ID smallint,			
+				PR_ID smallint,
 				DIS_ID int,
 				DIS_NUM varchar(50),
 				SYS_NAME varchar(500),
@@ -159,7 +159,7 @@ BEGIN
 			)
 
 		INSERT INTO #detail (
-				AFD_ID_AFM, 			
+				AFD_ID_AFM, 
 				DIS_ID, DIS_NUM, SYS_NAME, SYS_ORDER,
 				AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME,
@@ -169,21 +169,21 @@ BEGIN
 					(
 						SELECT TOP 1 AFM_ID
 						FROM #master
-					),				
+					),
 					INR_ID_DISTR, NULL, INR_NAME, NULL,
-					ROUND(INR_SUM * ISNULL(INR_COUNT, 1), 2), 
+					ROUND(INR_SUM * ISNULL(INR_COUNT, 1), 2),
 					INR_SNDS, INR_SALL,
-					TX_PERCENT, TX_NAME,				
+					TX_PERCENT, TX_NAME,
 					INR_GOOD, --SO_BILL_STR,
-					INR_UNIT				
-				FROM	
-					dbo.InvoiceSaleTable		A			INNER JOIN				
+					INR_UNIT
+				FROM
+					dbo.InvoiceSaleTable		A			INNER JOIN
 					dbo.InvoiceRowTable		Z	ON	Z.INR_ID_INVOICE= A.INS_ID	INNER JOIN
-					dbo.TaxTable			D	ON	D.TX_ID			= Z.INR_ID_TAX 
-				WHERE INS_ID = @invoiceid			
+					dbo.TaxTable			D	ON	D.TX_ID			= Z.INR_ID_TAX
+				WHERE INS_ID = @invoiceid
 
-					
-		SELECT 
+
+		SELECT
 			AFM_ID, CL_ID, CL_PSEDO, CL_FULL_NAME, CL_SHORT_NAME, CL_FOUNDING,
 			CO_ID, CO_NUM, CO_DATE, CK_HEADER, CK_CENTER, CK_FOOTER, POS_NAME, PER_FAM, PER_NAME, PER_OTCH,
 			ORG_ID, ORG_FULL_NAME, ORG_SHORT_NAME, ORG_INN, ORG_KPP, ORG_ACCOUNT,
@@ -191,7 +191,7 @@ BEGIN
 			BA_NAME, PR_MONTH, PR_END_DATE, 0 AS ACT_TO, '18' AS TAX_STR
 		FROM #master
 		ORDER BY CL_PSEDO, CL_ID
-			
+
 		SELECT
 			AFD_ID_AFM,
 			NULL AS TO_NUM,
@@ -202,7 +202,7 @@ BEGIN
 			TX_PERCENT, TX_NAME, SO_ID,
 			SO_BILL_STR, SO_INV_UNIT, SUM(AD_PAYED_PRICE) AS AD_PAYED_PRICE
 		FROM #detail
-		GROUP BY 
+		GROUP BY
 			AFD_ID_AFM, DIS_ID, DIS_NUM, SYS_NAME, SYS_ORDER,
 			TX_PERCENT, TX_NAME,
 			SO_ID, SO_INV_UNIT, SO_BILL_STR
@@ -213,14 +213,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#detail') IS NOT NULL
 			DROP TABLE #detail
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[ACT_PRINT_BY_INVOICE] TO rl_invoice_r;

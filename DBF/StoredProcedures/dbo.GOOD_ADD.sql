@@ -6,13 +6,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GOOD_ADD]
-	@name VARCHAR(150),	
+	@name VARCHAR(150),
 	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
@@ -36,14 +36,14 @@ BEGIN
 
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

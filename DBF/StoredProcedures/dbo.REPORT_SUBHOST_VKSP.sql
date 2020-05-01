@@ -39,11 +39,11 @@ BEGIN
 		ORDER BY SYS_ORDER, SST_ORDER, SNC_ORDER
 
 		/*
-		SELECT 
-			SYS_SHORT_NAME + 
+		SELECT
+			SYS_SHORT_NAME +
 				CASE SYS_PROBLEM
 					WHEN 0 THEN ''
-					WHEN 1 THEN 
+					WHEN 1 THEN
 						CASE REG_PROBLEM
 							WHEN 1 THEN ' Пробл.'
 							ELSE ''
@@ -60,23 +60,23 @@ BEGIN
 				SELECT SYS_ID, SYS_SHORT_NAME, SYS_ORDER, SYS_PROBLEM, SN_NAME, SN_ORDER, SN_ID, REG_PROBLEM, COUNT(*) AS CNT
 				FROM
 					(
-						SELECT 
-							SYS_ID, a.SYS_SHORT_NAME, SYS_PROBLEM, SN_NAME, SN_ORDER, SN_ID, SYS_ORDER, 
-							CONVERT(BIT, 
+						SELECT
+							SYS_ID, a.SYS_SHORT_NAME, SYS_PROBLEM, SN_NAME, SN_ORDER, SN_ID, SYS_ORDER,
+							CONVERT(BIT,
 								CASE
-									WHEN SYS_PROBLEM = 1 
+									WHEN SYS_PROBLEM = 1
 										AND NOT EXISTS
 										(
 											SELECT *
-											FROM 
+											FROM
 												dbo.PeriodRegExceptView b
 												INNER JOIN dbo.DistrStatusTable ON DS_ID = b.REG_ID_STATUS
-												INNER JOIN dbo.SystemProblem ON SP_ID_SYSTEM = a.REG_ID_SYSTEM 
-																			AND b.REG_ID_SYSTEM = SP_ID_OUT 
+												INNER JOIN dbo.SystemProblem ON SP_ID_SYSTEM = a.REG_ID_SYSTEM
+																			AND b.REG_ID_SYSTEM = SP_ID_OUT
 																			AND SP_ID_PERIOD = b.REG_ID_PERIOD
-											WHERE a.REG_COMPLECT = b.REG_COMPLECT 
-												AND a.REG_ID_PERIOD = b.REG_ID_PERIOD 
-												AND DS_REG = 0 AND REG_ID_TYPE <> 6 
+											WHERE a.REG_COMPLECT = b.REG_COMPLECT
+												AND a.REG_ID_PERIOD = b.REG_ID_PERIOD
+												AND DS_REG = 0 AND REG_ID_TYPE <> 6
 												AND a.REG_ID_SYSTEM <> b.REG_ID_SYSTEM
 										) AND EXISTS
 										(
@@ -89,12 +89,12 @@ BEGIN
 										AND REG_ID_TYPE = 20 THEN 1
 									ELSE 0
 								END) AS REG_PROBLEM
-						FROM 
+						FROM
 							dbo.PeriodRegView a
-							INNER JOIN 
+							INNER JOIN
 												(
-													SELECT 
-														SYS_ID, 
+													SELECT
+														SYS_ID,
 														CASE
 															WHEN EXISTS
 																(
@@ -106,9 +106,9 @@ BEGIN
 													FROM dbo.SystemTable
 												) AS z ON z.SYS_ID = REG_ID_SYSTEM
 							INNER JOIN dbo.SystemNetTable ON SN_ID = SNC_ID_SN
-							INNER JOIN dbo.SystemTypeVKSP ON SSTV_ID_SST = REG_ID_TYPE 
+							INNER JOIN dbo.SystemTypeVKSP ON SSTV_ID_SST = REG_ID_TYPE
 															AND SSTV_ID_PERIOD = @PR_ID
-						WHERE REG_ID_HOST = @SH_ID 
+						WHERE REG_ID_HOST = @SH_ID
 							AND REG_ID_PERIOD = @PR_ID
 							AND DS_REG = 0
 					) AS o_O
@@ -116,18 +116,18 @@ BEGIN
 			) AS o_O
 			INNER JOIN dbo.SystemWeightTable ON SW_ID_SYSTEM = SYS_ID
 											AND SW_ID_PERIOD = @PR_ID
-											AND SW_PROBLEM = REG_PROBLEM	
+											AND SW_PROBLEM = REG_PROBLEM
 			INNER JOIN dbo.SystemNetCoef ON SNCC_ID_SN = SN_ID AND SNCC_ID_PERIOD = @PR_ID
 		ORDER BY SYS_ORDER, SN_ORDER
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

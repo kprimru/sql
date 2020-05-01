@@ -8,15 +8,15 @@ GO
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 25.08.2008
--- Описание:	  Процедура для экспорта. 
---                Приводит к структурированному виду 
+-- Описание:	  Процедура для экспорта.
+--                Приводит к структурированному виду
 --                данные о юридическом адресе клиента.
 -- =============================================
 
-ALTER PROCEDURE [dbo].[CONVERT_ADDRESS_TO_STRING]	
+ALTER PROCEDURE [dbo].[CONVERT_ADDRESS_TO_STRING]
 	@clientid int
 AS
-BEGIN	
+BEGIN
   SET NOCOUNT ON;
 
 	DECLARE
@@ -33,9 +33,9 @@ BEGIN
 
 		  DECLARE @str varchar(250)
 		  DECLARE @result int
-		  DECLARE @addressstr varchar(500)  
+		  DECLARE @addressstr varchar(500)
 		  DECLARE @clientaddressid int
-		 
+
 		  SET @result = 1
 
 		  DECLARE @resultstr varchar(500)
@@ -59,10 +59,10 @@ BEGIN
 		  SET @home = ''
 
 		  SELECT @str = CA_STR, @clientaddressid = CA_ID, @addressstr = CA_STR
-		  FROM ClientAddressTable 
+		  FROM ClientAddressTable
 		  WHERE CA_ID_TYPE = 1 AND CA_ID_CLIENT = @clientid
 
-		  --если первые 6 символов - индекс       
+		  --если первые 6 символов - индекс
 
 		  SET @str = LTRIM(RTRIM(@str))
 
@@ -70,30 +70,30 @@ BEGIN
 			BEGIN
 			  /*
 				 Адрес представляет собой одну из строк
-				  1. <Индекс>,<Населенные пункт>,<Улица>,<Дом>           
+				  1. <Индекс>,<Населенные пункт>,<Улица>,<Дом>
 				  2. <Индекс>,<Страна>,<Город>,<Улица>,<Дом>
 				  3. <Индекс>,<Регион>,<Город>,<Улица>,<Дом>
-				  4. <Индекс>,<Регион>,<Район>,<Город>,<Улица>,<Дом>  
-				  5. <Индекс>,<Улица>,<Дом> 
+				  4. <Индекс>,<Регион>,<Район>,<Город>,<Улица>,<Дом>
+				  5. <Индекс>,<Улица>,<Дом>
 			  */
 			  --забираем первые 6 символов в индекс
 			  SET @index = LEFT(@str, 6)
-			  --и удаляем из строки вместе с 7-м символом - запятой  
+			  --и удаляем из строки вместе с 7-м символом - запятой
 			  SET @str = RIGHT(@str, LEN(@str) - 7)
-		         
+
 			  SET @str = LTRIM(RTRIM(@str))
 
-			  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+			  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 				BEGIN
 					-- Шаблон 1
-					-- запоминаем строку населенного пункта (вместе с префиксом)            
+					-- запоминаем строку населенного пункта (вместе с префиксом)
 				  SET @city = LEFT(@str, CHARINDEX(',', @str) - 1)
-				  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+				  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 				  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 				  SET @str = LTRIM(RTRIM(@str))
 
-				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 					BEGIN
 						-- это улица
 					  SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -102,7 +102,7 @@ BEGIN
 
 					  SET @str = LTRIM(RTRIM(@str))
 
-					  -- все, что осталось - дом. 
+					  -- все, что осталось - дом.
 					  SET @home = @str
 
 					  SET @result = 0
@@ -110,7 +110,7 @@ BEGIN
 				END --sity
 			  ELSE
 				BEGIN
-				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_COUNTRY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_COUNTRY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 					BEGIN
 					  -- шаблон 2
 
@@ -118,20 +118,20 @@ BEGIN
 					  SET @country = LEFT(@str, CHARINDEX(',', @str) - 1)
 
 					  -- вычераем страну из адреса
-					  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))                 
+					  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 					  SET @str = LTRIM(RTRIM(@str))
 
-					  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+					  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 						BEGIN
-		                    
-						  -- запоминаем строку населенного пункта (вместе с префиксом)            
+
+						  -- запоминаем строку населенного пункта (вместе с префиксом)
 						  SET @city = LEFT(@str, CHARINDEX(',', @str) - 1)
-						  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+						  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 						  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 						  SET @str = LTRIM(RTRIM(@str))
 
-						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 							BEGIN
 							  -- это улица
 							  SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -140,7 +140,7 @@ BEGIN
 
 							  SET @str = LTRIM(RTRIM(@str))
 
-							  -- все, что осталось - дом. 
+							  -- все, что осталось - дом.
 							  SET @home = @str
 
 							  SET @result = 0
@@ -149,17 +149,17 @@ BEGIN
 					END --country
 				  ELSE
 					BEGIN
-					  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_REGION_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0  
+					  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_REGION_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 						BEGIN
 						  -- либо 3 либо 4 шаблон
 						  -- запоминаем строку региона
 						  SET @region = LEFT(@str, CHARINDEX(',', @str) - 1)
-						  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+						  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 						  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
-						  SET @str = LTRIM(RTRIM(@str)) 
+						  SET @str = LTRIM(RTRIM(@str))
 
-						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_AREA_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_AREA_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 							BEGIN
 							  -- 4-й шаблон
 							  -- это рейон
@@ -168,18 +168,18 @@ BEGIN
 							  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 							  SET @str = LTRIM(RTRIM(@str))
-		                      
-							  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+
+							  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 								BEGIN
-		                         
-								  -- запоминаем строку населенного пункта (вместе с префиксом)            
+
+								  -- запоминаем строку населенного пункта (вместе с префиксом)
 								SET @city = LEFT(@str, CHARINDEX(',', @str) - 1)
-								-- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+								-- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 								SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 								SET @str = LTRIM(RTRIM(@str))
 
-								IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+								IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 								  BEGIN
 									  -- это улица
 									SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -188,7 +188,7 @@ BEGIN
 
 									SET @str = LTRIM(RTRIM(@str))
 
-									-- все, что осталось - дом. 
+									-- все, что осталось - дом.
 									SET @home = @str
 
 									SET @result = 0
@@ -197,17 +197,17 @@ BEGIN
 							END --area
 						  ELSE
 							BEGIN
-							  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+							  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 								BEGIN
-		                         
-								  -- запоминаем строку населенного пункта (вместе с префиксом)            
+
+								  -- запоминаем строку населенного пункта (вместе с префиксом)
 								SET @city = LEFT(@str, CHARINDEX(',', @str) - 1)
-								-- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+								-- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 								SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 								SET @str = LTRIM(RTRIM(@str))
 
-								IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+								IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 								  BEGIN
 									  -- это улица
 									SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -216,17 +216,17 @@ BEGIN
 
 									SET @str = LTRIM(RTRIM(@str))
 
-									-- все, что осталось - дом. 
+									-- все, что осталось - дом.
 									SET @home = @str
 
 									SET @result = 0
 								  END --street
 							  END --sity
-							END  
+							END
 						END -- region
 					  ELSE
 						BEGIN
-						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+						  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 							BEGIN
 								-- это улица
 								SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -237,12 +237,12 @@ BEGIN
 
 								-- если город не указан, то считаем, что владивосток
 								SET @city = 'г.Владивосток'
-								-- все, что осталось - дом. 
+								-- все, что осталось - дом.
 								SET @home = @str
 
 								SET @result = 0
 							END
-						END 
+						END
 					END
 				  END
 			END -- index
@@ -252,21 +252,21 @@ BEGIN
 				 Если индекс не указан - все намного хуже. Бардак будет полнейший, но попытаемся разобраться
 				 Большинство подходит под Шаблоны
 				  1. <Населенный пункт>,<Улица>,<Дом>
-				  2. <Улица>,<Дом> 
-				 Во втором случае, пробуем по умолчанию город Владивосток.  
+				  2. <Улица>,<Дом>
+				 Во втором случае, пробуем по умолчанию город Владивосток.
 			  */
 
-			  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+			  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_CITY_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 				BEGIN
 					-- Шаблон 1
-					-- запоминаем строку населенного пункта (вместе с префиксом)            
+					-- запоминаем строку населенного пункта (вместе с префиксом)
 				  SET @city = LEFT(@str, CHARINDEX(',', @str) - 1)
-				  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица 
+				  -- и обрезаем строку на длину нас. пункта. Дальше долджна быть улица
 				  SET @str = RIGHT(@str, LEN(@str) - CHARINDEX(',', @str))
 
 				  SET @str = LTRIM(RTRIM(@str))
 
-				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 					BEGIN
 						-- это улица
 					  SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
@@ -275,7 +275,7 @@ BEGIN
 
 					  SET @str = LTRIM(RTRIM(@str))
 
-					  -- все, что осталось - дом. 
+					  -- все, что осталось - дом.
 					  SET @home = @str
 
 					  SET @result = 0
@@ -283,9 +283,9 @@ BEGIN
 				END --sity
 			  ELSE
 				BEGIN
-				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0 
+				  IF CHARINDEX(',', @str) <> 0 AND dbo.IS_STREET_CORRECT(LEFT(@str, CHARINDEX(',', @str) - 1)) = 0
 					BEGIN
-					  -- шаблон 2 
+					  -- шаблон 2
 						-- это улица
 					  SET @street = LEFT(@str, CHARINDEX(',', @str) - 1)
 					  -- обрезаем из адреса улицу
@@ -294,16 +294,16 @@ BEGIN
 					  SET @str = LTRIM(RTRIM(@str))
 
 					  SET @city = 'г.Владивосток'
-					  -- все, что осталось - дом. 
+					  -- все, что осталось - дом.
 					  SET @home = @str
 
 					  SET @result = 0
 					END --street
-				END 
+				END
 			END
 
 
-		  SET @resultstr = CONVERT(varchar, @result) + '' + 
+		  SET @resultstr = CONVERT(varchar, @result) + '' +
 						   '"' + @index + '"' +
 						   '"' + @country + '"' +
 						   '"' + @region + '"' +
@@ -311,7 +311,7 @@ BEGIN
 						   '"' + @city + '"' +
 						   '"' + @street + '"' +
 						   '"' + @home + '"'
-		                   
+
 
 		  DECLARE @streetid int
 
@@ -323,11 +323,11 @@ BEGIN
 		  DECLARE @streetprefix varchar(50)
 
 
-		  IF CHARINDEX('.', @city) <> 0 
+		  IF CHARINDEX('.', @city) <> 0
 			BEGIN
 			  SET @cityprefix = LEFT(@city, CHARINDEX('.', @city))
 			  -- есть точка, значит скорее всего есть г. До точки включительно - префикс
-		               
+
 			  SET @cityname = LTRIM(RTRIM(RIGHT(@city, LEN(@city) - CHARINDEX('.', @city))))
 			END
 		  ELSE
@@ -343,12 +343,12 @@ BEGIN
 			  SET @cityname = ''
 			END
 
-		  IF CHARINDEX('.', @street) <> 0 
+		  IF CHARINDEX('.', @street) <> 0
 			BEGIN
 			  -- есть точка, значит скорее всего есть г. До точки включительно - префикс
 			  SET @streetprefix = LEFT(@street, CHARINDEX('.', @street))
 			  -- есть точка, значит скорее всего есть г. До точки включительно - префикс
-		               
+
 			  SET @streetname = LTRIM(RTRIM(RIGHT(@street, LEN(@street) - CHARINDEX('.', @street))))
 			END
 		  ELSE
@@ -357,7 +357,7 @@ BEGIN
 			  SET @streetname = @street
 			END
 
-		  IF LEN(@streetprefix) > 5 OR LEN(@streetname) < 5 
+		  IF LEN(@streetprefix) > 5 OR LEN(@streetname) < 5
 			BEGIN
 			  SET @streetprefix = ''
 			  SET @streetname = ''
@@ -365,32 +365,32 @@ BEGIN
 
 		  DECLARE @street_temp_name varchar(100)
 
-		  SELECT @street_temp_name = ST_NAME, @streetid = ST_ID 
+		  SELECT @street_temp_name = ST_NAME, @streetid = ST_ID
 		  FROM ClientAddressTable INNER JOIN
 			   StreetTable ON ClientAddressTable.CA_ID_STREET = StreetTable.ST_ID
 		  WHERE CA_ID_CLIENT = @clientid AND CA_ID_TYPE = 2
 
 		  IF UPPER(@street_temp_name) <> UPPER(@streetname)
 			BEGIN
-			  SET @streetid = 0      
-		 
-			  SELECT @streetid = ST_ID 
+			  SET @streetid = 0
+
+			  SELECT @streetid = ST_ID
 			  FROM StreetTable a INNER JOIN
 				   CityTable b ON a.ST_ID_CITY = b.CT_ID
 			  WHERE ST_NAME = @streetname AND CT_NAME = @cityname
 			END
 
-		  IF @streetid <> 0 
+		  IF @streetid <> 0
 			EXEC CLIENT_ADDRESS_EDIT @clientaddressid, @streetid, @index, @home, 1, @addressstr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
- 
+
 END

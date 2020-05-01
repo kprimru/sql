@@ -10,7 +10,7 @@ GO
 Описание:	  Изменить данные о типе прейскуранта
                с указанным кодом
 */
-ALTER PROCEDURE [dbo].[PRICE_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_EDIT]
 	@pricetypeid SMALLINT,
 	@pricetypename VARCHAR(50),
 	@group SMALLINT,
@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PriceTypeTable 
+		UPDATE dbo.PriceTypeTable
 		SET PT_NAME = @pricetypename,
 			PT_ID_GROUP = @group,
 			PT_COEF = @coef,
@@ -49,9 +49,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

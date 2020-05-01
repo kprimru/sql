@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_EDIT]
 	@id SMALLINT,
 	@prefix VARCHAR(20),
 	@name VARCHAR(250),
@@ -44,12 +44,12 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.SystemTable 
+		UPDATE dbo.SystemTable
 		SET SYS_PREFIX = @prefix,
-			SYS_NAME = @name, 
-			SYS_SHORT_NAME = @shortname, 
-			SYS_REG_NAME = @regname, 
-			SYS_ID_HOST = @hostid,     
+			SYS_NAME = @name,
+			SYS_SHORT_NAME = @shortname,
+			SYS_REG_NAME = @regname,
+			SYS_ID_HOST = @hostid,
 			SYS_ID_SO = @soid,
 			SYS_ORDER = @order,
 			SYS_REPORT = @report,
@@ -65,9 +65,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

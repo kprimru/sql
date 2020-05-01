@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_CHECK_REPORT_POS] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_CHECK_REPORT_POS]
 	@clientid INT,
 	@reportposid SMALLINT
 AS
@@ -29,7 +29,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT PER_ID 
+		SELECT PER_ID
 		FROM dbo.ClientPersonalTable
 		WHERE PER_ID_CLIENT = @clientid AND PER_ID_REPORT_POS = @reportposid
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

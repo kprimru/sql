@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_FACT_ACT_SELECT]
@@ -16,7 +16,7 @@ ALTER PROCEDURE [dbo].[CLIENT_FACT_ACT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -47,9 +47,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

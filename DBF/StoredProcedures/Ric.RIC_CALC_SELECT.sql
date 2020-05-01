@@ -29,7 +29,7 @@ BEGIN
 		SELECT @CUR_DATE = PR_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ID
-		
+
 		IF OBJECT_ID('tempdb..#weight') IS NOT NULL
 			DROP TABLE #weight
 
@@ -81,7 +81,7 @@ BEGIN
 				SERVICE_SUM	MONEY,
 				MSVUD_SUM	MONEY,
 				BASE_SUM	MONEY,
-				CALC_SUM	MONEY,			
+				CALC_SUM	MONEY,
 				INC_DISCOUNT	DECIMAL(8, 4),
 				PREPAY_DISCOUNT	DECIMAL(8, 4),
 				TOTAL_DISCOUNT	DECIMAL(8, 4),
@@ -97,26 +97,26 @@ BEGIN
 			SELECT HST_ID, HST_SHORT, PR_DATE, PS_PRICE, 0, ISNULL(INC_PREF, 0)
 			FROM
 				(
-					SELECT 
+					SELECT
 						HST_ID, HST_SHORT, PR_DATE, PS_PRICE, INC_PREF,
 						(
 							SELECT MIN(SYS_ORDER)
 							FROM dbo.SystemTable
 							WHERE SYS_ID_HOST = HST_ID
 						) AS HST_ORDER
-					FROM 
+					FROM
 						dbo.HostTable
-						LEFT OUTER JOIN 
+						LEFT OUTER JOIN
 							(
 								SELECT PR_DATE, HP_ID_HOST
-								FROM 
-									Ric.HostPeriod 
+								FROM
+									Ric.HostPeriod
 									LEFT OUTER JOIN dbo.PeriodTable ON PR_ID = HP_ID_PERIOD
 							) AS a ON HST_ID = a.HP_ID_HOST
 						LEFT OUTER JOIN
 							(
 								SELECT HP_ID_HOST, 1 AS INC_PREF
-								FROM 
+								FROM
 									Ric.HostPeriod
 									INNER JOIN dbo.PeriodTable ON PR_ID = HP_ID_INC_PREF
 								WHERE PR_DATE <= @CUR_DATE
@@ -132,7 +132,7 @@ BEGIN
 					WHERE EXISTS
 						(
 							SELECT *
-							FROM 
+							FROM
 								dbo.PeriodRegExceptView
 								INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
 								INNER JOIN dbo.SystemTable ON REG_ID_SYSTEM = SYS_ID
@@ -142,28 +142,28 @@ BEGIN
 			ORDER BY HST_ORDER
 
 		INSERT INTO #calc(ID_MASTER, SYS_ID, SYS_SHORT, PS_PRICE, MSVUD_SUM, INC_PREF)
-			SELECT 
+			SELECT
 				(
-					SELECT ID 
+					SELECT ID
 					FROM #calc
 					WHERE HST_ID = SYS_ID_HOST
 				), SYS_ID, SYS_SHORT_NAME, PS_PRICE,
 				(
 					SELECT PS_PRICE
 					FROM dbo.PriceSystemTable
-					WHERE PS_ID_PERIOD = @PR_ID 
-						AND PS_ID_SYSTEM = SYS_ID 
+					WHERE PS_ID_PERIOD = @PR_ID
+						AND PS_ID_SYSTEM = SYS_ID
 						AND PS_ID_TYPE = 15
-				) * 
+				) *
 				(
 					SELECT SUM(
-							CASE SNC_NET_COUNT 
+							CASE SNC_NET_COUNT
 								WHEN 50 THEN 3
 								WHEN 100 THEN 6
 								WHEN 150 THEN 9
 							END
 							)
-					FROM 
+					FROM
 						dbo.PeriodRegExceptView
 						INNER JOIN dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE
 						INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
@@ -176,8 +176,8 @@ BEGIN
 					FROM #calc
 					WHERE HST_ID = SYS_ID_HOST
 				)
-			FROM 
-				dbo.SystemTable		
+			FROM
+				dbo.SystemTable
 				INNER JOIN dbo.PriceSystemTable ON PS_ID_SYSTEM = SYS_ID
 			WHERE PS_ID_TYPE = 15 AND PS_ID_PERIOD = @PR_ID
 				AND EXISTS
@@ -198,22 +198,22 @@ BEGIN
 				#weight a
 			WHERE ID_MASTER IS NOT NULL
 			ORDER BY ID
-			
+
 
 		UPDATE a
-		SET SYS_COUNT = 
+		SET SYS_COUNT =
 			(
 				SELECT SUM(SYS_COUNT)
 				FROM #calc b
 				WHERE b.ID_MASTER = a.ID
 			),
-			RES_COUNT = 
+			RES_COUNT =
 			(
 				SELECT SUM(RES_COUNT)
 				FROM #calc b
 				WHERE b.ID_MASTER = a.ID
 			),
-			WEIGHT = 
+			WEIGHT =
 			(
 				SELECT SUM(WEIGHT)
 				FROM #calc b
@@ -239,15 +239,15 @@ BEGIN
 
 		/*
 		UPDATE a
-		SET SERVICE_SUM = 
+		SET SERVICE_SUM =
 			(
 				SELECT SUM(SERVICE_SUM)
 				FROM #calc b
 				WHERE b.ID_MASTER = a.ID
 			)
 		FROM #calc a
-		WHERE ID_MASTER IS NULL	
-		*/	
+		WHERE ID_MASTER IS NULL
+		*/
 
 		DECLARE @BASE	MONEY
 		DECLARE @KBU	DECIMAL(10, 4)
@@ -256,22 +256,22 @@ BEGIN
 		FROM Ric.KBU
 		WHERE RK_ID_QUARTER = dbo.PeriodQuarter(@PR_ID)
 
-		SELECT 
+		SELECT
 			ID, ID_MASTER,
 			CASE
 				WHEN PR_DATE = @CUR_DATE THEN 'ֿונגûי לוסÿצ ֿׁ׃'
 				ELSE ''
-			END AS SPU_FIRST, 
-			SYS_SHORT, SST_CAPTION, SN_NAME, SH_SUBHOST, 
-			SST_COEF, SN_COEF, SH_COEF, SYS_COUNT, RES_COUNT, 
+			END AS SPU_FIRST,
+			SYS_SHORT, SST_CAPTION, SN_NAME, SH_SUBHOST,
+			SST_COEF, SN_COEF, SH_COEF, SYS_COUNT, RES_COUNT,
 			WEIGHT, PS_PRICE, INC_PREF,
 
-			SERVICE_SUM, SPU_PRICE, 
+			SERVICE_SUM, SPU_PRICE,
 
 			MSVUD_SUM, BASE_SUM, CALC_SUM,
-			INC_DISCOUNT, PREPAY_DISCOUNT, TOTAL_DISCOUNT, 
+			INC_DISCOUNT, PREPAY_DISCOUNT, TOTAL_DISCOUNT,
 			TOTAL_SUM
-		FROM #calc 
+		FROM #calc
 		ORDER BY ID
 
 		IF OBJECT_ID('tempdb..#weight') IS NOT NULL
@@ -279,14 +279,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#calc') IS NOT NULL
 			DROP TABLE #calc
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

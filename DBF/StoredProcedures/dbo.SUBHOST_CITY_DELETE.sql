@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 06.11.2008
-Описание:	  Удалить подхосту город 
+Описание:	  Удалить подхосту город
                 сбытовой территории
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CITY_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_DELETE]
 	@subhostcityid INT
 AS
 BEGIN
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

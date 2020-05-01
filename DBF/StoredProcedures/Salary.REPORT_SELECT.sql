@@ -23,21 +23,21 @@ BEGIN
 	BEGIN TRY
 
 		/*
-		SELECT	
-			ID, PR_NAME, COUR_NAME, COUR_BASE, TO_ID, CL_ID, CL_PSEDO, CL_BASE, CLT_ID, 
-			CLT_NAME, SYS_COUNT, CL_SUM, TO_COUNT PRICE, TOTAL_PRICE, COUR_MIN, COUR_MAX, 
+		SELECT
+			ID, PR_NAME, COUR_NAME, COUR_BASE, TO_ID, CL_ID, CL_PSEDO, CL_BASE, CLT_ID,
+			CLT_NAME, SYS_COUNT, CL_SUM, TO_COUNT PRICE, TOTAL_PRICE, COUR_MIN, COUR_MAX,
 			COUR_PERCENT, COEF, CL_PAY, CL_ACT_KGS, TOTAL, COUR_COUNT, CL_TERR
 		FROM
 			asdasd
-		*/	
-		
+		*/
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

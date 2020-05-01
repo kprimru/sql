@@ -22,17 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 				a.TO_NAME
 			,	'''' + TO_INN AS CL_INN
 			,	(CT_PREFIX + ' ' + CT_NAME + ', ' + ISNULL(ST_PREFIX + ' ', '') + ST_NAME + ISNULL(' ' + ST_SUFFIX, '') + ', ' + TA_HOME) AS TO_ADDRESS
-			,	
+			,
 				(
-					SELECT TOP 1 
-						CO_NUM + ' от ' + CONVERT(VARCHAR(20), CO_DATE, 104) + 
-						' с ' + CONVERT(VARCHAR(20), CO_BEG_DATE, 104) + ISNULL(' по ' + CONVERT(VARCHAR(20), CO_END_DATE, 104), '') + 
+					SELECT TOP 1
+						CO_NUM + ' от ' + CONVERT(VARCHAR(20), CO_DATE, 104) +
+						' с ' + CONVERT(VARCHAR(20), CO_BEG_DATE, 104) + ISNULL(' по ' + CONVERT(VARCHAR(20), CO_END_DATE, 104), '') +
 						'. “ип оплаты: ' + ISNULL(COP_NAME, '')
-					FROM 
+					FROM
 						dbo.ContractTable LEFT OUTER JOIN
 						dbo.ContractPayTable ON COP_ID = CO_ID_PAY
 					WHERE CO_ID_CLIENT = CL_ID
@@ -48,7 +48,7 @@ BEGIN
 			,	(res.TP_SURNAME + ' ' + res.TP_NAME + ' ' + res.TP_OTCH) AS RES_NAME
 			,	res.POS_NAME AS RES_POS
 			,	res.TP_PHONE AS RES_PHONE
-		FROM 
+		FROM
 			dbo.TOTable a INNER JOIN
 			dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID LEFT OUTER JOIN
 			dbo.TOAddressTable c ON c.TA_ID_TO = a.TO_ID LEFT OUTER JOIN
@@ -59,14 +59,14 @@ BEGIN
 			dbo.TOPersonalView buh ON a.TO_ID = buh.TP_ID_TO AND buh.RP_PSEDO = 'BUH' LEFT OUTER JOIN
 			dbo.TOPersonalView res ON a.TO_ID = res.TP_ID_TO AND res.RP_PSEDO = 'RES'
 		WHERE TO_ID = @TO_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

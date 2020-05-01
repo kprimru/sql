@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE a
-		SET PS_PRICE = 
+		SET PS_PRICE =
 				(
 					SELECT ROUND(PS_PRICE * PD_COEF, 2)
-					FROM 
+					FROM
 						dbo.PriceSystemTable z
 						INNER JOIN dbo.PriceDepend ON PD_ID_SOURCE = PS_ID_TYPE
 					WHERE z.PS_ID_PERIOD = @PR_ID
@@ -37,7 +37,7 @@ BEGIN
 						AND PS_ID_PGD IS NULL
 						AND PD_ID_PERIOD = @PR_ID
 				)
-		FROM 
+		FROM
 			dbo.PriceSystemTable a
 			INNER JOIN dbo.PriceTypeTable c ON c.PT_ID = a.PS_ID_TYPE
 		WHERE PS_ID_PERIOD = @PR_ID
@@ -46,18 +46,18 @@ BEGIN
 			AND EXISTS
 				(
 					SELECT *
-					FROM dbo.PriceDepend b 
+					FROM dbo.PriceDepend b
 					WHERE PD_ID_TYPE = PS_ID_TYPE
 						AND PD_ID_PERIOD = @PR_ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

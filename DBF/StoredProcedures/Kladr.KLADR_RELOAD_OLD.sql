@@ -23,16 +23,16 @@ BEGIN
 
 		IF EXISTS
 			(
-				SELECT srvname 
-				FROM master.dbo.sysservers 
+				SELECT srvname
+				FROM master.dbo.sysservers
 				WHERE srvname='KladrData'
-			) 
-			EXEC sp_dropserver @server='KladrData', @droplogins='droplogins' 
+			)
+			EXEC sp_dropserver @server='KladrData', @droplogins='droplogins'
 
-		EXEC sp_addlinkedserver @server = N'KladrData', 
-								@srvproduct=N'MicrosoftJet.OLEDB.4.0', 
-								@provider=N'Microsoft.Jet.OLEDB.4.0', 
-								@datasrc=N'E:\KLADR\', 
+		EXEC sp_addlinkedserver @server = N'KladrData',
+								@srvproduct=N'MicrosoftJet.OLEDB.4.0',
+								@provider=N'Microsoft.Jet.OLEDB.4.0',
+								@datasrc=N'E:\KLADR\',
 								@provstr=N'dBase 5.0'
 
 		EXEC sp_addlinkedsrvlogin 'KladrData', 'false', 'sa', 'admin'
@@ -77,14 +77,14 @@ BEGIN
 		EXEC sp_dropserver 'KladrData'
 
 		EXEC Kladr.KLADR_TREE_CREATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -30,14 +30,14 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO Ric.DepthCoef(DC_ID_QUARTER, DC_VALUE)
 				SELECT @QR_ID, @VALUE
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

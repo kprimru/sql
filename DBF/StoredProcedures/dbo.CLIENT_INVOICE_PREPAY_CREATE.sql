@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[CLIENT_INVOICE_PREPAY_CREATE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -30,7 +30,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		-- проверяем, есть ли уже (неавансовая) счет-фактура клиенту за этот период
 		IF NOT EXISTS (SELECT * FROM dbo.InvoiceSaleTable INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE=INS_ID
 						WHERE INS_ID_CLIENT=@clientid AND INR_ID_PERIOD=@periodid AND INS_PREPAY=0)
@@ -42,15 +42,15 @@ BEGIN
 			SET @idstring = ''
 			SELECT	@docstring = @docstring + ('№'+IN_PAY_NUM +' от '+CONVERT(varchar,IN_PAY_DATE,104)) + '; ',
 					@idstring = @idstring + CONVERT(varchar,IN_ID) + ','
-					FROM	
+					FROM
 						(
 							SELECT DISTINCT	IN_PAY_NUM, IN_ID_CLIENT, ID_ID_PERIOD, IN_PAY_DATE,
 											IN_ID
 							FROM
-								dbo.IncomeTable inner join 
+								dbo.IncomeTable inner join
 								dbo.IncomeDistrTable on IN_ID = ID_ID_INCOME
 							WHERE	ID_ID_PERIOD = @periodid	and
-									IN_ID_CLIENT = @clientid 
+									IN_ID_CLIENT = @clientid
 						)	AS O_o
 			SET @docstring = LEFT(@docstring, LEN(@docstring)-1)
 			SET @idstring = LEFT(@idstring, LEN(@idstring)-1)
@@ -68,7 +68,7 @@ BEGIN
 				END
 
 			-- сначала добавляем саму счет-фактуру
-			
+
 			INSERT INTO dbo.InvoiceSaleTable(
 				INS_ID_ORG,
 				INS_DATE,
@@ -86,13 +86,13 @@ BEGIN
 				INS_COMMENT,
 				INS_PREPAY
 				)
-			SELECT 
+			SELECT
 				(SELECT CL_ID_ORG FROM dbo.ClientTable WHERE CL_ID=@clientid),
-			
+
 				@invdate,
-				
+
 				@num,
-				
+
 				RIGHT(DATEPART(yy,@invdate),2),
 
 				@clientid,
@@ -120,13 +120,13 @@ BEGIN
 			WHERE
 				NOT EXISTS	(
 					SELECT *
-					FROM 
+					FROM
 						dbo.IncomeDistrView	A									INNER JOIN
 						dbo.DistrView		B WITH(NOEXPAND)	ON	A.DIS_ID=B.DIS_ID
 					WHERE PR_ID = @periodid	and
 						IN_ID_CLIENT =	@clientid	and
 						SYS_ID_SO	  =	@soid		and
-						
+
 						EXISTS	(
 								SELECT *
 								FROM
@@ -142,9 +142,9 @@ BEGIN
 							FROM
 								(
 									SELECT IN_ID_CLIENT, ID_ID_DISTR, SUM(ID_PRICE) AS ID_PRICE, ID_ID_PERIOD
-									FROM 
+									FROM
 										dbo.IncomeDistrTable	A			INNER JOIN
-										dbo.IncomeTable			Z	ON	A.ID_ID_INCOME = Z.IN_ID	
+										dbo.IncomeTable			Z	ON	A.ID_ID_INCOME = Z.IN_ID
 									WHERE IN_ID_CLIENT = @clientid AND ID_ID_PERIOD = @periodid
 									GROUP BY ID_ID_DISTR, ID_ID_PERIOD, IN_ID_CLIENT
 								)				AS	O_o									INNER JOIN
@@ -165,15 +165,15 @@ BEGIN
 													INR_ID_PERIOD=@periodid	AND
 													B.DIS_ID=INR_ID_DISTR
 											)
-							 ) > 0 
-				
+							 ) > 0
 
-			
+
+
 
 			DECLARE @newinvid INT
 			SET @newinvid = SCOPE_IDENTITY()
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 			-- потом добавляем строки таблицы счета-фактуры
 			INSERT INTO dbo.InvoiceRowTable (INR_ID_INVOICE,
 										 INR_NAME, INR_SUM, INR_ID_TAX, INR_TNDS, INR_SNDS, INR_SALL,
@@ -182,7 +182,7 @@ BEGIN
 					@newinvid,
 
 					'Предоплата за '+SO_INV_STR+' '+C.SYS_NAME,
-					
+
 					CONVERT(money, ROUND(ID_PRICE / (1 + TX_PERCENT / 100), 2)),
 					SO_ID_TAX, TX_PERCENT,
 					(ID_PRICE - CONVERT(money, ROUND(ID_PRICE / (1 + TX_PERCENT / 100), 2))),
@@ -192,9 +192,9 @@ BEGIN
 			FROM
 				(
 					SELECT IN_ID_CLIENT, ID_ID_DISTR, SUM(ID_PRICE) AS ID_PRICE, ID_ID_PERIOD
-					FROM 
+					FROM
 						dbo.IncomeDistrTable	A			INNER JOIN
-						dbo.IncomeTable			Z	ON	A.ID_ID_INCOME = Z.IN_ID	
+						dbo.IncomeTable			Z	ON	A.ID_ID_INCOME = Z.IN_ID
 					WHERE IN_ID_CLIENT = @clientid AND ID_ID_PERIOD = @periodid
 					GROUP BY ID_ID_DISTR, ID_ID_PERIOD, IN_ID_CLIENT
 				)				AS	O_o									INNER JOIN
@@ -220,7 +220,7 @@ BEGIN
 					DROP TABLE #incomes
 
 				CREATE TABLE #incomes ( inc_id INT NOT NULL )
-				INSERT INTO #incomes 
+				INSERT INTO #incomes
 					SELECT * FROM dbo.GET_TABLE_FROM_LIST(@idstring, ',')
 
 				-- заносим в Income сведения о созданной с/ф (в ID_ID_INVOCIE)
@@ -228,19 +228,19 @@ BEGIN
 				WHERE IN_ID IN (SELECT inc_id FROM #incomes)
 
 				IF OBJECT_ID('tempdb..#incomes') IS NOT NULL
-					DROP TABLE #incomes	
-					
+					DROP TABLE #incomes
+
 			EXEC dbo.BOOK_SALE_PROCESS @newinvid
 			EXEC dbo.BOOK_PURCHASE_PROCESS @newinvid
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

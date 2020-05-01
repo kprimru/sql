@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -29,10 +29,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-				CO_ID, CO_ACTIVE, CO_NUM, CO_DATE, CO_BEG_DATE, CO_END_DATE, 
+		SELECT
+				CO_ID, CO_ACTIVE, CO_NUM, CO_DATE, CO_BEG_DATE, CO_END_DATE,
 				CTT_NAME, CTT_ID, COP_ID, COP_NAME, CK_NAME, CO_IDENT
-		FROM 
+		FROM
 			dbo.ContractTable co LEFT OUTER JOIN
 			dbo.ContractTypeTable ctt ON ctt.CTT_ID = co.CO_ID_TYPE LEFT OUTER JOIN
 			dbo.ContractPayTable ON CO_ID_PAY = COP_ID LEFT OUTER JOIN
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

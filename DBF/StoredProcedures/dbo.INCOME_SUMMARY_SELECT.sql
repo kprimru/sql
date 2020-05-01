@@ -27,14 +27,14 @@ BEGIN
 		FROM dbo.SaldoIncomeSummaryView
 		WHERE SL_DATE = @date
 		ORDER BY CL_PSEDO, CL_ID, DIS_STR, PR_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

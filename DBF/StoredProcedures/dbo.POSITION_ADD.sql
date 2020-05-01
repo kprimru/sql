@@ -12,7 +12,7 @@ GO
 Описание:	  Добавить должность в справочник
 */
 
-ALTER PROCEDURE [dbo].[POSITION_ADD] 
+ALTER PROCEDURE [dbo].[POSITION_ADD]
 	@positionname VARCHAR(150),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.PositionTable(POS_NAME, POS_ACTIVE) 
+		INSERT INTO dbo.PositionTable(POS_NAME, POS_ACTIVE)
 		VALUES (@positionname, @active)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

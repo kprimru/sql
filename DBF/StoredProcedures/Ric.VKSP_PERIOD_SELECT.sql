@@ -43,32 +43,32 @@ BEGIN
 
 		IF @PR_DATE >= '20120601'
 		BEGIN
-			SELECT @SDATE = 
+			SELECT @SDATE =
 				(
 					SELECT PR_DATE
 					FROM dbo.PeriodTable
 					WHERE PR_ID = @PR_START
-				), 
+				),
 				@VKSP_START =  Ric.VKSPGet(@PR_ALG, @PR_START, @PR_END, @PR_END),
 				@EDATE = (
 					SELECT PR_DATE
 					FROM dbo.PeriodTable
 					WHERE PR_ID = @PR_END
-				), 
+				),
 				@VKSP_END =  Ric.VKSPGet(@PR_ALG, @PR_END, @PR_END, @PR_END)
 		END
 
-		SELECT 
+		SELECT
 			@SDATE AS PR_START,	@VKSP_START AS VKSP_START,
 			@EDATE AS PR_END,	@VKSP_END   AS VKSP_END
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

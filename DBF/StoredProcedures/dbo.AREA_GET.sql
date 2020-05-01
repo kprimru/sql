@@ -7,16 +7,16 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AREA_GET] 
+ALTER PROCEDURE [dbo].[AREA_GET]
   @areaid SMALLINT = NULL
 AS
 
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -28,18 +28,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT AR_ID, AR_NAME, AR_ACTIVE
-		FROM dbo.AreaTable 
-		WHERE AR_ID = @areaid   
+		FROM dbo.AreaTable
+		WHERE AR_ID = @areaid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

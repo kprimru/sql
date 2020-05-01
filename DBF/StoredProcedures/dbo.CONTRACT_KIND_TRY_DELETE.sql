@@ -7,14 +7,14 @@ GO
 
 /*
 јвтор:		  ƒенисов јлексей
-ќписание:	  ¬озвращает 0, если тип договора с 
-                указанным кодом можно удалить 
-                (на нее не ссылаетс€ ни один 
-                договор клиента), 
+ќписание:	  ¬озвращает 0, если тип договора с
+                указанным кодом можно удалить
+                (на нее не ссылаетс€ ни один
+                договор клиента),
                 -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_KIND_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CONTRACT_KIND_TRY_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		
+
 
 		SELECT @res AS RES, @txt AS TXT
 
@@ -47,9 +47,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

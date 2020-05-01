@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_SELECT] 
+ALTER PROCEDURE [dbo].[SUBHOST_SELECT]
     @active BIT = NULL
 AS
 BEGIN
@@ -28,8 +28,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_LST_NAME, SH_ORDER, SH_ACTIVE 
-		FROM dbo.SubhostTable 
+		SELECT SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_LST_NAME, SH_ORDER, SH_ACTIVE
+		FROM dbo.SubhostTable
 		WHERE SH_ACTIVE = ISNULL(@active, SH_ACTIVE)
 		ORDER BY SH_ORDER
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

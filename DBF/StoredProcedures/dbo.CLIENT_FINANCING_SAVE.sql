@@ -30,14 +30,14 @@ BEGIN
 			BILL_MASS_PRINT = @BILL_MASS_PRINT,
 			UNKNOWN_FINANCING = @UNKNOWN
 		WHERE ID_CLIENT = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

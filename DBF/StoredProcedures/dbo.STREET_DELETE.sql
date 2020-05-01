@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Удалить улицу с указанным кодом 
+Описание:	  Удалить улицу с указанным кодом
                из справочника
 */
 
-ALTER PROCEDURE [dbo].[STREET_DELETE] 
+ALTER PROCEDURE [dbo].[STREET_DELETE]
 	@streetid INT
 AS
 BEGIN
@@ -36,9 +36,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

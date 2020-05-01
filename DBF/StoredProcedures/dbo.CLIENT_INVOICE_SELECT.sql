@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	
+		SELECT
 			INS_ID, INS_DATE, (CONVERT(VARCHAR(20), INS_NUM) + '/' + INS_NUM_YEAR) AS INS_FULL_NUM,
-			ORG_PSEDO, 
+			ORG_PSEDO,
 			(
-				SELECT SUM(INR_SALL) 
-				FROM dbo.InvoiceRowTable 
+				SELECT SUM(INR_SALL)
+				FROM dbo.InvoiceRowTable
 				WHERE INR_ID_INVOICE = INS_ID
 			) IF_TOTAL_PRICE, INT_NAME, ACT_ID,
 			(
 				SELECT SUM(S_ALL)
-				FROM 
+				FROM
 					dbo.BookSale z
 					INNER JOIN dbo.BookSaleDetail y ON z.ID = y.ID_SALE
 				WHERE INS_ID = ID_INVOICE
@@ -48,7 +48,7 @@ BEGIN
 			CONVERT(VARCHAR(500), (
 				SELECT 'Аванс: ' + CONVERT(VARCHAR(20), ID_AVANS) + ' , Реализ: ' + CONVERT(VARCHAR(20), ID_INVOICE) + '; Сумма: ' + dbo.MoneyFormat(S_ALL) + ' ||  '
 				FROM
-					( 
+					(
 						SELECT DISTINCT ID_INVOICE, ID_AVANS, SUM(S_ALL) AS S_ALL
 						FROM
 							dbo.BookPurchase z
@@ -58,7 +58,7 @@ BEGIN
 					) AS o_O
 				ORDER BY ID_INVOICE FOR XML PATH('')
 			)) AS PURCHASE_SUM
-		FROM 
+		FROM
 			dbo.InvoiceSaleTable
 			INNER JOIN dbo.ClientTable ON INS_ID_CLIENT = CL_ID
 			INNER JOIN dbo.OrganizationTable ON ORG_ID = INS_ID_ORG
@@ -71,9 +71,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,10 +10,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_ADD]
 	@clientid INT,
 	@streetid INT,
 	@index VARCHAR(100),
@@ -41,9 +41,9 @@ BEGIN
 
 		INSERT INTO dbo.ClientAddressTable
 							(
-								CA_ID_CLIENT, CA_ID_TYPE, CA_ID_STREET, 
+								CA_ID_CLIENT, CA_ID_TYPE, CA_ID_STREET,
 								CA_HOME, CA_INDEX, CA_STR, CA_ID_TEMPLATE, CA_FREE
-							) 
+							)
 		VALUES (@clientid, @addresstypeid, @streetid, @home, @index, @addressstr, @templateid, @free)
 
 		IF @returnvalue = 1
@@ -67,9 +67,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

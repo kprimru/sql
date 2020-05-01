@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[PeriodRegView]
 AS
-SELECT	
+SELECT
 		REG_ID,
 		PR_DATE,		REG_ID_PERIOD,
 		SYS_SHORT_NAME,	REG_ID_SYSTEM, SYS_ORDER, SYS_ID_HOST,
@@ -31,4 +31,4 @@ FROM	dbo.PeriodRegTable		A									LEFT JOIN
 		dbo.SystemTypeTable		E	ON	A.REG_ID_TYPE = E.SST_ID	LEFT JOIN
 		dbo.SystemNetCountTable	F	ON	A.REG_ID_NET = F.SNC_ID		LEFT JOIN
 		dbo.CourierTable		G	ON	A.REG_ID_COUR = G.COUR_ID	LEFT JOIN
-		dbo.DistrStatustable	H	ON	A.REG_ID_STATUS = H.DS_ID	
+		dbo.DistrStatustable	H	ON	A.REG_ID_STATUS = H.DS_ID

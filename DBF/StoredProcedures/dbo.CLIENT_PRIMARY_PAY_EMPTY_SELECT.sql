@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_PRIMARY_PAY_EMPTY_SELECT]
@@ -32,21 +32,21 @@ BEGIN
 		FROM dbo.ClientTable
 		WHERE EXISTS
 			(
-				SELECT * 
+				SELECT *
 				FROM
-					dbo.ClientDistrTable LEFT OUTER JOIN 
+					dbo.ClientDistrTable LEFT OUTER JOIN
 					dbo.PrimaryPayTable ON PRP_ID_DISTR = CD_ID_DISTR
 				WHERE CD_ID_CLIENT = CL_ID AND PRP_ID IS NULL
 			)
 		ORDER BY CL_PSEDO, CL_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

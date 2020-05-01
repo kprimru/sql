@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[DISTR_GET_TAX]
@@ -30,19 +30,19 @@ BEGIN
 	BEGIN TRY
 
 		SELECT TX_PERCENT, TX_ID, TX_CAPTION
-		FROM 
+		FROM
 			dbo.TaxTable a INNER JOIN
 			dbo.SaleObjectTable b ON a.TX_ID = b.SO_ID_TAX INNER JOIN
 			dbo.DistrView c WITH(NOEXPAND) ON c.SYS_ID_SO = b.SO_ID
 		WHERE DIS_ID = @distrid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

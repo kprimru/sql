@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить улицу в справочник
 */
 
-ALTER PROCEDURE [dbo].[STREET_ADD] 
+ALTER PROCEDURE [dbo].[STREET_ADD]
 	@streetname VARCHAR(150),
 	@streetprefix VARCHAR(10),
 	@streetsuffix VARCHAR(10),
@@ -35,7 +35,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.StreetTable (ST_NAME, ST_PREFIX, ST_SUFFIX, ST_ID_CITY, ST_ACTIVE, ST_OLD_CODE) 
+		INSERT INTO dbo.StreetTable (ST_NAME, ST_PREFIX, ST_SUFFIX, ST_ID_CITY, ST_ACTIVE, ST_OLD_CODE)
 		VALUES (@streetname, @streetprefix, @streetsuffix, @cityid, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

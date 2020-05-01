@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INCOME_OUT_AUTO_CONVEY]
 	@incomeid INT,
@@ -21,7 +21,7 @@ ALTER PROCEDURE [dbo].[INCOME_OUT_AUTO_CONVEY]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -33,7 +33,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
 
@@ -49,18 +49,18 @@ BEGIN
 			INSERT INTO #distr
 				SELECT DISTINCT SL_ID_DISTR
 				FROM dbo.SaldoTable
-				WHERE SL_ID_CLIENT = 
+				WHERE SL_ID_CLIENT =
 						(
 							SELECT IN_ID_CLIENT
-							FROM dbo.IncomeTable 
+							FROM dbo.IncomeTable
 							WHERE IN_ID = @incomeid
 						)
-				
+
 		IF @soid IS NULL
 			SELECT TOP 1 @soid = SYS_ID_SO
-			FROM 
-				dbo.DistrView a WITH(NOEXPAND) INNER JOIN 
-				#distr b ON a.DIS_ID = b.DIS_ID		
+			FROM
+				dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+				#distr b ON a.DIS_ID = b.DIS_ID
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
@@ -77,16 +77,16 @@ BEGIN
 				PR_DATE SMALLDATETIME,
 				SYS_ORDER INT
 			)
-		
+
 		DECLARE @clientid INT
 		DECLARE @indate SMALLDATETIME
 		DECLARE @pricesum MONEY
-		
-		
-		
+
+
+
 		SELECT @clientid = IN_ID_CLIENT, @indate = IN_DATE, @pricesum = IN_REST
-		FROM dbo.IncomeView 
-		WHERE IN_ID = @incomeid	
+		FROM dbo.IncomeView
+		WHERE IN_ID = @incomeid
 
 		--SELECT @clientid, @indate, @pricesum
 
@@ -98,46 +98,46 @@ BEGIN
 		DECLARE @idid INT
 		DECLARE @i INT
 
-		
-		
+
+
 
 		INSERT INTO #temp
 			(
 				ID_ID_DISTR, ID_PRICE, ID_ID_PERIOD, ID_PREPAY, PAYED, PR_DATE, SYS_ORDER
 			)
-			SELECT 
-				--BD_ID_DISTR, 
+			SELECT
+				--BD_ID_DISTR,
 				ID_ID_DISTR,
-				ID_PRICE,				
+				ID_PRICE,
 				PR_ID, 0, 0, PR_DATE, SYS_ORDER
-			FROM 
+			FROM
 				dbo.IncomeTable INNER JOIN
 				dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID INNER JOIN
 				dbo.PeriodTable ON PR_ID = ID_ID_PERIOD INNER JOIN
 				dbo.DistrView a WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 				#distr b ON a.DIS_ID = b.DIS_ID
-			WHERE ID_PRICE > 0 
+			WHERE ID_PRICE > 0
 				/*AND NOT EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.ActTable INNER JOIN
 							dbo.ActDistrTable ON ACT_ID = AD_ID_ACT
 						WHERE ACT_ID_CLIENT = IN_ID_CLIENT
 							AND ID_ID_DISTR = AD_ID_DISTR
 							AND ID_ID_PERIOD = AD_ID_PERIOD
 					)*/
-				AND IN_ID_CLIENT = @clientid 
-				AND SYS_ID_SO = @soid			
+				AND IN_ID_CLIENT = @clientid
+				AND SYS_ID_SO = @soid
 				ORDER BY PR_DATE DESC, SYS_ORDER
-			
+
 			SET @i = 0
 
-			WHILE @pricesum < 0 
+			WHILE @pricesum < 0
 			BEGIN
-				
+
 				--SELECT @i, @pricesum
-				SET @i = 
+				SET @i =
 					(
 						SELECT MIN(ID_ID)
 						FROM #temp
@@ -148,37 +148,37 @@ BEGIN
 					BREAK
 
 				--SELECT @pricesum
-						
+
 				SELECT @pricesum = @pricesum + ID_PRICE
 				FROM #temp
-				WHERE ID_ID = @i				
-				
+				WHERE ID_ID = @i
+
 				UPDATE #temp
 				SET PAYED = 1
 				WHERE ID_ID = @i
 
 				--SELECT * FROM #temp
-					
+
 				IF @pricesum >= 0
 				BEGIN
-					
+
 					UPDATE #temp
 					SET ID_PRICE = ID_PRICE - ABS(@pricesum)
 					WHERE ID_ID = @i
-					
+
 					--DELETE FROM #temp WHERE ID_ID > @i
 
 					SET @pricesum = 0
 
-					--SELECT * FROM #temp			
+					--SELECT * FROM #temp
 				END
 			END
 
 			DELETE FROM #temp WHERE ID_ID > @i
-		
+
 
 		SELECT DIS_ID, DIS_STR, SUM((-ID_PRICE)) AS ID_PRICE, PR_ID, b.PR_DATE, ID_PREPAY, CONVERT(BIT, 0) AS ID_ACTION
-		FROM 
+		FROM
 			#temp a INNER JOIN
 			dbo.PeriodTable b ON ID_ID_PERIOD = PR_ID INNER JOIN
 			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
@@ -198,9 +198,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -22,12 +22,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CL_FULL_NAME, CL_ID,
-			TO_NUM, TO_NAME, CL_INN, 
+			TO_NUM, TO_NAME, CL_INN,
 			CT_NAME, ST_NAME + ',' + TA_HOME TO_ADDRESS,
-			SYS_SHORT_NAME, RN_NET_COUNT, SST_CAPTION, 
-			CONVERT(VARCHAR(20), DIS_NUM) + 
+			SYS_SHORT_NAME, RN_NET_COUNT, SST_CAPTION,
+			CONVERT(VARCHAR(20), DIS_NUM) +
 			CONVERT(VARCHAR(20),
 				CASE DIS_COMP_NUM
 					WHEN 1 THEN ''
@@ -39,7 +39,7 @@ BEGIN
 				WHEN 1 THEN 'Не сопровождается'
 				ELSE 'Неизвестно'
 			END AS RN_STATUS
-		FROM 
+		FROM
 			dbo.ClientTable INNER JOIN
 			dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
 			dbo.TOAddressTable ON TA_ID_TO = TO_ID INNER JOIN
@@ -47,25 +47,25 @@ BEGIN
 			dbo.CityTable ON CT_ID = ST_ID_CITY INNER JOIN
 			dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
 			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR LEFT OUTER JOIN
-			dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME 
+			dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 						AND RN_DISTR_NUM = DIS_NUM
-						AND RN_COMP_NUM = DIS_COMP_NUM LEFT OUTER JOIN				
-			dbo.SystemTypeTable ON SST_NAME = RN_DISTR_TYPE			
+						AND RN_COMP_NUM = DIS_COMP_NUM LEFT OUTER JOIN
+			dbo.SystemTypeTable ON SST_NAME = RN_DISTR_TYPE
 		WHERE TO_ID_CLIENT IN
 			(
 				SELECT *
 				FROM dbo.GET_TABLE_FROM_LIST(@CL_ID, ',')
-			)	
+			)
 			AND SYS_ID_SO = 1
 		ORDER BY CL_PSEDO, TO_NUM, SYS_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

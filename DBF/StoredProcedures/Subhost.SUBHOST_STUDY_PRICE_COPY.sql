@@ -27,19 +27,19 @@ BEGIN
 
 		IF @REPL = 1
 			DELETE FROM Subhost.SubhostLessonPrice WHERE SLP_ID_PERIOD = @DEST
-		
+
 		INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
 			SELECT @DEST, SLP_ID_LESSON, CONVERT(MONEY, SLP_PRICE * @COEF)
 			FROM Subhost.SubhostLessonPrice
 			WHERE SLP_ID_PERIOD = @SOURCE
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

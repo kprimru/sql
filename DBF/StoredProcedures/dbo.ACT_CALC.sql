@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_CALC]
 	-- Список параметров процедуры
@@ -27,7 +27,7 @@ BEGIN
 	DECLARE @ID INT
 
 	DECLARE @actid INT
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -39,20 +39,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @oldactid IS NULL
 			SELECT TOP 1 @actid = a.ACT_ID
-			FROM 			
-				dbo.ActTable a INNER JOIN 
+			FROM 
+				dbo.ActTable a INNER JOIN
 				dbo.ActContractView b ON a.ACT_ID = b.ACT_ID
-			WHERE ACT_ID_CLIENT = @clientid 
+			WHERE ACT_ID_CLIENT = @clientid
 				AND CO_ID = @coid
-				AND	ACT_ID_INVOICE IS NULL	
+				AND	ACT_ID_INVOICE IS NULL
 			ORDER BY a.ACT_ID DESC
-			
+
 		ELSE
 			SET @actid = @oldactid
-				
+
 		IF @newact = 1
 			SET @actid = NULL
 
@@ -60,7 +60,7 @@ BEGIN
 			BEGIN
 				INSERT INTO dbo.ActTable (ACT_DATE, ACT_ID_CLIENT, ACT_ID_ORG, ACT_ID_COUR, ACT_TO, ACT_ID_PAYER)
 					SELECT @date, @clientid, CL_ID_ORG, @courid, @to, CL_ID_PAYER
-						FROM dbo.ClientTable 
+						FROM dbo.ClientTable
 						WHERE CL_ID = @clientid
 				SELECT @actid = SCOPE_IDENTITY()
 			END
@@ -71,13 +71,13 @@ BEGIN
 				AD_ID_TAX, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 				AD_PAYED_PRICE
 			)
-			SELECT 
+			SELECT
 				@actid, BD_ID_DISTR, @periodid,
 				BD_ID_TAX, BD_PRICE, BD_TAX_PRICE, BD_TOTAL_PRICE,
-				(				
+				(
 					ISNULL((
 						SELECT SUM(ID_PRICE)
-						FROM 
+						FROM
 							dbo.IncomeDistrTable INNER JOIN
 							dbo.IncomeTable ON IN_ID = ID_ID_INCOME INNER JOIN
 							dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
@@ -89,7 +89,7 @@ BEGIN
 							AND a.SO_ID = b.SYS_ID_SO
 						), 0)
 				) AS AD_PAYED_RICE
-			FROM 
+			FROM
 				dbo.BillDistrTable INNER JOIN
 				dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
 				dbo.DistrDocumentView c ON DIS_ID = BD_ID_DISTR INNER JOIN
@@ -99,21 +99,21 @@ BEGIN
 				AND	BD_ID_DISTR = @distrid
 				AND DOC_PSEDO = 'ACT'
 				AND DD_PRINT = 1
-				
+
 		SELECT @ID = SCOPE_IDENTITY()
 		DECLARE @TXT VARCHAR(MAX)
-		
+
 		EXEC dbo.ACT_PROTOCOL_DETAIL @ID, @TXT OUTPUT
-		
+
 		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Расчитана строка акта', @TXT, @clientid, @actid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[ACT_CALC] TO rl_act_w;

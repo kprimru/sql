@@ -23,16 +23,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SPG_ID, SPG_NAME, SPG_ORDER, SPG_ACTIVE
-		FROM Subhost.SubhostProductGroup 
+		FROM Subhost.SubhostProductGroup
 		WHERE SPG_ID = @SPG_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

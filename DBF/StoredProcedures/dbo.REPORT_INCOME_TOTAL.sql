@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_INCOME_TOTAL]
@@ -37,14 +37,14 @@ BEGIN
 			AND IN_ID_ORG = @org
 		GROUP BY IN_DATE
 		ORDER BY IN_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

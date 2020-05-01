@@ -9,19 +9,19 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_ALL_PRINT]
-	@consdate SMALLDATETIME,	
+	@consdate SMALLDATETIME,
 	@courid VARCHAR(MAX),
 	@check BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -33,7 +33,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @curdate DATETIME
 
 		SET @curdate = GETDATE()
@@ -52,13 +52,13 @@ BEGIN
 				FROM dbo.CourierTable
 		ELSE
 			INSERT INTO #cour
-				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@courid, ',')	
+				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@courid, ',')
 
 		DECLARE @conslist VARCHAR(MAX)
 		SET @conslist = ''
 
 		SELECT @conslist = @conslist + CONVERT(VARCHAR(10), CSG_ID) + ','
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT CSG_ID
 				FROM
@@ -69,8 +69,8 @@ BEGIN
 				WHERE CSG_DATE = @consdate
 					AND (CSG_PRINT IS NULL OR CSG_PRINT = 0)
 			) AS o_O
-			
-		
+
+
 
 		IF LEN(@conslist) > 2
 			SET @conslist = LEFT(@conslist, LEN(@conslist) - 1)
@@ -93,15 +93,15 @@ BEGIN
 					SELECT *
 					FROM dbo.GET_TABLE_FROM_LIST(@conslist, ',')
 				)
-		END	
-		
+		END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

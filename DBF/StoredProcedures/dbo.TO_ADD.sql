@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_ADD]
@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[TO_ADD]
 	@toreport BIT,
 	@courid SMALLINT,
 	@vmi VARCHAR(250),
-	@index VARCHAR(20),	
+	@index VARCHAR(20),
 	@streetid SMALLINT,
 	@home VARCHAR(200),
 	@tomain BIT = 0,
@@ -44,9 +44,9 @@ BEGIN
 		DECLARE @toid INT
 
 		INSERT INTO dbo.TOTable(
-							TO_ID_CLIENT, TO_NAME, TO_NUM, 
+							TO_ID_CLIENT, TO_NAME, TO_NUM,
 							TO_REPORT, TO_ID_COUR, TO_VMI_COMMENT, TO_MAIN, TO_INN, TO_PARENT
-							)	
+							)
 		VALUES (
 				@clientid, @toname, @tonum, @toreport, @courid, @vmi, @tomain, @toinn, @parent
 				)
@@ -62,17 +62,17 @@ BEGIN
 					@toid, @index, @streetid, @home
 					)
 		END
-		
-		IF @returnvalue = 1 
+
+		IF @returnvalue = 1
 			SELECT @toid AS NEW_IDEN
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

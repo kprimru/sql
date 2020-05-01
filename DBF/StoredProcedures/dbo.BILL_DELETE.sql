@@ -9,8 +9,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[BILL_DELETE]
@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[BILL_DELETE]
 	@soid SMALLINT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -32,21 +32,21 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.SaldoTable
-		WHERE SL_ID_BILL_DIS IN 
+		WHERE SL_ID_BILL_DIS IN
 				(
-					SELECT BD_ID 
-					FROM 
+					SELECT BD_ID
+					FROM
 						dbo.BillDistrTable INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR
 					WHERE BD_ID_BILL = @billid
-						AND SYS_ID_SO = @soid					
+						AND SYS_ID_SO = @soid
 				)
 		-- Текст процедуры ниже
-		DELETE 
+		DELETE
 		FROM dbo.BillDistrTable
-		WHERE BD_ID_BILL = @billid 
+		WHERE BD_ID_BILL = @billid
 			AND BD_ID_DISTR IN
 				(
 					SELECT DIS_ID
@@ -60,17 +60,17 @@ BEGIN
 				FROM dbo.BillDistrTable
 				WHERE BD_ID_BILL = @billid
 			)
-			DELETE 
+			DELETE
 			FROM dbo.BillTable
 			WHERE BL_ID = @billid
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

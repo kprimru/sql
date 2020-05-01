@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[DISTR_FINANCING_GET]
@@ -28,21 +28,21 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DF_ID, 
-			DIS_STR, DIS_ID, 
-			SN_ID, SN_NAME, 
+		SELECT
+			DF_ID,
+			DIS_STR, DIS_ID,
+			SN_ID, SN_NAME,
 			NULL AS TT_ID, NULL AS TT_NAME,
-			SST_ID, SST_CAPTION,		
-			PP_ID, PP_NAME, 
-			DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, DF_MON_COUNT, 
+			SST_ID, SST_CAPTION,
+			PP_ID, PP_NAME,
+			DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, DF_MON_COUNT,
 			PR_ID, PR_DATE,
 			DF_DEBT	, DF_END, DF_BEGIN,
 			COP_ID, COP_NAME, DF_NAME
-		FROM 
+		FROM
 			dbo.DistrFinancingTable a LEFT OUTER JOIN
 			dbo.DistrView b WITH(NOEXPAND) ON a.DF_ID_DISTR = b.DIS_ID LEFT OUTER JOIN
-			dbo.SystemNetTable c ON c.SN_ID = a.DF_ID_NET LEFT OUTER JOIN				
+			dbo.SystemNetTable c ON c.SN_ID = a.DF_ID_NET LEFT OUTER JOIN
 			dbo.SystemTypeTable e ON e.SST_ID = a.DF_ID_TYPE LEFT OUTER JOIN
 			dbo.PriceTable f ON f.PP_ID = a.DF_ID_PRICE LEFT OUTER JOIN
 			dbo.PeriodTable g ON g.PR_ID = a.DF_ID_PERIOD LEFT OUTER JOIN
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

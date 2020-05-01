@@ -10,7 +10,7 @@ ALTER PROCEDURE [dbo].[CLIENT_CONSIGNMENT_FACT_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,27 +22,27 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @d DATETIME
 		SET @d = CONVERT(DATETIME, @date, 121)
 
-		SELECT * 
-		FROM dbo.ConsignmentFactMasterTable 
-		WHERE CFM_DATE = @d AND CL_ID = @clientid	
+		SELECT *
+		FROM dbo.ConsignmentFactMasterTable
+		WHERE CFM_DATE = @d AND CL_ID = @clientid
 
-		SELECT ConsignmentFactDetailTable.* 
-		FROM 
+		SELECT ConsignmentFactDetailTable.*
+		FROM
 			dbo.ConsignmentFactDetailTable INNER JOIN
 			dbo.ConsignmentFactMasterTable ON CFD_ID_CFM = CFM_ID
 		WHERE CFM_DATE = @d
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

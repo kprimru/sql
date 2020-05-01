@@ -29,22 +29,22 @@ BEGIN
 		FROM dbo.PeriodTable
 		WHERE GETDATE() BETWEEN PR_DATE AND PR_END_DATE
 
-		SELECT 
+		SELECT
 			a.PT_ID, a.PT_NAME, @PR_ID AS PR_ID, @PR_NAME AS PR_NAME,
 			c.PT_ID AS PT_ID_DEPEND, c.PT_NAME AS PT_NAME_DEPEND, ISNULL(PD_COEF, 1) AS PD_COEF
-		FROM 
+		FROM
 			dbo.PriceTypeTable a
 			LEFT OUTER JOIN dbo.PriceDepend b ON a.PT_ID = b.PD_ID_TYPE AND PD_ID_PERIOD = @PR_ID
 			LEFT OUTER JOIN dbo.PriceTypeTable c ON c.PT_ID = b.PD_ID_SOURCE
 		WHERE a.PT_ID = @PT_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

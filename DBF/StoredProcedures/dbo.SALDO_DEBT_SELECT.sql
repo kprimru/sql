@@ -7,9 +7,9 @@ GO
 
 ALTER PROCEDURE [dbo].[SALDO_DEBT_SELECT]
 AS
-BEGIN  
+BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,22 +21,22 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, SL_REST, SN_ID, SN_NAME
-		FROM 
+		FROM
 			dbo.SaldoLastView LEFT OUTER JOIN
 			dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
 			dbo.SystemNetTable ON SN_ID = DF_ID_NET
 		WHERE SL_REST < 0
 		ORDER BY CL_PSEDO, CL_ID, DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

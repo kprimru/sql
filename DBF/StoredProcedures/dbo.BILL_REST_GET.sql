@@ -23,16 +23,16 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			BD_ID, DIS_ID, DIS_STR, BD_TOTAL_PRICE, 
+		SELECT
+			BD_ID, DIS_ID, DIS_STR, BD_TOTAL_PRICE,
 				(
 					SELECT SUM(ID_PRICE)
-					FROM 
+					FROM
 						dbo.IncomeDistrTable INNER JOIN
 						dbo.IncomeTable ON ID_ID_INCOME = IN_ID INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 						dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
-					WHERE ID_ID_DISTR = DIS_ID 
+					WHERE ID_ID_DISTR = DIS_ID
 						AND ID_ID_PERIOD = PR_ID
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 						AND b.SO_ID = a.SO_ID
@@ -40,28 +40,28 @@ BEGIN
 			BD_TOTAL_PRICE -
 				ISNULL((
 					SELECT SUM(ID_PRICE)
-					FROM 
+					FROM
 						dbo.IncomeDistrTable INNER JOIN
 						dbo.IncomeTable ON ID_ID_INCOME = IN_ID INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
 						dbo.SaleObjectTable b ON SO_ID = SYS_ID_SO
-					WHERE ID_ID_DISTR = DIS_ID 
+					WHERE ID_ID_DISTR = DIS_ID
 						AND ID_ID_PERIOD = PR_ID
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 						AND b.SO_ID = a.SO_ID
-				), 0) AS BD_UNPAY 
-		FROM 
-			dbo.BillDistrView a 
+				), 0) AS BD_UNPAY
+		FROM
+			dbo.BillDistrView a
 		WHERE PR_ID = @periodid AND BL_ID_CLIENT = @clientid
 		ORDER BY DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -44,7 +44,7 @@ BEGIN
 			ELSE
 				INSERT INTO dbo.BookPurchase(ID_ORG, ID_AVANS, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, PURCHASE_DATE)
 					VALUES (@ORG, @AVANS, @INVOICE, @CODE, @NUM, @DATE, @NAME, @INN, @KPP, @IN_NUM, @IN_DATE, @PURCHASE)
-					
+
 			SELECT @ID = SCOPE_IDENTITY()
 		END
 		ELSE
@@ -77,50 +77,50 @@ BEGIN
 					IN_DATE			=	@IN_DATE,
 					PURCHASE_DATE	=	@PURCHASE
 				WHERE ID = @ID
-		END	
-		
+		END
+
 		IF @TYPE = N'SALE'
-			DELETE 
+			DELETE
 			FROM dbo.BookSaleDetail
 			WHERE ID_SALE = @ID
 		ELSE
-			DELETE 
+			DELETE
 			FROM dbo.BookPurchaseDetail
 			WHERE ID_PURCHASE = @ID
-			
-		
-		DECLARE @XML XML	
-		
+
+
+		DECLARE @XML XML
+
 		SET @XML = CAST(@TAX AS XML)
-		
+
 		IF @TYPE = N'SALE'
 			INSERT INTO dbo.BookSaleDetail(ID_SALE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
-				SELECT 
-					@ID, 
+				SELECT
+					@ID,
 					c.value('@tax', 'SMALLINT'),
 					c.value('@bez_nds', 'MONEY'),
 					c.value('@nds', 'MONEY'),
 					c.value('@all', 'MONEY')
-				FROM 
+				FROM
 					@XML.nodes('/root/item') AS a(c)
 		ELSE
 			INSERT INTO dbo.BookPurchaseDetail(ID_PURCHASE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
-				SELECT 
-					@ID, 
+				SELECT
+					@ID,
 					c.value('@tax', 'SMALLINT'),
 					c.value('@bez_nds', 'MONEY'),
 					c.value('@nds', 'MONEY'),
 					c.value('@all', 'MONEY')
-				FROM 
+				FROM
 					@XML.nodes('/root/item') AS a(c)
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,7 +7,7 @@ GO
 
 
 ALTER FUNCTION [dbo].[GET_PERIOD_LIST_BY_DATE]
-(@date SMALLDATETIME)  
+(@date SMALLDATETIME)
 RETURNS @tbl TABLE (ITEM SMALLINT NOT NULL) AS
 BEGIN
 	INSERT INTO @tbl
@@ -16,7 +16,7 @@ BEGIN
 		WHERE PR_DATE <= DATEADD(MONTH, -1, @date) AND @date <= DATEADD(MONTH, 1, PR_END_DATE)
 
 
-	-- Возвращение результата работы функции	
+	-- Возвращение результата работы функции
 	RETURN
 END
 

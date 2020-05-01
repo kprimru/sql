@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_SET_ACT]
@@ -31,7 +31,7 @@ BEGIN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Изменение привязки к счету-фактуры', 'Был номер ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' стал номер ' + (SELECT CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) FROM dbo.InvoiceSaleTable WHERE INS_ID = @invoiceid)
-			FROM 
+			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.InvoiceSaleTable b ON a.ACT_ID_INVOICE = b.INS_ID
 			WHERE a.ACT_ID = @actid
@@ -39,14 +39,14 @@ BEGIN
 		UPDATE dbo.ActTable
 		SET ACT_ID_INVOICE = @invoiceid
 		WHERE ACT_ID = @actid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

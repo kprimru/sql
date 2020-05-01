@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[BOOK_DEFAULT_SELECT]
@@ -28,20 +28,20 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @d DATETIME
-		SET @d = DATEADD(M, -3, GETDATE())	
+		SET @d = DATEADD(M, -3, GETDATE())
 
-		SELECT TOP 1 ORG_ID, ORG_PSEDO, 
+		SELECT TOP 1 ORG_ID, ORG_PSEDO,
 			/*
 			CONVERT(DATETIME,CONVERT(VARCHAR(2),CONVERT(VARCHAR(2),(DATEPART(quarter,@d)-1)*3)+1)+'/1/'+convert(char(4),year(@d)),101) AS BOOK_START,
 			dateadd(month,3,convert(datetime,convert(varchar(2),(month(@d)-1)/3*3+1)+'/1/'+convert(char(4),year(@d)),101))-1 AS BOOK_END
 			*/
-			CONVERT(SMALLDATETIME, 
+			CONVERT(SMALLDATETIME,
 				(
 					SELECT GS_VALUE
 					FROM dbo.GlobalSettingsTable
 					WHERE GS_NAME = 'BOOK_START'
 				), 104) AS BOOK_START,
-			CONVERT(SMALLDATETIME, 
+			CONVERT(SMALLDATETIME,
 				(
 					SELECT GS_VALUE
 					FROM dbo.GlobalSettingsTable
@@ -50,14 +50,14 @@ BEGIN
 		FROM dbo.OrganizationTable
 		--WHERE ORG_PSEDO = 'Базис'
 		ORDER BY ORG_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

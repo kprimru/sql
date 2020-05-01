@@ -9,7 +9,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_FACT_CONSIGNMENT_SELECT]
@@ -30,12 +30,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CFM_DATE, 
+		SELECT CFM_DATE,
 			(
 				SELECT SUM(CSD_TOTAL_PRICE)
 				FROM dbo.ConsignmentFactDetailTable
 				WHERE CFD_ID_CFM = CFM_ID
-			) AS CSD_TOTAL_PRICE, 
+			) AS CSD_TOTAL_PRICE,
 			CFM_NUM
 		FROM dbo.ConsignmentFactMasterTable
 		WHERE CL_ID = @clientid
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

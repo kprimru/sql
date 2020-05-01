@@ -9,11 +9,11 @@ GO
 /*
 Автор:			Денисов Алексей
 Дата создания:	3 July 2009
-Описание:	  
+Описание:
 
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_EDIT]
 	@fatid SMALLINT,
 	@addrtypeid TINYINT,
 	@text VARCHAR(50),
@@ -34,7 +34,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.FinancingAddressTypeTable 
+		UPDATE dbo.FinancingAddressTypeTable
 		SET	FAT_ID_ADDR_TYPE = @addrtypeid,
 			FAT_TEXT = @text,
 			FAT_ACTIVE = @active
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

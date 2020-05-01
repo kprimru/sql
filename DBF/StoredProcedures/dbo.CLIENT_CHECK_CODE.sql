@@ -25,14 +25,14 @@ BEGIN
 		SELECT CL_ID
 		FROM dbo.ClientTable
 		WHERE CL_NUM = @CODE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[CLIENT_CHECK_CODE] TO rl_client_w;

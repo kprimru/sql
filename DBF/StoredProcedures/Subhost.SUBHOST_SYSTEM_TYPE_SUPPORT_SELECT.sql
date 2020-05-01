@@ -32,7 +32,7 @@ BEGIN
 
 		INSERT INTO @temp
 			SELECT SST_ID, SST_CAPTION, SST_COEF, SST_KBU, SST_PORDER
-			FROM 
+			FROM
 				dbo.SystemTypeTable a INNER JOIN
 				(
 					SELECT DISTINCT SST_ID_HOST
@@ -42,13 +42,13 @@ BEGIN
 			WHERE EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.PriceTypeSystemTable INNER JOIN
 						dbo.PriceTypeTable ON PT_ID = PTS_ID_PT
 					WHERE PT_ID_GROUP IN (5, 7) AND PTS_ID_ST = SST_ID
 				)
 
-		SELECT 
+		SELECT
 			SST_ID, SST_CAPTION, SST_COEF, SST_KBU, SST_ORDER,
 			(
 				SELECT COUNT(*)
@@ -57,14 +57,14 @@ BEGIN
 			) AS SST_COUNT
 		FROM @temp
 		ORDER BY SST_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

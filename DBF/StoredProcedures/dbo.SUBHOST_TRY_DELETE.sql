@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 16.10.2008
-Описание:	  Возвращает 0, если подхост можно 
-               удалить из справочника (ни в 
-               одной таблице он не указан), 
+Описание:	  Возвращает 0, если подхост можно
+               удалить из справочника (ни в
+               одной таблице он не указан),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_TRY_DELETE]
 	@subhostid SMALLINT
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		
+
 		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_HOST = @subhostid)
 			BEGIN
 				-- изменено 4.05.2009
@@ -46,7 +46,7 @@ BEGIN
 				SET @txt = @txt + 'Невозможно удалить подхост, так как '
 								+ 'имеются записи в истории рег.узла с данным подхостом.' + CHAR(13)
 			END
-		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_HOST = @subhostid) 
+		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_HOST = @subhostid)
 			BEGIN
 				SET @res = 1
 				SET @txt = @txt + 'Невозможно удалить подхост, так как '
@@ -69,8 +69,8 @@ BEGIN
 				SET @res = 1
 				SET @txt = @txt + 'Невозможно удалить подхост, на него ссылаются записи о городах подхостов.'
 			END
-		
-		-- 
+
+		--
 
 		SELECT @res AS RES, @txt AS TXT
 
@@ -78,9 +78,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

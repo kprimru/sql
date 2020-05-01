@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить новое поле в справочник полей
 */
 
-ALTER PROCEDURE [dbo].[FIELD_ADD] 
+ALTER PROCEDURE [dbo].[FIELD_ADD]
 	@fieldname VARCHAR(50),
 	@fieldwidth INT,
 	@fieldcaption VARCHAR(50),
@@ -32,19 +32,19 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.FieldTable(FL_NAME, FL_WIDTH, FL_CAPTION) 
+		INSERT INTO dbo.FieldTable(FL_NAME, FL_WIDTH, FL_CAPTION)
 		VALUES (@fieldname, @fieldwidth, @fieldcaption)
 
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -28,20 +28,20 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE Subhost.SubhostProduct
-		SET SP_ID_GROUP = @SPG_ID, 
-			SP_NAME = @SP_NAME, 
-			SP_ID_UNIT = @UN_ID, 
+		SET SP_ID_GROUP = @SPG_ID,
+			SP_NAME = @SP_NAME,
+			SP_ID_UNIT = @UN_ID,
 			SP_COEF	= @COEF,
 			SP_ACTIVE = @ACTIVE
 		WHERE SP_ID = @SP_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

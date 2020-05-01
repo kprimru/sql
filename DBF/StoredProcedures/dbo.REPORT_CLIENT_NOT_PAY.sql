@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @PR_DATE SMALLDATETIME
-		
+
 		SELECT @PR_DATE = PR_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PERIOD
@@ -63,15 +63,15 @@ BEGIN
 
 		INSERT INTO #distr(CL_ID, CL_PSEDO, DIS_ID, DIS_STR, SYS_ORDER, DIS_NUM, DIS_COMP_NUM)
 			SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, SYS_ORDER, DIS_NUM, DIS_COMP_NUM
-			FROM 
+			FROM
 				dbo.ClientDistrTable
 				INNER JOIN dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR
 				INNER JOIN dbo.ClientTable ON CL_ID = CD_ID_CLIENT
-			WHERE DSS_REPORT = 1 
+			WHERE DSS_REPORT = 1
 
-		DELETE 
-		FROM #distr 
+		DELETE
+		FROM #distr
 		WHERE EXISTS
 			(
 				SELECT *
@@ -86,11 +86,11 @@ BEGIN
 					)
 			)
 
-		SELECT 
+		SELECT
 			CL_PSEDO, DIS_STR, PR_DATE,
 			(
 				SELECT TOP 1 ACT_DATE
-				FROM 
+				FROM
 					dbo.ActTable
 					INNER JOIN dbo.ActDistrTable ON ACT_ID = AD_ID_ACT
 				WHERE ACT_ID_CLIENT = CL_ID
@@ -99,7 +99,7 @@ BEGIN
 			) AS ACT_DATE,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
-				FROM 
+				FROM
 					dbo.InvoiceSaleTable a
 					INNER JOIN dbo.InvoiceRowTable ON INS_ID = INR_ID_INVOICE
 				WHERE INR_ID_DISTR = DIS_ID
@@ -108,19 +108,19 @@ BEGIN
 			) AS INS_NUM,
 			(
 				SELECT MAX(PR_DATE)
-				FROM 
+				FROM
 					dbo.BillRestView
 					INNER JOIN dbo.PeriodTable ON PR_ID = BL_ID_PERIOD
 				WHERE BL_ID_CLIENT = CL_ID
 					AND BD_ID_DISTR = DIS_ID
 					AND BD_REST = 0
 			) AS LAST_MONTH
-		FROM 
+		FROM
 			#distr
 			CROSS APPLY
-				( 
+				(
 					SELECT PR_ID, PR_DATE
-					FROM 
+					FROM
 						dbo.BillRestView
 						INNER JOIN dbo.PeriodTable ON PR_ID = BL_ID_PERIOD
 					WHERE BL_ID_CLIENT = CL_ID
@@ -128,11 +128,11 @@ BEGIN
 						AND BD_REST <> 0
 						AND PR_DATE <= @PR_DATE
 				) AS a
-			--CROSS JOIN #period a	
+			--CROSS JOIN #period a
 		WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.BillRestView
 						INNER JOIN #period ON BL_ID_PERIOD = PR_ID
 					WHERE BL_ID_CLIENT = CL_ID
@@ -140,20 +140,20 @@ BEGIN
 						AND BD_REST = 0
 				)
 		ORDER BY CL_PSEDO, PR_DATE DESC, SYS_ORDER, DIS_NUM, DIS_COMP_NUM
-				
+
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
-				
+
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

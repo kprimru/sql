@@ -23,7 +23,7 @@ ALTER PROCEDURE [dbo].[PERIOD_REG_NEW_FILTER]
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -35,27 +35,27 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		-----------
 		--ПЕРИОДЫ--
 		-----------
 		IF OBJECT_ID('tempdb..#periods') IS NOT NULL
 			DROP TABLE #periods
 
-		CREATE TABLE #periods 
+		CREATE TABLE #periods
 			(
 				period_id INT NOT NULL
 			)
 
-		IF @rnnidperiods IS NULL 
+		IF @rnnidperiods IS NULL
 		BEGIN
-			INSERT INTO #periods 
+			INSERT INTO #periods
 				SELECT PR_ID FROM dbo.PeriodTable
 		END
-		ELSE 
+		ELSE
 		BEGIN
-			INSERT INTO #periods 
-				SELECT * 
+			INSERT INTO #periods
+				SELECT *
 				FROM dbo.GET_TABLE_FROM_LIST(@rnnidperiods, ',')
 		END
 
@@ -110,9 +110,9 @@ BEGIN
 		ELSE BEGIN
 			INSERT INTO #netcounts SELECT * FROM dbo.GET_TABLE_FROM_LIST(@rnnidnets, ',')
 		END
-		
 
-		SELECT	
+
+		SELECT
 				--RNN_ID,
 				PR_NAME,		--RNN_ID_PERIOD,
 				SYS_SHORT_NAME,	--RNN_ID_SYSTEM,
@@ -128,16 +128,16 @@ BEGIN
 				RNN_PSEDO_CLIENT,
 				SNC_NET_COUNT	--RNN_ID_NET,
 
-		FROM	
+		FROM
 				dbo.PeriodRegNewView	A											INNER JOIN
 				#periods			B	ON	A.RNN_ID_PERIOD=B.period_id			INNER JOIN
 				#systems			C	ON	A.RNN_ID_SYSTEM=C.system_id			INNER JOIN
 				#subhosts			D	ON	A.RNN_ID_HOST=	D.subhost_id		INNER JOIN
 				#systemtypes		E	ON	A.RNN_ID_TYPE=	E.system_type_id	INNER JOIN
-				#netcounts			F	ON	A.RNN_ID_NET=	F.nc_id				
+				#netcounts			F	ON	A.RNN_ID_NET=	F.nc_id
 		--		#cours				G	ON	A.REG_ID_COUR=	G.cour_id			--INNER JOIN
 
-		WHERE	
+		WHERE
 		/*
 		--		RNN_ID_PERIOD		=ISNULL(@rnnidperiod,	RNN_ID_PERIOD)		and
 		--		RNN_ID_SYSTEM		=ISNULL(@rnnidsystem,	RNN_ID_SYSTEM)		and
@@ -157,7 +157,7 @@ BEGIN
 		-- 24.11.09. Денисов А.С. поменял все в хлам, ибо не работало
 		(RNN_DISTR_NUM = @rnndistrnum OR @rnndistrnum IS NULL) AND
 		--(RNN_ID_PERIOD = @rnnidperiod OR @rnnperiod IS NULL) AND
-		--(RNN_ID_SYSTEM = @rnnidsystem OR @rnnidsystem IS NULL) AND	
+		--(RNN_ID_SYSTEM = @rnnidsystem OR @rnnidsystem IS NULL) AND
 		--(RNN_COMP_NUM = @rnncompnum OR @rnncompnum IS NULL) AND
 		--(RNN_ID_HOST = @rnnidhost OR @rnnidhost IS NULL) AND
 		--(RNN_ID_TYPE = @rnnidtype OR @rnnidtype IS NULL) AND
@@ -177,17 +177,17 @@ BEGIN
 		IF OBJECT_ID('tempdb..#subhosts') IS NOT NULL
 			DROP TABLE #subhosts
 		IF OBJECT_ID('tempdb..#systemtypes') IS NOT NULL
-			DROP TABLE #systemtypes			
+			DROP TABLE #systemtypes
 		IF OBJECT_ID('tempdb..#netcounts') IS NOT NULL
-			DROP TABLE #netcounts	
-			
+			DROP TABLE #netcounts
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[PERIOD_REG_NEW_FILTER] TO rl_reg_node_r;

@@ -4,26 +4,26 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER VIEW [dbo].[ConsignmentPeriodView]  
+ALTER VIEW [dbo].[ConsignmentPeriodView]
 AS
 	/*
-	SELECT   
+	SELECT
 		ACT_ID, ACT_DATE, ACT_ID_CLIENT, ACT_SIGN,
 		(
 			SELECT TOP 1 PR_ID
-			FROM 
+			FROM
 				dbo.PeriodTable INNER JOIN
 				dbo.ActDistrTable ON AD_ID_PERIOD = PR_ID
 			WHERE AD_ID_ACT = ACT_ID
 			ORDER BY PR_DATE DESC
 		) AS ACT_ID_PERIOD
-	FROM       
+	FROM
 		dbo.ActTable
 	*/
 
 	SELECT TOP 1 WITH TIES
 		CSG_ID, CSG_DATE, CSG_ID_CLIENT, CSG_SIGN, PR_ID AS CSG_ID_PERIOD--, MAX(PR_DATE) AS PR_DATE
-	FROM 
+	FROM
 		dbo.ConsignmentTable INNER JOIN
 		dbo.ConsignmentDetailTable ON CSD_ID_CONS = CSG_ID INNER JOIN
 		dbo.PeriodTable ON CSD_ID_PERIOD = PR_ID

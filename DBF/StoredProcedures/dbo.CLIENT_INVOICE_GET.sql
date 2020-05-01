@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_GET]
@@ -33,7 +33,7 @@ BEGIN
 			INS_ID_CLIENT, INS_CLIENT_PSEDO, INS_CLIENT_NAME, INS_CLIENT_ADDR,
 			INS_CONSIG_NAME, INS_CONSIG_ADDR, INS_CLIENT_INN, INS_CLIENT_KPP,
 			INS_INCOME_DATE, INS_DOC_STRING, INS_STORNO, INS_COMMENT, INT_ID, INT_NAME, INS_IDENT
-		FROM 
+		FROM
 			dbo.InvoiceSaleTable	A		LEFT JOIN
 			dbo.OrganizationTable	B	ON	A.INS_ID_ORG=B.ORG_ID LEFT JOIN
 			dbo.InvoiceTypeTable ON INT_ID = INS_ID_TYPE
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

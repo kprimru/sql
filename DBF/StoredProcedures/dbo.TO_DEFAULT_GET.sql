@@ -8,9 +8,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DEFAULT_GET]
@@ -35,10 +35,10 @@ BEGIN
 			CL_FULL_NAME AS TO_NAME, CL_INN,
 			(
 				SELECT MAX(TO_NUM) + 1
-				FROM dbo.TOTable			
+				FROM dbo.TOTable
 			) AS TO_NUM,
 			ST_NAME, ST_ID, CA_INDEX, CA_HOME,
-			CASE 
+			CASE
 				(
 					SELECT COUNT(*)
 					FROM dbo.TOTable
@@ -48,20 +48,20 @@ BEGIN
 				WHEN 0 THEN 1
 				ELSE 0
 			END AS TO_MAIN
-		FROM 
+		FROM
 			dbo.ClientTable LEFT OUTER JOIN
 			dbo.ClientAddressTable ON CA_ID_CLIENT = CL_ID LEFT OUTER JOIN
 			dbo.StreetTable ON ST_ID = CA_ID_STREET
-		WHERE CL_ID = @clientid 
+		WHERE CL_ID = @clientid
 		ORDER BY CA_ID_TYPE DESC, ISNULL(ST_ID, 0) DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

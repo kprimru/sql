@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Ric].[SMALLNESS_COEF_CALC]
 	@PR_ALG	SMALLINT,
-	@WS		DECIMAL(10, 4),	
+	@WS		DECIMAL(10, 4),
 	@QR_ID	SMALLINT,
 	@PR_ID	SMALLINT
 AS
@@ -36,9 +36,9 @@ BEGIN
 		DECLARE @VKSP	DECIMAL(10, 4)
 
 		IF @PR_DATE >= '20120601'
-		BEGIN		
+		BEGIN
 			SELECT @VKSP = Ric.VKSPGet(@PR_ALG, dbo.QuarterPeriod(dbo.QuarterDelta(@QR_ID, -2), 3), @PR_ID, @PR_ID)
-		
+
 			IF @VKSP / @WS <= 0.5
 				SET @RES = 0.5
 			ELSE IF ((@VKSP / @WS) < 1) AND ((@VKSP / @WS) > 0.5)
@@ -50,14 +50,14 @@ BEGIN
 		END
 
 		SELECT @RES AS COEF
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

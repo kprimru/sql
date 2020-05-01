@@ -6,15 +6,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INCOME_UNCONVEY_FULL]
 	@incomeid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -26,20 +26,20 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DELETE FROM dbo.SaldoTable
 		WHERE SL_ID_IN_DIS IN (SELECT ID_ID FROM dbo.IncomeDistrTable WHERE ID_ID_INCOME = @incomeid)
 
 		DELETE FROM dbo.IncomeDistrTable
-		WHERE ID_ID_INCOME = @incomeid	
-		
+		WHERE ID_ID_INCOME = @incomeid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

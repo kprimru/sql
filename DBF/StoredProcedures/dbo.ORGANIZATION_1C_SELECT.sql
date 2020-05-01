@@ -24,14 +24,14 @@ BEGIN
 		SELECT ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
 		WHERE ORG_PSEDO <> '' AND ORG_PSEDO <> 'КонсультантПрим'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

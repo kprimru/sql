@@ -6,15 +6,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
-ALTER PROCEDURE [dbo].[PRICE_ADD] 
+ALTER PROCEDURE [dbo].[PRICE_ADD]
 	@pricename VARCHAR(50),
-	@pricetypeid INT, 
+	@pricetypeid INT,
 	@pricecoefmul NUMERIC(8, 4),
 	@pricecoefadd MONEY,
 	@active BIT = 1,
-	@returnvalue BIT = 1  
+	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -31,7 +31,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.PriceTable(PP_NAME, PP_ID_TYPE, PP_COEF_MUL, PP_COEF_ADD, PP_ACTIVE) 
+		INSERT INTO dbo.PriceTable(PP_NAME, PP_ID_TYPE, PP_COEF_MUL, PP_COEF_ADD, PP_ACTIVE)
 		VALUES (@pricename, @pricetypeid, @pricecoefmul, @pricecoefadd, @active)
 
 		IF @returnvalue = 1
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

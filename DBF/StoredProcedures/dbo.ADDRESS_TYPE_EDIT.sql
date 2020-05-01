@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_EDIT]
 	@addresstypeid TINYINT,
 	@addresstypename VARCHAR(100),
 	@active BIT = 1
@@ -30,18 +30,18 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.AddressTypeTable 
-		SET AT_NAME = @addresstypename, 
-			AT_ACTIVE = @active 
+		UPDATE dbo.AddressTypeTable
+		SET AT_NAME = @addresstypename,
+			AT_ACTIVE = @active
 		WHERE AT_ID = @addresstypeid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

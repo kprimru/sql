@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[BOOK_BUY_MASTER_PRINT]
@@ -31,18 +31,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ORG_SHORT_NAME, ORG_INN, ORG_KPP, 
+			ORG_SHORT_NAME, ORG_INN, ORG_KPP,
 			(ORG_BUH_FAM + ' ' + LEFT(ORG_BUH_NAME, 1) + '.' + LEFT(ORG_BUH_OTCH, 1) + '.') AS ORG_BUH_SHORT
 		FROM dbo.OrganizationTable
 		WHERE ORG_ID = @orgid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

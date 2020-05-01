@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 05.11.2008
-Описание:	  Возвращает 0, в случае если 
-               сбытовую территорию можно удалить 
-               (она не связани ни с однимподхостом), 
+Описание:	  Возвращает 0, в случае если
+               сбытовую территорию можно удалить
+               (она не связани ни с однимподхостом),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE]
 	@marketareaid INT
 AS
 BEGIN
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_RECALC]
@@ -46,26 +46,26 @@ BEGIN
 			CSG_CLIENT_BANK = BANK
 		FROM
 			(
-				SELECT 				
+				SELECT 
 					CL_FULL_NAME,
 					(
 						SELECT
-							CASE 
+							CASE
 								WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-								ELSE 
-									(	
-										SELECT 
+								ELSE
+									(
+										SELECT
 											CASE ADDR_STRING
 												WHEN '' THEN CA_STR
 												ELSE ADDR_STRING
 											END AS ADDR_STRING
-										FROM	
+										FROM
 											dbo.ClientTable					A				INNER JOIN
 											dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 											dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																			AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																			AND C.FAT_ID=O_O.FAT_ID
-										WHERE  
+										WHERE
 											A.CL_ID = @clientid
 											AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 										)
@@ -77,22 +77,22 @@ BEGIN
 					CL_OKPO,
 					(
 						SELECT
-							CASE 
+							CASE
 								WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-								ELSE 
-									(	
-										SELECT 
+								ELSE
+									(
+										SELECT
 											CASE ADDR_STRING
 												WHEN '' THEN CA_STR
 												ELSE ADDR_STRING
 											END AS ADDR_STRING
-										FROM	
+										FROM
 											dbo.ClientTable					A				INNER JOIN
 											dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 											dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																			AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																			AND C.FAT_ID=O_O.FAT_ID
-										WHERE  
+										WHERE
 											A.CL_ID = @clientid
 											AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 										)
@@ -102,41 +102,41 @@ BEGIN
 					) AS BUY_ADDRESS,
 					CL_PHONE,
 					('р.с ' + CL_ACCOUNT + ' в ' + BA_NAME + ', БИК ' + BA_BIK + ' корр/с ' + BA_LORO) AS BANK
-				FROM 
+				FROM
 					dbo.ClientTable LEFT OUTER JOIN
 					dbo.BankTable ON BA_ID = CL_ID_BANK
 				WHERE CL_ID = @clientid
 			) AS dt
 		WHERE CSG_ID = @consid
 
-		DELETE 
+		DELETE
 		FROM dbo.InvoiceRowTable
-		WHERE INR_ID_INVOICE = 
+		WHERE INR_ID_INVOICE =
 			(
-				SELECT CSG_ID_INVOICE 
-				FROM dbo.ConsignmentTable 
+				SELECT CSG_ID_INVOICE
+				FROM dbo.ConsignmentTable
 				WHERE CSG_ID = @consid
 			)
-		
+
 		UPDATE dbo.InvoiceSaleTable
 		SET INS_RESERVE = 1
-		WHERE INS_ID = 
+		WHERE INS_ID =
 			(
-				SELECT CSG_ID_INVOICE 
-				FROM dbo.ConsignmentTable 
+				SELECT CSG_ID_INVOICE
+				FROM dbo.ConsignmentTable
 				WHERE CSG_ID = @consid
 			)
-		
+
 
 		EXEC dbo.INVOICE_CREATE_BY_CONSIGN @consid, NULL, 0, 0, NULL, 0
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

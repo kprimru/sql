@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_CHECK_NAME]
 	@addresstypename VARCHAR(100)
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT AT_ID 
-		FROM dbo.AddressTypeTable 
+		SELECT AT_ID
+		FROM dbo.AddressTypeTable
 		WHERE AT_NAME = @addresstypename
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

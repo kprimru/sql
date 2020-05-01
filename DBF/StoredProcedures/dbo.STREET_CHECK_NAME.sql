@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает ID улицы с указанным 
-               названием в указанном населенном 
-               пункте. 
+Описание:	  Возвращает ID улицы с указанным
+               названием в указанном населенном
+               пункте.
 */
 
-ALTER PROCEDURE [dbo].[STREET_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[STREET_CHECK_NAME]
 	@streetname VARCHAR(100),
 	@cityid SMALLINT,
 	@prefix VARCHAR(10) = NULL
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[WEIGHT_RULES_SELECT]
 	@PR_ID		SMALLINT,
@@ -62,7 +62,7 @@ BEGIN
 			SELECT SST_ID, SST_CAPTION, SST_ORDER
 			FROM dbo.SystemTypeTable
 			WHERE @SST_ID IS NULL OR SST_ID IN (SELECT Item FROM dbo.GET_TABLE_FROM_LIST(@SST_ID, ','))
-			
+
 		INSERT INTO @NET
 			SELECT SNC_ID, SNC_SHORT, ROW_NUMBER() OVER(ORDER BY SNC_TECH, SNC_NET_COUNT)
 			FROM dbo.SystemNetCountTable
@@ -86,10 +86,10 @@ BEGIN
 		INNER JOIN @SYSTEM ON ID_SYSTEM = SYS_ID
 		INNER JOIN @SYS_TYPE ON ID_TYPE = SST_ID
 		INNER JOIN @NET ON ID_NET = SNC_ID
-		WHERE ID_PERIOD = @PR_ID	
+		WHERE ID_PERIOD = @PR_ID
 
-		SELECT 
-			'R:<' + Convert(VarChar(20), SST_ID) + ':' + Convert(VarChar(20), SYS_ID) + ':' + Convert(VarChar(20), SNC_ID) + '>' AS ROOT_ID, 
+		SELECT
+			'R:<' + Convert(VarChar(20), SST_ID) + ':' + Convert(VarChar(20), SYS_ID) + ':' + Convert(VarChar(20), SNC_ID) + '>' AS ROOT_ID,
 			'R:<' + Convert(VarChar(20), SST_ID) + ':' + Convert(VarChar(20), SYS_ID) + '>' AS PARENT_ID,
 			ID, SYS_ID, SST_ID, SNC_ID, ITEM_NAME, ITEM_ORDER, WEIGHT, CONVERT(VARCHAR(512), WEIGHT) AS WEIGHT_STR
 		FROM @WEIGHT
@@ -97,7 +97,7 @@ BEGIN
 		UNION ALL
 
 		SELECT DISTINCT
-			'R:<' + Convert(VarChar(20), W.SST_ID) + ':' + Convert(VarChar(20), W.SYS_ID) + '>' AS ROOT_ID, 
+			'R:<' + Convert(VarChar(20), W.SST_ID) + ':' + Convert(VarChar(20), W.SYS_ID) + '>' AS ROOT_ID,
 			'R:<' + Convert(VarChar(20), W.SST_ID) + '>' AS PARENT_ID,
 			NULL, W.SYS_ID, W.SST_ID, NULL, SST_SHORT + ' :: ' + SYS_SHORT, SYS_ORDER, NULL,
 			REVERSE(STUFF(REVERSE((
@@ -112,12 +112,12 @@ BEGIN
 			)), 1, 3, ''))
 		FROM @WEIGHT W
 		INNER JOIN @SYSTEM S ON W.SYS_ID = S.SYS_ID
-		INNER JOIN @SYS_TYPE T ON W.SST_ID = T.SST_ID 
+		INNER JOIN @SYS_TYPE T ON W.SST_ID = T.SST_ID
 
 		UNION ALL
 
 		SELECT DISTINCT
-			'R:<' + Convert(VarChar(20), W.SST_ID) + '>' AS ROOT_ID, 
+			'R:<' + Convert(VarChar(20), W.SST_ID) + '>' AS ROOT_ID,
 			NULL AS PARENT_ID,
 			NULL, NULL, W.SST_ID, NULL, SST_SHORT, SST_ORDER, NULL,
 			REVERSE(STUFF(REVERSE((
@@ -133,22 +133,22 @@ BEGIN
 		FROM @WEIGHT W
 		INNER JOIN @SYS_TYPE T ON W.SST_ID = T.SST_ID
 		ORDER BY ITEM_ORDER
-		
+
 		SELECT @RES_CNT = COUNT(*)
 		FROM @WEIGHT
-		
-		IF (SELECT COUNT(DISTINCT WEIGHT) FROM @WEIGHT) = 1 
+
+		IF (SELECT COUNT(DISTINCT WEIGHT) FROM @WEIGHT) = 1
 			SET @IS_EQUAL = 1
 		ELSE
 			SET @IS_EQUAL = 0
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

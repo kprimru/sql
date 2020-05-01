@@ -8,7 +8,7 @@ ALTER PROCEDURE [Subhost].[SUBHOST_STUDY_PRICE_SELECT]
 	@PR_ID	SMALLINT
 AS
 BEGIN
-	SET NOCOUNT ON;		
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -22,25 +22,25 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			LS_ID, LS_NAME, 
+		SELECT
+			LS_ID, LS_NAME,
 			(
 				SELECT SLP_PRICE
-				FROM Subhost.SubhostLessonPrice 
+				FROM Subhost.SubhostLessonPrice
 				WHERE SLP_ID_LESSON = LS_ID AND SLP_ID_PERIOD = @PR_ID
 			) AS SLP_PRICE
-		FROM 
+		FROM
 			Subhost.Lesson
 		WHERE LS_ACTIVE = 1
-		ORDER BY LS_ORDER	
-		
+		ORDER BY LS_ORDER
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -12,7 +12,7 @@ ALTER PROCEDURE [dbo].[PRICE_COEF_SAVE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,7 +24,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @VALUE IS NULL
 			DELETE
 			FROM dbo.PriceCoef
@@ -58,14 +58,14 @@ BEGIN
 				INSERT INTO dbo.SystemSubhostCoef(SSC_ID_SYSTEM, SSC_ID_PERIOD, SSC_COEF)
 					VALUES(@SYS_ID, @PR_ID, @COEF)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

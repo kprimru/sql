@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает ID обслуживающей 
-               организации с указанным 
-               короткоим названием. 
+Описание:	  Возвращает ID обслуживающей
+               организации с указанным
+               короткоим названием.
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CHECK_NAME]
 	@organizationname VARCHAR(100)
 AS
 BEGIN
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

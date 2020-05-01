@@ -7,14 +7,14 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_ADDRESS_EDIT]
-	@taid INT,	
+	@taid INT,
 	@index VARCHAR(20),
-	@streetid SMALLINT,	
+	@streetid SMALLINT,
 	@home VARCHAR(100)
 AS
 BEGIN
@@ -33,19 +33,19 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.TOAddressTable
-		SET		
-			TA_INDEX = @index, 
-			TA_ID_STREET = @streetid, 
+		SET
+			TA_INDEX = @index,
+			TA_ID_STREET = @streetid,
 			TA_HOME = @home
 		WHERE TA_ID = @taid
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

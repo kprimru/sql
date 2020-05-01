@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
-ALTER PROCEDURE [dbo].[PAY_COEF_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PAY_COEF_TRY_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -31,13 +31,13 @@ BEGIN
 
 		SET @res = 0
 		SET @txt = ''
-		
+
 		-- изменено 30.04.2009, В.Богдан
-		
+
 		/*IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_COUR = @courierid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Данный сервис-инженер указан у одного или нескольких ТО. ' + 
+			SET @txt = @txt + 'Данный сервис-инженер указан у одного или нескольких ТО. ' +
 							  'Удаление невозможно, пока выбранный сервис-инженер будет указан хотя ' +
 							  'бы у одной ТО.'
 		  END
@@ -45,14 +45,14 @@ BEGIN
 		-- заменено на:
 
 		SELECT @res AS RES, @txt AS TXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

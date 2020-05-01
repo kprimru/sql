@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-ALTER PROCEDURE [dbo].[TO_PERSONAL_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_TRY_DELETE]
 	@personalid INT
 AS
 BEGIN
@@ -33,16 +33,16 @@ BEGIN
 
 		SET @res = 0
 		SET @txt = ''
-			
+
 		SELECT @res AS RES, @txt AS TXT
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

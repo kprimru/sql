@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AREA_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[AREA_CHECK_NAME]
 	@areaname VARCHAR(100)
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT AR_ID 
-		FROM dbo.AreaTable 
+		SELECT AR_ID
+		FROM dbo.AreaTable
 		WHERE AR_NAME = @areaname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

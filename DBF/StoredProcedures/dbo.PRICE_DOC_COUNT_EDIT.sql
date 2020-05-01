@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
-Описание:	  Изменить данные о количестве 
-               документов для указанной системы 
+Описание:	  Изменить данные о количестве
+               документов для указанной системы
                на указанную дату
 */
 
-ALTER PROCEDURE [dbo].[PRICE_DOC_COUNT_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_DOC_COUNT_EDIT]
 	@systemid SMALLINT,
 	@periodid SMALLINT,
 	@doccount INT
@@ -34,15 +34,15 @@ BEGIN
 	BEGIN TRY
 
 		IF EXISTS (
-					SELECT * 
-					FROM dbo.PriceSystemHistoryTable 
-					WHERE PSH_ID_SYSTEM = @systemid AND 
+					SELECT *
+					FROM dbo.PriceSystemHistoryTable
+					WHERE PSH_ID_SYSTEM = @systemid AND
 						PSH_ID_PERIOD = @periodid
 					)
 		BEGIN
 			UPDATE dbo.PriceSystemHistoryTable
-			SET PSH_DOC_COUNT = @doccount           
-			WHERE PSH_ID_SYSTEM = @systemid AND 
+			SET PSH_DOC_COUNT = @doccount
+			WHERE PSH_ID_SYSTEM = @systemid AND
 				PSH_ID_PERIOD = @periodid
 		END
 		ELSE
@@ -55,9 +55,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

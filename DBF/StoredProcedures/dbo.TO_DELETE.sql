@@ -10,10 +10,10 @@ GO
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
 
-ALTER PROCEDURE [dbo].[TO_DELETE]	
-	@toid INT   
+ALTER PROCEDURE [dbo].[TO_DELETE]
+	@toid INT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -35,9 +35,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
-Описание:	  Добавить технологический признак 
+Описание:	  Добавить технологический признак
                в справочник
 */
 
 ALTER PROCEDURE [dbo].[TECHNOL_TYPE_ADD]
-	@name VARCHAR(50),  
-	@reg SMALLINT,  
+	@name VARCHAR(50),
+	@reg SMALLINT,
 	@coef DECIMAL(10, 4),
 	@calc DECIMAL(4, 2),
 	@active BIT = 1,
@@ -37,7 +37,7 @@ BEGIN
 
 		DECLARE @ID	SMALLINT
 
-		INSERT INTO dbo.TechnolTypeTable(TT_NAME, TT_REG, TT_COEF, TT_CALC, TT_ACTIVE) 
+		INSERT INTO dbo.TechnolTypeTable(TT_NAME, TT_REG, TT_COEF, TT_CALC, TT_ACTIVE)
 		VALUES (@name, @reg, @coef, @calc, @active)
 
 		SET @ID = SCOPE_IDENTITY()
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

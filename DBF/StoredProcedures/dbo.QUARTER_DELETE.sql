@@ -7,10 +7,10 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
-Описание:	  Удалить регион с указанным 
+Описание:	  Удалить регион с указанным
                кодом из справочника
 */
-ALTER PROCEDURE [dbo].[QUARTER_DELETE] 
+ALTER PROCEDURE [dbo].[QUARTER_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
+		DELETE
 		FROM dbo.Quarter
 		WHERE QR_ID = @id
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,9 +7,9 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_EDIT]
 	@ID			INT,
 	@NET		SMALLINT,
 	@PERIOD		SMALLINT,
@@ -36,9 +36,9 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SystemNetCoef
-		SET 
+		SET
 			SNCC_ID_SN		= @NET,
-			SNCC_ID_PERIOD	= @PERIOD, 
+			SNCC_ID_PERIOD	= @PERIOD,
 			SNCC_VALUE		= @COEF,
 			SNCC_WEIGHT		= @WEIGHT,
 			SNCC_SUBHOST	= @SUBHOST,
@@ -59,19 +59,19 @@ BEGIN
 				SNCC_WEIGHT = @WEIGHT,
 				SNCC_SUBHOST = @SUBHOST,
 				SNCC_ROUND = @ROUND
-			FROM 
+			FROM
 				dbo.SystemNetCoef
 				INNER JOIN dbo.PeriodTable ON PR_ID = SNCC_ID_PERIOD
 			WHERE PR_DATE > @PR_DATE AND SNCC_ID_SN = @NET
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

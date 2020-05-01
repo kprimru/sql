@@ -8,14 +8,14 @@ GO
 /*
 јвтор:		  ƒенисов јлексей
 ƒата создани€: 25.08.2008
-ќписание:	  ¬озвращает 0, если обслуживающую 
-               организацию с указанным кодом можно 
-               удалить из справочника (она не 
-               указана ни у одного клиента), 
+ќписание:	  ¬озвращает 0, если обслуживающую
+               организацию с указанным кодом можно
+               удалить из справочника (она не
+               указана ни у одного клиента),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_TRY_DELETE]
 	@organizationid SMALLINT
 AS
 BEGIN
@@ -42,7 +42,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_ORG = @organizationid)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'ƒанна€ организаци€ указана у одного или нескольких клиентов. ' + 
+				SET @txt = @txt + 'ƒанна€ организаци€ указана у одного или нескольких клиентов. ' +
 								  '”даление невозможно, пока выбранна€ организаци€ будет указана хот€ ' +
 								  'бы у одного кдиента.'
 			END
@@ -80,9 +80,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

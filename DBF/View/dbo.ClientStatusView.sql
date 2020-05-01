@@ -6,11 +6,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER VIEW [dbo].[ClientStatusView]
 AS
-	SELECT 
-		CL_ID, CL_PSEDO, 
+	SELECT
+		CL_ID, CL_PSEDO,
 		(
 			SELECT TOP 1 DSS_NAME
-			FROM 
+			FROM
 				dbo.ClientDistrTable INNER JOIN
 				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
 			WHERE CD_ID_CLIENT = CL_ID
@@ -18,7 +18,7 @@ AS
 		) AS DSS_NAME,
 		(
 			SELECT TOP 1 DSS_ACT
-			FROM 
+			FROM
 				dbo.ClientDistrTable INNER JOIN
 				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
 			WHERE CD_ID_CLIENT = CL_ID
@@ -26,7 +26,7 @@ AS
 		) AS DSS_ACT,
 		(
 			SELECT TOP 1 DSS_REPORT
-			FROM 
+			FROM
 				dbo.ClientDistrTable INNER JOIN
 				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
 			WHERE CD_ID_CLIENT = CL_ID

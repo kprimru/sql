@@ -38,7 +38,7 @@ BEGIN
 			VALUES(@ID, @PR_ID, @SUM)
 		/*
 		DECLARE @PR_ID	SMALLINT
-		DECLARE @DEBT	MONEY	
+		DECLARE @DEBT	MONEY
 
 		SELECT @PR_ID = MAX(SHC_ID_PERIOD)
 		FROM Subhost.SubhostPayGet(@DATE)
@@ -52,13 +52,13 @@ BEGIN
 		SELECT @PR_ID = SHC_ID_PERIOD, @DEBT = SHC_TOTAL - DEBT
 		FROM Subhost.SubhostPayGet(@DATE)
 		WHERE SHC_ID_SUBHOST = @SH_ID AND SHP_ID_ORG = @ORG_ID
-			AND SHC_ID_PERIOD = 
+			AND SHC_ID_PERIOD =
 				(
 					SELECT MAX(SHC_ID_PERIOD)
 					FROM Subhost.SubhostPayGet(@DATE)
 					WHERE SHC_ID_SUBHOST = @SH_ID AND SHP_ID_ORG = @ORG_ID
 				)
-		
+
 		DECLARE @PAY MONEY
 		DECLARE @SALDO	MONEY
 
@@ -72,7 +72,7 @@ BEGIN
 			SET @PAY = @SUM
 			SET @SALDO = 0
 		END
-			
+
 		--SELECT @PR_ID = dbo.PERIOD_NEXT(@PR_ID)
 
 		INSERT INTO Subhost.SubhostPayDetail(SPD_ID_PAY, SPD_ID_PERIOD, SPD_SUM)
@@ -87,14 +87,14 @@ BEGIN
 		DELETE FROM Subhost.SubhostPayDetail
 		WHERE SPD_SUM = 0
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

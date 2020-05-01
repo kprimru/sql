@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[FIELD_GET] 
+ALTER PROCEDURE [dbo].[FIELD_GET]
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -27,16 +27,16 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT FL_NAME, FL_WIDTH, FL_CAPTION 
+		SELECT FL_NAME, FL_WIDTH, FL_CAPTION
 		FROM dbo.FieldTable
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

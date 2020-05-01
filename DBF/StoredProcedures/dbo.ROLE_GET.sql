@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ROLE_GET]
@@ -41,17 +41,17 @@ BEGIN
 		INSERT INTO #role
 			EXEC sp_helprolemember
 
-		DECLARE @rolename VARCHAR(100) 
+		DECLARE @rolename VARCHAR(100)
 		DECLARE @rolenote VARCHAR(500)
 		DECLARE @group BIT
 
 		SELECT @rolename = ROLE_NAME, @rolenote = ROLE_NOTE
 		FROM dbo.RoleTable
-		WHERE ROLE_ID = @roleid	
+		WHERE ROLE_ID = @roleid
 
 		IF EXISTS
 			(
-				SELECT * 
+				SELECT *
 				FROM #role
 				WHERE MemberName = @rolename
 			)
@@ -68,14 +68,14 @@ BEGIN
 			DROP TABLE #role
 
 		SELECT @rolename AS ROLE_NAME, @rolenote AS ROLE_NOTE, @group AS ROLE_GROUP
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

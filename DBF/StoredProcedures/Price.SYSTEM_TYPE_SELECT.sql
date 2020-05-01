@@ -24,14 +24,14 @@ BEGIN
 		SELECT SST_ID, SST_CAPTION
 		FROM dbo.SystemTypeTable
 		ORDER BY SST_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

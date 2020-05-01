@@ -29,7 +29,7 @@ BEGIN
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ALG
 
-		DECLARE @STOCK	DECIMAL(10, 4)	
+		DECLARE @STOCK	DECIMAL(10, 4)
 
 		DECLARE @ST1	DECIMAL(10, 4)
 		DECLARE @ST2	DECIMAL(10, 4)
@@ -56,14 +56,14 @@ BEGIN
 		END
 
 		SELECT @STOCK AS STOCK_VALUE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

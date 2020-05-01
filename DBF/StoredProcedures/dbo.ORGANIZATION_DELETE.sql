@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Удалить из справочника обслуживающую 
+Описание:	  Удалить из справочника обслуживающую
                организацию с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_DELETE] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_DELETE]
 	@organizationid SMALLINT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.OrganizationTable 
+		DELETE
+		FROM dbo.OrganizationTable
 		WHERE ORG_ID = @organizationid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

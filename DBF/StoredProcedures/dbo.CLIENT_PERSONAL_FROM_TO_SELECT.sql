@@ -12,7 +12,7 @@ GO
 					из всех ТО клиента
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_FROM_TO_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[PLUG_DEL_INCOME]
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.IncomeTable
-		SET IN_ID_INVOICE = NULL		
+		SET IN_ID_INVOICE = NULL
 		WHERE IN_ID = @incomeid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

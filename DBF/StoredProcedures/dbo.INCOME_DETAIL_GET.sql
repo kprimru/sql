@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_DETAIL_GET]
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ID_ID, PR_DATE, DIS_ID, DIS_STR, ID_PRICE, ID_PREPAY, ACT_DATE, ACT_ID, ID_ACTION
-		FROM 
+		FROM
 			dbo.IncomeDistrTable a INNER JOIN
 			dbo.IncomeTable ON IN_ID = ID_ID_INCOME INNER JOIN
 			dbo.DistrView b WITH(NOEXPAND) ON a.ID_ID_DISTR = b.DIS_ID INNER JOIN
@@ -39,14 +39,14 @@ BEGIN
 			dbo.ActTable ON ACT_ID = AD_ID_ACT AND ACT_ID_CLIENT = IN_ID_CLIENT
 		WHERE ID_ID_INCOME = @incomeid
 		ORDER BY DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

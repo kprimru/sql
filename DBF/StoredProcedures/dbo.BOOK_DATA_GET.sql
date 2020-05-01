@@ -25,27 +25,27 @@ BEGIN
 
 		IF @TYPE = N'SALE'
 			SELECT ORG_ID, ORG_PSEDO, INS_ID, INS_NUM, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE
-			FROM 
+			FROM
 				dbo.BookSale a
 				INNER JOIN dbo.OrganizationTable b ON a.ID_ORG = b.ORG_ID
 				INNER JOIN dbo.InvoiceSaleTable c ON INS_ID = ID_INVOICE
 			WHERE ID = @ID
 		ELSE IF @TYPE = N'PURCHASE'
 			SELECT ORG_ID, ORG_PSEDO, ID_AVANS, d.INS_NUM AS AVANS_NUM, ID_INVOICE, c.INS_NUM AS INVOICE_NUM, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, PURCHASE_DATE
-			FROM 
+			FROM
 				dbo.BookPurchase a
 				INNER JOIN dbo.OrganizationTable b ON a.ID_ORG = b.ORG_ID
 				INNER JOIN dbo.InvoiceSaleTable c ON c.INS_ID = ID_INVOICE
 				INNER JOIN dbo.InvoiceSaleTable d ON d.INS_ID = ID_AVANS
 			WHERE ID = @ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

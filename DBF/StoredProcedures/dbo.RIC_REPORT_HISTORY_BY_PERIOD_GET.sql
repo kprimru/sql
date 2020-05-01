@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
+Автор:
 Дата создания:	17.02.2009
 Описание:		Процедура получения отчёта ВМИ
 					из истории отчётов (по периоду)
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			--PR_NAME,
 			VRH_RIC_NUM, VRH_TO_NUM, VRH_TO_NAME,
 			VRH_INN, VRH_REGION, VRH_CITY, VRH_ADDR,
@@ -43,14 +43,14 @@ BEGIN
 
 		FROM	dbo.VRHView
 		WHERE	PR_ID=@periodid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

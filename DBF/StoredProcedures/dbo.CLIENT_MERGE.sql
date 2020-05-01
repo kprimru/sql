@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_MERGE]
@@ -30,12 +30,12 @@ BEGIN
 
 	BEGIN TRY
 
-		-- перенести точку обслуживания к другому клиент	
+		-- перенести точку обслуживания к другому клиент
 
 		IF EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.BillDistrTable INNER JOIN
 					dbo.BillTable ON BL_ID = BD_ID_BILL
 				WHERE BL_ID_CLIENT = @oldclient
@@ -57,14 +57,14 @@ BEGIN
 			SET BD_ID_BILL =
 				(
 					SELECT BL_ID
-					FROM 
+					FROM
 						dbo.BillTable a
 					WHERE BL_ID_CLIENT = @newclient
-						AND BL_ID_PERIOD = 
+						AND BL_ID_PERIOD =
 							(
 								SELECT BL_ID_PERIOD
 								FROM dbo.BillTable
-								WHERE BL_ID = BD_ID_BILL							
+								WHERE BL_ID = BD_ID_BILL
 							)
 				)
 			WHERE BD_ID_BILL IN
@@ -73,7 +73,7 @@ BEGIN
 					FROM dbo.BillTable
 					WHERE BL_ID = BD_ID_BILL
 						AND BL_ID_CLIENT = @oldclient
-				)		
+				)
 		END
 
 		UPDATE dbo.ActTable
@@ -91,7 +91,7 @@ BEGIN
 		UPDATE dbo.ConsignmentTable
 		SET CSG_ID_CLIENT = @newclient
 		WHERE CSG_ID_CLIENT = @oldclient
-		
+
 		UPDATE dbo.InvoiceSaleTable
 		SET INS_ID_CLIENT = @newclient
 		WHERE INS_ID_CLIENT = @oldclient
@@ -109,17 +109,17 @@ BEGIN
 		WHERE TO_ID_CLIENT = @oldclient
 
 		-- перенести дистрибутивы из ТО к клиенту
-		UPDATE dbo.ClientDistrTable 
+		UPDATE dbo.ClientDistrTable
 		SET CD_ID_CLIENT = @newclient
 		WHERE CD_ID_CLIENT = @oldclient
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

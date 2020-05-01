@@ -8,6 +8,6 @@ GO
 ALTER VIEW [dbo].[AddressView]
 AS
 	SELECT ST_ID, CT_ID, ST_PREFIX, ST_NAME, ST_SUFFIX, CT_PREFIX, CT_NAME
-	FROM         
+	FROM
 		dbo.StreetTable LEFT OUTER JOIN
         dbo.CityTable ON CT_ID = ST_ID_CITY

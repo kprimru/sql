@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_CREATE]
@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[USER_CREATE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -30,25 +30,25 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF @domainname IS NOT NULL
 		BEGIN
 			IF NOT EXISTS
 				(
-					SELECT * 
-					FROM sys.server_principals 
+					SELECT *
+					FROM sys.server_principals
 					WHERE [NAME] = @domainname
 						AND [TYPE_DESC] = 'WINDOWS_LOGIN'
 				)
 			BEGIN
-				EXEC('CREATE LOGIN [' + @domainname + '] FROM WINDOWS')	
+				EXEC('CREATE LOGIN [' + @domainname + '] FROM WINDOWS')
 			END
-			
+
 			IF NOT EXISTS
 				(
-					SELECT * 
-					FROM sys.database_principals 
-					WHERE TYPE_DESC = 'WINDOWS_USER' 
+					SELECT *
+					FROM sys.database_principals
+					WHERE TYPE_DESC = 'WINDOWS_USER'
 						AND [NAME] = @domainname
 				)
 			BEGIN
@@ -57,24 +57,24 @@ BEGIN
 
 			SELECT @domainname AS [USER_NAME]
 		END
-		ELSE 
+		ELSE
 		BEGIN
 			IF NOT EXISTS
 				(
-					SELECT * 
-					FROM sys.server_principals 
+					SELECT *
+					FROM sys.server_principals
 					WHERE [NAME] = @sqlname
 						AND [TYPE_DESC] = 'SQL_LOGIN'
 				)
 			BEGIN
-				EXEC('CREATE LOGIN [' + @sqlname + '] WITH PASSWORD = ''' + @pass + ''', CHECK_POLICY = OFF')	
+				EXEC('CREATE LOGIN [' + @sqlname + '] WITH PASSWORD = ''' + @pass + ''', CHECK_POLICY = OFF')
 			END
 
 			IF NOT EXISTS
 				(
-					SELECT * 
-					FROM sys.database_principals 
-					WHERE TYPE_DESC = 'SQL_USER' 
+					SELECT *
+					FROM sys.database_principals
+					WHERE TYPE_DESC = 'SQL_USER'
 						AND [NAME] = @sqlname
 				)
 			BEGIN
@@ -83,14 +83,14 @@ BEGIN
 
 			SELECT @sqlname AS [USER_NAME]
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

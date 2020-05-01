@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DELIVERY]
@@ -31,28 +31,28 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.TOTable
-		SET TO_ID_CLIENT = @clientid	
+		SET TO_ID_CLIENT = @clientid
 		WHERE TO_ID = @toid
 
 		-- перенести дистрибутивы из ТО к клиенту
-		UPDATE dbo.ClientDistrTable 
+		UPDATE dbo.ClientDistrTable
 		SET CD_ID_CLIENT = @clientid
-		WHERE 
+		WHERE
 			EXISTS
 				(
-					SELECT * 
-					FROM dbo.TODistrTable 
-					WHERE TD_ID_TO = @toid 
+					SELECT *
+					FROM dbo.TODistrTable
+					WHERE TD_ID_TO = @toid
 						AND CD_ID_DISTR = TD_ID_DISTR
-				)	
-				
+				)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

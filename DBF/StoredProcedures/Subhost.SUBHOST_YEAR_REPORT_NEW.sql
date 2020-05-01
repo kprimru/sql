@@ -26,25 +26,25 @@ BEGIN
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
 
-		CREATE TABLE #period 
+		CREATE TABLE #period
 			(
 				TPR_ID SMALLINT PRIMARY KEY,
 				TX_TOTAL_RATE	DECIMAL(8,4)
 			)
 
 		IF @PR_MIN IS NOT NULL
-			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE) 
+			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE)
 				SELECT DISTINCT PR_ID, TX_TOTAL_RATE
-				FROM 
+				FROM
 					dbo.PeriodTable
 					INNER JOIN Subhost.SubhostCalc ON PR_ID = SHC_ID_PERIOD
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
 				WHERE PR_DATE >= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_MIN)
 					AND PR_DATE >= '20111101'
 		ELSE
-			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE) 
+			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE)
 				SELECT PR_ID, TX_TOTAL_RATE
-				FROM 
+				FROM
 					dbo.GET_TABLE_FROM_LIST(@PR_LIST, ',')
 					INNER JOIN dbo.PeriodTable ON PR_ID = Item
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
@@ -54,29 +54,29 @@ BEGIN
 			ROW_NUMBER() OVER(PARTITION BY SH_ORDER ORDER BY SH_ORDER, PR_DATE) AS RN,
 			SHC_ID_SUBHOST, SH_FULL_NAME, SH_ORDER, SHC_ID_PERIOD, PR_NAME, PR_DATE,
 			DELIVERY_SUM, SUP_SUM, SUP_COM_COUNT, SUP_SPEC_COUNT,
-				ISNULL(DELIVERY_SUM, 0) + 
-				ISNULL(SUP_SUM, 0) + 
+				ISNULL(DELIVERY_SUM, 0) +
+				ISNULL(SUP_SUM, 0) +
 				ISNULL(SHC_PAPPER, 0) +
 				ISNULL(SHC_DELIVERY, 0) +
 				ISNULL(SHC_TRAFFIC, 0) -
 				ISNULL(SHC_DIU, 0) +
 				ISNULL(SP_STUDY, 0) +
-				ISNULL(SP_10, 0) + 
-				ISNULL(SP_MARKET, 0) - 
+				ISNULL(SP_10, 0) +
+				ISNULL(SP_MARKET, 0) -
 				ISNULL(SHP_STUDY, 0) AS TOTAL,
 
-			CONVERT(MONEY, 
+			CONVERT(MONEY,
 				ROUND(
 						(
-							ISNULL(DELIVERY_SUM, 0) + 
-							ISNULL(SUP_SUM, 0) + 
+							ISNULL(DELIVERY_SUM, 0) +
+							ISNULL(SUP_SUM, 0) +
 							ISNULL(SHC_PAPPER, 0) +
-							ISNULL(SHC_DELIVERY, 0) + 
+							ISNULL(SHC_DELIVERY, 0) +
 							ISNULL(SHC_TRAFFIC, 0) -
 							ISNULL(SHC_DIU, 0) +
-							ISNULL(SP_STUDY, 0) +			
-							ISNULL(SP_MARKET, 0) - 
-							ISNULL(SHP_STUDY, 0) 
+							ISNULL(SP_STUDY, 0) +
+							ISNULL(SP_MARKET, 0) -
+							ISNULL(SHP_STUDY, 0)
 						) * TX_TOTAL_RATE, 2) + ISNULL(SHC_DIU, 0) +
 
 			ROUND(ISNULL(SP_10, 0) * 1.1, 2)) AS TOTAL_NDS,
@@ -86,7 +86,7 @@ BEGIN
 			(
 				SELECT
 					TX_TOTAL_RATE,
-					
+
 					SS_ID AS SHC_ID_SUBHOST, SH_FULL_NAME, SH_ORDER,
 					a.PR_ID AS SHC_ID_PERIOD, PR_NAME, PR_DATE,
 					SCR_PAPPER AS SHC_PAPPER,
@@ -101,12 +101,12 @@ BEGIN
 					SCR_IC AS SHP_STUDY,
 					SCR_DEBT AS SHP_DEBT,
 					SCR_INCOME AS SHP_SUM
-				FROM 
-					#period c 
-					CROSS JOIN 
+				FROM
+					#period c
+					CROSS JOIN
 					(
 						SELECT DISTINCT SHC_ID_SUBHOST AS SS_ID
-						FROM 
+						FROM
 							Subhost.SubhostCalc
 							INNER JOIN #period ON TPR_ID = SHC_ID_PERIOD
 					) AS dt
@@ -117,7 +117,7 @@ BEGIN
 		WHERE SHC_ID_PERIOD IS NOT NULL
 		ORDER BY SH_ORDER, PR_DATE
 
-		
+
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
 
@@ -128,7 +128,7 @@ BEGIN
 			DROP TABLE #support
 
 		IF OBJECT_ID('tempdb..#sup_list') IS NOT NULL
-			DROP TABLE #sup_list	
+			DROP TABLE #sup_list
 
 		IF OBJECT_ID('tempdb..#con_list') IS NOT NULL
 			DROP TABLE #con_list
@@ -149,9 +149,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

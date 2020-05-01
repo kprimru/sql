@@ -9,7 +9,7 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Добавить тип системы 
+Описание:	  Добавить тип системы
                клиента в справочник
 */
 
@@ -34,7 +34,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.UnitTable(UN_NAME, UN_OKEI, UN_ACTIVE) 
+		INSERT INTO dbo.UnitTable(UN_NAME, UN_OKEI, UN_ACTIVE)
 		VALUES (@name, @okei, @active)
 
 		IF @returnvalue = 1
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

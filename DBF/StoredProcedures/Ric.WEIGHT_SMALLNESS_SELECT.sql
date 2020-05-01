@@ -27,7 +27,7 @@ BEGIN
 		SELECT @QR_ID = dbo.PeriodQuarter(@PR_ID)
 
 		SELECT QR_ID, QR_NAME, WS_VALUE, WS_VALUE AS WS_ORIGIN, WS_VALUE AS WS_COEF
-		FROM 
+		FROM
 			(
 				SELECT dbo.QuarterDelta(@QR_ID, 0) AS QR
 				UNION ALL
@@ -40,14 +40,14 @@ BEGIN
 			INNER JOIN dbo.Quarter ON QR_ID = QR
 			LEFT OUTER JOIN Ric.WeightSmallness ON WS_ID_QUARTER = QR_ID
 		ORDER BY QR_BEGIN DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

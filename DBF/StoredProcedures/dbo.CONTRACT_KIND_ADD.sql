@@ -8,15 +8,15 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_KIND_ADD]   
+ALTER PROCEDURE [dbo].[CONTRACT_KIND_ADD]
 	@NAME	VARCHAR(100),
 	@HEADER VARCHAR(100),
 	@CENTER	VARCHAR(100),
 	@FOOTER	VARCHAR(100),
-	@active BIT = 1,	
+	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
 
@@ -35,7 +35,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ContractKind(CK_NAME, CK_HEADER, CK_CENTER, CK_FOOTER, CK_ACTIVE) 
+		INSERT INTO dbo.ContractKind(CK_NAME, CK_HEADER, CK_CENTER, CK_FOOTER, CK_ACTIVE)
 			VALUES (@NAME, @HEADER, @CENTER, @FOOTER, @ACTIVE)
 
 		IF @returnvalue = 1
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -29,7 +29,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @PERIOD	TABLE(PR_ID SMALLINT)	
+		DECLARE @PERIOD	TABLE(PR_ID SMALLINT)
 
 		IF @PR_LIST IS NOT NULL
 		BEGIN
@@ -73,14 +73,14 @@ BEGIN
 					WHERE PD_ID_TYPE = @PT_ID
 						AND PD_ID_PERIOD = PR_ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

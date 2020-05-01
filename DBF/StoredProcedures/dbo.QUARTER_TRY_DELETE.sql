@@ -9,14 +9,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если период можно 
-               удалить из справочника (на него 
-               не ссылается ни одна запись 
-               из других таблиц), 
+Описание:	  Возвращает 0, если период можно
+               удалить из справочника (на него
+               не ссылается ни одна запись
+               из других таблиц),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[QUARTER_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[QUARTER_TRY_DELETE]
 	@periodid SMALLINT
 AS
 BEGIN
@@ -40,16 +40,16 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		
+
 		SELECT @res AS RES, @txt AS TXT
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

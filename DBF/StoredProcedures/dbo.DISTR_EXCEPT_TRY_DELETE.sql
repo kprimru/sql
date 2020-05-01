@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Возвращает 0, если дистрибутив с 
-               указанным кодом можно удалить со 
+Описание:	  Возвращает 0, если дистрибутив с
+               указанным кодом можно удалить со
                склада, -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[DISTR_EXCEPT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_TRY_DELETE]
 	@distrid INT
 AS
 BEGIN
@@ -35,7 +35,7 @@ BEGIN
 		DECLARE @txt VARCHAR(MAX)
 
 		SET @res = 0
-		SET @txt = ''	
+		SET @txt = ''
 
 		SELECT @res AS RES, @txt AS TXT
 
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

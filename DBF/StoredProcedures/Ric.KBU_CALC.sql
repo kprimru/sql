@@ -29,8 +29,8 @@ BEGIN
 
 		DECLARE @PR_DATE SMALLDATETIME
 
-		SELECT @PR_DATE = PR_DATE 
-		FROM dbo.PeriodTable 
+		SELECT @PR_DATE = PR_DATE
+		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ID
 
 		IF @PR_DATE >= '20120601'
@@ -50,14 +50,14 @@ BEGIN
 		END
 
 		SELECT ROUND(@RES, 4) AS KBU
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

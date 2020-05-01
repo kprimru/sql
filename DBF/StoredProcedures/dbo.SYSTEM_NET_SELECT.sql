@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_SELECT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,8 +29,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT SN_NAME, SN_FULL_NAME, SN_COEF, SN_ID 
-		FROM dbo.SystemNetTable 
+		SELECT SN_NAME, SN_FULL_NAME, SN_COEF, SN_ID
+		FROM dbo.SystemNetTable
 		WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
 		ORDER BY SN_ORDER
 
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

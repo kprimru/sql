@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_EDIT]
@@ -49,17 +49,17 @@ BEGIN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение даты с/ф', 'с ' + CONVERT(VARCHAR(20), INS_DATE, 104) + ' на ' + CONVERT(VARCHAR(20), @INS_DATE, 104)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @Invid
 				AND INS_DATE <> @INS_DATE
-					
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение № с/ф', 'с ' + CONVERT(VARCHAR(20), INS_NUM) + ' на ' + CONVERT(VARCHAR(20), @INS_NUM)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @Invid
-				AND INS_NUM <> @INS_NUM	
+				AND INS_NUM <> @INS_NUM
 
 		UPDATE dbo.InvoiceSaleTable SET
 			INS_ID_ORG=@INS_ID_ORG,
@@ -84,14 +84,14 @@ BEGIN
 
 		EXEC dbo.BOOK_SALE_PROCESS @invid
 		EXEC dbo.BOOK_PURCHASE_PROCESS @invid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

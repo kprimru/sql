@@ -8,14 +8,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 23.09.2008
-Описание:	  Возвращает 0, если тип сети 
-               с указанным кодом можно удалить 
-               (на него не ссылается ни одна 
-               запись в базе данных), 
+Описание:	  Возвращает 0, если тип сети
+               с указанным кодом можно удалить
+               (на него не ссылается ни одна
+               запись в базе данных),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_TRY_DELETE]
 	@systemnetid SMALLINT
 AS
 BEGIN
@@ -59,9 +59,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

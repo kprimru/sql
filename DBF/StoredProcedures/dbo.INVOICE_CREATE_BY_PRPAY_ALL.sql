@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY_ALL]
 	@invdate SMALLDATETIME,
@@ -29,13 +29,13 @@ BEGIN
 
 		DECLARE CL CURSOR LOCAL FOR
 			SELECT CL_ID
-			FROM 
+			FROM
 				dbo.ClientTable Z
-			WHERE 
+			WHERE
 				EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.PrimaryPayTable		A	INNER JOIN
 							dbo.DistrTable			B	ON	B.DIS_ID = A.PRP_ID_DISTR	INNER JOIN
 							dbo.ClientDistrTable	C	ON	B.DIS_ID = C.CD_ID_DISTR	INNER JOIN --LEFT JOIN
@@ -73,7 +73,7 @@ BEGIN
 
 		FETCH NEXT FROM CL INTO @clid
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 			BEGIN
 				EXEC dbo.INVOICE_CREATE_BY_PRPAY @clid, @invdate, 0, @invoiceid OUTPUT, 0	--ноль - это не печатать
 
@@ -93,14 +93,14 @@ BEGIN
 			EXEC dbo.INVOICE_PRINT_BY_ID_LIST @invoicestr
 		ELSE
 			SELECT * FROM dbo.GET_TABLE_FROM_LIST(@invoicestr, ',')
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SYSTEM_HOST_GET]
@@ -37,23 +37,23 @@ BEGIN
 
 		SELECT SYS_ID, SYS_SHORT_NAME
 		FROM dbo.SystemTable
-		WHERE SYS_ID <> @sysid 
-			AND SYS_ID_HOST = 
+		WHERE SYS_ID <> @sysid
+			AND SYS_ID_HOST =
 					(
-						SELECT SYS_ID_HOST 
-						FROM dbo.SystemTable 
+						SELECT SYS_ID_HOST
+						FROM dbo.SystemTable
 						WHERE SYS_ID = @sysid
 					)
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
 GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_distr_w;
 GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_host_r;

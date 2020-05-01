@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_ADD]
 	@systemid SMALLINT,
 	@periodid SMALLINT,
 	@weight DECIMAL(8, 4),
@@ -34,7 +34,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE) 
+		INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE)
 		VALUES (@systemid, @periodid, @weight, @problem, @active)
 
 		IF @returnvalue = 1
@@ -58,9 +58,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

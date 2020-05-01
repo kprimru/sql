@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_WEIGHT_EDIT]
 	@swid INT,
 	@systemid SMALLINT,
 	@periodid SMALLINT,
@@ -35,9 +35,9 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SystemWeightTable
-		SET 
+		SET
 			SW_ID_SYSTEM = @systemid,
-			SW_ID_PERIOD = @periodid, 
+			SW_ID_PERIOD = @periodid,
 			SW_WEIGHT = @weight,
 			SW_PROBLEM = @problem,
 			SW_ACTIVE = @active
@@ -53,19 +53,19 @@ BEGIN
 
 			UPDATE dbo.SystemWeightTable
 			SET SW_WEIGHT = @weight
-			FROM 
+			FROM
 				dbo.SystemWeightTable
 				INNER JOIN dbo.PeriodTable ON PR_ID = SW_ID_PERIOD
 			WHERE PR_DATE > @PR_DATE AND SW_ID_SYSTEM = @systemid AND SW_PROBLEM = @problem
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -56,40 +56,40 @@ BEGIN
 		BULK INSERT #ptl
 		FROM ''' + @PTL_FILE + '''
 		WITH (FIRSTROW = 2, FORMATFILE = ''' + @FMT_FILE + ''');');
-	    	
+	    
 		INSERT INTO dbo.RegProtocol(
 				RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER,
 				RPR_REG, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER
 				)
-			SELECT                 
+			SELECT
 				PTL_DATE, HST_ID, PTL_DISTR, PTL_COMP, PTL_OPER,
 				PTL_REG, PTL_TYPE, PTL_TEXT, PTL_USER, PTL_COMPUTER
 			FROM
 				(
-					SELECT 
-						CONVERT(DATETIME, 
-							SUBSTRING(PTL_DATE, 7, 4) + '-' + 
-							SUBSTRING(PTL_DATE, 4, 2) + '-' + 
+					SELECT
+						CONVERT(DATETIME,
+							SUBSTRING(PTL_DATE, 7, 4) + '-' +
+							SUBSTRING(PTL_DATE, 4, 2) + '-' +
 							SUBSTRING(PTL_DATE, 1, 2) + ' ' +
-							SUBSTRING(PTL_DATE, 13, 2) + ':' + 
-							SUBSTRING(PTL_DATE, 16, 2) + ':' + 
+							SUBSTRING(PTL_DATE, 13, 2) + ':' +
+							SUBSTRING(PTL_DATE, 16, 2) + ':' +
 							SUBSTRING(PTL_DATE, 19, 2)
-						, 120) AS PTL_DATE, 
+						, 120) AS PTL_DATE,
 						HST_ID,
-						CONVERT(INT, 
-							CASE CHARINDEX('_', PTL_DISTR) 
+						CONVERT(INT,
+							CASE CHARINDEX('_', PTL_DISTR)
 								WHEN 0 THEN PTL_DISTR
 								ELSE LEFT(PTL_DISTR, CHARINDEX('_', PTL_DISTR) - 1)
 							END
 						) AS PTL_DISTR,
-						CONVERT(TINYINT, 
-							CASE CHARINDEX('_', PTL_DISTR) 
+						CONVERT(TINYINT,
+							CASE CHARINDEX('_', PTL_DISTR)
 								WHEN 0 THEN 1
 								ELSE RIGHT(PTL_DISTR, LEN(PTL_DISTR) - CHARINDEX('_', PTL_DISTR))
 							END
 						) AS PTL_COMP,
 						PTL_OPER, PTL_REG, PTL_TYPE, PTL_TEXT, PTL_USER, PTL_COMP AS PTL_COMPUTER
-					FROM 
+					FROM
 						#ptl
 						INNER JOIN dbo.HostTable ON PTL_HOST = HST_REG_FULL
 				) a
@@ -111,14 +111,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#ptl') IS NOT NULL
 			DROP TABLE #ptl
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

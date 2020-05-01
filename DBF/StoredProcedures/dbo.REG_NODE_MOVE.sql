@@ -43,7 +43,7 @@ BEGIN
 			)
 			DELETE FROM dbo.PeriodRegTable
 			WHERE REG_ID_PERIOD = @periodid
-		
+
 		IF EXISTS
 			(
 				SELECT *
@@ -54,16 +54,16 @@ BEGIN
 			WHERE RNN_ID_PERIOD = @periodid
 
 		INSERT INTO	dbo.PeriodRegTable (
-					REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM, REG_COMP_NUM, 
-					REG_ID_HOST, REG_ID_TYPE, REG_ID_NET, REG_ID_STATUS, 
+					REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM, REG_COMP_NUM,
+					REG_ID_HOST, REG_ID_TYPE, REG_ID_NET, REG_ID_STATUS,
 					REG_ID_TECH_TYPE, REG_DATE, REG_FIRST, REG_COMMENT, REG_COMPLECT,
 					REG_NUM_CLIENT, REG_PSEDO_CLIENT, REG_ID_COUR, REG_MAIN, REG_OFFLINE
 					)
 			SELECT	@periodid, RN_ID_SYSTEM, RN_DISTR_NUM, RN_COMP_NUM, RN_ID_SUBHOST,
-					RN_ID_TYPE, RN_ID_NET, RN_ID_STATUS, RN_ID_TECH_TYPE, 
+					RN_ID_TYPE, RN_ID_NET, RN_ID_STATUS, RN_ID_TECH_TYPE,
 					RN_REG_DATE, RN_FIRST_REG, RN_COMMENT, RN_COMPLECT,
 					TO_NUM, CL_PSEDO, TO_ID_COUR, RN_MAIN, RN_OFFLINE
-			FROM 
+			FROM
 				dbo.RegNodeFullTable LEFT OUTER JOIN
 				(
 					SELECT SYS_ID, DIS_NUM, DIS_COMP_NUM, TO_NUM, TO_ID_COUR, CL_PSEDO
@@ -72,7 +72,7 @@ BEGIN
 						dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
-				) AS t ON RN_ID_SYSTEM = SYS_ID 
+				) AS t ON RN_ID_SYSTEM = SYS_ID
 					AND RN_DISTR_NUM = DIS_NUM
 					AND RN_COMP_NUM = DIS_COMP_NUM
 
@@ -85,7 +85,7 @@ BEGIN
 			SELECT	@periodid, RN_ID_SYSTEM, RN_DISTR_NUM, RN_COMP_NUM, RN_ID_SUBHOST,
 					RN_ID_TYPE, RN_ID_NET, RN_ID_TECH_TYPE, RN_REG_DATE, RN_COMMENT,
 					@prdate, TO_NUM, CL_PSEDO
-			FROM 
+			FROM
 				dbo.RegNodeFullTable a LEFT OUTER JOIN
 				(
 					SELECT SYS_ID, DIS_NUM, DIS_COMP_NUM, TO_NUM, TO_ID_COUR, CL_PSEDO
@@ -94,38 +94,38 @@ BEGIN
 						dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
 						dbo.TODistrTable ON TD_ID_TO = TO_ID INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
-				) AS t ON RN_ID_SYSTEM = SYS_ID 
+				) AS t ON RN_ID_SYSTEM = SYS_ID
 					AND RN_DISTR_NUM = DIS_NUM
 					AND RN_COMP_NUM = DIS_COMP_NUM
 			WHERE NOT EXISTS
 					(
 						SELECT *
 						FROM dbo.PeriodRegNewTable b
-						WHERE 
+						WHERE
 							(
 								SELECT SYS_ID_HOST
 								FROM dbo.SystemTable
-								WHERE SYS_ID = a.RN_ID_SYSTEM 
-							) = 
+								WHERE SYS_ID = a.RN_ID_SYSTEM
+							) =
 							(
 								SELECT SYS_ID_HOST
 								FROM dbo.SystemTable
-								WHERE SYS_ID = b.RNN_ID_SYSTEM 
+								WHERE SYS_ID = b.RNN_ID_SYSTEM
 							)
 							AND a.RN_DISTR_NUM = b.RNN_DISTR_NUM
 							AND a.RN_COMP_NUM  = b.RNN_COMP_NUM
-					) AND RN_ID_STATUS = 1				
+					) AND RN_ID_STATUS = 1
 
 		UPDATE dbo.ClientDistrTable
 		SET CD_REG_DATE = RNN_DATE
-		FROM 
+		FROM
 			dbo.ClientDistrTable INNER JOIN
 			dbo.DistrView WITH(NOEXPAND) ON DIS_ID = CD_ID_DISTR INNER JOIN
-			dbo.PeriodRegNewTable ON RNN_ID_SYSTEM = SYS_ID AND 
+			dbo.PeriodRegNewTable ON RNN_ID_SYSTEM = SYS_ID AND
 								RNN_DISTR_NUM = DIS_NUM AND
 								RNN_COMP_NUM = DIS_COMP_NUM
 		WHERE CD_REG_DATE IS NULL
-		
+
 		UPDATE A
 		SET RNN_ID_PERIOD = C.REG_ID_PERIOD
 		FROM dbo.PeriodRegNewTable A
@@ -134,14 +134,14 @@ BEGIN
 		INNER JOIN dbo.PeriodTable D ON a.RNN_ID_PERIOD = D.PR_ID
 		WHERE a.RNN_ID_PERIOD != C.REG_ID_PERIOD
 			AND D.PR_DATE >= '20180401'
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

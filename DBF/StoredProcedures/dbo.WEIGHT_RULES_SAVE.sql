@@ -50,11 +50,11 @@ BEGIN
 		INSERT INTO @SYSTEM(SYS_ID)
 		SELECT Item
 		FROM dbo.GET_TABLE_FROM_LIST(@SYS_ID, ',')
-		
+
 		INSERT INTO @SYSTEM_TYPE(SST_ID)
 		SELECT Item
 		FROM dbo.GET_TABLE_FROM_LIST(@SST_ID, ',')
-		
+
 		INSERT INTO @NET(NET_ID)
 		SELECT Item
 		FROM dbo.GET_TABLE_FROM_LIST(@NET_ID, ',')
@@ -90,14 +90,14 @@ BEGIN
 					AND ID_TYPE = SST_ID
 					AND ID_NET = NET_ID
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

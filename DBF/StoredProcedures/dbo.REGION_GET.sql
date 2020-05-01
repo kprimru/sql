@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[REGION_GET] 
+ALTER PROCEDURE [dbo].[REGION_GET]
 	@regionid SMALLINT = NULL
 AS
 BEGIN
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT RG_ID, RG_NAME, RG_ACTIVE
-		FROM dbo.RegionTable 
-		WHERE RG_ID = @regionid 
+		FROM dbo.RegionTable
+		WHERE RG_ID = @regionid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

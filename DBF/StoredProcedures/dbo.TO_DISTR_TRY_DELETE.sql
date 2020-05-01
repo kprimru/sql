@@ -7,12 +7,12 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_TRY_DELETE]
-	@tdid INT	
+	@tdid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -36,14 +36,14 @@ BEGIN
 		SET @txt = ''
 
 		SELECT @res AS RES, @txt AS TXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

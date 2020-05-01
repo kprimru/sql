@@ -21,11 +21,11 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	SET @result = NULL
-  
-	SELECT	@result = SNC_ID 
+
+	SELECT	@result = SNC_ID
 	FROM	dbo.SystemNetCountTable
 	WHERE	SNC_NET_COUNT = @netcount
-  
+
 	RETURN @result
 
 END

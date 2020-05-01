@@ -8,17 +8,17 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Добавить тип прейскуранта в 
+Описание:	  Добавить тип прейскуранта в
                справочник
 */
 
-ALTER PROCEDURE [dbo].[PRICE_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_ADD]
 	@pricetypename VARCHAR(20),
 	@group SMALLINT,
 	@coef BIT = null,
 	@order INT = null,
-	@active BIT = 1,  
-	@returnvalue BIT = 1  
+	@active BIT = 1,
+	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -35,9 +35,9 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.PriceTypeTable(PT_NAME, PT_ID_GROUP, PT_COEF, PT_ORDER, PT_ACTIVE) 
+		INSERT INTO dbo.PriceTypeTable(PT_NAME, PT_ID_GROUP, PT_COEF, PT_ORDER, PT_ACTIVE)
 		VALUES (@pricetypename, @group, @coef, @order, @active)
-		
+
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
 
@@ -48,9 +48,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

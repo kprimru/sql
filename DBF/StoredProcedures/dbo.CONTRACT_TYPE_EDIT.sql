@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_EDIT]
 	@contracttypeid SMALLINT,
 	@contracttypename VARCHAR(100),
 	@active BIT = 1
@@ -30,8 +30,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ContractTypeTable 
-		SET CTT_NAME = @contracttypename, 
+		UPDATE dbo.ContractTypeTable
+		SET CTT_NAME = @contracttypename,
 			CTT_ACTIVE = @active
 		WHERE CTT_ID = @contracttypeid
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

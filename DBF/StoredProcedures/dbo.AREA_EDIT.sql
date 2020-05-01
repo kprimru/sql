@@ -9,7 +9,7 @@ GO
 Автор:		  Денисов Алексей
 Описание:	  */
 
-ALTER PROCEDURE [dbo].[AREA_EDIT] 
+ALTER PROCEDURE [dbo].[AREA_EDIT]
 	@areaid SMALLINT,
 	@areaname VARCHAR(100),
 	@active BIT = 1
@@ -29,7 +29,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.AreaTable 
+		UPDATE dbo.AreaTable
 		SET AR_NAME = @areaname,
 			AR_ACTIVE = @active
 		WHERE AR_ID = @areaid
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

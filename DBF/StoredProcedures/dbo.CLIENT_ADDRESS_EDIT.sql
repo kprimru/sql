@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
-ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_EDIT]
 	@addressid INT,
 	@streetid INT,
 	@index VARCHAR(100),
@@ -34,11 +34,11 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ClientAddressTable 
-		SET CA_ID_TYPE = @addresstypeid, 
-			CA_ID_STREET = @streetid, 
-			CA_HOME = @home,	
-			CA_INDEX = @index, 
+		UPDATE dbo.ClientAddressTable
+		SET CA_ID_TYPE = @addresstypeid,
+			CA_ID_STREET = @streetid,
+			CA_HOME = @home,
+			CA_INDEX = @index,
 			CA_STR = @addressstr,
 			CA_ID_TEMPLATE = @templateid,
 			CA_FREE = @free
@@ -46,19 +46,19 @@ BEGIN
 
 		IF @templateid IS NOT NULL
 			INSERT INTO dbo.ClientFinancingAddressTable(CFA_ID_CLIENT, CFA_ID_FAT, CFA_ID_ATL)
-				SELECT 
+				SELECT
 					(
 						SELECT CA_ID_CLIENT
 						FROM dbo.ClientAddressTable
 						WHERE CA_ID = @addressid
 					), FAT_ID, @templateid
 				FROM dbo.FinancingAddressTypeTable
-				WHERE ISNULL(FAT_ID_ADDR_TYPE, @addresstypeid) = @addresstypeid		
+				WHERE ISNULL(FAT_ID_ADDR_TYPE, @addresstypeid) = @addresstypeid
 					AND NOT EXISTS
 						(
 							SELECT *
 							FROM dbo.ClientFinancingAddressTable
-							WHERE CFA_ID_CLIENT = 
+							WHERE CFA_ID_CLIENT =
 								(
 									SELECT CA_ID_CLIENT
 									FROM dbo.ClientAddressTable
@@ -66,14 +66,14 @@ BEGIN
 								)
 								AND CFA_ID_FAT = FAT_ID
 						)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

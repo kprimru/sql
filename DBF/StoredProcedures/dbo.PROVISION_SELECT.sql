@@ -23,19 +23,19 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ID, DATE, PRICE, PAY_NUM, ORG_SHORT_NAME, ORG_ID
-		FROM 
+		FROM
 			dbo.Provision
 			LEFT OUTER JOIN dbo.OrganizationTable ON ORG_ID = ID_ORG
 		WHERE ID_CLIENT = @CLIENT
 		ORDER BY DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

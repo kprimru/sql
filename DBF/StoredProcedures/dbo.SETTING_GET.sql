@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SETTING_GET]
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT GS_VALUE 
-		FROM dbo.GlobalSettingsTable 
+		SELECT GS_VALUE
+		FROM dbo.GlobalSettingsTable
 		WHERE GS_NAME = @sname
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

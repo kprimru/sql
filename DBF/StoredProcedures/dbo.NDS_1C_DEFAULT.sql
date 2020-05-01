@@ -42,24 +42,24 @@ BEGIN
 						SELECT TOP 1 1 AS TP, PR_ID, PR_NAME, PR_DATE
 						FROM dbo.PeriodTable
 						WHERE DATEADD(MONTH, -1, GETDATE()) BETWEEN PR_DATE AND PR_END_DATE
-						
+
 						UNION ALL
-						
+
 						SELECT TOP 1 0 AS TP, PR_ID, PR_NAME, PR_DATE
-						FROM 
+						FROM
 							dbo.PeriodTable a
 							INNER JOIN dbo.NDS1C b ON a.PR_ID = b.ID_PERIOD
 						ORDER BY PR_DATE DESC
 					) AS o_O
 			) AS c
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

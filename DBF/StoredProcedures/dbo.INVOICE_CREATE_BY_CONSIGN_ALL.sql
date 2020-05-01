@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_CONSIGN_ALL]
 	@invdate SMALLDATETIME,
@@ -15,7 +15,7 @@ ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_CONSIGN_ALL]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -27,11 +27,11 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE CONS CURSOR LOCAL FOR
 			SELECT CSG_ID
-			FROM 
-				dbo.ConsignmentTable 
+			FROM
+				dbo.ConsignmentTable
 			WHERE CSG_DATE = @invdate
 				AND CSG_ID_INVOICE IS NULL
 
@@ -67,14 +67,14 @@ BEGIN
 			EXEC dbo.INVOICE_PRINT_BY_ID_LIST @invoicestr, 0
 		ELSE
 			SELECT * FROM dbo.GET_TABLE_FROM_LIST(@invoicestr, ',')
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

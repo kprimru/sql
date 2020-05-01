@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 05.11.2008
-Описание:	  Изменить данные о сбытовой 
+Описание:	  Изменить данные о сбытовой
                территории с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[MARKET_AREA_EDIT] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_EDIT]
 	@marketareaid INT,
 	@marketareaname VARCHAR(100),
 	@marketareashortname VARCHAR(50),
@@ -33,8 +33,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.MarketAreaTable 
-		SET MA_NAME = @marketareaname, 
+		UPDATE dbo.MarketAreaTable
+		SET MA_NAME = @marketareaname,
 			MA_SHORT_NAME = @marketareashortname,
 			MA_ACTIVE = @active
 		WHERE MA_ID = @marketareaid
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

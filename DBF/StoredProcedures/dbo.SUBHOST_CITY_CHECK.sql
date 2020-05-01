@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 06.11.2008
-Описание:	  Проверить уникальность подхоста 
+Описание:	  Проверить уникальность подхоста
                и города
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CITY_CHECK] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_CHECK]
 	@subhostid SMALLINT,
 	@cityid SMALLINT
 AS
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

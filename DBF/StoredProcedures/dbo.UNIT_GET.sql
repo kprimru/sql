@@ -9,10 +9,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[UNIT_GET] 
+ALTER PROCEDURE [dbo].[UNIT_GET]
 	@unitid SMALLINT = NULL
 AS
 BEGIN
@@ -31,16 +31,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT UN_ID, UN_NAME, UN_OKEI, UN_ACTIVE
-		FROM dbo.UnitTable  
+		FROM dbo.UnitTable
 		WHERE UN_ID = @unitid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

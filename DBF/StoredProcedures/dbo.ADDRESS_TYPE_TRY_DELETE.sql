@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_TRY_DELETE]
 	@addresstypeid TINYINT
 AS
 BEGIN
@@ -37,7 +37,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_TYPE = @addresstypeid)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'Данный тип адреса указан в одном или нескольких адресах. ' + 
+				SET @txt = @txt + 'Данный тип адреса указан в одном или нескольких адресах. ' +
 								  'Удаление невозможно, пока выбранный тип адреса будет указан хотя ' +
 								  'бы в одном адресе.'
 			END
@@ -48,9 +48,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

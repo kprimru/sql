@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[REPORT_SYSTEM_SUBHOST]	
+ALTER PROCEDURE [dbo].[REPORT_SYSTEM_SUBHOST]
 	@statuslist VARCHAR(MAX),
-	@subhostlist VARCHAR(MAX),	
+	@subhostlist VARCHAR(MAX),
 	@systemlist VARCHAR(MAX),
 	@systemtypelist VARCHAR(MAX),
 	@systemnetlist VARCHAR(MAX),
@@ -32,7 +32,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_status') IS NOT NULL
 			DROP TABLE #dbf_status
 
-		CREATE TABLE #dbf_status 
+		CREATE TABLE #dbf_status
 			(
 				STAT_ID INT NOT NULL
 			)
@@ -45,8 +45,8 @@ BEGIN
 			WHERE DS_ACTIVE = 1
 		END
 		ELSE
-		BEGIN		
-			INSERT INTO #dbf_status 
+		BEGIN
+			INSERT INTO #dbf_status
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@statuslist, ',')
 		END
 
@@ -61,14 +61,14 @@ BEGIN
 		IF @systemlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_system
-				SELECT SYS_ID 
-				FROM dbo.SystemTable 
+				SELECT SYS_ID
+				FROM dbo.SystemTable
 				WHERE SYS_ACTIVE = 1
 		END
 		ELSE
 		BEGIN
-			
-			INSERT INTO #dbf_system 
+
+			INSERT INTO #dbf_system
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemlist, ',')
 		END
 
@@ -84,13 +84,13 @@ BEGIN
 		IF @systemtypelist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemtype
-				SELECT SST_ID 
-				FROM dbo.SystemTypeTable 
+				SELECT SST_ID
+				FROM dbo.SystemTypeTable
 				WHERE SST_ACTIVE = 1
 		END
 		ELSE
-		BEGIN		
-			INSERT INTO #dbf_systemtype 
+		BEGIN
+			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
 
@@ -106,13 +106,13 @@ BEGIN
 		IF @subhostlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_subhost
-				SELECT SH_ID 
-				FROM dbo.SubhostTable 
+				SELECT SH_ID
+				FROM dbo.SubhostTable
 				WHERE SH_ACTIVE = 1
 		END
 		ELSE
-		BEGIN		
-			INSERT INTO #dbf_subhost 
+		BEGIN
+			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
 
@@ -127,13 +127,13 @@ BEGIN
 		IF @systemnetlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemnet
-				SELECT SN_ID 
+				SELECT SN_ID
 				FROM dbo.SystemNetTable
 				WHERE SN_ACTIVE = 1
 				ORDER BY SN_ORDER
 		END
 		ELSE
-		BEGIN		
+		BEGIN
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
@@ -141,7 +141,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_period') IS NOT NULL
 			DROP TABLE #dbf_period
 
-		CREATE TABLE #dbf_period 
+		CREATE TABLE #dbf_period
 			(
 				TPR_ID INT NOT NULL
 			)
@@ -165,13 +165,13 @@ BEGIN
 		SET @sql = 'SELECT SHPVT.PR_DATE AS [Дата], '
 
 		SELECT @sql = @sql + 'SHPVT.[' + CONVERT(VARCHAR, SH_ID) + '] AS ''' + SH_SHORT_NAME + ''','
-		FROM 
+		FROM
 			dbo.SubhostTable INNER JOIN
 			#dbf_subhost ON SH_ID = TSH_ID
 		ORDER BY SH_ORDER
 
 		SELECT @sql = @sql + 'SSPVT.[' + CONVERT(VARCHAR, SYS_ID) + '] AS ''' + SYS_SHORT_NAME + ''','
-		FROM 
+		FROM
 			dbo.SystemTable INNER JOIN
 			#dbf_system ON SYS_ID = TSYS_ID
 		ORDER BY SYS_ORDER
@@ -179,8 +179,8 @@ BEGIN
 		IF @selecttotal = 1
 			SET @sql = @sql + '
 				(
-					SELECT COUNT(REG_ID) 
-					FROM 	
+					SELECT COUNT(REG_ID)
+					FROM 
 						#dbf_period	INNER JOIN
 						dbo.PeriodRegExceptView b ON TPR_ID = REG_ID_PERIOD INNER JOIN
 						dbo.PeriodTable ON PR_ID = REG_ID_PERIOD INNER JOIN
@@ -193,11 +193,11 @@ BEGIN
 				) AS [Итого],'
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
-		
-		SET @sql = @sql + ' FROM 		
+
+		SET @sql = @sql + ' FROM 
 			(
 				SELECT REG_ID, REG_ID_HOST, REG_ID_PERIOD, PR_DATE
-				FROM 				 
+				FROM 
 					#dbf_period INNER JOIN
 					dbo.PeriodRegExceptView b ON REG_ID_PERIOD = TPR_ID INNER JOIN
 					dbo.PeriodTable ON PR_ID = REG_ID_PERIOD INNER JOIN
@@ -205,7 +205,7 @@ BEGIN
 					#dbf_systemtype e ON e.TST_ID = b.REG_ID_TYPE INNER JOIN
 					dbo.SystemNetCountTable f ON f.SNC_ID = b.REG_ID_NET INNER JOIN
 					#dbf_systemnet g ON g.TSN_ID = f.SNC_ID_SN INNER JOIN
-					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS			
+					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS
 			) SH
 			PIVOT
 			(
@@ -214,11 +214,11 @@ BEGIN
 					( '
 
 		SELECT @sql = @sql + '[' + CONVERT(VARCHAR, SH_ID) + '],'
-		FROM 
+		FROM
 			dbo.SubhostTable INNER JOIN
 			#dbf_subhost ON SH_ID = TSH_ID
 		ORDER BY SH_ORDER
-		
+
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
 		SET @sql = @sql + '
@@ -226,15 +226,15 @@ BEGIN
 			) AS SHPVT INNER JOIN
 			(
 				SELECT REG_ID, REG_ID_SYSTEM, REG_ID_PERIOD, PR_DATE
-				FROM 				 
+				FROM 
 					#dbf_period INNER JOIN
 					dbo.PeriodRegExceptView b ON REG_ID_PERIOD = TPR_ID INNER JOIN
 					dbo.PeriodTable ON PR_ID = REG_ID_PERIOD INNER JOIN
-					#dbf_systemtype c ON c.TST_ID = b.REG_ID_TYPE INNER JOIN				
+					#dbf_systemtype c ON c.TST_ID = b.REG_ID_TYPE INNER JOIN
 					#dbf_subhost e ON e.TSH_ID = b.REG_ID_HOST INNER JOIN
 					dbo.SystemNetCountTable f ON f.SNC_ID = b.REG_ID_NET INNER JOIN
 					#dbf_systemnet g ON g.TSN_ID = f.SNC_ID_SN INNER JOIN
-					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS INNER JOIN				
+					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS INNER JOIN
 					dbo.SystemTypeTable x ON x.SST_ID = b.REG_ID_TYPE
 				WHERE NOT EXISTS
 					(
@@ -247,16 +247,16 @@ BEGIN
 				UNION ALL
 
 				SELECT REG_ID, REG_ID_SYSTEM, REG_ID_PERIOD, PR_DATE
-				FROM 				 
+				FROM 
 					#dbf_period INNER JOIN
 					dbo.PeriodRegExceptView b ON REG_ID_PERIOD = TPR_ID INNER JOIN
 					dbo.PeriodTable ON PR_ID = REG_ID_PERIOD INNER JOIN
-					#dbf_systemtype c ON c.TST_ID = b.REG_ID_TYPE INNER JOIN				
+					#dbf_systemtype c ON c.TST_ID = b.REG_ID_TYPE INNER JOIN
 					#dbf_subhost e ON e.TSH_ID = b.REG_ID_HOST INNER JOIN
 					dbo.SystemNetCountTable f ON f.SNC_ID = b.REG_ID_NET INNER JOIN
 					#dbf_systemnet g ON g.TSN_ID = f.SNC_ID_SN INNER JOIN
-					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS INNER JOIN				
-					dbo.SystemTypeTable x ON x.SST_ID = b.REG_ID_TYPE INNER JOIN 
+					#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS INNER JOIN
+					dbo.SystemTypeTable x ON x.SST_ID = b.REG_ID_TYPE INNER JOIN
 					dbo.SystemTypeSubhost y ON y.STS_ID_TYPE = x.SST_ID ON y.STS_ID_SUBHOST = b.REG_ID_HOST
 			) SS
 			PIVOT
@@ -266,13 +266,13 @@ BEGIN
 					( '
 
 		SELECT @sql = @sql + '[' + CONVERT(VARCHAR, SYS_ID) + '],'
-		FROM 
+		FROM
 			dbo.SystemTable INNER JOIN
 			#dbf_system ON SYS_ID = TSYS_ID
 		ORDER BY SYS_ORDER
-		
+
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
-		
+
 		SET @sql = @sql + '
 					)
 			) AS SSPVT ON SHPVT.REG_ID_PERIOD = SSPVT.REG_ID_PERIOD
@@ -293,15 +293,15 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_systemnet') IS NOT NULL
 			DROP TABLE #dbf_systemnet
 		IF OBJECT_ID('tempdb..#dbf_period') IS NOT NULL
-			DROP TABLE #dbf_period	
-			
+			DROP TABLE #dbf_period
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

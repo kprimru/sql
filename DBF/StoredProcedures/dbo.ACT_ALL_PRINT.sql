@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_ALL_PRINT]
 	@actdate SMALLDATETIME,
@@ -32,7 +32,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#actcour') IS NOT NULL
 			DROP TABLE #actcour
-		
+
 		CREATE TABLE #actcour
 			(
 				COUR_ID SMALLINT
@@ -53,7 +53,7 @@ BEGIN
 		SET @actlist = ''
 
 		SELECT @actlist = @actlist + CONVERT(VARCHAR(10), ACT_ID) + ','
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT ACT_ID
 				FROM
@@ -67,7 +67,7 @@ BEGIN
 					AND SYS_ID_SO = @soid
 					AND (ACT_PRINT IS NULL OR ACT_PRINT = 0)
 			) AS o_O
-			
+
 		IF LEN(@actlist) > 2
 			SET @actlist = LEFT(@actlist, LEN(@actlist) - 1)
 
@@ -96,14 +96,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#actcour') IS NOT NULL
 			DROP TABLE #actcour
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

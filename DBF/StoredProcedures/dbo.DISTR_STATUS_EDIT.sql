@@ -11,9 +11,9 @@ GO
 Описание:	  Изменить данные о статусе дистрибутива
 */
 
-ALTER PROCEDURE [dbo].[DISTR_STATUS_EDIT] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_EDIT]
 	@dsid SMALLINT,
-	@dsname VARCHAR(50),  
+	@dsname VARCHAR(50),
 	@dsreg TINYINT,
 	@active BIT = 1
 AS
@@ -32,8 +32,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.DistrStatusTable 
-		SET DS_NAME = @dsname, 
+		UPDATE dbo.DistrStatusTable
+		SET DS_NAME = @dsname,
 			DS_REG = @dsreg,
 			DS_ACTIVE = @active
 		WHERE DS_ID = @dsid
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

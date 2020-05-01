@@ -97,25 +97,25 @@ BEGIN
 			)
 
 		SELECT @ID = SCOPE_IDENTITY()
-		
+
 		SELECT @ID AS NEW_IDEN
-		
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @ID
-			
+
 		EXEC dbo.BOOK_SALE_PROCESS @ID
 		EXEC dbo.BOOK_PURCHASE_PROCESS @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

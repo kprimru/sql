@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[PRIMARY_PAY_DEFAULT_GET]
@@ -30,26 +30,26 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			TX_ID, TX_CAPTION, ORG_ID, ORG_PSEDO,
-			CAST(((PS_PRICE + PP_COEF_ADD) 
+			CAST(((PS_PRICE + PP_COEF_ADD)
 											* PP_COEF_MUL * SN_COEF * (100 - DF_DISCOUNT) / 100) AS MONEY) AS PRP_PRICE
-		FROM 
-			dbo.TaxTable, 
-			dbo.DistrView a WITH(NOEXPAND) INNER JOIN  
-			dbo.DistrFinancingView z ON z.DIS_ID = a.DIS_ID INNER JOIN		
-			dbo.PriceSystemTable b ON b.PS_ID_SYSTEM = a.SYS_ID INNER JOIN 
+		FROM
+			dbo.TaxTable,
+			dbo.DistrView a WITH(NOEXPAND) INNER JOIN
+			dbo.DistrFinancingView z ON z.DIS_ID = a.DIS_ID INNER JOIN
+			dbo.PriceSystemTable b ON b.PS_ID_SYSTEM = a.SYS_ID INNER JOIN
 			dbo.ClientTable y ON CD_ID_CLIENT = CL_ID LEFT OUTER JOIN
 			dbo.OrganizationTable x ON ORG_ID = CL_ID_ORG
-		WHERE a.DIS_ID = @distrid AND PP_ID = 2 AND PS_ID_PERIOD = @periodid AND TX_ID = 1 
-		
+		WHERE a.DIS_ID = @distrid AND PP_ID = 2 AND PS_ID_PERIOD = @periodid AND TX_ID = 1
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

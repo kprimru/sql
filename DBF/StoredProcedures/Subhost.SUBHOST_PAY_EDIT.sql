@@ -29,21 +29,21 @@ BEGIN
 
 		DECLARE @SH_ID SMALLINT
 
-		SELECT @SH_ID = SHP_ID_SUBHOST 
+		SELECT @SH_ID = SHP_ID_SUBHOST
 		FROM Subhost.SubhostPay
 		WHERE SHP_ID = @SHP_ID
 
 		EXEC Subhost.SUBHOST_PAY_DELETE @SHP_ID
 
 		EXEC Subhost.SUBHOST_PAY_ADD @SH_ID, @ORG_ID, @PR_ID, @DATE, @SUM, @COMMENT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

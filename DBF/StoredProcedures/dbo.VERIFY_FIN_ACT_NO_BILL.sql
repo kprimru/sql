@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[VERIFY_FIN_ACT_NO_BILL]	
+ALTER PROCEDURE [dbo].[VERIFY_FIN_ACT_NO_BILL]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -36,11 +36,11 @@ BEGIN
 			dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
 		WHERE NOT EXISTS
 			(
-				SELECT * FROM 
+				SELECT * FROM
 					dbo.BillDistrTable c INNER JOIN
 					dbo.BillTable d ON BD_ID_BILL = BL_ID
-				WHERE 
-					c.BD_ID_DISTR = b.AD_ID_DISTR 
+				WHERE
+					c.BD_ID_DISTR = b.AD_ID_DISTR
 					AND d.BL_ID_CLIENT = a.ACT_ID_CLIENT
 					AND d.BL_ID_PERIOD = b.AD_ID_PERIOD
 			)
@@ -56,24 +56,24 @@ BEGIN
 			dbo.PeriodTable ON PR_ID = CSD_ID_PERIOD
 		WHERE NOT EXISTS
 			(
-				SELECT * FROM 
+				SELECT * FROM
 					dbo.BillDistrTable c INNER JOIN
 					dbo.BillTable d ON BD_ID_BILL = BL_ID
-				WHERE 
-					c.BD_ID_DISTR = b.CSD_ID_DISTR 
+				WHERE
+					c.BD_ID_DISTR = b.CSD_ID_DISTR
 					AND d.BL_ID_CLIENT = a.CSG_ID_CLIENT
 					AND d.BL_ID_PERIOD = b.CSD_ID_PERIOD
 			)
 
 		ORDER BY CL_PSEDO, DIS_STR, PR_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

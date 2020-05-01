@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Subhost].[SUBHOST_LESSON_POSITION_EDIT]
-	@LP_ID	INT,	
+	@LP_ID	INT,
 	@LP_NAME	VARCHAR(50),
 	@LP_ORDER	SMALLINT,
 	@ACTIVE	BIT
@@ -30,7 +30,7 @@ BEGIN
 			LP_ORDER = @LP_ORDER,
 			LP_ACTIVE = @ACTIVE
 		WHERE LP_ID = @LP_ID
-		
+
 		UPDATE dbo.FieldTable
 		SET FL_CAPTION = @LP_NAME
 		WHERE FL_NAME = 'LP_NAME_' + CONVERT(VARCHAR(10), @LP_ID)
@@ -42,14 +42,14 @@ BEGIN
 		UPDATE dbo.FieldTable
 		SET FL_CAPTION = @LP_NAME + ' сумма'
 		WHERE FL_NAME = 'SLP_SUM_' + CONVERT(VARCHAR(10), @LP_ID)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

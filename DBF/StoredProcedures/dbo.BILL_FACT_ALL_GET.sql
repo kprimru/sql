@@ -5,11 +5,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
-ALTER PROCEDURE [dbo].[BILL_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[BILL_FACT_ALL_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,14 +30,14 @@ BEGIN
 		FROM dbo.BillFactMasterTable
 		GROUP BY BFM_DATE, BFM_ID_PERIOD, BILL_DATE
 		ORDER BY BFM_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[BILL_FACT_ALL_GET] TO rl_bill_p;

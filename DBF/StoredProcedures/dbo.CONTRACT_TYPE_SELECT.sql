@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_TYPE_SELECT]   
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_SELECT]
 	@active BIT = NULL
 AS
 
@@ -30,8 +30,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CTT_ID, CTT_NAME 
-		FROM dbo.ContractTypeTable 
+		SELECT CTT_ID, CTT_NAME
+		FROM dbo.ContractTypeTable
 		WHERE CTT_ACTIVE = ISNULL(@active, CTT_ACTIVE)
 		ORDER BY CTT_NAME
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

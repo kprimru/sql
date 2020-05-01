@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE]
 	@ID SMALLINT
 AS
 BEGIN
@@ -37,7 +37,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.Action WHERE ACTN_ID_TYPE = @ID)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'Данный тип акции указан в одной или нескольких акциях. ' + 
+				SET @txt = @txt + 'Данный тип акции указан в одной или нескольких акциях. ' +
 								  'Удаление невозможно, пока выбранный тип акции будет указан хотя ' +
 								  'бы в одной акции.'
 			END
@@ -48,9 +48,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -12,7 +12,7 @@ AS
 			TX_ID, TX_PERCENT, TX_NAME, TX_CAPTION,
 			DIS_ACTIVE, PRP_ID_INVOICE, PRP_COMMENT,
 			PRP_ID_ORG
-	FROM			
-		dbo.PrimaryPayTable	
-		LEFT OUTER JOIN dbo.ClientDistrView	ON DIS_ID = PRP_ID_DISTR 
+	FROM
+		dbo.PrimaryPayTable
+		LEFT OUTER JOIN dbo.ClientDistrView	ON DIS_ID = PRP_ID_DISTR
 		LEFT OUTER JOIN dbo.TaxTable ON PRP_ID_TAX = TX_ID

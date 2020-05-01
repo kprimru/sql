@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TYPE_SELECT]   
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_SELECT]
 	@active BIT = NULL
 AS
 
@@ -32,16 +32,16 @@ BEGIN
 
 		SELECT AT_ID, AT_NAME
 		FROM dbo.AddressTypeTable
-		WHERE AT_ACTIVE = ISNULL(@active, AT_ACTIVE) 
+		WHERE AT_ACTIVE = ISNULL(@active, AT_ACTIVE)
 		ORDER BY AT_NAME
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

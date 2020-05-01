@@ -8,16 +8,16 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
-Описание:	  Изменить данные о подхосте с 
+Описание:	  Изменить данные о подхосте с
                 указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_EDIT] 
+ALTER PROCEDURE [dbo].[SUBHOST_EDIT]
 	@subhostid SMALLINT,
 	@subhostfullname VARCHAR(250),
-	@subhostshortname VARCHAR(50),  
-	@subhostric BIT,	
-	@subhostlstname VARCHAR(20),  
+	@subhostshortname VARCHAR(50),
+	@subhostric BIT,
+	@subhostlstname VARCHAR(20),
 	@reg BIT,
 	@study BIT,
 	@system BIT,
@@ -44,9 +44,9 @@ BEGIN
 
 		UPDATE dbo.SubhostTable
 		SET SH_FULL_NAME = @subhostfullname,
-			SH_SHORT_NAME = @subhostshortname,    
-			SH_SUBHOST = @subhostric,		
-			SH_LST_NAME = @subhostlstname,    
+			SH_SHORT_NAME = @subhostshortname,
+			SH_SUBHOST = @subhostric,
+			SH_LST_NAME = @subhostlstname,
 			SH_REG = @reg,
 			SH_CALC_STUDY = @study,
 			SH_CALC_SYSTEM = @system,
@@ -61,9 +61,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

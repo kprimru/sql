@@ -41,23 +41,23 @@ BEGIN
 					),
 					(
 						SELECT TOP 1 GS_VALUE
-						FROM 
+						FROM
 							Ric.GrowStandard
 							INNER JOIN dbo.Quarter ON GS_ID_QUARTER = QR_ID
 						WHERE QR_BEGIN <= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_ID)
 						ORDER BY QR_BEGIN DESC
 					))
 		END
-		
+
 		SELECT @RES AS GS_VALUE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

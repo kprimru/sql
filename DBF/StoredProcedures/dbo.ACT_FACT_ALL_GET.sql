@@ -7,12 +7,12 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACT_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[ACT_FACT_ALL_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -34,14 +34,14 @@ BEGIN
 		LEFT JOIN dbo.ActTable A ON M.ACT_ID = A.ACT_ID
 		GROUP BY AFM_DATE
 		ORDER BY AFM_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Возвращает ID типа системы с 
-               указанным названием. 
+Описание:	  Возвращает ID типа системы с
+               указанным названием.
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_TYPE_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[SYSTEM_TYPE_CHECK_NAME]
 	@systemtypename VARCHAR(20)
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

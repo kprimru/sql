@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[MARKET_AREA_GET] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_GET]
 	@marketareaid INT = NULL
 AS
 BEGIN
@@ -30,16 +30,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT MA_ID, MA_NAME, MA_SHORT_NAME, MA_ACTIVE
-		FROM dbo.MarketAreaTable 
-		WHERE MA_ID = @marketareaid 
+		FROM dbo.MarketAreaTable
+		WHERE MA_ID = @marketareaid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

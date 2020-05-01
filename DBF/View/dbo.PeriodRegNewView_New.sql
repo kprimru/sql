@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[PeriodRegNewView_New]
 AS
-SELECT	
+SELECT
 		RNN_ID = A.REG_ID,
 		B.PR_NAME,	B.PR_DATE,	RNN_ID_PERIOD = A.REG_ID_PERIOD,
 		C.SYS_SHORT_NAME,	RNN_ID_SYSTEM = A.REG_ID_SYSTEM,
@@ -28,11 +28,11 @@ FROM	dbo.PeriodRegNewDistrView			N
 												AND N.REG_COMP_NUM = a.REG_COMP_NUM
 												AND N.REG_ID_PERIOD = A.REG_ID_PERIOD
 		INNER JOIN dbo.PeriodTable			B ON A.REG_ID_PERIOD = B.PR_ID
-		INNER JOIN dbo.SystemTable			C ON	A.REG_ID_SYSTEM = C.SYS_ID	
+		INNER JOIN dbo.SystemTable			C ON	A.REG_ID_SYSTEM = C.SYS_ID
 												AND N.SYS_ID_HOST = N.SYS_ID_HOST
 		INNER JOIN dbo.SubHostTable			D ON A.REG_ID_HOST = D.SH_ID
 		INNER JOIN dbo.SystemTypeTable		E ON A.REG_ID_TYPE = E.SST_ID
-		INNER JOIN dbo.SystemNetCountTable	F ON A.REG_ID_NET = F.SNC_ID		
+		INNER JOIN dbo.SystemNetCountTable	F ON A.REG_ID_NET = F.SNC_ID
 WHERE NOT EXISTS
 	(
 		SELECT *

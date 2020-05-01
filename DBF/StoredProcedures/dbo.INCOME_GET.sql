@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_GET]
@@ -30,15 +30,15 @@ BEGIN
 
 		SELECT IN_DATE, IN_SUM, IN_PAY_DATE, IN_PAY_NUM, IN_PRIMARY
 		FROM dbo.IncomeTable
-		WHERE IN_ID = @inid	
-		
+		WHERE IN_ID = @inid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

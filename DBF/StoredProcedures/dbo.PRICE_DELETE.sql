@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Удалить тип прейскуранта с 
+Описание:	  Удалить тип прейскуранта с
                указанным кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[PRICE_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_DELETE]
 	@priceid SMALLINT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.PriceTable 
+		DELETE
+		FROM dbo.PriceTable
 		WHERE PP_ID = @priceid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

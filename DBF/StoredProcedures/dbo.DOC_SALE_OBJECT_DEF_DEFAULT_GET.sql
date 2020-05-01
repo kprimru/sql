@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[DOC_SALE_OBJECT_DEF_DEFAULT_GET]
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DOC_NAME, DOC_ID, SO_NAME, SO_ID, GD_ID, GD_NAME, UN_ID, UN_NAME
-		FROM 
+		FROM
 			dbo.DocumentTable,
 			dbo.SaleObjectTable,
 			dbo.GoodTable,
@@ -41,14 +41,14 @@ BEGIN
 				FROM dbo.DocumentSaleObjectDefaultTable
 				WHERE DSD_ID_SO = SO_ID AND DSD_ID_DOC = DOC_ID
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

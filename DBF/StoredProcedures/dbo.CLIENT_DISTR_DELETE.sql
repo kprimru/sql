@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELETE] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELETE]
 	@id INT
 AS
 BEGIN
@@ -22,17 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.ClientDistrTable 
+		DELETE
+		FROM dbo.ClientDistrTable
 		WHERE CD_ID = @id
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

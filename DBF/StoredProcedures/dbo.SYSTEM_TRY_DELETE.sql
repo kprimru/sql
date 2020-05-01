@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если систему можно 
-               удалить из справочника (ни у 
-               одного клиента нет аткой системы), 
+Описание:	  Возвращает 0, если систему можно
+               удалить из справочника (ни у
+               одного клиента нет аткой системы),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_TRY_DELETE]
 	@systemid SMALLINT
 AS
 BEGIN
@@ -85,9 +85,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

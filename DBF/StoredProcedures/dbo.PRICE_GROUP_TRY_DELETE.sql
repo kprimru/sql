@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Возвращает 0, если тип прейскуранта 
-               можно удалить из справочника, 
+Описание:	  Возвращает 0, если тип прейскуранта
+               можно удалить из справочника,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[PRICE_GROUP_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_GROUP_TRY_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -46,14 +46,14 @@ BEGIN
 
 
 		SELECT @res AS RES, @txt AS TXT
-	  
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

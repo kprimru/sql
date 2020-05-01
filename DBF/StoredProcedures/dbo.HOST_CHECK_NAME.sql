@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Возвращает хоста с указанным 
-                названием. 
+Описание:	  Возвращает хоста с указанным
+                названием.
 */
 
-ALTER PROCEDURE [dbo].[HOST_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[HOST_CHECK_NAME]
 	@hostname VARCHAR(20)
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

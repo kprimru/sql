@@ -32,14 +32,14 @@ BEGIN
 			AND DIU_DISTR = @DISTR
 			AND DIU_COMP = @COMP
 			AND DIU_ACTIVE = 1
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

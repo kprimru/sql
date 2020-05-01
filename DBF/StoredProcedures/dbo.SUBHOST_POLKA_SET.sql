@@ -28,7 +28,7 @@ BEGIN
 		SET POLKA = @POLKA
 		WHERE ID_PERIOD = @PR_ID
 			--AND ID_SUBHOST = @SH_ID
-			
+
 		--IF @@ROWCOUNT = 0
 		INSERT INTO dbo.SubhostPolka(ID_SUBHOST, ID_PERIOD, POLKA)
 				--VALUES(@SH_ID, @PR_ID, @POLKA)
@@ -41,14 +41,14 @@ BEGIN
 					WHERE ID_SUBHOST = SH_ID
 						AND ID_PERIOD = @PR_ID
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

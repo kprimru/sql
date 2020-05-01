@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_GET_CURRENT]  
+ALTER PROCEDURE [dbo].[PERIOD_GET_CURRENT]
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -32,16 +32,16 @@ BEGIN
 		SELECT @date = GETDATE()
 
 		SELECT PR_ID , PR_NAME
-		FROM dbo.PeriodTable	
+		FROM dbo.PeriodTable
 		WHERE @date >= PR_DATE AND @date < DATEADD(day, 1, PR_END_DATE)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

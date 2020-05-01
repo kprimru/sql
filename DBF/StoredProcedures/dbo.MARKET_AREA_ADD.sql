@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить тип сбытовой территории
 */
 
-ALTER PROCEDURE [dbo].[MARKET_AREA_ADD] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_ADD]
 	@marketareaname VARCHAR(150),
 	@marketareashortname VARCHAR(50),
 	@active BIT = 1,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.MarketAreaTable(MA_NAME, MA_SHORT_NAME, MA_ACTIVE) 
+		INSERT INTO dbo.MarketAreaTable(MA_NAME, MA_SHORT_NAME, MA_ACTIVE)
 		VALUES (@marketareaname, @marketareashortname, @active)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,8 +10,8 @@ GO
 Описание:	  Выбрать данные о спарвочнике, либо список всех справочников
 */
 
-ALTER PROCEDURE [dbo].[REFERENCE_GET] 
-	@refname VARCHAR(50) = NULL  
+ALTER PROCEDURE [dbo].[REFERENCE_GET]
+	@refname VARCHAR(50) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -28,19 +28,19 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			REF_ID, REF_SCHEMA, REF_NAME, REF_TITLE, REF_FIELD_ID, REF_FIELD_NAME, 
-			REF_READ_ONLY 
-		FROM dbo.ReferenceTable 
-		WHERE REF_NAME = @refname 		
+		SELECT
+			REF_ID, REF_SCHEMA, REF_NAME, REF_TITLE, REF_FIELD_ID, REF_FIELD_NAME,
+			REF_READ_ONLY
+		FROM dbo.ReferenceTable
+		WHERE REF_NAME = @refname 
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_GET] 
+ALTER PROCEDURE [dbo].[SUBHOST_GET]
 	@subhostid SMALLINT = NULL
 AS
 BEGIN
@@ -28,10 +28,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-				SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_SUBHOST, SH_LST_NAME, 
+		SELECT
+				SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_SUBHOST, SH_LST_NAME,
 				SH_REG, SH_CALC_STUDY, SH_CALC_SYSTEM, SH_ORDER, SH_CALC, SH_PENALTY, SH_PERIODICITY, SH_ACTIVE
-		FROM 
+		FROM
 			dbo.SubhostTable a
 		WHERE SH_ID = @subhostid
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -11,14 +11,14 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[REPORT_HEADER_GET]	
+ALTER PROCEDURE [dbo].[REPORT_HEADER_GET]
 	@prid SMALLINT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -32,19 +32,19 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	'Отчет РИЦ ' + (SELECT dbo.GET_SETTING('REPORT_RIC_NUM')) + 
-				' по клиентам КонсультантПлюс за ' + CONVERT(VARCHAR, DATENAME(mm, PR_DATE)) + ' ' + CONVERT(VARCHAR, DATENAME(yyyy, PR_DATE)) + 
+		SELECT	'Отчет РИЦ ' + (SELECT dbo.GET_SETTING('REPORT_RIC_NUM')) +
+				' по клиентам КонсультантПлюс за ' + CONVERT(VARCHAR, DATENAME(mm, PR_DATE)) + ' ' + CONVERT(VARCHAR, DATENAME(yyyy, PR_DATE)) +
 			   ' года, ответственный ' + (SELECT dbo.GET_SETTING('REPORT_NAME')) AS RPT_HEADER
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @prid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
@@ -32,8 +32,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		INSERT INTO dbo.GlobalSettingsTable 
+
+		INSERT INTO dbo.GlobalSettingsTable
 								(
 									GS_NAME, GS_VALUE, GS_ACTIVE
 								)
@@ -44,14 +44,14 @@ BEGIN
 
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

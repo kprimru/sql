@@ -7,14 +7,14 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_DELETE]
 	@gsid SMALLINT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -32,14 +32,14 @@ BEGIN
 		DELETE
 		FROM dbo.GlobalSettingsTable
 		WHERE GS_ID = @gsid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

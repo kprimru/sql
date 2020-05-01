@@ -28,20 +28,20 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SubhostKBUTable
-		SET SK_ID_HOST = @SH_ID, 
-			SK_ID_SYSTEM = @SYS_ID, 
+		SET SK_ID_HOST = @SH_ID,
+			SK_ID_SYSTEM = @SYS_ID,
 			SK_ID_PERIOD = @PR_ID,
-			SK_KBU = @KBU, 
+			SK_KBU = @KBU,
 			SK_ACTIVE = @ACTIVE
 		WHERE SK_ID = @SK_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

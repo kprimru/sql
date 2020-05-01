@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 23.09.2008
-Описание:	  Возвращает ID типа сети с указанным 
-				  кол-вом станций. 
+Описание:	  Возвращает ID типа сети с указанным
+				  кол-вом станций.
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT]
 	@netcount INT
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

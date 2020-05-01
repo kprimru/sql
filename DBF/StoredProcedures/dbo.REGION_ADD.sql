@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить регион в справочник
 */
 
-ALTER PROCEDURE [dbo].[REGION_ADD] 
+ALTER PROCEDURE [dbo].[REGION_ADD]
 	@regionname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.RegionTable(RG_NAME, RG_ACTIVE, RG_OLD_CODE) 
+		INSERT INTO dbo.RegionTable(RG_NAME, RG_ACTIVE, RG_OLD_CODE)
 		VALUES (@regionname, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

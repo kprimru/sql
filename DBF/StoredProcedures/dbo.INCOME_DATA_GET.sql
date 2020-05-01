@@ -8,8 +8,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INCOME_DATA_GET]
@@ -30,29 +30,29 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			IN_ID, CL_ID, CL_FULL_NAME, IN_DATE, IN_PAY_DATE, IN_SUM, IN_PAY_NUM,
-			IN_SUM - 
+			IN_SUM -
 				ISNULL
 					(
 						(
 							SELECT SUM(ID_PRICE)
-							FROM dbo.IncomeDistrTable 
+							FROM dbo.IncomeDistrTable
 							WHERE ID_ID_INCOME = IN_ID
 						), 0
 					) AS IN_REST
-		FROM 
+		FROM
 			dbo.IncomeTable a INNER JOIN
 			dbo.ClientTable b ON a.IN_ID_CLIENT = b.CL_ID
 		WHERE IN_ID = @incomeid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

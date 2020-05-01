@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PRICE_SHOW] 
+ALTER PROCEDURE [dbo].[PRICE_SHOW]
 	@pricetypeid INT,
 	@periodid INT
 AS
@@ -31,16 +31,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PS_ID, SYS_SHORT_NAME, SYS_ID, PS_PRICE, SYS_ORDER
-		FROM 
-			dbo.PriceSystemTable a INNER JOIN		
-			dbo.SystemTable d ON d.SYS_ID = a.PS_ID_SYSTEM 
+		FROM
+			dbo.PriceSystemTable a INNER JOIN
+			dbo.SystemTable d ON d.SYS_ID = a.PS_ID_SYSTEM
 		WHERE PS_ID_TYPE = @pricetypeid AND PS_ID_PERIOD = @periodid
 
 		UNION ALL
-		
+
 		SELECT PS_ID, PGD_NAME, PGD_ID, PS_PRICE, 9999999
-		FROM 
-			dbo.PriceSystemTable a INNER JOIN		
+		FROM
+			dbo.PriceSystemTable a INNER JOIN
 			dbo.PriceGoodTable d ON d.PGD_ID = a.PS_ID_PGD
 		WHERE PS_ID_TYPE = @pricetypeid AND PS_ID_PERIOD = @periodid
 
@@ -50,9 +50,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

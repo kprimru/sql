@@ -7,7 +7,7 @@ GO
 ALTER PROCEDURE [Ric].[KBU_TOTAL_CALC]
 	@PR_ALG	SMALLINT,
 	@KBU	DECIMAL(10, 4),
-	@STOCK	DECIMAL(10, 4)	
+	@STOCK	DECIMAL(10, 4)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,7 +30,7 @@ BEGIN
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ALG
 
-		DECLARE @RES	DECIMAL(10, 4)	
+		DECLARE @RES	DECIMAL(10, 4)
 
 		IF @PR_DATE >= '20120601'
 		BEGIN
@@ -49,14 +49,14 @@ BEGIN
 		END
 
 		SELECT ROUND(@RES, 4) AS KBU_TOTAL
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

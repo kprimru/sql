@@ -24,7 +24,7 @@ BEGIN
 
 		DECLARE @RP	INT
 		DECLARE @RP_NAME VARCHAR(100)
-		
+
 		SELECT TOP 1 @RP = RP_ID, @RP_NAME = RP_NAME
 		FROM dbo.ReportPositionTable
 		WHERE RP_ACTIVE = 1
@@ -37,17 +37,17 @@ BEGIN
 				)
 		ORDER BY RP_ID
 
-		SELECT 
+		SELECT
 			'' AS TP_SURNAME, '' AS TP_NAME, '' AS TP_OTCH, '8(423)' AS TP_PHONE,
 			@RP AS RP_ID, @RP_NAME AS RP_NAME
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

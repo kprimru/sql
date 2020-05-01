@@ -25,14 +25,14 @@ BEGIN
 		SELECT LP_ID, LP_NAME, LP_ORDER, LP_ACTIVE
 		FROM Subhost.LessonPosition
 		WHERE LP_ID = @LP_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

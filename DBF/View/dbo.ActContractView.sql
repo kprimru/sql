@@ -6,11 +6,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER VIEW [dbo].[ActContractView]
 AS
-	SELECT 
-		ACT_ID, 
+	SELECT
+		ACT_ID,
 		(
 			SELECT TOP 1 CO_ID
-			FROM 
+			FROM
 				dbo.ContractDistrTable INNER JOIN
 				dbo.ContractTable ON CO_ID = COD_ID_CONTRACT INNER JOIN
 				dbo.ActDistrTable ON AD_ID_DISTR = COD_ID_DISTR

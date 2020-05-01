@@ -6,14 +6,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 ALTER PROCEDURE [dbo].[CLIENT_FACT_BILL_SELECT]
 	@clientid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -25,29 +25,29 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
-		SELECT 
+
+		SELECT
 			BFM_ID,
-			BFM_DATE, 
+			BFM_DATE,
 			(
 				SELECT SUM(BD_TOTAL_UNPAY)
 				FROM dbo.BillFactDetailTable
 				WHERE BFD_ID_BFM = BFM_ID
-			) AS BD_TOTAL_PRICE, 
+			) AS BD_TOTAL_PRICE,
 			BFM_NUM, BFM_ID_PERIOD, BILL_DATE, ORG_PSEDO
-		FROM 
+		FROM
 			dbo.BillFactMasterTable a INNER JOIN
 			dbo.OrganizationTable b ON a.ORG_ID = b.ORG_ID
 		WHERE CL_ID = @clientid
 		ORDER BY BFM_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

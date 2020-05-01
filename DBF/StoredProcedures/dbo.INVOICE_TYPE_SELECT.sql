@@ -8,9 +8,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_TYPE_SELECT]
@@ -32,17 +32,17 @@ BEGIN
 	BEGIN TRY
 
 		SELECT INT_ID, INT_NAME, INT_SALE, INT_BUY
-		FROM 
-			dbo.InvoiceTypeTable 
+		FROM
+			dbo.InvoiceTypeTable
 		WHERE INT_ACTIVE = ISNULL(@active, INT_ACTIVE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

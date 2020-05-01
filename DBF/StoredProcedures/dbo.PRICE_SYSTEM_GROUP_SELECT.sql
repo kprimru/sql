@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_SELECT]
 	@group SMALLINT,
@@ -15,7 +15,7 @@ ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_SELECT]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;		
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -31,9 +31,9 @@ BEGIN
 
 		DECLARE @sql NVARCHAR(MAX)
 
-		SET @sql = 
+		SET @sql =
 		'
-		SELECT DISTINCT ''Система'' AS IS_SYS, SYS_ID, SYS_ORDER, PR_ID, SYS_SHORT_NAME 
+		SELECT DISTINCT ''Система'' AS IS_SYS, SYS_ID, SYS_ORDER, PR_ID, SYS_SHORT_NAME
 		'
 
 		DECLARE @tp SMALLINT
@@ -63,7 +63,7 @@ BEGIN
 					AND PD_ID_TYPE = ' + CONVERT(VARCHAR(20), @tp) + '
 			)
 			) AS PS_ENABLE_' + CONVERT(VARCHAR, @tp)
-			
+
 
 			FETCH NEXT FROM TP INTO @tp
 		END
@@ -73,20 +73,20 @@ BEGIN
 
 		--SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-		SELECT @sql = @sql + ' 
-		FROM 	
-			dbo.PriceSystemTable a INNER JOIN		
+		SELECT @sql = @sql + '
+		FROM 
+			dbo.PriceSystemTable a INNER JOIN
 			dbo.PeriodTable ON PR_ID = PS_ID_PERIOD INNER JOIN
 			dbo.SystemTable ON SYS_ID = PS_ID_SYSTEM INNER JOIN
 			dbo.PriceTypeTable ON PT_ID = PS_ID_TYPE
-		WHERE PR_ID = ' + CONVERT(VARCHAR, @period) + 
+		WHERE PR_ID = ' + CONVERT(VARCHAR, @period) +
 			' AND PT_ID_GROUP = ' + CONVERT(VARCHAR, @group) + '
 		UNION ALL'
 
 
-		SET @sql = @sql + 
+		SET @sql = @sql +
 		'
-		SELECT DISTINCT ''Доп.услуга'' AS IS_SYS, PGD_ID, 9999999 AS SYS_ORDER, PR_ID, PGD_NAME 
+		SELECT DISTINCT ''Доп.услуга'' AS IS_SYS, PGD_ID, 9999999 AS SYS_ORDER, PR_ID, PGD_NAME
 		'
 
 		--DECLARE @tp SMALLINT
@@ -119,26 +119,26 @@ BEGIN
 
 		--SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-		SELECT @sql = @sql + ' 
-		FROM 	
-			dbo.PriceSystemTable a INNER JOIN		
+		SELECT @sql = @sql + '
+		FROM 
+			dbo.PriceSystemTable a INNER JOIN
 			dbo.PeriodTable ON PR_ID = PS_ID_PERIOD INNER JOIN
 			dbo.PriceGoodTable ON PGD_ID = PS_ID_PGD INNER JOIN
 			dbo.PriceTypeTable ON PT_ID = PS_ID_TYPE
-		WHERE PR_ID = ' + CONVERT(VARCHAR, @period) + 
+		WHERE PR_ID = ' + CONVERT(VARCHAR, @period) +
 			' AND PT_ID_GROUP = ' + CONVERT(VARCHAR, @group) + '
 			AND PGD_ACTIVE = 1
 		ORDER BY SYS_ORDER'
 
 		EXEC (@sql)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -28,16 +28,16 @@ BEGIN
 		WHERE SCD_ID_PERIOD = @PR_ID
 
 		IF @@ROWCOUNT = 0
-			INSERT INTO Subhost.SubhostCalcDates(SCD_ID_PERIOD, SCD_DATE)	
+			INSERT INTO Subhost.SubhostCalcDates(SCD_ID_PERIOD, SCD_DATE)
 				VALUES(@PR_ID, @DATE)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

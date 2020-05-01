@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:		
+Дата создания:
+Описание:
 Дата изменения:	18.06.2009
 Описание:		Период всячески исключаем из-за отсутствия его необходимости,
 				название не меняем.
@@ -37,7 +37,7 @@ BEGIN
 		DECLARE @PR_DATE	SMALLDATETIME
 		DECLARE @SQL NVARCHAR(MAX)
 
-		SELECT @PR_DATE = PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid	
+		SELECT @PR_DATE = PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid
 
 		IF @doctype = 'ACT'
 		BEGIN
@@ -52,7 +52,7 @@ BEGIN
 
 			INSERT INTO #act(AD_ID_PERIOD, AD_ID_DISTR)
 				SELECT AD_ID_PERIOD, AD_ID_DISTR
-				FROM 
+				FROM
 					dbo.ActTable INNER JOIN
 					dbo.ActDistrTable ON ACT_ID = AD_ID_ACT
 				WHERE ACT_ID_CLIENT = @clientid
@@ -60,14 +60,14 @@ BEGIN
 			SET @SQL = 'CREATE CLUSTERED INDEX [IX_' + CONVERT(VARCHAR(50), NEWID()) + '] ON #act (AD_ID_DISTR, AD_ID_PERIOD)'
 			EXEC (@SQL)
 
-			SELECT 
+			SELECT
 				BD_ID,
 				PR_ID, PR_DATE, a.DIS_ID, a.DIS_STR, BD_PRICE, BD_TAX_PRICE, BD_TOTAL_PRICE,
 				(
-					BD_TOTAL_PRICE - 
+					BD_TOTAL_PRICE -
 						ISNULL((
 							SELECT SUM(ID_PRICE)
-							FROM 
+							FROM
 								dbo.IncomeDistrTable INNER JOIN
 								dbo.IncomeTable ON IN_ID = ID_ID_INCOME INNER JOIN
 								dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
@@ -77,35 +77,35 @@ BEGIN
 								AND ID_ID_DISTR = a.DIS_ID
 								AND c.SO_ID = a.SO_ID
 						), 0)
-				) BD_UNPAY, 
+				) BD_UNPAY,
 				(
 					SELECT TOP 1 CO_ID
-					FROM 
+					FROM
 						dbo.ContractDistrTable LEFT OUTER JOIN
 						dbo.ContractTable ON CO_ID = COD_ID_CONTRACT AND CO_ID_CLIENT = @clientid --AND CO_ACTIVE = 1
 					WHERE COD_ID_DISTR = a.DIS_ID
 					ORDER BY CO_ACTIVE DESC, CO_END_DATE DESC
-				) AS CO_ID, 
+				) AS CO_ID,
 				(
 					SELECT TOP 1 CO_NUM
-					FROM 
+					FROM
 						dbo.ContractDistrTable LEFT OUTER JOIN
 						dbo.ContractTable ON CO_ID = COD_ID_CONTRACT AND CO_ID_CLIENT = @clientid --AND CO_ACTIVE = 1
 					WHERE COD_ID_DISTR = a.DIS_ID
 					ORDER BY CO_ACTIVE DESC, CO_END_DATE DESC
 				) AS CO_NUM
-			FROM 
+			FROM
 				dbo.BillDistrView a INNER JOIN
-				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID  
-			WHERE BL_ID_CLIENT = @clientid 
+				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID
+			WHERE BL_ID_CLIENT = @clientid
 				AND DOC_PSEDO = @doctype
-				AND DD_PRINT = 1			
+				AND DD_PRINT = 1
 				AND SO_ID = @psoid
 				-- 18.06.2009
 				AND PR_DATE <= @PR_DATE--(SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid)
 				AND NOT EXISTS
 					(
-						SELECT * 
+						SELECT *
 						FROM #act
 						WHERE AD_ID_PERIOD = PR_ID
 							AND AD_ID_DISTR = a.DIS_ID
@@ -117,13 +117,13 @@ BEGIN
 		END
 		ELSE IF @doctype = 'CONS'
 		BEGIN
-			SELECT 
+			SELECT
 				PR_ID, PR_DATE, a.DIS_ID, a.DIS_STR, BD_PRICE, BD_TAX_PRICE, BD_TOTAL_PRICE,
 				(
-					BD_TOTAL_PRICE - 
+					BD_TOTAL_PRICE -
 						ISNULL((
 							SELECT SUM(ID_PRICE)
-							FROM 
+							FROM
 								dbo.IncomeDistrTable INNER JOIN
 								dbo.IncomeTable ON IN_ID = ID_ID_INCOME INNER JOIN
 								dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
@@ -134,12 +134,12 @@ BEGIN
 								AND c.SO_ID = a.SO_ID
 						), 0)
 				) BD_UNPAY, CO_ID, CO_NUM
-			FROM 
+			FROM
 				dbo.BillDistrView a INNER JOIN
 				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID  LEFT OUTER JOIN
 				dbo.ContractDistrTable ON COD_ID_DISTR = a.DIS_ID LEFT OUTER JOIN
 				dbo.ContractTable ON CO_ID = COD_ID_CONTRACT AND CO_ID_CLIENT = @clientid
-			WHERE BL_ID_CLIENT = @clientid 
+			WHERE BL_ID_CLIENT = @clientid
 				AND DOC_PSEDO = @doctype
 				AND CO_ACTIVE = 1
 				AND DD_PRINT = 1
@@ -148,24 +148,24 @@ BEGIN
 				AND PR_DATE <= @PR_DATE--(SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid)
 				AND NOT EXISTS
 					(
-						SELECT * 
-						FROM 
+						SELECT *
+						FROM
 							dbo.ConsignmentTable INNER JOIN
 							dbo.ConsignmentDetailTable ON CSG_ID = CSD_ID_CONS
-						WHERE CSG_ID_CLIENT = @clientid 
+						WHERE CSG_ID_CLIENT = @clientid
 							AND CSD_ID_PERIOD = PR_ID
 							AND CSD_ID_DISTR = a.DIS_ID
 					)
 			ORDER BY CO_NUM, SYS_ORDER, DIS_NUM
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

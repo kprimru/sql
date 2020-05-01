@@ -7,7 +7,7 @@ GO
 ALTER VIEW [dbo].[DistrExchangeView]
 AS
 	SELECT b.SYS_ID_HOST, a.REG_DISTR_NUM, a.REG_COMP_NUM, COUNT_BIG(*) AS CNT
-	FROM 
+	FROM
 		dbo.PeriodRegTable a
 		INNER JOIN dbo.SystemTable b ON b.SYS_ID = a.REG_ID_SYSTEM
 		INNER JOIN dbo.PeriodRegTable c ON c.REG_DISTR_NUM = a.REG_DISTR_NUM AND c.REG_COMP_NUM = a.REG_COMP_NUM

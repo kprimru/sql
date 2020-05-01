@@ -10,7 +10,7 @@ ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,27 +22,27 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @d DATETIME
 		SET @d = CONVERT(DATETIME, @date, 121)
 
-		SELECT * 
-		FROM dbo.BillFactMasterTable 
-		WHERE BFM_DATE = @d AND CL_ID = @clientid	
+		SELECT *
+		FROM dbo.BillFactMasterTable
+		WHERE BFM_DATE = @d AND CL_ID = @clientid
 
-		SELECT BillFactDetailTable.* 
-		FROM 
+		SELECT BillFactDetailTable.*
+		FROM
 			dbo.BillFactDetailTable INNER JOIN
 			dbo.BillFactMasterTable ON BFD_ID_BFM = BFM_ID
 		WHERE BFM_DATE = @d
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER VIEW [dbo].[InvoiceProtocolView]
 AS
-	SELECT 
-		INS_ID, INS_ID_CLIENT, 
+	SELECT
+		INS_ID, INS_ID_CLIENT,
 		'С/ф №' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' сумма: ' +
 			(
 				SELECT dbo.MoneyFormat(SUM(INR_SALL))
@@ -16,13 +16,13 @@ AS
 			) + ' (' +
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT 
-						ISNULL(INR_GOOD + ' ', '') + ISNULL(DIS_STR + ' ', '') + ISNULL(INR_NAME + ' ', '') + 
-						CASE ISNULL(INR_COUNT, 1) 
-							WHEN 1 THEN '' 
-							ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - ' 
+					SELECT
+						ISNULL(INR_GOOD + ' ', '') + ISNULL(DIS_STR + ' ', '') + ISNULL(INR_NAME + ' ', '') +
+						CASE ISNULL(INR_COUNT, 1)
+							WHEN 1 THEN ''
+							ELSE ' x' + CONVERT(VARCHAR(20), INR_COUNT) + ' - '
 						END + dbo.MoneyFormat(INR_SALL) + ', '
-					FROM 
+					FROM
 						dbo.InvoiceRowTable
 						LEFT OUTER JOIN dbo.DistrView WITH(NOEXPAND) ON INR_ID_DISTR = DIS_ID
 						LEFT OUTER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD

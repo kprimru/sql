@@ -8,12 +8,12 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[INVOICE_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[INVOICE_FACT_ALL_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -34,14 +34,14 @@ BEGIN
 		FROM dbo.InvoiceFactMasterTable
 		GROUP BY IFM_DATE
 		ORDER BY IFM_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

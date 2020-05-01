@@ -9,11 +9,11 @@ GO
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
 Описание:	  Возвращает ID обслуживающей
-              орагнизации с указанным 
-               полным названием. 
+              орагнизации с указанным
+               полным названием.
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_CHECK_FULL_NAME] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CHECK_FULL_NAME]
 	@organizationname VARCHAR(100)
 AS
 BEGIN
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

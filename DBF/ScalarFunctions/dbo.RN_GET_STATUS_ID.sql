@@ -21,11 +21,11 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	SET @result = NULL
-  
+
 	SELECT	@result = DS_ID
 	FROM	dbo.DistrStatusTable
 	WHERE	DS_REG = @status
-  
+
 	RETURN @result
 
 END

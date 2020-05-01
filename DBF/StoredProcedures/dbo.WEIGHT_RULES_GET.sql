@@ -29,14 +29,14 @@ BEGIN
 		INNER JOIN dbo.SystemTypeTable ON ID_TYPE = SST_ID
 		INNER JOIN dbo.SystemNetCountTable ON ID_NET = SNC_ID
 		WHERE ID = @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

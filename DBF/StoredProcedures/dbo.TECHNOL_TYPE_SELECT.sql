@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[TECHNOL_TYPE_SELECT] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT TT_ID, TT_NAME, TT_REG, TT_COEF
-		FROM dbo.TechnolTypeTable 
+		FROM dbo.TechnolTypeTable
 		WHERE TT_ACTIVE = ISNULL(@active, TT_ACTIVE)
 		ORDER BY TT_NAME
 
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

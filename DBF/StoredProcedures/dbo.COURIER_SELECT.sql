@@ -8,16 +8,16 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COURIER_SELECT]   
+ALTER PROCEDURE [dbo].[COURIER_SELECT]
 	@active BIT = NULL
 AS
 
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -29,9 +29,9 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT COUR_NAME, COUR_ID, COT_NAME
-		FROM 
+		FROM
 			dbo.CourierTable LEFT OUTER JOIN
 			dbo.CourierTypeTable ON COT_ID = COUR_ID_TYPE
 		WHERE COUR_ACTIVE = ISNULL(@active, COUR_ACTIVE)
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,7 +10,7 @@ GO
 Описание:      Добавить дистрибутив клиенту
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_DISTR_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_ADD]
 	@clientid INT,
 	@distrid INT,
 	@registerdate SMALLDATETIME,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ClientDistrTable(CD_ID_CLIENT, CD_ID_DISTR, CD_REG_DATE, CD_ID_SERVICE) 
+		INSERT INTO dbo.ClientDistrTable(CD_ID_CLIENT, CD_ID_DISTR, CD_REG_DATE, CD_ID_SERVICE)
 		VALUES (@clientid, @distrid, @registerdate, @systemserviceid)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

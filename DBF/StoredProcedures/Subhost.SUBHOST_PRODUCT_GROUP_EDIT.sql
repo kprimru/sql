@@ -30,14 +30,14 @@ BEGIN
 			SPG_ORDER = @SPG_ORDER,
 			SPG_ACTIVE = @ACTIVE
 		WHERE SPG_ID = @SPG_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

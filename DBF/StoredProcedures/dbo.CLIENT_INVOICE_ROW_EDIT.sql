@@ -15,7 +15,7 @@ GO
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_EDIT]
-	@rowid INT,--	INR_ID,	
+	@rowid INT,--	INR_ID,
 	@INR_ID_DISTR INT,
 	@INR_GOOD VARCHAR(100),
 	@INR_NAME VARCHAR(500),
@@ -29,7 +29,7 @@ ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_EDIT]
 	@period		SMALLINT = NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -44,7 +44,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение строки с/ф', 
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение строки с/ф',
 				CASE
 					WHEN ISNULL(@INR_GOOD, '') <> ISNULL(INR_GOOD, '') THEN 'Текст услуги: с "' + ISNULL(INR_GOOD, '') + '" на "' + ISNULL(@INR_GOOD, '') + '" '
 					ELSE ''
@@ -61,10 +61,10 @@ BEGIN
 					WHEN @INR_SALL <> INR_SALL THEN 'Сумма: с "' + dbo.MoneyFormat(INR_SALL) + '" на "' + dbo.MoneyFormat(@INR_SALL) + '"'
 					ELSE ''
 				END
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable a
 				INNER JOIN dbo.InvoiceRowTable b ON a.INS_ID = INR_ID_INVOICE
-			WHERE INR_ID = @rowid AND 
+			WHERE INR_ID = @rowid AND
 				(
 					ISNULL(@INR_GOOD, '') <> ISNULL(INR_GOOD, '')
 					OR ISNULL(@INR_NAME, '') <> ISNULL(INR_NAME, '')
@@ -93,14 +93,14 @@ BEGIN
 
 		EXEC dbo.BOOK_SALE_PROCESS @insid
 		EXEC dbo.BOOK_PURCHASE_PROCESS @insid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

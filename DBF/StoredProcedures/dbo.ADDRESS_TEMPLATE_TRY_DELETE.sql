@@ -6,10 +6,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 Дата:			16.07.2009
 */
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_TRY_DELETE]
 	@atlid TINYINT
 AS
 BEGIN
@@ -36,20 +36,20 @@ BEGIN
 	/*	IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_TEMPLATE = @atlid)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'Данный шаблон адреса указан в одном или нескольких адресах. ' + 
+				SET @txt = @txt + 'Данный шаблон адреса указан в одном или нескольких адресах. ' +
 								  'Удаление невозможно, пока выбранный шаблон адреса будет указан хотя ' +
 								  'бы в одном адресе.'
 			END
 	*/
 		SELECT @res AS RES, @txt AS TXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

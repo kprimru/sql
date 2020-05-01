@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_DEFAULT_GET]	
+ALTER PROCEDURE [dbo].[CLIENT_DEFAULT_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,14 +30,14 @@ BEGIN
 		SELECT (SELECT MAX(CL_NUM) + 1 FROM ClientTable) AS CL_NUM, ORG_ID, ORG_PSEDO, SH_ID, SH_SHORT_NAME, 'устава' AS CL_FOUND
 		FROM dbo.OrganizationTable, dbo.SubhostTable
 		WHERE ORG_ID = 1 AND SH_ID = 1
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

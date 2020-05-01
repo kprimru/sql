@@ -37,7 +37,7 @@ BEGIN
 				последние 2 цифры - признак актуальности. Первые две - код региона
 			*/
 
-		
+
 		/*
 			Импорт районов (2-го уровня)
 		*/
@@ -45,7 +45,7 @@ BEGIN
 			(
 				KT_ID_MASTER, KT_LEVEL, KT_NAME, KT_PREFIX, KT_CODE, KT_ACTUAL
 			)
-			SELECT 
+			SELECT
 				(
 					SELECT KT_ID
 					FROM Kladr.KladrTree
@@ -57,12 +57,12 @@ BEGIN
 			WHERE KL_CODE LIKE N'_____000000__'
 				AND NOT (KL_CODE LIKE N'__000000000__')
 				AND EXISTS
-					(					
+					(
 						SELECT *
 						FROM Kladr.KladrTree
 						WHERE KT_CODE = LEFT(KL_CODE, 2)
 							--AND KT_LEVEL = 1
-							AND KT_ACTUAL = N'00'				
+							AND KT_ACTUAL = N'00'
 					)
 
 		/*
@@ -95,7 +95,7 @@ BEGIN
 		/*
 			Импорт населенных пунктов 3-го уровня, которые не привязаны к объектам 2-го уровня
 			(сразу к регионам, как, например, г.Владивосток)
-		*/	
+		*/
 		INSERT INTO Kladr.KladrTree
 			(
 				KT_ID_MASTER, KT_LEVEL, KT_NAME, KT_PREFIX, KT_CODE, KT_ACTUAL
@@ -109,7 +109,7 @@ BEGIN
 						AND KT_ACTUAL = N'00'
 				), 3, KL_NAME, KL_SOCR, LEFT(KL_CODE, 8), RIGHT(KL_CODE, 2)
 			FROM Kladr.Kladr
-			WHERE KL_CODE LIKE N'__000___000__'			
+			WHERE KL_CODE LIKE N'__000___000__'
 				AND NOT (KL_CODE LIKE N'_____000000__')
 				AND EXISTS
 					(
@@ -119,7 +119,7 @@ BEGIN
 							--AND KT_LEVEL = 2
 							AND KT_ACTUAL = N'00'
 					)
-		
+
 		/*
 			Имспорт населенных пунктов 4-го уровня
 		*/
@@ -150,7 +150,7 @@ BEGIN
 
 		/*
 			Испорт населенных объектов 4-го уровня, которые не привязаны к объектам 3-го уровня
-		*/	
+		*/
 		INSERT INTO Kladr.KladrTree
 			(
 				KT_ID_MASTER, KT_LEVEL, KT_NAME, KT_PREFIX, KT_CODE, KT_ACTUAL
@@ -194,12 +194,12 @@ BEGIN
 			WHERE KL_CODE LIKE N'__000000_____'
 				AND NOT (KL_CODE LIKE N'________000__')
 				AND EXISTS
-					(			
+					(
 						SELECT KT_ID
 						FROM Kladr.KladrTree
 						WHERE KT_CODE = LEFT(KL_CODE, 2)
 							--AND KT_LEVEL = 3
-							AND KT_ACTUAL = N'00'			
+							AND KT_ACTUAL = N'00'
 					)
 
 		/*
@@ -305,14 +305,14 @@ BEGIN
 							--AND KT_LEVEL = 4
 							AND KT_ACTUAL = N'00'
 					)
-					
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

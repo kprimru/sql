@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_ADD]
 	@name VARCHAR(20),
 	@fullname VARCHAR(100),
 	@coef DECIMAL(8, 4),
@@ -34,7 +34,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.SystemNetTable(SN_NAME, SN_FULL_NAME, SN_COEF, SN_ORDER, SN_CALC, SN_ACTIVE) 
+		INSERT INTO dbo.SystemNetTable(SN_NAME, SN_FULL_NAME, SN_COEF, SN_ORDER, SN_CALC, SN_ACTIVE)
 		VALUES (@name, @fullname, @coef, @order, @calc, @active)
 
 		IF @returnvalue = 1
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

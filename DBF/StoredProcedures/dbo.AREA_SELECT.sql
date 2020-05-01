@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AREA_SELECT]   
+ALTER PROCEDURE [dbo].[AREA_SELECT]
 	@active BIT = NULL
 AS
 
@@ -30,8 +30,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT AR_ID, AR_NAME  
-		FROM dbo.AreaTable 
+		SELECT AR_ID, AR_NAME
+		FROM dbo.AreaTable
 		WHERE AR_ACTIVE = ISNULL(@active, AR_ACTIVE)
 		ORDER BY AR_NAME
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -9,17 +9,17 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  19/10/2009	
+Дата создания:  19/10/2009
 Описание:		get-процедура для формы редактирования счетов (бывш. фактич. счета)
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT_GET]
 	@bfmid INT
-	
+
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			BFM_ID,
 			BFM_DATE,
 			BFM_NUM,
@@ -70,9 +70,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

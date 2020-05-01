@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_EDIT]
@@ -52,36 +52,36 @@ BEGIN
 
 		UPDATE dbo.BillFactMasterTable
 		SET BFM_NUM = @bfmnum,
-			BFM_ID_PERIOD = @bfmidperiod, 
-			BILL_DATE = @billdate, 
-			CL_SHORT_NAME = @clshortname, 
-			CL_CITY = @clcity, 
-			CL_ADDRESS = @claddress, 
-			ORG_SHORT_NAME = @orgshortname, 
-			ORG_INDEX = @orgindex, 
-			ORG_ADDRESS = @orgaddress, 
-			ORG_PHONE = @orgphone, 
-			ORG_ACCOUNT = @orgaccount, 
-			ORG_LORO = @orgloro, 
-			ORG_BIK = @orgbik, 
-			ORG_INN = @orginn, 
-			ORG_KPP = @orgkpp, 
-			ORG_OKONH = @orgokonh, 
-			ORG_OKPO = @orgokpo, 
-			ORG_BUH_SHORT = @orgbuhshort, 
-			BA_NAME = @baname, 
-			BA_CITY = @bacity, 
-			CO_NUM = @conum, 
+			BFM_ID_PERIOD = @bfmidperiod,
+			BILL_DATE = @billdate,
+			CL_SHORT_NAME = @clshortname,
+			CL_CITY = @clcity,
+			CL_ADDRESS = @claddress,
+			ORG_SHORT_NAME = @orgshortname,
+			ORG_INDEX = @orgindex,
+			ORG_ADDRESS = @orgaddress,
+			ORG_PHONE = @orgphone,
+			ORG_ACCOUNT = @orgaccount,
+			ORG_LORO = @orgloro,
+			ORG_BIK = @orgbik,
+			ORG_INN = @orginn,
+			ORG_KPP = @orgkpp,
+			ORG_OKONH = @orgokonh,
+			ORG_OKPO = @orgokpo,
+			ORG_BUH_SHORT = @orgbuhshort,
+			BA_NAME = @baname,
+			BA_CITY = @bacity,
+			CO_NUM = @conum,
 			CO_DATE = @codate
 		WHERE BFM_ID = @bfmid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

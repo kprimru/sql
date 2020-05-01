@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER TRIGGER [dbo].[ActDistrSync]
-   ON  [dbo].[ActDistrTable] 
+   ON  [dbo].[ActDistrTable]
    AFTER INSERT, UPDATE, DELETE
-AS 
+AS
 BEGIN
 	SET NOCOUNT ON;
-    
+
     DECLARE @Distrs Table
     (
 		SYS_REG_NAME	VarChar(20),
@@ -19,23 +19,23 @@ BEGIN
 		PR_DATE			SmallDateTime,
 		Primary Key Clustered (DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
     );
-    
+
     INSERT INTO @Distrs
 	SELECT DISTINCT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE
-	FROM 
+	FROM
 	(
 		SELECT AD_ID_DISTR, AD_ID_PERIOD
 		FROM inserted I
-		
+
 		UNION
-		
+
 		SELECT AD_ID_DISTR, AD_ID_PERIOD
 		FROM deleted D
 	) T
 	INNER JOIN dbo.DistrTable D ON D.DIS_ID = T.AD_ID_DISTR
 	INNER JOIN dbo.SystemTable S ON S.SYS_ID = D.DIS_ID_SYSTEM
 	INNER JOIN dbo.PeriodTable P ON P.PR_ID = T.AD_ID_PERIOD;
-	
+
 	UPDATE S
 	SET UPD_DATE = GetDate()
 	FROM Sync.DistrFinancing	S
@@ -43,7 +43,7 @@ BEGIN
 									AND	D.DIS_NUM		= S.DIS_NUM
 									AND D.DIS_COMP_NUM	= S.DIS_COMP_NUM
 									AND D.PR_DATE		= S.PR_DATE;
-	
+
 	INSERT INTO Sync.DistrFinancing(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE)
 	SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE
 	FROM @Distrs D

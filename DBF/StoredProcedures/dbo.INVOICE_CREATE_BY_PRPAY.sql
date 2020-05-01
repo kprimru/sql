@@ -17,8 +17,8 @@ ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY]
 	@returndataset BIT = 1
 AS
 BEGIN
-	SET NOCOUNT ON;	
-	
+	SET NOCOUNT ON;
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -30,10 +30,10 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @docstring varchar(1000)
 			SET @docstring = ''
-			
+
 		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
 			DROP TABLE #doc
 
@@ -54,28 +54,28 @@ BEGIN
 		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
-				SELECT 
+				SELECT
 				T.IN_DATE,
 				STUFF(
 						(
-							SELECT ',' + TT.IN_PAY_NUM 
-							FROM 
+							SELECT ',' + TT.IN_PAY_NUM
+							FROM
 								(
 									SELECT DISTINCT IN_PAY_NUM
 									FROM #doc O_O
-									WHERE O_O.IN_DATE = T.IN_DATE						
+									WHERE O_O.IN_DATE = T.IN_DATE
 								) TT
 							ORDER BY TT.IN_PAY_NUM FOR XML PATH('')
 						), 1, 1, ''
 					) IN_PAY_NUM
 				FROM #doc T
-				GROUP BY T.IN_DATE			
+				GROUP BY T.IN_DATE
 			) AS O_O
 		ORDER BY O_O.IN_DATE
 
 		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
 			DROP TABLE #doc
-		
+
 		IF @docstring <> ''
 			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
 
@@ -87,11 +87,11 @@ BEGIN
 			INS_ID_TYPE
 
 			)
-			SELECT TOP 1 
-				ISNULL(PRP_ID_ORG, CL_ID_ORG), @invdate, 
+			SELECT TOP 1
+				ISNULL(PRP_ID_ORG, CL_ID_ORG), @invdate,
 				(
-					SELECT ISNULL(MAX(INS_NUM) + 1, 1) 
-					FROM dbo.InvoiceSaleTable 
+					SELECT ISNULL(MAX(INS_NUM) + 1, 1)
+					FROM dbo.InvoiceSaleTable
 					WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, @invdate),2)
 						AND INS_ID_ORG = ISNULL(PRP_ID_ORG, CL_ID_ORG)
 				),
@@ -100,31 +100,31 @@ BEGIN
 				CL_FULL_NAME,
 				(
 					SELECT
-						CASE 
+						CASE
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-							ELSE 
+							ELSE
 								(
 							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
-								FROM	
+								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT INNER JOIN
-								WHERE  
+								WHERE
 									CL_ID = CD_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
-							*/	
-								-- 16.07.2009, Богдан В.С.						
-								SELECT 
+							*/
+								-- 16.07.2009, Богдан В.С.
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																		AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																		AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = CD_ID_CLIENT
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -136,31 +136,31 @@ BEGIN
 				CL_FULL_NAME,
 				(
 					SELECT
-						CASE 
+						CASE
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
-							ELSE 
+							ELSE
 								(
-							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)										
-								FROM	
+							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+								FROM
 									dbo.ClientTable INNER JOIN
-									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT 
-								WHERE  
+									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
+								WHERE
 									CL_ID = CD_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
 							*/
-								-- 16.07.2009, Богдан В.С.						
-								SELECT 
+								-- 16.07.2009, Богдан В.С.
+								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
 										ELSE ADDR_STRING
 									END AS ADDR_STRING
-								FROM	
+								FROM
 									dbo.ClientTable					A				INNER JOIN
 									dbo.ClientAddressView			B	ON A.CL_ID = B.CA_ID_CLIENT INNER JOIN
 									dbo.ClientFinancingAddressView	C	ON A.CL_ID = C.CL_ID
 																		AND B.CA_ID_TYPE = C.CA_ID_TYPE
 																		AND C.FAT_ID=O_O.FAT_ID
-								WHERE  
+								WHERE
 									A.CL_ID = CD_ID_CLIENT
 									AND B.CA_ID_TYPE = FAT_ID_ADDR_TYPE
 								)
@@ -170,17 +170,17 @@ BEGIN
 				),
 				CL_INN, CL_KPP, @docstring,
 				(
-					SELECT INT_ID 
+					SELECT INT_ID
 					FROM dbo.InvoiceTypeTable
 					WHERE INT_PSEDO = 'PRIMARY'
 				)
 
-				FROM 
+				FROM
 					dbo.PrimaryPayTable		A	INNER JOIN
 					dbo.DistrTable			B	ON	B.DIS_ID = A.PRP_ID_DISTR	INNER JOIN
 					dbo.ClientDistrTable	C	ON	B.DIS_ID = C.CD_ID_DISTR	LEFT JOIN
 					dbo.ClientTable			D	ON	D.CL_ID	= C.CD_ID_CLIENT	INNER JOIN
-					dbo.DistrDocumentView	H	ON	H.DIS_ID= B.DIS_ID			
+					dbo.DistrDocumentView	H	ON	H.DIS_ID= B.DIS_ID
 				WHERE
 					CD_ID_CLIENT = @client_id
 					AND PRP_ID_INVOICE IS NULL
@@ -204,23 +204,23 @@ BEGIN
 		INSERT INTO dbo.InvoiceRowTable (INR_ID_INVOICE,
 									 INR_GOOD, INR_NAME, INR_SUM, INR_ID_TAX, INR_TNDS, INR_SNDS, INR_SALL,
 									 INR_ID_DISTR, INR_PPRICE, INR_UNIT) --, INR_ID_PERIOD)
-			SELECT 
+			SELECT
 				@insid,
 				GD_NAME, ISNULL(SYS_PREFIX, '') + ' ' + SYS_NAME,
 				PRP_PRICE, E.TX_ID, E.TX_PERCENT, PRP_TAX_PRICE, PRP_TOTAL_PRICE,
 				B.DIS_ID,
 				PRP_TOTAL_PRICE, UN_NAME
-			FROM 
+			FROM
 				dbo.DistrTable			B									INNER JOIN
 				dbo.SystemTable			C	ON	B.DIS_ID_SYSTEM=C.SYS_ID	INNER JOIN
 				dbo.SaleObjectTable		D	ON	C.SYS_ID_SO=D.SO_ID			INNER JOIN
 				dbo.TaxTable			E	ON	D.SO_ID_TAX=E.TX_ID			INNER JOIN
 				dbo.PrimaryPayView		F	ON	F.DIS_ID=B.DIS_ID			INNER JOIN
-				dbo.DistrDocumentView	I	ON	I.DIS_ID=B.DIS_ID			
+				dbo.DistrDocumentView	I	ON	I.DIS_ID=B.DIS_ID
 			WHERE
 				CD_ID_CLIENT = @client_id
 				AND NOT EXISTS (
-					SELECT * FROM 
+					SELECT * FROM
 						dbo.InvoiceRowTable		G	INNER JOIN
 						dbo.InvoiceSaleTable	L	ON	INS_ID = INR_ID_INVOICE INNER JOIN
 						dbo.InvoiceTypeTable	M	ON	INT_ID = INS_ID_TYPE
@@ -233,7 +233,7 @@ BEGIN
 				AND PRP_ID_INVOICE IS NULL
 				AND PRP_PRICE <> 0
 
-		
+
 		-- заносим в PrimaryPay сведения о созданной с/ф (в PRP_ID_INVOICE)
 		UPDATE dbo.PrimaryPayTable SET PRP_ID_INVOICE=@insid
 			WHERE
@@ -255,41 +255,41 @@ BEGIN
 			FROM dbo.InvoiceProtocolView
 			WHERE INS_ID = @insid
 		*/
-		
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф на первичку', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @insid
-			
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT 
-				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',			
-				CONVERT(VARCHAR(20), PR_DATE, 104) + 
+			SELECT
+				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
+				CONVERT(VARCHAR(20), PR_DATE, 104) +
 					':' + DIS_STR + ' - ' + dbo.MoneyFormat(INR_SALL)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable z
 				INNER JOIN dbo.InvoiceRowTable a ON a.INR_ID_INVOICE = z.INS_ID
 				INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON a.INR_ID_DISTR = DIS_ID
 				INNER JOIN dbo.PeriodTable ON PR_ID = INR_ID_PERIOD
 			WHERE INR_ID_INVOICE = @insid
 
-		IF @print = 1 
+		IF @print = 1
 			EXEC dbo.INVOICE_PRINT_BY_ID_LIST @insid
 		ELSE IF @returndataset = 1
  			SELECT 0
-			WHERE @insid IS NOT NULL	
-			
+			WHERE @insid IS NOT NULL
+
 		EXEC dbo.BOOK_SALE_PROCESS @insid
 		EXEC dbo.BOOK_PURCHASE_PROCESS @insid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

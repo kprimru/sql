@@ -8,8 +8,8 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_PERSONAL_EDIT]
@@ -35,25 +35,25 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		UPDATE dbo.TOPersonalTable
-		SET		
-			TP_ID_RP = @rpid, 
-			TP_ID_POS = @posid, 
-			TP_SURNAME = @surname, 
+		SET
+			TP_ID_RP = @rpid,
+			TP_ID_POS = @posid,
+			TP_SURNAME = @surname,
 			TP_NAME = @name,
-			TP_OTCH = @otch, 
+			TP_OTCH = @otch,
 			TP_PHONE = @phone,
 			TP_LAST = GETDATE()
 		WHERE TP_ID = @tpid
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

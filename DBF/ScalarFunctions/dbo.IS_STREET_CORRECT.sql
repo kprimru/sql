@@ -9,7 +9,7 @@ GO
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если название улицы 
+-- Описание:	  Возвращает 0, если название улицы
 --                корректно (присутствует в справочнике)
 -- =============================================
 ALTER FUNCTION [dbo].[IS_STREET_CORRECT]
@@ -28,21 +28,21 @@ BEGIN
 
   SET @street = LTRIM(RTRIM(@street))
 
-  IF CHARINDEX('.', @street) <> 0 
+  IF CHARINDEX('.', @street) <> 0
     BEGIN
         -- есть точка, значит скорее всего есть префикс. До точки включительно - префикс
       SET @prefix = LEFT(@street, CHARINDEX('.', @street))
-      SET @street = RIGHT(@street, LEN(@street) - CHARINDEX('.', @street))        
-       
+      SET @street = RIGHT(@street, LEN(@street) - CHARINDEX('.', @street))
+
       SET @street = LTRIM(RTRIM(@street))
       SET @name = @street
       END
     ELSE
       BEGIN
         SET @name = @street
-        SET @prefix = '' 
+        SET @prefix = ''
       END
-	
+
     IF EXISTS(SELECT * FROM StreetTable WHERE ST_NAME = @name)
       RETURN 0
     ELSE

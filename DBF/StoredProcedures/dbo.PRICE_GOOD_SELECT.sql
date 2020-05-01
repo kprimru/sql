@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PRICE_GOOD_SELECT]   
+ALTER PROCEDURE [dbo].[PRICE_GOOD_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,8 +29,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PGD_ID, PGD_NAME
-		FROM 		
-			dbo.PriceGoodTable 
+		FROM 
+			dbo.PriceGoodTable
 		WHERE PGD_ACTIVE = ISNULL(@active, PGD_ACTIVE)
 		ORDER BY PGD_NAME
 
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

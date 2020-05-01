@@ -35,11 +35,11 @@ BEGIN
 			SET @ERROR = NULL
 			SET @NAME = NULL
 		END
-		
+
 		SELECT ID, ORG_PSEDO, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, S_ALL, ERR
 		FROM
 			(
-				SELECT 
+				SELECT
 					ID, ORG_PSEDO, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE,
 					(
 						SELECT SUM(S_ALL)
@@ -52,7 +52,7 @@ BEGIN
 						WHEN LEN(ISNULL(INN, '')) = 10 AND LEN(ISNULL(KPP, '')) <> 9 THEN 'Неверная длина поля КПП'
 						ELSE ''
 					END AS ERR
-				FROM 
+				FROM
 					dbo.BookSale a
 					INNER JOIN dbo.OrganizationTable b ON ORG_ID = ID_ORG
 				WHERE (ID_INVOICE = @INVOICE OR @INVOICE IS NULL)
@@ -63,14 +63,14 @@ BEGIN
 			) AS p
 		WHERE (ERR <> '' AND @ERROR = 1 OR @ERROR = 0 OR @ERROR IS NULL)
 		ORDER BY DATE DESC, NUM DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

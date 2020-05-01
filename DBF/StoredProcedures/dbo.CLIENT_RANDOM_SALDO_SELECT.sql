@@ -5,11 +5,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
-ALTER PROCEDURE [dbo].[CLIENT_RANDOM_SALDO_SELECT]	
+ALTER PROCEDURE [dbo].[CLIENT_RANDOM_SALDO_SELECT]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -66,15 +66,15 @@ BEGIN
 					AND SYS_ID_SO = 1
 					AND a.CL_ID = b.CL_ID
 			)
-			ORDER BY CL_PSEDO	
-			
+			ORDER BY CL_PSEDO
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[CLIENT_RANDOM_SALDO_SELECT] TO rl_fin_r;

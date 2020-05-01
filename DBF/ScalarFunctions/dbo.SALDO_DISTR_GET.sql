@@ -8,8 +8,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER FUNCTION [dbo].[SALDO_DISTR_GET]
@@ -26,10 +26,10 @@ BEGIN
 	DECLARE @result MONEY
 
 	-- Тело функции
-	
+
 	SELECT TOP 1 @result = SL_REST
 	FROM dbo.SaldoTable
-	WHERE SL_ID_DISTR = @distrid 
+	WHERE SL_ID_DISTR = @distrid
 		AND SL_ID_CLIENT = @clientid
 	ORDER BY SL_DATE DESC, SL_ID DESC
 

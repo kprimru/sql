@@ -27,14 +27,14 @@ BEGIN
 		FROM dbo.SubhostVKSP
 		WHERE ID_PERIOD = @PR_ID
 			AND ID_SUBHOST = @SH_ID
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -24,8 +24,8 @@ BEGIN
 
   DECLARE @subhoststr VARCHAR(150)
 
-  --IF @subsign = 1 
-    --BEGIN      
+  --IF @subsign = 1
+    --BEGIN
       SET @comment = dbo.GET_HOST_BY_COMMENT(@comment)
       SELECT @result = SH_ID FROM dbo.SubhostTable WHERE SH_LST_NAME = @comment AND SH_REG = 1
     --END

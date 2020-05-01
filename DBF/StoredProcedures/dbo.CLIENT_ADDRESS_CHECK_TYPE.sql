@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_CHECK_TYPE] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_CHECK_TYPE]
   @clientid int,
   @addresstypeid int
 
@@ -31,17 +31,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CA_ID 
-		FROM dbo.ClientAddressTable 
+		SELECT CA_ID
+		FROM dbo.ClientAddressTable
 		WHERE CA_ID_CLIENT = @clientid AND CA_ID_TYPE = @addresstypeid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_ADD] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_ADD]
 	@clientid INT,
 	@contractnumber VARCHAR(500),
 	@contracttypeid SMALLINT,
@@ -37,7 +37,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.ContractTable(CO_ID_CLIENT, CO_NUM, CO_ID_TYPE, CO_DATE, CO_BEG_DATE, CO_END_DATE, CO_ID_PAY, CO_ID_KIND,
-								  CO_ACTIVE, CO_IDENT, CO_KEY, CO_NUM_FROM, CO_NUM_TO, CO_EMAIL) 
+								  CO_ACTIVE, CO_IDENT, CO_KEY, CO_NUM_FROM, CO_NUM_TO, CO_EMAIL)
 		VALUES (@clientid, @contractnumber, @contracttypeid, @contractdate, @contractbegin, @contractend, @pay, @kind,
 				@active, @ident, @key, @num_from, @num_to, @email)
 
@@ -48,9 +48,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

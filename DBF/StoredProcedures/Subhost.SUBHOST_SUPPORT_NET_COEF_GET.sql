@@ -24,11 +24,11 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @PR_DATE	SMALLDATETIME
-		
+
 		SELECT @PR_DATE = PR_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PR_ID
-		
+
 		IF OBJECT_ID('tempdb..#sgr') IS NOT NULL
 			DROP TABLE #sgr
 
@@ -49,7 +49,7 @@ BEGIN
 					SELECT SN_NAME, SN_ID, SNCC_VALUE
 					FROM
 						(
-							SELECT 
+							SELECT
 								SN_NAME, SN_ID, SNCC_VALUE,
 								(
 									SELECT MAX(SNC_NET_COUNT)
@@ -61,7 +61,7 @@ BEGIN
 									FROM dbo.SystemNetCountTable
 									WHERE SNC_ID_SN = SN_ID
 								) AS TECH_TYPE
-							FROM 
+							FROM
 								dbo.SystemNetTable
 								INNER JOIN dbo.SystemNetCoef ON SNCC_ID_SN = SN_ID
 							WHERE SNCC_ID_PERIOD = @PR_ID
@@ -72,7 +72,7 @@ BEGIN
 					SELECT SN_NAME, SN_ID, SNCC_SUBHOST
 					FROM
 						(
-							SELECT 
+							SELECT
 								SN_NAME, SN_ID, SNCC_SUBHOST,
 								(
 									SELECT MAX(SNC_NET_COUNT)
@@ -84,7 +84,7 @@ BEGIN
 									FROM dbo.SystemNetCountTable
 									WHERE SNC_ID_SN = SN_ID
 								) AS TECH_TYPE
-							FROM 
+							FROM
 								dbo.SystemNetTable
 								INNER JOIN dbo.SystemNetCoef ON SNCC_ID_SN = SN_ID
 							WHERE SNCC_ID_PERIOD = @PR_ID
@@ -95,7 +95,7 @@ BEGIN
 			INSERT INTO #sgr(TITLE, SN_ID, COEF)
 				SELECT SN_NAME, SN_ID, SN_COEF
 				FROM dbo.SystemNetTable
-				ORDER BY SN_COEF	
+				ORDER BY SN_COEF
 
 		SELECT *
 		FROM #sgr
@@ -103,14 +103,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#sgr') IS NOT NULL
 			DROP TABLE #sgr
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

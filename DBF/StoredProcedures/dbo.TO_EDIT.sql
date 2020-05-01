@@ -8,8 +8,8 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[TO_EDIT]
@@ -43,9 +43,9 @@ BEGIN
 
 		UPDATE dbo.TOTable
 		SET
-			TO_NAME = @toname, 
-			TO_NUM = @tonum, 
-			TO_REPORT = @toreport, 
+			TO_NAME = @toname,
+			TO_NUM = @tonum,
+			TO_REPORT = @toreport,
 			TO_ID_COUR = @courid,
 			TO_VMI_COMMENT = @vmi,
 			TO_MAIN = @tomain,
@@ -58,7 +58,7 @@ BEGIN
 		BEGIN
 			IF NOT EXISTS
 				(
-					SELECT * 
+					SELECT *
 					FROM dbo.TOAddressTable
 					WHERE TA_ID_TO = @toid
 				)
@@ -76,14 +76,14 @@ BEGIN
 					TA_HOME = @home
 				WHERE TA_ID_TO = @toid
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

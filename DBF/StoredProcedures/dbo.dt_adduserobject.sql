@@ -15,7 +15,7 @@ as
 	*/
 	begin transaction
 		insert dbo.dtproperties (property) VALUES ('DtgSchemaOBJECT')
-		update dbo.dtproperties set objectid=@@identity 
+		update dbo.dtproperties set objectid=@@identity
 			where id=@@identity and property='DtgSchemaOBJECT'
 	commit
 	return @@identity

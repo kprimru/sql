@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SUBHOST_CITY_SELECT]
@@ -30,21 +30,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SC_ID, SH_SHORT_NAME, SH_ID, CT_NAME, CT_ID, MA_ID, MA_SHORT_NAME
-		FROM 
+		FROM
 			dbo.SubhostCityTable a INNER JOIN
 			dbo.SubhostTable b ON a.SC_ID_SUBHOST = b.SH_ID INNER JOIN
 			dbo.CityTable c ON c.CT_ID = a.SC_ID_CITY INNER JOIN
 			dbo.MarketAreaTable d ON d.MA_ID = a.SC_ID_MARKET_AREA
 		WHERE SC_ACTIVE = ISNULL(@active, SC_ACTIVE)
 		ORDER BY SH_SHORT_NAME, CT_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

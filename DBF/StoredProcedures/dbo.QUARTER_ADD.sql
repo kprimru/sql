@@ -9,12 +9,12 @@ GO
 Дата создания: 10.05.2012
 Описание:	  Добавить квартал в справочник
 */
-ALTER PROCEDURE [dbo].[QUARTER_ADD] 
+ALTER PROCEDURE [dbo].[QUARTER_ADD]
 	@name	VARCHAR(50),
 	@begin	SMALLDATETIME,
 	@end	SMALLDATETIME,
 	@active BIT = 1,
-	@returnvalue BIT = 1  
+	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -32,19 +32,19 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.Quarter(
-				QR_NAME, QR_BEGIN, QR_END, QR_ACTIVE) 
+				QR_NAME, QR_BEGIN, QR_END, QR_ACTIVE)
 		VALUES (@NAME, @begin, @end, @active)
 
 		IF @returnvalue = 1
 		  SELECT SCOPE_IDENTITY() AS NEW_IDEN
-		  
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

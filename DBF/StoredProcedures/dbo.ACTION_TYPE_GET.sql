@@ -7,11 +7,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTION_TYPE_GET] 
-	@ID SMALLINT  
+ALTER PROCEDURE [dbo].[ACTION_TYPE_GET]
+	@ID SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -27,18 +27,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT ACTT_ID, ACTT_NAME, ACTT_ACTIVE
-		FROM dbo.ActionType 
+		FROM dbo.ActionType
 		WHERE ACTT_ID = @ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

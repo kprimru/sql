@@ -6,15 +6,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей 
+Автор:			Денисов Алексей
 Дата создания:	3 July 2009
-Описание:		Возвращает 0, если тип адреса в фин. документе 
-				с указанным кодом можно удалить из 
-				справочника, 
+Описание:		Возвращает 0, если тип адреса в фин. документе
+				с указанным кодом можно удалить из
+				справочника,
 				-1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_DELETE]
 	@fatid SMALLINT
 AS
 BEGIN
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

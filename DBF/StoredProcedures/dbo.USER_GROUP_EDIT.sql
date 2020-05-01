@@ -5,13 +5,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_GROUP_EDIT]
-	@groupname VARCHAR(100),	
+	@groupname VARCHAR(100),
 	@groupnote VARCHAR(500),
 	@grouproles VARCHAR(MAX)
 AS
@@ -43,7 +43,7 @@ BEGIN
 
 		IF NOT EXISTS
 			(
-				SELECT * 
+				SELECT *
 				FROM sys.database_principals
 				WHERE TYPE_DESC = 'DATABASE_ROLE' AND [NAME] = @groupname
 			)
@@ -61,7 +61,7 @@ BEGIN
 
 		FETCH NEXT FROM ROLES INTO @rolename
 
-		WHILE @@FETCH_STATUS = 0 
+		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_addrolemember @rolename, @groupname
 
@@ -70,14 +70,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb.#role') IS NOT NULL
 			DROP TABLE #role
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTIVITY_ADD] 
+ALTER PROCEDURE [dbo].[ACTIVITY_ADD]
 	@activityname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -31,19 +31,19 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ActivityTable(AC_NAME, AC_ACTIVE, AC_OLD_CODE) 
+		INSERT INTO dbo.ActivityTable(AC_NAME, AC_ACTIVE, AC_OLD_CODE)
 		VALUES (@activityname, @active, @oldcode)
 
-		IF @returnvalue = 1 
+		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

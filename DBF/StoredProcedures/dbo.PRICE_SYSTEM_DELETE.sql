@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить систему из прейскуранта
 */
 
-ALTER PROCEDURE [dbo].[PRICE_SYSTEM_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_DELETE]
 	@pricesystemid INT
 AS
 BEGIN
@@ -29,17 +29,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.PriceSystemTable 
+		DELETE
+		FROM dbo.PriceSystemTable
 		WHERE PS_ID = @pricesystemid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

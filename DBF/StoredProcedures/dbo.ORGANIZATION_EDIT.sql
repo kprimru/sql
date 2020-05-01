@@ -9,10 +9,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT]
 	@id SMALLINT,
 	@psedo VARCHAR(50),
 	@fullname VARCHAR(250),
@@ -36,7 +36,7 @@ ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT]
 	@buhname VARCHAR(50),
 	@buhotch VARCHAR(50),
 	@dirfam VARCHAR(50),
-	@dirname VARCHAR(50),	
+	@dirname VARCHAR(50),
 	@dirotch VARCHAR(50),
 	@active BIT = 1
 AS
@@ -55,32 +55,32 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.OrganizationTable 
-		SET 
+		UPDATE dbo.OrganizationTable
+		SET
 			ORG_PSEDO = @psedo,
-			ORG_FULL_NAME = @fullname, 
-			ORG_SHORT_NAME = @shortname, 
-			ORG_INDEX = @index, 
-			ORG_ID_STREET = @streetid, 
+			ORG_FULL_NAME = @fullname,
+			ORG_SHORT_NAME = @shortname,
+			ORG_INDEX = @index,
+			ORG_ID_STREET = @streetid,
 			ORG_HOME = @home,
-			ORG_S_INDEX = @sindex, 
-			ORG_S_ID_STREET = @sstreetid, 
-			ORG_S_HOME = @shome, 
-			ORG_PHONE = @phone, 
+			ORG_S_INDEX = @sindex,
+			ORG_S_ID_STREET = @sstreetid,
+			ORG_S_HOME = @shome,
+			ORG_PHONE = @phone,
 			ORG_ID_BANK = @bankid,
 			ORG_ACCOUNT = @acc,
-			ORG_LORO = @loro, 
-			ORG_BIK = @bik, 
-			ORG_INN = @inn, 
-			ORG_KPP = @kpp, 
-			ORG_OKONH = @okonh, 
-			ORG_OKPO = @okpo, 
-			ORG_BUH_FAM = @buhfam, 
-			ORG_BUH_NAME = @buhname, 
-			ORG_BUH_OTCH = @buhotch, 
-			ORG_DIR_FAM = @dirfam, 
+			ORG_LORO = @loro,
+			ORG_BIK = @bik,
+			ORG_INN = @inn,
+			ORG_KPP = @kpp,
+			ORG_OKONH = @okonh,
+			ORG_OKPO = @okpo,
+			ORG_BUH_FAM = @buhfam,
+			ORG_BUH_NAME = @buhname,
+			ORG_BUH_OTCH = @buhotch,
+			ORG_DIR_FAM = @dirfam,
 			ORG_DIR_NAME = @dirname,
-			ORG_DIR_OTCH = @dirotch, 
+			ORG_DIR_OTCH = @dirotch,
 			ORG_ACTIVE = @active
 		WHERE ORG_ID = @id
 
@@ -88,9 +88,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

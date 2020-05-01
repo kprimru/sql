@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTIVITY_SELECT]   
+ALTER PROCEDURE [dbo].[ACTIVITY_SELECT]
   @active BIT = NULL
 
 AS
@@ -30,8 +30,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT AC_ID, AC_NAME 
-		FROM dbo.ActivityTable 
+		SELECT AC_ID, AC_NAME
+		FROM dbo.ActivityTable
 		WHERE AC_ACTIVE = ISNULL(@active, AC_ACTIVE)
 		ORDER BY AC_NAME
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

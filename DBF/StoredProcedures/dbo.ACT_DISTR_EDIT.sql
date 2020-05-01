@@ -8,8 +8,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DISTR_EDIT]
@@ -36,7 +36,7 @@ BEGIN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Изменение суммы', CONVERT(VARCHAR(20), PR_DATE, 104) + ' ' + DIS_STR + ' - с ' + dbo.MoneyFormat(AD_TOTAL_PRICE) + ' на ' + dbo.MoneyFormat(@totalprice)
-			FROM 
+			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.ActDistrTable b ON a.ACT_ID = b.AD_ID_ACT
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
@@ -48,14 +48,14 @@ BEGIN
 			AD_TAX_PRICE = @taxprice,
 			AD_TOTAL_PRICE = @totalprice
 		WHERE AD_ID = @adid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

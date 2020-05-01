@@ -21,19 +21,19 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT PT_ID, PT_SHORT, PT_GROUP
 		FROM Price.PriceType
 		--WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
 		ORDER BY PT_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

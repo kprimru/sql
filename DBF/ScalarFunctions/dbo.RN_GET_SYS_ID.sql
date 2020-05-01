@@ -10,7 +10,7 @@ GO
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 29.10.2008
--- Описание:	  Выделяет ID системы из строки 
+-- Описание:	  Выделяет ID системы из строки
 --                регузла
 -- =============================================
 ALTER FUNCTION [dbo].[RN_GET_SYS_ID]
@@ -23,11 +23,11 @@ BEGIN
   DECLARE @result INT
 
   SET @result = NULL
-  
-  SELECT @result = SYS_ID 
-  FROM dbo.SystemTable 
+
+  SELECT @result = SYS_ID
+  FROM dbo.SystemTable
   WHERE SYS_REG_NAME = @regname
-  
+
   RETURN @result
 
 END

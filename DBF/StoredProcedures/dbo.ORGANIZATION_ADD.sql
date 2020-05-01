@@ -9,10 +9,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ORGANIZATION_ADD] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_ADD]
 	@psedo VARCHAR(50),
 	@fullname VARCHAR(250),
 	@shortname VARCHAR(50),
@@ -35,7 +35,7 @@ ALTER PROCEDURE [dbo].[ORGANIZATION_ADD]
 	@buhname VARCHAR(50),
 	@buhotch VARCHAR(50),
 	@dirfam VARCHAR(50),
-	@dirname VARCHAR(50),	
+	@dirname VARCHAR(50),
 	@dirotch VARCHAR(50),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -57,13 +57,13 @@ BEGIN
 
 		INSERT INTO dbo.OrganizationTable
 			(
-				ORG_PSEDO, ORG_FULL_NAME, ORG_SHORT_NAME, ORG_INDEX, ORG_ID_STREET, 
-				ORG_HOME, ORG_S_INDEX, ORG_S_ID_STREET, ORG_S_HOME, ORG_PHONE, 
-				ORG_ID_BANK, ORG_ACCOUNT, ORG_LORO, ORG_BIK, ORG_INN, ORG_KPP, ORG_OKONH, 
-				ORG_OKPO, ORG_BUH_FAM, ORG_BUH_NAME, ORG_BUH_OTCH, ORG_DIR_FAM, 
+				ORG_PSEDO, ORG_FULL_NAME, ORG_SHORT_NAME, ORG_INDEX, ORG_ID_STREET,
+				ORG_HOME, ORG_S_INDEX, ORG_S_ID_STREET, ORG_S_HOME, ORG_PHONE,
+				ORG_ID_BANK, ORG_ACCOUNT, ORG_LORO, ORG_BIK, ORG_INN, ORG_KPP, ORG_OKONH,
+				ORG_OKPO, ORG_BUH_FAM, ORG_BUH_NAME, ORG_BUH_OTCH, ORG_DIR_FAM,
 				ORG_DIR_NAME,ORG_DIR_OTCH, ORG_ACTIVE
-			) 
-		VALUES 
+			)
+		VALUES
 			(
 				@psedo, @fullname, @shortname, @index, @streetid, @home, @sindex, @sstreetid,
 				@shome,	@phone,	@bankid, @acc, @loro, @bik, @inn,	@kpp, @okonh, @okpo,
@@ -77,9 +77,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

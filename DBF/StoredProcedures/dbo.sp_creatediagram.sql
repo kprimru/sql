@@ -8,7 +8,7 @@ GO
 	CREATE PROCEDURE dbo.sp_creatediagram
 	(
 		@diagramname 	sysname,
-		@owner_id		int	= null, 	
+		@owner_id		int	= null, 
 		@version 		int,
 		@definition 	varbinary(max)
 	)
@@ -16,7 +16,7 @@ GO
 	AS
 	BEGIN
 		set nocount on
-	
+
 		declare @theId int
 		declare @retval int
 		declare @IsDbo	int
@@ -26,12 +26,12 @@ GO
 			RAISERROR (N'E_INVALIDARG', 16, 1);
 			return -1
 		end
-	
+
 		execute as caller;
-		select @theId = DATABASE_PRINCIPAL_ID(); 
+		select @theId = DATABASE_PRINCIPAL_ID();
 		select @IsDbo = IS_MEMBER(N'db_owner');
-		revert; 
-		
+		revert;
+
 		if @owner_id is null
 		begin
 			select @owner_id = @theId;
@@ -54,11 +54,11 @@ GO
 			RAISERROR ('The name is already used.', 16, 1);
 			return -2
 		end
-	
+
 		insert into dbo.sysdiagrams(name, principal_id , version, definition)
 				VALUES(@diagramname, @theId, @version, @definition) ;
-		
-		select @retval = @@IDENTITY 
+
+		select @retval = @@IDENTITY
 		return @retval
 	END
 	DENY EXECUTE ON [dbo].[sp_creatediagram] TO guest;

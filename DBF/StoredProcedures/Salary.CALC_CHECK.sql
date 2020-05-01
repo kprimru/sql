@@ -33,9 +33,9 @@ BEGIN
 		FROM dbo.CourierTable
 		WHERE COUR_ACTIVE = 1
 			AND COUR_ID_TYPE IS NULL
-			
+
 		UNION ALL
-			
+
 		SELECT COUR_NAME, 'Не указан базовый город'
 		FROM dbo.CourierTable
 		WHERE COUR_ACTIVE = 1
@@ -43,9 +43,9 @@ BEGIN
 			AND COUR_ID_CITY IS NULL
 
 		UNION ALL
-			
+
 		SELECT CL_PSEDO, 'Не указан тип клиента'
-		FROM 
+		FROM
 			dbo.ClientTable
 			INNER JOIN dbo.TOTable ON TO_ID_CLIENT = CL_ID
 			INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
@@ -54,10 +54,10 @@ BEGIN
 		UNION ALL
 
 		SELECT CT_NAME, 'Не указан базовый населенный пункт для населенного пункта'
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT ST_ID_CITY
-				FROM 
+				FROM
 					dbo.TOTable
 					INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
 					INNER JOIN dbo.TOAddressTable ON TA_ID_TO = TO_ID
@@ -67,14 +67,14 @@ BEGIN
 			INNER JOIN dbo.CityTable ON ST_ID_CITY = CT_ID
 		WHERE CT_ID_BASE IS NULL
 		ORDER BY 2, 1
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

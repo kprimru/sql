@@ -9,7 +9,7 @@ GO
 /*
 Автор:			Денисов Алексей
 Дата создания:	02.02.2009
-Описание:		Внести первичку (если была - 
+Описание:		Внести первичку (если была -
 				перезаписать, если нет - добавить)
 */
 
@@ -45,16 +45,16 @@ BEGIN
 		IF @ppid IS NULL
 		  BEGIN
 			INSERT INTO dbo.PrimaryPayTable(PRP_ID_CLIENT, PRP_ID_DISTR, PRP_DATE, PRP_PRICE, PRP_DOC,
-										PRP_TAX_PRICE, PRP_TOTAL_PRICE, PRP_ID_TAX, 
-										PRP_COMMENT, PRP_ID_ORG) 
-				SELECT 
-					CD_ID_CLIENT, @distrid, @paydate, @price, @doc, @taxprice, 
+										PRP_TAX_PRICE, PRP_TOTAL_PRICE, PRP_ID_TAX,
+										PRP_COMMENT, PRP_ID_ORG)
+				SELECT
+					CD_ID_CLIENT, @distrid, @paydate, @price, @doc, @taxprice,
 					@totalprice, @taxid, @comment, @org
 				FROM dbo.ClientDistrTable
-				WHERE CD_ID_DISTR = @distrid		
+				WHERE CD_ID_DISTR = @distrid
 
 			IF @returnvalue = 1
-			  SELECT SCOPE_IDENTITY() AS NEW_IDEN  
+			  SELECT SCOPE_IDENTITY() AS NEW_IDEN
 		  END
 		ELSE
 		  BEGIN
@@ -68,16 +68,16 @@ BEGIN
 				PRP_ID_TAX = @taxid,
 				PRP_COMMENT = @comment,
 				PRP_ID_ORG = @org
-			WHERE PRP_ID = @ppid 
+			WHERE PRP_ID = @ppid
 		  END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

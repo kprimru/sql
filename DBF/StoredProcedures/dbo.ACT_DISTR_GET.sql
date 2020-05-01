@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[ACT_DISTR_GET]	
+ALTER PROCEDURE [dbo].[ACT_DISTR_GET]
 	@adid INT
 AS
 BEGIN
@@ -22,19 +22,19 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DIS_ID, DIS_STR, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE, 
+		SELECT
+			DIS_ID, DIS_STR, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 			PR_ID, PR_DATE
 		FROM dbo.ActDistrView
 		WHERE AD_ID = @adid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

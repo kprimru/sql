@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей, Богдан Владимир
 Дата создания: 27.01.2009
-Описание:	  Возвращает 0, если можно удалить 
-               налог, 
+Описание:	  Возвращает 0, если можно удалить
+               налог,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[TAX_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TAX_TRY_DELETE]
 	@taxid SMALLINT
 AS
 BEGIN
@@ -75,9 +75,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

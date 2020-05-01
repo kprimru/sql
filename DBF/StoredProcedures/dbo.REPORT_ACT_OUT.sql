@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[REPORT_ACT_OUT]
 	@periodid SMALLINT = NULL
@@ -31,26 +31,26 @@ BEGIN
 
 		SELECT @PR_DATE = PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid
 
-		SELECT 
+		SELECT
 				CL_ID, CL_PSEDO, CL_FULL_NAME
-				PR_ID, PR_DATE, a.DIS_ID, DIS_STR, BD_TOTAL_PRICE, 
+				PR_ID, PR_DATE, a.DIS_ID, DIS_STR, BD_TOTAL_PRICE,
 				ISNULL((
 					SELECT SUM(ID_PRICE)
-					FROM 
+					FROM
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0) AS BD_PAYED_PRICE,
 				(
 					SELECT TOP 1 COUR_NAME
-					FROM 
+					FROM
 						dbo.TOTable INNER JOIN
 						dbo.CourierTable ON TO_ID_COUR = COUR_ID
 					WHERE TO_ID_CLIENT = CL_ID
 				) AS COUR_NAME
-			FROM 
+			FROM
 				dbo.BillDistrTable INNER JOIN
 				dbo.DistrView a WITH(NOEXPAND) ON a.DIS_ID = BD_ID_DISTR INNER JOIN
 				dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
@@ -59,7 +59,7 @@ BEGIN
 				dbo.CLientTable c ON BL_ID_CLIENT = CL_ID INNER JOIN
 				dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID AND a.DIS_ID = CD_ID_DISTR INNER JOIN
 				dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE
-			WHERE  
+			WHERE
 				(DOC_PSEDO = 'ACT') AND
 				DD_PRINT = 1 AND
 				DSS_REPORT = 1 AND
@@ -67,7 +67,7 @@ BEGIN
 				NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.ActTable INNER JOIN
 						dbo.ActDistrTable ON ACT_ID = AD_ID_ACT
 					WHERE AD_ID_DISTR = BD_ID_DISTR
@@ -84,25 +84,25 @@ BEGIN
 							AND SL_REST >= 0
 					) AND
 					*/
-				BD_TOTAL_PRICE > 
+				BD_TOTAL_PRICE >
 				ISNULL((
 					SELECT SUM(ID_PRICE)
-					FROM 
+					FROM
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0)
 			ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, PR_DATE DESC
-			
+
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

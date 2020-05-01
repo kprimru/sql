@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_GET] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_GET]
 	@ID INT = NULL
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SNCC_ID, SN_ID, SN_NAME, PR_DATE, PR_ID, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE
-		FROM 
+		FROM
 			dbo.SystemNetCoef a INNER JOIN
 			dbo.SystemNetTable b ON a.SNCC_ID_SN = b.SN_ID INNER JOIN
 			dbo.PeriodTable c ON c.PR_ID = a.SNCC_ID_PERIOD
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

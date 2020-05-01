@@ -9,7 +9,7 @@ ALTER PROCEDURE [dbo].[BILL_DATE_DELETE]
 AS
 BEGIN
 	SET NOCOUNT ON
-    
+
     DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,41 +21,41 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-    
-		DELETE 
-		FROM 
+
+		DELETE
+		FROM
     		dbo.BillDistrTable
-		WHERE 
+		WHERE
     		BD_DATE <= @date AND
     		NOT EXISTS
         		(
-            		SELECT * 
-					FROM 
+            		SELECT *
+					FROM
                 		dbo.IncomeDistrTable INNER JOIN
                 		dbo.IncomeTable ON IN_ID = ID_ID_INCOME,
 						dbo.BillTable
-					WHERE ID_ID_PERIOD = BL_ID_PERIOD 
+					WHERE ID_ID_PERIOD = BL_ID_PERIOD
                 		AND ID_ID_DISTR = BD_ID_DISTR
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 						AND BL_ID = BD_ID_BILL
 				)
-	            
-		DELETE 
+
+		DELETE
 		FROM dbo.BillTable
 		WHERE NOT EXISTS
     			(
-            		SELECT * 
+            		SELECT *
 					FROM dbo.BillDistrTable
 					WHERE BL_ID = BD_ID_BILL
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

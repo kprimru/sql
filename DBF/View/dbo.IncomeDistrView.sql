@@ -8,7 +8,7 @@ GO
 ALTER VIEW [dbo].[IncomeDistrView]
 AS
 	SELECT ID_ID, DIS_ID, DIS_STR, PR_DATE, ID_PRICE, PR_ID, IN_ID_CLIENT
-	FROM        
+	FROM
 		dbo.IncomeDistrTable INNER JOIN
         dbo.DistrView WITH(NOEXPAND) ON ID_ID_DISTR = DIS_ID INNER JOIN
 		dbo.PeriodTable ON PR_ID = ID_ID_PERIOD INNER JOIN

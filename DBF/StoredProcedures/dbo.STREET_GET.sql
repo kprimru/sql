@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[STREET_GET]  
+ALTER PROCEDURE [dbo].[STREET_GET]
 	@streetid INT = NULL
 AS
 BEGIN
@@ -29,18 +29,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT ST_NAME, ST_PREFIX, ST_SUFFIX, ST_ID, CT_ID, CT_NAME, ST_ACTIVE
-		FROM 
+		FROM
 			dbo.StreetTable st LEFT OUTER JOIN
 			dbo.CityTable ct ON ct.CT_ID = st.ST_ID_CITY
-		WHERE ST_ID = @streetid  
+		WHERE ST_ID = @streetid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

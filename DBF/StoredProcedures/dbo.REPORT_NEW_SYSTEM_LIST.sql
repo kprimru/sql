@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-ALTER PROCEDURE [dbo].[REPORT_NEW_SYSTEM_LIST]	
+ALTER PROCEDURE [dbo].[REPORT_NEW_SYSTEM_LIST]
   @subhostlist VARCHAR(MAX),
   @systemlist VARCHAR(MAX),
   @systemtypelist VARCHAR(MAX),
@@ -35,19 +35,19 @@ BEGIN
 		CREATE TABLE #dbf_system
 			(
 				TSYS_ID INT NOT NULL,
-				HST_ID	INT     
+				HST_ID	INT
 			)
 
 		IF @systemlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_system
 				SELECT SYS_ID, SYS_ID_HOST
-				FROM dbo.SystemTable 
+				FROM dbo.SystemTable
 				WHERE SYS_REPORT = 1
 		END
 		ELSE
-		BEGIN		
-			INSERT INTO #dbf_system 
+		BEGIN
+			INSERT INTO #dbf_system
 				SELECT SYS_ID, SYS_ID_HOST FROM dbo.GET_TABLE_FROM_LIST(@systemlist, ',') INNER JOIN dbo.SystemTable ON SYS_ID = Item
 		END
 
@@ -62,13 +62,13 @@ BEGIN
 		IF @systemtypelist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemtype
-				SELECT SST_ID 
+				SELECT SST_ID
 				FROM dbo.SystemTypeTable
 				WHERE SST_REPORT = 1
 		END
 		ELSE
-		BEGIN      
-			INSERT INTO #dbf_systemtype 
+		BEGIN
+			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
 
@@ -83,13 +83,13 @@ BEGIN
 		IF @subhostlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_subhost
-				SELECT SH_ID 
-				FROM dbo.SubhostTable   
-				WHERE SH_ACTIVE = 1    
+				SELECT SH_ID
+				FROM dbo.SubhostTable
+				WHERE SH_ACTIVE = 1
 		END
 		ELSE
-		BEGIN      
-			INSERT INTO #dbf_subhost 
+		BEGIN
+			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
 
@@ -104,13 +104,13 @@ BEGIN
 		IF @systemnetlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemnet
-				SELECT SN_ID 
+				SELECT SN_ID
 				FROM dbo.SystemNetTable
 				WHERE SN_ACTIVE = 1
 				ORDER BY SN_ORDER
 		END
 		ELSE
-		BEGIN      
+		BEGIN
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
@@ -118,7 +118,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_period') IS NOT NULL
 			DROP TABLE #dbf_period
 
-		CREATE TABLE #dbf_period 
+		CREATE TABLE #dbf_period
 			(
 				PR_ID INT NOT NULL
 			)
@@ -134,18 +134,18 @@ BEGIN
 		BEGIN
 			INSERT INTO #dbf_period
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@periodlist, ',')
-		END	
+		END
 
-		SELECT 
-			PR_DATE, RNN_DATE_ON, RNN_DATE,	SYS_SHORT_NAME, RNN_DISTR_NUM, RNN_COMP_NUM, 
+		SELECT
+			PR_DATE, RNN_DATE_ON, RNN_DATE,	SYS_SHORT_NAME, RNN_DISTR_NUM, RNN_COMP_NUM,
 			SH_LST_NAME, SST_LST, SNC_NET_COUNT
-		FROM	
+		FROM
 			dbo.PeriodRegNewTable b INNER JOIN
 			dbo.PeriodTable a ON a.PR_ID = b.RNN_ID_PERIOD INNER JOIN
 			dbo.SystemTable c ON c.SYS_ID = b.RNN_ID_SYSTEM INNER JOIN
 			dbo.SystemTypeTable d ON d.SST_ID = b.RNN_ID_TYPE INNER JOIN
 			dbo.SubhostTable e ON e.SH_ID = b.RNN_ID_HOST INNER JOIN
-			dbo.SystemNetCountTable f ON f.SNC_ID = b.RNN_ID_NET INNER JOIN       
+			dbo.SystemNetCountTable f ON f.SNC_ID = b.RNN_ID_NET INNER JOIN
 			#dbf_systemnet g ON g.TSN_ID = f.SNC_ID_SN INNER JOIN
 			#dbf_system h ON h.TSYS_ID = c.SYS_ID INNER JOIN
 			#dbf_subhost j ON j.TSH_ID = e.SH_ID INNER JOIN
@@ -161,7 +161,7 @@ BEGIN
 				)
 		ORDER BY SYS_ORDER, RNN_DISTR_NUM, RNN_COMP_NUM
 
-	    
+
 		IF OBJECT_ID('tempdb..#dbf_status') IS NOT NULL
 			DROP TABLE #dbf_status
 		IF OBJECT_ID('tempdb..#dbf_system') IS NOT NULL
@@ -173,15 +173,15 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_systemnet') IS NOT NULL
 			DROP TABLE #dbf_systemnet
 		IF OBJECT_ID('tempdb..#dbf_period') IS NOT NULL
-			DROP TABLE #dbf_period	
-			
+			DROP TABLE #dbf_period
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

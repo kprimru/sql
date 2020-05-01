@@ -12,7 +12,7 @@ GO
 Описание:		все счета-фактуры клиента
 */
 
-ALTER PROCEDURE [dbo].[SINGLE_INVOICE_SELECT]	
+ALTER PROCEDURE [dbo].[SINGLE_INVOICE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -29,7 +29,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	INS_ID, 
+		SELECT	INS_ID,
 				INS_DATE, (CONVERT(varchar,INS_NUM)+'/'+INS_NUM_YEAR) AS INS_FULL_NUM,
 				ORG_PSEDO,
 				IF_TOTAL_PRICE, -- INS_STORNO, INS_COMMENT,
@@ -37,14 +37,14 @@ BEGIN
 		FROM dbo.InvoiceView
 		WHERE INS_ID_CLIENT IS NULL
 		ORDER BY INS_DATE DESC, INS_NUM
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

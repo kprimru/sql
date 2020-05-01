@@ -25,7 +25,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#delivery') IS NOT NULL
 			DROP TABLE #delivery
-			
+
 		CREATE TABLE #delivery
 			(
 				ID				INT IDENTITY(1, 1),
@@ -40,7 +40,7 @@ BEGIN
 				OPER			VARCHAR(100),
 				RNS_SUM			MONEY
 			)
-			
+
 		INSERT INTO #delivery
 			EXEC Subhost.REG_NODE_SUBHOST_SELECT @PR_ID, @SH_ID
 
@@ -64,14 +64,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#delivery') IS NOT NULL
 			DROP TABLE #delivery
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

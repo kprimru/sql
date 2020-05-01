@@ -9,13 +9,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если улицу с указанным 
-               кодом можно удалить из справочника 
-               (на нее не ссылается ни один адрес), 
+Описание:	  Возвращает 0, если улицу с указанным
+               кодом можно удалить из справочника
+               (на нее не ссылается ни один адрес),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[STREET_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[STREET_TRY_DELETE]
 	@streetid INT
 AS
 BEGIN
@@ -37,7 +37,7 @@ BEGIN
 		DECLARE @txt VARCHAR(MAX)
 
 		SET @res = 0
-		SET @txt = ''	
+		SET @txt = ''
 
 		-- добавлено 29.04.2009, В.Богдан
 		IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_STREET = @streetid)
@@ -70,9 +70,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

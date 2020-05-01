@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_ADD] 
+ALTER PROCEDURE [dbo].[DISTR_ADD]
 	@systemid INT,
 	@distrnum INT,
 	@compnum TINYINT,
@@ -33,24 +33,24 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @distrid INT	
+		DECLARE @distrid INT
 
 		INSERT INTO dbo.DistrTable (DIS_ID_SYSTEM, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE)
-		VALUES (@systemid, @distrnum, @compnum, @active)	
+		VALUES (@systemid, @distrnum, @compnum, @active)
 
-		SELECT @distrid = SCOPE_IDENTITY() 	
+		SELECT @distrid = SCOPE_IDENTITY() 
 
 		INSERT INTO dbo.DistrDocumentTable
 						(
 							DD_ID_DISTR, DD_ID_DOC, DD_PRINT, DD_ID_GOOD, DD_ID_UNIT
 						)
 			SELECT @distrid, DSD_ID_DOC, DSD_PRINT, DSD_ID_GOOD, DSD_ID_UNIT
-			FROM 
+			FROM
 				dbo.DocumentSaleObjectDefaultTable INNER JOIN
 				dbo.SaleObjectTable ON DSD_ID_SO = SO_ID INNER JOIN
 				dbo.SystemTable ON SYS_ID_SO = SO_ID
 			WHERE SYS_ID = @systemid
-		
+
 
 		IF EXISTS
 			(
@@ -58,10 +58,10 @@ BEGIN
 				FROM dbo.DistrView WITH(NOEXPAND)
 				WHERE DIS_NUM = @distrnum
 					AND DIS_COMP_NUM = @compnum
-					AND HST_ID = 
+					AND HST_ID =
 						(
-							SELECT SYS_ID_HOST 
-							FROM dbo.SystemTable 
+							SELECT SYS_ID_HOST
+							FROM dbo.SystemTable
 							WHERE SYS_ID = @systemid
 						)
 					AND DIS_ID <> @distrid
@@ -70,16 +70,16 @@ BEGIN
 				INSERT INTO dbo.ClientDistrTable
 					SELECT CD_ID_CLIENT, @distrid, NULL, CD_ID_SERVICE
 					FROM dbo.ClientDistrTable
-					WHERE CD_ID_DISTR = 
+					WHERE CD_ID_DISTR =
 						(
 							SELECT DIS_ID
 							FROM dbo.DistrView WITH(NOEXPAND)
 							WHERE DIS_NUM = @distrnum
 								AND DIS_COMP_NUM = @compnum
-								AND HST_ID = 
+								AND HST_ID =
 									(
-										SELECT SYS_ID_HOST 
-										FROM dbo.SystemTable 
+										SELECT SYS_ID_HOST
+										FROM dbo.SystemTable
 										WHERE SYS_ID = @systemid
 									)
 								AND DIS_ID <> @distrid
@@ -94,18 +94,18 @@ BEGIN
 							FROM dbo.DistrView WITH(NOEXPAND)
 							WHERE DIS_NUM = @distrnum
 								AND DIS_COMP_NUM = @compnum
-								AND HST_ID = 
+								AND HST_ID =
 									(
-										SELECT SYS_ID_HOST 
-										FROM dbo.SystemTable 
+										SELECT SYS_ID_HOST
+										FROM dbo.SystemTable
 										WHERE SYS_ID = @systemid
 									)
 								AND DIS_ID <> @distrid
-						)			
-					
+						)
+
 
 				--Удалить все остальные дистрибутивы с таким же хостом и номером
-				DELETE 
+				DELETE
 				FROM dbo.TODistrTable
 				WHERE TD_ID_DISTR IN
 					(
@@ -113,17 +113,17 @@ BEGIN
 						FROM dbo.DistrView WITH(NOEXPAND)
 						WHERE DIS_NUM = @distrnum
 							AND DIS_COMP_NUM = @compnum
-							AND HST_ID = 
+							AND HST_ID =
 								(
-									SELECT SYS_ID_HOST 
-									FROM dbo.SystemTable 
+									SELECT SYS_ID_HOST
+									FROM dbo.SystemTable
 									WHERE SYS_ID = @systemid
 								)
 							AND DIS_ID <> @distrid
-					)			
-				
-				
-				DELETE 
+					)
+
+
+				DELETE
 				FROM dbo.ClientDistrTable
 				WHERE CD_ID_DISTR IN
 					(
@@ -131,10 +131,10 @@ BEGIN
 						FROM dbo.DistrView WITH(NOEXPAND)
 						WHERE DIS_NUM = @distrnum
 							AND DIS_COMP_NUM = @compnum
-							AND HST_ID = 
+							AND HST_ID =
 								(
-									SELECT SYS_ID_HOST 
-									FROM dbo.SystemTable 
+									SELECT SYS_ID_HOST
+									FROM dbo.SystemTable
 									WHERE SYS_ID = @systemid
 								)
 							AND DIS_ID <> @distrid
@@ -143,14 +143,14 @@ BEGIN
 
 		IF @returnvalue = 1
 			SELECT @distrid AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -87,10 +87,10 @@ BEGIN
 		SET WEIGHT_DELTA = A.WEIGHT - ISNULL((SELECT WEIGHT FROM @RESULT Z WHERE Z.PR_DATE = DATEADD(MONTH, -1, A.PR_DATE)), 0),
 			WEIGHT_START = Ric.VKSPGet_New(DATEADD(MONTH, -12, A.PR_DATE)),
 			WEIGHT_FINISH = Ric.VKSPGet_New(A.PR_DATE),
-			WEIGHT_CORRECTION_SUM = 
+			WEIGHT_CORRECTION_SUM =
 				(
 					SELECT SUM(WC_VALUE)
-					FROM 
+					FROM
 						Ric.WeightCorrectionMonth Z
 						INNER JOIN dbo.PeriodTable Y ON Y.PR_ID = Z.WC_ID_PERIOD
 					WHERE Y.PR_DATE BETWEEN DATEADD(MONTH, -11, A.PR_DATE) AND A.PR_DATE
@@ -106,7 +106,7 @@ BEGIN
 		SET WEIGHT_PERCENT = 100 * (WEIGHT_PERIOD_DELTA + ISNULL(WEIGHT_CORRECTION_SUM, 0)) / NullIf(WEIGHT_START, 0)
 		FROM @RESULT A
 
-		SELECT 
+		SELECT
 			[Номер строки]							= ROW_NUMBER() OVER(ORDER BY PR_DATE),
 			[Дата]									= PR_DATE,
 			[Кол-во весовых систем] 				= SYS_COUNT,
@@ -121,14 +121,14 @@ BEGIN
 			[Период П4|Прирост веса за период %]	= WEIGHT_PERCENT
 		FROM @RESULT A
 		ORDER BY PR_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,14 +7,14 @@ GO
 
 ALTER VIEW [dbo].[AuditDistrView]
 AS
-	SELECT 
-		DIS_ID, DIS_STR, 
-		NULL AS TO_ID, NULL AS CL_ID, 
+	SELECT
+		DIS_ID, DIS_STR,
+		NULL AS TO_ID, NULL AS CL_ID,
 		'Дистрибутив не распределен клиенту' AS DIS_ER
 	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE NOT EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.ClientDistrTable
 			WHERE CD_ID_DISTR = DIS_ID
 		)
@@ -22,21 +22,21 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		NULL AS TO_ID, CD_ID_CLIENT AS CL_ID, 
+	SELECT
+		DIS_ID, DIS_STR,
+		NULL AS TO_ID, CD_ID_CLIENT AS CL_ID,
 		'Дистрибутив не распределен в ТО' AS DIS_ER
 	FROM dbo.DistrView a WITH(NOEXPAND) INNER JOIN
 		dbo.ClientDistrTable ON DIS_ID = CD_ID_DISTR
 	WHERE NOT EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.TODistrTable
 			WHERE TD_ID_DISTR = DIS_ID
 		)
 		AND EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.ClientDistrTable
 			WHERE CD_ID_DISTR = DIS_ID
 		)
@@ -44,11 +44,11 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		TO_ID, CL_ID, 
+	SELECT
+		DIS_ID, DIS_STR,
+		TO_ID, CL_ID,
 		('Дистрибутив клиента "' + CL_PSEDO + '" разнесен в ТО "' + TO_NAME + '" (' + CONVERT(VARCHAR(20), TO_NUM) + ') не принадлежащую данному клиенту') AS DIS_ER
-	FROM 
+	FROM
 		dbo.DistrView WITH(NOEXPAND) INNER JOIN
 		dbo.TODistrTable ON TD_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_DISTR = DIS_ID INNER JOIN
@@ -58,8 +58,8 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
+	SELECT
+		DIS_ID, DIS_STR,
 		NULL AS TO_ID, CL_ID, 'Признак подхоста на рег.узле и в базе не совпадают' AS DIS_ER
 	FROM
 		dbo.ClientDistrView			a
@@ -72,8 +72,8 @@ AS
 		WHERE rn_subhost != sh_subhost
 
 	UNION ALL
-	SELECT 
-		DIS_ID, DIS_STR, NULL AS TO_ID, CL_ID, 
+	SELECT
+		DIS_ID, DIS_STR, NULL AS TO_ID, CL_ID,
 		'Названия подхостов на рег.узле и в базе не совпадают' AS DIS_ER
 	FROM
 		dbo.ClientDistrView			a
@@ -89,9 +89,9 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		TD_ID_TO AS TO_ID, CL_ID, 
+	SELECT
+		DIS_ID, DIS_STR,
+		TD_ID_TO AS TO_ID, CL_ID,
 		'Дистрибутив не указан ни в одном действующем договоре' AS DIS_ER
 	FROM
 		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
@@ -103,7 +103,7 @@ AS
 		NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ContractTable INNER JOIN
 					dbo.ContractDistrTable ON CO_ID = COD_ID_CONTRACT
 				WHERE CO_ID_CLIENT = CL_ID AND CO_ACTIVE = 1

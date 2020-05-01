@@ -11,7 +11,7 @@ GO
 Описание:	  Очистить таблицу полей отчета
 */
 
-ALTER PROCEDURE [dbo].[REPORT_FIELD_INIT]	
+ALTER PROCEDURE [dbo].[REPORT_FIELD_INIT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -31,14 +31,14 @@ BEGIN
 		DELETE FROM dbo.ReportFieldTable
 
 		DBCC CHECKIDENT(ReportFieldTable, RESEED, 0)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

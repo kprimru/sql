@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Возвращает 0, если тип прейскуранта 
-               можно удалить из справочника, 
+Описание:	  Возвращает 0, если тип прейскуранта
+               можно удалить из справочника,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[PRICE_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_TRY_DELETE]
 	@pricetypeid SMALLINT
 AS
 BEGIN
@@ -45,25 +45,25 @@ BEGIN
 			END
 
 		-- связь PriceType <-> PriceSystem <-> System
-		
+
 		IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_TYPE = @pricetypeid)
 			BEGIN
 				SET @res = 1
 				SET @txt = @txt + 'Невозможно удалить тип прейскуранта, так как существует' +
 								+ 'запись о стоимости систем по этому типу прейскуранта.' + CHAR(13)
 			END
-		
+
 		--
 
 		SELECT @res AS RES, @txt AS TXT
-	  
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

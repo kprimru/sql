@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COURIER_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[COURIER_TYPE_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@active BIT = 1
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.CourierTypeTable 
+		UPDATE dbo.CourierTypeTable
 		SET COT_NAME = @name,
 			COT_ACTIVE = @active
 		WHERE COT_ID = @id
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

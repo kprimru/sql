@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_EXCEPT_ADD] 
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_ADD]
 	@systemid INT,
 	@distrnum INT,
 	@compnum TINYINT,
@@ -34,23 +34,23 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @distrid INT	
+		DECLARE @distrid INT
 
 		INSERT INTO dbo.DistrExceptTable (DE_ID_SYSTEM, DE_DIS_NUM, DE_COMP_NUM, DE_COMMENT, DE_ACTIVE)
-		VALUES (@systemid, @distrnum, @compnum, @comment, @active)	
+		VALUES (@systemid, @distrnum, @compnum, @comment, @active)
 
-		SELECT @distrid = SCOPE_IDENTITY()	
+		SELECT @distrid = SCOPE_IDENTITY()
 
 		IF @returnvalue = 1
 			SELECT @distrid AS NEW_IDEN
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -11,7 +11,7 @@ GO
 					сотрудников клиента
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_COPY_FROM_TO] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_COPY_FROM_TO]
 	@toperid INT,
 	@returnvalue BIT = 1
 AS
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[PERIOD_GET_NEXT_DATE]
@@ -32,14 +32,14 @@ BEGIN
 		SELECT CONVERT(VARCHAR, DATEPART(d, PR_DATE)) + ' ' + DATENAME(mm, PR_DATE) + ' ' + DATENAME(yyyy, PR_DATE) + ' года' AS PR_STR
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @periodid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

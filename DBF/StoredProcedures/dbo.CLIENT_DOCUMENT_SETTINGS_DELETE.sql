@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_DELETE]
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.ClientDocumentSettingsTable	
-		WHERE CDS_ID = @cdsid				
-		
+		DELETE
+		FROM dbo.ClientDocumentSettingsTable
+		WHERE CDS_ID = @cdsid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

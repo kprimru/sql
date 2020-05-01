@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CITY_EDIT] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_EDIT]
 	@subhostcityid INT,
 	@subhostid SMALLINT,
 	@cityid SMALLINT,
@@ -33,9 +33,9 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.SubhostCityTable
-		SET 
+		SET
 			SC_ID_SUBHOST = @subhostid,
-			SC_ID_CITY = @cityid, 
+			SC_ID_CITY = @cityid,
 			SC_ID_MARKET_AREA = @marketareaid,
 			SC_ACTIVE = @active
 		WHERE SC_ID = @subhostcityid
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

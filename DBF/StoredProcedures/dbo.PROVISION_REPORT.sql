@@ -9,7 +9,7 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -24,35 +24,35 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		CREATE TABLE #result
 			(
 				[Организация]	NVARCHAR(128),
 				[Клиент]		NVARCHAR(128)
 			)
-				
+
 		DECLARE @SQL NVARCHAR(MAX)
-		
-		
+
+
 		DECLARE Y CURSOR LOCAL FOR
 			SELECT DISTINCT DATEPART(YEAR, DATE) AS YEAR_NUM
 			FROM dbo.Provision
-			
+
 		DECLARE @Y INT
-		
+
 		OPEN Y
-		
+
 		FETCH NEXT FROM Y INTO @Y
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			--SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] NVARCHAR(512)'
 			--EXEC (@SQL)
-			
+
 			SET @SQL = 'ALTER TABLE #result ADD '
-			
+
 			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - дата выплаты] SMALLDATETIME,'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN_2
 					FROM dbo.ProvisionView
@@ -60,14 +60,14 @@ BEGIN
 				) AS o_O
 
 			SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
+
 			EXEC (@SQL)
-		
-			
+
+
 			SET @SQL = 'ALTER TABLE #result ADD '
-			
+
 			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - сумма] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - дата] SMALLDATETIME,'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN_1
 					FROM dbo.ProvisionView
@@ -75,50 +75,50 @@ BEGIN
 				) AS o_O
 
 			SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
+
 			EXEC (@SQL)
-		
+
 			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] MONEY'
 			EXEC (@SQL)
-		
+
 			FETCH NEXT FROM Y INTO @Y
 		END
 
 		CLOSE Y
 		DEALLOCATE Y
-		
+
 		INSERT INTO #result([Организация], [Клиент])
 			SELECT DISTINCT ORG_PSEDO, CL_PSEDO
 			FROM dbo.ProvisionView
-		
+
 		SET @SQL = '
 		UPDATE a
 		SET	'
-		
+
 		DECLARE Y CURSOR LOCAL FOR
 			SELECT DISTINCT DATEPART(YEAR, DATE) AS YEAR_NUM
 			FROM dbo.Provision
-		
+
 		OPEN Y
-		
+
 		FETCH NEXT FROM Y INTO @Y
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			SELECT @SQL = @SQL + 
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - выплачено клиенту] = 
+			SELECT @SQL = @SQL +
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - выплачено клиенту] =
 					(
-						SELECT PRICE 
+						SELECT PRICE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE < 0
 							AND z.RN_2 = ' + CONVERT(NVARCHAR(16), RN_2) + '
-					),		
+					),
 				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - дата выплаты] =
 					(
-						SELECT DATE 
+						SELECT DATE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
@@ -126,28 +126,28 @@ BEGIN
 							AND z.PRICE < 0
 							AND z.RN_2 = ' + CONVERT(NVARCHAR(16), RN_2) + '
 					),'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN_2
 					FROM dbo.ProvisionView
 					WHERE YEAR_NUM = @Y
-				) AS o_O		
-						
-			
-			SELECT @SQL = @SQL + 
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - сумма] = 
+				) AS o_O
+
+
+			SELECT @SQL = @SQL +
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - сумма] =
 					(
-						SELECT PRICE 
+						SELECT PRICE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN_1 = ' + CONVERT(NVARCHAR(16), RN_1) + '
-					),		
+					),
 				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - дата] =
 					(
-						SELECT DATE 
+						SELECT DATE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
@@ -155,13 +155,13 @@ BEGIN
 							AND z.PRICE > 0
 							AND z.RN_1 = ' + CONVERT(NVARCHAR(16), RN_1) + '
 					),'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN_1
 					FROM dbo.ProvisionView
 					WHERE YEAR_NUM = @Y
-				) AS o_O		
-		
+				) AS o_O
+
 			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] =
 					(
 						SELECT SUM(PRICE)
@@ -170,62 +170,62 @@ BEGIN
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM <= ' + CONVERT(NVARCHAR(16), @Y) + '
 					),'
-		
+
 			FETCH NEXT FROM Y INTO @Y
 		END
 
 		CLOSE Y
 		DEALLOCATE Y
-		
+
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1) + '
 		FROM #result a'
-		
-		
-		PRINT @SQL		
+
+
+		PRINT @SQL
 		EXEC (@SQL)
-			
+
 		SELECT ROW_NUMBER() OVER(PARTITION BY [Организация] ORDER BY [Организация], [Клиент]) AS [№], *
 		FROM #result
 		ORDER BY [Организация], [Клиент]
-		
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
-		
+
 
 		/*
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
-			
+
 		CREATE TABLE #result
 			(
 				[Организация]	NVARCHAR(128),
 				[Клиент]		NVARCHAR(128)
 			)
-				
+
 		DECLARE @SQL NVARCHAR(MAX)
-		
-		
+
+
 		DECLARE Y CURSOR LOCAL FOR
 			SELECT DISTINCT DATEPART(YEAR, DATE) AS YEAR_NUM
 			FROM dbo.Provision
-			
+
 		DECLARE @Y INT
-		
+
 		OPEN Y
-		
+
 		FETCH NEXT FROM Y INTO @Y
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] NVARCHAR(512)'
 			EXEC (@SQL)
-		
-			
+
+
 			SET @SQL = 'ALTER TABLE #result ADD '
-			
+
 			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - сумма] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - дата] SMALLDATETIME,'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN
 					FROM dbo.ProvisionView
@@ -233,37 +233,37 @@ BEGIN
 				) AS o_O
 
 			SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
+
 			EXEC (@SQL)
-		
+
 			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] MONEY'
 			EXEC (@SQL)
-		
+
 			FETCH NEXT FROM Y INTO @Y
 		END
 
 		CLOSE Y
 		DEALLOCATE Y
-		
+
 		INSERT INTO #result([Организация], [Клиент])
 			SELECT DISTINCT ORG_PSEDO, CL_PSEDO
 			FROM dbo.ProvisionView
-		
+
 		SET @SQL = '
 		UPDATE a
 		SET	'
-		
+
 		DECLARE Y CURSOR LOCAL FOR
 			SELECT DISTINCT DATEPART(YEAR, DATE) AS YEAR_NUM
 			FROM dbo.Provision
-		
+
 		OPEN Y
-		
+
 		FETCH NEXT FROM Y INTO @Y
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту]  = 
+			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту]  =
 					(
 						SELECT SUM(-PRICE)
 						FROM dbo.ProvisionView z
@@ -271,12 +271,12 @@ BEGIN
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE < 0
-					), 
+					),
 					[' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] =
 					REVERSE(STUFF(REVERSE(
 						(
 						SELECT CONVERT(NVARCHAR(32), DATE, 104) + '',''
-						FROM 
+						FROM
 							(
 								SELECT DISTINCT DATE
 								FROM
@@ -288,22 +288,22 @@ BEGIN
 							) AS o_O
 						ORDER BY DATE DESC FOR XML PATH('''')
 					)), 1, 1, '''')),'
-						
-			
-			SELECT @SQL = @SQL + 
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - сумма] = 
+
+
+			SELECT @SQL = @SQL +
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - сумма] =
 					(
-						SELECT PRICE 
+						SELECT PRICE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN = ' + CONVERT(NVARCHAR(16), RN) + '
-					),		
+					),
 				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - дата] =
 					(
-						SELECT DATE 
+						SELECT DATE
 						FROM dbo.ProvisionView z
 						WHERE z.ORG_PSEDO = a.[Организация]
 							AND z.CL_PSEDO = a.[Клиент]
@@ -311,13 +311,13 @@ BEGIN
 							AND z.PRICE > 0
 							AND z.RN = ' + CONVERT(NVARCHAR(16), RN) + '
 					),'
-			FROM 
+			FROM
 				(
 					SELECT DISTINCT RN
 					FROM dbo.ProvisionView
 					WHERE YEAR_NUM = @Y
-				) AS o_O		
-		
+				) AS o_O
+
 			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] =
 					(
 						SELECT SUM(PRICE)
@@ -326,35 +326,35 @@ BEGIN
 							AND z.CL_PSEDO = a.[Клиент]
 							AND z.YEAR_NUM <= ' + CONVERT(NVARCHAR(16), @Y) + '
 					),'
-		
+
 			FETCH NEXT FROM Y INTO @Y
 		END
 
 		CLOSE Y
 		DEALLOCATE Y
-		
+
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1) + '
 		FROM #result a'
-		
-		
-		PRINT @SQL		
+
+
+		PRINT @SQL
 		EXEC (@SQL)
-			
+
 		SELECT *
 		FROM #result
 		ORDER BY [Организация], [Клиент]
-		
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 		*/
 
 		/*
-		SELECT 
+		SELECT
 			ORG_PSEDO, CL_PSEDO, RIC_PRICE, CLIENT_PRICE, RIC_PRICE - CLIENT_PRICE AS PROVISION_DELTA,
 			RIC_DATES, CLIENT_DATES
 		FROM
 			(
-				SELECT 
+				SELECT
 					ORG_PSEDO, CL_PSEDO,
 					(
 						SELECT SUM(PRICE)
@@ -373,7 +373,7 @@ BEGIN
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT CONVERT(NVARCHAR(32), DATE, 104) + ', '
-							FROM 
+							FROM
 								(
 									SELECT DISTINCT DATE
 									FROM dbo.Provision
@@ -388,7 +388,7 @@ BEGIN
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT CONVERT(NVARCHAR(32), DATE, 104) + ', '
-							FROM 
+							FROM
 								(
 									SELECT DISTINCT DATE
 									FROM dbo.Provision
@@ -404,22 +404,22 @@ BEGIN
 					(
 						SELECT DISTINCT
 							CL_ID, CL_PSEDO, ORG_ID, ORG_PSEDO
-						FROM 
+						FROM
 							dbo.Provision a
 							INNER JOIN dbo.ClientTable b ON a.ID_CLIENT = b.CL_ID
 							LEFT OUTER JOIN dbo.OrganizationTable c ON c.ORG_ID = a.ID_ORG
 					) AS a
 			) AS o_O
-		ORDER BY ORG_PSEDO, CL_PSEDO	
+		ORDER BY ORG_PSEDO, CL_PSEDO
 		*/
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

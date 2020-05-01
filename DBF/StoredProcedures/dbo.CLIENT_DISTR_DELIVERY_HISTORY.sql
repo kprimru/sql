@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:         Денисов Алексей
-Описание:      
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELIVERY_HISTORY] 
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELIVERY_HISTORY]
 	@id INT,
 	@clientid INT
 AS
@@ -35,19 +35,19 @@ BEGIN
 		FROM dbo.ClientDistrTable
 		WHERE CD_ID = @id
 
-		UPDATE dbo.ClientDistrTable 
+		UPDATE dbo.ClientDistrTable
 		SET CD_ID_CLIENT = @clientid
 		WHERE CD_ID = @id
-		
+
 		--удалить из ТО этот дистрибутив
 
-		DELETE 
+		DELETE
 		FROM dbo.TODistrTable
-		WHERE TD_ID_DISTR = 
+		WHERE TD_ID_DISTR =
 			(
-				SELECT CD_ID_DISTR 
-				FROM  dbo.ClientDistrTable 
-				WHERE CD_ID = @id	
+				SELECT CD_ID_DISTR
+				FROM  dbo.ClientDistrTable
+				WHERE CD_ID = @id
 			)
 
 		IF (SELECT COUNT(*) FROM dbo.TOTable WHERE TO_ID_CLIENT = @clientid) = 1
@@ -55,24 +55,24 @@ BEGIN
 				INSERT INTO dbo.TODistrTable (TD_ID_TO, TD_ID_DISTR)
 				SELECT
 					(
-						SELECT TO_ID 
-						FROM dbo.TOTable 
+						SELECT TO_ID
+						FROM dbo.TOTable
 						WHERE TO_ID_CLIENT = @clientid
 					),
 					(
-						SELECT CD_ID_DISTR 
-						FROM  dbo.ClientDistrTable 
-						WHERE CD_ID = @id 
-					)				
+						SELECT CD_ID_DISTR
+						FROM  dbo.ClientDistrTable
+						WHERE CD_ID = @id
+					)
 			END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

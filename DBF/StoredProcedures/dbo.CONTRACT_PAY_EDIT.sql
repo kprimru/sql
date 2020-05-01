@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_PAY_EDIT] 
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@day TINYINT,
@@ -32,8 +32,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ContractPayTable 
-		SET COP_NAME = @name, 
+		UPDATE dbo.ContractPayTable
+		SET COP_NAME = @name,
 			COP_DAY = @day,
 			COP_MONTH = @month,
 			COP_ACTIVE = @active
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

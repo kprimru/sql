@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-**	Drop one or all the associated properties of an object or an attribute 
+**	Drop one or all the associated properties of an object or an attribute
 **
 **	dt_dropproperties objid, null or '' -- drop all properties of the object itself
 **	dt_dropproperties objid, property -- drop the property
@@ -19,6 +19,6 @@ as
 	if (@property is null) or (@property = '')
 		delete from dbo.dtproperties where objectid=@id
 	else
-		delete from dbo.dtproperties 
+		delete from dbo.dtproperties
 			where objectid=@id and property=@property
 

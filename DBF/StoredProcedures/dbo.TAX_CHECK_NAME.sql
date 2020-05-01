@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 13.01.2009
-Описание:	  Возвращает ID налога 
-                с указанным названием. 
+Описание:	  Возвращает ID налога
+                с указанным названием.
 */
 
-ALTER PROCEDURE [dbo].[TAX_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[TAX_CHECK_NAME]
 	@taxname VARCHAR(100)
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT TX_ID 
-		FROM dbo.TaxTable 
+		SELECT TX_ID
+		FROM dbo.TaxTable
 		WHERE TX_NAME = @taxname
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

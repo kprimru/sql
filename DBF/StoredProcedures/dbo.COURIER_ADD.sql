@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COURIER_ADD] 
+ALTER PROCEDURE [dbo].[COURIER_ADD]
 	@couriername VARCHAR(150),
 	@type SMALLINT,
 	@active BIT = 1,
@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.CourierTable (COUR_NAME, COUR_ID_TYPE, COUR_ID_CITY, COUR_ACTIVE, COUR_OLD_CODE) 
+		INSERT INTO dbo.CourierTable (COUR_NAME, COUR_ID_TYPE, COUR_ID_CITY, COUR_ACTIVE, COUR_OLD_CODE)
 		VALUES (@couriername, @type, @city, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

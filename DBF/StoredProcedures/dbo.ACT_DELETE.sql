@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DELETE]
@@ -31,35 +31,35 @@ BEGIN
 
 		DECLARE @CLIENT	INT
 		DECLARE @TXT	VARCHAR(MAX)
-		
-		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT	
+
+		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
 
 		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Удаление акта', @TXT, @CLIENT, @actid
 
-		DELETE 
+		DELETE
 		FROM dbo.SaldoTable
-		WHERE SL_ID_ACT_DIS IN 
+		WHERE SL_ID_ACT_DIS IN
 				(
-					SELECT AD_ID 
-					FROM dbo.ActDistrTable 
+					SELECT AD_ID
+					FROM dbo.ActDistrTable
 					WHERE AD_ID_ACT = @actid
 				)
 
-		DELETE 
+		DELETE
 		FROM dbo.ActDistrTable
 		WHERE AD_ID_ACT = @actid
 
-		DELETE 
+		DELETE
 		FROM dbo.ActTable
 		WHERE ACT_ID = @actid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

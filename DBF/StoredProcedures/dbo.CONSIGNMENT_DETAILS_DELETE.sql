@@ -49,7 +49,7 @@ BEGIN
 
 
 		DELETE
-		FROM 
+		FROM
 			dbo.ConsignmentDetailTable
 		WHERE CSD_ID IN (SELECT ROW_ID FROM #dbf_consrow)
 
@@ -60,9 +60,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

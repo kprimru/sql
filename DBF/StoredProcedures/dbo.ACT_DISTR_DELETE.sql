@@ -9,7 +9,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DISTR_DELETE]
@@ -46,33 +46,33 @@ BEGIN
 			END
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT 
-				ACT_ID_CLIENT, ACT_ID, 'ACT', 'Удаление строки акта', 
+			SELECT
+				ACT_ID_CLIENT, ACT_ID, 'ACT', 'Удаление строки акта',
 				CONVERT(VARCHAR(20), PR_DATE, 104) + ' ' + DIS_STR + ' - ' + dbo.MoneyFormat(AD_TOTAL_PRICE)
-			FROM 
+			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.ActDistrTable b ON a.ACT_ID = b.AD_ID
 				INNER JOIN #act c ON aid = AD_ID
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
 				INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
 
-		DELETE 
+		DELETE
 		FROM dbo.SaldoTable
 		WHERE SL_ID_ACT_DIS IN (SELECT aid FROM #act)
-		
+
 		DELETE FROM dbo.ActDistrTable
 		WHERE AD_ID IN (SELECT aid FROM #act)
 
 		IF OBJECT_ID('tempdb..#act') IS NOT NULL
 			DROP TABLE #act
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

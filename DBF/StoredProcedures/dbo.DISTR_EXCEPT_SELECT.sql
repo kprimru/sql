@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_EXCEPT_SELECT]    
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DE_ID, SYS_SHORT_NAME, DE_DIS_NUM, DE_COMP_NUM, DE_COMMENT
-		FROM 
+		FROM
 			dbo.DistrExceptTable INNER JOIN
 			dbo.SystemTable ON SYS_ID = DE_ID_SYSTEM
 		WHERE DE_ACTIVE = ISNULL(@active, DE_ACTIVE)
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

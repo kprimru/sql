@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[DISTR_EXCHANGE]
 	@distrid INT,
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.DistrDeliveryHistoryTable(DDH_ID_DISTR, DDH_ID_OLD_CLIENT, DDH_ID_NEW_CLIENT, DDH_NOTE, DDH_USER, DDH_DATE)
-			SELECT 
-				@distrid, 
-				(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid), 
+			SELECT
+				@distrid,
+				(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid),
 				(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid),
 				'Замена с ' + (SELECT SYS_SHORT_NAME FROM dbo.DistrView WITH(NOEXPAND) WHERE DIS_ID = @distrid) + ' на ' + (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @newsysid),
 				ORIGINAL_LOGIN(), GETDATE()
 
-		DECLARE @newid INT	
+		DECLARE @newid INT
 
-		SELECT @newid = DIS_ID 
+		SELECT @newid = DIS_ID
 		FROM dbo.DistrTable	a
 		WHERE EXISTS
 			(
@@ -67,28 +67,28 @@ BEGIN
 				WHERE DIS_ID = @newid
 			END
 
-		UPDATE dbo.DistrTable 
-		SET DIS_ACTIVE = 0 
+		UPDATE dbo.DistrTable
+		SET DIS_ACTIVE = 0
 		WHERE DIS_ID = @distrid
 
-		
+
 		INSERT INTO dbo.ClientDistrTable
 			SELECT CD_ID_CLIENT, @newid, NULL, CD_ID_SERVICE
 			FROM dbo.ClientDistrTable
 			WHERE CD_ID_DISTR = @distrid
-				
+
 
 		INSERT INTO dbo.TODistrTable
 			SELECT @newid, TD_ID_TO, TD_FORCED
 			FROM dbo.TODistrTable
 			WHERE TD_ID_DISTR = @distrid
-				
+
 		--Удалить все остальные дистрибутивы с таким же хостом и номером
-		DELETE 
+		DELETE
 		FROM dbo.TODistrTable
 		WHERE TD_ID_DISTR = @distrid
-								
-		DELETE 
+
+		DELETE
 		FROM dbo.ClientDistrTable
 		WHERE CD_ID_DISTR = @distrid
 
@@ -96,11 +96,11 @@ BEGIN
 		INSERT INTO dbo.DistrFinancingTable
 				(
 					DF_ID_DISTR, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE,
-					DF_ID_PRICE, DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, 
+					DF_ID_PRICE, DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE,
 					DF_ID_PERIOD, DF_MON_COUNT
 				)
-			SELECT 
-				@newid, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_PRICE, 
+			SELECT
+				@newid, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_PRICE,
 				DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT
 			FROM dbo.DistrFinancingTable
 			WHERE DF_ID_DISTR = @distrid
@@ -119,15 +119,15 @@ BEGIN
 						SELECT *
 						FROM dbo.DistrDocumentTable
 						WHERE DD_ID_DISTR = @newid
-					)	
-					
+					)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

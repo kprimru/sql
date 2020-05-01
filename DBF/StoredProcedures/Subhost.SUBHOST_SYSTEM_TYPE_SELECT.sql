@@ -32,7 +32,7 @@ BEGIN
 
 		INSERT INTO @temp
 			SELECT SST_ID, SST_CAPTION, SST_COEF, SST_KBU, SST_SORDER
-			FROM 
+			FROM
 				dbo.SystemTypeTable a INNER JOIN
 				(
 					SELECT DISTINCT SST_ID_DHOST
@@ -40,7 +40,7 @@ BEGIN
 					WHERE SST_ID_DHOST IS NOT NULL
 				) b ON a.SST_ID = b.SST_ID_DHOST
 
-		SELECT 
+		SELECT
 			SST_ID, SST_CAPTION, SST_COEF, SST_KBU, SST_ORDER,
 			(
 				SELECT COUNT(*)
@@ -49,14 +49,14 @@ BEGIN
 			) AS SST_COUNT
 		FROM @temp
 		ORDER BY SST_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

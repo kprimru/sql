@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SALE_OBJECT_SELECT]
@@ -30,18 +30,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SO_ID, SO_NAME, TX_ID, TX_NAME
-		FROM 
+		FROM
 			dbo.SaleObjectTable a INNER JOIN
 			dbo.TaxTable b ON a.SO_ID_TAX = b.TX_ID
 		WHERE SO_ACTIVE = ISNULL(@active, SO_ACTIVE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

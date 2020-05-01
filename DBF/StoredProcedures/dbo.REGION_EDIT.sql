@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Изменить данные о регионе с 
+Описание:	  Изменить данные о регионе с
                указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[REGION_EDIT] 
+ALTER PROCEDURE [dbo].[REGION_EDIT]
 	@regionid SMALLINT,
 	@regionname VARCHAR(100),
 	@active BIT = 1
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.RegionTable 
+		UPDATE dbo.RegionTable
 		SET RG_NAME = @regionname,
 			RG_ACTIVE = @active
 		WHERE RG_ID = @regionid
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DETAIL_SELECT]
@@ -29,22 +29,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 				AD_ID, DIS_ID, DIS_STR, TX_ID, TX_NAME, TX_PERCENT,
 				AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE, --AD_DATE
 				PR_DATE
-		FROM 
-			dbo.ActDistrView 
+		FROM
+			dbo.ActDistrView
 		WHERE ACT_ID = @actid
 		ORDER BY DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

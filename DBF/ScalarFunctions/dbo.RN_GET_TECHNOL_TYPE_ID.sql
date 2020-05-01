@@ -8,7 +8,7 @@ GO
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 18.12.2008
--- Описание:	  Выделяет ID технологического 
+-- Описание:	  Выделяет ID технологического
 --                признака из регузла
 -- =============================================
 ALTER FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
@@ -18,14 +18,14 @@ ALTER FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
 RETURNS INT
 AS
 BEGIN
-  DECLARE @result INT  
-  
+  DECLARE @result INT
+
   SET @result = NULL
 
-  SELECT @result = TT_ID 
-  FROM dbo.TechnolTypeTable 
+  SELECT @result = TT_ID
+  FROM dbo.TechnolTypeTable
   WHERE TT_REG = @regdata
-  
+
   RETURN @result
 
 END

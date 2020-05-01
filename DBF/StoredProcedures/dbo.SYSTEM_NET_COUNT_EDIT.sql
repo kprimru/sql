@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 23.08.2008
-Описание:	  Изменить данные о типе сети с 
+Описание:	  Изменить данные о типе сети с
                указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT]
 	@systemnetcountid SMALLINT,
 	@systemnetid SMALLINT,
 	@netcount INT,
@@ -37,8 +37,8 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.SystemNetCountTable 
-		SET SNC_ID_SN = @systemnetid, 
+		UPDATE dbo.SystemNetCountTable
+		SET SNC_ID_SN = @systemnetid,
 			SNC_NET_COUNT = @netcount,
 			SNC_TECH = @tech,
 			SNC_ODON = @ODON,
@@ -51,9 +51,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

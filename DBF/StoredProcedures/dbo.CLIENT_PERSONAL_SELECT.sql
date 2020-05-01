@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -28,14 +28,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	
-				PER_ID, PER_FAM, PER_NAME, PER_OTCH, (PER_FAM + ' ' + PER_NAME + ' ' + PER_OTCH) AS PER_FULL_NAME, 
+		SELECT
+				PER_ID, PER_FAM, PER_NAME, PER_OTCH, (PER_FAM + ' ' + PER_NAME + ' ' + PER_OTCH) AS PER_FULL_NAME,
 				POS_NAME, POS_ID, RP_ID, RP_NAME --, PER_PHONE
-		FROM	
+		FROM
 				dbo.ClientPersonalTable	cp												LEFT OUTER JOIN
 				dbo.PositionTable		pt	ON cp.PER_ID_POS  = pt.POS_ID				LEFT OUTER JOIN
 				dbo.ReportPositionTable	prt	ON prt.RP_ID = cp.PER_ID_REPORT_POS
-		WHERE	
+		WHERE
 				PER_ID_CLIENT = @clientid
 		ORDER BY
 				PER_FAM, PER_NAME, PER_OTCH, POS_NAME
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

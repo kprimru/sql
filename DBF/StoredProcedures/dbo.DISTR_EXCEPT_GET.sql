@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_EXCEPT_GET]  
-	@distrid INT = NULL  
+ALTER PROCEDURE [dbo].[DISTR_EXCEPT_GET]
+	@distrid INT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DE_DIS_NUM, DE_COMP_NUM, SYS_ID, SYS_SHORT_NAME, DE_ACTIVE, DE_COMMENT
-		FROM 
+		FROM
 			dbo.DistrExceptTable INNER JOIN
 			dbo.SystemTable ON SYS_ID = DE_ID_SYSTEM
 		WHERE DE_ID = @distrid
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

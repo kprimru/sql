@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить налог из справочника
 */
 
-ALTER PROCEDURE [dbo].[TAX_DELETE] 
+ALTER PROCEDURE [dbo].[TAX_DELETE]
 	@taxid SMALLINT
 AS
 BEGIN
@@ -29,17 +29,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.TaxTable 
+		DELETE
+		FROM dbo.TaxTable
 		WHERE TX_ID = @taxid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

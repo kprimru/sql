@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DISTR_DEFAULT_GET]
@@ -30,22 +30,22 @@ BEGIN
 
 		SELECT DSS_ID, DSS_NAME
 		FROM dbo.DistrServiceStatusTable
-		WHERE DSS_SUBHOST = 
+		WHERE DSS_SUBHOST =
 			(
 				SELECT SH_SUBHOST
-				FROM 
+				FROM
 					dbo.SubhostTable INNER JOIN
 					dbo.ClientTable ON CL_ID_SUBHOST = SH_ID
 				WHERE CL_ID = @clientid
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

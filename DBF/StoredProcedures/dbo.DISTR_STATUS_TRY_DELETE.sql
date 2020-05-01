@@ -8,12 +8,12 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 30.01.2009
-Описание:	  Возвращает 0, если дистрибутив с 
-               указанным кодом можно удалить со 
+Описание:	  Возвращает 0, если дистрибутив с
+               указанным кодом можно удалить со
                склада, -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[DISTR_STATUS_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_TRY_DELETE]
 	@dsid SMALLINT
 AS
 BEGIN
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

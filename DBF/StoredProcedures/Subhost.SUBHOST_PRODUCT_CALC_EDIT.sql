@@ -44,19 +44,19 @@ BEGIN
 			UPDATE Subhost.SubhostProductPrice
 			SET SPP_PRICE = @PRICE
 			WHERE SPP_ID_PERIOD = @PR_ID AND SPP_ID_PRODUCT = @SP_ID
-		
+
 			IF @@ROWCOUNT = 0
 				INSERT INTO Subhost.SubhostProductPrice(SPP_ID_PERIOD, SPP_ID_PRODUCT, SPP_PRICE)
 					VALUES(@PR_ID, @SP_ID, @PRICE)
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

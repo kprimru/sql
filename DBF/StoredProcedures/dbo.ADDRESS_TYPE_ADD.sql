@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_ADD]
 	@addresstypename VARCHAR(100),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.AddressTypeTable (AT_NAME, AT_ACTIVE) 
+		INSERT INTO dbo.AddressTypeTable (AT_NAME, AT_ACTIVE)
 		VALUES (@addresstypename, @active)
 
 		IF @returnvalue = 1
@@ -40,9 +40,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

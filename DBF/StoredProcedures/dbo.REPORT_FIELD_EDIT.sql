@@ -32,17 +32,17 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ReportFieldTable 
-			SET RF_NAME = @fieldname, RF_CAPTION = @fieldcaption, RF_ORDER = @order 
-		WHERE RF_ID = @fieldid                     
-		
+		UPDATE dbo.ReportFieldTable
+			SET RF_NAME = @fieldname, RF_CAPTION = @fieldcaption, RF_ORDER = @order
+		WHERE RF_ID = @fieldid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

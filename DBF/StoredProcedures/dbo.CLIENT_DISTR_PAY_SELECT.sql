@@ -29,11 +29,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			DIS_ID, DIS_STR, DIS_PRICE, 
-			CAST(ROUND(DIS_PRICE * ISNULL(TX_PERCENT / 100, 0), 2) AS MONEY) AS DIS_TAX_PRICE, 
+		SELECT
+			DIS_ID, DIS_STR, DIS_PRICE,
+			CAST(ROUND(DIS_PRICE * ISNULL(TX_PERCENT / 100, 0), 2) AS MONEY) AS DIS_TAX_PRICE,
 			CAST(ROUND(DIS_PRICE * (1 + ISNULL(TX_PERCENT / 100, 0)), 2) AS MONEY) AS DIS_TOTAL_PRICE
-		FROM 
+		FROM
 			dbo.DistrPriceView a INNER JOIN
 			dbo.SaleObjectTable b ON a.SYS_ID_SO = b.SO_ID INNER JOIN
 			dbo.TaxTable c ON c.TX_ID = b.SO_ID_TAX
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

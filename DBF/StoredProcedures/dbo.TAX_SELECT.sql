@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[TAX_SELECT] 
+ALTER PROCEDURE [dbo].[TAX_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,7 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT TX_ID, TX_NAME, TX_CAPTION, TX_PERCENT
-		FROM dbo.TaxTable 
+		FROM dbo.TaxTable
 		WHERE TX_ACTIVE = ISNULL(@active, TX_ACTIVE)
 		ORDER BY TX_NAME
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

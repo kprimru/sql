@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[HOST_SELECT] 
+ALTER PROCEDURE [dbo].[HOST_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,8 +29,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT HST_ID, HST_NAME, HST_REG_NAME 
-		FROM dbo.HostTable 
+		SELECT HST_ID, HST_NAME, HST_REG_NAME
+		FROM dbo.HostTable
 		WHERE HST_ACTIVE = ISNULL(@active, HST_ACTIVE)
 		ORDER BY HST_NAME
 
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

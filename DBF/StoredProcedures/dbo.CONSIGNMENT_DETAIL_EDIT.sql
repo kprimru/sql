@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_DETAIL_EDIT]
@@ -48,30 +48,30 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.ConsignmentDetailTable
-		SET	CSD_ID_DISTR = @csdiddistr, 
+		SET	CSD_ID_DISTR = @csdiddistr,
 			CSD_COST = @csdcost,
-			CSD_PRICE = @csdprice, 
+			CSD_PRICE = @csdprice,
 			CSD_TAX_PRICE = @csdtaxprice,
 			CSD_TOTAL_PRICE = @csdtotalprice,
 			CSD_PAYED_PRICE = @csdpayedprice,
-			CSD_CODE = @csdcode, 		
-			CSD_COUNT = @csdcount, 
-			CSD_NAME = @csdname, 
-			CSD_UNIT = @csdunit, 
+			CSD_CODE = @csdcode, 
+			CSD_COUNT = @csdcount,
+			CSD_NAME = @csdname,
+			CSD_UNIT = @csdunit,
 			CSD_OKEI = @csdokei,
-			CSD_PACKING = @csdpacking, 
-			CSD_PLACE = @csdplace, 
-			CSD_MASS = @csdmass, 
+			CSD_PACKING = @csdpacking,
+			CSD_PLACE = @csdplace,
+			CSD_MASS = @csdmass,
 			CSD_ID_TAX = @taxid
-		WHERE CSD_ID = @csdid		
-		
+		WHERE CSD_ID = @csdid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

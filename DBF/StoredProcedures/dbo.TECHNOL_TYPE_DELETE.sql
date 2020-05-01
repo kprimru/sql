@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Удалить тип системы с указанным 
+Описание:	  Удалить тип системы с указанным
                кодом из справочника
 */
 
-ALTER PROCEDURE [dbo].[TECHNOL_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_DELETE]
 	@technoltypeid SMALLINT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.TechnolTypeTable 
+		DELETE
+		FROM dbo.TechnolTypeTable
 		WHERE TT_ID = @technoltypeid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[DISTR_GET]  
-	@distrid INT = NULL  
+ALTER PROCEDURE [dbo].[DISTR_GET]
+	@distrid INT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

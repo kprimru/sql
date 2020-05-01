@@ -9,13 +9,13 @@ GO
 /*
 јвтор:		  ƒенисов јлексей
 ƒата создани€: 25.08.2008
-ќписание:	  ¬озвращает 0, в случае если 
-               должность можно удалить 
-               (она не указана ни у одного сотрудника), 
+ќписание:	  ¬озвращает 0, в случае если
+               должность можно удалить
+               (она не указана ни у одного сотрудника),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[POSITION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[POSITION_TRY_DELETE]
 	@positionid INT
 AS
 BEGIN
@@ -42,16 +42,16 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_POS = @positionid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' + 
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' +
 							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
 							  'бы у одного сотрудника.'
 		  END
-		
+
 		-- добавлено 29.04.2009, ¬.Ѕогдан
 		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_POS = @positionid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' + 
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' +
 							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
 							  'бы у одного сотрудника.'
 		  END
@@ -63,9 +63,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить статус дистриубтива
 */
 
-ALTER PROCEDURE [dbo].[DISTR_STATUS_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_STATUS_DELETE]
 	@distrstatusid SMALLINT
 AS
 BEGIN
@@ -29,17 +29,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.DistrStatusTable 
+		DELETE
+		FROM dbo.DistrStatusTable
 		WHERE DS_ID = @distrstatusid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

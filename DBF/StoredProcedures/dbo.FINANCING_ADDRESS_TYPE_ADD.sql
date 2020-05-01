@@ -9,11 +9,11 @@ GO
 /*
 Автор:			Денисов Алексей
 Дата создания:	3 July 2009
-Описание:	  
+Описание:
 
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_ADD]
 	@addrtypeid TINYINT,
 	@fatnote varchar(100),
 	@fatdoc varchar(50),
@@ -43,16 +43,16 @@ BEGIN
 			@addrtypeid, @fatdoc, @fatnote, @text, @active
 		)
 
-		IF @returnvalue = 1 
+		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

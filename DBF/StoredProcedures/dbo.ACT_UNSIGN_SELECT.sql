@@ -25,17 +25,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			ACT_ID, CONVERT(BIT, 0) AS CHECKED, ACT_DATE, CL_PSEDO, 
+		SELECT
+			ACT_ID, CONVERT(BIT, 0) AS CHECKED, ACT_DATE, CL_PSEDO,
 			DIS_NUM, DIS_STR, COUR_NAME
-		FROM 
+		FROM
 			dbo.ActTable
 			INNER JOIN dbo.ClientTable ON ACT_ID_CLIENT = CL_ID
 			INNER JOIN dbo.CourierTable ON ACT_ID_COUR = COUR_ID
 			OUTER APPLY
 				(
 					SELECT TOP 1 DIS_STR, DIS_NUM
-					FROM 
+					FROM
 						dbo.ActDistrTable
 						INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
 					WHERE AD_ID_ACT = ACT_ID
@@ -53,14 +53,14 @@ BEGIN
 					WHERE AD_ID_ACT = ACT_ID
 				)
 		ORDER BY COUR_NAME, DIS_NUM, CL_PSEDO
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT]
 	@contractid INT,
 	@contractnumber VARCHAR(500),
 	@contracttypeid SMALLINT,
@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_EDIT]
 	@contractbegin SMALLDATETIME,
 	@contractend SMALLDATETIME,
 	@pay SMALLINT,
-	@kind SMALLINT,	
+	@kind SMALLINT,
 	@active BIT,
 	@ident	nvarchar(128),
 	@key		NvarChar(256),
@@ -41,11 +41,11 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ContractTable 
-		SET CO_NUM = @contractnumber, 
-			CO_ID_TYPE = @contracttypeid, 
-			CO_DATE = @contractdate, 
-			CO_BEG_DATE = @contractbegin, 
+		UPDATE dbo.ContractTable
+		SET CO_NUM = @contractnumber,
+			CO_ID_TYPE = @contracttypeid,
+			CO_DATE = @contractdate,
+			CO_BEG_DATE = @contractbegin,
 			CO_END_DATE = @contractend,
 			CO_ID_PAY = @pay,
 			CO_ID_KIND = @kind,
@@ -56,14 +56,14 @@ BEGIN
 			CO_NUM_TO = @num_to,
 			CO_EMAIL = @email
 		WHERE CO_ID = @contractid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

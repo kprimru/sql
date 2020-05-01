@@ -11,7 +11,7 @@ GO
 Описание:	  Изменить данные о поле в справочнике полей
 */
 
-ALTER PROCEDURE [dbo].[FIELD_EDIT] 
+ALTER PROCEDURE [dbo].[FIELD_EDIT]
 	@fieldid INT,
 	@fieldname VARCHAR(50),
 	@fieldwidth INT,
@@ -32,19 +32,19 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.FieldTable 
-		SET FL_NAME = @fieldname, 
-			FL_WIDTH = @fieldwidth, 
-			FL_CAPTION = @fieldcaption 
+		UPDATE dbo.FieldTable
+		SET FL_NAME = @fieldname,
+			FL_WIDTH = @fieldwidth,
+			FL_CAPTION = @fieldcaption
 		WHERE FL_ID = @fieldid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

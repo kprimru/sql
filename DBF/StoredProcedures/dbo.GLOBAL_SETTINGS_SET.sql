@@ -30,14 +30,14 @@ BEGIN
 		ELSE
 			INSERT INTO dbo.GlobalSettingsTable(GS_NAME, GS_VALUE, GS_ACTIVE)
 				VALUES(@NAME, @VALUE, 1)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

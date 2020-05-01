@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_ROLES_SELECT]
@@ -39,29 +39,29 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO @user 
+		INSERT INTO @user
 			EXEC sp_helpuser @username
 
 		SELECT * FROM @user
-			
+
 		DECLARE @roles TABLE (
 			DbRole VARCHAR(50),
-			MemberName VARCHAR(50),	
+			MemberName VARCHAR(50),
 			MemberSID VARBINARY(256)
 			)
 
-		INSERT INTO @roles 
+		INSERT INTO @roles
 			EXEC sp_helprolemember
 
 		DECLARE @total TABLE (
-			DbRole VARCHAR(50)	
+			DbRole VARCHAR(50)
 			)
 
 
 		INSERT INTO @total
 			SELECT GroupName
 			FROM @user
-			
+
 		INSERT INTO @total
 			SELECT DBRole
 			FROM @roles a
@@ -71,7 +71,7 @@ BEGIN
 					FROM @user
 				) AND NOT EXISTS
 				(
-					SELECT * 
+					SELECT *
 					FROM @total b
 					WHERE a.DBRole = b.DBRole
 				)
@@ -82,15 +82,15 @@ BEGIN
 					FROM @roles a
 					WHERE EXISTS
 						(
-							SELECT * 
+							SELECT *
 							FROM @roles b
 							WHERE a.MemberName = b.DBRole
 						) AND NOT EXISTS
 						(
-							SELECT * 
+							SELECT *
 							FROM @total b
 							WHERE a.DBRole = b.DBRole
-						) 
+						)
 				)
 		BEGIN
 			INSERT INTO @total
@@ -99,10 +99,10 @@ BEGIN
 				WHERE MemberName IN
 					(
 						SELECT DBRole
-						FROM @roles			
+						FROM @roles
 					) AND NOT EXISTS
 					(
-						SELECT * 
+						SELECT *
 						FROM @total b
 						WHERE a.DBRole = b.DBRole
 					)
@@ -110,14 +110,14 @@ BEGIN
 
 
 		SELECT * from @total
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

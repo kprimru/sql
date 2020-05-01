@@ -10,10 +10,10 @@ GO
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
 
-ALTER PROCEDURE [dbo].[TO_GET]	
-	@toid INT   
+ALTER PROCEDURE [dbo].[TO_GET]
+	@toid INT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -28,10 +28,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			TO_NAME, TO_ID, TO_NUM, TO_REPORT, COUR_ID, TO_VMI_COMMENT, TO_MAIN,
 			COUR_NAME, TA_INDEX, TA_HOME, ST_ID, ST_NAME, ST_CITY_NAME, CL_INN, TO_INN, TO_PARENT
-		FROM 
+		FROM
 			dbo.TOView a LEFT OUTER JOIN
 			dbo.TOAddressView b ON a.TO_ID = b.TA_ID_TO
 		WHERE TO_ID = @toid
@@ -40,9 +40,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

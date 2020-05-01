@@ -27,7 +27,7 @@ BEGIN
 		BEGIN
 			DELETE FROM dbo.BookSaleDetail
 			WHERE ID_SALE = @ID
-			
+
 			DELETE FROM dbo.BookSale
 			WHERE ID = @ID
 		END
@@ -35,18 +35,18 @@ BEGIN
 		BEGIN
 			DELETE FROM dbo.BookPurchaseDetail
 			WHERE ID_PURCHASE = @ID
-			
+
 			DELETE FROM dbo.BookPurchase
 			WHERE ID = @ID
 		END
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

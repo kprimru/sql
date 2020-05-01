@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_YEAR_HOLE_SELECT]
 	@year VARCHAR(5),
@@ -40,7 +40,7 @@ BEGIN
 				INS_NUM BIGINT
 			)
 
-		SELECT @min = MIN(INS_NUM), @max = MAX(INS_NUM) 
+		SELECT @min = MIN(INS_NUM), @max = MAX(INS_NUM)
 		FROM dbo.InvoiceSaleTable
 		WHERE INS_NUM_YEAR = @year AND INS_ID_ORG = @orgid
 
@@ -49,16 +49,16 @@ BEGIN
 		WHILE @row < @max
 		BEGIN
 			INSERT INTO #temp SELECT @row
-			SET @row = @row + 1 
+			SET @row = @row + 1
 		END
 		/*
 		SELECT @year, INS_NUM, @orgid
-		FROM #temp a EXCEPT 
+		FROM #temp a EXCEPT
 			SELECT @year, INS_NUM, @orgid
 			FROM dbo.InvoiceSaleTable
 			WHERE INS_ID_ORG = @orgid
 			*/
-			
+
 		SELECT @year, INS_NUM, @orgid
 		FROM #temp a
 		WHERE NOT EXISTS
@@ -72,14 +72,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

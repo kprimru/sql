@@ -33,7 +33,7 @@ BEGIN
 				CD_ID INT
 			)
 
-		INSERT INTO @cd 
+		INSERT INTO @cd
 			SELECT *
 			FROM dbo.GET_TABLE_FROM_LIST(@cdid, ',')
 
@@ -50,16 +50,16 @@ BEGIN
 
 		IF LEN(@dislist) > 0
 			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
-		
+
 		SELECT @dislist AS DIS_STR
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

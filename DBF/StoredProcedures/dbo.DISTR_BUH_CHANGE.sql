@@ -27,17 +27,17 @@ BEGIN
 		INSERT INTO dbo.DistrTable(DIS_ID_SYSTEM, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE)
 			OUTPUT inserted.DIS_ID INTO @NEW_DISTR
 			SELECT SYS_ID, RN_DISTR_NUM, RN_COMP_NUM, 1
-			FROM 
+			FROM
 				dbo.DistrExchange
 				INNER JOIN dbo.SystemTable a ON SYS_ID_HOST = NEW_HOST
-				INNER JOIN dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME 
+				INNER JOIN dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
 											AND NEW_NUM = RN_DISTR_NUM
 											AND NEW_COMP = RN_COMP_NUM
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
-						dbo.DistrTable 
+					FROM
+						dbo.DistrTable
 						INNER JOIN dbo.SystemTable b ON DIS_ID_SYSTEM = b.SYS_ID
 					WHERE b.SYS_ID_HOST = a.SYS_ID_HOST
 						AND DIS_NUM = RN_DISTR_NUM
@@ -47,7 +47,7 @@ BEGIN
 		-- распределить все эти дистрибутивы по клиентам
 		INSERT INTO dbo.ClientDistrTable(CD_ID_CLIENT, CD_ID_DISTR, CD_ID_SERVICE)
 			SELECT CD_ID_CLIENT, a.ID, (SELECT TOP 1 DSS_ID FROM dbo.DistrServiceStatusTable WHERE DSS_REPORT = 1)
-			FROM 
+			FROM
 				@NEW_DISTR a
 				INNER JOIN dbo.DistrTable b ON a.ID = b.DIS_ID
 				INNER JOIN dbo.SystemTable c ON c.SYS_ID = b.DIS_ID_SYSTEM
@@ -64,7 +64,7 @@ BEGIN
 		-- распределить все эти дистрибутивы по точкам
 		INSERT INTO dbo.TODistrTable(TD_ID_TO, TD_ID_DISTR)
 			SELECT TD_ID_TO, a.ID
-			FROM 
+			FROM
 				@NEW_DISTR a
 				INNER JOIN dbo.DistrTable b ON a.ID = b.DIS_ID
 				INNER JOIN dbo.SystemTable c ON c.SYS_ID = b.DIS_ID_SYSTEM
@@ -83,17 +83,17 @@ BEGIN
 						FROM dbo.TODistrTable z
 						WHERE z.TD_ID_DISTR = b.DIS_ID
 					)
-			
+
 
 		-- прицепить эти дистрибутивы в действующие договора, к которым цеплялись старые
 		INSERT INTO dbo.ContractDistrTable(COD_ID_CONTRACT, COD_ID_DISTR)
 			SELECT CO_ID, ID
 			FROM
 				(
-					SELECT 
+					SELECT
 						(
 							SELECT TOP 1 COD_ID_CONTRACT
-							FROM 
+							FROM
 								dbo.DistrTable b
 								INNER JOIN dbo.SystemTable c ON b.DIS_ID_SYSTEM = c.SYS_ID
 								INNER JOIN dbo.DistrExchange d ON d.NEW_HOST = c.SYS_ID_HOST
@@ -112,7 +112,7 @@ BEGIN
 						, ID
 					FROM @NEW_DISTR a
 				) AS o_O
-			WHERE CO_ID IS NOT NULL	
+			WHERE CO_ID IS NOT NULL
 
 		-- сменить статус старых дистрибутивов
 		UPDATE dbo.ClientDistrTable
@@ -120,7 +120,7 @@ BEGIN
 		WHERE CD_ID_DISTR IN
 			(
 				SELECT a.DIS_ID
-				FROM 
+				FROM
 					dbo.DistrTable a
 					INNER JOIN dbo.SystemTable b ON a.DIS_ID_SYSTEM = b.SYS_ID
 					INNER JOIN dbo.DistrExchange c ON b.SYS_ID_HOST = OLD_HOST
@@ -136,7 +136,7 @@ BEGIN
 
 		INSERT INTO dbo.DistrFinancingTable(DF_ID_DISTR, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_SCHEMA, DF_ID_PRICE, DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT, DF_ID_PAY, DF_DEBT)
 			SELECT DISTINCT a.ID, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_SCHEMA, DF_ID_PRICE, DF_DISCOUNT, DF_COEF, DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT, DF_ID_PAY, DF_DEBT
-			FROM 
+			FROM
 				@NEW_DISTR a
 				INNER JOIN dbo.DistrTable b ON a.ID = b.DIS_ID
 				INNER JOIN dbo.SystemTable c ON c.SYS_ID = b.DIS_ID_SYSTEM
@@ -157,7 +157,7 @@ BEGIN
 
 		INSERT INTO dbo.DistrDocumentTable(DD_ID_DISTR, DD_ID_DOC, DD_PRINT, DD_ID_GOOD, DD_ID_UNIT, DD_PREFIX)
 			SELECT DISTINCT a.ID, DD_ID_DOC, DD_PRINT, DD_ID_GOOD, DD_ID_UNIT, DD_PREFIX
-			FROM 
+			FROM
 				@NEW_DISTR a
 				INNER JOIN dbo.DistrTable b ON a.ID = b.DIS_ID
 				INNER JOIN dbo.SystemTable c ON c.SYS_ID = b.DIS_ID_SYSTEM
@@ -176,14 +176,14 @@ BEGIN
 					WHERE z.DD_ID_DISTR = a.ID
 						AND z.DD_ID_DOC = g.DD_ID_DOC
 				)	 AND f.DIS_ACTIVE = 1
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

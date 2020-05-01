@@ -37,7 +37,7 @@ BEGIN
 			UNION ALL
 			SELECT (@GN + @STG) AS Val
 		) AS o_O
-	
+
 	DECLARE @GROW	DECIMAL(10, 4)
 
 	SET @GROW = Ric.GrowCorrectValue(@PR_ID)

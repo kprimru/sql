@@ -25,33 +25,33 @@ BEGIN
 
 		DECLARE @PR_ID	SMALLINT
 		DECLARE @SUB_ID SMALLINT
-		
+
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
 
-		CREATE TABLE #period 
+		CREATE TABLE #period
 			(
 				TPR_ID	SMALLINT PRIMARY KEY,
 				TX_TOTAL_RATE	DECIMAL(8,4)
 			)
 
 		IF @PR_MIN IS NOT NULL
-			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE) 
+			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE)
 				SELECT DISTINCT PR_ID, TX_TOTAL_RATE
-				FROM 
+				FROM
 					dbo.PeriodTable
 					INNER JOIN Subhost.SubhostCalc ON PR_ID = SHC_ID_PERIOD
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
 				WHERE PR_DATE >= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_MIN)
 					AND PR_DATE >= '20111101'
 		ELSE
-			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE) 
+			INSERT INTO #period(TPR_ID, TX_TOTAL_RATE)
 				SELECT PR_ID, TX_TOTAL_RATE
-				FROM 
+				FROM
 					dbo.GET_TABLE_FROM_LIST(@PR_LIST, ',')
 					INNER JOIN dbo.PeriodTable ON PR_ID = Item
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
-				WHERE PR_DATE >= '20111101'			
+				WHERE PR_DATE >= '20111101'
 
 
 		IF OBJECT_ID('tempdb..#pay') IS NOT NULL
@@ -100,7 +100,7 @@ BEGIN
 
 				INSERT INTO #tmp
 					EXEC Subhost.SUBHOST_SUM_SELECT @SUB_ID, @PR_ID, 'STUDY'
-			
+
 				INSERT INTO #pay
 					SELECT @SUB_ID, @PR_ID, SHP_SUM_PREV, SHP_DEBT, SHP_PENALTY, SHP_PERCENT, SHP_DAYS
 					FROM #tmp
@@ -109,12 +109,12 @@ BEGIN
 				FROM Subhost.SubhostCalc
 				WHERE SHC_ID_PERIOD = @PR_ID AND SHC_ID_SUBHOST > @SUB_ID
 			END
-			
+
 			SELECT @PR_ID = MIN(TPR_ID)
 			FROM #period
 			WHERE TPR_ID > @PR_ID
-		END	
-		
+		END
+
 		SELECT
 			ROW_NUMBER() OVER(PARTITION BY SH_ORDER ORDER BY SH_ORDER, PR_DATE) AS RN,
 			SHC_ID_SUBHOST, SH_FULL_NAME, SH_ORDER, SHC_ID_PERIOD, PR_NAME, PR_DATE,
@@ -141,26 +141,26 @@ BEGIN
 			) AS PENALTY
 		FROM
 			(
-				SELECT 
+				SELECT
 					SS_ID AS SHC_ID_SUBHOST, SH_FULL_NAME, SH_ORDER,
 					PR_ID AS SHC_ID_PERIOD, PR_NAME, PR_DATE, TX_TOTAL_RATE,
 					(
 						SELECT CONVERT(MONEY, SUM(ROUND(SS_COUNT * SLP_PRICE, 2)))
-						FROM 
-							Subhost.SubhostStudy				
-							INNER JOIN Subhost.SubhostLessonPrice ON SLP_ID_PERIOD = SS_ID_PERIOD 
+						FROM
+							Subhost.SubhostStudy
+							INNER JOIN Subhost.SubhostLessonPrice ON SLP_ID_PERIOD = SS_ID_PERIOD
 														AND SLP_ID_LESSON = SS_ID_LESSON
 						WHERE SS_ID_PERIOD = a.PR_ID
 							AND SS_ID_SUBHOST = t.SH_ID
 							AND SS_ID_SUBHOST = SHC_ID_SUBHOST
 					) AS SHP_STUDY,
 					SHP_SUM, SHP_DEBT, SHP_PERCENT, SHP_DAYS, SHP_PENALTY
-				FROM 
-					#period c 
-					CROSS JOIN 
+				FROM
+					#period c
+					CROSS JOIN
 					(
 						SELECT DISTINCT SHC_ID_SUBHOST AS SS_ID
-						FROM 
+						FROM
 							Subhost.SubhostCalc
 							--INNER JOIN #period ON TPR_ID = SHC_ID_PERIOD
 					) AS dt
@@ -172,7 +172,7 @@ BEGIN
 		--WHERE SHC_ID_SUBHOST IS NOT NULL
 		ORDER BY SH_ORDER, PR_DATE
 
-		
+
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
 
@@ -181,14 +181,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#tmp') IS NOT NULL
 			DROP TABLE #tmp
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,11 +10,11 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 Дата:			15-July-2009
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]   
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]
 	@active BIT = NULL
 AS
 
@@ -45,7 +45,7 @@ BEGIN
 			ATL_STR_PREFIX,
 			ATL_STREET,
 			ATL_HOME
-		FROM dbo.AddressTemplateTable 
+		FROM dbo.AddressTemplateTable
 		WHERE ATL_ACTIVE = ISNULL(@active, ATL_ACTIVE)
 		ORDER BY ATL_CAPTION
 
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

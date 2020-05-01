@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.11.2008
-Описание:	  Возвращает ID хоста с указанным 
-               названием рег. 
+Описание:	  Возвращает ID хоста с указанным
+               названием рег.
 */
 
-ALTER PROCEDURE [dbo].[HOST_CHECK_REG_NAME] 
+ALTER PROCEDURE [dbo].[HOST_CHECK_REG_NAME]
 	@hostregname VARCHAR(20)
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

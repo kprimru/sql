@@ -22,34 +22,34 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @MONTH SMALLINT
-		
+
 		SELECT @MONTH = PR_ID
 		FROM dbo.PeriodTable
 		WHERE GETDATE() >= PR_DATE AND GETDATE() < DATEADD(day, 1, PR_END_DATE)
-		
+
 		IF DATEPART(DAY, GETDATE()) > 15
 			SET @MONTH = dbo.PERIOD_NEXT(@MONTH)
-		
-		SELECT 
+
+		SELECT
 			CL_ID, CL_PSEDO, DIS_STR, SST_CAPTION, SN_NAME,
-			
+
 			DISCOUNT,	DF_FIXED_PRICE, REAL_DISCOUNT
 		FROM
 			(
-				SELECT 
+				SELECT
 					CL_ID, CL_PSEDO, DIS_STR, SST_CAPTION, SN_NAME,
-					
+
 					CONVERT(INT, DF_DISCOUNT) AS DISCOUNT,	DF_FIXED_PRICE,
 					--PS_PRICE,
 					CASE
 						WHEN ISNULL(PS_PRICE, 0) = 0 THEN 0
-						WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN 
-							CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PS_PRICE * SNCC_VALUE, SNCC_ROUND) - DF_FIXED_PRICE) / ROUND(PS_PRICE * SNCC_VALUE, SNCC_ROUND)), 2)) 
+						WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
+							CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PS_PRICE * SNCC_VALUE, SNCC_ROUND) - DF_FIXED_PRICE) / ROUND(PS_PRICE * SNCC_VALUE, SNCC_ROUND)), 2))
 						WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN DF_DISCOUNT
 						ELSE 0
 					END AS REAL_DISCOUNT, SYS_ORDER, DIS_NUM, DIS_COMP_NUM
-					
-				FROM 
+
+				FROM
 					dbo.ClientTable a
 					INNER JOIN dbo.ClientDistrView b ON a.CL_ID = b.CD_ID_CLIENT
 					INNER JOIN dbo.DistrFinancingTable e ON b.CD_ID_DISTR = e.DF_ID_DISTR
@@ -61,14 +61,14 @@ BEGIN
 			) AS o_O
 		WHERE REAL_DISCOUNT <> 0
 		ORDER BY CL_PSEDO, SYS_ORDER, DIS_NUM, DIS_COMP_NUM
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

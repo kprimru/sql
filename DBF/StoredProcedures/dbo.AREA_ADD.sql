@@ -7,7 +7,7 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[AREA_ADD]
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.AreaTable(AR_NAME, AR_ACTIVE) 
+		INSERT INTO dbo.AreaTable(AR_NAME, AR_ACTIVE)
 		VALUES (@areaname, @active)
 
 		IF @returnvalue = 1
@@ -40,9 +40,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

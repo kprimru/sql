@@ -28,18 +28,18 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CD_ID, DIS_ID, DIS_STR, CD_REG_DATE, DSS_NAME, DSS_ID
 		FROM dbo.ClientDistrView
-		WHERE CD_ID = @clientdistrid	
+		WHERE CD_ID = @clientdistrid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -29,14 +29,14 @@ BEGIN
 			dbo.UnitTable ON UN_ID = SP_ID_UNIT
 		WHERE SP_ACTIVE = ISNULL(@ACTIVE, SP_ACTIVE)
 		ORDER BY SPG_NAME, SP_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

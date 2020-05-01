@@ -7,14 +7,14 @@ GO
 
 /*
 јвтор:		  ƒенисов јлексей
-ќписание:	  ¬озвращает 0, если тип договора с 
-                указанным кодом можно удалить 
-                (на нее не ссылаетс€ ни один 
-                договор клиента), 
+ќписание:	  ¬озвращает 0, если тип договора с
+                указанным кодом можно удалить
+                (на нее не ссылаетс€ ни один
+                договор клиента),
                 -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_PAY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_TRY_DELETE]
 	@id SMALLINT
 AS
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ContractTable WHERE CO_ID_PAY = @id)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'ƒанный тип указан у одного или нескольких договоров. ' + 
+			SET @txt = @txt + 'ƒанный тип указан у одного или нескольких договоров. ' +
 							  '”даление невозможно, пока выбранный тип будет указан хот€ ' +
 							  'бы в одном договоре.'
 		  END
@@ -53,9 +53,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -12,8 +12,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CALC]
@@ -39,18 +39,18 @@ BEGIN
 	BEGIN TRY
 
 		DECLARE @consid INT
-		
+
 		SELECT TOP 1 @consid = CSG_ID
 		FROM dbo.ConsignmentTable
-		WHERE CSG_ID_CLIENT = @clientid 
+		WHERE CSG_ID_CLIENT = @clientid
 			--AND	CSG_ID_INVOICE IS NULL
-			AND 
+			AND
 				(
 					SELECT INS_RESERVE
 					FROM dbo.InvoiceSaleTable
 					WHERE INS_ID = CSG_ID_INVOICE
 				) = 1
-		
+
 		DECLARE @soid SMALLINT
 
 		SELECT @soid = SYS_ID_SO
@@ -58,24 +58,24 @@ BEGIN
 		WHERE DIS_ID = @distrid
 
 		IF @consid IS NULL
-			BEGIN		
-				EXEC dbo.CONSIGNMENT_CREATE @clientid, @periodid, @date, @soid, @consid	OUTPUT		
+			BEGIN
+				EXEC dbo.CONSIGNMENT_CREATE @clientid, @periodid, @date, @soid, @consid	OUTPUT
 			END
 
 		INSERT INTO dbo.ConsignmentDetailTable
 			(
 				CSD_ID_CONS, CSD_ID_DISTR, CSD_ID_PERIOD,
-				CSD_ID_TAX, CSD_COST, CSD_PRICE, CSD_TAX_PRICE, 
+				CSD_ID_TAX, CSD_COST, CSD_PRICE, CSD_TAX_PRICE,
 				CSD_TOTAL_PRICE, CSD_PAYED_PRICE, CSD_COUNT,
 				CSD_UNIT, CSD_OKEI, CSD_NAME
 			)
-			SELECT 
+			SELECT
 				@consid, BD_ID_DISTR, @periodid,
 				BD_ID_TAX, BD_PRICE / 2, BD_PRICE, BD_TAX_PRICE, BD_TOTAL_PRICE,
 				(
 					ISNULL((
 						SELECT SUM(ID_PRICE)
-						FROM 
+						FROM
 							dbo.IncomeDistrTable INNER JOIN
 							dbo.IncomeTable ON IN_ID = ID_ID_INCOME INNER JOIN
 							dbo.DistrView WITH (NOEXPAND) ON DIS_ID = ID_ID_DISTR INNER JOIN
@@ -88,7 +88,7 @@ BEGIN
 						), 0)
 				) AS AD_PAYED_PRICE, 2, UN_NAME, UN_OKEI,
 				GD_NAME + ' ' + SYS_NAME
-			FROM 
+			FROM
 				dbo.BillDistrTable INNER JOIN
 				dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
 				dbo.DistrDocumentView c ON DIS_ID = BD_ID_DISTR INNER JOIN
@@ -110,7 +110,7 @@ BEGIN
 
 		DECLARE @docstring varchar(1000)
 			SET @docstring = ''
-			
+
 		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
 			DROP TABLE #doc
 
@@ -125,52 +125,52 @@ BEGIN
 				FROM
 					dbo.ConsignmentTable INNER JOIN
 					dbo.ConsignmentDetailTable ON CSG_ID = CSD_ID_CONS INNER JOIN
-					dbo.IncomeDistrTable ON ID_ID_DISTR = CSD_ID_DISTR 
+					dbo.IncomeDistrTable ON ID_ID_DISTR = CSD_ID_DISTR
 									AND ID_ID_PERIOD = CSD_ID_PERIOD INNER JOIN
-					dbo.IncomeTable ON IN_ID = ID_ID_INCOME 
+					dbo.IncomeTable ON IN_ID = ID_ID_INCOME
 								--AND ACT_ID_CLIENT = IN_ID_CLIENT
-					
-				WHERE	CSG_ID = @consid 
+
+				WHERE	CSG_ID = @consid
 
 		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
-				SELECT 
+				SELECT
 				T.IN_DATE,
 				STUFF(
 						(
-							SELECT ',' + TT.IN_PAY_NUM 
-							FROM 
+							SELECT ',' + TT.IN_PAY_NUM
+							FROM
 								(
 									SELECT DISTINCT IN_PAY_NUM
 									FROM #doc O_O
-									WHERE O_O.IN_DATE = T.IN_DATE						
+									WHERE O_O.IN_DATE = T.IN_DATE
 								) TT
 							ORDER BY TT.IN_PAY_NUM FOR XML PATH('')
 						), 1, 1, ''
 					) IN_PAY_NUM
 				FROM #doc T
-				GROUP BY T.IN_DATE			
+				GROUP BY T.IN_DATE
 			) AS O_O
 		ORDER BY O_O.IN_DATE
 
 		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
 			DROP TABLE #doc
-		
+
 		IF @docstring <> ''
 			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
 
 		UPDATE dbo.ConsignmentTable
 		SET CSG_FOUND = @docstring
 		WHERE CSG_ID = @consid AND CSG_FOUND <> @docstring
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

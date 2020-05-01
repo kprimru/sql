@@ -11,14 +11,14 @@ GO
 Описание:	  Добавить период в справочник
 */
 
-ALTER PROCEDURE [dbo].[PERIOD_ADD] 
+ALTER PROCEDURE [dbo].[PERIOD_ADD]
 	@periodname VARCHAR(20),
 	@perioddate SMALLDATETIME,
 	@periodenddate SMALLDATETIME,
 	@breport	SMALLDATETIME,
 	@ereport	SMALLDATETIME,
 	@active BIT = 1,
-	@returnvalue BIT = 1  
+	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -36,7 +36,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.PeriodTable(
-				PR_NAME, PR_DATE, PR_END_DATE, PR_BREPORT, PR_EREPORT, PR_ACTIVE) 
+				PR_NAME, PR_DATE, PR_END_DATE, PR_BREPORT, PR_EREPORT, PR_ACTIVE)
 		VALUES (@periodname, @perioddate, @periodenddate, @breport, @ereport, @active)
 
 		IF @returnvalue = 1
@@ -46,9 +46,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

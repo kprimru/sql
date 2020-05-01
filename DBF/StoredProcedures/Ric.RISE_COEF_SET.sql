@@ -30,14 +30,14 @@ BEGIN
 		IF @@ROWCOUNT = 0
 			INSERT INTO Ric.RiseCoef(RC_ID_PERIOD, RC_VALUE)
 				SELECT @PR_ID, @VALUE
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

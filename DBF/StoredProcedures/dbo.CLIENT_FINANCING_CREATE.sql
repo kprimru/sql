@@ -24,14 +24,14 @@ BEGIN
 
 		INSERT INTO dbo.ClientFinancing(ID_CLIENT, BILL_GROUP)
 			VALUES(@ID, 0)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

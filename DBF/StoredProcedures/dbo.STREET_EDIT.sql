@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Изменить данные об улице 
+Описание:	  Изменить данные об улице
                с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[STREET_EDIT] 
+ALTER PROCEDURE [dbo].[STREET_EDIT]
 	@streetid INT,
 	@streetname VARCHAR(150),
 	@streetprefix VARCHAR(10),
@@ -35,9 +35,9 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.StreetTable 
-		SET ST_NAME = @streetname, 
-			ST_ID_CITY = @cityid, 
+		UPDATE dbo.StreetTable
+		SET ST_NAME = @streetname,
+			ST_ID_CITY = @cityid,
 			ST_PREFIX = @streetprefix,
 			ST_SUFFIX = @streetsuffix,
 			ST_ACTIVE = @active
@@ -47,9 +47,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

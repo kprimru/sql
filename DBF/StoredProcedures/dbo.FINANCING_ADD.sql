@@ -11,7 +11,7 @@ GO
 Описание:	  Добавить тип финансирования в справочник
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_ADD] 
+ALTER PROCEDURE [dbo].[FINANCING_ADD]
 	@financingname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.FinancingTable (FIN_NAME, FIN_ACTIVE, FIN_OLD_CODE) 
+		INSERT INTO dbo.FinancingTable (FIN_NAME, FIN_ACTIVE, FIN_OLD_CODE)
 		VALUES (@financingname, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

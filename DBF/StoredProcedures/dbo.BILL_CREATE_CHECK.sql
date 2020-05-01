@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[BILL_CREATE_CHECK]
@@ -19,7 +19,7 @@ ALTER PROCEDURE [dbo].[BILL_CREATE_CHECK]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -31,7 +31,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @res INT
 		DECLARE @txt VARCHAR(MAX)
 
@@ -40,7 +40,7 @@ BEGIN
 
 		IF NOT EXISTS
 			(
-				SELECT * 
+				SELECT *
 				FROM dbo.PriceSystemTable
 				WHERE PS_ID_PERIOD = @periodid
 			)
@@ -54,30 +54,30 @@ BEGIN
 		IF NOT EXISTS
 			(
 				SELECT *
-				FROM 
-					dbo.ClientDistrView a INNER JOIN				
+				FROM
+					dbo.ClientDistrView a INNER JOIN
 					dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID
-				WHERE DOC_PSEDO = 'BILL' 
-					--AND DD_PRINT = 1 
-					AND DSS_REPORT = 1	
-					AND SYS_ID_SO = @soid			
+				WHERE DOC_PSEDO = 'BILL'
+					--AND DD_PRINT = 1
+					AND DSS_REPORT = 1
+					AND SYS_ID_SO = @soid
 					AND CD_ID_CLIENT = ISNULL(@clientid, CD_ID_CLIENT)
 			)
 		BEGIN
 			SET @res = 1
 			SET @txt = @txt + 'Отсутствуют дистрибутивы, для которых возможно формирование счета. Проверьте фин.установки и статус сопровождения дистрибутива'
 		END
-		
 
-		SELECT @res AS RES, @txt AS TXT	
-		
+
+		SELECT @res AS RES, @txt AS TXT
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

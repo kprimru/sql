@@ -22,27 +22,27 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			INS_ID, CL_PSEDO, INS_NUM, INS_DATE, INT_NAME,
 			(
 				SELECT SUM(INR_SALL)
 				FROM dbo.InvoiceRowTable
 				WHERE INR_ID_INVOICE = INS_ID
 			) AS INS_SALL
-		FROM 
+		FROM
 			dbo.InvoiceSaleTable a
 			INNER JOIN dbo.InvoiceTypeTable ON INT_ID = INS_ID_TYPE
 			INNER JOIN dbo.ClientTable ON CL_ID = INS_ID_CLIENT
 		WHERE INS_DATE >= DATEADD(YEAR, -2, GETDATE())
 		ORDER BY INS_DATE DESC, INS_NUM DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

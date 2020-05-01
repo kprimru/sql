@@ -8,7 +8,7 @@ ALTER PROCEDURE [dbo].[WEIGHT_RULES_CHANGES_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -20,13 +20,13 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT	MIN(PR_DATE) AS [CHANGE_DATE],
 				SYS_REG_NAME,
 				SST_NAME,
-				SNC_NET_COUNT, 
-				SNC_TECH, 
-				SNC_ODON, 
+				SNC_NET_COUNT,
+				SNC_TECH,
+				SNC_ODON,
 				SNC_ODOFF,
 				WEIGHT,
 				ROW_NUM-R AS DELTA
@@ -35,9 +35,9 @@ BEGIN
 						PR_DATE,
 						SYS_REG_NAME,
 						SST_NAME,
-						SNC_NET_COUNT, 
-						SNC_TECH, 
-						SNC_ODON, 
+						SNC_NET_COUNT,
+						SNC_TECH,
+						SNC_ODON,
 						SNC_ODOFF,
 						W.WEIGHT,
 						ROW_NUMBER() OVER(ORDER BY SYS_REG_NAME, SST_NAME, SNC_NET_COUNT, SNC_TECH, SNC_ODON, SNC_ODOFF, W.WEIGHT, PR_DATE) AS [ROW_NUM],
@@ -55,9 +55,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

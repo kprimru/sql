@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_UNSIGN_REPORT]
@@ -28,23 +28,23 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			CL_ID, CL_PSEDO, COUR_NAME, ACT_DATE, PR_DATE
-		FROM 
+		FROM
 			dbo.ClientCourView INNER JOIN
 			dbo.ActPeriodView ON ACT_ID_CLIENT = CL_ID INNER JOIN
 			dbo.PeriodTable ON PR_ID = ACT_ID_PERIOD
 		WHERE ACT_SIGN IS NULL
 			AND ACT_DATE <= @actdate
 		ORDER BY COUR_NAME, CL_PSEDO, CL_ID, ACT_DATE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

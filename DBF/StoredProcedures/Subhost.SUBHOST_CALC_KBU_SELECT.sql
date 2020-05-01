@@ -25,10 +25,10 @@ BEGIN
 
 		DECLARE @sql NVARCHAR(MAX)
 
-		SET @sql = 
+		SET @sql =
 		'
-		SELECT 
-			SYS_ID, SYS_SHORT_NAME, 
+		SELECT
+			SYS_ID, SYS_SHORT_NAME,
 			(
 				SELECT SK_KBU
 				FROM Subhost.SubhostKbuTable
@@ -42,8 +42,8 @@ BEGIN
 
 		DECLARE TP CURSOR LOCAL FOR
 			SELECT PT_ID
-			FROM 
-				dbo.PriceTypeTable 
+			FROM
+				dbo.PriceTypeTable
 				INNER JOIN dbo.PriceGroupTable ON PG_ID = PT_ID_GROUP
 			WHERE PT_ID_GROUP IN (4, 5, 6, 7)
 			ORDER BY PG_ORDER, PT_ORDER
@@ -70,7 +70,7 @@ BEGIN
 
 		--SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-		SELECT @sql = @sql + ' 
+		SELECT @sql = @sql + '
 		FROM dbo.SystemTable
 		WHERE EXISTS
 			(
@@ -90,14 +90,14 @@ BEGIN
 		ORDER BY SYS_ORDER '
 
 		EXEC sp_executesql @SQL, N'@PR_ID SMALLINT, @SH_ID SMALLINT', @PR_ID, @SH_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

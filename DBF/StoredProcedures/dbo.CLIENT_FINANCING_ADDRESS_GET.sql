@@ -16,14 +16,14 @@ GO
 				его данные, иначе можно указать шаблон по умолчанию в поле ATL_ID
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_GET] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_GET]
 	@cfaid INT,
 	@fatid SMALLINT
 
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -35,7 +35,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF ((@cfaid IS NOT NULL) AND (@cfaid <> 0))
 		BEGIN
 			SELECT CFA_ID, FAT_ID, FAT_NOTE, FAT_DOC, ATL_ID, ATL_CAPTION
@@ -54,16 +54,16 @@ BEGIN
 				WHERE
 				FAT_ID = @fatid
 			ORDER BY FAT_NOTE
-			
+
 		END
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

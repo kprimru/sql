@@ -31,12 +31,12 @@ BEGIN
 					-- сумма оплаты за этот период
 					ISNULL((
 						SELECT SUM(ID_PRICE)
-						FROM 
+						FROM
 							dbo.IncomeTable
 							INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
 						WHERE IN_ID_CLIENT = CL_ID AND ID_ID_DISTR = DIS_ID AND ID_ID_PERIOD = BL_ID_PERIOD
 					), 0) AS IN_SUM, ORG_PSEDO, PR_DATE
-				FROM 
+				FROM
 					dbo.BillTable
 					INNER JOIN dbo.BillDistrTable ON BL_ID = BD_ID_BILL
 					INNER JOIN dbo.ClientDistrTable ON CD_ID_CLIENT = BL_ID_CLIENT AND CD_ID_DISTR = BD_ID_DISTR
@@ -49,14 +49,14 @@ BEGIN
 			) AS o_O
 		WHERE BD_TOTAL_PRICE <> IN_SUM
 		ORDER BY CL_PSEDO, SYS_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

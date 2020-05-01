@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Subhost].[SUBHOST_LESSON_POSITION_ADD]	
+ALTER PROCEDURE [Subhost].[SUBHOST_LESSON_POSITION_ADD]
 	@LP_NAME	VARCHAR(50),
 	@LP_ORDER	SMALLINT,
 	@ACTIVE	BIT,
@@ -39,17 +39,17 @@ BEGIN
 			SELECT 'SLP_PRICE_' + CONVERT(VARCHAR, @ID), 80, @LP_NAME + ' цена'
 		INSERT INTO dbo.FieldTable(FL_NAME, FL_WIDTH, FL_CAPTION)
 			SELECT 'SLP_SUM_' + CONVERT(VARCHAR, @ID), 80, @LP_NAME + ' сумма'
-		
+
 		IF @RETURN = 1
 			SELECT @ID AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -21,7 +21,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			PR_ID, PR_NAME,
 			REVERSE(STUFF(REVERSE(
 				(
@@ -39,14 +39,14 @@ BEGIN
 				)), 1, 1, '')) AS COUR_NAME
 		FROM dbo.PeriodTable
 		WHERE PR_ID = dbo.PERIOD_PREV(dbo.GET_PERIOD_BY_DATE(GETDATE()))
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

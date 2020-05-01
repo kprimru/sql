@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Subhost].[SUBHOST_LESSON_ADD]	
-	@LS_NAME	VARCHAR(50),	
+ALTER PROCEDURE [Subhost].[SUBHOST_LESSON_ADD]
+	@LS_NAME	VARCHAR(50),
 	@LS_ORDER	SMALLINT,
 	@ACTIVE	BIT,
 	@return	BIT = 1
@@ -30,14 +30,14 @@ BEGIN
 
 		IF @RETURN = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

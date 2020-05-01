@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 19.11.2008
-Описание:	  Возвращает 0, если подхост можно 
-                удалить из справочника (ни в 
-               одной таблице он не указан), 
+Описание:	  Возвращает 0, если подхост можно
+                удалить из справочника (ни в
+               одной таблице он не указан),
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[SUBHOST_CITY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_TRY_DELETE]
 	@subhostcityid INT
 AS
 BEGIN
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -12,12 +12,12 @@ GO
 Автор:			Денисов Алексей
 Описание:		Изменение шаблона адреса в фин.док-те клиента
 				Если @cfaid не нуль (адрес фин.документа имеет заданный шаблон),
-				изменяется его шаблон на @atlid, иначе типу адреса в док-те @fatid 
+				изменяется его шаблон на @atlid, иначе типу адреса в док-те @fatid
 				присваивается шаблон @atlid.
 Дата:			17.07.2009
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_FINANCING_ADDRESS_EDIT]
 	@cfaid INT,
 	@atlid SMALLINT,
 	@clid INT,
@@ -44,7 +44,7 @@ BEGIN
 				UPDATE dbo.ClientFinancingAddressTable
 				SET CFA_ID_ATL = @atlid
 				WHERE CFA_ID = @cfaid
-				
+
 				SELECT @cfaid AS NEW_IDEN
 			END
 		ELSE
@@ -62,9 +62,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

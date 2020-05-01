@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_ROLE_DELIVERY]
@@ -46,7 +46,7 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO #sourceuser 
+		INSERT INTO #sourceuser
 			EXEC sp_helpuser @sourceuser
 
 
@@ -64,16 +64,16 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO #destuser 
+		INSERT INTO #destuser
 			EXEC sp_helpuser @destuser
 
 		DECLARE DROPROLE CURSOR LOCAL FOR
 			SELECT GroupName
-			FROM 
+			FROM
 				#destuser LEFT OUTER JOIN
 				dbo.RoleTable ON ROLE_NAME = GroupName
-			WHERE GroupName <> 'public' 
-				AND GroupName <> 'db_accessadmin' 
+			WHERE GroupName <> 'public'
+				AND GroupName <> 'db_accessadmin'
 				AND GroupName <> 'db_securityadmin'
 				AND GroupName <> 'db_backupoperator'
 				AND GroupName <> 'db_datareader'
@@ -86,11 +86,11 @@ BEGIN
 				AND NOT EXISTS
 					(
 						SELECT GroupName
-						FROM 
+						FROM
 							#sourceuser LEFT OUTER JOIN
 							dbo.RoleTable ON ROLE_NAME = GroupName
-						WHERE GroupName <> 'public' 
-							AND GroupName <> 'db_accessadmin' 
+						WHERE GroupName <> 'public'
+							AND GroupName <> 'db_accessadmin'
 							AND GroupName <> 'db_securityadmin'
 							AND GroupName <> 'db_backupoperator'
 							AND GroupName <> 'db_datareader'
@@ -118,15 +118,15 @@ BEGIN
 		CLOSE DROPROLE
 		DEALLOCATE DROPROLE
 
-		
-		
+
+
 		DECLARE ADDROLE CURSOR LOCAL FOR
 			SELECT GroupName
-			FROM 
+			FROM
 				#sourceuser a LEFT OUTER JOIN
 				dbo.RoleTable ON ROLE_NAME = GroupName
-			WHERE GroupName <> 'public' 
-				AND GroupName <> 'db_accessadmin' 
+			WHERE GroupName <> 'public'
+				AND GroupName <> 'db_accessadmin'
 				AND GroupName <> 'db_securityadmin'
 				AND GroupName <> 'db_backupoperator'
 				AND GroupName <> 'db_datareader'
@@ -139,11 +139,11 @@ BEGIN
 				AND NOT EXISTS
 					(
 						SELECT GroupName
-						FROM 
+						FROM
 							#destuser b LEFT OUTER JOIN
 							dbo.RoleTable ON ROLE_NAME = GroupName
-						WHERE GroupName <> 'public' 
-							AND GroupName <> 'db_accessadmin' 
+						WHERE GroupName <> 'public'
+							AND GroupName <> 'db_accessadmin'
 							AND GroupName <> 'db_securityadmin'
 							AND GroupName <> 'db_backupoperator'
 							AND GroupName <> 'db_datareader'
@@ -153,9 +153,9 @@ BEGIN
 							AND GroupName <> 'db_denydatareader'
 							AND GroupName <> 'db_denydatawriter'
 							AND GroupName <> 'db_owner'
-							
+
 							AND a.GroupName = b.GroupName
-					)	
+					)
 
 		OPEN ADDROLE
 
@@ -164,7 +164,7 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_addrolemember @rolename, @destuser
-			
+
 			PRINT @rolename + ' ' + @destuser
 
 			FETCH NEXT FROM ADDROLE INTO @rolename
@@ -178,14 +178,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#destuser') IS NOT NULL
 			DROP TABLE #destuser
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

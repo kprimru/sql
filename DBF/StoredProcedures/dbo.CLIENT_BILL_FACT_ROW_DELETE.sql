@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_BILL_FACT_ROW_DELETE]
@@ -30,24 +30,24 @@ BEGIN
 
 		DECLARE @list TABLE (ROW_ID INT)
 
-		INSERT INTO @list 
+		INSERT INTO @list
 			SELECT *
 			FROM dbo.GET_TABLE_FROM_LIST(@ROWLIST, ',')
 
-		DELETE 
+		DELETE
 		FROM dbo.BillFactDetailTable
 		WHERE BFD_ID IN
 			(
 				SELECT ROW_ID FROM @list
-			)	
-			
+			)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

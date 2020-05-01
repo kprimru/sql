@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_GET_LAST_NUM]
@@ -35,20 +35,20 @@ BEGIN
 		FROM dbo.InvoiceSaleTable
 		WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, @date),2)
 			AND INS_ID_ORG = @orgid
-		
 
-		IF @insnum IS NULL	
+
+		IF @insnum IS NULL
 			SET @insnum = 1
 
 		SELECT @insnum AS INS_NUM, RIGHT(DATEPART(yy, @date),2) AS INS_NUM_YEAR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

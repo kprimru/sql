@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_SUBHOST_SYSTEM_LIST]
@@ -37,7 +37,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_status') IS NOT NULL
 			DROP TABLE #dbf_status
 
-		CREATE TABLE #dbf_status 
+		CREATE TABLE #dbf_status
 			(
 				STAT_ID INT NOT NULL
 			)
@@ -52,7 +52,7 @@ BEGIN
 		ELSE
 		BEGIN
 			--парсить строчку и выбирать нужные значения
-			INSERT INTO #dbf_status 
+			INSERT INTO #dbf_status
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@statuslist, ',')
 		END
 
@@ -68,14 +68,14 @@ BEGIN
 		IF @systemlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_system
-				SELECT SYS_ID 
-				FROM dbo.SystemTable 
+				SELECT SYS_ID
+				FROM dbo.SystemTable
 				WHERE SYS_ACTIVE = 1
 		END
 		ELSE
 		BEGIN
 			--парсить строчку и выбирать нужные значения
-			INSERT INTO #dbf_system 
+			INSERT INTO #dbf_system
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemlist, ',')
 		END
 
@@ -91,14 +91,14 @@ BEGIN
 		IF @systemtypelist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemtype
-				SELECT SST_ID 
-				FROM dbo.SystemTypeTable 
+				SELECT SST_ID
+				FROM dbo.SystemTypeTable
 				--WHERE SST_REPORT = 1
 		END
 		ELSE
 		BEGIN
 			--парсить строчку и выбирать нужные значения
-			INSERT INTO #dbf_systemtype 
+			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
 
@@ -113,14 +113,14 @@ BEGIN
 		IF @subhostlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_subhost
-				SELECT SH_ID 
-				FROM dbo.SubhostTable 
+				SELECT SH_ID
+				FROM dbo.SubhostTable
 				--WHERE SH_ACTIVE = 1
 		END
 		ELSE
 		BEGIN
 			--парсить строчку и выбирать нужные значения
-			INSERT INTO #dbf_subhost 
+			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
 
@@ -136,7 +136,7 @@ BEGIN
 		IF @systemnetlist IS NULL
 		BEGIN
 			INSERT INTO #dbf_systemnet
-				SELECT SN_ID 
+				SELECT SN_ID
 				FROM dbo.SystemNetTable
 				--WHERE SN_ACTIVE = 1
 				ORDER BY SN_ORDER
@@ -146,9 +146,9 @@ BEGIN
 			--парсить строчку и выбирать нужные значения
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
-		END	
+		END
 
-	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)	
+	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)
 		DECLARE @sql VARCHAR(MAX)
 
 		IF OBJECT_ID('tempdb..#keys') IS NOT NULL
@@ -159,45 +159,45 @@ BEGIN
 				KEY_ID INT IDENTITY(1, 1) PRIMARY KEY,
 				KEY_NAME NVARCHAR(64),
 				KEY_DISTR INT,
-				KEY_NET INT,			
-				SST_ORDER INT,			
+				KEY_NET INT,
+				SST_ORDER INT,
 				KEY_SUM SMALLINT
 			)
-	         
-		INSERT INTO #keys 
+
+		INSERT INTO #keys
 			SELECT CP, SST_ID, SN_ID, SST_ORDER, KEY_SUM
 			FROM
 				(
 					SELECT DISTINCT f.SST_CAPTION + ' | ' + SN_NAME AS CP, f.SST_ID, SN_ID, f.SST_ORDER, 0 AS KEY_SUM
-					FROM 
-						dbo.SystemTypeTable a INNER JOIN 
+					FROM
+						dbo.SystemTypeTable a INNER JOIN
 						#dbf_systemtype d ON d.TST_ID = a.SST_ID INNER JOIN
-						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS, 
+						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS,
 						dbo.SystemNetTable b INNER JOIN #dbf_systemnet e ON e.TSN_ID = b.SN_ID
-					UNION 
+					UNION
 					SELECT DISTINCT f.SST_CAPTION + ' | Все', f.SST_ID, NULL, f.SST_ORDER, 1 AS KEY_SUM
-					FROM 
-						dbo.SystemTypeTable a INNER JOIN 
+					FROM
+						dbo.SystemTypeTable a INNER JOIN
 						#dbf_systemtype d ON d.TST_ID = a.SST_ID INNER JOIN
 						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS
-					UNION 
+					UNION
 					SELECT DISTINCT f.SST_CAPTION + ' | X', f.SST_ID, NULL, f.SST_ORDER, 2 AS KEY_SUM
-					FROM 
-						dbo.SystemTypeTable a INNER JOIN 
+					FROM
+						dbo.SystemTypeTable a INNER JOIN
 						#dbf_systemtype d ON d.TST_ID = a.SST_ID INNER JOIN
 						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS
-					UNION 
+					UNION
 					SELECT DISTINCT f.SST_CAPTION + ' | %', f.SST_ID, NULL, f.SST_ORDER, 3 AS KEY_SUM
-					FROM 
-						dbo.SystemTypeTable a INNER JOIN 
+					FROM
+						dbo.SystemTypeTable a INNER JOIN
 						#dbf_systemtype d ON d.TST_ID = a.SST_ID INNER JOIN
-						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS				
+						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS
 				) AS o_O
 			ORDER BY SST_ORDER, ISNULL(SN_ID, 9999), KEY_SUM
 
 		IF OBJECT_ID('tempdb..#final') IS NOT NULL
 			DROP TABLE #final
-		
+
 		CREATE TABLE #final
 			(
 				ID BIGINT IDENTITY(1, 1) PRIMARY KEY,
@@ -210,27 +210,27 @@ BEGIN
 		SET @sql = 'ALTER TABLE #final ADD '
 
 		SELECT @sql = @sql + '
-				[' + CONVERT(VARCHAR, KEY_NAME) + '] ' + 
-			CASE KEY_SUM 
+				[' + CONVERT(VARCHAR, KEY_NAME) + '] ' +
+			CASE KEY_SUM
 				WHEN 3 THEN ' FLOAT,'
 				ELSE ' INT,'
 			END
 		FROM #keys
-		ORDER BY KEY_ID	
-			
+		ORDER BY KEY_ID
+
 		SET @sql = @sql + '
 				[-] INT,'
 		SET @sql = @sql + '
 				[-, X] INT'
 		SET @sql = @sql + '
-			'		
+			'
 
-		EXEC (@sql)	
+		EXEC (@sql)
 
 
 		IF OBJECT_ID('tempdb..#tempfinal') IS NOT NULL
 			DROP TABLE #tempfinal
-		
+
 		CREATE TABLE #tempfinal
 			(
 				ID BIGINT IDENTITY(1, 1) PRIMARY KEY,
@@ -241,22 +241,22 @@ BEGIN
 		SET @sql = 'ALTER TABLE #tempfinal ADD '
 
 		SELECT @sql = @sql + '
-				[' + CONVERT(VARCHAR, KEY_ID) + '] ' + 
-			CASE KEY_SUM 
+				[' + CONVERT(VARCHAR, KEY_ID) + '] ' +
+			CASE KEY_SUM
 				WHEN 3 THEN ' FLOAT,'
 				ELSE ' INT,'
 			END
 		FROM #keys
-		ORDER BY KEY_ID	
-			
+		ORDER BY KEY_ID
+
 		SET @sql = @sql + '
 				[-] INT,'
 		SET @sql = @sql + '
 				[-, X] INT'
 		SET @sql = @sql + '
-			'			
+			'
 
-		EXEC (@sql)	
+		EXEC (@sql)
 
 		SET @sql = 'CREATE INDEX [' + CONVERT(VARCHAR(50), NEWID()) + '] ON #tempfinal(SYS_ID, SH_ID) INCLUDE (ID)'
 		EXEC (@sql)
@@ -265,43 +265,43 @@ BEGIN
 			INSERT INTO #tempfinal
 			SELECT KPVT.SH_ID, KPVT.SYS_ID, '
 
-			SELECT @sql = @sql + 
+			SELECT @sql = @sql +
 				CASE KEY_SUM
 					WHEN 3 THEN 'NULL AS ''[' + CONVERT(VARCHAR, KEY_ID)  + ']'', '
 					WHEN 1 THEN 'NULL AS ''[' + CONVERT(VARCHAR, KEY_ID)  + ']'', '
 					ELSE ' [' + CONVERT(VARCHAR, KEY_ID)  + '], '
 				END
 			FROM #keys
-			ORDER BY KEY_ID	
+			ORDER BY KEY_ID
 
 			SET @sql = @sql + '0, NULL '
 
-			SET @sql = @sql + 
+			SET @sql = @sql +
 				'
 					FROM
 						(
-							SELECT SH_ID, SYS_ID, 
-								CASE 
-									WHEN STAT_ID IS NULL 
-										OR REG_ID_HOST IS NULL 
+							SELECT SH_ID, SYS_ID,
+								CASE
+									WHEN STAT_ID IS NULL
+										OR REG_ID_HOST IS NULL
 										OR REG_ID_SYSTEM IS NULL
 										OR SST_ID IS NULL
 										OR SNC_ID IS NULL
-										OR KEY_ID IS NULL									
+										OR KEY_ID IS NULL
 											THEN NULL
 									ELSE REG_ID
 								END AS REG_ID, z.KEY_ID
-							FROM 
+							FROM
 								dbo.SystemTable INNER JOIN
 								#dbf_system ON SYS_ID = TSYS_ID INNER JOIN
 								dbo.SubhostTable ON 1 = 1 INNER JOIN
 								#dbf_subhost ON TSH_ID = SH_ID LEFT OUTER JOIN
-								dbo.PeriodRegExceptView b ON REG_ID_HOST = SH_ID AND REG_ID_SYSTEM = SYS_ID AND REG_ID_PERIOD = ' + @period + ' LEFT OUTER JOIN	
+								dbo.PeriodRegExceptView b ON REG_ID_HOST = SH_ID AND REG_ID_SYSTEM = SYS_ID AND REG_ID_PERIOD = ' + @period + ' LEFT OUTER JOIN
 								dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE LEFT OUTER JOIN
 								#dbf_status ON STAT_ID = REG_ID_STATUS LEFT OUTER JOIN
 								dbo.SystemNetCountTable d ON d.SNC_ID = b.REG_ID_NET LEFT OUTER JOIN
-								#keys z ON KEY_DISTR = SST_ID_MOS									
-										AND ISNULL(KEY_NET, SNC_ID_SN) = SNC_ID_SN 
+								#keys z ON KEY_DISTR = SST_ID_MOS
+										AND ISNULL(KEY_NET, SNC_ID_SN) = SNC_ID_SN
 							WHERE NOT EXISTS
 								(
 									SELECT *
@@ -321,33 +321,33 @@ BEGIN
 			FROM #keys
 			WHERE KEY_NET IS NOT NULL
 			ORDER BY KEY_ID
-		
+
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-			SET @sql = @sql + 
+			SET @sql = @sql +
 							'	)
-				) AS KPVT 
-			INNER JOIN 
+				) AS KPVT
+			INNER JOIN
 				(
 					SELECT SH_ID, SYS_ID,
-						CASE 
-							WHEN STAT_ID IS NULL 
-								OR REG_ID_HOST IS NULL 
+						CASE
+							WHEN STAT_ID IS NULL
+								OR REG_ID_HOST IS NULL
 								OR REG_ID_SYSTEM IS NULL
 								OR SST_ID IS NULL
 								OR SNC_ID IS NULL
-								OR KEY_ID IS NULL									
+								OR KEY_ID IS NULL
 									THEN NULL
 								ELSE REG_ID
 							END AS REG_ID, z.KEY_ID
-					FROM 
+					FROM
 						dbo.SystemTable INNER JOIN
 						#dbf_system ON SYS_ID = TSYS_ID INNER JOIN
 						dbo.SubhostTable ON 1 = 1 INNER JOIN
 						#dbf_subhost ON TSH_ID = SH_ID LEFT OUTER JOIN
 						dbo.PeriodRegExceptView b ON REG_ID_HOST = SH_ID AND REG_ID_SYSTEM = SYS_ID AND REG_ID_PERIOD = ' + @period + ' LEFT OUTER JOIN
-						dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE LEFT OUTER JOIN					
-						#dbf_status ON STAT_ID <> REG_ID_STATUS LEFT OUTER JOIN	
+						dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE LEFT OUTER JOIN
+						#dbf_status ON STAT_ID <> REG_ID_STATUS LEFT OUTER JOIN
 						dbo.SystemNetCountTable d ON d.SNC_ID = b.REG_ID_NET LEFT OUTER JOIN
 						#keys z ON KEY_DISTR = SST_ID_MOS
 					WHERE NOT EXISTS
@@ -369,23 +369,23 @@ BEGIN
 			FROM #keys
 			WHERE KEY_NET IS NULL AND KEY_SUM = 2
 			ORDER BY KEY_ID
-		
+
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-			SET @sql = @sql + 
+			SET @sql = @sql +
 							'	)
-				) AS KPVM ON KPVM.SH_ID = KPVT.SH_ID AND KPVM.SYS_ID = KPVT.SYS_ID'	
+				) AS KPVM ON KPVM.SH_ID = KPVT.SH_ID AND KPVM.SYS_ID = KPVT.SYS_ID'
 
-			SET @sql = @sql + ' 
+			SET @sql = @sql + '
 			'
-			--SELECT @sql	
+			--SELECT @sql
 			EXEC (@sql)
-		
+
 		SET @sql = '
 			UPDATE #tempfinal
 			SET '
 			SELECT @sql = @sql + '
-				[' + CONVERT(VARCHAR, KEY_ID) + '] = ' + 
+				[' + CONVERT(VARCHAR, KEY_ID) + '] = ' +
 				(
 					SELECT '[' + CONVERT(VARCHAR, KEY_ID) + '] +'
 					FROM #keys b
@@ -395,16 +395,16 @@ BEGIN
 				) + '0,'
 			FROM #keys a
 			WHERE KEY_SUM = 1
-				
-			
-			SET @sql = LEFT(@sql, LEN(@sql) - 1)
-			
-			
-			--SELECT @sql					
-			EXEC (@sql)
-		
 
-			
+
+			SET @sql = LEFT(@sql, LEN(@sql) - 1)
+
+
+			--SELECT @sql
+			EXEC (@sql)
+
+
+
 
 
 	--SELECT *
@@ -413,7 +413,7 @@ BEGIN
 
 		DECLARE STM CURSOR LOCAL FOR
 			SELECT SYS_ID, SYS_NAME
-			FROM 
+			FROM
 				#dbf_system INNER JOIN
 				dbo.SystemTable ON SYS_ID = TSYS_ID
 			WHERE SYS_REG_NAME <> '-'
@@ -432,12 +432,12 @@ BEGIN
 				SELECT 1, 0, @sysid, @sysname + '    месяц     ' + PR_NAME
 				FROM dbo.PeriodTable
 				WHERE PR_ID = @period
-		
+
 			SET @sql = '
 			INSERT INTO #final
 				(IS_GROUP, IS_FINAL, SYS_ID, SH_SHORT_NAME, '
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_NAME) + '],'
-			FROM #keys 
+			FROM #keys
 			--WHERE KEY_SUM <> 3
 			ORDER BY KEY_ID
 
@@ -446,15 +446,15 @@ BEGIN
 			SET @sql = @sql + ')
 				SELECT 0, 0, SYS_ID, SH_SHORT_NAME, '
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_ID) + '],'
-			FROM #keys 
+			FROM #keys
 			--WHERE KEY_SUM <> 3
 			ORDER BY KEY_ID
 
 			SET @sql = @sql + '[-], [-, X]
-			FROM 
+			FROM
 				#tempfinal a INNER JOIN
 				dbo.SubhostTable b ON a.SH_ID = b.SH_ID
-			WHERE SYS_ID = ' + CONVERT(VARCHAR, @sysid) + '		
+			WHERE SYS_ID = ' + CONVERT(VARCHAR, @sysid) + '
 			ORDER BY SH_ORDER'
 
 			EXEC (@sql)
@@ -463,7 +463,7 @@ BEGIN
 			INSERT INTO #final
 				(IS_GROUP, IS_FINAL, SYS_ID, SH_SHORT_NAME, '
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_NAME) + '],'
-			FROM #keys 
+			FROM #keys
 			WHERE KEY_SUM <> 3
 			ORDER BY KEY_ID
 
@@ -472,17 +472,17 @@ BEGIN
 			SET @sql = @sql + ')
 				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ', ''Итого'', '
 			SELECT @sql = @sql + 'SUM([' + CONVERT(VARCHAR, KEY_ID) + ']),'
-			FROM #keys 
+			FROM #keys
 			WHERE KEY_SUM <> 3
 			ORDER BY KEY_ID
-			
+
 			SET @sql = @sql + 'SUM([-]), SUM([-, X])
 			FROM #tempfinal
 			WHERE SYS_ID = ' + CONVERT(VARCHAR, @sysid) + '
-			'	
-			--SELECT @sql	
-			EXEC (@sql)				
-			
+			'
+			--SELECT @sql
+			EXEC (@sql)
+
 			SELECT @sql = '
 			INSERT INTO #final(IS_GROUP, IS_FINAL, SYS_ID, SH_SHORT_NAME, [' +
 				KEY_NAME + '])'
@@ -493,16 +493,16 @@ BEGIN
 				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ',''Всего в списке: '', '
 
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_NAME) + '] +'
-			FROM #keys 
+			FROM #keys
 			WHERE KEY_SUM = 1 OR KEY_SUM = 2
 			ORDER BY KEY_NAME
-			
-			SET @sql = @sql + '0 
+
+			SET @sql = @sql + '0
 			FROM #final
 			WHERE IS_FINAL = 1 AND SYS_ID = ' + CONVERT(VARCHAR, @sysid) + ' '
 			--SELECT @sql
-			EXEC (@sql)		
-		
+			EXEC (@sql)
+
 			FETCH NEXT FROM STM INTO @sysid, @sysname
 		END
 
@@ -515,10 +515,10 @@ BEGIN
 			SET [-, X] =  '
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_NAME) + '] +'
 			FROM #keys b
-			WHERE KEY_SUM = 2				
+			WHERE KEY_SUM = 2
 
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
-					
+
 			EXEC (@sql)
 
 
@@ -526,8 +526,8 @@ BEGIN
 			UPDATE #final
 			SET '
 			SELECT @sql = @sql + '
-				[' + CONVERT(VARCHAR, KEY_NAME) + '] = 
-				CASE (' + 
+				[' + CONVERT(VARCHAR, KEY_NAME) + '] =
+				CASE (' +
 				(
 					SELECT '[' + CONVERT(VARCHAR, KEY_NAME) + ']'
 					FROM #keys b
@@ -540,12 +540,12 @@ BEGIN
 				) + ')
 					WHEN 0 THEN 0
 					ELSE
-				 ROUND(100 * CONVERT(FLOAT, ' + 
+				 ROUND(100 * CONVERT(FLOAT, ' +
 				(
 					SELECT '[' + CONVERT(VARCHAR, KEY_NAME) + ']'
 					FROM #keys b
 					WHERE KEY_SUM = 2 AND a.KEY_DISTR = b.KEY_DISTR
-				) + ')/(' + 
+				) + ')/(' +
 				(
 					SELECT '[' + CONVERT(VARCHAR, KEY_NAME) + ']'
 					FROM #keys b
@@ -555,15 +555,15 @@ BEGIN
 					SELECT '[' + CONVERT(VARCHAR, KEY_NAME) + ']'
 					FROM #keys b
 					WHERE KEY_SUM = 2 AND a.KEY_DISTR = b.KEY_DISTR
-				) + '), 1) END,' 
+				) + '), 1) END,'
 			FROM #keys a
 			WHERE KEY_SUM = 3
-			
+
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
-			
-			--SELECT @sql					
+
+			--SELECT @sql
 			EXEC (@sql)
-		
+
 
 
 		SELECT *
@@ -578,7 +578,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#dbf_subhost') IS NOT NULL
 			DROP TABLE #dbf_subhost
 		IF OBJECT_ID('tempdb..#dbf_systemnet') IS NOT NULL
-			DROP TABLE #dbf_systemnet		
+			DROP TABLE #dbf_systemnet
 		IF OBJECT_ID('tempdb..#keys') IS NOT NULL
 			DROP TABLE #keys
 		IF OBJECT_ID('tempdb..#ric') IS NOT NULL
@@ -587,14 +587,14 @@ BEGIN
 			DROP TABLE #final
 		IF OBJECT_ID('tempdb_#tempfinal') IS NOT NULL
 			DROP TABLE #tempfinal
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

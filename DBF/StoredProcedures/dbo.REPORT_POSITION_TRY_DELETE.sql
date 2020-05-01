@@ -8,13 +8,13 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если указанную 
-               отчетную должность можно удалить 
-               (должность не указана ни у одного 
+Описание:	  Возвращает 0, если указанную
+               отчетную должность можно удалить
+               (должность не указана ни у одного
                 сотрудника), -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[REPORT_POSITION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[REPORT_POSITION_TRY_DELETE]
 	@positionreportid SMALLINT
 AS
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_REPORT_POS = @positionreportid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Данная отчетная должность указана у одного или нескольких сотрудников клиента. ' + 
+			SET @txt = @txt + 'Данная отчетная должность указана у одного или нескольких сотрудников клиента. ' +
 							  'Удаление невозможно, пока выбранная отчетная должность будет указан хотя ' +
 							  'бы у одного сотрудника.'
 		  END
@@ -50,7 +50,7 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_RP = @positionreportid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Данная отчетная должность указана у одного или нескольких сотрудников ТО. ' + 
+			SET @txt = @txt + 'Данная отчетная должность указана у одного или нескольких сотрудников ТО. ' +
 							  'Удаление невозможно, пока выбранная отчетная должность будет указан хотя ' +
 							  'бы у одного сотрудника.'
 		  END
@@ -63,9 +63,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

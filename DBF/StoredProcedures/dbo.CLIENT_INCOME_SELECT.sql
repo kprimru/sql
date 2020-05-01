@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 ALTER PROCEDURE [dbo].[CLIENT_INCOME_SELECT]
 	@clientid INT
@@ -26,22 +26,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			IN_ID, IN_DATE, IN_SUM, IN_PAY_DATE, IN_PAY_NUM, IN_REST, IN_PRIMARY, (CONVERT(VARCHAR, INS_NUM) + '/' + INS_NUM_YEAR) AS INS_NUM,
 			ORG_PSEDO
-		FROM 
+		FROM
 			dbo.IncomeView LEFT OUTER JOIN
 			dbo.InvoiceSaleTable ON INS_ID = IN_ID_INVOICE
 		WHERE IN_ID_CLIENT = @clientid
 		ORDER BY IN_DATE DESC
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

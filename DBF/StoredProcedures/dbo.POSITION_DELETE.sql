@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Удалить из справочника должность 
+Описание:	  Удалить из справочника должность
                с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[POSITION_DELETE] 
+ALTER PROCEDURE [dbo].[POSITION_DELETE]
 	@positionid INT
 AS
 BEGIN
@@ -30,17 +30,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.PositionTable 
+		DELETE
+		FROM dbo.PositionTable
 		WHERE POS_ID = @positionid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

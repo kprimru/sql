@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[SALE_OBJECT_TRY_DELETE]
@@ -33,7 +33,7 @@ BEGIN
 		DECLARE @txt VARCHAR(MAX)
 
 		SET @res = 0
-		SET @txt = ''	
+		SET @txt = ''
 
 		-- добавлено 29.04.2009, В.Богдан
 		IF EXISTS(SELECT * FROM dbo.SystemTable WHERE SYS_ID_SO = @soid)
@@ -44,14 +44,14 @@ BEGIN
 		--
 
 		SELECT @res AS RES, @txt AS TXT
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

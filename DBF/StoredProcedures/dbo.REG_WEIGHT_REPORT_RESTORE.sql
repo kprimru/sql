@@ -23,15 +23,15 @@ BEGIN
 	BEGIN TRY
 
 		SELECT *
-		FROM dbo.REG_WEIGHT_REPORT_SELECT(@PR_ID)	
-		
+		FROM dbo.REG_WEIGHT_REPORT_SELECT(@PR_ID)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

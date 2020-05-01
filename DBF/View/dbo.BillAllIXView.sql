@@ -13,5 +13,5 @@ AS
 		INNER JOIN dbo.BillDistrTable b ON a.BL_ID = b.BD_ID_BILL
 		INNER JOIN dbo.PeriodTable c ON c.PR_ID = a.BL_ID_PERIOD
 		INNER JOIN dbo.DistrTable d ON d.DIS_ID = b.BD_ID_DISTR
-		INNER JOIN dbo.SystemTable e ON e.SYS_ID = d.DIS_ID_SYSTEM		
+		INNER JOIN dbo.SystemTable e ON e.SYS_ID = d.DIS_ID_SYSTEM
 	GROUP BY SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE

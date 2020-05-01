@@ -7,16 +7,16 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COUNTRY_GET] 
+ALTER PROCEDURE [dbo].[COUNTRY_GET]
 	@countryid SMALLINT = NULL,
 	@active BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -28,18 +28,18 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT CNT_NAME, CNT_ID, CNT_ACTIVE
-		FROM dbo.CountryTable 
-		WHERE CNT_ID =  @countryid 
+		FROM dbo.CountryTable
+		WHERE CNT_ID =  @countryid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_SELECT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -29,9 +29,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SNC_ID, SN_NAME, SNC_NET_COUNT, SNC_TECH, SNC_SHORT, SNC_ODON, SNC_ODOFF
-		FROM 
+		FROM
 			dbo.SystemNetCountTable a INNER JOIN
-			dbo.SystemNetTable b ON a.SNC_ID_SN = b.SN_ID 
+			dbo.SystemNetTable b ON a.SNC_ID_SN = b.SN_ID
 		WHERE SNC_ACTIVE = ISNULL(@active, SNC_ACTIVE)
 		ORDER BY SNC_NET_COUNT
 
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

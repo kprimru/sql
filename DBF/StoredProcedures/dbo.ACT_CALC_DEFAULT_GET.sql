@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[ACT_CALC_DEFAULT_GET]
@@ -32,21 +32,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SO_ID, SO_NAME, COUR_ID, COUR_NAME, PR_ID, PR_NAME
-		FROM 
+		FROM
 			dbo.SaleObjectTable,
 			dbo.ClientCourView,
 			dbo.PeriodTable
-		WHERE SO_ID = 1 
-			AND CL_ID = @clientid 
+		WHERE SO_ID = 1
+			AND CL_ID = @clientid
 			AND ISNULL(@dt, GETDATE()) BETWEEN PR_DATE AND PR_END_DATE
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

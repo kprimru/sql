@@ -10,7 +10,7 @@ ALTER PROCEDURE [Subhost].[SUBHOST_SUPPORT_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -22,7 +22,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF OBJECT_ID('tempdb..#system_type') IS NOT NULL
 			DROP TABLE #system_type
 
@@ -53,7 +53,7 @@ BEGIN
 				UNION ALL
 
 				SELECT SST_ID, SST_CAPTION, STS_ID_HOST
-				FROM 
+				FROM
 					dbo.SystemTypeTable
 					INNER JOIN dbo.SystemTypeSubhost ON STS_ID_TYPE = SST_ID
 				WHERE STS_ID_SUBHOST = @SUBHOST
@@ -62,7 +62,7 @@ BEGIN
 
 		SET @ST_GROUP = ''
 		SELECT @ST_GROUP = @ST_GROUP + CONVERT(VARCHAR(20), SST_ID_HOST) + ','
-		FROM 
+		FROM
 			(
 				SELECT DISTINCT SST_ID_HOST
 				FROM #system_type
@@ -70,7 +70,7 @@ BEGIN
 			) AS o_O
 
 		IF @ST_GROUP <> ''
-			SET @ST_GROUP = LEFT(@ST_GROUP, LEN(@ST_GROUP) - 1)	
+			SET @ST_GROUP = LEFT(@ST_GROUP, LEN(@ST_GROUP) - 1)
 
 		IF OBJECT_ID('tempdb..#sgr') IS NOT NULL
 			DROP TABLE #sgr
@@ -83,11 +83,11 @@ BEGIN
 				TT_ID SMALLINT
 			)
 
-		INSERT INTO #sgr(TITLE, SN_ID)	
+		INSERT INTO #sgr(TITLE, SN_ID)
 			SELECT SN_NAME, SN_ID
 			FROM dbo.SystemNetTable
 			ORDER BY SN_COEF
-			
+
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL
 			DROP TABLE #res
 
@@ -97,8 +97,8 @@ BEGIN
 				GR_ID SMALLINT,
 				SGR_ID SMALLINT,
 				SYS_ID SMALLINT,
-				SYS_COUNT SMALLINT		
-			)	
+				SYS_COUNT SMALLINT
+			)
 
 		INSERT INTO #res(GR_ID, SGR_ID, SYS_ID)
 			SELECT Item, ID, SYS_ID
@@ -116,17 +116,17 @@ BEGIN
 				REG_DISTR_NUM INT,
 				REG_COMP_NUM TINYINT,
 				REG_ID_TYPE SMALLINT,
-				REG_ID_NET SMALLINT,			
+				REG_ID_NET SMALLINT,
 				REG_ID_STATUS SMALLINT
 			)
 
 		INSERT INTO #regnode
-			SELECT 
-				REG_ID, REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM, 
+			SELECT
+				REG_ID, REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM,
 				REG_COMP_NUM, REG_ID_TYPE, REG_ID_NET, REG_ID_STATUS
 			FROM dbo.PeriodRegTable INNER JOIN dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE
 			WHERE REG_ID_PERIOD = @PERIOD
-				AND REG_ID_HOST = @SUBHOST	
+				AND REG_ID_HOST = @SUBHOST
 				AND SST_NAME <> 'NCT'
 				AND NOT EXISTS
 					(
@@ -137,66 +137,66 @@ BEGIN
 							AND DIU_COMP = REG_COMP_NUM
 					)
 
-			UNION 
+			UNION
 
-			SELECT 
-				REG_ID, REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM, 
+			SELECT
+				REG_ID, REG_ID_PERIOD, REG_ID_SYSTEM, REG_DISTR_NUM,
 				REG_COMP_NUM, REG_ID_TYPE, REG_ID_NET, REG_ID_STATUS
-			FROM 
+			FROM
 				dbo.PeriodRegTable
-				INNER JOIN Subhost.Diu ON DIU_ID_SYSTEM = REG_ID_SYSTEM 
-										AND REG_DISTR_NUM = DIU_DISTR 
+				INNER JOIN Subhost.Diu ON DIU_ID_SYSTEM = REG_ID_SYSTEM
+										AND REG_DISTR_NUM = DIU_DISTR
 										AND	REG_COMP_NUM = DIU_COMP
 			WHERE REG_ID_PERIOD = @PERIOD
 				AND DIU_ID_SUBHOST = @SUBHOST
 				AND DIU_ACTIVE = 1
 
 		UPDATE t
-		SET SYS_COUNT = 
+		SET SYS_COUNT =
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						#regnode z INNER JOIN
 						#system_type y ON SST_ID = REG_ID_TYPE INNER JOIN
 						dbo.SystemTable x ON x.SYS_ID = REG_ID_SYSTEM INNER JOIN
 						dbo.SystemNetCountTable ON SNC_ID = REG_ID_NET INNER JOIN
-						dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS 
+						dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
 					WHERE REG_ID_SYSTEM = t.SYS_ID
 						AND SST_ID_HOST = GR_ID
 						AND SNC_ID_SN = SN_ID
 						AND z.REG_ID_PERIOD = @PERIOD
 						AND DS_REG = 0
 				)
-		FROM 
+		FROM
 			#res t INNER JOIN
 			#sgr a ON a.ID = t.SGR_ID
 		WHERE SN_ID IS NOT NULL
 
 		UPDATE t
-		SET SYS_COUNT = 
+		SET SYS_COUNT =
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						#regnode z INNER JOIN
 						#system_type y ON SST_ID = REG_ID_TYPE INNER JOIN
 						dbo.SystemTable x ON x.SYS_ID = REG_ID_SYSTEM INNER JOIN
 						dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
-					WHERE REG_ID_SYSTEM = t.SYS_ID	
-						AND SST_ID_HOST = GR_ID					
-						AND z.REG_ID_PERIOD = @PERIOD					
+					WHERE REG_ID_SYSTEM = t.SYS_ID
+						AND SST_ID_HOST = GR_ID
+						AND z.REG_ID_PERIOD = @PERIOD
 						AND DS_REG = 0
 				)
-		FROM 
+		FROM
 			#res t INNER JOIN
 			#sgr a ON a.ID = t.SGR_ID
 		WHERE TT_ID IS NOT NULL
 
 		SELECT SST_ID, /*c.SYS_ID, */SYS_SHORT_NAME, TITLE, SYS_COUNT
-		FROM 
+		FROM
 			#res a INNER JOIN
 			#sgr b ON a.SGR_ID = b.ID INNER JOIN
 			dbo.SystemTable c ON c.SYS_ID = a.SYS_ID INNER JOIN
-			dbo.SystemTypeTable ON SST_ID = a.GR_ID	
+			dbo.SystemTypeTable ON SST_ID = a.GR_ID
 		WHERE SYS_COUNT <> 0
 		ORDER BY SST_ORDER, SYS_ORDER, b.ID
 
@@ -211,14 +211,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#system_type') IS NOT NULL
 			DROP TABLE #system_type
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

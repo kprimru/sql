@@ -24,18 +24,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT LS_ID, LS_NAME, SS_COUNT
-		FROM 
+		FROM
 			Subhost.SubhostStudy a INNER JOIN
-			Subhost.Lesson ON LS_ID = SS_ID_LESSON 
+			Subhost.Lesson ON LS_ID = SS_ID_LESSON
 		WHERE SS_ID_PERIOD = @PR_ID AND SS_ID_SUBHOST = @SH_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-/* 
+/*
 Автор:		  Денисов Алексей
 Описание:	  Добавить сотрудника клиенту
 */
 
-ALTER PROCEDURE [dbo].[TO_ADDRESS_ADD] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_ADD]
 	@toid INT,
 	@streetid SMALLINT,
 	@index VARCHAR(20),
@@ -33,7 +33,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.TOAddressTable(
-									TA_ID_TO, TA_INDEX, TA_ID_STREET, TA_HOME								
+									TA_ID_TO, TA_INDEX, TA_ID_STREET, TA_HOME
 									)
 		VALUES (
 				@toid, @index, @streetid, @home
@@ -46,9 +46,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -9,7 +9,7 @@ ALTER PROCEDURE [dbo].[SALDO_RECALC_NEW]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -21,7 +21,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		DECLARE @temp TABLE
 		(
 			SL_ID				BIGINT,
@@ -29,30 +29,30 @@ BEGIN
 			SL_DATE				SMALLDATETIME,
 			SL_PRICE			MONEY,
 			SL_PRICE_BEZ_NDS	MONEY,
-			SL_REST 			MONEY,			
+			SL_REST 			MONEY,
 			TP					TINYINT
 			PRIMARY KEY CLUSTERED(SL_ID)
 		);
-		
+
 		INSERT INTO @temp
-		SELECT 
+		SELECT
 			SL_ID, SL_ID_DISTR, ACT_DATE,
 			- AD_TOTAL_PRICE, -AD_PRICE, 0, SL_TP
-		FROM 
-			dbo.SaldoTable WITH(UPDLOCK) 
-			INNER JOIN dbo.ActDistrTable ON AD_ID = SL_ID_ACT_DIS 
-			INNER JOIN dbo.ActTable ON ACT_ID = AD_ID_ACT 
+		FROM
+			dbo.SaldoTable WITH(UPDLOCK)
+			INNER JOIN dbo.ActDistrTable ON AD_ID = SL_ID_ACT_DIS
+			INNER JOIN dbo.ActTable ON ACT_ID = AD_ID_ACT
 		WHERE SL_ID_CLIENT = @clientid AND SL_ID_ACT_DIS IS NOT NULL
-		
+
 		UNION ALL
-		
-		SELECT 
+
+		SELECT
 			SL_ID, SL_ID_DISTR, IN_DATE,
 			ID_PRICE, ID_PRICE - ROUND(ID_PRICE * TX_PERCENT / (100.0 + TX_PERCENT), 2), 0, SL_TP
-		FROM 
-			dbo.SaldoTable WITH(UPDLOCK) 
-			INNER JOIN dbo.IncomeDistrTable ON ID_ID = SL_ID_IN_DIS 
-			INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME			
+		FROM
+			dbo.SaldoTable WITH(UPDLOCK)
+			INNER JOIN dbo.IncomeDistrTable ON ID_ID = SL_ID_IN_DIS
+			INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME
 			INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 			INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
 			CROSS APPLY
@@ -68,12 +68,12 @@ BEGIN
 							AND AD_ID_PERIOD = ID_ID_PERIOD
 							AND ACT_ID_CLIENT = IN_ID_CLIENT
 					)
-					
+
 				UNION ALL
-				
-				SELECT TOP 1 * 
+
+				SELECT TOP 1 *
 				FROM dbo.TaxTable
-				WHERE TX_PERCENT = 
+				WHERE TX_PERCENT =
 					CASE
 						WHEN SYS_ID_SO = 1 AND IN_DATE < '20190101' THEN 18
 						WHEN SYS_ID_SO = 1 AND IN_DATE >= '20190101' THEN 20
@@ -91,30 +91,30 @@ BEGIN
 					)
 			) AS T
 		WHERE SL_ID_CLIENT = @clientid AND SL_ID_IN_DIS IS NOT NULL
-		
+
 		UNION ALL
-		
-		SELECT 
+
+		SELECT
 			SL_ID, SL_ID_DISTR, CSG_DATE,
 			- CSD_TOTAL_PRICE, -CSD_PRICE, 0, SL_TP
-		FROM 
-			dbo.SaldoTable WITH(UPDLOCK) 
-			INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID = SL_ID_CONSIG_DIS 
+		FROM
+			dbo.SaldoTable WITH(UPDLOCK)
+			INNER JOIN dbo.ConsignmentDetailTable ON CSD_ID = SL_ID_CONSIG_DIS
 			INNER JOIN dbo.ConsignmentTable ON CSG_ID = CSD_ID_CONS
 		WHERE SL_ID_CLIENT = @clientid AND SL_ID_CONSIG_DIS IS NOT NULL
-		
+
 		UNION ALL
-		
-		SELECT 
+
+		SELECT
 			SL_ID, SL_ID_DISTR, BD_DATE,
 			0, 0, 0, SL_TP
-		FROM 
-			dbo.SaldoTable WITH(UPDLOCK) 
-			INNER JOIN dbo.BillDistrTable ON BD_ID = SL_ID_BILL_DIS 
-			INNER JOIN dbo.BillTable ON BL_ID = BD_ID_BILL 
+		FROM
+			dbo.SaldoTable WITH(UPDLOCK)
+			INNER JOIN dbo.BillDistrTable ON BD_ID = SL_ID_BILL_DIS
+			INNER JOIN dbo.BillTable ON BL_ID = BD_ID_BILL
 		WHERE SL_ID_CLIENT = @clientid AND SL_ID_BILL_DIS IS NOT NULL
 
-		
+
 		DECLARE @saldo TABLE
 		(
 			ID INT IDENTITY(1, 1) PRIMARY KEY,
@@ -127,7 +127,7 @@ BEGIN
 			SL_REST_BEZ_NDS MONEY
 		)
 
-		
+
 		INSERT INTO @saldo
 		SELECT SL_ID, SL_ID_DISTR, SL_DATE, SL_PRICE, SL_PRICE_BEZ_NDS, SL_REST, 0
 		FROM @temp
@@ -135,14 +135,14 @@ BEGIN
 
 		DECLARE @a MONEY
 		SET @a = 0
-		
+
 		DECLARE @b MONEY
 		SET @b = 0
 
 		DECLARE @dis INT
 		SET @dis = 0
 
-		SET @dis = 
+		SET @dis =
 		(
 			SELECT TOP 1 SL_ID_DISTR
 			FROM @saldo
@@ -153,14 +153,14 @@ BEGIN
 		WHILE @dis IS NOT NULL
 		BEGIN
 			UPDATE @saldo
-			SET @a				= @a + SL_PRICE,	
+			SET @a				= @a + SL_PRICE,
 				@b				= CASE WHEN @a = 0 THEN 0 ELSE @b + SL_PRICE_BEZ_NDS END,
 				SL_REST			= @a,
 				SL_REST_BEZ_NDS = CASE WHEN @a = 0 THEN 0 ELSE @b END
-			WHERE SL_ID_DISTR = @dis		
-			
+			WHERE SL_ID_DISTR = @dis
 
-			SET @dis = 
+
+			SET @dis =
 					(
 						SELECT TOP 1 SL_ID_DISTR
 						FROM @saldo
@@ -170,21 +170,21 @@ BEGIN
 			SET @a = 0
 			SET @b = 0
 		END
-		
+
 		UPDATE dbo.SaldoTable
 		SET SL_DATE = a.SL_DATE,
 			SL_REST = a.SL_REST,
 			SL_BEZ_NDS = a.SL_REST_BEZ_NDS
 		FROM @saldo a
 		WHERE SaldoTable.SL_ID = a.SL_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_ACT_CALC_NEW]
@@ -29,24 +29,24 @@ BEGIN
 	BEGIN TRY
 
 		IF @periodid IS NULL
-			SELECT 
+			SELECT
 				CL_ID, CL_PSEDO, CL_FULL_NAME,
-				PR_ID, a.DIS_ID, DIS_STR, P.PR_DATE, BD_TOTAL_PRICE, 
+				PR_ID, a.DIS_ID, DIS_STR, P.PR_DATE, BD_TOTAL_PRICE,
 				ISNULL(
 					REVERSE(
 						STUFF(
 							REVERSE(
 										(
-											SELECT 
-												CONVERT(VARCHAR(20), IN_DATE, 104) + ' (' + 
+											SELECT
+												CONVERT(VARCHAR(20), IN_DATE, 104) + ' (' +
 												CONVERT(VARCHAR(20), IN_PAY_NUM, 104) + ')' + ' /'
 											FROM
 												(
 													SELECT DISTINCT IN_DATE, IN_PAY_NUM
-													FROM 
+													FROM
 														dbo.IncomeTable INNER JOIN
 														dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
-													WHERE ID_ID_DISTR = BD_ID_DISTR 
+													WHERE ID_ID_DISTR = BD_ID_DISTR
 														AND ID_ID_PERIOD = BL_ID_PERIOD
 														AND IN_ID_CLIENT = BL_ID_CLIENT
 												) AS o_O
@@ -61,19 +61,19 @@ BEGIN
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
 						*/
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0) AS BD_PAYED_PRICE,
 				(
 					SELECT TOP 1 COUR_NAME
-					FROM 
+					FROM
 						dbo.TOTable INNER JOIN
 						dbo.CourierTable ON TO_ID_COUR = COUR_ID
 					WHERE TO_ID_CLIENT = CL_ID
 					ORDER BY TO_MAIN DESC
 				) AS COUR_NAME
-			FROM 
+			FROM
 				dbo.BillIXVIew WITH(NOEXPAND) INNER JOIN
 				/*
 				dbo.BillDistrTable INNER JOIN
@@ -84,8 +84,8 @@ BEGIN
 				*/
 				dbo.PeriodTable P ON PR_ID = BL_ID_PERIOD INNER JOIN
 				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN
-				dbo.CLientTable ON BL_ID_CLIENT = CL_ID 
-			WHERE  
+				dbo.CLientTable ON BL_ID_CLIENT = CL_ID
+			WHERE
 				DOC_PSEDO = 'ACT' AND
 				DD_PRINT = 1 AND
 				NOT EXISTS
@@ -101,7 +101,7 @@ BEGIN
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
 				-- неоплаченная сумма счета
-				BD_TOTAL_PRICE = 
+				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)
 					FROM dbo.IncomeIXView WITH(NOEXPAND)
@@ -109,30 +109,30 @@ BEGIN
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
 						*/
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0)
 			ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER
 		ELSE
-			SELECT 
+			SELECT
 				CL_ID, CL_PSEDO, CL_FULL_NAME,
-				PR_ID, a.DIS_ID, DIS_STR, P.PR_DATE, BD_TOTAL_PRICE, 
+				PR_ID, a.DIS_ID, DIS_STR, P.PR_DATE, BD_TOTAL_PRICE,
 				ISNULL(
 					REVERSE(
 						STUFF(
 							REVERSE(
 										(
-											SELECT 
-												CONVERT(VARCHAR(20), IN_DATE, 104) + ' (' + 
+											SELECT
+												CONVERT(VARCHAR(20), IN_DATE, 104) + ' (' +
 												CONVERT(VARCHAR(20), IN_PAY_NUM, 104) + ')' + ' /'
 											FROM
 												(
 													SELECT DISTINCT IN_DATE, IN_PAY_NUM
-													FROM 
+													FROM
 														dbo.IncomeTable INNER JOIN
 														dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
-													WHERE ID_ID_DISTR = BD_ID_DISTR 
+													WHERE ID_ID_DISTR = BD_ID_DISTR
 														AND ID_ID_PERIOD = BL_ID_PERIOD
 														AND IN_ID_CLIENT = BL_ID_CLIENT
 												) AS o_O
@@ -147,19 +147,19 @@ BEGIN
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
 						*/
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0) AS BD_PAYED_PRICE,
 				(
 					SELECT TOP 1 COUR_NAME
-					FROM 
+					FROM
 						dbo.TOTable INNER JOIN
 						dbo.CourierTable ON TO_ID_COUR = COUR_ID
 					WHERE TO_ID_CLIENT = CL_ID
 					ORDER BY TO_MAIN DESC
 				) AS COUR_NAME
-			FROM 
+			FROM
 				dbo.BillIXView WITH(NOEXPAND) INNER JOIN
 				/*
 				dbo.BillDistrTable INNER JOIN
@@ -170,10 +170,10 @@ BEGIN
 				*/
 				dbo.PeriodTable P ON PR_ID = BL_ID_PERIOD INNER JOIN
 				dbo.DistrDocumentView b ON a.DIS_ID = b.DIS_ID INNER JOIN
-				dbo.CLientTable ON BL_ID_CLIENT = CL_ID 
-			WHERE  
+				dbo.CLientTable ON BL_ID_CLIENT = CL_ID
+			WHERE
 				(DOC_PSEDO = 'ACT') AND
-				DD_PRINT = 1 AND			
+				DD_PRINT = 1 AND
 				P.PR_DATE <= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @periodid) AND
 				NOT EXISTS
 				(
@@ -188,7 +188,7 @@ BEGIN
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
 				-- неоплаченная сумма счета
-				BD_TOTAL_PRICE = 
+				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)
 					FROM dbo.IncomeIXView WITH(NOEXPAND)
@@ -196,19 +196,19 @@ BEGIN
 						dbo.IncomeTable INNER JOIN
 						dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
 						*/
-					WHERE ID_ID_DISTR = BD_ID_DISTR 
+					WHERE ID_ID_DISTR = BD_ID_DISTR
 						AND ID_ID_PERIOD = BL_ID_PERIOD
 						AND IN_ID_CLIENT = BL_ID_CLIENT
 				), 0)
 			ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, PR_DATE DESC
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

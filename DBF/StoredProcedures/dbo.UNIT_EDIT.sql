@@ -9,11 +9,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 24.09.2008
-Описание:	  Изменить данные о типе системы с 
+Описание:	  Изменить данные о типе системы с
                указанным кодом в справочнике
 */
 
-ALTER PROCEDURE [dbo].[UNIT_EDIT] 
+ALTER PROCEDURE [dbo].[UNIT_EDIT]
 	@unitid SMALLINT,
 	@name VARCHAR(100),
 	@okei VARCHAR(50),
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

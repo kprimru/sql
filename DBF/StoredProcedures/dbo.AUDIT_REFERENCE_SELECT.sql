@@ -6,12 +6,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]	
+ALTER PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -31,14 +31,14 @@ BEGIN
 		SELECT REF_NAME, REF_ERROR
 		FROM dbo.AuditReferenceView
 		ORDER BY REF_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

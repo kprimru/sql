@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PAY_COEF_EDIT] 
+ALTER PROCEDURE [dbo].[PAY_COEF_EDIT]
 	@id SMALLINT,
 	@min SMALLINT,
 	@max SMALLINT,
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PayCoefTable 
+		UPDATE dbo.PayCoefTable
 		SET PC_START = @min,
 			PC_END = @max,
 			PC_VALUE = @value,
@@ -43,9 +43,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

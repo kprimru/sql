@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 Дата:			16.07.2009
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_ADD] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_ADD]
 --	@atlid			SMALLINT,
 	@name			VARCHAR(50),
 	@index			BIT,
@@ -67,16 +67,16 @@ BEGIN
 			@home,
 			@active
 		)
-		IF @returnvalue = 1 
+		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

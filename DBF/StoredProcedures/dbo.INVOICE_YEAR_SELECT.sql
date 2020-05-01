@@ -5,12 +5,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[INVOICE_YEAR_SELECT]	
+ALTER PROCEDURE [dbo].[INVOICE_YEAR_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,14 +30,14 @@ BEGIN
 		SELECT DISTINCT INS_NUM_YEAR
 		FROM dbo.InvoiceSaleTable
 		ORDER BY INS_NUM_YEAR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

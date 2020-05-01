@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Возвращает ID типа прейскуранта 
-               с указанным названием. 
+Описание:	  Возвращает ID типа прейскуранта
+               с указанным названием.
 */
 
-ALTER PROCEDURE [dbo].[PRICE_GROUP_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[PRICE_GROUP_CHECK_NAME]
 	@name VARCHAR(50)
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

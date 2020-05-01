@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_CHECK]
@@ -28,18 +28,18 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT [NAME] AS [USER_NAME] 
-		FROM sys.server_principals 
+		SELECT [NAME] AS [USER_NAME]
+		FROM sys.server_principals
 		WHERE [NAME] = @name
 			AND [TYPE_DESC] = 'SQL_LOGIN'
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

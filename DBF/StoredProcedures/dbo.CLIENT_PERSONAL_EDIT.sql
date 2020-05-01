@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_EDIT]
 	@personalid INT,
 	@surname VARCHAR(100),
 	@name VARCHAR(100),
@@ -34,7 +34,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ClientPersonalTable 
+		UPDATE dbo.ClientPersonalTable
 		SET	PER_FAM = @surname, PER_NAME = @name, PER_OTCH = @otch,
 			PER_ID_POS = @positionid, PER_ID_REPORT_POS = @reportpositionid
 		--, PER_PHONE = @phone
@@ -44,9 +44,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 ENDGRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_EDIT] TO rl_client_personal_w;

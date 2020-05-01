@@ -12,7 +12,7 @@ GO
 Описание:	  Выбрать данные о фин. установке
 */
 
-ALTER PROCEDURE [dbo].[PRIMARY_PAY_GET] 
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_GET]
 	@ppid INT
 AS
 BEGIN
@@ -30,12 +30,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	
-			DIS_ID, DIS_STR, PRP_DATE, PRP_PRICE, 
+		SELECT
+			DIS_ID, DIS_STR, PRP_DATE, PRP_PRICE,
 			PRP_TAX_PRICE, PRP_TOTAL_PRICE, PRP_DOC,
 			PRP_COMMENT, ORG_ID, ORG_PSEDO
 				--, TX_ID, TX_PERCENT, TX_NAME, TX_CAPTION
-		FROM 
+		FROM
 			dbo.PrimaryPayTable INNER JOIN
 			dbo.DistrView WITH(NOEXPAND) ON PRP_ID_DISTR = DIS_ID LEFT OUTER JOIN
 			dbo.OrganizationTable ON ORG_ID = PRP_ID_ORG
@@ -45,9 +45,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

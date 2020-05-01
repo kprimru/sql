@@ -9,11 +9,11 @@ GO
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
 Описание:	  Возвращает 0, если технологический признак
-               можно удалить, 
+               можно удалить,
                -1 в противном случае
 */
 
-ALTER PROCEDURE [dbo].[TECHNOL_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_TRY_DELETE]
 	@technoltypeid SMALLINT
 AS
 BEGIN
@@ -69,9 +69,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

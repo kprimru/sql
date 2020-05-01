@@ -9,7 +9,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_SPEC_FINANCING_SELECT]
@@ -40,7 +40,7 @@ BEGIN
 					FROM dbo.DistrFinancingView
 					WHERE DSS_REPORT = 1
 						AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
-						AND CD_ID_CLIENT = CL_ID				
+						AND CD_ID_CLIENT = CL_ID
 				)
 			ORDER BY CL_PSEDO
 		ELSE
@@ -61,9 +61,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

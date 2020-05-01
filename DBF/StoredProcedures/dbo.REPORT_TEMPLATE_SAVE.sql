@@ -9,8 +9,8 @@ GO
 /*
 Автор:			Денисов Алексей
 Дата создания:	20.10.2008
-Описание:		Сохранить отчет. Если отчет с 
-					указанным именем уже существует, 
+Описание:		Сохранить отчет. Если отчет с
+					указанным именем уже существует,
 					он будет перезаписан
 Дата изменения:	03.03.2009
 Описание:		Строка текста заменена на
@@ -33,7 +33,7 @@ ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
+
     DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -45,15 +45,15 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-    
+
 		DECLARE @reporttemplateid SMALLINT
 
 		SET @reporttemplateid = NULL
 
-		SELECT @reporttemplateid = RT_ID 
+		SELECT @reporttemplateid = RT_ID
 		FROM dbo.ReportTemplateTable
 		WHERE RT_NAME = @reporttemplatename
-	    
+
 		IF @reporttemplateid IS NULL
 			BEGIN
 				INSERT INTO dbo.ReportTemplateTable (
@@ -89,14 +89,14 @@ BEGIN
 							RT_TOTALCOUNT=@totalcount
 				WHERE RT_ID = @reporttemplateid
 			END
- 
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

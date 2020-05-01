@@ -11,8 +11,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_ROLE_DENY]
@@ -59,20 +59,20 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO #user 
+		INSERT INTO #user
 				EXEC sp_helpuser @user
 
 		DECLARE @loginname VARCHAR(100)
 		SELECT DISTINCT @loginname = LoginName FROM #user
-		
+
 		IF OBJECT_ID('tempdb..#user') IS NOT NULL
 			DROP TABLE #user
 
 
-		DECLARE R CURSOR LOCAL FOR 
-			SELECT a.ROLE_NAME 
-			FROM 
-				#role a INNER JOIN 
+		DECLARE R CURSOR LOCAL FOR
+			SELECT a.ROLE_NAME
+			FROM
+				#role a INNER JOIN
 				dbo.RoleTable b ON a.ROLE_NAME = b.ROLE_NAME
 
 		DECLARE @rolename VARCHAR(100)
@@ -80,13 +80,13 @@ BEGIN
 		OPEN R
 
 		FETCH NEXT FROM R INTO @rolename
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC sp_droprolemember @rolename, @user
 
 			IF UPPER(@rolename) = 'RL_BULK'
-			BEGIN			
+			BEGIN
 				EXEC sp_dropsrvrolemember @loginname, 'bulkadmin'
 			END
 			ELSE IF UPPER(@rolename) = 'RL_USER'
@@ -102,17 +102,17 @@ BEGIN
 
 		CLOSE R
 		DEALLOCATE R
-		
+
 		IF OBJECT_ID('tempdb..#role') IS NOT NULL
 			DROP TABLE #role
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

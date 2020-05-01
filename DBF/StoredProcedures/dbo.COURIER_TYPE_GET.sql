@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[COURIER_TYPE_GET] 
-	@id SMALLINT  
+ALTER PROCEDURE [dbo].[COURIER_TYPE_GET]
+	@id SMALLINT
 AS
 
 BEGIN
@@ -31,16 +31,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT COT_NAME, COT_ID, COT_ACTIVE
-		FROM dbo.CourierTypeTable 
-		WHERE COT_ID = @id 
+		FROM dbo.CourierTypeTable
+		WHERE COT_ID = @id
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

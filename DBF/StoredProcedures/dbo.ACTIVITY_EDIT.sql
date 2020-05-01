@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTIVITY_EDIT] 
+ALTER PROCEDURE [dbo].[ACTIVITY_EDIT]
 	@id SMALLINT,
 	@name VARCHAR(100),
 	@active BIT = 1
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.ActivityTable 
+		UPDATE dbo.ActivityTable
 		SET AC_NAME = @name,
 			AC_ACTIVE = @active
 		WHERE AC_ID = @id
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

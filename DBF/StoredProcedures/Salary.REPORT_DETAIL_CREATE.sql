@@ -23,14 +23,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			COUR_ID, COUR_NAME, KGS, (1 - ISNULL(COEF, 0)) AS COEF,
-			CT_NAME + ' (' + CASE 
+			CT_NAME + ' (' + CASE
 				WHEN CT_NAME = (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = a.COUR_ID) THEN 'ац'
 				WHEN CT_NAME <> (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = a.COUR_ID) THEN 'ср'
 				ELSE '-'
-			END + ')' AS CT_NAME, 
-			CL_NAME, CLT_NAME, SYS_COUNT, 
+			END + ')' AS CT_NAME,
+			CL_NAME, CLT_NAME, SYS_COUNT,
 			CLIENT_TOTAL_PRICE, TO_COUNT, TO_PRICE, CPS_PERCENT, CPS_MIN, CPS_MAX, KOB, TO_CALC,
 			CPS_PAY, CONVERT(INT, PAY) AS PAY, TO_PAY_RESULT, TO_PAY_HANDS,
 			(
@@ -39,15 +39,15 @@ BEGIN
 				WHERE z.ID_SALARY = c.ID
 			) AS COUR_COUNT,
 			f.PR_ID, f.PR_NAME, UPDATES
-		FROM 
+		FROM
 			dbo.CourierTable a
 			INNER JOIN
 				(
 					SELECT Item
 					FROM dbo.GET_TABLE_FROM_LIST(@COURIER, ',')
-					
+
 					UNION
-					
+
 					SELECT COUR_ID
 					FROM dbo.CourierTable
 					WHERE COUR_ID_TYPE = 2 AND COUR_ACTIVE = 1
@@ -57,16 +57,16 @@ BEGIN
 			INNER JOIN dbo.ClientTypeTable e ON e.CLT_ID = d.ID_TYPE
 			INNER JOIN dbo.PeriodTable f ON f.PR_ID = d.ID_PERIOD
 		WHERE c.ID_PERIOD = @PERIOD
-		
+
 		ORDER BY COUR_NAME, CT_NAME, CL_NAME, TO_NAME
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

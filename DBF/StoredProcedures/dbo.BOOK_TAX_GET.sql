@@ -25,26 +25,26 @@ BEGIN
 
 		IF @TYPE = N'SALE'
 			SELECT TX_ID, TX_CAPTION, TX_PERCENT, SUM(S_NDS) AS S_NDS, SUM(S_BEZ_NDS) AS S_BEZ_NDS, SUM(S_ALL) AS S_ALL
-			FROM 
+			FROM
 				dbo.TaxTable a
-				LEFT OUTER JOIN dbo.BookSaleDetail b ON a.TX_ID = b.ID_TAX AND b.ID_SALE = @ID		
+				LEFT OUTER JOIN dbo.BookSaleDetail b ON a.TX_ID = b.ID_TAX AND b.ID_SALE = @ID
 			GROUP BY TX_ID, TX_CAPTION, TX_PERCENT
 			ORDER BY TX_PERCENT DESC
 		ELSE IF @TYPE = N'PURCHASE'
 			SELECT TX_ID, TX_CAPTION, TX_PERCENT, SUM(S_NDS) AS S_NDS, SUM(S_BEZ_NDS) AS S_BEZ_NDS, SUM(S_ALL) AS S_ALL
-			FROM 
+			FROM
 				dbo.TaxTable a
 				LEFT OUTER JOIN dbo.BookPurchaseDetail b ON a.TX_ID = b.ID_TAX AND b.ID_PURCHASE = @ID
 			GROUP BY TX_ID, TX_CAPTION, TX_PERCENT
 			ORDER BY TX_PERCENT DESC
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

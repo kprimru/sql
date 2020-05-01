@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-ALTER PROCEDURE [dbo].[TO_ADDRESS_GET] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_GET]
 	@taid INT
 AS
 BEGIN
@@ -28,18 +28,18 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 				TA_ID, TA_INDEX, TA_HOME, ST_ID, ST_NAME
 		FROM dbo.TOAddressView
-		WHERE TA_ID = @taid	
+		WHERE TA_ID = @taid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

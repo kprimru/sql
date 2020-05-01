@@ -7,11 +7,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ACTIVITY_GET] 
-	@activityid SMALLINT  
+ALTER PROCEDURE [dbo].[ACTIVITY_GET]
+	@activityid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT AC_ID, AC_NAME, AC_ACTIVE
-		FROM dbo.ActivityTable 
-		WHERE AC_ID = @activityid           
+		FROM dbo.ActivityTable
+		WHERE AC_ID = @activityid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

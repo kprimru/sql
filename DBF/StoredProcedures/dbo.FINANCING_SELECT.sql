@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[FINANCING_SELECT] 
+ALTER PROCEDURE [dbo].[FINANCING_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -28,8 +28,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT FIN_ID, FIN_NAME 
-		FROM dbo.FinancingTable 
+		SELECT FIN_ID, FIN_NAME
+		FROM dbo.FinancingTable
 		WHERE FIN_ACTIVE = ISNULL(@active, FIN_ACTIVE)
 		ORDER BY FIN_NAME
 
@@ -37,9 +37,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_EDIT]
@@ -38,24 +38,24 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.ClientDocumentSettingsTable
-		SET	CDS_ID_CLIENT = @clientid, 
-			CDS_ACT_CONTRACT = @actcontract, 
+		SET	CDS_ID_CLIENT = @clientid,
+			CDS_ACT_CONTRACT = @actcontract,
 			CDS_ACT_POS = @actpos,
-			CDS_ACT_POS_F = @actposf, 
-			CDS_ACT_NAME = @actname, 
-			CDS_ACT_NAME_F = @actnamef, 
-			CDS_BILL_REST = @billrest, 
-			CDS_INS_CONTRACT = @inscontract, 
-			CDS_INS_NAME = @insname		
-		WHERE CDS_ID = @cdsid				
-		
+			CDS_ACT_POS_F = @actposf,
+			CDS_ACT_NAME = @actname,
+			CDS_ACT_NAME_F = @actnamef,
+			CDS_BILL_REST = @billrest,
+			CDS_INS_CONTRACT = @inscontract,
+			CDS_INS_NAME = @insname
+		WHERE CDS_ID = @cdsid
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

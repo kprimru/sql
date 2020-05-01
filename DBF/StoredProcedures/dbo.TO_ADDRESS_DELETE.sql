@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-ALTER PROCEDURE [dbo].[TO_ADDRESS_DELETE] 
+ALTER PROCEDURE [dbo].[TO_ADDRESS_DELETE]
 	@toadid INT
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE 
-		FROM dbo.TOAddressTable 
+		DELETE
+		FROM dbo.TOAddressTable
 		WHERE TA_ID = @toadid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -24,9 +24,9 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT @ID = ID
-		FROM 
+		FROM
 			(
 				SELECT ID, ROW_NUMBER() OVER(ORDER BY DATE) AS RN
 				FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
@@ -40,7 +40,7 @@ BEGIN
 				DISTR		INT,
 				COMP		TINYINT,
 				MON			SMALLDATETIME
-			)	
+			)
 
 		IF @RN IS NOT NULL
 			INSERT INTO @CLAIM(SYS_REG, DISTR, COMP, MON)
@@ -50,24 +50,24 @@ BEGIN
 		ELSE
 		BEGIN
 			DECLARE @XML XML
-			
+
 			SET @XML = CAST(@DATA AS XML)
-			
+
 			INSERT INTO @CLAIM(SYS_REG, DISTR, COMP, MON)
-				SELECT 
-					c.value('s[1]', 'NVARCHAR(64)'), 
-					c.value('d[1]', 'INT'), 
-					c.value('c[1]', 'INT'), 
+				SELECT
+					c.value('s[1]', 'NVARCHAR(64)'),
+					c.value('d[1]', 'INT'),
+					c.value('c[1]', 'INT'),
 					CONVERT(SMALLDATETIME, c.value('m[1]', 'NVARCHAR(64)'), 112)
 				FROM @XML.nodes('/act_claim/i') AS a(c)
 		END
-					
+
 
 		DECLARE @ERR_TEXT NVARCHAR(MAX)
-		
-		SELECT @ERR_TEXT = 
+
+		SELECT @ERR_TEXT =
 			(
-				SELECT ERR_TXT + CHAR(10) 
+				SELECT ERR_TXT + CHAR(10)
 				FROM
 					(
 						SELECT
@@ -75,19 +75,19 @@ BEGIN
 								WHEN NOT EXISTS
 									(
 										SELECT *
-										FROM dbo.ClientDistrView c 
+										FROM dbo.ClientDistrView c
 										WHERE SYS_REG_NAME = SYS_REG AND DISTR = DIS_NUM AND DIS_COMP_NUM = COMP
 									) THEN 'Отсутствует дистрибутив у клиента (' + ISNULL(DIS_STR, SYS_REG_NAME + CONVERT(NVARCHAR(32), DIS_NUM)) + ')'
 								WHEN NOT EXISTS
 									(
 										SELECT *
 										FROM dbo.BillDistrView z
-										WHERE BL_ID_CLIENT = CD_ID_CLIENT 
-											AND DIS_ID = CD_ID_DISTR 
+										WHERE BL_ID_CLIENT = CD_ID_CLIENT
+											AND DIS_ID = CD_ID_DISTR
 											AND z.PR_ID = b.PR_ID
 									) THEN 'Отсутствует счет начисл. у клиента (' + CL_PSEDO + ') за (' + CONVERT(NVARCHAR(32), PR_DATE, 104) + ') (' + DIS_STR + ')'
 							END AS ERR_TXT
-						FROM 
+						FROM
 							--[PC275-SQL\ALPHA].ClientDB.dbo.ActCalcDetail a
 							@CLAIM a
 							INNER JOIN dbo.PeriodTable b ON PR_DATE = MON
@@ -97,21 +97,21 @@ BEGIN
 					) AS o_O
 				WHERE ERR_TXT IS NOT NULL
 				FOR XML PATH('')
-			) 
-			
+			)
+
 		IF ISNULL(REPLACE(@ERR_TEXT, CHAR(10), N''), N'') = N''
 			SELECT '' AS ERR_TXT
 			WHERE 1 = 0
 		ELSE
 			SELECT @ERR_TEXT AS ERR_TXT
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHANGE]
@@ -16,8 +16,8 @@ ALTER PROCEDURE [dbo].[CLIENT_DISTR_STATUS_CHANGE]
 	@status SMALLINT
 AS
 BEGIN
-	SET NOCOUNT ON;	
-	
+	SET NOCOUNT ON;
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -29,23 +29,23 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		UPDATE dbo.ClientDistrTable
-		SET							
+		SET
 			CD_ID_SERVICE = @STATUS
 		WHERE CD_ID IN
 			(
 				SELECT *
 				FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
 			)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

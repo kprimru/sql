@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[VERIFY_DEFAULT_GET]
@@ -29,14 +29,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ORG_ID, ORG_SHORT_NAME, dbo.GET_SETTING('ORG_BUH') AS BUH_NAME,
-			CL_FULL_NAME, 
+			CL_FULL_NAME,
 			(
 				SELECT SUM(SL_REST)
-				FROM 
+				FROM
 					(
-						SELECT 
+						SELECT
 							ISNULL((
 								SELECT TOP 1 SL_REST
 								FROM dbo.SaldoTable b
@@ -45,7 +45,7 @@ BEGIN
 									AND SL_DATE < @date
 								ORDER BY SL_DATE DESC, SL_TP DESC, SL_ID DESC
 								), 0) AS SL_REST
-						FROM 
+						FROM
 							(
 								SELECT DISTINCT SL_ID_DISTR
 								FROM dbo.SaldoTable
@@ -53,18 +53,18 @@ BEGIN
 							) AS a
 					) AS O_O
 			) AS SL_REST
-		FROM 
+		FROM
 			dbo.ClientTable LEFT OUTER JOIN
 			dbo.OrganizationTable ON CL_ID_ORG = ORG_ID
 		WHERE CL_ID = @clientid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

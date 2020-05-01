@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_SELECT] 
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_SELECT]
 	@clientid INT
 AS
 BEGIN
@@ -32,14 +32,14 @@ BEGIN
 		FROM dbo.ClientAddressView
 		WHERE CA_ID_CLIENT = @clientid
 		ORDER BY AT_NAME, ST_NAME
-    
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -32,24 +32,24 @@ BEGIN
 	BEGIN TRY
 
 		UPDATE dbo.PriceSystemType
-		SET PST_ID_SYSTEM = @SYS_ID, 
-			PST_ID_PRICE = @PT_ID, 
-			PST_ID_TYPE = @SST_ID, 
-			PST_COEF = @COEF, 
-			PST_FIXED = @FIXED, 
-			PST_DISCOUNT = @DISC, 
+		SET PST_ID_SYSTEM = @SYS_ID,
+			PST_ID_PRICE = @PT_ID,
+			PST_ID_TYPE = @SST_ID,
+			PST_COEF = @COEF,
+			PST_FIXED = @FIXED,
+			PST_DISCOUNT = @DISC,
 			PST_START = @START,
 			PST_END = @END,
 			PST_ACTIVE = @ACTIVE
 		WHERE PST_ID = @PST_ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -35,14 +35,14 @@ BEGIN
 				SCP_ID_NET, SCP_ID_TECH, SCP_DISTR, SCP_COMP, SCP_COMMENT
 			)
 			VALUES (@SH_ID, @PR_ID, @SYS_ID, @SST_ID, @SN_ID, @TT_ID, @DISTR, @COMP, @COMMENT)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

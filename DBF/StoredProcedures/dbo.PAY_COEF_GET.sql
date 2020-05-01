@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[PAY_COEF_GET] 
-	@id SMALLINT  
+ALTER PROCEDURE [dbo].[PAY_COEF_GET]
+	@id SMALLINT
 AS
 
 BEGIN
@@ -31,16 +31,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT PC_START, PC_END, PC_VALUE, PC_ID, PC_ACTIVE
-		FROM dbo.PayCoefTable 
-		WHERE PC_ID = @id 
+		FROM dbo.PayCoefTable
+		WHERE PC_ID = @id
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

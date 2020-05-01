@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AREA_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[AREA_TRY_DELETE]
 	@areaid SMALLINT
 AS
 BEGIN
@@ -35,23 +35,23 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		IF EXISTS(SELECT * FROM dbo.CityTable WHERE CT_ID_AREA = @areaid) 
+		IF EXISTS(SELECT * FROM dbo.CityTable WHERE CT_ID_AREA = @areaid)
 			BEGIN
 				SET @res = 1
-				SET @txt = @txt + 'Данный район указан у одного или нескольких городов. ' + 
+				SET @txt = @txt + 'Данный район указан у одного или нескольких городов. ' +
 								  'Удаление невозможно, пока выбранный район будет указан хотя ' +
 								  'бы у одного города.'
 			END
 
 		SELECT @res AS RES, @txt AS TXT
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

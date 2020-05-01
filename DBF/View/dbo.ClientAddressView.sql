@@ -17,7 +17,7 @@ FROM
     dbo.AddressTypeTable	AS b ON a.CA_ID_TYPE	= b.AT_ID LEFT OUTER JOIN
     dbo.StreetTable			AS c ON a.CA_ID_STREET	= c.ST_ID LEFT OUTER JOIN
     dbo.CityTable			AS d ON c.ST_ID_CITY	= d.CT_ID
-	
+
 	LEFT OUTER JOIN
     dbo.AreaTable ON AR_ID = d.CT_ID_AREA LEFT OUTER JOIN
     dbo.RegionTable ON RG_ID = d.CT_ID_RG LEFT OUTER JOIN

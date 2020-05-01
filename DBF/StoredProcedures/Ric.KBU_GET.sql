@@ -31,14 +31,14 @@ BEGIN
 			SELECT RK_TOTAL AS KBU
 			FROM Ric.KBU
 			WHERE RK_ID_QUARTER = dbo.PeriodQuarter(@PR_ID)
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

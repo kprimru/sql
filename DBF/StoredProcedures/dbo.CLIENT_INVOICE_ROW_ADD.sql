@@ -22,11 +22,11 @@ ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_ADD]
 	@inrunit VARCHAR(100),
 	@inrcount smallint,
 	@period smallint = null
-	
+
 AS
 BEGIN
-	SET NOCOUNT ON;	
-	
+	SET NOCOUNT ON;
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -38,37 +38,37 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
-				ISNULL(@INR_GOOD + ' ', '') + ISNULL(@INR_NAME + ' ', '') + 
-				CASE ISNULL(@inrcount, 1) 
+				ISNULL(@INR_GOOD + ' ', '') + ISNULL(@INR_NAME + ' ', '') +
+				CASE ISNULL(@inrcount, 1)
 					WHEN 1 THEN ''
 					ELSE ' x' + CONVERT(VARCHAR(20), @inrcount) + ' - '
 				END + dbo.MoneyFormat(@INR_SALL)
-			FROM 
+			FROM
 				dbo.InvoiceSaleTable a
 			WHERE INS_ID = @INR_ID_INVOICE
-		
+
 		INSERT INTO dbo.InvoiceRowTable
 			(INR_ID_INVOICE, INR_ID_DISTR, INR_GOOD, INR_NAME, INR_SUM, INR_ID_TAX, INR_TNDS, INR_SNDS, INR_SALL, INR_UNIT, INR_COUNT, INR_ID_PERIOD) VALUES
 			(@INR_ID_INVOICE, @INR_ID_DISTR, @INR_GOOD, @INR_NAME, @INR_SUM, @INR_ID_TAX, @INR_TNDS, @INR_SNDS, @INR_SALL, @inrunit, @inrcount, @period)
 
 		DECLARE @newiden int
 		SET @newiden = SCOPE_IDENTITY()
-		
+
 		SELECT @newiden AS NEW_IDEN
-		
+
 		EXEC dbo.BOOK_SALE_PROCESS @INR_ID_INVOICE
 		EXEC dbo.BOOK_PURCHASE_PROCESS @INR_ID_INVOICE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

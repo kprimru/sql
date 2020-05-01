@@ -8,11 +8,11 @@ GO
 
 /*
 Автор:			Денисов Алексей
-Описание:		
+Описание:
 Дата:			16.07.2009
 */
 
-ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_DELETE] 
+ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_DELETE]
 	@atlid INT
 AS
 BEGIN
@@ -36,9 +36,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,9 +10,9 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_TYPE_GET]
@@ -32,19 +32,19 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		SELECT INT_ID, INT_NAME, INT_PSEDO, INT_SALE, INT_BUY, INT_ACTIVE
-		FROM 
-			dbo.InvoiceTypeTable 
+		FROM
+			dbo.InvoiceTypeTable
 		WHERE INT_ID = @intid
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

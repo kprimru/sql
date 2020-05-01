@@ -7,7 +7,7 @@ GO
 ALTER FUNCTION [dbo].[MoneyMin]
 (
 	@A	MONEY,
-	@B	MONEY	
+	@B	MONEY
 )
 RETURNS MONEY
 AS

@@ -9,7 +9,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[AUDIT_FINANCING_SELECT]
@@ -36,13 +36,13 @@ BEGIN
 		FROM dbo.AuditFinancingView
 		/*
 		UNION ALL
-		
+
 		SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не сформирован счет по начислению за текущий месяц' AS FIN_ERROR
-		FROM 
+		FROM
 			dbo.ClientTable INNER JOIN
 			dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN
 			dbo.DistrView ON DIS_ID = CD_ID_DISTR INNER JOIN
-			dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN 
+			dbo.DistrServiceStatusTable ON DSS_ID = CD_ID_SERVICE INNER JOIN
 			dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID INNER JOIN
 			dbo.PeriodTable ON DF_ID_PERIOD = PR_ID
 		WHERE PR_DATE <= GETDATE() AND DSS_REPORT = 1 AND SYS_ID_SO = 1 AND DF_MON_COUNT <> 0
@@ -50,21 +50,21 @@ BEGIN
 				(
 					SELECT *
 					FROM dbo.BillIXView WITH(NOEXPAND)
-					WHERE BD_ID_DISTR = DIS_ID 
+					WHERE BD_ID_DISTR = DIS_ID
 						AND BL_ID_CLIENT = CL_ID
 						AND BL_ID_PERIOD = @PR
 				)
 		*/
-		
+
 		ORDER BY CL_PSEDO, CL_ID, DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

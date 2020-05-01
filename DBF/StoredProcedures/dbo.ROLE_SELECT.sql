@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[ROLE_SELECT] 
+ALTER PROCEDURE [dbo].[ROLE_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
@@ -28,17 +28,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ROLE_ID, ROLE_NAME, ROLE_NOTE 
-		FROM dbo.RoleTable 
+		SELECT ROLE_ID, ROLE_NAME, ROLE_NOTE
+		FROM dbo.RoleTable
 		ORDER BY ROLE_NAME
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

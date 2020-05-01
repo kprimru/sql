@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[HOST_GET] 
+ALTER PROCEDURE [dbo].[HOST_GET]
 	@hostid SMALLINT = NULL
 AS
 BEGIN
@@ -29,16 +29,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT HST_ID, HST_NAME, HST_REG_NAME, HST_ACTIVE
-		FROM dbo.HostTable 
+		FROM dbo.HostTable
 		WHERE HST_ID = @hostid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

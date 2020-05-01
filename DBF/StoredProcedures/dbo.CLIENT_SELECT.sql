@@ -8,15 +8,15 @@ GO
 
 /*
 Автор:         Денисов Алексей
-Описание:      
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CLIENT_SELECT] 	
+ALTER PROCEDURE [dbo].[CLIENT_SELECT] 
 	@active BIT = NULL
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON	
+	SET NOCOUNT ON
 
 	DECLARE
 		@DebugError		VarChar(512),
@@ -31,7 +31,7 @@ BEGIN
 	BEGIN TRY
 
 		IF DB_ID('DBF_NAH') IS NOT NULL
-			SELECT 
+			SELECT
 				CL_ID, CL_PSEDO, CL_FULL_NAME, (SELECT COUNT(*) FROM DBF_NAH.dbo.ClientTable z WHERE z.CL_NUM = a.CL_NUM) AS CL_NAH,
 				UNKNOWN_FINANCING
 			FROM dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
@@ -40,14 +40,14 @@ BEGIN
 			SELECT CL_ID, CL_PSEDO, CL_FULL_NAME, 0 AS CL_NAH, UNKNOWN_FINANCING
 			FROM dbo.ClientTable a LEFT OUTER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
 			ORDER BY CL_PSEDO
-	
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

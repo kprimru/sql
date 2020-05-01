@@ -24,14 +24,14 @@ BEGIN
 
 		EXEC dbo.BOOK_SALE_PROCESS @ID
 		EXEC dbo.BOOK_PURCHASE_PROCESS @ID
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -27,26 +27,26 @@ BEGIN
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
 			DROP TABLE #period
 
-		CREATE TABLE #period 
+		CREATE TABLE #period
 			(
 				TPR_ID SMALLINT PRIMARY KEY,
 				TX_RATE	DECIMAL(8,4)
 			)
 
 		IF @PR_MIN IS NOT NULL
-			INSERT INTO #period(TPR_ID, TX_RATE) 
+			INSERT INTO #period(TPR_ID, TX_RATE)
 				SELECT PR_ID, TX_TAX_RATE
-				FROM 
+				FROM
 					dbo.PeriodTable
 					INNER JOIN Subhost.SubhostCalc ON PR_ID = SHC_ID_PERIOD
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
-				WHERE SHC_ID_SUBHOST = @SH_ID 
+				WHERE SHC_ID_SUBHOST = @SH_ID
 					AND PR_DATE >= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_MIN)
 					AND PR_DATE >= '20111101'
 		ELSE
-			INSERT INTO #period(TPR_ID, TX_RATE) 
+			INSERT INTO #period(TPR_ID, TX_RATE)
 				SELECT PR_ID, TX_TAX_RATE
-				FROM 
+				FROM
 					dbo.GET_TABLE_FROM_LIST(@PR_LIST, ',')
 					INNER JOIN dbo.PeriodTable ON PR_ID = Item
 					CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
@@ -54,10 +54,10 @@ BEGIN
 
 		SELECT
 			TX_RATE,
-			SCR_ID_PERIOD AS SHC_ID_PERIOD, PR_NAME, 	
+			SCR_ID_PERIOD AS SHC_ID_PERIOD, PR_NAME, 
 			SCR_PAPPER AS SHC_PAPPER,
 			SCR_TRAFFIC AS SHC_TRAFFIC, SCR_DIU AS SHC_DIU, SCR_DELIVERY AS SHC_DELIVERY,
-			SHC_INV_NUM, SHC_INV_DATE,		
+			SHC_INV_NUM, SHC_INV_DATE,
 			SCR_DELIVERY_SYS AS DELIVERY_SUM,
 			SCR_CNT AS SUP_COM_COUNT,
 			SCR_CNT_SPEC AS SUP_SPEC_COUNT,
@@ -79,17 +79,17 @@ BEGIN
 		WHERE SHC_ID_SUBHOST = @SH_ID
 		ORDER BY PR_DATE
 
-		
+
 		IF OBJECT_ID('tempdb..#period') IS NOT NULL
-			DROP TABLE #period	
-			
+			DROP TABLE #period
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

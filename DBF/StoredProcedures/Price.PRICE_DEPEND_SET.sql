@@ -45,10 +45,10 @@ BEGIN
 					FROM dbo.GET_TABLE_FROM_LIST(@NEW_NET, ',')
 				)
 			AND COEF <> @COEF
-		
+
 		INSERT INTO Price.PriceDepend(ID_OLD_PRICE, ID_NEW_PRICE, ID_OLD_SYS_TYPE, ID_NEW_SYS_TYPE, ID_OLD_NET, ID_NEW_NET, COEF)
 			SELECT @OLD_PRICE, @NEW_PRICE, @OLD_SYS, a.Item, @OLD_NET, b.Item, @COEF
-			FROM 
+			FROM
 				dbo.GET_TABLE_FROM_LIST(@NEW_SYS, ',') AS a
 				CROSS JOIN dbo.GET_TABLE_FROM_LIST(@NEW_NET, ',') AS b
 			WHERE NOT EXISTS
@@ -62,14 +62,14 @@ BEGIN
 						AND ID_OLD_NET = @OLD_NET
 						AND ID_NEW_NET = b.Item
 				)
-				
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

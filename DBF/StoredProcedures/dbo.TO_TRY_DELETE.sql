@@ -11,10 +11,10 @@ GO
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
 
-ALTER PROCEDURE [dbo].[TO_TRY_DELETE]	
-	@toid INT   
+ALTER PROCEDURE [dbo].[TO_TRY_DELETE]
+	@toid INT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
@@ -35,19 +35,19 @@ BEGIN
 		SET @res = 0
 		SET @txt = ''
 
-		IF EXISTS(SELECT * FROM dbo.TODistrTable WHERE TD_ID_TO = @toid) 
+		IF EXISTS(SELECT * FROM dbo.TODistrTable WHERE TD_ID_TO = @toid)
 		  BEGIN
 			SET @res = 1
 			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как ей занесены дистрибутивы.'
 		  END
 
-		IF EXISTS(SELECT * FROM dbo.TOTable WHERE TO_ID = @toid AND TO_REPORT = 1) 
+		IF EXISTS(SELECT * FROM dbo.TOTable WHERE TO_ID = @toid AND TO_REPORT = 1)
 		  BEGIN
 			SET @res = 1
 			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как она включена в отчет.'
 		  END
 
-		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_TO = @toid) 
+		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_TO = @toid)
 		  BEGIN
 			SET @res = 1
 			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как ей занесены сотрудники.'
@@ -59,9 +59,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

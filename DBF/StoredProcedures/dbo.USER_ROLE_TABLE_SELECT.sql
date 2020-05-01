@@ -5,11 +5,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
-ALTER PROCEDURE [dbo].[USER_ROLE_TABLE_SELECT]	
+ALTER PROCEDURE [dbo].[USER_ROLE_TABLE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -38,15 +38,15 @@ BEGIN
 
 		INSERT INTO #role EXEC sp_helprolemember
 
-		DELETE 
-		FROM #role 
+		DELETE
+		FROM #role
 		WHERE RUSER = 'dbo'
 
 		DECLARE @sql VARCHAR(MAX)
 
 		SET @sql = 'SELECT RNAME, ROLE_NOTE, '
 
-		SELECT @sql = @sql + '[' + RUSER + '],' 
+		SELECT @sql = @sql + '[' + RUSER + '],'
 		FROM
 			(
 				SELECT DISTINCT RUSER
@@ -56,20 +56,20 @@ BEGIN
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-		SET @sql = @sql + ' 
-							FROM 
+		SET @sql = @sql + '
+							FROM
 								(
 									SELECT ROLE_NOTE, RUSER, RNAME
-									FROM 
+									FROM
 										#role INNER JOIN
 										dbo.RoleTable ON ROLE_NAME = #role.RNAME
 								) p
 							PIVOT
 								(
-									COUNT (RUser) 		
+									COUNT (RUser) 
 									FOR RUSER IN
 										( '
-		SELECT @sql = @sql + '[' + RUSER + '],' 
+		SELECT @sql = @sql + '[' + RUSER + '],'
 		FROM
 			(
 				SELECT DISTINCT RUSER
@@ -79,7 +79,7 @@ BEGIN
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-		SET @sql = @sql + ' 
+		SET @sql = @sql + '
 										)
 								) AS pvt
 							ORDER BY RNAME'
@@ -90,14 +90,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#role') IS NOT NULL
 			DROP TABLE #role
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

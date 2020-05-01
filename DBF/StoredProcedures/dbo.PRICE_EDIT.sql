@@ -12,7 +12,7 @@ GO
                 с указанным кодом
 */
 
-ALTER PROCEDURE [dbo].[PRICE_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_EDIT]
 	@priceid SMALLINT,
 	@pricename VARCHAR(50),
 	@pricetypeid SMALLINT,
@@ -35,7 +35,7 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PriceTable 
+		UPDATE dbo.PriceTable
 		SET PP_NAME = @pricename,
 			PP_ID_TYPE = @pricetypeid,
 			PP_COEF_MUL = @pricecoefmul,
@@ -47,9 +47,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

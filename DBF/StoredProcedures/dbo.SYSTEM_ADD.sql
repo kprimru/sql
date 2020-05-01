@@ -8,10 +8,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_ADD]
 	@prefix VARCHAR(20),
 	@name VARCHAR(250),
 	@shortname VARCHAR(50),
@@ -23,11 +23,11 @@ ALTER PROCEDURE [dbo].[SYSTEM_ADD]
 	@code_1c VARCHAR(50),
 	@code_1c2 VARCHAR(50),
 	--@weight INT,
-	@coef DECIMAL(8, 4),	
+	@coef DECIMAL(8, 4),
 	@IB	VARCHAR(10) = NULL,
 	@calc	DECIMAL(4, 2),
 	@active BIT,
-	@psedo VARCHAR(50) = NULL, 		
+	@psedo VARCHAR(50) = NULL, 
 	@returnvalue BIT = 1
 AS
 BEGIN
@@ -47,15 +47,15 @@ BEGIN
 
 		INSERT INTO dbo.SystemTable
 						(
-							SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, 
+							SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME,
 							SYS_REG_NAME, SYS_ID_HOST, SYS_ID_SO, SYS_ORDER,
 							SYS_REPORT, SYS_PSEDO, SYS_ACTIVE, SYS_1C_CODE, SYS_1C_CODE2, SYS_COEF,
 							SYS_IB, SYS_CALC
-						) 
-		VALUES 
+						)
+		VALUES
 				(
-					@prefix, @name, @shortname, @regname, 
-					@hostid, @soid, @order, @report, @psedo, 
+					@prefix, @name, @shortname, @regname,
+					@hostid, @soid, @order, @report, @psedo,
 					@active, @code_1c, @code_1c2, @coef, @IB, @calc
 				)
 
@@ -66,9 +66,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

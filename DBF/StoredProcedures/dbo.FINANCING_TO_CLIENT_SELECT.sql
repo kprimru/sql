@@ -23,8 +23,8 @@ BEGIN
 
 		DECLARE @XML VARCHAR(MAX)
 
-		--SET @XML = CONVERT(VARCHAR(MAX), '<?xml version="1.0" encoding="windows-1251"?><dbf_data>') + 
-		SET @XML = CONVERT(VARCHAR(MAX), '<dbf_data>') + 
+		--SET @XML = CONVERT(VARCHAR(MAX), '<?xml version="1.0" encoding="windows-1251"?><dbf_data>') +
+		SET @XML = CONVERT(VARCHAR(MAX), '<dbf_data>') +
 			+
 			CONVERT(VARCHAR(MAX),
 				(
@@ -49,19 +49,19 @@ BEGIN
 					WHERE SYS_REG_NAME <> '-'
 					ORDER BY SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE FOR XML PATH ('i'), ROOT('income')
 				)) + CONVERT(VARCHAR(MAX), '</dbf_data>')
-				
+
 		--SET @XML = REPLACE(@XML, '<i>', CHAR(13) + '	<i>')
 		--SET @XML = REPLACE(@XML, '</i>', '</i>')
-				
+
 		SELECT @XML AS DATA
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

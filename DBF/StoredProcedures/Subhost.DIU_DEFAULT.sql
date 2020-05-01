@@ -21,22 +21,22 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			SST_ID, SST_CAPTION,
 			NULL AS DISTR,
 			NULL AS SH_ID, NULL AS SH_CAPTION,
 			NULL AS COMMENT,
 			CONVERT(BIT, 0) AS UNREG
-		FROM dbo.SystemTypeTable 
+		FROM dbo.SystemTypeTable
 		WHERE SST_NAME = 'NCT'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

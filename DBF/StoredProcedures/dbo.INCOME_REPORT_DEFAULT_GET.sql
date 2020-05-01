@@ -5,11 +5,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
-ALTER PROCEDURE [dbo].[INCOME_REPORT_DEFAULT_GET]	
+ALTER PROCEDURE [dbo].[INCOME_REPORT_DEFAULT_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -29,14 +29,14 @@ BEGIN
 		SELECT ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
 		WHERE ORG_PSEDO = 'Базис'
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

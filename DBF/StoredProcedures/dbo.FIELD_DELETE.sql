@@ -11,7 +11,7 @@ GO
 Описание:	  Удалить поле из справочника полей
 */
 
-ALTER PROCEDURE [dbo].[FIELD_DELETE] 
+ALTER PROCEDURE [dbo].[FIELD_DELETE]
 	@fieldid INT
 AS
 BEGIN
@@ -35,9 +35,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

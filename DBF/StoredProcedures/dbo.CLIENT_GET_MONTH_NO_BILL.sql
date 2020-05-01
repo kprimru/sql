@@ -7,8 +7,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]
@@ -34,19 +34,19 @@ BEGIN
 		WHERE PR_DATE >
 				(
 					SELECT MAX(b.PR_DATE)
-					FROM 
+					FROM
 						dbo.PeriodTable b INNER JOIN
 						dbo.BillTable c ON c.BL_ID_PERIOD = b.PR_ID
-					WHERE BL_ID_CLIENT = @clientid					
-				)	
-				
+					WHERE BL_ID_CLIENT = @clientid
+				)
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

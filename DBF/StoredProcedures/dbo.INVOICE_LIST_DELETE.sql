@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_LIST_DELETE]
@@ -33,13 +33,13 @@ BEGIN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT b.INS_ID_CLIENT, b.INS_ID, 'INVOICE', 'Удаление с/ф', b.INS_DATA
-			FROM 
+			FROM
 				@list a
 				INNER JOIN dbo.InvoiceProtocolView b ON a.ID = b.INS_ID
 
-		DELETE 
-		FROM dbo.InvoiceRowTable 
-		WHERE INR_ID_INVOICE IN 
+		DELETE
+		FROM dbo.InvoiceRowTable
+		WHERE INR_ID_INVOICE IN
 			(
 				SELECT ID
 				FROM @list
@@ -77,7 +77,7 @@ BEGIN
 				FROM @list
 			)
 
-		DELETE 
+		DELETE
 		FROM dbo.BookSaleDetail
 		WHERE ID_SALE IN
 			(
@@ -89,7 +89,7 @@ BEGIN
 						FROM @list
 					)
 			)
-			
+
 		DELETE FROM dbo.BookPurchase
 		WHERE ID_INVOICE IN
 			(
@@ -100,8 +100,8 @@ BEGIN
 				SELECT ID
 				FROM @list
 			)
-			
-		DELETE 
+
+		DELETE
 		FROM dbo.BookPurchaseDetail
 		WHERE ID_PURCHASE IN
 			(
@@ -118,7 +118,7 @@ BEGIN
 						FROM @list
 					)
 			)
-			
+
 		DELETE FROM dbo.BookSale
 		WHERE ID_INVOICE IN
 			(
@@ -126,21 +126,21 @@ BEGIN
 				FROM @list
 			)
 
-		DELETE 
+		DELETE
 		FROM dbo.InvoiceSaleTable
 		WHERE INS_ID IN
 			(
 				SELECT ID
 				FROM @list
 			)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

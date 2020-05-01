@@ -8,14 +8,14 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 18.12.2008
-Описание:	  Добавить указанную систему 
-               в указанный прейскурант на 
-               указанный период с указанной 
+Описание:	  Добавить указанную систему
+               в указанный прейскурант на
+               указанный период с указанной
                стоимостью
 */
 
-ALTER PROCEDURE [dbo].[PRICE_SYSTEM_ADD]  
-	@pricetypeid SMALLINT, 
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_ADD]
+	@pricetypeid SMALLINT,
 	@periodid SMALLINT,
 	@systemid SMALLINT,
 	@price MONEY,
@@ -37,7 +37,7 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @pgdid IS NOT NULL	
+		IF @pgdid IS NOT NULL
 			INSERT INTO dbo.PriceSystemTable(PS_ID_PERIOD, PS_ID_TYPE, PS_ID_PGD, PS_PRICE)
 			VALUES (@periodid, @pricetypeid, @pgdid, @price)
 		ELSE
@@ -51,9 +51,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

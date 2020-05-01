@@ -10,8 +10,8 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[USER_ROLE_SELECT]
@@ -46,15 +46,15 @@ BEGIN
 				SID VARBINARY(1000)
 			)
 
-		INSERT INTO #user 
+		INSERT INTO #user
 			EXEC sp_helpuser @username
 
 		SELECT 1 AS HasRole, GroupName, ROLE_NOTE
-		FROM 
+		FROM
 			#user LEFT OUTER JOIN
 			dbo.RoleTable ON ROLE_NAME = GroupName
-		WHERE GroupName <> 'public' 
-			AND GroupName <> 'db_accessadmin' 
+		WHERE GroupName <> 'public'
+			AND GroupName <> 'db_accessadmin'
 			AND GroupName <> 'db_securityadmin'
 			AND GroupName <> 'db_backupoperator'
 			AND GroupName <> 'db_datareader'
@@ -70,8 +70,8 @@ BEGIN
 		SELECT 0 AS HasRole, ROLE_NAME, ROLE_NOTE
 		FROM dbo.RoleTable
 		WHERE NOT EXISTS(SELECT * FROM #user WHERE GroupName = ROLE_NAME)
-			AND ROLE_NAME <> 'public' 
-			AND ROLE_NAME <> 'db_accessadmin' 
+			AND ROLE_NAME <> 'public'
+			AND ROLE_NAME <> 'db_accessadmin'
 			AND ROLE_NAME <> 'db_securityadmin'
 			AND ROLE_NAME <> 'db_backupoperator'
 			AND ROLE_NAME <> 'db_datareader'
@@ -85,14 +85,14 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#user') IS NOT NULL
 			DROP TABLE #user
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

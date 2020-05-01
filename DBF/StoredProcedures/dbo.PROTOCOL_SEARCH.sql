@@ -30,12 +30,12 @@ BEGIN
 		SET @TXT = NULLIF(@TXT, '%%')
 		SET @USERS = NULLIF(@USERS, '')
 		SET @OPER = NULLIF(@OPER, '')
-		
+
 		DECLARE @toper TABLE
 			(
 				OP_NAME VARCHAR(128) PRIMARY KEY CLUSTERED
 			)
-			
+
 		DECLARE @tusers TABLE
 			(
 				US_NAME NVARCHAR(128) PRIMARY KEY CLUSTERED
@@ -45,14 +45,14 @@ BEGIN
 			INSERT INTO @tusers
 				SELECT *
 				FROM dbo.GET_STRING_TABLE_FROM_LIST(@USERS, ',')
-				
+
 		IF @OPER IS NOT NULL
 			INSERT INTO @toper
 				SELECT *
 				FROM dbo.GET_STRING_TABLE_FROM_LIST(@OPER, ',')
 
 		SELECT CL_ID, CL_PSEDO, ID_DOCUMENT, TP, OPER, TXT, USR_NAME, UPD_DATE
-		FROM 
+		FROM
 			dbo.FinancingProtocol
 			LEFT OUTER JOIN dbo.ClientTable ON CL_ID = ID_CLIENT
 		WHERE (UPD_DATE >= @BEGIN OR @BEGIN IS NULL)
@@ -63,14 +63,14 @@ BEGIN
 			AND (@OPER IS NULL OR OPER IN (SELECT OP_NAME FROM @toper))
 		ORDER BY UPD_DATE DESC, ID
 		OPTION (RECOMPILE)
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

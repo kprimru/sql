@@ -5,9 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_LIST_SELECT]
@@ -33,20 +33,20 @@ BEGIN
 
 		SELECT *
 		FROM dbo.InvoiceListView
-		WHERE 
+		WHERE
 			(INS_DATE >= @begindate OR @begindate IS NULL) AND
 			(INS_DATE <= @enddate OR @enddate IS NULL)  AND
 			(INS_NUM >= @beginnum OR @beginnum IS NULL) AND
 			(INS_NUM <= @endnum OR @endnum IS NULL)
 		ORDER BY INS_DATE, INS_NUM
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

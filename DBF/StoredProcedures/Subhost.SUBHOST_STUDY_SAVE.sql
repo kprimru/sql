@@ -25,28 +25,28 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-	
+
 		IF EXISTS
 			(
 				SELECT *
 				FROM Subhost.SubhostStudy
 				WHERE SS_ID_PERIOD = @PR_ID
 					AND SS_ID_SUBHOST = @SH_ID
-					AND SS_ID_LESSON = @LS_ID	
-			)		
+					AND SS_ID_LESSON = @LS_ID
+			)
 		BEGIN
 			UPDATE Subhost.SubhostStudy
 			SET SS_COUNT = @COUNT
 			WHERE SS_ID_PERIOD = @PR_ID
 				AND SS_ID_SUBHOST = @SH_ID
-				AND SS_ID_LESSON = @LS_ID					
+				AND SS_ID_LESSON = @LS_ID
 		END
 		ELSE
 		BEGIN
 			INSERT INTO Subhost.SubhostStudy(SS_ID_PERIOD, SS_ID_SUBHOST, SS_ID_LESSON, SS_COUNT)
 				SELECT @PR_ID, @SH_ID, @LS_ID, @COUNT
-		END		
-		
+		END
+
 		IF @PRICE IS NOT NULL
 		BEGIN
 			UPDATE Subhost.SubhostLessonPrice
@@ -56,15 +56,15 @@ BEGIN
 			IF @@ROWCOUNT = 0
 				INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
 					VALUES(@PR_ID, @LS_ID, @PRICE)
-		END	
-		
+		END
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

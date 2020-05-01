@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_FULL_SELECT]
 	@periodid SMALLINT,
@@ -82,11 +82,11 @@ BEGIN
 			--dbo.ContractDistrTable	D	ON	D.COD_ID_DISTR	= C.CO_ID	LEFT JOIN
 			dbo.ClientPersonalTable	E	ON	E.PER_ID_CLIENT	= B.CL_ID	LEFT JOIN
 			dbo.PositionTable		F	ON	E.PER_ID_POS	= F.POS_ID	LEFT JOIN
-			dbo.OrganizationTable	G	ON	B.CL_ID_ORG		= G.ORG_ID	LEFT JOIN		
-			
+			dbo.OrganizationTable	G	ON	B.CL_ID_ORG		= G.ORG_ID	LEFT JOIN
+
 			dbo.OrganizationCalc	J	ON  j.ORGC_ID		=	B.CL_ID_ORG_CALC LEFT JOIN
-			dbo.BankTable			H	ON	ISNULL(J.ORGC_ID_BANK, G.ORG_ID_BANK)	= H.BA_ID	
-			
+			dbo.BankTable			H	ON	ISNULL(J.ORGC_ID_BANK, G.ORG_ID_BANK)	= H.BA_ID
+
 
 		-- деталь
 		IF OBJECT_ID('tempdb..#detail') IS NOT NULL
@@ -115,18 +115,18 @@ BEGIN
 			AD_PAYED_PRICE
 
 		INTO #detail
-		FROM 
+		FROM
 			dbo.ActDistrTable		A									LEFT JOIN
 			dbo.ActTable			B	ON A.AD_ID_ACT	  = B.ACT_ID	LEFT JOIN
 			dbo.PeriodTable			C	ON A.AD_ID_PERIOD = C.PR_ID		INNER JOIN
 			dbo.DistrView			D WITH(NOEXPAND)	ON A.AD_ID_DISTR  = D.DIS_ID	LEFT JOIN
-			dbo.DistrDocumentView	Z	ON Z.DIS_ID		  = D.DIS_ID	INNER JOIN		
+			dbo.DistrDocumentView	Z	ON Z.DIS_ID		  = D.DIS_ID	INNER JOIN
 			dbo.SaleObjectTable		E	ON D.SYS_ID_SO	  = E.SO_ID		LEFT JOIN
 			dbo.TaxTable			F	ON E.SO_ID_TAX	  = F.TX_ID		LEFT JOIN
 			dbo.ContractDistrTable	H	ON H.COD_ID_DISTR = D.DIS_ID	LEFT JOIN
 			#master				G	ON H.COD_ID_CONTRACT = G.CO_ID
-		
-		WHERE 
+
+		WHERE
 			SYS_ID_SO = @soid AND DOC_PSEDO = 'ACT' AND DD_PRINT = 1
 	--		AND PR_ID = @periodid
 		--ORDER BY CL_PSEDO, CL_ID, CO_NUM, SYS_ORDER
@@ -166,14 +166,14 @@ BEGIN
 			DROP TABLE #master
 		IF OBJECT_ID('tempdb..#detail') IS NOT NULL
 			DROP TABLE #detail
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

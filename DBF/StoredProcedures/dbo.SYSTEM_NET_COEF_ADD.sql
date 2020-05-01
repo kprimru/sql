@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_ADD] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_ADD]
 	@NET		SMALLINT,
 	@PERIOD		SMALLINT,
 	@COEF		DECIMAL(8, 4),
@@ -36,7 +36,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE) 
+		INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE)
 			VALUES (@NET, @PERIOD, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE)
 
 		IF @RETURN = 1
@@ -60,9 +60,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

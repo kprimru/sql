@@ -21,17 +21,17 @@ BEGIN
 	SELECT @VKSP = Ric.VKSPGet(dbo.QuarterPeriod(dbo.QuarterDelta(@QR_ID, -2), 3), @PR_ID)
 
 	SELECT @WS = @COEF
-	
+
 	IF @VKSP / @WS <= 0.5
 		SET @RES = 0.5
 	ELSE IF ((@VKSP / @WS) < 1) AND ((@VKSP / @WS) > 0.5)
 		SET @RES = @VKSP / @WS
 	ELSE IF @VKSP / @WS >= 1
 		SET @RES = 1
-	ELSE 
+	ELSE
 		SET @RES = NULL
-	
+
 	SET @RES = ROUND(@RES, 2)
-	
+
 	RETURN @RES
 END

@@ -30,9 +30,9 @@ BEGIN
 		SELECT @PR_BEGIN = PR_DATE, @PR_END = PR_END_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PERIOD
-		
-		DECLARE @TP INT	
-		
+
+		DECLARE @TP INT
+
 		DECLARE INVOICE CURSOR LOCAL FOR
 			SELECT INS_ID
 			FROM dbo.InvoiceSaleTable
@@ -44,30 +44,30 @@ BEGIN
 						FROM dbo.InvoiceTypeTable
 						WHERE INT_PSEDO IN ('ACT', 'CONSIGNMENT')
 					)
-					
+
 		OPEN INVOICE
-		
+
 		DECLARE @INS INT
-		
+
 		FETCH NEXT FROM INVOICE INTO @INS
-		
+
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			EXEC dbo.BOOK_PURCHASE_PROCESS @INS
-			
+
 			FETCH NEXT FROM INVOICE INTO @INS
 		END
-		
+
 		CLOSE INVOICE
 		DEALLOCATE INVOICE
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

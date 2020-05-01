@@ -7,14 +7,14 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_PAY_ADD] 
+ALTER PROCEDURE [dbo].[CONTRACT_PAY_ADD]
 	@name VARCHAR(100),
 	@day TINYINT,
 	@month TINYINT,
-	@active BIT = 1,	
+	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
 BEGIN
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ContractPayTable(COP_NAME, COP_DAY, COP_MONTH, COP_ACTIVE) 
+		INSERT INTO dbo.ContractPayTable(COP_NAME, COP_DAY, COP_MONTH, COP_ACTIVE)
 		VALUES (@name, @day, @month, @active)
 
 		IF @returnvalue = 1
@@ -42,9 +42,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

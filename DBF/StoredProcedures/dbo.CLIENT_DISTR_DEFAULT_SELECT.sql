@@ -26,14 +26,14 @@ BEGIN
 		DECLARE @subhost SMALLINT
 
 		SELECT @service = RN_SERVICE, @subhost = RN_SUBHOST
-		FROM 
+		FROM
 			dbo.RegNodeTable INNER JOIN
 			dbo.DistrView WITH(NOEXPAND) ON SYS_REG_NAME = RN_SYS_NAME
-						AND DIS_NUM = RN_DISTR_NUM 
+						AND DIS_NUM = RN_DISTR_NUM
 						AND DIS_COMP_NUM = RN_COMP_NUM
 		WHERE DIS_ID = @distrid
 
-		IF @subhost = 1 
+		IF @subhost = 1
 			SELECT DSS_ID, DSS_NAME
 			FROM dbo.DistrServiceStatusTable
 			WHERE DSS_SUBHOST = 1
@@ -46,15 +46,15 @@ BEGIN
 			FROM dbo.DistrServiceStatusTable
 			WHERE DSS_ID_STATUS = 2
 		ELSE
-			SELECT 0 AS DSS_ID, '' AS DSS_NAME	
-			
+			SELECT 0 AS DSS_ID, '' AS DSS_NAME
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

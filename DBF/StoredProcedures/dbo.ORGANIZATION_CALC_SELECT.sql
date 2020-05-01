@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_SELECT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_SELECT]
     @active BIT = NULL
 AS
 BEGIN
@@ -22,10 +22,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 			ORGC_ID, ORGC_NAME, ORG_SHORT_NAME, BA_NAME, ORGC_ACCOUNT
-		FROM 
-			dbo.OrganizationCalc INNER JOIN 
+		FROM
+			dbo.OrganizationCalc INNER JOIN
 			dbo.OrganizationTable ON ORGC_ID_ORG = ORG_ID INNER JOIN
 			dbo.BankTable ON BA_ID = ORGC_ID_BANK
 		WHERE ORGC_ACTIVE = ISNULL(@active, ORGC_ACTIVE)
@@ -35,9 +35,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

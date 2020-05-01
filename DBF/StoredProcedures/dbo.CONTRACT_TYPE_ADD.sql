@@ -7,10 +7,10 @@ GO
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[CONTRACT_TYPE_ADD] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_ADD]
 	@contracttypename VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
@@ -31,7 +31,7 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ContractTypeTable(CTT_NAME, CTT_ACTIVE, CTT_OLD_CODE) 
+		INSERT INTO dbo.ContractTypeTable(CTT_NAME, CTT_ACTIVE, CTT_OLD_CODE)
 		VALUES (@contracttypename, @active, @oldcode)
 
 		IF @returnvalue = 1
@@ -41,9 +41,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

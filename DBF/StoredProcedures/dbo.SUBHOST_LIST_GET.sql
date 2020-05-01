@@ -29,18 +29,18 @@ BEGIN
 			ORDER BY SH_ORDER
 		ELSE
 			SELECT SH_ID, SH_SHORT_NAME
-			FROM 
+			FROM
 				dbo.SubhostTable INNER JOIN
 				dbo.GET_TABLE_FROM_LIST(@SH_ID, ',') ON Item = SH_ID
 			ORDER BY SH_ORDER
-			
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -10,7 +10,7 @@ GO
 Описание:	  Выбрать даанные о сотрудниках указанной ТО.
 */
 
-ALTER PROCEDURE [dbo].[TO_PERSONAL_SELECT] 
+ALTER PROCEDURE [dbo].[TO_PERSONAL_SELECT]
 	@toid INT
 AS
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
+		SELECT
 				TP_ID, (TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS TP_FIO,
 				TP_PHONE, POS_NAME, RP_NAME, TP_LAST
 		FROM dbo.TOPersonalView
@@ -39,9 +39,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

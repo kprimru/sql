@@ -22,14 +22,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 
-			SPS_ID, 
-			SYS_ID, SYS_SHORT_NAME, 
-			PR_ID, PR_DATE, 
-			PT_ID, PT_NAME, 
-			SH_ID, SH_SHORT_NAME, 
+		SELECT
+			SPS_ID,
+			SYS_ID, SYS_SHORT_NAME,
+			PR_ID, PR_DATE,
+			PT_ID, PT_NAME,
+			SH_ID, SH_SHORT_NAME,
 			SPS_PRICE
-		FROM 
+		FROM
 			dbo.SubhostPriceSystemTable INNER JOIN
 			dbo.SystemTable ON SPS_ID_SYSTEM = SYS_ID INNER JOIN
 			dbo.PriceTypeTable ON SPS_ID_TYPE = PT_ID INNER JOIN
@@ -37,14 +37,14 @@ BEGIN
 			dbo.PeriodTable ON SPS_ID_PERIOD = PR_ID
 		WHERE SPS_ACTIVE = ISNULL(@ACTIVE, SPS_ACTIVE)
 		ORDER BY PR_DATE DESC, SH_SHORT_NAME, SYS_ORDER
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 20.11.2008
-Описание:	  Изменить стоимость системы в 
+Описание:	  Изменить стоимость системы в
                прейскуранте
 */
 
-ALTER PROCEDURE [dbo].[PRICE_SYSTEM_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_SYSTEM_EDIT]
 	@pricesystemid INT,
 	@price MONEY
 AS
@@ -31,17 +31,17 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE dbo.PriceSystemTable 
-		SET PS_PRICE = @price    
+		UPDATE dbo.PriceSystemTable
+		SET PS_PRICE = @price
 		WHERE PS_ID = @pricesystemid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

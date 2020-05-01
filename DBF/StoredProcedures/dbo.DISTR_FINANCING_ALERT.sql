@@ -26,7 +26,7 @@ BEGIN
 			SET @DATE = DATEADD(MONTH, 1, GETDATE())
 
 		SELECT b.CL_ID, b.CL_PSEDO, DIS_STR, DF_FIXED_PRICE, DF_DISCOUNT, DF_END, SST_CAPTION, COUR_NAME
-		FROM 
+		FROM
 			dbo.DistrFinancingView a
 			INNER JOIN dbo.ClientTable b ON a.CD_ID_CLIENT = CL_ID
 			LEFT OUTER JOIN dbo.ClientCourView c ON c.CL_ID = b.CL_ID
@@ -35,14 +35,14 @@ BEGIN
 			AND ((DF_END <= @DATE) OR DF_END IS NULL)
 			AND DIS_STR NOT LIKE 'ÃÊ%'
 		ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, DIS_STR
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

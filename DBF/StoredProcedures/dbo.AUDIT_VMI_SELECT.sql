@@ -7,12 +7,12 @@ GO
 
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+Автор:
+Дата создания:  
+Описание:
 */
 
-ALTER PROCEDURE [dbo].[AUDIT_VMI_SELECT]	
+ALTER PROCEDURE [dbo].[AUDIT_VMI_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,12 +40,12 @@ BEGIN
 
 		INSERT INTO #temp
 			SELECT TO_ID, 'Установлены только дополнительные системы'
-			FROM 		
-				dbo.TOTable 
+			FROM 
+				dbo.TOTable
 			WHERE EXISTS
 					(
 						SELECT *
-						FROM 
+						FROM
 							dbo.DistrView WITH(NOEXPAND) INNER JOIN
 							dbo.TODistrTable ON TD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 							dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
@@ -54,7 +54,7 @@ BEGIN
 						WHERE TD_ID_TO = TO_ID AND
 							DIS_ACTIVE = 1 AND SYS_REG_NAME <> '-'
 							AND RN_SERVICE <> 2
-					) AND	
+					) AND
 				NOT EXISTS
 					(
 						SELECT *
@@ -68,15 +68,15 @@ BEGIN
 							SYS_REPORT = 1 AND SYS_REG_NAME <> '-'
 							AND RN_SERVICE <> 2
 					) AND TO_REPORT = 1
-				
-			
+
+
 		INSERT INTO #temp
 			SELECT TO_ID, 'Дистрибутив передан другому клиенту'
 			FROM dbo.TOTable
 			WHERE NOT EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.TODistrTable INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR LEFT OUTER JOIN
 						dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
@@ -92,18 +92,18 @@ BEGIN
 			WHERE EXISTS
 				(
 					SELECT *
-					FROM 
+					FROM
 						dbo.TODistrTable INNER JOIN
 						dbo.DistrView WITH(NOEXPAND) ON DIS_ID = TD_ID_DISTR
 					WHERE DIS_ACTIVE = 1 AND TD_ID_TO = TO_ID AND SYS_REG_NAME <> '-'
 						AND SYS_REPORT = 1
 				) AND TO_REPORT = 1
 
-		SELECT 
-			CL_ID, CL_FULL_NAME, 
+		SELECT
+			CL_ID, CL_FULL_NAME,
 			TO_ID, TO_NUM, TO_VMI_COMMENT,
 			TO_COMMENT AS TO_ERROR
-		FROM 
+		FROM
 			dbo.TOTable INNER JOIN
 			dbo.ClientTable ON CL_ID = TO_ID_CLIENT INNER JOIN
 			#temp ON TOID = TO_ID
@@ -116,9 +116,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END

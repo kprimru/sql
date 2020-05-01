@@ -8,11 +8,11 @@ GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 25.08.2008
-Описание:	  Возвращает ID вида деятельности 
-               с указанным названием. 
+Описание:	  Возвращает ID вида деятельности
+               с указанным названием.
 */
 
-ALTER PROCEDURE [dbo].[REGION_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[REGION_CHECK_NAME]
 	@regionname VARCHAR(100)
 AS
 BEGIN
@@ -38,9 +38,9 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		SET @DebugError = Error_Message();
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
-		
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
