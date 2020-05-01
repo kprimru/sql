@@ -4,34 +4,34 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Personal].[PERSONAL_SELECT]
+ALTER PROCEDURE [Personal].[PERSONAL_SELECT]
 	@FILTER		NVARCHAR(256),
 	@DISMISS	BIT,
 	@RC		INT	= NULL OUTPUT
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	BEGIN TRY
 		SELECT
-			a.ID, 
+			a.ID,
 			ISNULL(a.SURNAME + ' ', '') + ISNULL(a.NAME + ' ', '') + ISNULL(a.PATRON + ' ', '') AS FULL_NAME,
 			a.SHORT, a.SURNAME, a.NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT b.SHORT + ', '
-					FROM 
+					FROM
 						Personal.PersonalType b
 						INNER JOIN Personal.OfficePersonalType d ON d.ID_TYPE = b.ID
 					WHERE d.ID_PERSONAL = a.ID AND d.EDATE IS NULL
 					ORDER BY b.NAME FOR XML PATH('')
-				)), 1, 2, '')) AS TP_NAME, 
+				)), 1, 2, '')) AS TP_NAME,
 			c.SHORT AS MAN_NAME,
 			a.START_DATE, a.END_DATE,
 			e.principal_id AS US_ID, f.principal_id AS LG_ID
-		FROM	
-			Personal.OfficePersonal a			
+		FROM
+			Personal.OfficePersonal a
 			LEFT OUTER JOIN Personal.OfficePersonal c ON a.MANAGER = c.ID
 			LEFT OUTER JOIN sys.database_principals e ON e.name = a.login AND e.type IN ('U', 'S')
 			LEFT OUTER JOIN sys.server_principals f ON f.name = a.login AND f.type IN ('U', 'S')
@@ -48,23 +48,23 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			a.ID, 
+			a.ID,
 			ISNULL(a.SURNAME + ' ', '') + ISNULL(a.NAME + ' ', '') + ISNULL(a.PATRON + ' ', '') AS FULL_NAME,
 			a.SHORT, a.SURNAME, a.NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT b.NAME + ', '
-					FROM 
+					FROM
 						Personal.PersonalType b
 						INNER JOIN Personal.OfficePersonalType d ON d.ID_TYPE = b.ID
 					WHERE d.ID_PERSONAL = a.ID AND d.EDATE IS NULL
 					ORDER BY b.NAME FOR XML PATH('')
-				)), 1, 2, '')) AS TP_NAME, 
+				)), 1, 2, '')) AS TP_NAME,
 			c.SHORT AS MAN_NAME,
 			a.START_DATE, a.END_DATE,
 			e.principal_id AS US_ID, f.principal_id AS LG_ID
-		FROM	
-			Personal.OfficePersonal a			
+		FROM
+			Personal.OfficePersonal a
 			LEFT OUTER JOIN Personal.OfficePersonal c ON a.MANAGER = c.ID
 			LEFT OUTER JOIN sys.database_principals e ON e.name = a.login AND e.type IN ('U', 'S')
 			LEFT OUTER JOIN sys.server_principals f ON f.name = a.login AND f.type IN ('U', 'S')
@@ -88,7 +88,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -98,3 +98,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Personal].[PERSONAL_SELECT] TO rl_personal_r;
+GO

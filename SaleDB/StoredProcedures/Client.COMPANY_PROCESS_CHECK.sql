@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[COMPANY_PROCESS_CHECK]
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_CHECK]
 	@ID		NVARCHAR(MAX),
 	@TYPE	NVARCHAR(64)
 AS
@@ -13,74 +13,74 @@ BEGIN
 
 	BEGIN TRY
 		IF @TYPE = N'SALE'
-			SELECT 
+			SELECT
 				(
 					SELECT COUNT(*)
 					FROM Common.TableGUIDFromXML(@ID) a
 					WHERE NOT EXISTS
 						(
 							SELECT *
-							FROM Client.CompanyProcessSaleView b WITH(NOEXPAND) 
+							FROM Client.CompanyProcessSaleView b WITH(NOEXPAND)
 							WHERE b.ID = a.ID
 						)
 				) AS FREE_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						Common.TableGUIDFromXML(@ID) a
 						INNER JOIN Client.CompanyProcessSaleView b WITH(NOEXPAND) ON b.ID = a.ID
 				) AS PROCESS_COUNT
 		ELSE IF @TYPE = N'PHONE'
-			SELECT 
+			SELECT
 				(
 					SELECT COUNT(*)
 					FROM Common.TableGUIDFromXML(@ID) a
 					WHERE NOT EXISTS
 						(
 							SELECT *
-							FROM Client.CompanyProcessPhoneView b WITH(NOEXPAND) 
+							FROM Client.CompanyProcessPhoneView b WITH(NOEXPAND)
 							WHERE b.ID = a.ID
 						)
 				) AS FREE_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						Common.TableGUIDFromXML(@ID) a
 						INNER JOIN Client.CompanyProcessPhoneView b WITH(NOEXPAND) ON b.ID = a.ID
 				) AS PROCESS_COUNT
 		ELSE IF @TYPE = N'MANAGER'
-			SELECT 
+			SELECT
 				(
 					SELECT COUNT(*)
 					FROM Common.TableGUIDFromXML(@ID) a
 					WHERE NOT EXISTS
 						(
 							SELECT *
-							FROM Client.CompanyProcessManagerView b WITH(NOEXPAND) 
+							FROM Client.CompanyProcessManagerView b WITH(NOEXPAND)
 							WHERE b.ID = a.ID
 						)
 				) AS FREE_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						Common.TableGUIDFromXML(@ID) a
 						INNER JOIN Client.CompanyProcessManagerView b WITH(NOEXPAND) ON b.ID = a.ID
 				) AS PROCESS_COUNT
 		ELSE IF @TYPE = N'RIVAL'
-			SELECT 
+			SELECT
 				(
 					SELECT COUNT(*)
 					FROM Common.TableGUIDFromXML(@ID) a
 					WHERE NOT EXISTS
 						(
 							SELECT *
-							FROM Client.CompanyProcessRivalView b WITH(NOEXPAND) 
+							FROM Client.CompanyProcessRivalView b WITH(NOEXPAND)
 							WHERE b.ID = a.ID
 						)
 				) AS FREE_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM 
+					FROM
 						Common.TableGUIDFromXML(@ID) a
 						INNER JOIN Client.CompanyProcessRivalView b WITH(NOEXPAND) ON b.ID = a.ID
 				) AS PROCESS_COUNT
@@ -92,7 +92,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -102,3 +102,10 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_manager;
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_phone;
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_return_manager;
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_return_phone;
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_return_sale;
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_sale;
+GO

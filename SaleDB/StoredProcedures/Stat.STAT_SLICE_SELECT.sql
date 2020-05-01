@@ -4,18 +4,18 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Stat].[STAT_SLICE_SELECT]
+ALTER PROCEDURE [Stat].[STAT_SLICE_SELECT]
 	@GROUPS	NVARCHAR(MAX),
 	@TP		TINYINT = 1,
 	@REPORT	TINYINT = 0
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	BEGIN TRY
 		DECLARE @LAST_SLICE SMALLDATETIME
-		
+
 		SELECT @LAST_SLICE = DATE
 		FROM Stat.Slice
 		WHERE TP = @TP
@@ -23,7 +23,7 @@ BEGIN
 
 		IF @LAST_SLICE IS NULL
 			SELECT @LAST_SLICE = '20010101'
-	
+
 		IF OBJECT_ID('tempdb..#stat') IS NOT NULL
 			DROP TABLE #stat
 
@@ -43,19 +43,19 @@ BEGIN
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.WorkState b
 							LEFT OUTER JOIN Client.Company a ON a.ID_WORK_STATE = b.ID AND STATUS = 1
 						GROUP BY GR
 					) AS o_O
 				ORDER BY ORD
-				
+
 			INSERT INTO #stat(GR, NAME, CNT)
 				SELECT ' ‡ÚÂ„ÓËˇ', GR, CNT
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.PayCategory b
 							LEFT OUTER JOIN Client.Company a ON a.ID_PAY_CAT = b.ID AND STATUS = 1
 						GROUP BY GR
@@ -67,7 +67,7 @@ BEGIN
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.Potential b
 							LEFT OUTER JOIN Client.Company a ON a.ID_POTENTIAL = b.ID AND STATUS = 1
 						GROUP BY GR
@@ -79,7 +79,7 @@ BEGIN
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.Availability b
 							LEFT OUTER JOIN Client.Company a ON a.ID_AVAILABILITY = b.ID AND STATUS = 1
 						GROUP BY GR
@@ -91,10 +91,10 @@ BEGIN
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							(
-									SELECT DISTINCT 
-										CARD, 
+									SELECT DISTINCT
+										CARD,
 										CASE CARD
 											WHEN 1 THEN 'ÌÂËÁ‚ÂÒÚÌÓ'
 											WHEN 2 THEN 'ÌÂÚ'
@@ -105,7 +105,7 @@ BEGIN
 											WHEN 2 THEN 20
 											WHEN 3 THEN 10
 										END AS ORD
-									FROM Client.Company 
+									FROM Client.Company
 									WHERE STATUS = 1 AND CARD IS NOT NULL
 								) AS b
 							LEFT OUTER JOIN Client.Company a ON a.CARD = b.CARD AND STATUS = 1
@@ -118,7 +118,7 @@ BEGIN
 				FROM
 					(
 						SELECT GR, MIN(ORD) AS ORD, SUM(CASE WHEN d.ID IS NULL THEN 0 ELSE 1 END) AS CNT
-						FROM 
+						FROM
 							Client.RivalSystem c
 							LEFT OUTER JOIN Client.CompanyRival b ON b.ID_RIVAL = c.ID AND b.STATUS = 1 AND b.ACTIVE = 1
 							LEFT OUTER JOIN Client.Company a ON b.ID_COMPANY = a.ID AND a.STATUS = 1
@@ -134,9 +134,9 @@ BEGIN
 				FROM
 					(
 						SELECT '— ‚ËÁËÚÓÏ' AS GR, 1 AS ORD, COUNT(*) AS CNT
-						FROM 
-							Client.CompanyProcess a							
-						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE							
+						FROM
+							Client.CompanyProcess a
+						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE
 							AND EXISTS
 								(
 									SELECT *
@@ -145,17 +145,17 @@ BEGIN
 										AND z.STATUS = 1
 										AND z.BDATE_S >= @LAST_SLICE
 								)
-							
+
 						UNION ALL
-						
+
 						SELECT '¡ÂÁ ‚ËÁËÚ‡' AS GR, 2 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
-							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY							
-						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE		
+							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY
+						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE
 							AND b.STATUS = 1
-							AND c.NAME = 'œ≈–—œ≈ “»¬Õ€≈'					
+							AND c.NAME = 'œ≈–—œ≈ “»¬Õ€≈'
 							AND NOT EXISTS
 								(
 									SELECT *
@@ -166,23 +166,23 @@ BEGIN
 								)
 					) AS o_O
 				ORDER BY ORD
-				
+
 			INSERT INTO #stat(GR, NAME, CNT)
 				SELECT '—‰‡ÌÓ', GR, CNT
 				FROM
 					(
 						SELECT 'œÓ‰‡Ê‡' AS GR, 1 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
 							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY
 						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE AND RETURN_DATE IS NOT NULL
 							AND b.STATUS = 1
 							AND c.NAME = ' À»≈Õ“€'
-							AND 
+							AND
 								(
 									SELECT TOP 1 y.NAME
-									FROM 
+									FROM
 										Client.Company z
 										INNER JOIN Client.Availability y ON y.ID = z.ID_AVAILABILITY
 									WHERE z.ID_MASTER = b.ID
@@ -190,51 +190,51 @@ BEGIN
 										AND EDATE <= @LAST_SLICE
 									ORDER BY EDATE DESC
 								) <> ' À»≈Õ“€'
-							
-							
+
+
 						UNION ALL
-						
+
 						SELECT 'œÂÒÔÂÍÚË‚Ì˚Â' AS GR, 2 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
-							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY							
+							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY
 						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE AND RETURN_DATE IS NOT NULL
 							AND b.STATUS = 1
 							AND c.NAME = 'œ≈–—œ≈ “»¬Õ€≈'
-							
+
 						UNION ALL
-						
+
 						SELECT 'ÕÂÔÂÒÔÂÍÚË‚Ì˚Â' AS GR, 3 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
-							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY							
+							INNER JOIN Client.Availability c ON c.ID = b.ID_AVAILABILITY
 						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE AND RETURN_DATE IS NOT NULL
 							AND b.STATUS = 1
 							AND c.NAME = 'Õ≈œ≈–—œ≈ “»¬Õ€≈'
 					) AS o_O
 				ORDER BY ORD
-				
+
 			INSERT INTO #stat(GR, NAME, CNT)
 				SELECT '¬ Ì‡ÎË˜ËË', GR, CNT
 				FROM
 					(
 						SELECT '' AS GR, 1 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
-						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE 
+						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE
 					) AS o_O
 				ORDER BY ORD
-				
+
 			INSERT INTO #stat(GR, NAME, CNT)
 				SELECT '»Á ÌËı', GR, CNT
 				FROM
 					(
 						SELECT '¡ÂÁ Á‚ÓÌÍ‡' AS GR, 1 AS ORD, COUNT(*) AS CNT
-						FROM 
+						FROM
 							Client.CompanyProcess a
-						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE 
+						WHERE PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE
 							AND NOT EXISTS
 								(
 									SELECT *
@@ -242,36 +242,36 @@ BEGIN
 									WHERE z.STATUS = 1
 										AND z.ID_COMPANY = a.ID_COMPANY
 								)
-								
+
 						UNION ALL
-						
+
 						SELECT c.NAME AS GR, MIN(ORD), COUNT(*)
-						FROM 
-							Client.CompanyProcess a						
+						FROM
+							Client.CompanyProcess a
 							INNER JOIN Client.CompanyRival b ON a.ID_COMPANY = b.ID_COMPANY
 							INNER JOIN Client.RivalSystem c ON c.ID = b.ID_RIVAL
 							INNER JOIN Client.CompanyRivalView d ON d.ID = b.ID
 						WHERE b.STATUS = 1 AND /*b.ACTIVE = 1 AND */c.NAME IN ('√¿–¿Õ“', '¡——')
-							AND PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE 
+							AND PROCESS_TYPE = N'SALE' AND ASSIGN_DATE >= @LAST_SLICE
 						GROUP BY c.NAME
 					) AS o_O
 				ORDER BY ORD
-				
+
 			INSERT INTO #stat(GR, NAME, CNT)
 				SELECT '¬ÒÚÂ˜', GR, CNT
 				FROM
 					(
 						SELECT '¬ÒÂ„Ó' AS GR, 1 AS ORD, COUNT(*) AS CNT
-						FROM 
-							Meeting.ClientMeeting a	
+						FROM
+							Meeting.ClientMeeting a
 						WHERE a.DATE >= @LAST_SLICE
 							AND STATUS = 1
-								
+
 						UNION ALL
-						
+
 						SELECT d.NAME, MIN(ORD), COUNT(*) AS CNT
-						FROM 
-							Meeting.ClientMeeting a	
+						FROM
+							Meeting.ClientMeeting a
 							INNER JOIN Meeting.AssignedMeeting b ON a.ID_ASSIGNED = b.ID
 							INNER JOIN Client.CompanyRival c ON b.ID_COMPANY = c.ID_COMPANY
 							INNER JOIN Client.RivalSystem d ON d.ID = c.ID_RIVAL
@@ -317,48 +317,48 @@ BEGIN
 
 		SET @SQL = '
 		INSERT INTO #result
-			SELECT 
+			SELECT
 				ID, 1 AS TP, DATE, CNT,'
-			
-		SELECT @SQL = @SQL + ' 
+
+		SELECT @SQL = @SQL + '
 				(
-					SELECT DTL_COUNT 
-					FROM Stat.SliceDetail b 
-					WHERE a.ID = b.ID_SLICE 
-						AND GRP = ''' + GR + ''' 
+					SELECT DTL_COUNT
+					FROM Stat.SliceDetail b
+					WHERE a.ID = b.ID_SLICE
+						AND GRP = ''' + GR + '''
 						AND DTL_NAME = ''' + NAME + '''
 				),'
 		FROM #stat
 		ORDER BY ID
 
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
+
 		SET @SQL = @SQL + '
 			FROM Stat.Slice a
 			WHERE STATUS = 1 AND TP = ' + CONVERT(VARCHAR(20), @TP)
-			
+
 		EXEC (@SQL)
 
 
 		SET @SQL = '
 		INSERT INTO #result
-			SELECT 
+			SELECT
 				NULL, 2 AS TP, Common.DateOf(GETDATE()), (SELECT COUNT(*) FROM Client.Company WHERE STATUS = 1 ' + CASE WHEN @TP = 2 THEN ' AND 1 = 2' ELSE '' END + '),'
-			
+
 		SELECT @SQL = @SQL + ' ' + CONVERT(NVARCHAR(32), CNT) +  ' ,'
 		FROM #stat
 		ORDER BY ID
 
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
-			
+
 		EXEC (@SQL)
 
 		SET @SQL = '
 		INSERT INTO #result
-			SELECT 
+			SELECT
 				NULL, 3 AS TP, NULL, b.CNT - a.CNT,'
-			
-		SELECT @SQL = @SQL + ' b.[' + GR + '|' + NAME + '] - a.[' + GR + '|' + NAME + '],'		
+
+		SELECT @SQL = @SQL + ' b.[' + GR + '|' + NAME + '] - a.[' + GR + '|' + NAME + '],'
 		FROM #stat
 		ORDER BY ID
 
@@ -367,16 +367,16 @@ BEGIN
 		SET @SQL = @SQL + '
 			FROM
 				(
-					SELECT 
+					SELECT
 						CNT,'
-					
+
 
 		SELECT @SQL = @SQL + '
 						(
-							SELECT DTL_COUNT 
+							SELECT DTL_COUNT
 							FROM Stat.SliceDetail z
-							WHERE y.ID = z.ID_SLICE 
-								AND GRP = ''' + GR + ''' 
+							WHERE y.ID = z.ID_SLICE
+								AND GRP = ''' + GR + '''
 								AND DTL_NAME = ''' + NAME + '''
 						) AS [' + GR + '|' + NAME + '],'
 		FROM #stat
@@ -392,7 +392,7 @@ BEGIN
 				) AS a
 				CROSS JOIN
 				(
-					SELECT 
+					SELECT
 						(SELECT COUNT(*) FROM Client.Company WHERE STATUS = 1 ' + CASE WHEN @TP = 2 THEN ' AND 1 = 2' ELSE '' END + ') AS CNT,'
 
 		SELECT @SQL = @SQL + ' ' + CONVERT(NVARCHAR(32), CNT) + ' AS [' + GR + '|' + NAME + '],'
@@ -403,7 +403,7 @@ BEGIN
 
 		SET @SQL = @SQL + '
 				) AS b'
-				
+
 		EXEC (@SQL)
 
 		IF @REPORT = 0
@@ -413,29 +413,29 @@ BEGIN
 		ELSE
 		BEGIN
 			ALTER TABLE #result ADD RN INT, PP TINYINT
-			
+
 			DELETE FROM #result WHERE TP <> 1
-			
+
 			UPDATE a
 			SET a.RN = b.RN,
 				a.PP = 0
 			FROM
 				(
 					SELECT DATE, ROW_NUMBER() OVER(ORDER BY TP, DATE) AS RN
-					FROM #result 
+					FROM #result
 				) b
 				INNER JOIN #result a ON a.DATE = b.DATE
-			
+
 			SET @SQL = '
 					INSERT INTO #result
-						SELECT 
+						SELECT
 							ID, 1 AS TP, DATE, 0,'
-						
+
 					SELECT @SQL = @SQL + '
 							(
-								SELECT AVG([' + GR + '|' + NAME + ']) 
-								FROM #result b 
-								WHERE b.RN >= a.RN - 3 AND 
+								SELECT AVG([' + GR + '|' + NAME + '])
+								FROM #result b
+								WHERE b.RN >= a.RN - 3 AND
 									b.RN <= a.RN
 									AND b.PP = 0
 							),'
@@ -443,30 +443,30 @@ BEGIN
 					ORDER BY ID
 
 			SET @SQL = @SQL + 'RN, 1'
-				
+
 			SET @SQL = @SQL + '
 				FROM #result a
 				WHERE RN % 4 = 0 AND PP = 0'
-				
+
 			EXEC (@SQL)
-				
+
 			SET @SQL = '
 					INSERT INTO #result
-						SELECT 
+						SELECT
 							ID, 1 AS TP, DATE, 0,'
-						
+
 					SELECT @SQL = @SQL + '
-							CONVERT(INT, 100 * 
-								CASE RN 
+							CONVERT(INT, 100 *
+								CASE RN
 									WHEN 4 THEN NULL
 									ELSE
 										CONVERT(FLOAT,[' + GR + '|' + NAME + '])
-										/ 
-										NULLIF( 
+										/
+										NULLIF(
 											(
 												SELECT [' + GR + '|' + NAME + ']
-												FROM #result b 
-												WHERE b.RN = a.RN - 4 
+												FROM #result b
+												WHERE b.RN = a.RN - 4
 													AND b.PP = 1
 											), 0)
 								END),'
@@ -474,22 +474,22 @@ BEGIN
 					ORDER BY ID
 
 			SET @SQL = @SQL + 'RN, 2'
-				
+
 			SET @SQL = @SQL + '
 				FROM #result a
 				WHERE PP = 1'
-				
+
 			EXEC (@SQL)
-			
+
 			SELECT * FROM #result
-			
+
 			ORDER BY DATE, PP
 		END
 
 
 		IF OBJECT_ID('tempdb..#stat') IS NOT NULL
 			DROP TABLE #stat
-			
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 	END TRY
@@ -500,7 +500,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -510,3 +510,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Stat].[STAT_SLICE_SELECT] TO rl_stat_r;
+GO

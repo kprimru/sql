@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[ODD_DIN_MANAGER_SAVE]
+ALTER PROCEDURE [dbo].[ODD_DIN_MANAGER_SAVE]
 	@Host_Id	SmallInt,
 	@Distr		Int,
 	@Comp		TinyInt,
@@ -12,7 +12,9 @@ CREATE PROCEDURE [dbo].[ODD_DIN_MANAGER_SAVE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	INSERT INTO Client.ManagerOdd(Manager_Id, Host_Id, Distr, Comp)
 	VALUES(@Manager_Id, @Host_Id, @Distr, @Comp)
 END
+GRANT EXECUTE ON [dbo].[ODD_DIN_MANAGER_SAVE] TO rl_odd_manager;
+GO

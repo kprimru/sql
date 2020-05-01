@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@Load]
+ALTER PROCEDURE [Client].[CompanyDepo@Load]
 	@Data			Xml
 AS
 BEGIN
@@ -35,11 +35,11 @@ BEGIN
 
 	BEGIN TRY
 		RaisError('Функционал заблокирован.', 16, 2);
-	
+
 		INSERT INTO @DepoFile
 		SELECT *
 		FROM [Client].[DepoList@Parse](@Data);
-		
+
 		SET @ErrorNumbers = NULL;
 		SELECT @ErrorNumbers =
 		Reverse(Stuff(Reverse(
@@ -59,10 +59,10 @@ BEGIN
 			)
 		), 1, 1, ''))
 		OPTION (RECOMPILE);
-		
+
 		IF @ErrorNumbers IS NOT NULL
 			RaisError('Не найдены компании с номерами %s', 16, 2, @ErrorNumbers);
-			
+
 		SET @ErrorNumbers =
 		Reverse(Stuff(Reverse(
 			(
@@ -76,14 +76,14 @@ BEGIN
 				FOR XML PATH('')
 			)
 		), 1, 1, ''));
-		
+
 		IF @ErrorNumbers IS NOT NULL
 			RaisError('Надены дубликаты номеров ДЕПО: %s', 16, 2, @ErrorNumbers);
-			
+
 		SET @DepoStatus_ACTIVE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
-			
+
 		DELETE FROM Client.CompanyDepo;
-			
+
 		INSERT INTO Client.CompanyDepo(
 				[Company_Id], [DateFrom], [Number], [ExpireDate], [Status_Id],
 				[Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address],
@@ -103,7 +103,7 @@ BEGIN
 		) AS C
 		CROSS APPLY
 		(
-			SELECT 
+			SELECT
 				[Depo:Address?Without Region] = CASE WHEN [RegionAndAddress] LIKE '25,%' THEN Right([RegionAndAddress], Len([RegionAndAddress]) - 3) ELSE [RegionAndAddress] END,
 				[Depo:Region] = CASE WHEN [RegionAndAddress] LIKE '25,%' THEN '25' ELSE '' END
 		) AS RGN
@@ -115,13 +115,15 @@ BEGIN
 		) AS CT
 		CROSS APPLY
 		(
-			SELECT 
+			SELECT
 				[Depo:Person1FIO] = CASE WHEN Right(D.[Person1FIO], 3) = '(1)' THEN Left(D.[Person1FIO], Len(D.[Person1FIO]) - 3) ELSE D.[Person1FIO] END
 		) AS P
 		OPTION (RECOMPILE);
-			
+
 	END TRY
 	BEGIN CATCH
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@Load] TO rl_depo_file_process;
+GO

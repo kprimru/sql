@@ -4,12 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [Client].[CompanyProcessPhoneView]
+ALTER VIEW [Client].[CompanyProcessPhoneView]
 WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		a.ID, ID_PERSONAL, c.SHORT
-	FROM 
+	FROM
 		Client.Company a
 		INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
 		INNER JOIN Personal.OfficePersonal c ON c.ID = b.ID_PERSONAL

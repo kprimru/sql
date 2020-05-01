@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@Set Number]
+ALTER PROCEDURE [Client].[CompanyDepo@Set Number]
 	@Id		UniqueIdentifier,
 	@Number	Int
 AS
@@ -16,7 +16,9 @@ BEGIN
 		SET [Number] = @Number
 		WHERE [Id] = @Id
 	END TRY
-	BEGIN CATCH	
+	BEGIN CATCH
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@Set Number] TO rl_depo_number;
+GO

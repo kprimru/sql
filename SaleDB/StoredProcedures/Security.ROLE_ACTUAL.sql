@@ -4,23 +4,23 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[ROLE_ACTUAL]
+ALTER PROCEDURE [Security].[ROLE_ACTUAL]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	BEGIN TRY
 		SELECT a.name
-		FROM 
+		FROM
 			sys.database_principals a
 			INNER JOIN sys.database_role_members b ON b.role_principal_id = a.principal_id
 			INNER JOIN sys.database_principals c ON c.principal_id = b.member_principal_id
 		WHERE c.name = ORIGINAL_LOGIN()
 
 		UNION ALL
-	
+
 		SELECT e.name
-		FROM 
+		FROM
 			sys.database_principals a
 			INNER JOIN sys.database_role_members b ON b.member_principal_id = a.principal_id
 			INNER JOIN sys.database_principals c ON b.role_principal_id = c.principal_id
@@ -35,7 +35,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -45,3 +45,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[ROLE_ACTUAL] TO public;
+GO

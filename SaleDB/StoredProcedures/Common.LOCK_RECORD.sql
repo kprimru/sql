@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Common].[LOCK_RECORD]
+ALTER PROCEDURE [Common].[LOCK_RECORD]
 	@DATA		VARCHAR(64),
 	@REC		NVARCHAR(MAX),
-	@REC_STR	NVARCHAR(MAX),	
+	@REC_STR	NVARCHAR(MAX),
 	@USER		NVARCHAR(128)	OUTPUT,
 	@HOST		NVARCHAR(128)	OUTPUT,
 	@DATE		DATETIME		OUTPUT,
@@ -16,22 +16,22 @@ CREATE PROCEDURE [Common].[LOCK_RECORD]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	BEGIN TRY
 		-- 0 - нормальное завершение, 1 - запись заблокирована, 2 - таблица заблокирована
 		SET @RESULT = 0
-		
+
 		IF EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					Common.Locks a
-					INNER JOIN sys.dm_exec_sessions b ON 				
+					INNER JOIN sys.dm_exec_sessions b ON 
 						LOCK_SPID		=	session_id AND
-						LOCK_HOST		=	host_name AND					
+						LOCK_HOST		=	host_name AND
 						LOCK_LOGIN		=	original_login_name AND
-						a.LOGIN_TIME	=	b.login_time 
+						a.LOGIN_TIME	=	b.login_time
 				WHERE DATA = @DATA
 					AND session_id <> @@SPID
 					AND REC IN
@@ -41,16 +41,16 @@ BEGIN
 						)
 			)
 		BEGIN
-			SELECT TOP 1 
+			SELECT TOP 1
 				@RESULT = 1, @HOST = LOCK_HOST, @DATE = LOCK_TIME, @USER = LOCK_LOGIN,
 				@DATE_LEN = Common.TimeSecToStr(DATEDIFF(SECOND, LOCK_TIME, GETDATE()))
-			FROM 
+			FROM
 				Common.Locks a
-				INNER JOIN sys.dm_exec_sessions b ON 				
+				INNER JOIN sys.dm_exec_sessions b ON 
 						LOCK_SPID		=	session_id AND
-						LOCK_HOST		=	host_name AND					
+						LOCK_HOST		=	host_name AND
 						LOCK_LOGIN		=	original_login_name AND
-						a.LOGIN_TIME	=	b.login_time  			
+						a.LOGIN_TIME	=	b.login_time  
 			WHERE DATA = @DATA
 				AND REC IN
 					(
@@ -65,40 +65,40 @@ BEGIN
 		IF EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					Common.Locks a
-					INNER JOIN sys.dm_exec_sessions b ON 				
+					INNER JOIN sys.dm_exec_sessions b ON 
 							LOCK_SPID		=	session_id AND
-							LOCK_HOST		=	host_name AND					
+							LOCK_HOST		=	host_name AND
 							LOCK_LOGIN		=	original_login_name AND
-							a.LOGIN_TIME	=	b.login_time  			
+							a.LOGIN_TIME	=	b.login_time  
 				WHERE DATA = @DATA
 					AND session_id <> @@SPID
 					AND REC IS NULL
 			)
 		BEGIN
-			SELECT TOP 1 
+			SELECT TOP 1
 				@RESULT = 2, @HOST = LOCK_HOST, @DATE = LOCK_TIME, @USER = LOCK_LOGIN,
 				@DATE_LEN = Common.TimeSecToStr(DATEDIFF(SECOND, LOCK_TIME, GETDATE()))
-			FROM 
+			FROM
 				dbo.Locks
-				INNER JOIN sys.dm_exec_sessions ON 				
+				INNER JOIN sys.dm_exec_sessions ON 
 							LOCK_SPID			=	session_id AND
-							LOCK_HOST			=	host_name AND					
+							LOCK_HOST			=	host_name AND
 							LOCK_LOGIN			=	original_login_name AND
-							LOCK_LOGIN_TIME		=	login_time  			
+							LOCK_LOGIN_TIME		=	login_time  
 			WHERE LOCK_DATA = @DATA
 				AND LOCK_REC IS NULL
 			ORDER BY LOCK_TIME
 
 			RETURN
 		END
-			
+
 		EXEC Common.LOCK_RELEASE @REC, @DATA
-	
+
 		INSERT INTO Common.Locks(DATA, REC, REC_STR, LOGIN_TIME)
 			SELECT @DATA, ID, @REC_STR, login_time
-			FROM 
+			FROM
 				sys.dm_exec_sessions
 				CROSS JOIN Common.TableStringFromXML(@REC)
 			WHERE session_id = @@SPID
@@ -110,7 +110,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -120,3 +120,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Common].[LOCK_RECORD] TO public;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@StageAll]
+ALTER PROCEDURE [Client].[CompanyDepo@StageAll]
 	@IDs					VarChar(Max)
 AS
 BEGIN
@@ -18,16 +18,16 @@ BEGIN
 		Id	UniqueIdentifier Primary Key Clustered
 	);
 
-	BEGIN TRY	
+	BEGIN TRY
 		IF @IDs IS NULL
 			RaisError('Abstract error: @Id IS NULL!', 16, 1);
-			
+
 		SET @Status_STAGE	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
-	
-		INSERT INTO @TIDs		
+
+		INSERT INTO @TIDs
 		SELECT ID
 		FROM Common.TableGUIDFromXML(@IDs)
-			
+
 		IF EXISTS
 			(
 				SELECT *
@@ -37,7 +37,7 @@ BEGIN
 					AND STATUS = 1
 			)
 			RaisError('Компания уже задепонирована на следующий этап!', 16, 1);
-			
+
 		INSERT INTO Client.CompanyDepo(
 					[Company_Id], [Number], [Status_Id], [Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address],
 					[Depo:Person1FIO], [Depo:Person1Phone], [Depo:Person2FIO], [Depo:Person2Phone],
@@ -51,7 +51,9 @@ BEGIN
 		INNER JOIN @TIDs		I ON D.[Id] = I.[Id]
 	END TRY
 	BEGIN CATCH
-	
+
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@StageAll] TO rl_depo_w;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@StageSortIndex]
+ALTER PROCEDURE [Client].[CompanyDepo@StageSortIndex]
 	@Id			UniqueIdentifier,
 	@Direction	VarChar(10)	= NULL,
 	@Number		Int			= NULL
@@ -19,24 +19,24 @@ BEGIN
 	BEGIN TRY
 		IF @Direction IS NULL AND @Number IS NULL
 			RaisError('Abstract Error: @Direction IS NULL AND @Number IS NULL', 16, 1);
-			
+
 		IF @Direction IS NOT NULL AND @Number IS NOT NULL
 			RaisError('Abstract Error: @Direction IS NOT NULL AND @Number IS NOT NULL', 16, 1);
-			
+
 		IF @Direction IS NOT NULL AND @Direction NOT IN ('UP', 'DOWN')
 			RaisError('Abstract Error: @Direction NOT IN "UP", "DOWN", @Direction = %s', 16, 1, @Direction);
-			
+
 		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
 		SET @CurNumber = (SELECT TOP (1) [SortIndex] FROM [Client].[CompanyDepo] WHERE [Id] = @Id);
-			
+
 		IF @Direction IS NOT NULL
 			SET @Number = CASE @Direction WHEN 'UP' THEN @CurNumber - 1 WHEN 'DOWN' THEN @CurNumber + 1 ELSE NULL END;
-			
+
 		IF @Number IS NOT NULL BEGIN
 			UPDATE D
 			SET [SortIndex] = I.[NewSortIndex]
 			FROM [Client].[CompanyDepo] AS D
-			INNER JOIN 
+			INNER JOIN
 			(
 				SELECT
 					[Id],
@@ -66,7 +66,9 @@ BEGIN
 			RaisError('Abstract Error: @Direction IS NULL AND @Number IS NULL', 16, 1);
 		END;
 	END TRY
-	BEGIN CATCH	
+	BEGIN CATCH
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@StageSortIndex] TO rl_depo_stage_filter;
+GO

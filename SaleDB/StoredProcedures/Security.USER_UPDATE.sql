@@ -4,9 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_UPDATE]
+ALTER PROCEDURE [Security].[USER_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
-	@LOGIN	NVARCHAR(128),	
+	@LOGIN	NVARCHAR(128),
 	@NAME	NVARCHAR(128),
 	@PASS	NVARCHAR(128),
 	@AUTH	TINYINT,
@@ -16,17 +16,17 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY			
+	BEGIN TRY
 		UPDATE Security.Users
 		SET NAME	=	@NAME,
 			LAST	=	GETDATE()
-		WHERE ID = @ID		
+		WHERE ID = @ID
 
 		DECLARE @GRP NVARCHAR(256)
 
 		DECLARE GR CURSOR LOCAL FOR
 			SELECT c.name
-			FROM 
+			FROM
 				sys.database_principals a
 				INNER JOIN sys.database_role_members b ON a.principal_id = b.member_principal_id
 				INNER JOIN sys.database_principals c ON c.principal_id = b.role_principal_id
@@ -38,8 +38,8 @@ BEGIN
 						FROM Common.TableGUIDFromXML(@GROUPS) a
 						WHERE a.ID = d.ID
 					)
-						
-		OPEN GR		
+
+		OPEN GR
 
 		FETCH NEXT FROM GR INTO @GRP
 
@@ -55,7 +55,7 @@ BEGIN
 
 		DECLARE GR CURSOR LOCAL FOR
 			SELECT NAME
-			FROM 
+			FROM
 				Common.TableGUIDFromXML(@GROUPS) a
 				INNER JOIN Security.RoleGroup b ON a.ID = b.ID
 			WHERE NOT EXISTS
@@ -67,8 +67,8 @@ BEGIN
 						INNER JOIN sys.database_principals x ON x.principal_id = y.role_principal_id
 					WHERE z.name = @LOGIN AND b.name = x.name
 				)
-		
-		OPEN GR		
+
+		OPEN GR
 
 		FETCH NEXT FROM GR INTO @GRP
 
@@ -89,13 +89,15 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
 			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()		
+			@MSG	=	ERROR_MESSAGE()
 
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_UPDATE] TO rl_user_w;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Meeting].[CLIENT_MEETING_GET]
+ALTER PROCEDURE [Meeting].[CLIENT_MEETING_GET]
 	@ID			UNIQUEIDENTIFIER,
 	@ASSIGNED	UNIQUEIDENTIFIER = NULL
 AS
@@ -13,86 +13,86 @@ BEGIN
 
 	BEGIN TRY
 		IF @ID IS NOT NULL
-			SELECT 
+			SELECT
 				ID, DATE, ID_PERSONAL, ID_RESULT, NOTE,
 				(
 					SELECT TOP 1 SUCCESS_RATE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS SUCCESS_RATE,
 				(
 					SELECT TOP 1 a.ID_RESULT
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_RES,
 				(
 					SELECT TOP 1 a.ID_STATUS
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_STATUS,
 				(
 					SELECT TOP 1 a.STATUS_NOTE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_STATUS_NOTE,
 				(
 					SELECT DATE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
-						INNER JOIN Client.CallDate z ON z.ID_COMPANY = a.ID_COMPANY						
+						INNER JOIN Client.CallDate z ON z.ID_COMPANY = a.ID_COMPANY
 					WHERE a.ID = @ASSIGNED
 				) AS NEXT_DATE
-			FROM 
+			FROM
 				Meeting.ClientMeeting t
 			WHERE ID = @ID
 		ELSE
-			SELECT 
-				CONVERT(UNIQUEIDENTIFIER, NULL) AS ID, 
-				Common.DateOf(GETDATE()) AS DATE, 
-				CONVERT(UNIQUEIDENTIFIER, NULL) AS ID_PERSONAL, 
-				CONVERT(UNIQUEIDENTIFIER, NULL)ID_RESULT, 
+			SELECT
+				CONVERT(UNIQUEIDENTIFIER, NULL) AS ID,
+				Common.DateOf(GETDATE()) AS DATE,
+				CONVERT(UNIQUEIDENTIFIER, NULL) AS ID_PERSONAL,
+				CONVERT(UNIQUEIDENTIFIER, NULL)ID_RESULT,
 				CONVERT(NVARCHAR(MAX), '') AS NOTE,
 				(
 					SELECT TOP 1 SUCCESS_RATE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS SUCCESS_RATE,
 				(
 					SELECT TOP 1 a.ID_RESULT
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_RES,
 				(
 					SELECT TOP 1 a.ID_STATUS
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_STATUS,
 				(
 					SELECT TOP 1 a.STATUS_NOTE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
 						INNER JOIN Meeting.ClientMeeting b ON a.ID = b.ID_ASSIGNED
 					WHERE a.ID = @ASSIGNED AND a.ID_MASTER IS NULL
 				) AS TOTAL_STATUS_NOTE,
 				(
 					SELECT DATE
-					FROM 
+					FROM
 						Meeting.AssignedMeeting a
-						INNER JOIN Client.CallDate z ON z.ID_COMPANY = a.ID_COMPANY						
+						INNER JOIN Client.CallDate z ON z.ID_COMPANY = a.ID_COMPANY
 					WHERE a.ID = @ASSIGNED
 				) AS NEXT_DATE
 	END TRY
@@ -103,7 +103,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -113,3 +113,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Meeting].[CLIENT_MEETING_GET] TO rl_meeting_r;
+GRANT EXECUTE ON [Meeting].[CLIENT_MEETING_GET] TO rl_meeting_result;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_DBF_IMPORT_SELECT]
+ALTER PROCEDURE [Price].[PRICE_DBF_IMPORT_SELECT]
 	@DBFMonth		UniqueIdentifier,
 	@ClientMonth	UniqueIdentifier,
 	@OnlyDiff		Bit					= 0
@@ -59,6 +59,8 @@ BEGIN
 	) AS P
 	INNER JOIN System.Systems S ON S.REG = P.SYS_REG_NAME
 	WHERE @OnlyDiff = 0
-		OR IsNull([DBFPrice], 0) - IsNull([ClientPrice], 0) != 0 
+		OR IsNull([DBFPrice], 0) - IsNull([ClientPrice], 0) != 0
 	ORDER BY S.[ORD]
 END
+GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT_SELECT] TO rl_price_import;
+GO

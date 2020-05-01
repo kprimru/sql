@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Client].[CompanyFilterWrite]
+ALTER FUNCTION [Client].[CompanyFilterWrite]
 (
 	@SRC	NVARCHAR(MAX)
 )
@@ -16,7 +16,7 @@ BEGIN
 	SET @XML = CAST(@SRC AS XML)
 
 	DECLARE @RESULT NVARCHAR(MAX)
-	SET @RESULT = 
+	SET @RESULT =
 		(
 			SELECT a.ID AS 'item/@id'
 			FROM
@@ -28,6 +28,6 @@ BEGIN
 					) AS b ON a.ID = b.ID
 			FOR XML PATH('root')
 		)
-		
+
 	RETURN @RESULT
 END

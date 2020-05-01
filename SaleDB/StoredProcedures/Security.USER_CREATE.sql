@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_CREATE]
+ALTER PROCEDURE [Security].[USER_CREATE]
 	@AUTH	SMALLINT,
 	@LOGIN	NVARCHAR(128),
 	@NAME	NVARCHAR(128),
@@ -14,7 +14,7 @@ CREATE PROCEDURE [Security].[USER_CREATE]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE @ER_TXT NVARCHAR(2048)
 	DECLARE @SQL NVARCHAR(MAX)
@@ -47,19 +47,19 @@ BEGIN
 		SET @US_EXISTS = 1
 	ELSE
 		SET @US_EXISTS = 0
-		
+
 
 	BEGIN TRY
 		IF @AUTH = 1
-		BEGIN			
-			-- доменный пользователь			
-			IF @LG_EXISTS = 1 
+		BEGIN
+			-- доменный пользователь
+			IF @LG_EXISTS = 1
 			BEGIN
 				SET @ER_TXT = 'ѕользователь или роль "' + @LOGIN + '" уже существует на сервере. ¬ыберите другое им€.'
 
 				RAISERROR(@ER_TXT, 16, 1)
 			END
-			ELSE IF @US_EXISTS = 1 
+			ELSE IF @US_EXISTS = 1
 			BEGIN
 				SET @ER_TXT = 'ѕользователь или роль "' + @LOGIN + '" уже существует в базе данных. ¬ыберите другое им€.'
 
@@ -125,7 +125,7 @@ BEGIN
 				VALUES(@LOGIN, @NAME, @TYPE)
 
 			SELECT @ID = ID FROM @TBL
-		END		
+		END
 	END TRY
 	BEGIN CATCH
 		DECLARE	@SEV	INT
@@ -134,7 +134,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -144,3 +144,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_CREATE] TO rl_user_w;
+GO

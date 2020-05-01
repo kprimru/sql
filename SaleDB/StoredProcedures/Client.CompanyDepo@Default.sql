@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@Default]
+ALTER PROCEDURE [Client].[CompanyDepo@Default]
 	@Company_Id UniqueIdentifier
 AS
 BEGIN
@@ -15,7 +15,9 @@ BEGIN
 			[Depo:Region] = '25'
 	END TRY
 	BEGIN CATCH
-			
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@Default] TO rl_depo_r;
+GO

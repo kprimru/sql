@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[COMPANY_DEPO_FILTER]
+ALTER PROCEDURE [Client].[COMPANY_DEPO_FILTER]
 	@Statuses	VarChar(Max)	= NULL,
 	@ExpireDate	SmallDateTime	= NULL,
 	@FileName	VarChar(250)	= NULL OUTPUT,
@@ -26,10 +26,10 @@ BEGIN
 		SET @Status_TAG = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG');
 		SET @Status_TERMINATION = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
-		
+
 		INSERT INTO @TStatuses
 		SELECT [Id] FROM Common.TableIDFromXML(@Statuses);
-		
+
 		IF (SELECT Count(*) FROM @TStatuses) = 1 BEGIN
 			IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_NEW)
 				SET @FileName = 'Список NEW РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
@@ -42,7 +42,7 @@ BEGIN
 		END
 		ELSE
 			SET @FileName = ''
-		
+
 		SELECT
 			D.[Id],
 			[Company_Id],
@@ -91,7 +91,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -101,3 +101,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Client].[COMPANY_DEPO_FILTER] TO rl_depo_filter;
+GO

@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION [Client].[DepoList@Parse]
+ALTER FUNCTION [Client].[DepoList@Parse]
 (
 	@Data Xml
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT
 		[Ric]				= Node.value('@Ric[1]',					'SmallInt'),

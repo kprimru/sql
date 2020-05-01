@@ -4,8 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_INSERT]
-	@LOGIN	NVARCHAR(128),	
+ALTER PROCEDURE [Security].[USER_INSERT]
+	@LOGIN	NVARCHAR(128),
 	@NAME	NVARCHAR(128),
 	@PASS	NVARCHAR(128),
 	@AUTH	TINYINT,
@@ -14,7 +14,7 @@ CREATE PROCEDURE [Security].[USER_INSERT]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	DECLARE @ER_TXT NVARCHAR(2048)
 	DECLARE @SQL NVARCHAR(MAX)
@@ -46,22 +46,22 @@ BEGIN
 	PRINT @US_EXISTS
 
 	BEGIN TRY
-		
+
 		IF @AUTH = 0
-		BEGIN			
-			-- доменный пользователь			
-			IF @LG_EXISTS = 1 
+		BEGIN
+			-- доменный пользователь
+			IF @LG_EXISTS = 1
 			BEGIN
 				SET @ER_TXT = 'ѕользователь или роль "' + @LOGIN + '" уже существует на сервере. ¬ыберите другое им€.'
 
-				
+
 				RAISERROR(@ER_TXT, 16, 1)
 			END
-			ELSE IF @US_EXISTS = 1 
+			ELSE IF @US_EXISTS = 1
 			BEGIN
 				SET @ER_TXT = 'ѕользователь или роль "' + @LOGIN + '" уже существует в базе данных. ¬ыберите другое им€.'
 
-				
+
 				RAISERROR(@ER_TXT, 16, 1)
 			END
 			ELSE
@@ -69,18 +69,18 @@ BEGIN
 				IF @LG_EXISTS = 0
 				BEGIN
 					SET @SQL = N'CREATE LOGIN ' + QUOTENAME(@LOGIN) + ' FROM WINDOWS'
-					
+
 					PRINT @SQL
-					
+
 					EXEC (@SQL)
 				END
 
 				IF @US_EXISTS = 0
 				BEGIN
 					SET @SQL = 'CREATE USER ' + QUOTENAME(@LOGIN) + ' FOR LOGIN ' + QUOTENAME(@LOGIN)
-					
+
 					PRINT @SQL
-					
+
 					EXEC (@SQL)
 				END
 
@@ -91,7 +91,7 @@ BEGIN
 				PRINT @LOGIN
 
 				SET @TYPE = 1
-			END			
+			END
 		END
 		ELSE IF @AUTH = 1
 		BEGIN
@@ -136,10 +136,10 @@ BEGIN
 
 		DECLARE GR CURSOR LOCAL FOR
 			SELECT NAME
-			FROM 
+			FROM
 				Common.TableGUIDFromXML(@GROUPS) a
 				INNER JOIN Security.RoleGroup b ON a.ID = b.ID
-		
+
 		OPEN GR
 
 		DECLARE @GRP NVARCHAR(256)
@@ -163,13 +163,15 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
 			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()		
+			@MSG	=	ERROR_MESSAGE()
 
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Security].[USER_INSERT] TO rl_user_w;
+GO

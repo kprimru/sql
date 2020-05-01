@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Personal].[PERSONAL_LOGIN_CHECK]
+ALTER PROCEDURE [Personal].[PERSONAL_LOGIN_CHECK]
 	@LOGIN		NVARCHAR(128)
 WITH EXECUTE AS OWNER
 AS
@@ -18,7 +18,7 @@ BEGIN
 			SELECT 'Логин "' + @LOGIN + '" уже присутствует на сервере. Выберите другое имя' AS ERROR
 		ELSE IF EXISTS(SELECT * FROM sys.database_principals WHERE name = @LOGIN)
 			SELECT 'Пользователь "' + @LOGIN + '" уже присутствует в базе данных. Выберите другое имя' AS ERROR
-		ELSE 
+		ELSE
 			SELECT '' AS ERROR
 	END TRY
 	BEGIN CATCH
@@ -28,7 +28,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -38,3 +38,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Personal].[PERSONAL_LOGIN_CHECK] TO rl_personal_r;
+GO

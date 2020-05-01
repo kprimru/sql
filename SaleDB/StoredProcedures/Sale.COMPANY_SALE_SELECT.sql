@@ -4,16 +4,16 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Sale].[COMPANY_SALE_SELECT]
+ALTER PROCEDURE [Sale].[COMPANY_SALE_SELECT]
 	@COMPANY	UNIQUEIDENTIFIER,
 	@RC			INT	= NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
 	BEGIN TRY
-		SELECT 
-			a.ID, a.DATE, b.NAME AS OF_NAME, 
+		SELECT
+			a.ID, a.DATE, b.NAME AS OF_NAME,
 			REVERSE(STUFF(REVERSE((
 				SELECT y.SHORT + '(' + x.SHORT + '), '
 				FROM
@@ -27,7 +27,7 @@ BEGIN
 				SELECT y.SHORT + '(' + CONVERT(VARCHAR(20), [VALUE]) + '), '
 				FROM
 					Sale.SalePersonal z
-					INNER JOIN Personal.OfficePersonal y ON z.ID_PERSONAL = y.ID					
+					INNER JOIN Personal.OfficePersonal y ON z.ID_PERSONAL = y.ID
 				WHERE z.ID_SALE = a.ID
 				ORDER BY [VALUE] DESC, y.SHORT FOR XML PATH('')
 			)), 1, 2, '')) AS PERS_STR,
@@ -35,37 +35,37 @@ BEGIN
 			a.STATUS, a.CONFIRMED,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), BDATE, 104) + ' ' + CONVERT(VARCHAR(20), BDATE, 108) + '/' + UPD_USER
-				FROM 
+				FROM
 					(
 						SELECT BDATE, UPD_USER
 						FROM Sale.SaleCompany z
 						WHERE z.ID_MASTER = a.ID
 							AND z.STATUS = 2
-	
+
 						UNION ALL
 
 						SELECT BDATE, UPD_USER
 						FROM Sale.SaleCompany z
 						WHERE z.ID = a.ID
-							AND z.STATUS = 1						
+							AND z.STATUS = 1
 					) AS o_O
 				ORDER BY BDATE
 			) AS CREATE_DATA,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), BDATE, 104) + ' ' + CONVERT(VARCHAR(20), BDATE, 108) + '/' + UPD_USER
-				FROM 
+				FROM
 					(
 						SELECT BDATE, UPD_USER
 						FROM Sale.SaleCompany z
 						WHERE z.ID_MASTER = a.ID
 							AND z.STATUS = 2
-	
+
 						UNION ALL
 
 						SELECT BDATE, UPD_USER
 						FROM Sale.SaleCompany z
 						WHERE z.ID = a.ID
-							AND z.STATUS = 1						
+							AND z.STATUS = 1
 					) AS o_O
 				ORDER BY BDATE DESC
 			) AS UPDATE_DATA,
@@ -73,7 +73,7 @@ BEGIN
 				WHEN 3 THEN CONVERT(VARCHAR(20), a.EDATE, 104) + ' ' + CONVERT(VARCHAR(20), a.EDATE, 108) + '/' + a.UPD_USER
 				ELSE ''
 			END AS DELETE_DATA
-		FROM 
+		FROM
 			Sale.SaleCompany a
 			LEFT OUTER JOIN Client.Office b ON a.ID_OFFICE = b.ID
 			LEFT OUTER JOIN Personal.OfficePersonal c ON c.ID = a.ID_ASSIGNER
@@ -91,7 +91,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -101,3 +101,5 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GRANT EXECUTE ON [Sale].[COMPANY_SALE_SELECT] TO rl_sale_r;
+GO

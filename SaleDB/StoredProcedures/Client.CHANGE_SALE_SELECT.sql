@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CHANGE_SALE_SELECT]
+ALTER PROCEDURE [Client].[CHANGE_SALE_SELECT]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -18,7 +18,7 @@ BEGIN
 		WHERE ID_COMPANY = @ID
 			AND RETURN_DATE IS NULL
 			AND PROCESS_TYPE = N'SALE'
-					
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
@@ -27,10 +27,10 @@ BEGIN
 				TP		NVARCHAR(64),
 				OLD		NVARCHAR(512),
 				NEW		NVARCHAR(512)
-			)	
+			)
 
 		INSERT INTO #result(TP, OLD, NEW)
-			SELECT 
+			SELECT
 				N'ADDRESS' AS TP,
 				(
 					SELECT TOP 1 AD_STR
@@ -49,16 +49,16 @@ BEGIN
 					ORDER BY BDATE DESC
 				) AS NEW_ADDR
 			FROM Client.Office a
-			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)	
-	
+			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)
+
 
 		INSERT INTO #result(TP, OLD, NEW)
-			SELECT 
-				N'PHONE' AS TP,		
+			SELECT
+				N'PHONE' AS TP,
 				(
 					SELECT TOP 1 PHONE
 					FROM
-						Client.CompanyPhone b				
+						Client.CompanyPhone b
 					WHERE b.ID_MASTER = a.ID AND Common.DateOf(BDATE) <= @START_DATE
 					ORDER BY BDATE DESC
 				) AS OLD_ADDR,
@@ -70,14 +70,14 @@ BEGIN
 					ORDER BY BDATE DESC
 				) AS NEW_ADDR
 			FROM Client.CompanyPhone a
-			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)	
-				
+			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)
+
 		INSERT INTO #result(TP, OLD, NEW)
-			SELECT 
-				N'PERSONAL' AS TP,		
+			SELECT
+				N'PERSONAL' AS TP,
 				(
-					SELECT TOP 1 
-						FIO + ' / ' + ISNULL(d.NAME, '') + ' / ' + 
+					SELECT TOP 1
+						FIO + ' / ' + ISNULL(d.NAME, '') + ' / ' +
 						ISNULL(REVERSE(STUFF(REVERSE(
 							(
 								SELECT PHONE + ','
@@ -92,8 +92,8 @@ BEGIN
 					ORDER BY BDATE DESC
 				) AS OLD_ADDR,
 				(
-					SELECT TOP 1 
-						FIO + ' / ' + ISNULL(d.NAME, '') + ' / ' + 
+					SELECT TOP 1
+						FIO + ' / ' + ISNULL(d.NAME, '') + ' / ' +
 						ISNULL(REVERSE(STUFF(REVERSE(
 							(
 								SELECT PHONE + ','
@@ -108,10 +108,10 @@ BEGIN
 					ORDER BY BDATE DESC
 				) AS NEW_ADDR
 			FROM Client.CompanyPersonal a
-			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)	
-		
-		SELECT 
-			CASE TP 
+			WHERE ID_COMPANY = @ID AND STATUS IN (1, 3)	AND (Common.DateOf(BDATE) >= @START_DATE OR Common.DateOf(EDATE) >= @START_DATE)
+
+		SELECT
+			CASE TP
 				WHEN 'ADDRESS' THEN 'Адрес'
 				WHEN 'PHONE' THEN 'Телефон'
 				WHEN 'PERSONAL' THEN 'Сотрудник'
@@ -122,8 +122,8 @@ BEGIN
 				SELECT a.TP,
 					REVERSE(STUFF(REVERSE(
 						(
-							SELECT 
-								CASE 
+							SELECT
+								CASE
 									WHEN OLD IS NULL AND NEW IS NOT NULL THEN 'Новый: ' + NEW
 									WHEN OLD IS NOT NULL AND NEW IS NULL THEN 'Удален: ' + OLD
 									WHEN OLD IS NOT NULL AND NEW IS NOT NULL THEN 'Изменен: ' + 'с ' + ISNULL(OLD, '') + ' на ' + ISNULL(NEW, '') + ''
@@ -153,7 +153,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),

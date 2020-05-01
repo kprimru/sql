@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[DepoList@Select From File]
+ALTER PROCEDURE [Client].[DepoList@Select From File]
 	@Data			Xml,
 	@HideUnchanged	Bit = 1
 AS
@@ -36,7 +36,7 @@ BEGIN
 	INSERT INTO @DepoFile
 	SELECT *
 	FROM [Client].[DepoList@Parse](@Data);
-	
+
 	SELECT
 		[Checked] = Cast(CASE WHEN [Action] NOT IN ('N', 'E') THEN 1 ELSE 0 END AS Bit),
 		[ActionDescription] =
@@ -96,3 +96,5 @@ BEGIN
 	ORDER BY D.[Action], D.[Number]
 	OPTION(RECOMPILE)
 END
+GRANT EXECUTE ON [Client].[DepoList@Select From File] TO rl_depo_file_process;
+GO

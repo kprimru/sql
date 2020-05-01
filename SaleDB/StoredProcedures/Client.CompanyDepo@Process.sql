@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Client].[CompanyDepo@Process]
+ALTER PROCEDURE [Client].[CompanyDepo@Process]
 	@GUIds		VarChar(Max),
 	@Data		Xml
 AS
@@ -19,7 +19,7 @@ BEGIN
 		@Status_Id_REFUSED		SmallInt,
 		@Status_Id_TERMINATION	SmallInt,
 		@Status_Id_STAGE		SmallInt;
-	
+
 	DECLARE @DepoFile Table
 	(
 		[Ric]					SmallInt,
@@ -49,11 +49,11 @@ BEGIN
 		INSERT INTO @DepoFile
 		SELECT *
 		FROM [Client].[DepoList@Parse](@Data);
-		
+
 		INSERT INTO @IDs
 		SELECT DISTINCT [Id]
 		FROM Common.TableGUIDFromXML(@GUIds);
-		
+
 		SET @Status_Id_NEW			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
 		SET @Status_Id_TAG			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
 		SET @Status_Id_ACCEPT		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACCEPT');
@@ -61,13 +61,13 @@ BEGIN
 		SET @Status_Id_REFUSED		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');
 		SET @Status_Id_TERMINATION	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 		SET @Status_Id_STAGE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
-		
+
 		BEGIN TRAN;
-		
+
 		INSERT INTO Client.CompanyDepo(
 				[Master_Id], [Company_Id], [DateFrom], [DateTo], [Number], [ExpireDate], [Status_Id],
-				[Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address], 
-				[Depo:Person1FIO], [Depo:Person1Phone], [Depo:Person2FIO], [Depo:Person2Phone], 
+				[Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address],
+				[Depo:Person1FIO], [Depo:Person1Phone], [Depo:Person2FIO], [Depo:Person2Phone],
 				[Depo:Person3FIO], [Depo:Person3Phone], [Depo:Rival], [Status], [UpdDate], [UpdUser])
 		SELECT
 			D.[Id], D.[Company_Id], D.[DateFrom], D.[DateTo], D.[Number], D.[ExpireDate], D.[Status_Id],
@@ -76,12 +76,12 @@ BEGIN
 			D.[Depo:Person3FIO], D.[Depo:Person3Phone], D.[Depo:Rival], 2, GetDate(), Original_Login()
 		FROM @IDs						AS I
 		INNER JOIN Client.CompanyDepo	AS D ON I.[Id] = D.[Id];
-		
+
 		/*ToDo Переписать как один запрос, если будет тормозить
 		Можно сделать LEFT JOIN на таблицу @DepoFile и с помощью CASE выбрать поля для UPDATE
 		*/
-		
-		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта" или "TAG", то делаем ее действующей и 
+
+		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта" или "TAG", то делаем ее действующей и
 		UPDATE D
 		SET [Status_Id] 	= @Status_Id_ACTIVE,
 			[DateFrom]		= F.[DepoDate],
@@ -93,7 +93,7 @@ BEGIN
 		INNER JOIN @DepoFile					AS F ON F.[Code] = D.[Number]
 		WHERE	D.[Status] = 1
 			AND D.[Status_Id] IN (@Status_Id_NEW, @Status_Id_ACCEPT, @Status_Id_TAG);
-			
+
 		DELETE D
 		FROM Client.CompanyDepo AS D
 		WHERE D.Status = 1
@@ -112,7 +112,7 @@ BEGIN
 							WHERE F.[Code] = D.[Number]
 						)
 			);
-			
+
 		UPDATE D
 		SET [Status_Id] 	= @Status_Id_REFUSED,
 			[DateTo]		= CASE WHEN D.[DateFrom] IS NULL THEN NULL ELSE Common.DateOf(GetDate()) END,
@@ -128,14 +128,16 @@ BEGIN
 					FROM @DepoFile					AS F
 					WHERE F.[Code] = D.[Number]
 				);
-					
+
 		IF @@TranCount > 0
 			COMMIT TRAN;
 	END TRY
 	BEGIN CATCH
 		IF @@TranCount > 0
 			ROLLBACK TRAN;
-			
+
 		EXEC [Maintenance].[ReRaise Error];
-	END CATCH	
+	END CATCH
 END
+GRANT EXECUTE ON [Client].[CompanyDepo@Process] TO rl_depo_file_process;
+GO

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Price].[PRICE_DBF_IMPORT]
+ALTER PROCEDURE [Price].[PRICE_DBF_IMPORT]
 	@DBFMonth		UniqueIdentifier,
 	@ClientMonth	UniqueIdentifier
 AS
@@ -27,7 +27,7 @@ BEGIN
 	INSERT INTO @DBFPrice
 	SELECT SYS_REG_NAME, PS_PRICE
 	FROM dbo.DBFPriceView
-	WHERE PR_DATE = @DBFDate	
+	WHERE PR_DATE = @DBFDate
 
 	-- удялем данные за целевой месяц, мы ведь сейчас загрузим новые
 	DELETE
@@ -39,6 +39,8 @@ BEGIN
 		[SystemId]		= S.[Id],
 		[MonthId]		= @ClientMonth,
 		[Price]			= D.[PRICE]
-	FROM @DBFPrice D 
+	FROM @DBFPrice D
 	INNER JOIN System.Systems S ON S.REG = D.SYS_REG;
 END
+GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT] TO rl_price_import;
+GO
