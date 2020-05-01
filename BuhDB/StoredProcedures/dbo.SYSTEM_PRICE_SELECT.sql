@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[SYSTEM_PRICE_SELECT]
+ALTER PROCEDURE [dbo].[SYSTEM_PRICE_SELECT]
 	@SYSTEM	VARCHAR(150),
 	@DISTR	VARCHAR(150),
 	@DATE	VARCHAR(50) = '',
@@ -15,7 +15,7 @@ BEGIN
 
 	DECLARE @DCOEF DECIMAL(8, 4)
 	DECLARE @DROUND SMALLINT
-			
+
 	SELECT @DCOEF = DistrTypeCoefficient, @DROUND = DistrTypeRound
 	FROM dbo.DistrTypeTable d
 	WHERE d.DistrTypeName = @DISTR
@@ -24,14 +24,14 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKBEM',
 					'SKJEM',
 					'SBOEM',
 					'SKUEM'
 				)
-		) 
+		)
 	BEGIN
 		SET @DCOEF = 1
 		SET @DROUND = 2
@@ -41,7 +41,7 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKBP',
 					'SKBO',
@@ -61,7 +61,7 @@ BEGIN
 					'SKZO',
 					'SKZB'
 				)
-		) AND @DISTR IN ('Онлайн-версия Пароль')		
+		) AND @DISTR IN ('Онлайн-версия Пароль')
 	BEGIN
 		SET @DCOEF = 1.1
 		SET @DROUND = 2
@@ -71,24 +71,24 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
-					'SKBO', 'SKUO', 'SBOO', 'SKJP', 'SKZO', 'SKZB'					
+					'SKBO', 'SKUO', 'SBOO', 'SKJP', 'SKZO', 'SKZB'
 				)
 		) AND @DISTR IN ('ОВМ-Ф (1;2)')
 		)
 		OR
-		
+
 		(@SYSTEM IN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKZO'
 				)
 		) AND @DISTR IN ('ОВК')
-		)	
+		)
 	BEGIN
 		SET @DCOEF = 1.3
 		SET @DROUND = 2
@@ -97,7 +97,7 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKUP', 'SBOP'
 				)
@@ -110,11 +110,11 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ОВС (5 ОД)')		
+		) AND @DISTR IN ('ОВС (5 ОД)')
 	BEGIN
 		SET @DCOEF = 2.3
 		SET @DROUND = 2
@@ -122,11 +122,11 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ОВС (10 ОД)')		
+		) AND @DISTR IN ('ОВС (10 ОД)')
 	BEGIN
 		SET @DCOEF = 2.52
 		SET @DROUND = 2
@@ -134,11 +134,11 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ОВС (20 ОД)')		
+		) AND @DISTR IN ('ОВС (20 ОД)')
 	BEGIN
 		SET @DCOEF = 2.64
 		SET @DROUND = 2
@@ -146,11 +146,11 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN 
+			WHERE SystemReg IN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ОВС (50 ОД)')		
+		) AND @DISTR IN ('ОВС (50 ОД)')
 	BEGIN
 		SET @DCOEF = 2.86
 		SET @DROUND = 2
@@ -175,24 +175,24 @@ BEGIN
 							SELECT *
 							FROM dbo.SystemComposite
 							WHERE SystemID = ID_SYSTEM
-						) 
+						)
 						THEN
 								(
-									SELECT 
-										SUM(ROUND(ROUND(CEILING(CEILING(z.SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF + 
+									SELECT
+										SUM(ROUND(ROUND(CEILING(CEILING(z.SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF +
 											CASE
 												WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF, @DROUND) < ROUND(SystemServicePrice * @DCOEF, @DROUND) * 0.85 THEN 10
 												ELSE 0
 											END
 											, @DROUND))
-									FROM 
+									FROM
 										dbo.SystemTable z
 										INNER JOIN dbo.SystemComposite ON ID_COMPOSITE = z.SystemID
 									WHERE ID_SYSTEM = a.SystemID
-								)											
+								)
 						ELSE
 						*/
-							ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF + 
+							ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF +
 								CASE
 									WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF, @DROUND) < ROUND(SystemServicePrice * @DCOEF, @DROUND) * 0.85 THEN 10
 									ELSE 0
@@ -201,11 +201,11 @@ BEGIN
 				/*END */AS MONTH_PRICE
 			FROM dbo.SystemTable a
 			WHERE SystemName = @SYSTEM
-					
+
 						/*
-			SELECT 
+			SELECT
 				--ROUND(ROUND(SystemServicePrice * 0.85, -1) * DistrTypeCoefficient, DistrTypeRound) AS MONTH_PRICE
-				ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * DistrTypeCoefficient + 
+				ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * DistrTypeCoefficient +
 					CASE
 						WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * DistrTypeCoefficient, DistrTypeRound) < ROUND(SystemServicePrice * DistrTypeCoefficient, DistrTypeRound) * 0.85 THEN 10
 						ELSE 0
@@ -227,7 +227,7 @@ BEGIN
 			WHERE DistrTypeName = @DISTR
 		ELSE
 			SELECT
-				ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF + 
+				ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF +
 					CASE
 						WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF, @DROUND) < ROUND(SystemServicePrice * @DCOEF, @DROUND) * 0.85 THEN 10
 						ELSE 0
@@ -238,3 +238,5 @@ BEGIN
 			WHERE SystemName = @SYSTEM AND PriceDate = @DATE
 	END
 END
+GRANT EXECUTE ON [dbo].[SYSTEM_PRICE_SELECT] TO DBCount;
+GO

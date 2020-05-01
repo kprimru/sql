@@ -18,27 +18,27 @@ create procedure dbo.dt_setpropertybyid_u
 	@lvalue image
 as
 	set nocount on
-	-- 
-	-- If we are writing the name property, find the ansi equivalent. 
-	-- If there is no lossless translation, generate an ansi name. 
-	-- 
-	declare @avalue varchar(255) 
-	set @avalue = null 
-	if (@uvalue is not null) 
-	begin 
-		if (convert(nvarchar(255), convert(varchar(255), @uvalue)) = @uvalue) 
-		begin 
-			set @avalue = convert(varchar(255), @uvalue) 
-		end 
-		else 
-		begin 
-			if 'DtgSchemaNAME' = @property 
-			begin 
-				exec dbo.dt_generateansiname @avalue output 
-			end 
-		end 
-	end 
-	if exists (select * from dbo.dtproperties 
+	--
+	-- If we are writing the name property, find the ansi equivalent.
+	-- If there is no lossless translation, generate an ansi name.
+	--
+	declare @avalue varchar(255)
+	set @avalue = null
+	if (@uvalue is not null)
+	begin
+		if (convert(nvarchar(255), convert(varchar(255), @uvalue)) = @uvalue)
+		begin
+			set @avalue = convert(varchar(255), @uvalue)
+		end
+		else
+		begin
+			if 'DtgSchemaNAME' = @property
+			begin
+				exec dbo.dt_generateansiname @avalue output
+			end
+		end
+	end
+	if exists (select * from dbo.dtproperties
 			where objectid=@id and property=@property)
 	begin
 		--

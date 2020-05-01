@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[CONTRACT_COPY]
+ALTER PROCEDURE [dbo].[CONTRACT_COPY]
 	@NUM		INT,
 	@DATE		VARCHAR(30),
 	@PROVIDER	VARCHAR(250)
@@ -13,7 +13,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @NEW_NUM INT
-	
+
 	SELECT @NEW_NUM = MAX(ContractNumber) + 1
 	FROM dbo.ContractTable
 	WHERE DATEPART(YEAR, CONVERT(DATETIME, ContractDate, 112)) = DATEPART(YEAR, CONVERT(DATETIME, @DATE, 112))
@@ -25,14 +25,14 @@ BEGIN
 		WHERE ContractNumber = @NUM
 			AND ContractDate = @DATE
 			AND ProviderName = @PROVIDER
-		
+
 	INSERT INTO dbo.ContractTaxTable(ContractNumber, ProviderName, ContractDate, TaxName, TaxRate, TaxPrice)
 		SELECT @NEW_NUM, ProviderName, ContractDate, TaxName, TaxRate, TaxPrice
 		FROM dbo.ContractTaxTable WITH(NOLOCK)
 		WHERE ContractNumber = @NUM
 			AND ContractDate = @DATE
 			AND ProviderName = @PROVIDER
-		
+
 	INSERT INTO dbo.ContractSystemsTable(ContractNumber, ProviderName, ContractDate, SystemNamePrefix, SystemPrefix, SystemNameStr, EdIzm, SystemEdPrice, SystemPrice, MonthStr, DistrType, NetVersion, SystemOrder, SystemSet, TaxPrice, TotalPrice, SystemNote)
 		SELECT @NEW_NUM, ProviderName, ContractDate, SystemNamePrefix, SystemPrefix, SystemNameStr, EdIzm, SystemEdPrice, SystemPrice, MonthStr, DistrType, NetVersion, SystemOrder, SystemSet, TaxPrice, TotalPrice, SystemNote
 		FROM dbo.ContractSystemsTable WITH(NOLOCK)
@@ -40,3 +40,5 @@ BEGIN
 			AND ContractDate = @DATE
 			AND ProviderName = @PROVIDER
 END
+GRANT EXECUTE ON [dbo].[CONTRACT_COPY] TO DBCount;
+GO
