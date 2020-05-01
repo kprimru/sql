@@ -21,17 +21,37 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.PriceTypeTable 
-	SET PT_NAME = @pricetypename,
-		PT_ID_GROUP = @group,
-		PT_COEF = @coef,
-		PT_ORDER = @order,
-		PT_ACTIVE = @active
-	WHERE PT_ID = @pricetypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE dbo.FieldTable
-	SET FL_CAPTION = @pricetypename
-	WHERE FL_NAME = 'PS_PRICE_' + CONVERT(VARCHAR, @pricetypeid)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.PriceTypeTable 
+		SET PT_NAME = @pricetypename,
+			PT_ID_GROUP = @group,
+			PT_COEF = @coef,
+			PT_ORDER = @order,
+			PT_ACTIVE = @active
+		WHERE PT_ID = @pricetypeid
+
+		UPDATE dbo.FieldTable
+		SET FL_CAPTION = @pricetypename
+		WHERE FL_NAME = 'PS_PRICE_' + CONVERT(VARCHAR, @pricetypeid)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

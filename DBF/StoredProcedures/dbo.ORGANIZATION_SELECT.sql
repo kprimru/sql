@@ -17,14 +17,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT ORG_FULL_NAME, ORG_SHORT_NAME, ORG_ID , ORG_PSEDO
-	FROM dbo.OrganizationTable 
-	WHERE ORG_ACTIVE = ISNULL(@active, ORG_ACTIVE)
-	ORDER BY ORG_FULL_NAME, ORG_SHORT_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ORG_FULL_NAME, ORG_SHORT_NAME, ORG_ID , ORG_PSEDO
+		FROM dbo.OrganizationTable 
+		WHERE ORG_ACTIVE = ISNULL(@active, ORG_ACTIVE)
+		ORDER BY ORG_FULL_NAME, ORG_SHORT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-

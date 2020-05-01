@@ -12,22 +12,44 @@ AS
 BEGIN
 	SET NOCOUNT ON;		
 
-	IF EXISTS
-		(
-			SELECT *
-			FROM Subhost.SubhostLessonPrice
-			WHERE SLP_ID_PERIOD = @PR_ID					
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF EXISTS
+			(
+				SELECT *
+				FROM Subhost.SubhostLessonPrice
+				WHERE SLP_ID_PERIOD = @PR_ID					
+					AND SLP_ID_LESSON = @LS_ID
+			)
+		BEGIN
+			UPDATE Subhost.SubhostLessonPrice
+			SET SLP_PRICE = @PRICE
+			WHERE SLP_ID_PERIOD = @PR_ID				
 				AND SLP_ID_LESSON = @LS_ID
-		)
-	BEGIN
-		UPDATE Subhost.SubhostLessonPrice
-		SET SLP_PRICE = @PRICE
-		WHERE SLP_ID_PERIOD = @PR_ID				
-			AND SLP_ID_LESSON = @LS_ID
-	END
-	ELSE
-	BEGIN
-		INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
-			SELECT @PR_ID, @LS_ID, @PRICE
-	END			
+		END
+		ELSE
+		BEGIN
+			INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
+				SELECT @PR_ID, @LS_ID, @PRICE
+		END			
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

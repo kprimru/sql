@@ -16,27 +16,49 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ID	SMALLINT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @PERIOD IS NULL
-	BEGIN
-		INSERT INTO dbo.Action(ACTN_NAME, ACTN_ID_TYPE, ACTN_BEGIN, ACTN_END, ACTN_ACTIVE)
-			VALUES(@NAME, @TYPE, @BEGIN, @END, @ACTIVE)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		SET @ID = SCOPE_IDENTITY()
-	END
-	ELSE
-	BEGIN
-		INSERT INTO dbo.Action(ACTN_NAME, ACTN_ID_TYPE, ACTN_ACTIVE)
-			VALUES(@NAME, @TYPE, @ACTIVE)
+	BEGIN TRY
 
-		SET @ID = SCOPE_IDENTITY()
+		DECLARE @ID	SMALLINT
 
-		INSERT INTO dbo.ActionPeriod(AP_ID_AC, AP_ID_PERIOD)
-			SELECT @ID, Item
-			FROM dbo.GET_TABLE_FROM_LIST(@PERIOD, ',')
-	END
+		IF @PERIOD IS NULL
+		BEGIN
+			INSERT INTO dbo.Action(ACTN_NAME, ACTN_ID_TYPE, ACTN_BEGIN, ACTN_END, ACTN_ACTIVE)
+				VALUES(@NAME, @TYPE, @BEGIN, @END, @ACTIVE)
 
-	IF @RETURN = 1
-		SELECT @ID AS NEW_IDEN
+			SET @ID = SCOPE_IDENTITY()
+		END
+		ELSE
+		BEGIN
+			INSERT INTO dbo.Action(ACTN_NAME, ACTN_ID_TYPE, ACTN_ACTIVE)
+				VALUES(@NAME, @TYPE, @ACTIVE)
+
+			SET @ID = SCOPE_IDENTITY()
+
+			INSERT INTO dbo.ActionPeriod(AP_ID_AC, AP_ID_PERIOD)
+				SELECT @ID, Item
+				FROM dbo.GET_TABLE_FROM_LIST(@PERIOD, ',')
+		END
+
+		IF @RETURN = 1
+			SELECT @ID AS NEW_IDEN
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

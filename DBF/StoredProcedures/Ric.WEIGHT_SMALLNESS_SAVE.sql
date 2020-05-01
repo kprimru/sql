@@ -11,11 +11,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Ric.WeightSmallness
-	SET WS_VALUE = @VALUE
-	WHERE WS_ID_QUARTER = @QR_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Ric.WeightSmallness(WS_ID_QUARTER, WS_VALUE)
-			SELECT @QR_ID, @VALUE
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Ric.WeightSmallness
+		SET WS_VALUE = @VALUE
+		WHERE WS_ID_QUARTER = @QR_ID
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Ric.WeightSmallness(WS_ID_QUARTER, WS_VALUE)
+				SELECT @QR_ID, @VALUE
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -18,10 +18,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 	
-	SELECT COT_NAME, COT_ID 
-	FROM dbo.CourierTypeTable 
-	WHERE COT_ACTIVE = ISNULL(@active, COT_ACTIVE)
-	ORDER BY COT_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	
+		SELECT COT_NAME, COT_ID 
+		FROM dbo.CourierTypeTable 
+		WHERE COT_ACTIVE = ISNULL(@active, COT_ACTIVE)
+		ORDER BY COT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

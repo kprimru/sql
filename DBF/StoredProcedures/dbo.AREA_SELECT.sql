@@ -18,17 +18,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT AR_ID, AR_NAME  
-	FROM dbo.AreaTable 
-	WHERE AR_ACTIVE = ISNULL(@active, AR_ACTIVE)
-	ORDER BY AR_NAME
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		SELECT AR_ID, AR_NAME  
+		FROM dbo.AreaTable 
+		WHERE AR_ACTIVE = ISNULL(@active, AR_ACTIVE)
+		ORDER BY AR_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-

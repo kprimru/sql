@@ -18,44 +18,66 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb.#role') IS NOT NULL
-		DROP TABLE #role
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #role
-		(
-			RL_NAME VARCHAR(100)
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO #role
-		SELECT * FROM dbo.GET_STRING_TABLE_FROM_LIST(@grouproles, ',')
+	BEGIN TRY
 
-	IF NOT EXISTS
-		(
-			SELECT * 
-			FROM sys.database_principals
-			WHERE TYPE_DESC = 'DATABASE_ROLE' AND [NAME] = @groupname
-		)
-	BEGIN
-		EXEC('CREATE ROLE ' + @groupname)
+		IF OBJECT_ID('tempdb.#role') IS NOT NULL
+			DROP TABLE #role
 
-		INSERT INTO dbo.RoleTable(ROLE_NAME, ROLE_NOTE)
-			SELECT @groupname, @groupnote
-	END
+		CREATE TABLE #role
+			(
+				RL_NAME VARCHAR(100)
+			)
 
-	DECLARE @rolename VARCHAR(100)
-	DECLARE ROLES CURSOR LOCAL FOR
-		SELECT RL_NAME
-		FROM #role
+		INSERT INTO #role
+			SELECT * FROM dbo.GET_STRING_TABLE_FROM_LIST(@grouproles, ',')
 
-	FETCH NEXT FROM ROLES INTO @rolename
+		IF NOT EXISTS
+			(
+				SELECT * 
+				FROM sys.database_principals
+				WHERE TYPE_DESC = 'DATABASE_ROLE' AND [NAME] = @groupname
+			)
+		BEGIN
+			EXEC('CREATE ROLE ' + @groupname)
 
-	WHILE @@FETCH_STATUS = 0 
-	BEGIN
-		EXEC sp_addrolemember @rolename, @groupname
+			INSERT INTO dbo.RoleTable(ROLE_NAME, ROLE_NOTE)
+				SELECT @groupname, @groupnote
+		END
+
+		DECLARE @rolename VARCHAR(100)
+		DECLARE ROLES CURSOR LOCAL FOR
+			SELECT RL_NAME
+			FROM #role
 
 		FETCH NEXT FROM ROLES INTO @rolename
-	END
 
-	IF OBJECT_ID('tempdb.#role') IS NOT NULL
-		DROP TABLE #role
+		WHILE @@FETCH_STATUS = 0 
+		BEGIN
+			EXEC sp_addrolemember @rolename, @groupname
+
+			FETCH NEXT FROM ROLES INTO @rolename
+		END
+
+		IF OBJECT_ID('tempdb.#role') IS NOT NULL
+			DROP TABLE #role
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

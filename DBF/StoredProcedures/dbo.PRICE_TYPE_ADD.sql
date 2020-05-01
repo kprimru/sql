@@ -23,14 +23,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.PriceTypeTable(PT_NAME, PT_ID_GROUP, PT_COEF, PT_ORDER, PT_ACTIVE) 
-	VALUES (@pricetypename, @group, @coef, @order, @active)
-	
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.FieldTable(FL_NAME, FL_WIDTH, FL_CAPTION)
-		SELECT 'PS_PRICE_' + CONVERT(VARCHAR, SCOPE_IDENTITY()), 80, @pricetypename
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.PriceTypeTable(PT_NAME, PT_ID_GROUP, PT_COEF, PT_ORDER, PT_ACTIVE) 
+		VALUES (@pricetypename, @group, @coef, @order, @active)
+		
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		INSERT INTO dbo.FieldTable(FL_NAME, FL_WIDTH, FL_CAPTION)
+			SELECT 'PS_PRICE_' + CONVERT(VARCHAR, SCOPE_IDENTITY()), 80, @pricetypename
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

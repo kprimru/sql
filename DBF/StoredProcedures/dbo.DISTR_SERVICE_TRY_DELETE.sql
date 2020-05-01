@@ -16,23 +16,43 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 30.04.2009, ¬.Ѕогдан
-	IF EXISTS(SELECT * FROM dbo.ClientDistrTable WHERE CD_ID_SERVICE = @dsid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + '”даление невозможно, так как выбранный статус обслуживани€ приписан '
-							+ 'какому-то дистрибутиву некоторого клиента.'
-							+ CHAR(13)
-		END
-	--
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		-- добавлено 30.04.2009, ¬.Ѕогдан
+		IF EXISTS(SELECT * FROM dbo.ClientDistrTable WHERE CD_ID_SERVICE = @dsid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + '”даление невозможно, так как выбранный статус обслуживани€ приписан '
+								+ 'какому-то дистрибутиву некоторого клиента.'
+								+ CHAR(13)
+			END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

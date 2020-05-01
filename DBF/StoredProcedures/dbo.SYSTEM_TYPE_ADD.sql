@@ -31,11 +31,31 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.SystemTypeTable(SST_NAME, SST_CAPTION, SST_LST, SST_REPORT, SST_ACTIVE, SST_ORDER, SST_ID_MOS, SST_ID_SUB, SST_ID_HOST, SST_ID_DHOST, SST_COEF, SST_CALC, SST_KBU) 
-	VALUES (@systemtypename, @systemtypecaption, @systemtypelst, @systemtypereport, @active, @order, @mosid, @subid, @host, @dhost, @coef, @calc, @kbu)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.SystemTypeTable(SST_NAME, SST_CAPTION, SST_LST, SST_REPORT, SST_ACTIVE, SST_ORDER, SST_ID_MOS, SST_ID_SUB, SST_ID_HOST, SST_ID_DHOST, SST_COEF, SST_CALC, SST_KBU) 
+		VALUES (@systemtypename, @systemtypecaption, @systemtypelst, @systemtypereport, @active, @order, @mosid, @subid, @host, @dhost, @coef, @calc, @kbu)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

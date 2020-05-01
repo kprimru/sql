@@ -17,20 +17,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @sysid INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @sysid = SYS_ID
-	FROM dbo.DistrView WITH(NOEXPAND)
-	WHERE DIS_ID = @distrid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT SYS_ID, SYS_SHORT_NAME
-	FROM dbo.SystemTable
-	WHERE SYS_ID <> @sysid 
-		AND SYS_ID_HOST = 
-				(
-					SELECT SYS_ID_HOST 
-					FROM dbo.SystemTable 
-					WHERE SYS_ID = @sysid
-				)
-	
+	BEGIN TRY
+
+		DECLARE @sysid INT
+
+		SELECT @sysid = SYS_ID
+		FROM dbo.DistrView WITH(NOEXPAND)
+		WHERE DIS_ID = @distrid
+
+		SELECT SYS_ID, SYS_SHORT_NAME
+		FROM dbo.SystemTable
+		WHERE SYS_ID <> @sysid 
+			AND SYS_ID_HOST = 
+					(
+						SELECT SYS_ID_HOST 
+						FROM dbo.SystemTable 
+						WHERE SYS_ID = @sysid
+					)
+					
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH	
 END

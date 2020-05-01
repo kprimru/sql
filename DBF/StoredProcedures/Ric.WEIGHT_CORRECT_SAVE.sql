@@ -11,15 +11,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @QR_ID	SMALLINT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @QR_ID = dbo.PeriodQuarter(@PR_ID)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	UPDATE Ric.WeightCorrection
-	SET WC_VALUE = @VALUE
-	WHERE WC_ID_QUARTER = @QR_ID
+	BEGIN TRY
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Ric.WeightCorrection(WC_ID_QUARTER, WC_VALUE)
-			SELECT @QR_ID, @VALUE
+		DECLARE @QR_ID	SMALLINT
+
+		SET @QR_ID = dbo.PeriodQuarter(@PR_ID)
+
+		UPDATE Ric.WeightCorrection
+		SET WC_VALUE = @VALUE
+		WHERE WC_ID_QUARTER = @QR_ID
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Ric.WeightCorrection(WC_ID_QUARTER, WC_VALUE)
+				SELECT @QR_ID, @VALUE
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

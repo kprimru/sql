@@ -24,25 +24,45 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE) 
-		VALUES (@NET, @PERIOD, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @RETURN = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @replace = 1
-	BEGIN
-		DECLARE @PR_DATE SMALLDATETIME
+	BEGIN TRY
 
-		SELECT @PR_DATE = PR_DATE
-		FROM dbo.PeriodTable
-		WHERE PR_ID = @PERIOD
+		INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE) 
+			VALUES (@NET, @PERIOD, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE)
 
-		INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE)
-			SELECT @NET, PR_ID, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE
+		IF @RETURN = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		IF @replace = 1
+		BEGIN
+			DECLARE @PR_DATE SMALLDATETIME
+
+			SELECT @PR_DATE = PR_DATE
 			FROM dbo.PeriodTable
-			WHERE PR_DATE > @PR_DATE
-	END
+			WHERE PR_ID = @PERIOD
 
-	SET NOCOUNT OFF
+			INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE)
+				SELECT @NET, PR_ID, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE
+				FROM dbo.PeriodTable
+				WHERE PR_DATE > @PR_DATE
+		END
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

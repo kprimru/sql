@@ -25,15 +25,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.SystemNetCountTable 
-	SET SNC_ID_SN = @systemnetid, 
-		SNC_NET_COUNT = @netcount,
-		SNC_TECH = @tech,
-		SNC_ODON = @ODON,
-		SNC_ODOFF = @ODOFF,
-		SNC_SHORT = @SHORT,
-		SNC_ACTIVE = @active
-	WHERE SNC_ID = @systemnetcountid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.SystemNetCountTable 
+		SET SNC_ID_SN = @systemnetid, 
+			SNC_NET_COUNT = @netcount,
+			SNC_TECH = @tech,
+			SNC_ODON = @ODON,
+			SNC_ODOFF = @ODOFF,
+			SNC_SHORT = @SHORT,
+			SNC_ACTIVE = @active
+		WHERE SNC_ID = @systemnetcountid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

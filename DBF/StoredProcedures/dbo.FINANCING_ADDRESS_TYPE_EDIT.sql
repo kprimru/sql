@@ -22,15 +22,32 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.FinancingAddressTypeTable 
-	SET	FAT_ID_ADDR_TYPE = @addrtypeid,
-		FAT_TEXT = @text,
-		FAT_ACTIVE = @active
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	WHERE FAT_ID = @fatid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.FinancingAddressTypeTable 
+		SET	FAT_ID_ADDR_TYPE = @addrtypeid,
+			FAT_TEXT = @text,
+			FAT_ACTIVE = @active
+
+		WHERE FAT_ID = @fatid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-

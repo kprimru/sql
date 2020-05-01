@@ -14,10 +14,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Subhost.SubhostKBUTable
-	SET SK_ID_HOST = @SH_ID, 
-		SK_ID_SYSTEM = @SYS_ID, 
-		SK_KBU = @KBU, 
-		SK_ACTIVE = @ACTIVE
-	WHERE SK_ID = @SK_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Subhost.SubhostKBUTable
+		SET SK_ID_HOST = @SH_ID, 
+			SK_ID_SYSTEM = @SYS_ID, 
+			SK_KBU = @KBU, 
+			SK_ACTIVE = @ACTIVE
+		WHERE SK_ID = @SK_ID
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

@@ -16,13 +16,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT TX_ID, TX_NAME, TX_CAPTION, TX_PERCENT
-	FROM dbo.TaxTable 
-	WHERE TX_ACTIVE = ISNULL(@active, TX_ACTIVE)
-	ORDER BY TX_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT TX_ID, TX_NAME, TX_CAPTION, TX_PERCENT
+		FROM dbo.TaxTable 
+		WHERE TX_ACTIVE = ISNULL(@active, TX_ACTIVE)
+		ORDER BY TX_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-

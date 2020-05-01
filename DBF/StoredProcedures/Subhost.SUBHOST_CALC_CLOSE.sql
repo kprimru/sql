@@ -31,51 +31,73 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF EXISTS(
-			SELECT *
-			FROM Subhost.SubhostCalcReport
-			WHERE SCR_ID_SUBHOST = @SH_ID
-				AND SCR_ID_PERIOD = @PR_ID
-		) 
-	BEGIN
-		RAISERROR('Расчет уже закрыт.', 16, 1)
-		RETURN
-	END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF NOT EXISTS
-		(
-			SELECT *
-			FROM Subhost.SubhostCalc 
-			WHERE SHC_ID_SUBHOST = @SH_ID
-				AND SHC_ID_PERIOD = @PR_ID
-		)
-	BEGIN
-		RAISERROR('Расчет еще не производился.', 16, 1)
-		RETURN
-	END
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @TX_RATE DECIMAL(8,4)
-	
-	SELECT @TX_RATE = TX_TAX_RATE
-	FROM dbo.PeriodTable
-	CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
-	WHERE PR_ID = @PR_ID
+	BEGIN TRY
 
-	INSERT INTO Subhost.SubhostCalcReport(
-				SCR_ID_SUBHOST, SCR_ID_PERIOD, SCR_DELIVERY_SYS, SCR_SUPPORT, SCR_CNT, SCR_CNT_SPEC, SCR_DIU, SCR_PAPPER, 
-				SCR_MARKET, SCR_STUDY, SCR_NDS10, 
-				SCR_IC, SCR_IC_NDS,
-				SCR_DELIVERY, SCR_TRAFFIC, SCR_TOTAL_18, SCR_NDS_18, SCR_TOTAL_NDS, 
-				SCR_INCOME, SCR_DEBT, SCR_SALDO, SCR_PENALTY, SCR_TOTAL)
-		SELECT 
-				@SH_ID, @PR_ID, @SCR_DELIVERY_SYS, @SCR_SUPPORT, @SCR_CNT, @SCR_CNT_SPEC, @SCR_DIU, @SCR_PAPPER, 
-				@SCR_MARKET, @SCR_STUDY, @SCR_NDS10, 
-				@SCR_IC, ROUND(@SCR_IC * @TX_RATE, 2),
-				@SCR_DELIVERY, @SCR_TRAFFIC, @SCR_TOTAL_18, @SCR_NDS_18, @SCR_TOTAL_NDS, 
-				@SCR_INCOME, @SCR_DEBT, @SCR_SALDO, @SCR_PENALTY, @SCR_TOTAL
+		IF EXISTS(
+				SELECT *
+				FROM Subhost.SubhostCalcReport
+				WHERE SCR_ID_SUBHOST = @SH_ID
+					AND SCR_ID_PERIOD = @PR_ID
+			) 
+		BEGIN
+			RAISERROR('Расчет уже закрыт.', 16, 1)
+			RETURN
+		END
 
-	UPDATE Subhost.SubhostCalc
-	SET SHC_CLOSED = 1
-	WHERE SHC_ID_SUBHOST = @SH_ID
-		AND SHC_ID_PERIOD = @PR_ID
+		IF NOT EXISTS
+			(
+				SELECT *
+				FROM Subhost.SubhostCalc 
+				WHERE SHC_ID_SUBHOST = @SH_ID
+					AND SHC_ID_PERIOD = @PR_ID
+			)
+		BEGIN
+			RAISERROR('Расчет еще не производился.', 16, 1)
+			RETURN
+		END
+
+		DECLARE @TX_RATE DECIMAL(8,4)
+		
+		SELECT @TX_RATE = TX_TAX_RATE
+		FROM dbo.PeriodTable
+		CROSS APPLY dbo.TaxDefaultSelect(PR_DATE)
+		WHERE PR_ID = @PR_ID
+
+		INSERT INTO Subhost.SubhostCalcReport(
+					SCR_ID_SUBHOST, SCR_ID_PERIOD, SCR_DELIVERY_SYS, SCR_SUPPORT, SCR_CNT, SCR_CNT_SPEC, SCR_DIU, SCR_PAPPER, 
+					SCR_MARKET, SCR_STUDY, SCR_NDS10, 
+					SCR_IC, SCR_IC_NDS,
+					SCR_DELIVERY, SCR_TRAFFIC, SCR_TOTAL_18, SCR_NDS_18, SCR_TOTAL_NDS, 
+					SCR_INCOME, SCR_DEBT, SCR_SALDO, SCR_PENALTY, SCR_TOTAL)
+			SELECT 
+					@SH_ID, @PR_ID, @SCR_DELIVERY_SYS, @SCR_SUPPORT, @SCR_CNT, @SCR_CNT_SPEC, @SCR_DIU, @SCR_PAPPER, 
+					@SCR_MARKET, @SCR_STUDY, @SCR_NDS10, 
+					@SCR_IC, ROUND(@SCR_IC * @TX_RATE, 2),
+					@SCR_DELIVERY, @SCR_TRAFFIC, @SCR_TOTAL_18, @SCR_NDS_18, @SCR_TOTAL_NDS, 
+					@SCR_INCOME, @SCR_DEBT, @SCR_SALDO, @SCR_PENALTY, @SCR_TOTAL
+
+		UPDATE Subhost.SubhostCalc
+		SET SHC_CLOSED = 1
+		WHERE SHC_ID_SUBHOST = @SH_ID
+			AND SHC_ID_PERIOD = @PR_ID
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

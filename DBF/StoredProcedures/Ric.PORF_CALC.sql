@@ -13,18 +13,40 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE	SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @PR_ALG
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @RES	DECIMAL(10, 4)
+	BEGIN TRY
 
-	IF @PR_DATE >= '20120601'
-	BEGIN
-		SET @RES = ROUND(100 * (@END - @START + @WEIGHT) / @START, 2)
-	END
+		DECLARE @PR_DATE	SMALLDATETIME
 
-	SELECT @RES AS PORF
+		SELECT @PR_DATE = PR_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @PR_ALG
+
+		DECLARE @RES	DECIMAL(10, 4)
+
+		IF @PR_DATE >= '20120601'
+		BEGIN
+			SET @RES = ROUND(100 * (@END - @START + @WEIGHT) / @START, 2)
+		END
+
+		SELECT @RES AS PORF
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

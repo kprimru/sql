@@ -15,9 +15,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Subhost.SubhostProduct(SP_ID_GROUP, SP_NAME, SP_ID_UNIT, SP_COEF, SP_ACTIVE)
-		VALUES(@SPG_ID, @SP_NAME, @UN_ID, @COEF, @ACTIVE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @RETURN = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO Subhost.SubhostProduct(SP_ID_GROUP, SP_NAME, SP_ID_UNIT, SP_COEF, SP_ACTIVE)
+			VALUES(@SPG_ID, @SP_NAME, @UN_ID, @COEF, @ACTIVE)
+
+		IF @RETURN = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

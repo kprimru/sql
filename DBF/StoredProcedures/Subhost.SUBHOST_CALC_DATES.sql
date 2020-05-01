@@ -11,11 +11,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    UPDATE Subhost.SubhostCalcDates
-	SET SCD_DATE	=	@DATE
-	WHERE SCD_ID_PERIOD = @PR_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Subhost.SubhostCalcDates(SCD_ID_PERIOD, SCD_DATE)	
-			VALUES(@PR_ID, @DATE)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Subhost.SubhostCalcDates
+		SET SCD_DATE	=	@DATE
+		WHERE SCD_ID_PERIOD = @PR_ID
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Subhost.SubhostCalcDates(SCD_ID_PERIOD, SCD_DATE)	
+				VALUES(@PR_ID, @DATE)
+				
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

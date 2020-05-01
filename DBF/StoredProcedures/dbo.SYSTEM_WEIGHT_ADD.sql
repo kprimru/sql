@@ -22,32 +22,45 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE) 
-	VALUES (@systemid, @periodid, @weight, @problem, @active)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @replace = 1
-	BEGIN
-		DECLARE @PR_DATE SMALLDATETIME
+	BEGIN TRY
 
-		SELECT @PR_DATE = PR_DATE
-		FROM dbo.PeriodTable
-		WHERE PR_ID = @periodid
+		INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE) 
+		VALUES (@systemid, @periodid, @weight, @problem, @active)
 
-		INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE)
-			SELECT @systemid, PR_ID, @weight, @problem, 1
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		IF @replace = 1
+		BEGIN
+			DECLARE @PR_DATE SMALLDATETIME
+
+			SELECT @PR_DATE = PR_DATE
 			FROM dbo.PeriodTable
-			WHERE PR_DATE > @PR_DATE
-	END
+			WHERE PR_ID = @periodid
 
-	SET NOCOUNT OFF
+			INSERT INTO dbo.SystemWeightTable(SW_ID_SYSTEM, SW_ID_PERIOD, SW_WEIGHT, SW_PROBLEM, SW_ACTIVE)
+				SELECT @systemid, PR_ID, @weight, @problem, 1
+				FROM dbo.PeriodTable
+				WHERE PR_DATE > @PR_DATE
+		END
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-

@@ -25,15 +25,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.ClientDocumentSettingsTable
-	SET	CDS_ID_CLIENT = @clientid, 
-		CDS_ACT_CONTRACT = @actcontract, 
-		CDS_ACT_POS = @actpos,
-		CDS_ACT_POS_F = @actposf, 
-		CDS_ACT_NAME = @actname, 
-		CDS_ACT_NAME_F = @actnamef, 
-		CDS_BILL_REST = @billrest, 
-		CDS_INS_CONTRACT = @inscontract, 
-		CDS_INS_NAME = @insname		
-	WHERE CDS_ID = @cdsid				
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.ClientDocumentSettingsTable
+		SET	CDS_ID_CLIENT = @clientid, 
+			CDS_ACT_CONTRACT = @actcontract, 
+			CDS_ACT_POS = @actpos,
+			CDS_ACT_POS_F = @actposf, 
+			CDS_ACT_NAME = @actname, 
+			CDS_ACT_NAME_F = @actnamef, 
+			CDS_BILL_REST = @billrest, 
+			CDS_INS_CONTRACT = @inscontract, 
+			CDS_INS_NAME = @insname		
+		WHERE CDS_ID = @cdsid				
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

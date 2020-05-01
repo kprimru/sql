@@ -22,14 +22,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.SystemNetTable 
-	SET SN_NAME = @name, 
-	    SN_FULL_NAME = @fullname, 
-		SN_COEF = @coef,
-		SN_ORDER = @order,
-		SN_CALC = @calc,
-		SN_ACTIVE = @active
-	WHERE SN_ID = @id
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.SystemNetTable 
+		SET SN_NAME = @name, 
+			SN_FULL_NAME = @fullname, 
+			SN_COEF = @coef,
+			SN_ORDER = @order,
+			SN_CALC = @calc,
+			SN_ACTIVE = @active
+		WHERE SN_ID = @id
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

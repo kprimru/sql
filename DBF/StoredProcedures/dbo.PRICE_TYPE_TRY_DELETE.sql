@@ -19,32 +19,51 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, ¬.Ѕогдан
-	IF EXISTS(SELECT * FROM dbo.PriceTable WHERE PP_ID_TYPE = @pricetypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить тип прейскуранта, так как имеютс€ прейскуранты этого типа.'
-		END
+	BEGIN TRY
 
-	-- св€зь PriceType <-> PriceSystem <-> System
-	
-	IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_TYPE = @pricetypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить тип прейскуранта, так как существует' +
-							+ 'запись о стоимости систем по этому типу прейскуранта.' + CHAR(13)
-		END
-	
-	--
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SELECT @res AS RES, @txt AS TXT
+		SET @res = 0
+		SET @txt = ''
+
+		-- добавлено 29.04.2009, ¬.Ѕогдан
+		IF EXISTS(SELECT * FROM dbo.PriceTable WHERE PP_ID_TYPE = @pricetypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить тип прейскуранта, так как имеютс€ прейскуранты этого типа.'
+			END
+
+		-- св€зь PriceType <-> PriceSystem <-> System
+		
+		IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_TYPE = @pricetypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить тип прейскуранта, так как существует' +
+								+ 'запись о стоимости систем по этому типу прейскуранта.' + CHAR(13)
+			END
+		
+		--
+
+		SELECT @res AS RES, @txt AS TXT
 	  
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-

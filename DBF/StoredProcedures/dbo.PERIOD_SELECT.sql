@@ -10,10 +10,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT PR_ID, PR_NAME, PR_DATE, PR_END_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ACTIVE = ISNULL(@active, PR_ACTIVE)
-	ORDER BY PR_DATE DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PR_ID, PR_NAME, PR_DATE, PR_END_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ACTIVE = ISNULL(@active, PR_ACTIVE)
+		ORDER BY PR_DATE DESC
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

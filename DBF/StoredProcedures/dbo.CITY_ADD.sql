@@ -28,24 +28,38 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.CityTable
-						(
-							CT_PREFIX, CT_NAME, CT_PHONE, CT_ID_RG, CT_ID_AREA, 
-							CT_ID_COUNTRY, CT_REGION, CT_ACTIVE, /*CT_OLD_CODE, */CT_ID_BASE
-						) 
-	VALUES (
-			@cityprefix, @cityname, @phone, @regionid, 
-			@areaid, @countryid, @region, @active, /*@oldcode, */@base
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.CityTable
+							(
+								CT_PREFIX, CT_NAME, CT_PHONE, CT_ID_RG, CT_ID_AREA, 
+								CT_ID_COUNTRY, CT_REGION, CT_ACTIVE, /*CT_OLD_CODE, */CT_ID_BASE
+							) 
+		VALUES (
+				@cityprefix, @cityname, @phone, @regionid, 
+				@areaid, @countryid, @region, @active, /*@oldcode, */@base
+				)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-

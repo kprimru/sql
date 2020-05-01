@@ -17,18 +17,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DOC_NAME, DOC_ID, SO_NAME, SO_ID, GD_ID, GD_NAME, UN_ID, UN_NAME
-	FROM 
-		dbo.DocumentTable,
-		dbo.SaleObjectTable,
-		dbo.GoodTable,
-		dbo.UnitTable
-	WHERE NOT EXISTS
-		(
-			SELECT *
-			FROM dbo.DocumentSaleObjectDefaultTable
-			WHERE DSD_ID_SO = SO_ID AND DSD_ID_DOC = DOC_ID
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DOC_NAME, DOC_ID, SO_NAME, SO_ID, GD_ID, GD_NAME, UN_ID, UN_NAME
+		FROM 
+			dbo.DocumentTable,
+			dbo.SaleObjectTable,
+			dbo.GoodTable,
+			dbo.UnitTable
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM dbo.DocumentSaleObjectDefaultTable
+				WHERE DSD_ID_SO = SO_ID AND DSD_ID_DOC = DOC_ID
+			)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-

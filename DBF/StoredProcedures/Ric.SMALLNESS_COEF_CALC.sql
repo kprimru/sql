@@ -13,29 +13,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE	SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @PR_ALG
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @RES	DECIMAL(10, 4)
+	BEGIN TRY
 
-	DECLARE @VKSP	DECIMAL(10, 4)
+		DECLARE @PR_DATE	SMALLDATETIME
 
-	IF @PR_DATE >= '20120601'
-	BEGIN		
-		SELECT @VKSP = Ric.VKSPGet(@PR_ALG, dbo.QuarterPeriod(dbo.QuarterDelta(@QR_ID, -2), 3), @PR_ID, @PR_ID)
-	
-		IF @VKSP / @WS <= 0.5
-			SET @RES = 0.5
-		ELSE IF ((@VKSP / @WS) < 1) AND ((@VKSP / @WS) > 0.5)
-			SET @RES = @VKSP / @WS
-		ELSE IF @VKSP / @WS >= 1
-			SET @RES = 1
-		ELSE
-			SET @RES = NULL
-	END
+		SELECT @PR_DATE = PR_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @PR_ALG
 
-	SELECT @RES AS COEF
+		DECLARE @RES	DECIMAL(10, 4)
+
+		DECLARE @VKSP	DECIMAL(10, 4)
+
+		IF @PR_DATE >= '20120601'
+		BEGIN		
+			SELECT @VKSP = Ric.VKSPGet(@PR_ALG, dbo.QuarterPeriod(dbo.QuarterDelta(@QR_ID, -2), 3), @PR_ID, @PR_ID)
+		
+			IF @VKSP / @WS <= 0.5
+				SET @RES = 0.5
+			ELSE IF ((@VKSP / @WS) < 1) AND ((@VKSP / @WS) > 0.5)
+				SET @RES = @VKSP / @WS
+			ELSE IF @VKSP / @WS >= 1
+				SET @RES = 1
+			ELSE
+				SET @RES = NULL
+		END
+
+		SELECT @RES AS COEF
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

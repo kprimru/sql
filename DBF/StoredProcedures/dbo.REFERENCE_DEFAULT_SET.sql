@@ -17,16 +17,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DECLARE @refid INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @refid = REF_ID
-	FROM dbo.ReferenceTable
-	WHERE REF_NAME = @refname
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @refid IS NULL
-		RETURN
-
-	INSERT INTO dbo.ReferenceDefaultTable (RD_ID_REF, RD_USER, RD_VALUE)
-		SELECT @refid, USER_NAME(), @dataid
+	BEGIN TRY
 	
+		DECLARE @refid INT
+
+		SELECT @refid = REF_ID
+		FROM dbo.ReferenceTable
+		WHERE REF_NAME = @refname
+
+		IF @refid IS NULL
+			RETURN
+
+		INSERT INTO dbo.ReferenceDefaultTable (RD_ID_REF, RD_USER, RD_VALUE)
+			SELECT @refid, USER_NAME(), @dataid
+	
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

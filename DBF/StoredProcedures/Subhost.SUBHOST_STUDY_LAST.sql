@@ -11,26 +11,48 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE 
-	FROM Subhost.SubhostStudy
-	WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = @PR_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
-		SELECT @PR_ID, SLP_ID_LESSON, SLP_PRICE
-		FROM Subhost.SubhostLessonPrice a
-		WHERE SLP_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
-			AND NOT EXISTS
-				(
-					SELECT *
-					FROM Subhost.SubhostLessonPrice b
-					WHERE b.SLP_ID_PERIOD = @PR_ID
-						AND b.SLP_ID_LESSON = a.SLP_ID_LESSON
-				)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO Subhost.SubhostStudy(
-			SS_ID_SUBHOST, SS_ID_PERIOD, SS_ID_LESSON, SS_COUNT)
-		SELECT 
-			SS_ID_SUBHOST, @PR_ID, SS_ID_LESSON, SS_COUNT			
+	BEGIN TRY
+
+		DELETE 
 		FROM Subhost.SubhostStudy
-		WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
+		WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = @PR_ID
+
+		INSERT INTO Subhost.SubhostLessonPrice(SLP_ID_PERIOD, SLP_ID_LESSON, SLP_PRICE)
+			SELECT @PR_ID, SLP_ID_LESSON, SLP_PRICE
+			FROM Subhost.SubhostLessonPrice a
+			WHERE SLP_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
+				AND NOT EXISTS
+					(
+						SELECT *
+						FROM Subhost.SubhostLessonPrice b
+						WHERE b.SLP_ID_PERIOD = @PR_ID
+							AND b.SLP_ID_LESSON = a.SLP_ID_LESSON
+					)
+
+		INSERT INTO Subhost.SubhostStudy(
+				SS_ID_SUBHOST, SS_ID_PERIOD, SS_ID_LESSON, SS_COUNT)
+			SELECT 
+				SS_ID_SUBHOST, @PR_ID, SS_ID_LESSON, SS_COUNT			
+			FROM Subhost.SubhostStudy
+			WHERE SS_ID_SUBHOST = @SH_ID AND SS_ID_PERIOD = dbo.PERIOD_PREV(@PR_ID)
+			
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

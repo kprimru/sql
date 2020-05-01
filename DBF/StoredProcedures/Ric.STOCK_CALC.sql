@@ -11,37 +11,59 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @PR_ALG
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @STOCK	DECIMAL(10, 4)	
+	BEGIN TRY
 
-	DECLARE @ST1	DECIMAL(10, 4)
-	DECLARE @ST2	DECIMAL(10, 4)
+		DECLARE @PR_DATE SMALLDATETIME
 
-	SELECT @ST1 = RK_KBU
-	FROM Ric.KBU
-	WHERE RK_ID_QUARTER = dbo.PeriodQuarter(dbo.PeriodDelta(@PR_ID, -12))
+		SELECT @PR_DATE = PR_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @PR_ALG
 
-	SELECT @ST2 = RK_KBU
-	FROM Ric.KBU
-	WHERE RK_ID_QUARTER = dbo.PeriodQuarter(dbo.PeriodDelta(@PR_ID, -24))
+		DECLARE @STOCK	DECIMAL(10, 4)	
 
-	IF @PR_DATE >= '20111201' AND @PR_DATE <= '20120901'
-	BEGIN
-		SET @STOCK = @ST1
-	END
-	ELSE IF @PR_DATE >= '20121001' AND @PR_DATE <= '20130901'
-	BEGIN
-		SET @STOCK = @ST2 / 3 + @ST1 * 2 / 3
-	END
-	ELSE IF @PR_DATE >= '20131001'
-	BEGIN
-		SET @STOCK = @ST2 / 3 + @ST1 * 2 / 3
-	END
+		DECLARE @ST1	DECIMAL(10, 4)
+		DECLARE @ST2	DECIMAL(10, 4)
 
-	SELECT @STOCK AS STOCK_VALUE
+		SELECT @ST1 = RK_KBU
+		FROM Ric.KBU
+		WHERE RK_ID_QUARTER = dbo.PeriodQuarter(dbo.PeriodDelta(@PR_ID, -12))
+
+		SELECT @ST2 = RK_KBU
+		FROM Ric.KBU
+		WHERE RK_ID_QUARTER = dbo.PeriodQuarter(dbo.PeriodDelta(@PR_ID, -24))
+
+		IF @PR_DATE >= '20111201' AND @PR_DATE <= '20120901'
+		BEGIN
+			SET @STOCK = @ST1
+		END
+		ELSE IF @PR_DATE >= '20121001' AND @PR_DATE <= '20130901'
+		BEGIN
+			SET @STOCK = @ST2 / 3 + @ST1 * 2 / 3
+		END
+		ELSE IF @PR_DATE >= '20131001'
+		BEGIN
+			SET @STOCK = @ST2 / 3 + @ST1 * 2 / 3
+		END
+
+		SELECT @STOCK AS STOCK_VALUE
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

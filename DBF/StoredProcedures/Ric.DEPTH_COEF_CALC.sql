@@ -11,29 +11,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE 
-	FROM dbo.PeriodTable 
-	WHERE PR_ID = @PR_ALG
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @RES	DECIMAL(10, 4)
-	
-	IF @PR_DATE >= '20120601'
-	BEGIN
-		IF @DEPTH <= 1
-			SET @RES = 1
-		ELSE IF (@DEPTH > 1) AND (@DEPTH <= 1.4)
-			SET @RES = 1 + 0.5 * (@DEPTH - 1)
-		ELSE IF (@DEPTH > 1.4) AND (@DEPTH <= 1.7)
-			SET @RES = 1.2 + 1.5 * (@DEPTH - 1.4)
-		ELSE IF @DEPTH > 1.7 
-			SET @RES = 1.65 + 3 * (@DEPTH - 1.7)
-		ELSE 
-			SET @RES = NULL
+	BEGIN TRY
 
-		SET @RES = ROUND(@RES, 2)			
-	END
+		DECLARE @PR_DATE SMALLDATETIME
 
-	SELECT @RES AS DEPTH_COEF
+		SELECT @PR_DATE = PR_DATE 
+		FROM dbo.PeriodTable 
+		WHERE PR_ID = @PR_ALG
+
+		DECLARE @RES	DECIMAL(10, 4)
+		
+		IF @PR_DATE >= '20120601'
+		BEGIN
+			IF @DEPTH <= 1
+				SET @RES = 1
+			ELSE IF (@DEPTH > 1) AND (@DEPTH <= 1.4)
+				SET @RES = 1 + 0.5 * (@DEPTH - 1)
+			ELSE IF (@DEPTH > 1.4) AND (@DEPTH <= 1.7)
+				SET @RES = 1.2 + 1.5 * (@DEPTH - 1.4)
+			ELSE IF @DEPTH > 1.7 
+				SET @RES = 1.65 + 3 * (@DEPTH - 1.7)
+			ELSE 
+				SET @RES = NULL
+
+			SET @RES = ROUND(@RES, 2)			
+		END
+
+		SELECT @RES AS DEPTH_COEF
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

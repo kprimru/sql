@@ -18,10 +18,30 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.ContractTypeTable 
-	SET CTT_NAME = @contracttypename, 
-		CTT_ACTIVE = @active
-	WHERE CTT_ID = @contracttypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.ContractTypeTable 
+		SET CTT_NAME = @contracttypename, 
+			CTT_ACTIVE = @active
+		WHERE CTT_ID = @contracttypeid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END

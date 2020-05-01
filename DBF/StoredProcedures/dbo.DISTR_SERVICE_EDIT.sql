@@ -25,18 +25,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.DistrServiceStatusTable 
-	SET DSS_NAME = @dsname,
-		DSS_ID_STATUS = @statusid,
-		DSS_SUBHOST = @subhost,
-		DSS_REPORT = @dsreport,
-		DSS_ACTIVE = @active
-	WHERE DSS_ID = @dsid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.DistrServiceStatusTable 
+		SET DSS_NAME = @dsname,
+			DSS_ID_STATUS = @statusid,
+			DSS_SUBHOST = @subhost,
+			DSS_REPORT = @dsreport,
+			DSS_ACTIVE = @active
+		WHERE DSS_ID = @dsid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-

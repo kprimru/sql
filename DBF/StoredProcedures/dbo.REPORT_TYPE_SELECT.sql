@@ -16,13 +16,29 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT RTY_ID, RTY_NAME
-	FROM dbo.ReportTypeTable
---	WHERE RT_ACTIVE=@active
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT RTY_ID, RTY_NAME
+		FROM dbo.ReportTypeTable
+	--	WHERE RT_ACTIVE=@active
+	
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+		
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+		
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
