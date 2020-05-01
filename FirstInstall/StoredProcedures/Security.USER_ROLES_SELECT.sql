@@ -4,13 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Security].[USER_ROLES_SELECT]
+ALTER PROCEDURE [Security].[USER_ROLES_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	SELECT us.name AS USR_NAME, rl.NAME AS ROLE_NAME, lg.NAME
-	FROM 
+	FROM
 		sys.database_principals AS us INNER JOIN
 		sys.database_role_members AS rm ON rm.member_principal_id = us.principal_id INNER JOIN
 		sys.database_principals AS rl ON rm.role_principal_id = rl.principal_id INNER JOIN
@@ -18,3 +18,5 @@ BEGIN
 	WHERE us.name = ORIGINAL_LOGIN()
 	ORDER BY USR_NAME, ROLE_NAME
 END
+GRANT EXECUTE ON [Security].[USER_ROLES_SELECT] TO public;
+GO

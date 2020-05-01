@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE FUNCTION [Salary].[PersonalSalaryCalc]
+ALTER FUNCTION [Salary].[PersonalSalaryCalc]
 (
 	@PER_ID	UNIQUEIDENTIFIER,
 	@BEGIN	SMALLDATETIME,
@@ -13,18 +13,18 @@ CREATE FUNCTION [Salary].[PersonalSalaryCalc]
 )
 RETURNS MONEY
 AS
-BEGIN	
+BEGIN
 	DECLARE @RESULT MONEY
 
 	SET @RESULT = 0
 
 	SELECT TOP 1 @RESULT = SC_VALUE
-	FROM 
+	FROM
 		Salary.SalaryConditionActive
-	WHERE PT_ID_MASTER = 
+	WHERE PT_ID_MASTER =
 		(
 			SELECT PER_ID_TYPE
-			FROM 
+			FROM
 				Personal.PersonalActive
 			WHERE PER_ID_MASTER = @PER_ID
 		) AND

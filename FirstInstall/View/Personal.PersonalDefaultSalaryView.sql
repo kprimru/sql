@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-	
-CREATE VIEW [Personal].[PersonalDefaultSalaryView]
+
+ALTER VIEW [Personal].[PersonalDefaultSalaryView]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		PDS_ID, PER_ID_MASTER, PER_NAME, PDS_VALUE, PDS_COMMENT, PR_NAME
 	FROM
 		Personal.PersonalActive INNER JOIN
