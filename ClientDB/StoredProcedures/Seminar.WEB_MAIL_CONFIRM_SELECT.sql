@@ -26,8 +26,6 @@ BEGIN
 
 		SET @Status_Id = (SELECT TOP (1) ID FROM Seminar.Status WHERE INDX = 1);
 
-		-- ToDo вычислить Id сотрудников, которых записываем, а потом уже делать выборку данных
-
 		SELECT
 			a.ID, a.PSEDO,
 			a.EMAIL,

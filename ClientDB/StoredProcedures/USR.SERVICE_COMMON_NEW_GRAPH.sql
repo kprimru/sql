@@ -72,7 +72,6 @@ BEGIN
 			PRIMARY KEY CLUSTERED(ClientId, Complect, SystemId, Distr, Comp)
 		);
 
-		-- ToDO злоупотребляем View, план не очень получается...
 		INSERT INTO @client
 		SELECT ClientID, Complect, ComplectStr
 		FROM dbo.ClientTable a
@@ -115,28 +114,11 @@ BEGIN
 			AND STATUS = 1
 			AND O.[IsOnline] = 0;
 
-		--ToDo если дистрибутива нет в РЦ?
 		INSERT INTO @Clientdistr
 		SELECT c.CL_ID, c.Complect, d.HostId, d.SystemId, d.DISTR, d.COMP, d.DistrTypeId, d.SystemBaseName, SystemBaseCheck, DistrTypeBaseCheck, d.SystemOrder, d.DistrStr, d.DistrTypeName
 		FROM @Client c
 		INNER JOIN dbo.CLientDistrView d WITH(NOEXPAND) ON d.ID_CLIENT = c.CL_ID
-		--INNER JOIN Reg.RegNodeSearchView r WITH(NOEXPAND) ON d.Distr = r.DistrNumber AND d.Comp = r.CompNumber AND d.HostId = r.HostId AND r.Complect = c.Complect
 		WHERE d.DS_REG = 0;
-
-		-- убираем из отчета все комплекты, в которых нет ни одного дистрибутива, которын надо проверять
-		/*
-		DELETE c
-		FROM @Client c
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM @ClientDIstr d
-				WHERE c.CL_ID = d.CLientID
-					AND d.Complect = c.Complect
-					AND d.SYstemBaseCheck = 1
-					AND d.DistrTypeBaseCheck = 1
-			);
-		*/
 
 		DECLARE @ip Table
 		(

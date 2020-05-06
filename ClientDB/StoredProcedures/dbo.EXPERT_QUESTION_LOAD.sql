@@ -125,8 +125,8 @@ BEGIN
 					AND b.CompNumber = @CompNumber
 					AND b.HostId = @Host_Id
 			) = 'Л1'
-			-- ToDo - убрать злостный хардкод (Id славянки)
-			SET @Client_Id = 3103
+			-- ToDo - убрать злостный хардкод (Л1) - вынести в свойство dbo.Subhost
+			SET @Client_Id = (SELECT SH_ID_CLIENT FROM dbo.Subhost WHERE SH_REG = 'Л1');
 
 		IF @Client_Id IS NOT NULL BEGIN
 			INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL,

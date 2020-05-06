@@ -56,7 +56,8 @@ BEGIN
 			[HotlineCheckDateTime],
 			[ExpertDistrActive] = IsNull([ExpertDistrActive], 0),
 			[ExpertCheckDateTime]
-		FROM dbo.RegNodeComplectClientView AS R
+		FROM dbo.RegNodeComplectClientView	AS R
+		INNER JOIN Din.NetTypeOffline()		AS N ON N.NT_ID = R.NT_ID
 		OUTER APPLY
 		(
 			SELECT TOP (1)
@@ -83,8 +84,6 @@ BEGIN
 			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			AND (DistrNumber = @DISTR OR @DISTR IS NULL)
 			AND (ClientName LIKE @ClientName OR @ClientName IS NULL)
-			-- ToDo - убрать злостный хардкод
-			AND (NT_TECH IN (0, 1, 11))
 			AND (SST_SHORT IN (SELECT ID FROM dbo.TableStringFromXML(@Types)) OR @Types IS NULL)
 			AND (@HideUnservicesDistrs = 1 AND DS_REG = 0 OR @HideUnservicesDistrs = 0)
 			AND (@HideHotlineDistrs = 0 OR @HideHotlineDistrs = 1 AND HD.[HotlineDistrActive] IS NULL)

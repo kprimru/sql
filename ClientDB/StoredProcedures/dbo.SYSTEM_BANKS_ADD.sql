@@ -13,12 +13,25 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	--ToDo сделать нормально
-
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
 		@Params			Xml;
+
+	DECLARE @Systems TABLE
+	(
+		System_Id		SmallInt Primary Key Clustered
+	);
+
+	DECLARE @DistrTypes	TABLE
+	(
+		DistrType_Id	SmallInt Primary Key Clustered
+	);
+
+	DECLARE @InfoBanks	TABLE
+	(
+		InfoBank_Id		SmallInt Primary Key Clustered
+	);
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -27,49 +40,32 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @s	TABLE
-		(
-			System_Id	VARCHAR(5)
-		)
-
-		DECLARE @d	TABLE
-		(
-			DistrType_Id	VARCHAR(5)
-		)
-
-		DECLARE @ib	TABLE
-		(
-			InfoBank_Id	VARCHAR(5)
-		)
-
-
-		INSERT INTO @s(System_Id)
+		INSERT INTO @Systems(System_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@SYS_LIST, ',')
 
-		INSERT INTO @d(DistrType_Id)
+		INSERT INTO @DistrTypes(DistrType_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@DISTR_TYPE_LIST, ',')
 
-		INSERT INTO @ib(InfoBank_Id)
+		INSERT INTO @InfoBanks(InfoBank_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@BANK_LIST, ',')
 
 
 		INSERT INTO dbo.SystemsBanks(System_Id, DistrType_Id, InfoBank_Id, Required, Start)
 		SELECT s.System_Id, d.DistrType_Id, ib.InfoBank_Id, @REQUIRE, GETDATE()
-		FROM @s s
-		CROSS APPLY @d d
-		CROSS APPLY @ib ib
-		WHERE NOT EXISTS (
-							SELECT *
-							FROM dbo.SystemsBanks sb
-							WHERE	sb.System_Id = s.System_Id AND
-									sb.DistrType_Id = d.DistrType_Id AND
-									sb.InfoBank_Id = ib.InfoBank_Id
-							)
-
-		--SELECT * FROM @s, @d, @ib
+		FROM @Systems s
+		CROSS APPLY @DistrTypes d
+		CROSS APPLY @InfoBanks ib
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM dbo.SystemsBanks sb
+				WHERE	sb.System_Id = s.System_Id AND
+						sb.DistrType_Id = d.DistrType_Id AND
+						sb.InfoBank_Id = ib.InfoBank_Id
+			);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

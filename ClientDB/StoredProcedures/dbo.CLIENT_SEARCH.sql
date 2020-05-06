@@ -168,11 +168,11 @@ BEGIN
 				ID, 'REG' AS TP, Comment, '',
 				'', '', (SELECT TOP 1 ServiceStatusIndex FROM dbo.ServiceStatusTable WHERE ServiceStatusReg = Service ORDER BY ServiceStatusIndex)
 			FROM
-				dbo.RegNodeTable a
+				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN
 					(
 						SELECT DISTINCT Complect
-						FROM dbo.RegNodeTable a
+						FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 						WHERE Complect IS NOT NULL
 							/*AND NOT EXISTS
 								(
@@ -184,7 +184,7 @@ BEGIN
 										AND a.CompNumber = c.COMP
 								)
 								*/
-					) AS b ON a.Complect = b.Complect AND b.Complect LIKE a.SystemName + '%'
+					) AS b ON a.Complect = b.Complect AND b.Complect LIKE a.SystemBaseName + '%'
 			WHERE (a.Comment LIKE @NAME OR @NAME IS NULL)
 				AND (a.DistrNumber LIKE @DISTR OR @DISTR IS NULL)
 
@@ -194,7 +194,7 @@ BEGIN
 			SELECT
 				ID, 'REG' AS TP, Comment, '',
 				'', '', (SELECT TOP 1 ServiceStatusIndex FROM dbo.ServiceStatusTable WHERE ServiceStatusReg = Service ORDER BY ServiceStatusIndex)
-			FROM dbo.RegNodeTable a
+			FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 			WHERE Complect IS NULL
 				AND (Comment LIKE @NAME OR @NAME IS NULL)
 				AND (DistrNumber LIKE @DISTR OR @DISTR IS NULL)
@@ -203,7 +203,7 @@ BEGIN
 					SELECT *
 					FROM
 						dbo.ClientDistrView c
-					WHERE c.SystemBaseName = a.SystemName
+					WHERE c.SystemBaseName = a.SystemBaseName
 						AND a.DistrNumber = c.DISTR
 						AND a.CompNumber = c.COMP
 				)

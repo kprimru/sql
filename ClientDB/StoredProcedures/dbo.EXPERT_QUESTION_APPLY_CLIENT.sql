@@ -46,8 +46,7 @@ BEGIN
 			ClientDutyQuest, EMAIL,
 			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
 		SELECT
-			-- ToDo убрать злостный хардкод
-			IsNull(ID_CLIENT, 3103), a.DATE, a.FIO, a.PHONE,
+			IsNull(ID_CLIENT, SH_ID_CLIENT), a.DATE, a.FIO, a.PHONE,
 			@Duty_Id,
 			a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
 		FROM dbo.ClientDutyQuestion a
@@ -60,13 +59,15 @@ BEGIN
 		) AS C
 		OUTER APPLY
 		(
-			SELECT TOP (1) SubhostName
+			SELECT TOP (1) SubhostName, SH_ID_CLIENT
 			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
 			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
+            LEFT JOIN dbo.Subhost s ON s.SH_REG = b.SubhostName
 			WHERE b.DistrNumber = a.DISTR
 				AND b.CompNumber = a.COMP
 		) AS S
 		WHERE a.IMPORT IS NULL --AND a.ID = @ID
+            --ToDo Л1 - вынести в свойство dbo.Subhost
 			AND (C.ID_CLIENT IS NOT NULL OR C.ID_CLIENT IS NULL AND s.SubhostName = 'Л1')
 			AND DATE >= '20170801'
 

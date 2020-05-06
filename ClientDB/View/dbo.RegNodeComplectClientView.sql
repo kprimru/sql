@@ -9,14 +9,14 @@ AS
 	SELECT
 		ClientID, ISNULL(ClientFullName, Comment) AS ClientName,
 		ISNULL(ServiceName, SubhostName) AS ServiceName, ServiceID,
-		a.HostID, a.DistrNumber, a.CompNumber, a.DistrStr, a.DS_INDEX, a.DS_REG, a.NT_SHORT, a.NT_TECH, a.SystemOrder,
+		a.HostID, a.DistrNumber, a.CompNumber, a.DistrStr, a.DS_INDEX, a.DS_REG, a.NT_SHORT, a.NT_TECH, a.NT_ID, a.SystemOrder,
 		ISNULL(c.ServiceStatusIndex, a.DS_INDEX) AS ServiceStatusIndex,
 		SST_SHORT, a.SystemShortName, ManagerID, ManagerName, SubhostName, Complect
 	FROM
 		(
 			SELECT
 				c.HostID, c.DistrNumber, c.CompNumber, c.DistrStr, c.SubhostName, c.DS_INDEX, c.DS_REG, c.NT_SHORT, c.NT_TECH, c.Comment, c.SystemOrder,
-				c.SST_SHORT, c.SystemShortName, c.Complect
+				c.SST_SHORT, c.SystemShortName, c.Complect, c.NT_ID
 			FROM
 				(
 					SELECT DISTINCT Complect, y.SystemID

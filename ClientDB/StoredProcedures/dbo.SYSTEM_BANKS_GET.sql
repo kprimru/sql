@@ -11,12 +11,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	--ToDo переписать нормально
-
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
 		@Params			Xml;
+
+	DECLARE @Systems	TABLE
+	(
+		System_Id	SmallInt Primary Key Clustered
+	);
+
+	DECLARE @DistrTypes TABLE
+	(
+		DistrType_Id	SmallInt Primary Key Clustered
+	);
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -25,29 +33,18 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @s	TABLE
-		(
-			System_Id	VARCHAR(5)
-		)
-
-		DECLARE @d	TABLE
-		(
-			DistrType_Id	VARCHAR(5)
-		)
-
-
-		INSERT INTO @s(System_Id)
+		INSERT INTO @Systems(System_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@SYS_LIST, ',')
 
-		INSERT INTO @d(DistrType_Id)
+		INSERT INTO @DistrTypes(DistrType_Id)
 		SELECT *
 		FROM dbo.GET_STRING_TABLE_FROM_LIST(@DISTR_TYPE_LIST, ',')
 
 		SELECT DISTINCT InfoBank_ID, InfoBankName, InfoBankShortName, Required, InfoBankOrder
-		FROM dbo.SystemInfoBanksView WITH(NOEXPAND)
-		WHERE	System_Id IN (SELECT System_Id FROM @s) AND
-				DistrType_Id IN (SELECT DistrType_Id FROM @d)
+		FROM dbo.SystemInfoBanksView	AS I WITH(NOEXPAND)
+		INNER JOIN @Systems				AS S ON S.System_Id = I.System_Id
+		INNER JOIN @DistrTypes			AS D ON D.DistrType_Id = I.DistrType_Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

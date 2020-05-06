@@ -65,13 +65,13 @@ BEGIN
 			RETURN
 		END
 
-		-- ToDo два обращения
-		IF NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
-				WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-			)
+		SET @HOST = NULL;
+
+		SELECT @HOST = MainHostID
+		FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
+		WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
+
+		IF @HOST IS NULL
 		BEGIN
 			SET @STATUS = 1
 			SET @MSG = 'Вы не являетесь клиентом компании "Базис". Запись на семинар недоступна'
@@ -79,9 +79,7 @@ BEGIN
 			RETURN
 		END
 
-		SELECT @HOST = MainHostID
-		FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
-		WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
+
 
 		IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0
 		BEGIN

@@ -14,6 +14,12 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @UD_ID          Int,
+        @Date           SmallDateTime;
+
+    DECLARE @Complects TABLE (UD_ID Int PRIMARY KEY CLUSTERED);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -21,13 +27,11 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @Date SmallDateTime;
-
 		SET @Date = DateAdd(Month, -3, GetDate());
 
-		UPDATE D
-		SET UD_ACTIVE = 0
-		FROM USR.USRData D
+        INSERT INTO @Complects
+        SELECT D.UD_ID
+        FROM USR.USRData D
 		CROSS APPLY
 		(
 			SELECT TOP (1) UF_ID, UF_CREATE
@@ -53,7 +57,28 @@ BEGIN
 					INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON R.SystemID = P.UP_ID_SYSTEM AND R.DistrNumber = P.UP_DISTR AND R.CompNumber = P.UP_COMP
 					WHERE P.UP_ID_USR = F.UF_ID
 						AND R.DS_REG = 0
-				)
+				);
+
+		UPDATE D
+		SET UD_ACTIVE = 0
+		FROM USR.USRData        AS D
+		INNER JOIN @Complects   AS C ON D.UD_ID = C.UD_ID;
+
+        SET @UD_ID = 0;
+
+        WHILE (1 = 1) BEGIN
+            SELECT TOP (1)
+                @UD_ID = UD_ID
+            FROM @Complects
+            WHERE UD_ID > @UD_ID
+            ORDER BY
+                UD_ID;
+
+            IF @@RowCount < 1
+                BREAK;
+
+            EXEC [USR].[USR_ACTIVE_CACHE_REBUILD] @UD_ID = @UD_ID;
+        END;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

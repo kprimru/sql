@@ -15,12 +15,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE @UD_ID      Int;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+        SET @UD_ID = (SELECT UF_ID_COMPLECT FROM USR.USRFile WHERE UF_ID = @UF_ID);
 
 		UPDATE USR.USRFile
 		SET UF_ACTIVE =
@@ -30,6 +34,8 @@ BEGIN
 					ELSE NULL
 				END
 		WHERE UF_ID = @UF_ID
+
+        EXEC [USR].[USR_ACTIVE_CACHE_REBUILD] @UD_ID = @UD_ID;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -22,7 +22,6 @@ BEGIN
 
 	BEGIN TRY
 
-		--ToDo почему не используются View???
 		SELECT DISTINCT
 			R.COMPLECT,
 			(

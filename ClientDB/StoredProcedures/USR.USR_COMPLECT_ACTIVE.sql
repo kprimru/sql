@@ -31,6 +31,8 @@ BEGIN
 				END
 		WHERE UD_ID = @UD_ID
 
+        EXEC [USR].[USR_ACTIVE_CACHE_REBUILD] @UD_ID = @UD_ID;
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH

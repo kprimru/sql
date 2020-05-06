@@ -16,10 +16,13 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE @SQL NVARCHAR(MAX)
+
 	DECLARE @Monthes Table
 	(
 		Start	SmallDateTime	NOT NULL,
 		Finish	SmallDateTime	NOT NULL,
+		Name	VarCHar(100)	NOT NULL,
 		PRIMARY KEY CLUSTERED (Start,Finish)
 	);
 
@@ -31,11 +34,14 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO @Monthes
-		SELECT START, FINISH
+		SELECT START, FINISH, CONVERT(VARCHAR(4), DATEPART(YEAR, START)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, START)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, START))
 		FROM Common.Period
 		WHERE [Type] = 2
 			AND START < GetDate()
 			AND START > DateAdd(Year, -1, GetDate());
+
+		IF OBJECT_ID('tempdb..#result') IS NOT NULL
+			DROP TABLE #result
 
 		CREATE TABLE #result
 		(
@@ -51,16 +57,52 @@ BEGIN
 			PRIMARY KEY CLUSTERED(TP, ClientID)
 		);
 
-		DECLARE @SQL NVARCHAR(MAX)
+		IF OBJECT_ID('tempdb..#distrs') IS NOT NULL
+			DROP TABLE #distrs
+
+		CREATE TABLE #distrs
+		(
+			HostId		SmallInt,
+			Distr		Int,
+			Comp		TinyInt,
+			MonName		VarChar(100),
+			Cnt			SmallInt,
+			Reg_Id		Int,
+			Client_Id	Int,
+			Primary Key Clustered(Distr, HostId, Comp, MonName)
+		);
+
+		INSERT INTO #distrs
+		SELECT H.HostId, H.Distr, H.Comp, M.Name, Count(*), R.Id, D.ID_CLIENT
+		FROM dbo.HotlineChatView	AS H WITH(NOEXPAND)
+		INNER JOIN @Monthes			AS M ON M.START <= H.START AND M.FINISH >= H.START
+		OUTER APPLY
+		(
+			SELECT TOP (1) ID_CLIENT
+			FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
+			WHERE D.HostId = H.HostId
+				AND D.DISTR = H.DISTR
+				AND D.COMP = H.COMP
+		) AS D
+		OUTER APPLY
+		(
+			SELECT TOP (1) ID
+			FROM Reg.RegNodeSearchView AS R WITH(NOEXPAND)
+			WHERE R.HostId = H.HostId
+				AND R.DistrNumber = H.DISTR
+				AND R.CompNumber = H.COMP
+		) AS R
+		GROUP BY H.HostId, H.Distr, H.Comp, M.Name, R.Id, D.ID_CLIENT;
+
 
 		SET @SQL = 'ALTER TABLE #result ADD '
 
-		SELECT @SQL = @SQL + '[' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '] BIT,'
+		SELECT @SQL = @SQL + '[' + MON_NAME + '] BIT,'
 		FROM
-			(
-				SELECT DISTINCT MON = START
+		(
+				SELECT DISTINCT MON = START, MON_NAME = Name
 				FROM @Monthes
-			) AS a
+		) AS a
 		ORDER BY MON
 
 		SET @SQL = LEFT(@SQL, LEN(@SQL) - 1)
@@ -69,84 +111,58 @@ BEGIN
 
 		INSERT INTO #result(TP, ManagerName, ServiceName, ClientFullName, ClientID, DistrStr, NT_SHORT, HotlineEnable, HotlineDate)
 		SELECT
-			1, ManagerName, ServiceName, ClientFullName, ClientID,
-			(
-				SELECT TOP 1 DistrStr
-				FROM dbo.ClientDistrView b WITH(NOEXPAND)
-				WHERE b.ID_CLIENT = ClientID AND DS_REG = 0
-				ORDER BY SystemOrder, DISTR, COMP
-			),
-			(
-				SELECT TOP 1 DistrTypeName
-				FROM dbo.ClientDistrView b WITH(NOEXPAND)
-				WHERE b.ID_CLIENT = ClientID AND DS_REG = 0
-				ORDER BY SystemOrder, DISTR, COMP
-			),
-			--ToDO сделать через OUTER APPLY без дублировани€
-			CASE WHEN EXISTS
+			1, ManagerName, ServiceName, ClientFullName, ClientID, D.DistrStr, D.DistrTypeName,
+			CASE WHEN [HotlineDate] IS NOT NULL THEN 1 ELSE 0 END, [HotlineDate]
+		FROM dbo.ClientView							AS C WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() AS S ON C.ServiceStatusId = S.ServiceStatusId
+		OUTER APPLY
+		(
+			SELECT TOP 1 DistrStr, DistrTypeName
+			FROM dbo.ClientDistrView AS CD WITH(NOEXPAND)
+			WHERE CD.ID_CLIENT = ClientID AND DS_REG = 0
+			ORDER BY SystemOrder, DISTR, COMP
+		) AS D
+		OUTER APPLY
+		(
+			SELECT [HotlineDate] = MAX(dbo.DateOf(SET_DATE))
+			FROM
+				dbo.ClientDistrView			AS CD WITH(NOEXPAND)
+				INNER JOIN dbo.HotlineDistr AS HD ON ID_HOST = HostID AND CD.DISTR = HD.DISTR AND CD.COMP = HD.COMP
+			WHERE CD.ID_CLIENT = ClientID AND HD.STATUS = 1
+		) AS H
+
+		UNION ALL
+
+		SELECT
+			2, SubhostName, SubhostName, Comment, R.ID, DistrStr, NT_SHORT,
+			CASE WHEN [HotlineDate] IS NOT NULL THEN 1 ELSE 0 END, [HotlineDate]
+		FROM Reg.RegNodeSearchView AS R WITH(NOEXPAND)
+		INNER JOIN
+		(
+			SELECT DISTINCT MainHostID, MainCompNumber, MainDistrNumber
+			FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
+		) AS RM ON R.HostID = RM.MainHostID
+				AND R.DistrNumber = RM.MainDistrNumber
+				AND R.CompNumber = RM.MainCompNumber
+		OUTER APPLY
+		(
+			SELECT [HotlineDate] = MAX(dbo.DateOf(SET_DATE))
+			FROM dbo.HotlineDistr HD
+			WHERE ID_HOST = HostID
+					AND R.DistrNumber = HD.DISTR
+					AND R.CompNumber = HD.COMP
+					AND HD.STATUS = 1
+		) AS H
+		WHERE DS_REG = 0
+			AND NOT EXISTS
 				(
 					SELECT *
-					FROM
-						dbo.ClientDistrView b WITH(NOEXPAND)
-						INNER JOIN dbo.HotlineDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
-					WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
-				) THEN 1
-				ELSE 0
-			END,
-			(
-				SELECT MAX(dbo.DateOf(SET_DATE))
-				FROM
-					dbo.ClientDistrView b WITH(NOEXPAND)
-					INNER JOIN dbo.HotlineDistr c ON ID_HOST = HostID AND b.DISTR = c.DISTR AND b.COMP = c.COMP
-					WHERE b.ID_CLIENT = ClientID AND c.STATUS = 1
+					FROM dbo.ClientDistrView AS CD WITH(NOEXPAND)
+					WHERE CD.HostID = R.HostID
+						AND CD.DISTR = R.DistrNumber
+						AND CD.COMP = R.CompNumber
 				)
-			FROM dbo.ClientView a WITH(NOEXPAND)
-			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 
-			UNION ALL
-
-			SELECT
-				2, SubhostName, SubhostName, Comment, a.ID, DistrStr, NT_SHORT,
-				CASE WHEN EXISTS
-					(
-						SELECT *
-						FROM dbo.HotlineDistr c
-						WHERE ID_HOST = HostID
-							AND a.DistrNumber = c.DISTR
-							AND a.CompNumber = c.COMP
-							AND c.STATUS = 1
-					) THEN 1
-					ELSE 0
-				END,
-				(
-					SELECT MAX(dbo.DateOf(SET_DATE))
-					FROM dbo.HotlineDistr c
-					WHERE ID_HOST = HostID
-							AND a.DistrNumber = c.DISTR
-							AND a.CompNumber = c.COMP
-							AND c.STATUS = 1
-				)
-			FROM
-				Reg.RegNodeSearchView a WITH(NOEXPAND)
-				INNER JOIN
-					(
-						SELECT DISTINCT MainHostID, MainCompNumber, MainDistrNumber
-						FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
-					) AS b ON a.HostID = b.MainHostID
-						AND a.DistrNumber = b.MainDistrNumber
-						AND a.CompNumber = b.MainCompNumber
-			WHERE DS_REG = 0
-				AND NOT EXISTS
-					(
-						SELECT *
-						FROM dbo.ClientDistrView z WITH(NOEXPAND)
-						WHERE z.HostID = a.HostID
-							AND z.DISTR = a.DistrNumber
-							AND z.COMP = a.CompNumber
-					)
-
-		--ToDO тут полные сканы чатов. ѕлохо
-		-- наверное, надо подготовитть данные в виде ƒистрибутив, мес€ц, количество и потом с этим работать
 		SET @SQL = ''
 		SELECT @SQL = @SQL + '
 		UPDATE #result
@@ -155,28 +171,22 @@ BEGIN
 				WHEN 1 THEN
 					(
 						SELECT COUNT(*)
-						FROM dbo.HotlineChatView A WITH(NOEXPAND)
-						INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostId = b.HostID
-																		AND a.DISTR = b.DISTR
-																		AND a.COMP = b.COMP
-						WHERE ClientID = ID_CLIENT AND START >= ''' + CONVERT(VARCHAR(20), a.START, 112) + ''' AND START <= ''' + CONVERT(VARCHAR(20), a.FINISH, 112) + '''
+						FROM #distrs
+						WHERE ClientID = Client_Id AND MonName = ''' + M.Name + '''
 					)
 				WHEN 2 THEN
 					(
 						SELECT COUNT(*)
-						FROM dbo.HotlineChatView A WITH(NOEXPAND)
-						INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostId = b.HostID
-																		AND a.DISTR = b.DistrNumber
-																		AND a.COMP = b.CompNumber
-						WHERE ClientID = B.ID AND START >= ''' + CONVERT(VARCHAR(20), a.START, 112) + ''' AND START <= ''' + CONVERT(VARCHAR(20), a.FINISH, 112) + '''
+						FROM #distrs
+						WHERE ClientID = Reg_Id AND MonName = ''' + M.Name + '''
 					)
 			END
 		'
 		FROM
 		(
-			SELECT START, FINISH
+			SELECT START, FINISH, Name
 			FROM @Monthes
-		) AS a
+		) AS M
 
 		EXEC (@SQL)
 
@@ -195,6 +205,9 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
+
+		IF OBJECT_ID('tempdb..#distrs') IS NOT NULL
+			DROP TABLE #distrs
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

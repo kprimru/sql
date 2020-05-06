@@ -1056,6 +1056,8 @@ BEGIN
 			)
 		WHERE UI_ID_USR = @Usr_Id;
 
+        EXEC [USR].[USR_ACTIVE_CACHE_REBUILD] @UD_ID = @Complect_Id;
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH

@@ -82,35 +82,7 @@ BEGIN
 
 		INSERT INTO @Distr
 		SELECT HostID, DistrNumber, CompNumber
-		FROM
-			dbo.RegNodeTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-		WHERE (Comment LIKE @SH_REG OR Comment LIKE @SH_REG_ADD) AND SystemReg = 1
-
-		UNION
-
-		SELECT b.HostID, DistrNumber, CompNumber
-		FROM
-			dbo.RegNodeTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-			INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
-		WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
-
-		UNION
-
-		SELECT HostID, DistrNumber, CompNumber
-		FROM
-			dbo.RegNodeTable a
-			INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-		WHERE Complect IN
-			(
-				SELECT Complect
-				FROM
-					dbo.RegNodeTable a
-					INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
-					INNER JOIN dbo.SubhostComplect c ON SC_DISTR = DistrNumber AND SC_COMP = CompNumber AND c.SC_ID_HOST = b.HostID
-				WHERE SystemReg = 1 AND SC_REG = 1 AND SC_ID_SUBHOST = @SUBHOST
-			);
+		FROM dbo.SubhostDistrs@Get(NULL, @SH);
 
 		SET @Stat =
 			(

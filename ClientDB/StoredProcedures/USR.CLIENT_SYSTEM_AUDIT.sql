@@ -87,7 +87,9 @@ BEGIN
 			ORDER BY UF_DATE DESC
 		) U
 		WHERE	R.Service = 0
-			AND	(U.UF_DATE >= @DATE OR @DATE IS NULL);
+			AND	(U.UF_DATE >= @DATE OR @DATE IS NULL)
+		-- сильно разное количество строк в зависимости от @CLIENT/@MANAGER/@SERVICE
+		OPTION(RECOMPILE);
 
 
 		-- ToDO убрать задвоение!!!

@@ -22,7 +22,6 @@ BEGIN
 
 	BEGIN TRY
 
-		-- ToDo сначала выбрать результат, а потом последний дистр вычислять
 		SELECT
 			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [Дистрибутив],
 			NT_SHORT AS [Сеть], SST_SHORT AS [Тип], dbo.DateOf(DF_CREATE) AS [Получен],
@@ -66,6 +65,8 @@ BEGIN
 			INNER JOIN dbo.SystemTypeTable g ON g.SystemTypeID = SST_ID_MASTER
 		WHERE /*NT_SHORT <> 'мобильная' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> 'ДСП'
 		ORDER BY /*SST_SHORT, */SystemOrder, DF_DISTR, DF_COMP
+		-- без этого криво джойнит
+		OPTION(FORCE ORDER)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
