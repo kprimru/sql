@@ -162,7 +162,7 @@ FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SET @index_name = @schema+'.'+@table+'.'+@index
+	SET @index_name = '[' + @schema+'].['+@table+'].['+@index + ']'
 	IF LEN(@index_right)>100
 	BEGIN
 		PRINT 'Объект '+@index+' не был переименован, так как сгенерированное имя слишком длинное' -- ЕСЛИ И ПОСЛЕ ЭТОГО СЛИШКОМ ДЛИННОЕ, ТОГДА НИЧЕГО НЕ ДЕЛАТЬ
