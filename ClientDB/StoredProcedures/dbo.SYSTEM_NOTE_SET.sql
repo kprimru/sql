@@ -41,5 +41,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-GRANT EXECUTE ON [dbo].[SYSTEM_NOTE_SET] TO rl_system_u;
+GRANT EXECUTE ON [dbo].[SYSTEM_NOTE_SET] TO rl_system_note_w;
 GO
