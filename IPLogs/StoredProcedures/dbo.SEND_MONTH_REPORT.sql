@@ -104,3 +104,4 @@ BEGIN
 				@attach_query_result_as_file = 1,
 				@query_attachment_filename = 'ip.txt'
 END
+GO

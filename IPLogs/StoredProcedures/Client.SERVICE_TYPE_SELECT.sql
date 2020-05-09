@@ -14,5 +14,6 @@ BEGIN
 	FROM [PC275-SQL\ALPHA].ClientDB.dbo.ServiceTypeTable
 	ORDER BY ServiceTypeName
 END
+GO
 GRANT EXECUTE ON [Client].[SERVICE_TYPE_SELECT] TO rl_common;
 GO

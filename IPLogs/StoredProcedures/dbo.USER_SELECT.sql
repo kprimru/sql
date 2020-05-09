@@ -15,5 +15,6 @@ BEGIN
 		AND [name] NOT IN ('dbo', 'guest', 'sys', 'INFORMATION_SCHEMA')
 	ORDER BY US_NAME
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_SELECT] TO rl_admin;
 GO

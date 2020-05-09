@@ -55,3 +55,4 @@ BEGIN
 		SET @RESULT = 2
 	END
 END
+GO

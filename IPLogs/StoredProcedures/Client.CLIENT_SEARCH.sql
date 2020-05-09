@@ -338,5 +338,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 		DROP TABLE #reg
 END
+GO
 GRANT EXECUTE ON [Client].[CLIENT_SEARCH] TO rl_client_search;
 GO

@@ -13,5 +13,6 @@ BEGIN
 	FROM dbo.Servers
 	ORDER BY SRV_ID
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVER_GET] TO rl_common;
 GO

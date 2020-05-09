@@ -35,5 +35,6 @@ BEGIN
 		EXEC sp_addrolemember 'rl_common', @US_NAME
 	END
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_CREATE] TO rl_admin;
 GO

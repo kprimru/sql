@@ -22,5 +22,6 @@ BEGIN
 		[PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 	ORDER BY ServiceName
 END
+GO
 GRANT EXECUTE ON [Client].[COURIER_SELECT] TO rl_common;
 GO

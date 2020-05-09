@@ -521,5 +521,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [dbo].[STAT_BY_MONTH] TO rl_stat_report;
 GO

@@ -111,3 +111,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#ssd') IS NOT NULL
 		DROP TABLE #ssd
 END
+GO

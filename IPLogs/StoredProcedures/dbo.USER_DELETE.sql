@@ -20,5 +20,6 @@ BEGIN
 		)
 	EXEC('DROP USER [' + @US_NAME + ']')
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_DELETE] TO rl_admin;
 GO

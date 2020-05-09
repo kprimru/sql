@@ -25,5 +25,6 @@ BEGIN
 
 	SET @RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVER_STAT_SELECT] TO rl_server_stat;
 GO

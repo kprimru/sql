@@ -19,5 +19,6 @@ BEGIN
 		dbo.ConsErr ON UF_ID = ID_USR
 	WHERE FL_NAME = @FILENAME
 END
+GO
 GRANT EXECUTE ON [dbo].[ERR_LOG_FILE_OPEN] TO rl_client_stat;
 GO

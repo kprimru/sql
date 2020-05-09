@@ -202,3 +202,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 		DROP TABLE #distr
 END
+GO

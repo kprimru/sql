@@ -116,5 +116,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#filelist') IS NOT NULL
 		DROP TABLE #filelist
 END
+GO
 GRANT EXECUTE ON [dbo].[PROCESS_FILES] TO rl_ip_refresh;
 GO

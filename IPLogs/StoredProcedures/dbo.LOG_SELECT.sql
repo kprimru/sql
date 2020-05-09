@@ -98,5 +98,6 @@ BEGIN
 			)
 	ORDER BY LF_DATE DESC
 END
+GO
 GRANT EXECUTE ON [dbo].[LOG_SELECT] TO rl_client_stat;
 GO

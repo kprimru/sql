@@ -18,5 +18,6 @@ BEGIN
 		dbo.LogFiles ON LF_ID_FILE = FL_ID
 	WHERE FL_NAME = @FILENAME
 END
+GO
 GRANT EXECUTE ON [dbo].[LOG_FILE_OPEN] TO rl_client_stat;
 GO

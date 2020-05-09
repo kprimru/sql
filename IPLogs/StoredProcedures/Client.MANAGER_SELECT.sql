@@ -14,5 +14,6 @@ BEGIN
 	FROM [PC275-SQL\ALPHA].ClientDB.dbo.ManagerTable
 	ORDER BY ManagerName
 END
+GO
 GRANT EXECUTE ON [Client].[MANAGER_SELECT] TO rl_common;
 GO

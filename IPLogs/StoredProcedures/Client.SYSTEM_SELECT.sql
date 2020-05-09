@@ -14,5 +14,6 @@ BEGIN
 	FROM [PC275-SQL\ALPHA].ClientDB.dbo.SystemTable
 	ORDER BY SystemOrder
 END
+GO
 GRANT EXECUTE ON [Client].[SYSTEM_SELECT] TO rl_common;
 GO

@@ -322,3 +322,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#reg') IS NOT NULL
 		DROP TABLE #reg
 END
+GO

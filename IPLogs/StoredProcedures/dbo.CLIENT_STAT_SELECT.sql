@@ -772,5 +772,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#stat') IS NOT NULL
 		DROP TABLE #stat
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_STAT_SELECT] TO rl_client_stat;
 GO

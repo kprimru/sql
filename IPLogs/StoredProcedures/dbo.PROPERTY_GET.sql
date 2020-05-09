@@ -15,5 +15,6 @@ BEGIN
 	FROM dbo.Settings
 	WHERE ST_NAME = @NAME
 END
+GO
 GRANT EXECUTE ON [dbo].[PROPERTY_GET] TO rl_common;
 GO

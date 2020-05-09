@@ -14,5 +14,6 @@ BEGIN
 	FROM [PC275-SQL\ALPHA].ClientDB.dbo.ServiceStatusTable
 	ORDER BY ServiceStatusIndex
 END
+GO
 GRANT EXECUTE ON [Client].[STATUS_SELECT] TO rl_common;
 GO

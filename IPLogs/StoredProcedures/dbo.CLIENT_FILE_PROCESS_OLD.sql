@@ -176,3 +176,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#csd') IS NOT NULL
 		DROP TABLE #csd
 END
+GO

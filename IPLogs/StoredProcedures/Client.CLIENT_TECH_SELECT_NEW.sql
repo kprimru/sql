@@ -643,5 +643,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 		DROP TABLE #usr
 END
+GO
 GRANT EXECUTE ON [Client].[CLIENT_TECH_SELECT_NEW] TO rl_tech_info;
 GO

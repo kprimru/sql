@@ -17,5 +17,6 @@ BEGIN
 
 	EXEC xp_cmdshell @cmd
 END
+GO
 GRANT EXECUTE ON [dbo].[IP_FILES_REFRESH] TO rl_ip_refresh;
 GO
