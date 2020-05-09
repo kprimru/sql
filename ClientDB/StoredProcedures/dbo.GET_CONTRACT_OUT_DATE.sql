@@ -80,5 +80,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GET_CONTRACT_OUT_DATE] TO rl_contract_audit;
 GO

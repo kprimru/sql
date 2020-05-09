@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[USR_COMPLECT_ACTIVE] TO rl_tech_info_complect;
 GO

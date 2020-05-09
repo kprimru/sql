@@ -347,5 +347,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Reg].[REG_NODE_SEARCH] TO rl_reg_node_search;
 GO

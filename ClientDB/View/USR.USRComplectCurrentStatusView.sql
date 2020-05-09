@@ -16,3 +16,4 @@ AS
 		USR.USRData a
 		INNER JOIN dbo.SystemTable b ON a.UD_ID_HOST = b.HostID
 		INNER JOIN dbo.RegNodeTable c ON b.SystemBaseName = c.SystemName AND UD_DISTR = DistrNumber AND UD_COMP = CompNumber
+GO

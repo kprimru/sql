@@ -65,5 +65,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
+GO
 GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE] TO rl_client_contract_tech;
 GO

@@ -45,6 +45,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_HOTLINE_PRINT] TO rl_client_duty_r;
 GRANT EXECUTE ON [dbo].[CLIENT_HOTLINE_PRINT] TO rl_expert_distr;
 GO

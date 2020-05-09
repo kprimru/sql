@@ -59,5 +59,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[NAMED_SET_ADD] TO rl_named_sets_i;
 GO

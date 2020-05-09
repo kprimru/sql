@@ -36,5 +36,6 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;GRANT EXECUTE ON [Maintenance].[JOB_SETTINGS_UPDATE] TO rl_job_settings_u;
+END;GO
+GRANT EXECUTE ON [Maintenance].[JOB_SETTINGS_UPDATE] TO rl_job_settings_u;
 GO

@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Control].[AUTHOR_SELECT] TO rl_control_r;
 GO

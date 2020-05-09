@@ -279,5 +279,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TEACHER_REPORT_RDD_CREATE] TO rl_report_study_rdd;
 GO

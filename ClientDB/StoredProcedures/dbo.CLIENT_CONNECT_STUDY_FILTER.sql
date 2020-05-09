@@ -76,5 +76,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONNECT_STUDY_FILTER] TO rl_client_connect_study_filter;
 GO

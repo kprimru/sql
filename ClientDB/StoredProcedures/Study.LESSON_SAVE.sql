@@ -58,5 +58,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Study].[LESSON_SAVE] TO rl_study_personal_u;
 GO

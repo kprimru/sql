@@ -63,5 +63,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DOWNLOAD_DOCUMENT_IMPORT] TO rl_import_data;
 GO

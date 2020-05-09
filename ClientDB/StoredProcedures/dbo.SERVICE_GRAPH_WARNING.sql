@@ -63,5 +63,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVICE_GRAPH_WARNING] TO rl_graph_warning;
 GO

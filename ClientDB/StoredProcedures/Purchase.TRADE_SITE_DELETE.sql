@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[TRADE_SITE_DELETE] TO rl_trade_site_d;
 GO

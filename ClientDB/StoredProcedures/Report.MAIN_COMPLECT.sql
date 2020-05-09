@@ -84,5 +84,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[MAIN_COMPLECT] TO rl_report;
 GO

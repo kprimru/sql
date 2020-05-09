@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[OS_FAMILY_SELECT] TO rl_os_family_r;
 GO

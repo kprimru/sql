@@ -130,5 +130,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_AUDIT_DEFAULT] TO rl_client_audit_i;
 GO

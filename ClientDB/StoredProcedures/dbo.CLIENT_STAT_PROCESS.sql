@@ -87,5 +87,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_STAT_PROCESS] TO rl_client_stat_process;
 GO

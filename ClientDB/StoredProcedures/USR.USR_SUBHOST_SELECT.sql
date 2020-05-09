@@ -75,5 +75,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[USR_SUBHOST_SELECT] TO rl_usr_subhost_save;
 GO

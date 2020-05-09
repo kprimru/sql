@@ -69,5 +69,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_STAT_SELECT] TO rl_client_stat_save;
 GO

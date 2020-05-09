@@ -11,3 +11,4 @@ AS
 		ClientID, SearchMonthDate, COUNT_BIG(*) AS CNT
 	FROM dbo.ClientSearchTable
 	GROUP BY ClientID, SearchMonthDate
+GO

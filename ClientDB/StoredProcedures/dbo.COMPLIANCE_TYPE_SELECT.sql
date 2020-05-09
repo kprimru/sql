@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COMPLIANCE_TYPE_SELECT] TO rl_compliance_type_r;
 GO

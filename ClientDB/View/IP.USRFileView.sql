@@ -10,3 +10,4 @@ AS
 	FROM
 		[PC275-SQL\OMEGA].IPLogs.dbo.USRFiles a
 		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.Files b ON a.UF_ID_FILE = b.FL_ID
+GO

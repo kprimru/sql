@@ -84,3 +84,4 @@ AS
 		LEFT OUTER JOIN dbo.SystemDocsView l ON l.SystemID = f.SystemID
 		LEFT OUTER JOIN dbo.SystemDocsView m ON m.SystemID = g.SystemID
 		LEFT OUTER JOIN dbo.SystemDocsView n ON n.SystemID = h.SystemID
+GO

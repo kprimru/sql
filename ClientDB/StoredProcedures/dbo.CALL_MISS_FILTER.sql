@@ -110,5 +110,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CALL_MISS_FILTER] TO rl_call_miss;
 GO

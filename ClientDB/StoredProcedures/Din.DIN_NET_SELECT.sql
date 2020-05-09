@@ -179,5 +179,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[DIN_NET_SELECT] TO rl_din_exchange;
 GO

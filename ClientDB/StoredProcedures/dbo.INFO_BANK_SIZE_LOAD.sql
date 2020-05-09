@@ -118,5 +118,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INFO_BANK_SIZE_LOAD] TO rl_info_bank_size_u;
 GO

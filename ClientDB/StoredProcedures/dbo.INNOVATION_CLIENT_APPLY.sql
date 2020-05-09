@@ -82,5 +82,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INNOVATION_CLIENT_APPLY] TO rl_innovation_u;
 GO

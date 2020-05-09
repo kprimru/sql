@@ -248,6 +248,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[TENDER_SAVE] TO rl_tender_i;
 GRANT EXECUTE ON [Purchase].[TENDER_SAVE] TO rl_tender_u;
 GO

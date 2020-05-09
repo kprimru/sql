@@ -50,5 +50,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[SEMINAR_SIGN_PRINT] TO rl_training_r;
 GO

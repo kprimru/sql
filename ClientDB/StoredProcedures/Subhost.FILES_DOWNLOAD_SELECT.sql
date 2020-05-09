@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[FILES_DOWNLOAD_SELECT] TO rl_web_subhost;
 GO

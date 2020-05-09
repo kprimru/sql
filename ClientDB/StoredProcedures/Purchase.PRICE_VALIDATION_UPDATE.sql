@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[PRICE_VALIDATION_UPDATE] TO rl_price_validation_u;
 GO

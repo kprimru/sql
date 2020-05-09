@@ -51,5 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Salary].[SERVICE_SALARY_DISTR_IMPORT] TO rl_salary;
 GO

@@ -10,3 +10,4 @@ AS
 	FROM
 		[PC275-SQL\OMEGA].IPLogs.dbo.USRFiles b
 		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ConsErr a ON b.UF_ID = a.ID_USR
+GO

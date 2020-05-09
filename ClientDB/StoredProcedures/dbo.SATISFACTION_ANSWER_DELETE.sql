@@ -36,6 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SATISFACTION_ANSWER_DELETE] TO rl_satisfaction_i;
 GRANT EXECUTE ON [dbo].[SATISFACTION_ANSWER_DELETE] TO rl_satisfaction_u;
 GO

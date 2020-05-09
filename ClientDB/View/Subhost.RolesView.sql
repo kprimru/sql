@@ -41,3 +41,4 @@ AS
 	UNION ALL
 	SELECT 1 AS ORD, 'rl_knowlenge' AS RL_NAME, 'База знаний' AS RL_CAPTION
 	*/
+GO

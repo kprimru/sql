@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[COMMERCIAL_OFFER_FILTER] TO rl_commercial_offer_r;
 GO

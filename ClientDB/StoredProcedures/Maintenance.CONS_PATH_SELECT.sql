@@ -33,5 +33,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[CONS_PATH_SELECT] TO rl_qst_process;
 GO

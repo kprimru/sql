@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SEMINAR_GRAPH_DOUBLE] TO rl_seminar_graph;
 GO

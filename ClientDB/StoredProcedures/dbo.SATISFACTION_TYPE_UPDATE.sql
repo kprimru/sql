@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SATISFACTION_TYPE_UPDATE] TO rl_satisfaction_type_u;
 GO

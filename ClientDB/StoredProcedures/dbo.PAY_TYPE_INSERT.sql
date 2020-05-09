@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PAY_TYPE_INSERT] TO rl_pay_type_i;
 GO

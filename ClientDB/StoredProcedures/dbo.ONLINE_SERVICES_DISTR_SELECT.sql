@@ -100,5 +100,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ONLINE_SERVICES_DISTR_SELECT] TO rl_expert_distr;
 GO

@@ -63,6 +63,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_PROCESS] TO rl_client_call_i;
 GRANT EXECUTE ON [dbo].[CLIENT_SATISFACTION_PROCESS] TO rl_client_call_u;
 GO

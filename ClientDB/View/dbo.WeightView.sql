@@ -19,4 +19,4 @@ AS
 	INNER JOIN Din.NetType NT ON W.NetCount = NT_NET
 								AND W.NetTech = NT_TECH
 								AND W.NetOdon = NT_ODON
-								AND W.NetOdoff = NT_ODOFF
+								AND W.NetOdoff = NT_ODOFFGO

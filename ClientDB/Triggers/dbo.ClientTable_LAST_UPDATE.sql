@@ -29,3 +29,4 @@ BEGIN
 		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
 		SELECT 'dbo', 'ClientReadList', GetDate();
 END
+GO

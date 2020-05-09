@@ -33,3 +33,4 @@ AS
 							(a.NetCount = 1 AND a.TechnolType = 11 AND a.ODON = 1 AND a.ODOFF = 2)
 					)
 			)
+GO

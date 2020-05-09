@@ -12,3 +12,4 @@ AS
 		b.SystemNumber AS UD_SYS, a.UD_DISTR, a.UD_COMP
 	FROM USR.USRData a
 	INNER JOIN dbo.SystemTable b ON a.UD_ID_HOST = b.HostID
+GO

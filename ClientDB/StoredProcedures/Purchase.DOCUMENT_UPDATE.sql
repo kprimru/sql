@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[DOCUMENT_UPDATE] TO rl_document_u;
 GO

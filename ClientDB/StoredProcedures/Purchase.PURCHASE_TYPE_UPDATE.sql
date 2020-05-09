@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[PURCHASE_TYPE_UPDATE] TO rl_purchase_type_u;
 GO

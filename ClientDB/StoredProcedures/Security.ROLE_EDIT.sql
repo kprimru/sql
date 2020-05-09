@@ -71,5 +71,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[ROLE_EDIT] TO rl_role_u;
 GO

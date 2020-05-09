@@ -102,5 +102,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_SAVE] TO rl_client_save;
 GO

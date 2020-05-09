@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Poll].[CLIENT_POLL_DELETE] TO rl_client_poll_d;
 GO

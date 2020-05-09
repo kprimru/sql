@@ -14,3 +14,4 @@ AS
 		INNER JOIN USR.USRIB ON UI_ID_USR = UF_ID
 		INNER JOIN dbo.ComplianceTypeTable ON ComplianceTypeID = UI_ID_COMP
 	WHERE ComplianceTypeName = '#HOST'
+GO

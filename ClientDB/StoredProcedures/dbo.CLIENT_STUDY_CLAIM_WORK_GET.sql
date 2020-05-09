@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_STUDY_CLAIM_WORK_GET] TO rl_client_study_claim_apply;
 GO

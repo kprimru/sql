@@ -74,5 +74,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[TRAINING_STUDY_SAVE] TO rl_training_study;
 GO

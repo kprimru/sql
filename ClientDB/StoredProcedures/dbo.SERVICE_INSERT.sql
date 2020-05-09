@@ -49,5 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVICE_INSERT] TO rl_personal_service_i;
 GO

@@ -37,5 +37,6 @@ BEGIN
 	END CATCH
 
 END
+GO
 GRANT EXECUTE ON [dbo].[CONS_EXE_DELETE] TO rl_cons_exe_d;
 GO

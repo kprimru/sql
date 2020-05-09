@@ -97,5 +97,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[EXPERT_QUESTION_IMPORT] TO rl_import_zve;
 GO

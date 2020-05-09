@@ -108,5 +108,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DUTY_CONTROL_FILTER] TO rl_filter_duty_control;
 GO

@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_ORI_PREPARE] TO rl_client_ori_r;
 GO

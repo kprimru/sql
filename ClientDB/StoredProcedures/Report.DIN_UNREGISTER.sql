@@ -78,5 +78,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[DIN_UNREGISTER] TO rl_report;
 GO

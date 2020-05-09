@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[SYSTEM_SELECT] TO rl_din_import;
 GO

@@ -47,3 +47,4 @@ AS
 				AND ServiceStart IS NOT NULL
 				AND ServiceTime IS NOT NULL
 		) AS a
+GO

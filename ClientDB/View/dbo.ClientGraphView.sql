@@ -44,3 +44,4 @@ AS
 				LEFT OUTER JOIN dbo.DayTable b ON a.DayID = b.DayID
 			WHERE STATUS = 1
 		) AS a
+GO

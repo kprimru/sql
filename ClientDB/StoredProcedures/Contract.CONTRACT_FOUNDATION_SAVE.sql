@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
+GO
 GRANT EXECUTE ON [Contract].[CONTRACT_FOUNDATION_SAVE] TO rl_client_contract_foundation;
 GO

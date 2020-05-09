@@ -88,5 +88,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Poll].[CLIENT_POLL_QUESTION] TO rl_client_poll_r;
 GO

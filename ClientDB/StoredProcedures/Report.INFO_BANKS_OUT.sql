@@ -60,5 +60,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[INFO_BANKS_OUT] TO rl_report;
 GO

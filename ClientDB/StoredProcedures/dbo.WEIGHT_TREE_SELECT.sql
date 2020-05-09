@@ -295,5 +295,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[WEIGHT_TREE_SELECT] TO rl_weights_tree_select;
 GO

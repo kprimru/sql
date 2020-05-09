@@ -71,5 +71,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_MESSAGE_SEND] TO rl_client_message_w;
 GO

@@ -52,5 +52,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Memo].[KGS_CLIENT_DISTR_SELECT] TO rl_kgs_complect_calc;
 GO

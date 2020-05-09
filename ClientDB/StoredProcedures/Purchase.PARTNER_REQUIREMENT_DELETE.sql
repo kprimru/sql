@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[PARTNER_REQUIREMENT_DELETE] TO rl_partner_requirement_d;
 GO

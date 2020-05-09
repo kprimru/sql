@@ -33,3 +33,4 @@ AS
 					AND C.DateTo IS NULL
 					AND D.ExpireDate >= dbo.DateOf(GETDATE())
 			)
+GO

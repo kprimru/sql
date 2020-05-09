@@ -187,4 +187,4 @@ AS
 		INNER JOIN dbo.City b ON a.ST_ID_CITY = b.CT_ID
 		LEFT OUTER JOIN dbo.Area c ON c.AR_ID = b.CT_ID_AREA
 		LEFT OUTER JOIN dbo.Region d ON d.RG_ID = b.CT_ID_REGION
-		LEFT OUTER JOIN dbo.City e ON b.CT_ID_CITY = e.CT_ID
+		LEFT OUTER JOIN dbo.City e ON b.CT_ID_CITY = e.CT_IDGO

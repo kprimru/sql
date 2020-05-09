@@ -68,5 +68,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[PROCESS_FILE_REPORT] TO rl_usr_process;
 GO

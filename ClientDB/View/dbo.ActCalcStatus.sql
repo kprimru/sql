@@ -7,3 +7,4 @@ GO
 ALTER VIEW [dbo].[ActCalcStatus]
 AS
 	SELECT 1 AS ST, 'Заявка создана' AS ST_TEXT
+GO

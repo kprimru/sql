@@ -19,3 +19,4 @@ BEGIN
 		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
 		SELECT 'Purchase', 'TradeSite', GetDate();
 END
+GO

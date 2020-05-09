@@ -62,5 +62,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[STAT_FILE_LOAD] TO rl_stat_import;
 GO

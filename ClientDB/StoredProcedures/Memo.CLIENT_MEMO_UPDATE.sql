@@ -75,5 +75,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_UPDATE] TO rl_client_memo_u;
 GO

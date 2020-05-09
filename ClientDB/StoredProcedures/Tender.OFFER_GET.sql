@@ -42,6 +42,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[OFFER_GET] TO rl_tender_r;
 GRANT EXECUTE ON [Tender].[OFFER_GET] TO rl_tender_u;
 GO

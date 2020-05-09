@@ -19,3 +19,4 @@ BEGIN
 		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
 		SELECT 'Cache', 'Persons=Patrons', GetDate();
 END
+GO

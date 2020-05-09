@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Control].[CONTROL_GROUP_SELECT] TO rl_control_r;
 GO

@@ -85,5 +85,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_SYSTEM_UPDATE] TO rl_client_system_u;
 GO

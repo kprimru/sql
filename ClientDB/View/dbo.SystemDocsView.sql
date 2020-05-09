@@ -32,4 +32,4 @@ AS
 		WHERE c.InfoBankID = b.InfoBankID
 		ORDER BY c.StatisticDate DESC
 	) c
-	GROUP BY a.SystemID, a.SystemBaseName
+	GROUP BY a.SystemID, a.SystemBaseNameGO

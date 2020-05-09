@@ -19,3 +19,4 @@ as
 			where id=@@identity and property='DtgSchemaOBJECT'
 	commit
 	return @@identity
+GO

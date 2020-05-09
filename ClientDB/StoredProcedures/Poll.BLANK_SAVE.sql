@@ -86,5 +86,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Poll].[BLANK_SAVE] TO rl_blank_u;
 GO

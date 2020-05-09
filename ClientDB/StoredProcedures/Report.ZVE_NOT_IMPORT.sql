@@ -85,5 +85,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[ZVE_NOT_IMPORT] TO rl_report;
 GO

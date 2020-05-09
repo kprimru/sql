@@ -167,5 +167,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Poll].[POLL_QUESTION_REPORT] TO rl_blank_report;
 GO

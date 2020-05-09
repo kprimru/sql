@@ -29,3 +29,4 @@ AS
 			WHERE CRR_ID_RIVAL = CR_ID
 		)), 0) AS CRR_PARTNER
 	FROM dbo.ClientRival
+GO

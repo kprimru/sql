@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CALENDAR_TYPE_SELECT] TO rl_calendar_type_r;
 GO

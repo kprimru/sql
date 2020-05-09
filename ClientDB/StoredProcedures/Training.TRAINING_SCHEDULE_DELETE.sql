@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[TRAINING_SCHEDULE_DELETE] TO rl_training_i;
 GO

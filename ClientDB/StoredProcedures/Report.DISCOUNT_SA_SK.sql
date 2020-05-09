@@ -95,5 +95,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[DISCOUNT_SA_SK] TO rl_report;
 GO

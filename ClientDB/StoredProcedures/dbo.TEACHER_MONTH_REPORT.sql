@@ -155,5 +155,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TEACHER_MONTH_REPORT] TO rl_teacher_month_report;
 GO

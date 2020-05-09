@@ -75,5 +75,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_FILE_CHECK] TO rl_client_search_import;
 GO

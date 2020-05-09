@@ -122,5 +122,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[RISK_TOTAL] TO rl_report;
 GO

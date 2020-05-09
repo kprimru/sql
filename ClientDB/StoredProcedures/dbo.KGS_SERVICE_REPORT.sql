@@ -156,5 +156,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[KGS_SERVICE_REPORT] TO rl_report_kgs_service;
 GO

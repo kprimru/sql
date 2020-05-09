@@ -67,5 +67,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[RIC_490_TRAFFIC] TO rl_report;
 GO

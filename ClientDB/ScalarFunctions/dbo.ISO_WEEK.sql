@@ -23,3 +23,4 @@ BEGIN
 
    RETURN(@ISOweek)
 END
+GO

@@ -42,3 +42,4 @@ BEGIN
 
 	RETURN @resstr
 END
+GO

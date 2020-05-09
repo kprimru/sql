@@ -77,5 +77,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[FILE_DISCOUNT_SELECT] TO rl_web_subhost;
 GO

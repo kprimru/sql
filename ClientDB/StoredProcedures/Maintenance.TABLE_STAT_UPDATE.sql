@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[TABLE_STAT_UPDATE] TO rl_maintenance;
 GO

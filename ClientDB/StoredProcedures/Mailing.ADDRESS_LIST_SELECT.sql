@@ -67,5 +67,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Mailing].[ADDRESS_LIST_SELECT] TO rl_mailing_req;
 GO

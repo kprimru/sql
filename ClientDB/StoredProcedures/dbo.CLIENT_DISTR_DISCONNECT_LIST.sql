@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_DISCONNECT_LIST] TO rl_client_distr_disconnect_list;
 GO

@@ -66,5 +66,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SELECT_CLIENT_DUTY] TO rl_client_duty_r;
 GO

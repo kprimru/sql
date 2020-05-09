@@ -70,5 +70,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_DELETE] TO rl_system_bank_d;
 GO

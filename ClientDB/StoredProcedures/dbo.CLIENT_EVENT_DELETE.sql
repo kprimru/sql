@@ -47,5 +47,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_EVENT_DELETE] TO rl_client_event_d;
 GO

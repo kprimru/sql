@@ -36,6 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[OFFER_TEMPLATE_SELECT] TO public;
 GRANT EXECUTE ON [Price].[OFFER_TEMPLATE_SELECT] TO rl_offer_template_r;
 GO

@@ -81,5 +81,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_COMMON_REPORT] TO rl_report_common_client;
 GO

@@ -53,3 +53,4 @@ AS
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable ON RP_ID = TP_ID_RP
 				WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'RES'
 			) AS res
+GO

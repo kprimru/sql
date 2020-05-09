@@ -152,5 +152,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_HST_COMMENT_PROCESS] TO rl_hst_process;
 GO

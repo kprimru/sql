@@ -10,3 +10,4 @@ AS
 	SELECT ServiceID, ServiceName, ServiceLogin
 	FROM dbo.ServiceTable
 	WHERE ServiceDismiss IS NULL
+GO

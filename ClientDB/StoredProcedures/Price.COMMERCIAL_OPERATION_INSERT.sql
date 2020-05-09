@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[COMMERCIAL_OPERATION_INSERT] TO rl_commercial_operation_i;
 GO

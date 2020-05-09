@@ -107,5 +107,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[SEMINAR_SIGN_INSERT] TO rl_training_i;
 GO

@@ -31,3 +31,4 @@ BEGIN
 
 	RETURN CAST(@rpart AS VARCHAR(20)) + ',' + RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2)
 END
+GO

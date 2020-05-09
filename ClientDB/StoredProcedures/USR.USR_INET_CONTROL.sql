@@ -295,5 +295,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[USR_INET_CONTROL] TO rl_report_inet_control;
 GO

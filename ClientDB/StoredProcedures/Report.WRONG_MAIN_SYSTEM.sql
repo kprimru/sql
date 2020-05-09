@@ -325,5 +325,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[WRONG_MAIN_SYSTEM] TO rl_report;
 GO

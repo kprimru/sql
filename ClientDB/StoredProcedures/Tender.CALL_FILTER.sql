@@ -43,6 +43,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[CALL_FILTER] TO rl_tender_call_filter;
 GRANT EXECUTE ON [Tender].[CALL_FILTER] TO rl_tender_u;
 GO

@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_INSERT] TO rl_client_contract_i;
 GO

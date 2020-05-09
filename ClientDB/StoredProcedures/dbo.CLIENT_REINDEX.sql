@@ -78,5 +78,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_REINDEX] TO rl_client_reindex;
 GO

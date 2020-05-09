@@ -40,3 +40,4 @@ AS
 		dbo.ClientSatisfaction
 		INNER JOIN dbo.ClientCall ON CC_ID = CS_ID_CALL
 
+GO

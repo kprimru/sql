@@ -19,3 +19,4 @@ RETURN
 	FROM dbo.SystemBanksView WITH(NOEXPAND)
 	WHERE SystemId = @System
 )
+GO

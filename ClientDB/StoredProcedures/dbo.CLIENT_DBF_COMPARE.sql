@@ -1195,5 +1195,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DBF_COMPARE] TO rl_client_dbf_compare;
 GO

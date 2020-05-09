@@ -141,5 +141,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[LARGE_CLIENT] TO rl_report;
 GO

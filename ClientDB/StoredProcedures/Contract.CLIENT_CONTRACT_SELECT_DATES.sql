@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_DATES] TO rl_client_contract_r;
 GO

@@ -105,5 +105,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTROL_REMOVE] TO rl_client_control_remove;
 GO

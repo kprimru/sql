@@ -23,3 +23,4 @@ declare @vchDescription nvarchar(255)
 
     return
 
+GO

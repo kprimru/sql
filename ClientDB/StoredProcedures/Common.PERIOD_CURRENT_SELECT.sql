@@ -63,5 +63,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Common].[PERIOD_CURRENT_SELECT] TO public;
 GO

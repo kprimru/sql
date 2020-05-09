@@ -12,3 +12,4 @@ RETURN
 	SELECT WCL_ID = ClientID
 	FROM [dbo].[ClientList@Get]('WRITE')
 )
+GO

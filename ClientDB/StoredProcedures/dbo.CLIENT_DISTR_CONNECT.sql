@@ -57,5 +57,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_CONNECT] TO rl_client_distr_connect;
 GO

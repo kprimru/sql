@@ -13,3 +13,4 @@ AS
 		INNER JOIN dbo.ServiceTable b ON a.ID_SERVICE = b.ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 		INNER JOIN dbo.City d ON d.CT_ID = a.ID_CITY
+GO

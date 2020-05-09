@@ -22,3 +22,4 @@ AS
 	FROM dbo.RegNodeTable R
 	INNER JOIN dbo.SystemTable S ON S.SystemBaseName = [Reg].[Complect@Extract?Params](R.Complect, 'SYSTEM')
 	WHERE R.Service = 0
+GO

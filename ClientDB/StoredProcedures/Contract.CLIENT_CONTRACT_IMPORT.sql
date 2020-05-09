@@ -71,5 +71,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH;
 END
+GO
 GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_IMPORT] TO rl_client_contract_u;
 GO

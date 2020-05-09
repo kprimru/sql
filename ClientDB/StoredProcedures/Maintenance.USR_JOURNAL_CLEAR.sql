@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[USR_JOURNAL_CLEAR] TO rl_maintenance;
 GO

@@ -38,6 +38,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GET_SERVICE_FULL_NAME] TO rl_report_graf_common;
 GRANT EXECUTE ON [dbo].[GET_SERVICE_FULL_NAME] TO rl_report_graf_time;
 GRANT EXECUTE ON [dbo].[GET_SERVICE_FULL_NAME] TO rl_report_graf_update;

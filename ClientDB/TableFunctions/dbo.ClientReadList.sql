@@ -153,5 +153,6 @@ BEGIN
 
 	RETURN
 END
+GO
 GRANT SELECT ON [dbo].[ClientReadList] TO public;
 GO

@@ -378,5 +378,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_PAY_DYNAMIC] TO rl_client_pay_dynamic;
 GO

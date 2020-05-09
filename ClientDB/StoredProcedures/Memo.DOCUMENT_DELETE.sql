@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Memo].[DOCUMENT_DELETE] TO rl_memo_document_d;
 GO

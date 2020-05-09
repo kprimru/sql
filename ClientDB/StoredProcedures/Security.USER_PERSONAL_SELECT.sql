@@ -70,5 +70,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[USER_PERSONAL_SELECT] TO public;
 GO

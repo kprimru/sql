@@ -76,5 +76,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[CLIENT_SEMINAR_VISIT_REPORT] TO rl_seminar_visit_report;
 GO

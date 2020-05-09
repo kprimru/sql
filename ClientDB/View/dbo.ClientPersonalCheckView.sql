@@ -40,3 +40,4 @@ AS
 		INNER JOIN dbo.ClientPersonal b ON a.ClientID = b.CP_ID_CLIENT
 		INNER JOIN dbo.ClientPersonalType c ON c.CPT_ID = b.CP_ID_TYPE
 	WHERE (CP_POS = '' OR CP_POS = '-')
+GO

@@ -19,3 +19,4 @@ AS
 				(UF_DATE > ResVersionEnd AND ResVersionEnd IS NOT NULL)
 				OR (UF_DATE > ConsExeVersionEnd AND ConsExeVersionEnd IS NOT NULL)
 			)
+GO

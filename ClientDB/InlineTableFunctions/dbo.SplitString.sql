@@ -39,3 +39,4 @@ RETURN
 		SELECT [Order], Word
 		FROM Proposition
 )
+GO

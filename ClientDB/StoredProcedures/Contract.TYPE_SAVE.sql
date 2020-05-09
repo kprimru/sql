@@ -80,5 +80,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Contract].[TYPE_SAVE] TO rl_contract_type_u;
 GO

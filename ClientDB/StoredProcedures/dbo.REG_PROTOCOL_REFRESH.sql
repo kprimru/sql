@@ -162,5 +162,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REG_PROTOCOL_REFRESH] TO rl_reg_protocol_refresh;
 GO

@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[TRAINING_SUBJECT_INSERT] TO rl_training_subject_i;
 GO

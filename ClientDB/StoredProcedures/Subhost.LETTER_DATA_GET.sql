@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[LETTER_DATA_GET] TO rl_web_subhost;
 GO

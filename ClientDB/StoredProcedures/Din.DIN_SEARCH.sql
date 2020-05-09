@@ -331,5 +331,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[DIN_SEARCH] TO rl_din_search;
 GO

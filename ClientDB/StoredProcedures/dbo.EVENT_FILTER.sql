@@ -119,5 +119,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[EVENT_FILTER] TO rl_filter_event;
 GO

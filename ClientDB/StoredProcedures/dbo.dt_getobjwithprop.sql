@@ -26,3 +26,4 @@ as
 	else
 		select objectid id from dbo.dtproperties
 			where property=@property and value=@value
+GO

@@ -38,3 +38,4 @@ as
 			values (@property, @id, @value, @uvalue, @lvalue)
 	end
 
+GO

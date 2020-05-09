@@ -16,3 +16,4 @@ AS
 BEGIN
 	RETURN IsNull(@SysShort + ' ', '') + CAST(@Distr AS VarChar(10)) + CASE @Comp WHEN 1 THEN '' ELSE '/' + CAST(@Comp AS VarChar(10)) END
 END
+GO

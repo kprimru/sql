@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[PROCESSOR_FAMILY_UPDATE] TO rl_proc_family_u;
 GO

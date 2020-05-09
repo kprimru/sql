@@ -82,5 +82,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTROL_DOCUMENT_FILTER] TO rl_control_document_filter;
 GO

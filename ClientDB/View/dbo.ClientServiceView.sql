@@ -30,4 +30,4 @@ AS
 				FROM dbo.ClientService b
 				WHERE a.ID_CLIENT = b.ID_CLIENT
 					AND b.UPD_DATE > a.UPD_DATE
-			)
+			)GO

@@ -67,6 +67,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[GLOBAL_SETTING_LOAD] TO public;
 GRANT EXECUTE ON [Maintenance].[GLOBAL_SETTING_LOAD] TO rl_settings;
 GO

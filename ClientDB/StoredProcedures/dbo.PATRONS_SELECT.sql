@@ -35,5 +35,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PATRONS_SELECT] TO public;
 GO

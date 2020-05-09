@@ -90,5 +90,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[NET_REPORT] TO rl_report;
 GO

@@ -141,5 +141,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[DIN_FILTER] TO rl_din_r;
 GO

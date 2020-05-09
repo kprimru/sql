@@ -36,6 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[TEST_SELECT] TO rl_subhost_test;
 GRANT EXECUTE ON [Subhost].[TEST_SELECT] TO rl_web_subhost;
 GO

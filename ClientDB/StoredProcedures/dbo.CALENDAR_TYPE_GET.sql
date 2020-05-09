@@ -38,5 +38,6 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [dbo].[CALENDAR_TYPE_GET] TO rl_calendar_type_r;
 GO

@@ -39,6 +39,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[STAT_SELECT] TO rl_stat_export;
 GRANT EXECUTE ON [dbo].[STAT_SELECT] TO rl_stat_import;
 GO

@@ -58,5 +58,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVICE_GRAPH_CORRECT] TO rl_report_service_graph_correct;
 GO

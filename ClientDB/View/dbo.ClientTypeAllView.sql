@@ -55,4 +55,4 @@ AS
 			INNER JOIN Din.NetType e ON e.NT_ID_MASTER = b.DistrTypeID
 			WHERE a.ClientID = b.ID_CLIENT AND DS_REG = 0
 		) AS b
-	WHERE a.STATUS = 1
+	WHERE a.STATUS = 1GO

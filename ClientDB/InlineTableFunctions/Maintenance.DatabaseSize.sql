@@ -82,3 +82,4 @@ RETURN
 			WHERE a2.type <> N'S' and a2.type <> N'IT'
 		) AS dt
 )
+GO

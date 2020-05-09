@@ -24,5 +24,6 @@ AS
 		INNER JOIN dbo.Hosts e ON e.HostID = ID_HOST
 		INNER JOIN dbo.DistrStatus f ON f.DS_ID = a.ID_STATUS
 	WHERE STATUS = 1
+GO
 GRANT SELECT ON [dbo].[ClientDistrView] TO COMPLECTBASE;
 GO

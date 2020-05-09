@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Memo].[DOCUMENT_INSERT] TO rl_memo_document_i;
 GO

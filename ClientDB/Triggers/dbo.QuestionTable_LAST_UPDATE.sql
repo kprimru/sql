@@ -28,4 +28,4 @@ BEGIN
 	IF @@RowCount = 0
 		INSERT INTO Common.Reference(ReferenceSchema, ReferenceName, ReferenceLast)
 		SELECT 'dbo', 'QuestionTableQ', GetDate();
-END;
+END;GO

@@ -76,5 +76,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[USERS_ACTIVE] TO rl_maintenance;
 GO

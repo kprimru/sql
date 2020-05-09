@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Kladr].[FIAS_LEVEL_SELECT] TO rl_fias_r;
 GO

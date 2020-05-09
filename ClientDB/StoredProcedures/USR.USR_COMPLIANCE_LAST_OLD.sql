@@ -267,5 +267,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[USR_COMPLIANCE_LAST_OLD] TO rl_usr_compliance;
 GO

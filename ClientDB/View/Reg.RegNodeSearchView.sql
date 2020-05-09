@@ -24,3 +24,4 @@ AS
 		INNER JOIN Din.NetType d ON d.NT_NET = a.NetCount AND d.NT_TECH = a.TechnolType AND d.NT_ODON = a.ODON AND d.NT_ODOFF = a.ODOFF
 		INNER JOIN dbo.DistrStatus ON DS_REG = Service
 		INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeId = d.NT_ID_MASTER
+GO

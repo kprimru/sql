@@ -39,5 +39,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[RDD_POSITION_SELECT] TO rl_rdd_position_r;
 GO

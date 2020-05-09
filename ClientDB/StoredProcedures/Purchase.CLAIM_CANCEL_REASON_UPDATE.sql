@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[CLAIM_CANCEL_REASON_UPDATE] TO rl_claim_cancel_reason_u;
 GO

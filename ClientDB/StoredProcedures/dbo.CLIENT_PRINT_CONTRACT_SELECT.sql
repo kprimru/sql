@@ -153,5 +153,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_PRINT_CONTRACT_SELECT] TO rl_client_p;
 GO

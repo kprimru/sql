@@ -104,3 +104,4 @@ AS
 	FROM
 		dbo.ClientGraphView
 	WHERE GR_ERROR IS NOT NULL
+GO

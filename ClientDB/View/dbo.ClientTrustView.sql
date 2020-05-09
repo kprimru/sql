@@ -70,3 +70,4 @@ AS
 	FROM
 		dbo.ClientTrust
 		INNER JOIN dbo.ClientCall ON CC_ID = CT_ID_CALL
+GO

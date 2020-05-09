@@ -134,5 +134,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[CLIENT_PRICE_CHANGE_REPORT] TO rl_price_history;
 GO

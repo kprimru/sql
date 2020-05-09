@@ -49,3 +49,4 @@ AS
 				AND z.COMP = a.DF_COMP
 				AND y.DATE < a.DF_CREATE
 		)
+GO

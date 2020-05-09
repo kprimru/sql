@@ -18,3 +18,4 @@ AS
 		INNER JOIN Din.SystemType ON ID_TYPE = SST_ID
 		INNER JOIN Din.NetType ON ID_NET = NT_ID
 		INNER JOIN dbo.DistrStatus ON ID_STATUS = DS_ID
+GO

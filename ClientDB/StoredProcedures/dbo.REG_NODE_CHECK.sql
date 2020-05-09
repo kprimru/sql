@@ -161,5 +161,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REG_NODE_CHECK] TO rl_reg_node_audit;
 GO

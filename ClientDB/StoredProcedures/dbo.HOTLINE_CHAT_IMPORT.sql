@@ -80,5 +80,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[HOTLINE_CHAT_IMPORT] TO rl_chat_import;
 GO

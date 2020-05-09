@@ -40,5 +40,6 @@ BEGIN
 	END CATCH
 
 END
+GO
 GRANT EXECUTE ON [Purchase].[PLACEMENT_ORDER_UPDATE] TO rl_placement_order_u;
 GO

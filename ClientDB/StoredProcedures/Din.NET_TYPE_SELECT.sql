@@ -39,6 +39,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[NET_TYPE_SELECT] TO rl_din_import;
 GRANT EXECUTE ON [Din].[NET_TYPE_SELECT] TO rl_din_net_type_r;
 GO

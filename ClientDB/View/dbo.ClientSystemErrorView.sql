@@ -19,3 +19,4 @@ AS
 									AND	b.COMP = e.CompNumber
 	WHERE c.DS_REG <> e.Service AND a.STATUS = 1 AND b.STATUS = 1
 	GROUP BY a.ClientID
+GO

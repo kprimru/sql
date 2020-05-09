@@ -22,4 +22,4 @@ AS
 		INNER JOIN sys.database_principals c ON b.role_principal_id = c.principal_id
 		INNER JOIN sys.database_role_members d ON d.member_principal_id = c.principal_id
 		INNER JOIN sys.database_principals e ON d.role_principal_id = e.principal_id
-		INNER JOIN Security.Roles ON RoleName = e.name
+		INNER JOIN Security.Roles ON RoleName = e.nameGO

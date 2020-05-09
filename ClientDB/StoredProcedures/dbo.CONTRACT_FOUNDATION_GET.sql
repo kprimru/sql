@@ -36,6 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_FOUNDATION_GET] TO rl_contract_foundation_d;
 GRANT EXECUTE ON [dbo].[CONTRACT_FOUNDATION_GET] TO rl_contract_foundation_u;
 GO

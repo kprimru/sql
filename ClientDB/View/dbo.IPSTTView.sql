@@ -12,3 +12,4 @@ AS
 	FROM [PC275-SQL\OMEGA].IPLogs.dbo.ClientStatDetail
 	WHERE CSD_STT_SEND = 1 AND CSD_STT_RESULT = 1
 	*/
+GO

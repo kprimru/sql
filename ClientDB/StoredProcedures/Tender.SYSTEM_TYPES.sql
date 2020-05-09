@@ -34,6 +34,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[SYSTEM_TYPES] TO rl_tender_r;
 GRANT EXECUTE ON [Tender].[SYSTEM_TYPES] TO rl_tender_u;
 GO

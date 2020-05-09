@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Contract].[SPECIFICATION_DELETE] TO rl_contract_specification_d;
 GO

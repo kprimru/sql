@@ -134,5 +134,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DUTY_PERSONAL_REPORT_NEW] TO rl_report_client_duty;
 GO

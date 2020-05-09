@@ -62,5 +62,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_QUESTION_SELECT] TO rl_client_question_r;
 GO

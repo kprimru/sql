@@ -16,4 +16,4 @@ AS
 		Din.DinFiles
 		INNER JOIN dbo.SystemTable ON SystemID = DF_ID_SYS
 		INNER JOIN Din.SystemType ON SST_ID = DF_ID_TYPE
-		INNER JOIN Din.NetType ON NT_ID = DF_ID_NET
+		INNER JOIN Din.NetType ON NT_ID = DF_ID_NETGO

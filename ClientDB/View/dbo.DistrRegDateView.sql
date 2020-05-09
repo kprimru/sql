@@ -21,4 +21,4 @@ AS
 	SELECT a.ID_HOST, a.DISTR, a.COMP, b.REG_DATE
 	FROM
 		Reg.RegDistr a
-		INNER JOIN Reg.RegHistory b ON a.ID = b.ID_DISTR
+		INNER JOIN Reg.RegHistory b ON a.ID = b.ID_DISTRGO

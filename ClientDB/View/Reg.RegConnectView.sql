@@ -12,4 +12,4 @@ AS
 	UNION ALL
 
 	SELECT ID_HOST, DISTR, COMP, DATE
-	FROM Reg.RegProtocolTextConnectView WITH(NOEXPAND)
+	FROM Reg.RegProtocolTextConnectView WITH(NOEXPAND)GO

@@ -73,5 +73,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[DISTR_PRICE_GET] TO rl_tender_u;
 GO

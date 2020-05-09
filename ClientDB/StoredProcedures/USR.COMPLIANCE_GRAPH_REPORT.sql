@@ -147,5 +147,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[COMPLIANCE_GRAPH_REPORT] TO rl_report_compliance_graph;
 GO

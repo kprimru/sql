@@ -69,6 +69,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[USER_SELECT] TO rl_client_message_r;
 GRANT EXECUTE ON [Security].[USER_SELECT] TO rl_user_r;
 GRANT EXECUTE ON [Security].[USER_SELECT] TO rl_user_roles;

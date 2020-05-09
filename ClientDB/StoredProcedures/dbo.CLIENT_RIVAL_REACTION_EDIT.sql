@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_REACTION_EDIT] TO rl_client_rival_reaction_u;
 GO

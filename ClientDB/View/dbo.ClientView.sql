@@ -18,4 +18,4 @@ AS
 		INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 		INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID
-	WHERE a.STATUS = 1
+	WHERE a.STATUS = 1GO

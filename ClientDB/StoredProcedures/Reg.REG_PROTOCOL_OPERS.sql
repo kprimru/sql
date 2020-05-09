@@ -63,5 +63,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Reg].[REG_PROTOCOL_OPERS] TO rl_reg_protocol_filter;
 GO

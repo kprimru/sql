@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[SYSTEM_TYPE_DELETE] TO rl_din_system_type_d;
 GO

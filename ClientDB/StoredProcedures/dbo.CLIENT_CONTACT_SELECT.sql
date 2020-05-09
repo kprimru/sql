@@ -59,5 +59,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONTACT_SELECT] TO rl_client_contact_r;
 GO

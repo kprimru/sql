@@ -87,5 +87,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Seminar].[SCHEDULE_PERSONAL_SAVE] TO rl_seminar_write;
 GO

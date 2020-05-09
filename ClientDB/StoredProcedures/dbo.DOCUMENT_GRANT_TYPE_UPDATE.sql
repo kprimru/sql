@@ -44,5 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DOCUMENT_GRANT_TYPE_UPDATE] TO rl_doc_grant_type_u;
 GO

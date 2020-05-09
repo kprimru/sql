@@ -35,5 +35,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[USERLOG_USER_SELECT] TO rl_userlog;
 GO

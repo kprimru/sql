@@ -42,3 +42,4 @@ BEGIN
 				ELSE 'ек'
 			END
 END
+GO

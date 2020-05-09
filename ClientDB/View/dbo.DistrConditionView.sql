@@ -32,3 +32,4 @@ AS
 			WHERE DS_REG = 0 AND a.Complect = b.Complect
 				AND b.SystemBaseName IN ('FIN', 'QSA')
 		 )
+GO

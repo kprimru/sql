@@ -11,3 +11,4 @@ AS
 		[PC275-SQL\OMEGA].IPLogs.dbo.LogFiles a
 		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.Files b ON a.LF_ID_FILE = b.FL_ID
 	WHERE LF_TYPE = ''
+GO

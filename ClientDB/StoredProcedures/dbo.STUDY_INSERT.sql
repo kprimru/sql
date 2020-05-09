@@ -98,5 +98,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[STUDY_INSERT] TO rl_client_study_i;
 GO

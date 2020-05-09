@@ -28,4 +28,4 @@ AS
 		INNER JOIN dbo.ServiceTable d ON d.ServiceID = b.ClientServiceID
 		INNER JOIN dbo.ServiceStatusTable e ON e.ServiceStatusID = b.StatusID
 		INNER JOIN Seminar.Schedule f ON f.ID = a.ID_SCHEDULE
-	WHERE a.STATUS = 1
+	WHERE a.STATUS = 1GO

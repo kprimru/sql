@@ -67,5 +67,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONNECT_SYSTEM] TO rl_client_connect;
 GO

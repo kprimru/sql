@@ -70,5 +70,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_EVENT_UPDATE] TO rl_client_event_u;
 GO

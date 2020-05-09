@@ -131,5 +131,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[TENDER_SAVE] TO rl_tender_u;
 GO

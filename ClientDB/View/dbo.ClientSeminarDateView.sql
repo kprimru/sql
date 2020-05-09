@@ -13,4 +13,4 @@ AS
 		dbo.ClientStudy a
 		INNER JOIN dbo.ClientStudyPeople b ON a.ID = b.ID_STUDY
 	WHERE ID_PLACE = 3 AND STATUS = 1
-	GROUP BY ID_CLIENT, DATE
+	GROUP BY ID_CLIENT, DATEGO

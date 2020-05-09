@@ -184,5 +184,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[GLOBAL_SETTING_SAVE] TO rl_settings;
 GO

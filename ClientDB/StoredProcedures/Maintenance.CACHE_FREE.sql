@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Maintenance].[CACHE_FREE] TO rl_import_data;
 GO

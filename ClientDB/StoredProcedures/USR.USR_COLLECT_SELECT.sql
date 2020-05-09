@@ -64,5 +64,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[USR_COLLECT_SELECT] TO rl_usr_collect;
 GO

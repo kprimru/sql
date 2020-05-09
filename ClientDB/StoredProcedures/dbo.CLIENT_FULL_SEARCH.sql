@@ -532,5 +532,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_FULL_SEARCH] TO rl_client_list;
 GO

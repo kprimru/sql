@@ -23,3 +23,4 @@ BEGIN
 		INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
 		VALUES(@Id, @FinishDateTime, @Error);
 END;
+GO

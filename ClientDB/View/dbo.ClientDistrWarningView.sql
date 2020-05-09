@@ -70,3 +70,4 @@ AS
 					)
 		) AS o_O
 	WHERE REG_ERROR <> ''
+GO

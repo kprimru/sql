@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[CONTRACT_EXECUTION_PROVISION_INSERT] TO rl_contract_execution_provision_i;
 GO

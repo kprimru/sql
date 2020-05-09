@@ -50,5 +50,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_LEFT_BANKS_GET] TO rl_system_bank_r;
 GO

@@ -37,3 +37,4 @@ TooMany:
 
 	set @name = 'DIAGRAM'
 	goto Leave
+GO

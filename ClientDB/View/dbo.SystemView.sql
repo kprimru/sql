@@ -10,3 +10,4 @@ AS
 		SystemID, SystemShortName, SystemName, SystemBaseName,
 		SystemNumber, MainInfoBankID, SystemOrder, SystemFullName, SystemActive
 	FROM dbo.SystemTable
+GO

@@ -52,6 +52,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[CALC_SAVE] TO rl_tender_r;
 GRANT EXECUTE ON [Tender].[CALC_SAVE] TO rl_tender_u;
 GO

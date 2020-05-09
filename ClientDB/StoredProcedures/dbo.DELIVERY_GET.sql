@@ -37,5 +37,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[DELIVERY_GET] TO rl_delivery_r;
 GO

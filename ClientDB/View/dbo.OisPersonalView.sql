@@ -32,3 +32,4 @@ AS
 				WHERE STATUS = 1
 					AND a.ManagerID = c.ManagerID
 			)
+GO

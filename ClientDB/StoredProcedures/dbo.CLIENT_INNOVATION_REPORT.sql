@@ -150,5 +150,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_INNOVATION_REPORT] TO rl_innovation_report;
 GO

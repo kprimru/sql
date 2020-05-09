@@ -177,5 +177,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[HST_TOTAL_REPORT] TO rl_usr_cfg_report;
 GO

@@ -149,5 +149,6 @@ BEGIN
 
 	RETURN
 END
+GO
 GRANT SELECT ON [dbo].[ClientWriteList] TO public;
 GO

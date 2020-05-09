@@ -105,5 +105,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_DISCOUNT_REPORT] TO rl_report_act_discount;
 GO

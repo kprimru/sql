@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[GOOD_REQUIREMENT_GET] TO rl_good_requirement_r;
 GO

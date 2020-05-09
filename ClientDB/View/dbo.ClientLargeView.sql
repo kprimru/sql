@@ -30,3 +30,4 @@ AS
 							z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 						)
 			)
+GO

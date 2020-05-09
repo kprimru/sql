@@ -34,6 +34,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_ERROR_REASON_TYPE] TO public;
 GRANT EXECUTE ON [dbo].[CLIENT_ERROR_REASON_TYPE] TO rl_message_r;
 GO

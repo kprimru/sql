@@ -139,5 +139,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[MANAGER_PAY] TO rl_report;
 GO

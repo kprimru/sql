@@ -128,3 +128,4 @@ BEGIN
 	END
   RETURN UPPER(SUBSTRING(@nword, 2, 1)) + SUBSTRING(@nword, 3, LEN(@nword) - 2)
 END
+GO

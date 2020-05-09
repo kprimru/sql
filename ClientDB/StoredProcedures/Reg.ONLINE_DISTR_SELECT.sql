@@ -119,5 +119,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Reg].[ONLINE_DISTR_SELECT] TO rl_reg_online;
 GO

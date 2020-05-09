@@ -18,3 +18,4 @@ AS
 		LEFT OUTER JOIN dbo.ClientPersonalDirView e WITH(NOEXPAND) ON e.CP_ID_CLIENT = a.ClientID
 		LEFT OUTER JOIN dbo.ClientPersonalBuhView f WITH(NOEXPAND) ON f.CP_ID_CLIENT = a.ClientID
 		LEFT OUTER JOIN dbo.ClientPersonalResView g WITH(NOEXPAND) ON g.CP_ID_CLIENT = a.ClientID
+GO

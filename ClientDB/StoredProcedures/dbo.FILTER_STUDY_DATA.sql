@@ -108,5 +108,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[FILTER_STUDY_DATA] TO rl_filter_study;
 GO

@@ -78,5 +78,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_CREATE] TO rl_system_bank_i;
 GO

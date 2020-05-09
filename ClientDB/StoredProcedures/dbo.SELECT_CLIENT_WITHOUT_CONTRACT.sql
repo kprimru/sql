@@ -62,5 +62,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SELECT_CLIENT_WITHOUT_CONTRACT] TO rl_contract_audit;
 GO

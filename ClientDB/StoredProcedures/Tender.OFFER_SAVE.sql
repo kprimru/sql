@@ -95,6 +95,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[OFFER_SAVE] TO rl_tender_offer_u;
 GRANT EXECUTE ON [Tender].[OFFER_SAVE] TO rl_tender_u;
 GO

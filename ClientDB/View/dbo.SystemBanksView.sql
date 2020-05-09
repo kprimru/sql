@@ -17,3 +17,4 @@ AS
 		dbo.SystemTable a INNER JOIN
 		dbo.SystemBankTable b ON a.SystemID = b.SystemID INNER JOIN
 		dbo.InfoBankTable c ON c.InfoBankID = b.InfoBankID
+GO

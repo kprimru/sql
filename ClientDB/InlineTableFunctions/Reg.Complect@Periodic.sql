@@ -31,4 +31,4 @@ RETURN
 		ORDER BY H.DATE DESC
 	)  AS H
 	WHERE H.COMPLECT = @Complect
-)
+)GO

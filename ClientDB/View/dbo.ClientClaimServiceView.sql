@@ -24,4 +24,4 @@ AS
 					ORDER BY UPD_DATE
 				)
 		END AS ID_SERVICE
-	FROM dbo.ClaimTable
+	FROM dbo.ClaimTableGO

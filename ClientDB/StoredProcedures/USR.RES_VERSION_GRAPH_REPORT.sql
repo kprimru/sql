@@ -73,6 +73,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[RES_VERSION_GRAPH_REPORT] TO rl_report_res_version_graph;
 GRANT EXECUTE ON [USR].[RES_VERSION_GRAPH_REPORT] TO rl_report_unservice_complect_graph;
 GO

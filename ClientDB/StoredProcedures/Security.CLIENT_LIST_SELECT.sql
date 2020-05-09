@@ -96,5 +96,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[CLIENT_LIST_SELECT] TO rl_security_client_list_r;
 GO

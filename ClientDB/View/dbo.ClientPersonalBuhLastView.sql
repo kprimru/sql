@@ -11,3 +11,4 @@ AS
 		dbo.ClientTable a
 		INNER JOIN dbo.ClientPersonalBuhView b WITH(NOEXPAND) ON CP_ID_CLIENT = ClientID
 	--GROUP BY a.ID_MASTER, CP_SURNAME, CP_NAME, CP_PATRON, CP_POS, CP_PHONE
+GO

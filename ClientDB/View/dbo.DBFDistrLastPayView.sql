@@ -70,3 +70,4 @@ AS
 			) AS B
 		) AS D
 	) AS D
+GO

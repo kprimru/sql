@@ -37,6 +37,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[TENDER_DELETE] TO rl_tender_d;
 GRANT EXECUTE ON [Tender].[TENDER_DELETE] TO rl_tender_u;
 GO

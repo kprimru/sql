@@ -78,5 +78,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[CONTRACT_PAY_CONDITION] TO rl_report;
 GO

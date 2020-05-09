@@ -12,3 +12,4 @@ GO
 create procedure dbo.dt_verstamp006
 as
 	select 7000
+GO

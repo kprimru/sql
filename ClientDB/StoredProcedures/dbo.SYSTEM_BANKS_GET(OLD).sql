@@ -84,6 +84,7 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_GET(OLD)] TO rl_info_bank_r;
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_GET(OLD)] TO rl_system_bank_r;
 GO

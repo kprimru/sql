@@ -59,5 +59,6 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_INSERT] TO rl_client_stat_detail_i;
+END;GO
+GRANT EXECUTE ON [dbo].[CLIENT_STAT_DETAIL_INSERT] TO rl_client_stat_detail_i;
 GO

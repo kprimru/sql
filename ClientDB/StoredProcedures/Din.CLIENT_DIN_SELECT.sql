@@ -197,6 +197,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Din].[CLIENT_DIN_SELECT] TO rl_din_client_only;
 GRANT EXECUTE ON [Din].[CLIENT_DIN_SELECT] TO rl_din_r;
 GO

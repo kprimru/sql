@@ -34,5 +34,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Mailing].[WEB_MESSAGES_SELECT] TO rl_mailing_web;
 GO

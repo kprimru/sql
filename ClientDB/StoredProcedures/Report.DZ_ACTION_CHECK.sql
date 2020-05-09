@@ -88,5 +88,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[DZ_ACTION_CHECK] TO rl_report;
 GO

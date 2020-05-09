@@ -54,6 +54,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Reg].[CLIENT_DISTR_PROTOCOL_TEXT] TO rl_client_distr_protocol;
 GRANT EXECUTE ON [Reg].[CLIENT_DISTR_PROTOCOL_TEXT] TO rl_client_system_protocol;
 GO

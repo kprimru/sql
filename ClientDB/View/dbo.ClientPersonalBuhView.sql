@@ -15,3 +15,4 @@ AS
 		dbo.ClientPersonal a
 		INNER JOIN dbo.ClientPersonalType b ON a.CP_ID_TYPE = b.CPT_ID
 	WHERE CPT_PSEDO = 'BUH'
+GO

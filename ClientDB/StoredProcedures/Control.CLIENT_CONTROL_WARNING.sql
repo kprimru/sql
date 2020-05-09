@@ -55,6 +55,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Control].[CLIENT_CONTROL_WARNING] TO rl_control_chief;
 GRANT EXECUTE ON [Control].[CLIENT_CONTROL_WARNING] TO rl_control_duty;
 GRANT EXECUTE ON [Control].[CLIENT_CONTROL_WARNING] TO rl_control_law;

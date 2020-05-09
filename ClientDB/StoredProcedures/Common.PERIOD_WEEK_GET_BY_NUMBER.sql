@@ -56,5 +56,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Common].[PERIOD_WEEK_GET_BY_NUMBER] TO public;
 GO

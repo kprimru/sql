@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Seminar].[WEB_MAIL_CONFIRM_SET] TO rl_seminar_web;
 GO

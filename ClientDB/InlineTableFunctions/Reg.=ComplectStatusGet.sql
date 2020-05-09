@@ -27,4 +27,4 @@ RETURN
 				WHERE c.ID_DISTR = b.ID_DISTR
 					AND c.DATE <= @DT
 			)
-)
+)GO

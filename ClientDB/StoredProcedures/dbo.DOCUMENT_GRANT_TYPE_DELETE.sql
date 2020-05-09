@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DOCUMENT_GRANT_TYPE_DELETE] TO rl_doc_grant_type_d;
 GO

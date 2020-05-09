@@ -58,3 +58,4 @@ BEGIN
 
 	RETURN @last_date
 END
+GO

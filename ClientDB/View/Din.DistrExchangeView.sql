@@ -101,3 +101,4 @@ AS
 						OR y.ID_NET <> a.DF_ID_NET
 					)
 		)
+GO

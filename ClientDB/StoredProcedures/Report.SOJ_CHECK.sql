@@ -70,5 +70,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[SOJ_CHECK] TO rl_report;
 GO

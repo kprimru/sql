@@ -72,5 +72,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Task].[TASK_NOTIFY] TO rl_task_r;
 GO

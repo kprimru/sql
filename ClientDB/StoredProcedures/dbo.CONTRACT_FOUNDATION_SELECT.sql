@@ -41,5 +41,6 @@ END
 
 
 
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_FOUNDATION_SELECT] TO rl_contract_foundation_r;
 GO

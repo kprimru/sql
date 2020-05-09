@@ -61,5 +61,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_DOCUMENT_SAVE] TO rl_contract_document;
 GO

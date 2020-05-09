@@ -104,5 +104,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_ADD(OLD)] TO rl_system_bank_i;
 GO

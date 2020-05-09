@@ -68,5 +68,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DBF_FINANCING_LOAD] TO rl_import_data;
 GO

@@ -75,4 +75,4 @@ AS
 		INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 		INNER JOIN dbo.ManagerTable d ON d.ManagerID = c.ManagerID
 		INNER JOIN dbo.ServiceTypeTable f ON f.ServiceTypeID = a.ServiceTypeID
-		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_Id
+		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_IdGO

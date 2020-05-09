@@ -67,5 +67,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[PRICE_COMPARE] TO rl_price_history;
 GO

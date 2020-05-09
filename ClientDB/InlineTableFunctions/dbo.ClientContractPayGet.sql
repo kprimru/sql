@@ -52,3 +52,4 @@ RETURN
 	) AS A
 	ORDER BY Ord
 )
+GO

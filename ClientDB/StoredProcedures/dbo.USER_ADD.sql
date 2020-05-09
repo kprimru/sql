@@ -71,5 +71,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_ADD] TO BL_ADMIN;
 GO

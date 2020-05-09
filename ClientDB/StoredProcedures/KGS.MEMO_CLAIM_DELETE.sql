@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [KGS].[MEMO_CLAIM_DELETE] TO rl_kgs_claim;
 GO

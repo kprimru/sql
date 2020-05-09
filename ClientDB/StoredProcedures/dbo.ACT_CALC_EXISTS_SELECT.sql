@@ -59,5 +59,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_CALC_EXISTS_SELECT] TO rl_act_calc;
 GO

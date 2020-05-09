@@ -36,6 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[LAW_SELECT] TO public;
 GRANT EXECUTE ON [Tender].[LAW_SELECT] TO rl_tender_law_r;
 GO

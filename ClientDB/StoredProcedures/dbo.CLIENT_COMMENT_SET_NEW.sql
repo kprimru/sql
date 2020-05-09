@@ -37,6 +37,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_COMMENT_SET_NEW] TO rl_client_search_comment;
 GRANT EXECUTE ON [dbo].[CLIENT_COMMENT_SET_NEW] TO rl_client_search_import;
 GO

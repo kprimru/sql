@@ -99,5 +99,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_REG_FILTER] TO rl_distr_reg_filter;
 GO

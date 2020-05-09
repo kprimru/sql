@@ -73,5 +73,6 @@ BEGIN
 	END CATCH
 END
 GRANT EXECUTE ON [Contract].[CONTRACT_DELETE] TO rl_contract_register_d;
+GO
 GRANT EXECUTE ON [Contract].[CONTRACT_DELETE] TO rl_contract_register_d;
 GO

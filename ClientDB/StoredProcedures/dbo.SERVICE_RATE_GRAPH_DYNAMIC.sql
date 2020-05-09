@@ -124,5 +124,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVICE_RATE_GRAPH_DYNAMIC] TO rl_service_rate;
 GO

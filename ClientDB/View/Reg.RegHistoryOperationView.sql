@@ -80,3 +80,4 @@ AS
 			FROM
 				Reg.RegHistoryView WITH(NOEXPAND)
 		) AS dst ON src.RN = dst.RN - 1 AND src.ID_DISTR = dst.ID_DISTR
+GO

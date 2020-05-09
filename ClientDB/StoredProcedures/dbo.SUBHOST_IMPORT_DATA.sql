@@ -393,5 +393,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_IMPORT_DATA] TO rl_import_data;
 GO

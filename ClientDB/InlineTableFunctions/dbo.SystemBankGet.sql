@@ -22,3 +22,4 @@ RETURN
 	WHERE System_Id = @System
 		AND DistrType_Id = @DistrType
 )
+GO

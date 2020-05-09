@@ -38,3 +38,4 @@ RETURN
 			[DistrNumber] = Cast([ComplectWithoutSystemAndComp] AS Int)
 	) AS D
 )
+GO

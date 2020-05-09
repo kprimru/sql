@@ -12,3 +12,4 @@ AS
 		dbo.InfoBankSize
 		INNER JOIN dbo.InfoBankFile ON IBS_ID_FILE = IBF_ID
 	GROUP BY IBS_DATE, IBF_ID_IB
+GO

@@ -60,3 +60,4 @@ RETURN
 			OR (C.LST_ORI = 1 AND W.OriClient = 1)
 	) W
 )
+GO

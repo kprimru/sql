@@ -12,4 +12,4 @@ AS
 	FROM
 		dbo.SystemComplex a
 		INNER JOIN dbo.SystemTable b ON a.ID_MASTER = b.SystemID
-		INNER JOIN dbo.SystemTable c ON a.ID_SLAVE = c.SystemID
+		INNER JOIN dbo.SystemTable c ON a.ID_SLAVE = c.SystemIDGO

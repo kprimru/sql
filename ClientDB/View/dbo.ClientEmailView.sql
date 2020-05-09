@@ -24,3 +24,4 @@ AS
 	SELECT DISTINCT ID_CLIENT, EMAIL
 	FROM dbo.ClientDelivery
 	WHERE ISNULL(EMAIL, '') <> ''
+GO

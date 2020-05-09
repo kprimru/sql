@@ -55,5 +55,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [dbo].[INFO_BANK_SELECT] TO rl_info_bank_r;
 GO

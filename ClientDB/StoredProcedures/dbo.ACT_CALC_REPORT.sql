@@ -86,5 +86,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_CALC_REPORT] TO rl_act_report;
 GO

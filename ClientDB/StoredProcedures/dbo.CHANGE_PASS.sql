@@ -37,6 +37,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CHANGE_PASS] TO DBChief;
 GRANT EXECUTE ON [dbo].[CHANGE_PASS] TO DBTech;
 GO

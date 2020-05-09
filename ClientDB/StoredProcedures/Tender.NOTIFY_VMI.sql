@@ -152,5 +152,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Tender].[NOTIFY_VMI] TO rl_tender_r;
 GO

@@ -24,3 +24,4 @@ AS
 			WHERE OPER = 'Зашел'
 		) AS o_O
 	WHERE S_END IS NOT NULL
+GO

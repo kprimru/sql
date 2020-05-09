@@ -79,5 +79,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERVICE_STATE_SELECT] TO rl_service_state_r;
 GO

@@ -35,5 +35,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[LETTERS_GROUP_SELECT] TO rl_letter_r;
 GO

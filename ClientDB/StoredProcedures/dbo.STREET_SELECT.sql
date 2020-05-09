@@ -100,5 +100,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[STREET_SELECT] TO rl_street_r;
 GO

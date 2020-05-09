@@ -219,5 +219,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[UPDATE_PERIOD_AUDIT] TO rl_update_period_audit;
 GO

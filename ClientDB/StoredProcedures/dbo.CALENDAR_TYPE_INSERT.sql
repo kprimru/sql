@@ -43,5 +43,6 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [dbo].[CALENDAR_TYPE_INSERT] TO rl_calendar_type_i;
 GO

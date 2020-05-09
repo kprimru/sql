@@ -7,3 +7,4 @@ GO
 ALTER VIEW [Common].[RandView]
 AS
 	SELECT RAND() AS V
+GO

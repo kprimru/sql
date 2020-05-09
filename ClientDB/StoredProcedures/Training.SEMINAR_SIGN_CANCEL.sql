@@ -68,5 +68,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Training].[SEMINAR_SIGN_CANCEL] TO rl_training_cancel;
 GO

@@ -54,3 +54,4 @@ RETURN
 			)
 	) AS D
 )
+GO

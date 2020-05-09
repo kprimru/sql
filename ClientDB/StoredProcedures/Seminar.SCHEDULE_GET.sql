@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Seminar].[SCHEDULE_GET] TO rl_seminar_admin;
 GO

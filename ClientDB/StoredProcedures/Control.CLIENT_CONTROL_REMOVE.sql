@@ -47,6 +47,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Control].[CLIENT_CONTROL_REMOVE] TO rl_control_teacher;
 GRANT EXECUTE ON [Control].[CLIENT_CONTROL_REMOVE] TO rl_control_u;
 GO

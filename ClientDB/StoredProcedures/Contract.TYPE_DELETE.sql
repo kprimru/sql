@@ -37,5 +37,6 @@ BEGIN
 	END CATCH
 
 END
+GO
 GRANT EXECUTE ON [Contract].[TYPE_DELETE] TO rl_contract_type_d;
 GO

@@ -42,3 +42,4 @@ ALTER FUNCTION [dbo].[GetTableList] (@list varchar(max))
 
       RETURN
    END
+GO

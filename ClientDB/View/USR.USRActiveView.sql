@@ -25,3 +25,4 @@ AS
 	) AS UF
 	WHERE UD_ACTIVE = 1
 	*/
+GO

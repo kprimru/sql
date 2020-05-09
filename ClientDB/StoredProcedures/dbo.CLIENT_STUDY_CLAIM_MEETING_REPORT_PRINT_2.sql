@@ -118,5 +118,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_STUDY_CLAIM_MEETING_REPORT_PRINT_2] TO rl_client_study_claim_meeting;
 GO

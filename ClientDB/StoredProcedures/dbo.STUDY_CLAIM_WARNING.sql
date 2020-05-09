@@ -127,6 +127,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_client_study_claim_warning;
 GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_study_warning;
 GRANT EXECUTE ON [dbo].[STUDY_CLAIM_WARNING] TO rl_study_warning_manager;

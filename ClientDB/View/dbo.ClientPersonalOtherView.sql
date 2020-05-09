@@ -168,3 +168,4 @@ AS
 					AND STATUS = 1
 			) AS o_O
 	WHERE STATUS = 1
+GO

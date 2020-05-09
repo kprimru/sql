@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SERTIFICAT_TYPE_INSERT] TO rl_sertificat_type_i;
 GO

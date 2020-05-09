@@ -118,5 +118,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISCOUNT_DBF_FILTER] TO rl_discount_dbf_filter;
 GO

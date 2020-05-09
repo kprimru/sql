@@ -59,5 +59,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_BANKS_CLEAR] TO rl_system_bank_d;
 GO

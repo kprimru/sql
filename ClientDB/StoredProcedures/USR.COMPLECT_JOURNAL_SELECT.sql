@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[COMPLECT_JOURNAL_SELECT] TO rl_tech_info;
 GO

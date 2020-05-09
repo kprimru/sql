@@ -20,4 +20,4 @@ AS
 	FROM
 		dbo.HotlineChat a
 		INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber AND b.SystemRic = 20
-	
+	GO

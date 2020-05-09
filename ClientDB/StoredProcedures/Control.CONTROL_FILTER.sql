@@ -66,5 +66,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Control].[CONTROL_FILTER] TO rl_control_r;
 GO

@@ -68,5 +68,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[MAILING_LOG_SELECT] TO rl_mailing_log_r;
 GO

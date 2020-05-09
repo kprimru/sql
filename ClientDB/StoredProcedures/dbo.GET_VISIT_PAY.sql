@@ -35,5 +35,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GET_VISIT_PAY] TO rl_report_month_xl;
 GO

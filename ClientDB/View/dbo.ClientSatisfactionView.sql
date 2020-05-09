@@ -13,3 +13,4 @@ AS
 		INNER JOIN dbo.ClientCall ON CS_ID_CALL = CC_ID
 		INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
 
+GO

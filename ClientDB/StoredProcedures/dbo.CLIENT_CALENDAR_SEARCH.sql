@@ -185,5 +185,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CALENDAR_SEARCH] TO rl_search_history;
 GO

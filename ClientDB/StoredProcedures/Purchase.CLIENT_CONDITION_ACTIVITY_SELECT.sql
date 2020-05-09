@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[CLIENT_CONDITION_ACTIVITY_SELECT] TO rl_condition_card_r;
 GO

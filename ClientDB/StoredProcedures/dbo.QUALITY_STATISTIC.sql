@@ -177,5 +177,6 @@ BEGIN
 	END CATCH
 END
 
+GO
 GRANT EXECUTE ON [dbo].[QUALITY_STATISTIC] TO rl_quality_statistic;
 GO

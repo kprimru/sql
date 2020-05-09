@@ -208,5 +208,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_PROFILE_LOAD] TO rl_client_profile;
 GO

@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[PROCESSOR_FAMILY_INSERT] TO rl_proc_family_i;
 GO

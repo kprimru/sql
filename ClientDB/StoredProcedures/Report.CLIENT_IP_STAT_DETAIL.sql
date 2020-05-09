@@ -148,5 +148,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[CLIENT_IP_STAT_DETAIL] TO rl_report;
 GO

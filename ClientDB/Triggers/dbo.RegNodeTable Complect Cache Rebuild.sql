@@ -50,3 +50,4 @@ BEGIN
 		EXEC dbo.COMPLECT_INFO_BANK_CACHE_RESET @Complect = @Complect;
     END
 END
+GO

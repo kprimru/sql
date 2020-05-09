@@ -82,5 +82,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Report].[EXPERT_QUESTION_MONTH_STAT] TO rl_report;
 GO

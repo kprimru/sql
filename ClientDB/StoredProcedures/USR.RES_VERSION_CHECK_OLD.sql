@@ -169,5 +169,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [USR].[RES_VERSION_CHECK_OLD] TO rl_old_res_version;
 GO

@@ -19,4 +19,4 @@ AS
 	FROM
 		sys.database_principals
 		INNER JOIN dbo.RoleTable ON RoleName = name
-	WHERE [TYPE] = 'R'
+	WHERE [TYPE] = 'R'GO

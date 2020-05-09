@@ -55,6 +55,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_PROTOCOL] TO rl_client_distr_protocol;
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_PROTOCOL] TO rl_client_system_protocol;
 GO

@@ -23,3 +23,4 @@ AS
 		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrServiceStatusTable ON CD_ID_SERVICE = DSS_ID
 		LEFT JOIN [PC275-SQL\DELTA].DBF.dbo.DistrFinancingTable ON DIS_ID = DF_ID_DISTR
 
+GO

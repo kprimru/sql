@@ -16,4 +16,4 @@ RETURN
 	SELECT SetItem
 	FROM dbo.NamedSetsItems
 	WHERE SetId = (SELECT TOP (1) SetId FROM dbo.NamedSets WHERE RefName = @REF_NAME AND SetName = @SET_NAME)
-)
+)GO

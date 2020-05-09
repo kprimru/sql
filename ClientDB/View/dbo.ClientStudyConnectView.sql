@@ -74,3 +74,4 @@ AS
 				) AS a
 				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ID = b.ID
 		) AS a
+GO

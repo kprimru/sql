@@ -39,5 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Purchase].[CLAIM_PROVISION_UPDATE] TO rl_claim_provision_u;
 GO

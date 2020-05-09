@@ -209,5 +209,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REFRESH_REG_NODE] TO rl_reg_node_refresh;
 GO
