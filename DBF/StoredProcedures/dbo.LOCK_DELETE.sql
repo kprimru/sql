@@ -44,5 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[LOCK_DELETE] TO rl_admin_lock_w;
 GO

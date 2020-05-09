@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_DELETE] TO rl_global_settings_d;
 GO

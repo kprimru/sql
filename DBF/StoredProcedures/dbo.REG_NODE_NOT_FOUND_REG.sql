@@ -57,5 +57,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REG_NODE_NOT_FOUND_REG] TO rl_audit_reg_node_r;
 GO

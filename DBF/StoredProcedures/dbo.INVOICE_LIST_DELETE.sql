@@ -144,5 +144,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_LIST_DELETE] TO rl_invoice_d;
 GO

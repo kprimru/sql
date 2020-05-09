@@ -14,3 +14,4 @@ AS
 		dbo.ClientTable a INNER JOIN
 		dbo.TOTable b ON a.CL_ID = b.TO_ID_CLIENT LEFT OUTER JOIN
 		dbo.CourierTable c ON c.COUR_ID = b.TO_ID_COUR
+GO

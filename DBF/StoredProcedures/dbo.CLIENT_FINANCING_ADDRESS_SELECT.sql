@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ADDRESS_SELECT] TO rl_client_fin_template_r;
 GO

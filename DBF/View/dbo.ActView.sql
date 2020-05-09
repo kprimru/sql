@@ -19,3 +19,4 @@ SELECT
 		dbo.OrganizationTable ON ORG_ID = ACT_ID_ORG LEFT OUTER JOIN
 		dbo.CourierTable ON COUR_ID = ACT_ID_COUR
 		-- INNER JOIN dbo.PeriodTable AS b ON ACT_ID_PERIOD = PR_ID
+GO

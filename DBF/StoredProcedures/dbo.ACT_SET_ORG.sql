@@ -41,5 +41,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[ACT_SET_ORG] TO rl_act_w;
+END
+GO
+GRANT EXECUTE ON [dbo].[ACT_SET_ORG] TO rl_act_w;
 GO

@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_TYPE_GET] TO rl_report_type_r;
 GO

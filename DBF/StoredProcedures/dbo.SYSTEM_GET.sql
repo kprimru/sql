@@ -49,6 +49,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_d;
 GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_r;
 GRANT EXECUTE ON [dbo].[SYSTEM_GET] TO rl_system_w;

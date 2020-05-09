@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_SUBHOST_SET] TO rl_subhost_w;
 GO

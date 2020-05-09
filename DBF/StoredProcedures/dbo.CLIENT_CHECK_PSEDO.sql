@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CHECK_PSEDO] TO rl_client_r;
 GO

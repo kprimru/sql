@@ -32,4 +32,4 @@ AS
 			WHERE CD_ID_CLIENT = CL_ID
 			ORDER BY DSS_ACT DESC, DSS_ORDER
 		) AS DSS_REPORT
-	FROM dbo.ClientTable 
+	FROM dbo.ClientTable GO

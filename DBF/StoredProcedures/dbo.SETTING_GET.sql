@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SETTING_GET] TO rl_global_settings_r;
 GO

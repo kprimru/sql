@@ -31,5 +31,6 @@ BEGIN
 
 	RETURN @result
 END
+GO
 GRANT EXECUTE ON [dbo].[___GetWeight] TO rl_reg_node_report_r;
 GO

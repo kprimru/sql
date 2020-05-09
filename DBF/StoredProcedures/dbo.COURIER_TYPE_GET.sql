@@ -44,5 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COURIER_TYPE_GET] TO rl_courier_type_r;
 GO

@@ -96,5 +96,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_ROLE_SELECT] TO rl_user;
 GO

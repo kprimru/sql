@@ -89,5 +89,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ROW_DELETE] TO rl_invoice_d;
 GO

@@ -50,5 +50,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_GET_MONTH_NO_BILL] TO rl_bill_r;
 GO

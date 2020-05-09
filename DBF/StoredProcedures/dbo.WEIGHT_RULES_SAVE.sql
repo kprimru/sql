@@ -101,5 +101,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[WEIGHT_RULES_SAVE] TO rl_weight_rules;
 GO

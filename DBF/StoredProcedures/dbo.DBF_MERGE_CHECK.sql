@@ -703,5 +703,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DBF_MERGE_CHECK] TO rl_dbf_merge;
 GO

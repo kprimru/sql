@@ -69,5 +69,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRICE_COEF_SAVE] TO rl_price_calc;
 GO

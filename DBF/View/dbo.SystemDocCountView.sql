@@ -12,3 +12,4 @@ FROM         dbo.SystemTable INNER JOIN
                       dbo.PriceSystemHistoryTable ON dbo.PeriodTable.PR_ID = dbo.PriceSystemHistoryTable.PSH_ID_PERIOD ON
                       dbo.SystemTable.SYS_ID = dbo.PriceSystemHistoryTable.PSH_ID_SYSTEM
 ORDER BY dbo.PeriodTable.PR_DATE, dbo.SystemTable.SYS_SHORT_NAME
+GO

@@ -307,6 +307,7 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [dbo].[REPORT_SYSTEM_SUBHOST] TO rl_reg_node_report_r;
 GRANT EXECUTE ON [dbo].[REPORT_SYSTEM_SUBHOST] TO rl_reg_report_r;
 GO

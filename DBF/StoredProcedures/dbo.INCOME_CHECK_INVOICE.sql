@@ -64,5 +64,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INCOME_CHECK_INVOICE] TO rl_income_w;
 GO

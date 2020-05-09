@@ -61,5 +61,6 @@ END
 
 
 
+GO
 GRANT EXECUTE ON [dbo].[ACT_DETAIL_SELECT] TO rl_act_r;
 GO

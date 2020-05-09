@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[STAGE_SAVE] TO rl_ric_kbu;
 GO

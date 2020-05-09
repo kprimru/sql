@@ -22,4 +22,4 @@ AS
 		dbo.SystemNetTable
 		INNER JOIN dbo.SystemNetCountTable ON SNC_ID_SN = SN_ID,
 		dbo.TechnolTypeTable
-	WHERE SNC_NET_COUNT = 0 AND TT_REG = 1
+	WHERE SNC_NET_COUNT = 0 AND TT_REG = 1GO

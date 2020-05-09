@@ -73,5 +73,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRIMARY_PAY_GET_PRICE_BY_DISTR] TO rl_primary_pay_r;
 GO

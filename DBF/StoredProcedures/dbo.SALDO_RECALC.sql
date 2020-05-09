@@ -220,5 +220,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SALDO_RECALC] TO rl_saldo_w;
 GO

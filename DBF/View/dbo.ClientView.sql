@@ -24,3 +24,4 @@ AS
 		dbo.ClientTypeTable ON CLT_ID = a.CL_ID_TYPE LEFT OUTER JOIN
 		dbo.ClientTable b ON a.CL_ID_PAYER = b.CL_ID LEFT OUTER JOIN
 		dbo.OrganizationCalc ON ORGC_ID = a.CL_ID_ORG_CALC
+GO

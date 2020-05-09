@@ -127,6 +127,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRICE_COPY] TO rl_price_copy;
 GRANT EXECUTE ON [dbo].[PRICE_COPY] TO rl_price_list_w;
 GO

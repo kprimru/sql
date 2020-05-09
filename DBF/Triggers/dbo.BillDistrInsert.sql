@@ -44,3 +44,4 @@ BEGIN
 			BillTable ON BD_ID_BILL = BL_ID
 END
 
+GO

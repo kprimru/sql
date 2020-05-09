@@ -35,3 +35,4 @@ BEGIN
 
 	RETURN ISNULL(@result, 0)
 END
+GO

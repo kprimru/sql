@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_SELECT] TO rl_system_net_count_r;
 GO

@@ -44,5 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_CHECK_SHORT_NAME] TO rl_subhost_w;
 GO

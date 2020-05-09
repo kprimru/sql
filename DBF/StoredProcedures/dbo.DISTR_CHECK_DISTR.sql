@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_CHECK_DISTR] TO rl_distr_w;
 GO

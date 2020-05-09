@@ -49,5 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[BOOK_DATA_GET] TO rl_book_sale_p;
 GO

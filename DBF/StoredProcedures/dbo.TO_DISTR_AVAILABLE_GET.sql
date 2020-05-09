@@ -56,5 +56,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TO_DISTR_AVAILABLE_GET] TO rl_to_distr_r;
 GO

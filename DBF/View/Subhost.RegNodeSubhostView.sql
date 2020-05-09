@@ -32,4 +32,4 @@ AS
 		dbo.SystemTable h ON a.RNS_ID_OLD_SYS = h.SYS_ID LEFT OUTER JOIN
 		dbo.SystemTable i ON a.RNS_ID_NEW_SYS = i.SYS_ID LEFT OUTER JOIN
 		dbo.SystemNetTable j ON a.RNS_ID_OLD_NET = j.SN_ID LEFT OUTER JOIN
-		dbo.SystemNetTable k ON a.RNS_ID_NEW_NET = k.SN_ID
+		dbo.SystemNetTable k ON a.RNS_ID_NEW_NET = k.SN_IDGO

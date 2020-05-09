@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_KBU_DELETE] TO rl_subhost_kbu_d;
 GO

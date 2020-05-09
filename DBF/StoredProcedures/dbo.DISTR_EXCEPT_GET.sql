@@ -45,6 +45,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_GET] TO rl_distr_except_r;
 GRANT EXECUTE ON [dbo].[DISTR_EXCEPT_GET] TO rl_reg_node_report_r;
 GO

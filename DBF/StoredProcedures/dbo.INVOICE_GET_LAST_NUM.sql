@@ -52,5 +52,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_GET_LAST_NUM] TO rl_invoice_w;
 GO

@@ -55,5 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[AREA_TRY_DELETE] TO rl_area_d;
 GO

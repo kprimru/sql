@@ -59,5 +59,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_ADD] TO rl_subhost_w;
 GO

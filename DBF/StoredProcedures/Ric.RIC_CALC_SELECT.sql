@@ -290,5 +290,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[RIC_CALC_SELECT] TO rl_ric_kbu;
 GO

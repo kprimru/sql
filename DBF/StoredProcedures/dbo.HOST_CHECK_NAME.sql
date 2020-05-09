@@ -44,5 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[HOST_CHECK_NAME] TO rl_host_w;
 GO

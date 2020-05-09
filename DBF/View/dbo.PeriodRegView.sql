@@ -32,3 +32,4 @@ FROM	dbo.PeriodRegTable		A									LEFT JOIN
 		dbo.SystemNetCountTable	F	ON	A.REG_ID_NET = F.SNC_ID		LEFT JOIN
 		dbo.CourierTable		G	ON	A.REG_ID_COUR = G.COUR_ID	LEFT JOIN
 		dbo.DistrStatustable	H	ON	A.REG_ID_STATUS = H.DS_ID
+GO

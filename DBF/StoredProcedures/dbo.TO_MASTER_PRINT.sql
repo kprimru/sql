@@ -70,5 +70,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TO_MASTER_PRINT] TO rl_to_w;
 GO

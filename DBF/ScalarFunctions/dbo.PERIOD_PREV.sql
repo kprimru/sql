@@ -38,3 +38,4 @@ BEGIN
 	RETURN @result
 
 END
+GO

@@ -65,6 +65,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COURIER_TRY_DELETE] TO rl_courier_d;
 GRANT EXECUTE ON [dbo].[COURIER_TRY_DELETE] TO rl_courier_type_d;
 GO

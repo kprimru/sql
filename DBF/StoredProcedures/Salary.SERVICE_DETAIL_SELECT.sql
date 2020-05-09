@@ -51,6 +51,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Salary].[SERVICE_DETAIL_SELECT] TO public;
 GRANT EXECUTE ON [Salary].[SERVICE_DETAIL_SELECT] TO rl_courier_pay;
 GO

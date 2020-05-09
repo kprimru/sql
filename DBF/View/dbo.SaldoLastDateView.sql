@@ -23,3 +23,4 @@ AS
     	dbo.DistrView DITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
         dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
         dbo.SystemNetTable ON SN_ID = DF_ID_NET
+GO

@@ -64,6 +64,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_client_distr_r;
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_client_r;
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_SELECT] TO rl_income_r;

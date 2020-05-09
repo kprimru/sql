@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONSIGNMENT_SELECT] TO rl_consignment_r;
 GO

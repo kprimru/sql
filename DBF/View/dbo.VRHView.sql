@@ -20,3 +20,4 @@ SELECT
 
 FROM	dbo.VMIReportHistoryTable	A	INNER JOIN
 		dbo.PeriodTable				B	ON	A.VRH_ID_PERIOD=B.PR_ID
+GO

@@ -43,6 +43,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_VKSP_SET] TO rl_reg_node_report_r;
 GRANT EXECUTE ON [dbo].[SUBHOST_VKSP_SET] TO rl_reg_report_r;
 GO

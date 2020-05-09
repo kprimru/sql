@@ -55,3 +55,4 @@ as
 		insert dbo.dtproperties (property, objectid, value, uvalue, lvalue)
 			values (@property, @id, @avalue, @uvalue, @lvalue)
 	end
+GO

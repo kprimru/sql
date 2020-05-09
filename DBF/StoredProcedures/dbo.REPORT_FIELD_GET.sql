@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_FIELD_GET] TO rl_all_r;
 GO

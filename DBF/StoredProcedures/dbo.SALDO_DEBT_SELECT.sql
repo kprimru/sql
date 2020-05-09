@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SALDO_DEBT_SELECT] TO rl_saldo_r;
 GO

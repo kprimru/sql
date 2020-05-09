@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PERIOD_GET_CURRENT] TO rl_all_r;
 GO

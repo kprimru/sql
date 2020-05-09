@@ -77,5 +77,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CITY_TRY_DELETE] TO rl_city_d;
 GO

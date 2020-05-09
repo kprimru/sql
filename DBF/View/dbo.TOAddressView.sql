@@ -13,3 +13,4 @@ AS
 		dbo.TOAddressTable
 		LEFT OUTER JOIN dbo.StreetTable ON ST_ID = TA_ID_STREET
 		LEFT OUTER JOIN dbo.CityTable ON ST_ID_CITY = CT_ID
+GO

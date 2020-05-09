@@ -60,5 +60,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TO_DISTR_STATUS_CHANGE] TO rl_client_distr_w;
 GO

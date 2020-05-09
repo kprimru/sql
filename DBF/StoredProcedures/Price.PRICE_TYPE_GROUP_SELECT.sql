@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[PRICE_TYPE_GROUP_SELECT] TO rl_price_type_r;
 GO

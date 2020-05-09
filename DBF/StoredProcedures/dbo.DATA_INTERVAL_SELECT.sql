@@ -152,5 +152,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DATA_INTERVAL_SELECT] TO public;
 GO

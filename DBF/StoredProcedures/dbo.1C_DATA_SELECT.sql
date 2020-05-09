@@ -164,5 +164,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[1C_DATA_SELECT] TO rl_report_act_r;
 GO

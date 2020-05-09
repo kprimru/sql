@@ -75,5 +75,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_TRY_DELETE] TO rl_technol_type_d;
 GO

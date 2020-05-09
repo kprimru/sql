@@ -49,5 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INCOME_CONVEY_DISTR] TO rl_income_w;
 GO

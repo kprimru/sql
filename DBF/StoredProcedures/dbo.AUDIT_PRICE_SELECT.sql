@@ -41,6 +41,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_financing_r;
 GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_price;
 GO

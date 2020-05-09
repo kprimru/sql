@@ -28,4 +28,4 @@ AS
 			REG_DISTR_NUM,
 			REG_COMP_NUM
 	) AS a
-	INNER JOIN dbo.PeriodTable b ON a.PR_DATE = b.PR_DATE
+	INNER JOIN dbo.PeriodTable b ON a.PR_DATE = b.PR_DATEGO

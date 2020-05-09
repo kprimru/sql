@@ -37,3 +37,4 @@ BEGIN
 
   RETURN @res
 END
+GO

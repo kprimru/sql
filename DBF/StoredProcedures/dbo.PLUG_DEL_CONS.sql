@@ -42,5 +42,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PLUG_DEL_CONS] TO rl_invoice_w;
 GO

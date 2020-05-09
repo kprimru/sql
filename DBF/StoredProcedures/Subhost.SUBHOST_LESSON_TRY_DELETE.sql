@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_LESSON_TRY_DELETE] TO rl_subhost_lesson_d;
 GO

@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Salary].[REPORT_CREATE] TO rl_courier_pay;
 GO

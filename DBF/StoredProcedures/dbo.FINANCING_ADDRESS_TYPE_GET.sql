@@ -49,5 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[FINANCING_ADDRESS_TYPE_GET] TO rl_financing_address_type_r;
 GO

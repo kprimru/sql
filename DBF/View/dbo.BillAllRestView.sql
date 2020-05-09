@@ -22,3 +22,4 @@ AS
 		) AS BD_REST
 	FROM
 		dbo.BillAllIXView a WITH(NOEXPAND)
+GO

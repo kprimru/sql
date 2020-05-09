@@ -78,5 +78,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_CONSIGN_ALL] TO rl_invoice_w;
 GO

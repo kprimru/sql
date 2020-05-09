@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SALE_OBJECT_SELECT] TO rl_sale_object_r;
 GO

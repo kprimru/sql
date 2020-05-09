@@ -306,5 +306,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[BILL_CREATE] TO rl_bill_w;
 GO

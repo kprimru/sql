@@ -47,5 +47,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[WIEGHT_CORRECTION_SET] TO rl_ric_kbu;
 GO

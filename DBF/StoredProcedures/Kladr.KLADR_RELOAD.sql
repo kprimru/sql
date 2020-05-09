@@ -70,5 +70,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Kladr].[KLADR_RELOAD] TO rl_kladr_w;
 GO

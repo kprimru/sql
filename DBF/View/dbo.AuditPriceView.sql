@@ -64,3 +64,4 @@ WHERE NOT EXISTS
 					)
 			)
 	)
+GO

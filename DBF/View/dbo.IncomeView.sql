@@ -21,3 +21,4 @@ AS
 	FROM
 		dbo.IncomeTable LEFT OUTER JOIN
 		dbo.OrganizationTable ON ORG_ID = IN_ID_ORG
+GO

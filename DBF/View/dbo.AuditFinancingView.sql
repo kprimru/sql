@@ -191,4 +191,4 @@ AS
 					AND CD_ID_CLIENT = CL_ID
 			)
 	) AS C
-	
+	GO

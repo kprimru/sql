@@ -41,3 +41,4 @@ FROM
 									and d.CA_ID_TYPE = 1		LEFT JOIN
 		dbo.OrganizationTable	e	ON	a.INS_ID_ORG=e.ORG_ID		LEFT JOIN
 		dbo.InvoiceTypeTable	f	ON	a.INS_ID_TYPE = f.INT_ID
+GO

@@ -17,3 +17,4 @@ FROM	dbo.TOPersonalTable		TOPT	INNER JOIN
 		dbo.ReportPositionTable	RPT		ON	TOPT.TP_ID_RP = RPT.RP_ID	LEFT OUTER JOIN
 		dbo.PositionTable		PT		ON	TOPT.TP_ID_POS = PT.POS_ID	LEFT OUTER JOIN
 		dbo.TOTable				TOT		ON	TOT.TO_ID=TOPT.TP_ID_TO
+GO

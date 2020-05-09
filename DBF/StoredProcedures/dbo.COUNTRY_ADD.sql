@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COUNTRY_ADD] TO rl_country_w;
 GO

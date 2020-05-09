@@ -51,5 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_BILL_FACT_ROW_DELETE] TO rl_bill_w;
 GO

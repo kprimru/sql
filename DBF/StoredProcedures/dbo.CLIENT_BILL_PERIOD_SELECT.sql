@@ -169,5 +169,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_BILL_PERIOD_SELECT] TO rl_bill_r;
 GO

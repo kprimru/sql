@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GOOD_DELETE] TO rl_good_d;
 GO

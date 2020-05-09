@@ -189,5 +189,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[USER_ROLE_DELIVERY] TO rl_admin_permission_w;
 GO

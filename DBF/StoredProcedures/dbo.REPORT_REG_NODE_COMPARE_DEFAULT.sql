@@ -50,5 +50,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_REG_NODE_COMPARE_DEFAULT] TO public;
 GO

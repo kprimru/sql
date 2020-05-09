@@ -55,5 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_GET] TO rl_report_r;
 GO

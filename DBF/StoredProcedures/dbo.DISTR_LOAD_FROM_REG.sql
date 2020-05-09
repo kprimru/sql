@@ -128,5 +128,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_LOAD_FROM_REG] TO rl_distr_financing_w;
 GO

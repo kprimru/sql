@@ -14,3 +14,4 @@ AS
 	INNER JOIN dbo.PriceTypeTable ON PS_ID_TYPE = PT_ID
 	INNER JOIN dbo.SystemTable ON PS_ID_SYSTEM = SYS_ID
 	WHERE PT_ID = 1
+GO

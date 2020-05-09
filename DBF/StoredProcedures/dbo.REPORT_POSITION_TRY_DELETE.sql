@@ -69,5 +69,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_POSITION_TRY_DELETE] TO rl_report_position_d;
 GO

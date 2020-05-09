@@ -38,5 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_CALC_SELECT_LAST] TO rl_subhost_calc;
 GO

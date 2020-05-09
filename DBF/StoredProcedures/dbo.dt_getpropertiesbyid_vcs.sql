@@ -19,3 +19,4 @@ as
                 where @id=objectid and @property=property
                 )
 
+GO

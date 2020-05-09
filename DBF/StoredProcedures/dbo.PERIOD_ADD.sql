@@ -52,5 +52,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PERIOD_ADD] TO rl_period_w;
 GO

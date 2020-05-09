@@ -40,6 +40,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_DELETE] TO rl_client_d;
 GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_DELETE] TO rl_client_personal_d;
 GO

@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_UNSIGN_REPORT] TO rl_act_r;
 GO

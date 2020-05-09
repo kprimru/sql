@@ -19,3 +19,4 @@ AS
         dbo.TaxTable ON AD_ID_TAX = TX_ID INNER JOIN
         dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR INNER JOIN
 		dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
+GO

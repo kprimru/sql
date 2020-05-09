@@ -104,5 +104,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_PRPAY_ALL] TO rl_invoice_w;
 GO

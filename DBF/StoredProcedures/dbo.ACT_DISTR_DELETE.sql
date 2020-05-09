@@ -76,5 +76,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_DISTR_DELETE] TO rl_act_d;
 GO

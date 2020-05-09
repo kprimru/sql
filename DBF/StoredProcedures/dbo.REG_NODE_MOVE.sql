@@ -145,5 +145,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REG_NODE_MOVE] TO rl_reg_node_history_w;
 GO

@@ -432,3 +432,4 @@ AS
 					WHERE SH_SUBHOST <> RN_SUBHOST AND RN_DISTR_NUM <> 20
 				) AS dt
 		) AS o_O
+GO

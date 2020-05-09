@@ -44,3 +44,4 @@ BEGIN
 			INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
 			INNER JOIN dbo.TaxTable ON TX_ID = SO_ID_TAX
 END
+GO

@@ -19,3 +19,4 @@ SELECT
         dbo.TaxTable ON BD_ID_TAX = TX_ID INNER JOIN
         dbo.DistrView WITH(NOEXPAND) ON DIS_ID = BD_ID_DISTR INNER JOIN
 		dbo.SaleObjectTable ON SYS_ID_SO = SO_ID
+GO

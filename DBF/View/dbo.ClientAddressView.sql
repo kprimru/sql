@@ -23,3 +23,4 @@ FROM
     dbo.RegionTable ON RG_ID = d.CT_ID_RG LEFT OUTER JOIN
     dbo.CountryTable ON CNT_ID = d.CT_ID_COUNTRY LEFT OUTER JOIN
 	dbo.AddressTemplateTable ON ATL_ID = CA_ID_TEMPLATE
+GO

@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_PRODUCT_GROUP_DELETE] TO rl_subhost_product_group_d;
 GO

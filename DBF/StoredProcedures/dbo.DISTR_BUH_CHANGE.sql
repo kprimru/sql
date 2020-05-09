@@ -9,6 +9,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	RETURN
+
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
@@ -187,3 +189,4 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO

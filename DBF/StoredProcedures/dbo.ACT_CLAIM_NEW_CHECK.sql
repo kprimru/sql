@@ -56,5 +56,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_CLAIM_NEW_CHECK] TO rl_act_w;
 GO

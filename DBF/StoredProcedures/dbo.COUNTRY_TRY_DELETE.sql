@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COUNTRY_TRY_DELETE] TO rl_country_d;
 GO

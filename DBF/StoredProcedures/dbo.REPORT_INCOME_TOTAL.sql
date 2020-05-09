@@ -48,5 +48,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_INCOME_TOTAL] TO rl_report_income_r;
 GO

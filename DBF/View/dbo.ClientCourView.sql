@@ -32,4 +32,4 @@ WHERE EXISTS
 		SELECT *
 		FROM dbo.TOTable
 		WHERE TO_ID_CLIENT = CL_ID
-	)
+	)GO

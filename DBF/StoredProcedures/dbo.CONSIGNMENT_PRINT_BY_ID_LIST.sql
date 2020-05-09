@@ -267,5 +267,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONSIGNMENT_PRINT_BY_ID_LIST] TO rl_consignment_p;
 GO

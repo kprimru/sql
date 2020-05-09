@@ -139,5 +139,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_VERIFY_SYSTEM_SELECT] TO rl_report_verify_r;
 GO

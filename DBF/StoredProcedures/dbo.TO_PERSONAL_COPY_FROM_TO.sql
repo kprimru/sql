@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TO_PERSONAL_COPY_FROM_TO] TO rl_to_personal_w;
 GO

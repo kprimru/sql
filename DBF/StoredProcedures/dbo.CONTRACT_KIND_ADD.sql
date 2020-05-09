@@ -51,5 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_KIND_ADD] TO rl_contract_kind_w;
 GO

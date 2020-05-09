@@ -16,3 +16,4 @@ FROM         dbo.ClientTable INNER JOIN
                       dbo.ContractDistrTable ON dbo.ContractTable.CO_ID = dbo.ContractDistrTable.COD_ID_CONTRACT INNER JOIN
                       dbo.DistrView WITH(NOEXPAND) ON dbo.DistrView.DIS_ID = dbo.ContractDistrTable.COD_ID_DISTR LEFT OUTER JOIN
                       dbo.ContractTypeTable ON dbo.ContractTable.CO_ID_TYPE = dbo.ContractTypeTable.CTT_ID
+GO

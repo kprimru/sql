@@ -12,3 +12,4 @@ SELECT     dbo.SystemTable.SYS_ID, dbo.SystemTable.SYS_PREFIX, dbo.SystemTable.S
 FROM         dbo.SystemTable INNER JOIN
                       dbo.HostTable ON dbo.SystemTable.SYS_ID_HOST = dbo.HostTable.HST_ID INNER JOIN
                       dbo.SaleObjectTable ON dbo.SystemTable.SYS_ID_SO = dbo.SaleObjectTable.SO_ID
+GO

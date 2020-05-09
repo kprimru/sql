@@ -305,6 +305,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_NEW_SYSTEM_NEW] TO rl_reg_node_report_r;
 GRANT EXECUTE ON [dbo].[REPORT_NEW_SYSTEM_NEW] TO rl_reg_report_r;
 GO

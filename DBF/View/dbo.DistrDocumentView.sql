@@ -21,3 +21,4 @@ SELECT
 		dbo.UnitTable ON UN_ID = DD_ID_UNIT
 	--WHERE
 		--DIS_ACTIVE = 1
+GO

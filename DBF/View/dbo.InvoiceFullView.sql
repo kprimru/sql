@@ -35,3 +35,4 @@ SELECT
 				dbo.ClientTable			F	ON	A.INS_ID_CLIENT=F.CL_ID
 		/*WHERE	INR_ID_PERIOD=@prid	AND
 				SYS_ID_SO	 =@soid*/
+GO

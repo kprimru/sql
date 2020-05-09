@@ -197,5 +197,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[RIC_REPORT_CREATE_NEW] TO rl_vmi_report_w;
+END
+GO
+GRANT EXECUTE ON [dbo].[RIC_REPORT_CREATE_NEW] TO rl_vmi_report_w;
 GO

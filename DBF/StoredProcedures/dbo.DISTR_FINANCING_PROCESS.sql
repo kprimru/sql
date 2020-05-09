@@ -92,5 +92,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_FINANCING_PROCESS] TO rl_distr_financing_w;
 GO

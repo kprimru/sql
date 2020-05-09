@@ -214,5 +214,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_SALDO_1C] TO rl_report_act_r;
 GO

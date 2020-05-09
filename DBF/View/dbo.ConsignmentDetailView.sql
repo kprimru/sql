@@ -12,3 +12,4 @@ SELECT     dbo.ConsignmentDetailTable.CSD_ID, dbo.ConsignmentTable.CSG_ID, dbo.C
                       dbo.ConsignmentDetailTable.CSD_PRICE, dbo.ConsignmentDetailTable.CSD_TAX_PRICE, dbo.ConsignmentDetailTable.CSD_TOTAL_PRICE
 FROM         dbo.ConsignmentTable INNER JOIN
                       dbo.ConsignmentDetailTable ON dbo.ConsignmentTable.CSG_ID = dbo.ConsignmentDetailTable.CSD_ID_CONS
+GO

@@ -60,6 +60,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_DISTRS_AVAILABLE_GET] TO rl_client_contract_w;
 GRANT EXECUTE ON [dbo].[CONTRACT_DISTRS_AVAILABLE_GET] TO rl_client_w;
 GO

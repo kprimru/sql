@@ -51,5 +51,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_TRY_DELETE] TO rl_system_weight_d;
 GO

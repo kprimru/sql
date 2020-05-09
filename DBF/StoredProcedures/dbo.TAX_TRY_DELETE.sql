@@ -81,5 +81,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[TAX_TRY_DELETE] TO rl_tax_d;
 GO

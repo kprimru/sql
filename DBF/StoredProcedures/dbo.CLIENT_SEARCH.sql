@@ -292,6 +292,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_client_fin_r;
 GRANT EXECUTE ON [dbo].[CLIENT_SEARCH] TO rl_client_r;
 GO

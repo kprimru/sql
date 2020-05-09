@@ -245,5 +245,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PERIOD_REG_FILTER] TO rl_reg_node_r;
 GO

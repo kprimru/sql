@@ -40,5 +40,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[BILL_DISTR_GET] TO rl_bill_r;
+END
+GO
+GRANT EXECUTE ON [dbo].[BILL_DISTR_GET] TO rl_bill_r;
 GO

@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_SAVE] TO rl_distr_financing_w;
 GO

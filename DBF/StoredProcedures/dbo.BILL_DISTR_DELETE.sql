@@ -70,5 +70,6 @@ END
 
 
 
+GO
 GRANT EXECUTE ON [dbo].[BILL_DISTR_DELETE] TO rl_bill_d;
 GO

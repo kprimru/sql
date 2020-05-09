@@ -113,5 +113,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PERIOD_TRY_DELETE] TO rl_period_d;
 GO

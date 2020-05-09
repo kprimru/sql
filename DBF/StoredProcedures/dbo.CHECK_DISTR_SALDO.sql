@@ -44,5 +44,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[CHECK_DISTR_SALDO] TO rl_client_distr_w;
+END
+GO
+GRANT EXECUTE ON [dbo].[CHECK_DISTR_SALDO] TO rl_client_distr_w;
 GO

@@ -46,5 +46,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Price].[PRICE_SYSTEM_NET_LIST_SELECT] TO rl_price_w;
 GO

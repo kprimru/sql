@@ -46,5 +46,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[RIC_REPORT_CHECK] TO rl_vmi_report_w;
 GO

@@ -82,5 +82,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[BOOK_SALE_DETAIL_PRINT] TO rl_book_sale_p;
+END
+GO
+GRANT EXECUTE ON [dbo].[BOOK_SALE_DETAIL_PRINT] TO rl_book_sale_p;
 GO

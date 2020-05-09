@@ -19,6 +19,7 @@ AS
 	FROM dbo.SystemTable
 	INNER JOIN dbo.DistrTable ON SYS_ID = DIS_ID_SYSTEM
 	INNER JOIN dbo.HostTable ON SYS_ID_HOST = HST_ID
+GO
 GRANT SELECT ON [dbo].[DistrView] TO rl_client_fin_r;
 GRANT SELECT ON [dbo].[DistrView] TO rl_client_r;
 GRANT SELECT ON [dbo].[DistrView] TO rl_fin_r;

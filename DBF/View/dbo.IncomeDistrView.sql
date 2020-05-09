@@ -13,3 +13,4 @@ AS
         dbo.DistrView WITH(NOEXPAND) ON ID_ID_DISTR = DIS_ID INNER JOIN
 		dbo.PeriodTable ON PR_ID = ID_ID_PERIOD INNER JOIN
 		dbo.IncomeTable	ON ID_ID_INCOME=IN_ID
+GO

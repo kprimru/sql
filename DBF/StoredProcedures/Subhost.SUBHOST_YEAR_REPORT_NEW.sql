@@ -155,5 +155,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_YEAR_REPORT_NEW] TO rl_subhost_calc;
 GO

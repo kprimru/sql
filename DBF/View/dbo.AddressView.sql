@@ -11,3 +11,4 @@ AS
 	FROM
 		dbo.StreetTable LEFT OUTER JOIN
         dbo.CityTable ON CT_ID = ST_ID_CITY
+GO

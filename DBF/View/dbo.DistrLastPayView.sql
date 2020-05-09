@@ -65,3 +65,4 @@ AS
 					WHERE SYS_REG_NAME <> '-'
 				) AS a
 		) AS a
+GO

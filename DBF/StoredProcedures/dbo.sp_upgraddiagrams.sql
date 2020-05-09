@@ -63,4 +63,4 @@ GO
 		end
 		return 1;
 	END
-	
+	GO

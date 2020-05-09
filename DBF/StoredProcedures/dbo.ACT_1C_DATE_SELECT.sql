@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_1C_DATE_SELECT] TO rl_report_act_r;
 GO

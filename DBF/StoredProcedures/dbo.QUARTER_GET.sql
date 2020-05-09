@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[QUARTER_GET] TO rl_quarter_r;
 GO

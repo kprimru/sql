@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_SERVICE_ADD] TO rl_distr_service_w;
 GO

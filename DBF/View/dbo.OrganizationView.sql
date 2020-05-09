@@ -29,3 +29,4 @@ AS
 		dbo.OrganizationTable LEFT OUTER JOIN
 		dbo.AddressView a ON a.ST_ID = ORG_ID_STREET LEFT OUTER JOIN
 		dbo.AddressView b ON b.ST_ID = ORG_S_ID_STREET
+GO

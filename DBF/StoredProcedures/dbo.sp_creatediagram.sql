@@ -61,6 +61,7 @@ GO
 		select @retval = @@IDENTITY
 		return @retval
 	END
-	DENY EXECUTE ON [dbo].[sp_creatediagram] TO guest;
+	GO
+DENY EXECUTE ON [dbo].[sp_creatediagram] TO guest;
 GRANT EXECUTE ON [dbo].[sp_creatediagram] TO public;
 GO

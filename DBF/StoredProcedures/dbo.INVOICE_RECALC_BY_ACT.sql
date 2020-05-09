@@ -247,5 +247,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_RECALC_BY_ACT] TO rl_act_w;
 GO

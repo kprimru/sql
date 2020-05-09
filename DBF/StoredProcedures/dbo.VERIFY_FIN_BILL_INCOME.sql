@@ -74,5 +74,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[VERIFY_FIN_BILL_INCOME] TO rl_audit_fin;
 GO

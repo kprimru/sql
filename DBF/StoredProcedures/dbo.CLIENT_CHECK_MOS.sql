@@ -100,5 +100,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_CHECK_MOS] TO rl_client_check;
 GO

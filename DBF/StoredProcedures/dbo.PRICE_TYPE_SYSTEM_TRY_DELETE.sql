@@ -41,5 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRICE_TYPE_SYSTEM_TRY_DELETE] TO rl_price_type_system_d;
 GO

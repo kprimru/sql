@@ -80,5 +80,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ADDRESS_TEMPLATE_ADD] TO rl_address_template_w;
 GO

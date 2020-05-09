@@ -102,5 +102,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRICE_CALC_SELECT] TO rl_price_calc;
 GO

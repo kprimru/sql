@@ -63,5 +63,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_WEIGHT_EXPORT] TO rl_system_weight_w;
 GO

@@ -81,5 +81,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRIMARY_PAY_PROCESS] TO rl_primary_pay_w;
 GO

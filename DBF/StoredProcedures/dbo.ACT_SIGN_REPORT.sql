@@ -64,5 +64,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[ACT_SIGN_REPORT] TO rl_act_r;
+END
+GO
+GRANT EXECUTE ON [dbo].[ACT_SIGN_REPORT] TO rl_act_r;
 GO

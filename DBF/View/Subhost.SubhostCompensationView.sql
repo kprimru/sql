@@ -22,4 +22,4 @@ AS
 		Subhost.SubhostCompensationTable INNER JOIN
 		dbo.SystemTable ON SYS_ID = SCP_ID_SYSTEM INNER JOIN
 		dbo.SystemTypeTable ON SST_ID = SCP_ID_TYPE INNER JOIN
-		dbo.SystemNetTable ON SN_ID = SCP_ID_NET 
+		dbo.SystemNetTable ON SN_ID = SCP_ID_NET GO

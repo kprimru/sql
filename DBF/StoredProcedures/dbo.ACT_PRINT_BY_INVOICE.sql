@@ -223,5 +223,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[ACT_PRINT_BY_INVOICE] TO rl_invoice_r;
+END
+GO
+GRANT EXECUTE ON [dbo].[ACT_PRINT_BY_INVOICE] TO rl_invoice_r;
 GO

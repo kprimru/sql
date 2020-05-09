@@ -15,3 +15,4 @@ AS
 		dbo.DistrView b WITH(NOEXPAND) ON DDH_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientTable c ON c.CL_ID = DDH_ID_OLD_CLIENT INNER JOIN
 		dbo.ClientTable d ON d.CL_ID = DDH_ID_NEW_CLIENT
+GO

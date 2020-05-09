@@ -51,6 +51,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_GET] TO rl_client_personal_r;
 GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_GET] TO rl_client_r;
 GO

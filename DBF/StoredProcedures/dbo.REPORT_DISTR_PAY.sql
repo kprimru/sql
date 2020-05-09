@@ -142,5 +142,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_DISTR_PAY] TO rl_report_income_r;
 GO

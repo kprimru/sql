@@ -49,5 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[CALC_COEF_SAVE] TO rl_ric_kbu;
 GO

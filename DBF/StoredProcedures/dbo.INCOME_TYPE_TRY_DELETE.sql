@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INCOME_TYPE_TRY_DELETE] TO rl_income_type_d;
 GO

@@ -748,6 +748,8 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[REPORT_SYSTEM_NAME_HOST_NET_NEW] TO rl_reg_node_report_r;
+END
+GO
+GRANT EXECUTE ON [dbo].[REPORT_SYSTEM_NAME_HOST_NET_NEW] TO rl_reg_node_report_r;
 GRANT EXECUTE ON [dbo].[REPORT_SYSTEM_NAME_HOST_NET_NEW] TO rl_reg_report_r;
 GO

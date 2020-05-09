@@ -15,3 +15,4 @@ SELECT
 		dbo.TODistrTable a INNER JOIN
 		dbo.TOTable b ON a.TD_ID_TO = b.TO_ID INNER JOIN
 		dbo.DistrView c WITH(NOEXPAND) ON a.TD_ID_DISTR = c.DIS_ID
+GO

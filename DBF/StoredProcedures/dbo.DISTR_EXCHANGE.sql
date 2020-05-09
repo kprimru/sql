@@ -131,6 +131,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[DISTR_EXCHANGE] TO rl_client_distr_w;
 GRANT EXECUTE ON [dbo].[DISTR_EXCHANGE] TO rl_distr_w;
 GO

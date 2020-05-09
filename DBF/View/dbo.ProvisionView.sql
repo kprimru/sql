@@ -14,4 +14,4 @@ AS
 	FROM
 		dbo.Provision
 		INNER JOIN dbo.ClientTable ON CL_ID = ID_CLIENT
-		INNER JOIN dbo.OrganizationTable ON ORG_ID = ID_ORG	
+		INNER JOIN dbo.OrganizationTable ON ORG_ID = ID_ORG	GO

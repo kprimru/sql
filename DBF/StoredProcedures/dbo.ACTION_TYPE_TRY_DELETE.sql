@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACTION_TYPE_TRY_DELETE] TO rl_action_type_d;
 GO

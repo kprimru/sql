@@ -136,5 +136,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COURIER_PAY_REPORT] TO rl_courier_pay;
 GO

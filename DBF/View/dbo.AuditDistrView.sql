@@ -108,3 +108,4 @@ AS
 					dbo.ContractDistrTable ON CO_ID = COD_ID_CONTRACT
 				WHERE CO_ID_CLIENT = CL_ID AND CO_ACTIVE = 1
 			)
+GO

@@ -47,5 +47,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_POSITION_ADD] TO rl_report_position_w;
 GO

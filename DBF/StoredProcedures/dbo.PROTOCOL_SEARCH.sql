@@ -74,5 +74,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PROTOCOL_SEARCH] TO rl_financing_protocol_r;
 GO

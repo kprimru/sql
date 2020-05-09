@@ -15,3 +15,4 @@ AS
 		dbo.PriceSystemTable ON PR_ID = PS_ID_PERIOD INNER JOIN
 		dbo.PriceTypeTable ON PS_ID_TYPE = PT_ID INNER JOIN
 		dbo.SystemTable ON PS_ID_SYSTEM = SYS_ID
+GO

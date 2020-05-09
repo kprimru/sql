@@ -551,5 +551,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_RECALC_ADDRESS] TO rl_invoice_w;
 GO

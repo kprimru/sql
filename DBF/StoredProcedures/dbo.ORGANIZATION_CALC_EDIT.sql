@@ -45,5 +45,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ORGANIZATION_CALC_EDIT] TO rl_organization_calc_w;
 GO

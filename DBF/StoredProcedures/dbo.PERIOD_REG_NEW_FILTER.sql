@@ -190,5 +190,7 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-ENDGRANT EXECUTE ON [dbo].[PERIOD_REG_NEW_FILTER] TO rl_reg_node_r;
+END
+GO
+GRANT EXECUTE ON [dbo].[PERIOD_REG_NEW_FILTER] TO rl_reg_node_r;
 GO

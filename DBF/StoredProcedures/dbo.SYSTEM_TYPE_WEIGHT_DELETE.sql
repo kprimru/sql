@@ -36,5 +36,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_TYPE_WEIGHT_DELETE] TO rl_system_type_weight_d;
 GO

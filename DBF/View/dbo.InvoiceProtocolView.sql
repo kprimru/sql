@@ -32,3 +32,4 @@ AS
 			), 1, 2, '')) + ')'
 		AS INS_DATA
 	FROM dbo.InvoiceSaleTable
+GO

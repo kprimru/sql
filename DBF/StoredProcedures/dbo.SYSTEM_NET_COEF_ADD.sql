@@ -66,5 +66,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_ADD] TO rl_system_net_w;
 GO

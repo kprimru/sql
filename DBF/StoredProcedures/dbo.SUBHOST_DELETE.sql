@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SUBHOST_DELETE] TO rl_subhost_d;
 GO

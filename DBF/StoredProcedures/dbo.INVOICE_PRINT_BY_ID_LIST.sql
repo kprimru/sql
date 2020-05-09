@@ -435,5 +435,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_PRINT_BY_ID_LIST] TO rl_invoice_p;
 GO

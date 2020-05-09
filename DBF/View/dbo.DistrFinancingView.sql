@@ -32,3 +32,4 @@ AS
 		LEFT OUTER JOIN dbo.PriceTypeTable ON PP_ID_TYPE = PT_ID
 		LEFT OUTER JOIN dbo.PeriodTable ON PR_ID = DF_ID_PERIOD
 		LEFT OUTER JOIN dbo.SystemTypeTable ON SST_ID = DF_ID_TYPE 
+GO

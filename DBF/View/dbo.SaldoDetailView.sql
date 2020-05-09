@@ -33,3 +33,4 @@ FROM
 	dbo.PeriodTable ap ON ap.PR_ID = h.AD_ID_PERIOD LEFT OUTER JOIN
 	dbo.PeriodTable ip ON ip.PR_ID = f.ID_ID_PERIOD LEFT OUTER JOIN
 	dbo.PeriodTable cp ON cp.PR_ID = j.CSD_ID_PERIOD
+GO

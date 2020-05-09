@@ -83,5 +83,6 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [dbo].[BILL_CREATE_CHECK] TO rl_bill_w;
 GO

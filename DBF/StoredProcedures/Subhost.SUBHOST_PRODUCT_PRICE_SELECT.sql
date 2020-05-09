@@ -55,5 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_PRODUCT_PRICE_SELECT] TO rl_subhost_calc;
 GO

@@ -357,5 +357,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Kladr].[KLADR_TREE_SELECT] TO rl_kladr_r;
 GO

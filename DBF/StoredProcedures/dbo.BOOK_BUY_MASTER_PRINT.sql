@@ -48,5 +48,6 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [dbo].[BOOK_BUY_MASTER_PRINT] TO rl_book_buy_p;
 GO

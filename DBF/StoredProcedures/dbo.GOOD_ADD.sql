@@ -47,5 +47,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[GOOD_ADD] TO rl_good_w;
 GO

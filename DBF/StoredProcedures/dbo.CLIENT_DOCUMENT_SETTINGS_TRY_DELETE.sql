@@ -46,5 +46,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_DOCUMENT_SETTINGS_TRY_DELETE] TO rl_client_d;
 GO

@@ -43,5 +43,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Subhost].[SUBHOST_KBU_EDIT] TO rl_subhost_kbu_w;
 GO

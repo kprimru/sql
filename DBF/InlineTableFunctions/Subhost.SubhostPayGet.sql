@@ -36,3 +36,4 @@ RETURN
 			--WHERE SHC_ID_PERIOD = @PERIOD
 		) AS o_O
 )
+GO

@@ -15,3 +15,4 @@ SELECT
 		dbo.ClientDistrTable AS a INNER JOIN
         dbo.DistrView AS b WITH(NOEXPAND) ON a.CD_ID_DISTR = b.DIS_ID LEFT OUTER JOIN
         dbo.DistrServiceStatusTable AS c ON a.CD_ID_SERVICE = c.DSS_ID
+GO

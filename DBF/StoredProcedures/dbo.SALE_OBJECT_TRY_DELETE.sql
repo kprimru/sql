@@ -55,5 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[SALE_OBJECT_TRY_DELETE] TO rl_sale_object_d;
 GO

@@ -86,5 +86,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ORGANIZATION_TRY_DELETE] TO rl_organization_d;
 GO

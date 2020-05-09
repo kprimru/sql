@@ -72,5 +72,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[VKSP_PERIOD_SELECT] TO rl_ric_kbu;
 GO

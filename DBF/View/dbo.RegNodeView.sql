@@ -15,3 +15,4 @@ AS
 	FROM
 		dbo.RegNodeTable
 		INNER JOIN dbo.SystemTable ON RN_SYS_NAME = SYS_REG_NAME
+GO

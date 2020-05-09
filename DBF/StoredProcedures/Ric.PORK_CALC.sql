@@ -53,5 +53,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Ric].[PORK_CALC] TO rl_ric_kbu;
 GO

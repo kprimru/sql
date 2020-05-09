@@ -18,3 +18,4 @@ AS
 		dbo.ConsignmentTable AS a INNER JOIN
 		dbo.OrganizationTable ON ORG_ID = CSG_ID_ORG
 		-- INNER JOIN dbo.PeriodTable AS b ON ACT_ID_PERIOD = PR_ID
+GO

@@ -35,6 +35,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PRICE_SELECT_FROM_PRICECOUNT] TO rl_price_list_w;
 GRANT EXECUTE ON [dbo].[PRICE_SELECT_FROM_PRICECOUNT] TO rl_price_w;
 GO

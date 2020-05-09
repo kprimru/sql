@@ -19,3 +19,4 @@ SELECT
 		dbo.BillDistrView AS c ON a.SL_ID_BILL_DIS = c.BD_ID LEFT OUTER JOIN
 		dbo.IncomeDistrView AS d ON a.SL_ID_IN_DIS = d.ID_ID LEFT OUTER JOIN
 		dbo.ConsignmentDetailView AS e ON a.SL_ID_CONSIG_DIS = e.CSD_ID
+GO

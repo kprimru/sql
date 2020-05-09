@@ -74,3 +74,4 @@ FROM
 																	INNER JOIN
 	dbo.AddressTemplateTable		E	ON	E.ATL_ID = B.CFA_ID_ATL
 --WHERE ISNULL(A.FAT_ID_ADDR_TYPE, D.CA_ID_TYPE) = D.CA_ID_TYPE
+GO

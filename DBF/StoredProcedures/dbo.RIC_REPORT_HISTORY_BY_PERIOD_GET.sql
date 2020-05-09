@@ -54,5 +54,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET] TO rl_vmi_history_r;
 GO

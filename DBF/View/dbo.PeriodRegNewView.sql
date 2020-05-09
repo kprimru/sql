@@ -38,3 +38,4 @@ WHERE NOT EXISTS
 			AND z.NEW_COMP = a.RNN_COMP_NUM
 	)
 --		dbo.CourierTable		G	ON A.RNN_ID_COUR= G.COUR_ID
+GO

@@ -37,6 +37,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PERIOD_SELECT] TO rl_period_r;
 GRANT EXECUTE ON [dbo].[PERIOD_SELECT] TO rl_quarter_r;
 GO

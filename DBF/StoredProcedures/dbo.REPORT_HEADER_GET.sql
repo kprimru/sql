@@ -48,6 +48,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_HEADER_GET] TO rl_all_r;
 GRANT EXECUTE ON [dbo].[REPORT_HEADER_GET] TO rl_vmi_report_r;
 GO

@@ -37,5 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[COURIER_SELECT_BY_TYPE] TO rl_courier_r;
 GO

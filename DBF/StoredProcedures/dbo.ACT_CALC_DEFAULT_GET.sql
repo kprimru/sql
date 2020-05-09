@@ -50,5 +50,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_CALC_DEFAULT_GET] TO rl_act_w;
 GO

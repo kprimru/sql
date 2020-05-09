@@ -61,5 +61,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[CLIENT_ACT_FACT_GET] TO rl_act_p;
 GO

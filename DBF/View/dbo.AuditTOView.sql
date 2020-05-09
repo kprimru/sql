@@ -72,4 +72,4 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
-	WHERE TO_NAME LIKE '%;%' OR TO_NAME LIKE '%' + CHAR(10) + '%' OR TO_NAME LIKE '%' + CHAR(13) + '%'		
+	WHERE TO_NAME LIKE '%;%' OR TO_NAME LIKE '%' + CHAR(10) + '%' OR TO_NAME LIKE '%' + CHAR(13) + '%'		GO

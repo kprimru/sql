@@ -423,5 +423,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[PROVISION_REPORT] TO rl_report_act_r;
 GO

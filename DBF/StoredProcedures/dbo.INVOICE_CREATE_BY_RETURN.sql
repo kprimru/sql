@@ -362,5 +362,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[INVOICE_CREATE_BY_RETURN] TO rl_invoice_w;
 GO

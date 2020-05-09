@@ -113,5 +113,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [dbo].[REPORT_UNPAY_SYSTEM] TO rl_distr_report;
 GO
