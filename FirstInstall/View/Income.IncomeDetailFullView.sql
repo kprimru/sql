@@ -66,4 +66,4 @@ AS
 		Income.IncomeDetailView a LEFT OUTER JOIN
 		Common.PeriodLast c ON a.ID_ID_FIRST_MON = c.PR_ID_MASTER LEFT OUTER JOIN
 		Common.PeriodLast d ON a.ID_ID_FULL_PAY = d.PR_ID_MASTER
-		
+		GO

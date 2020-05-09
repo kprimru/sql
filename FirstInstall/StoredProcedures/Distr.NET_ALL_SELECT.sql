@@ -16,5 +16,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Distr].[NET_ALL_SELECT] TO rl_distr_income_r;
 GO

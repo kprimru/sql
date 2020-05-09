@@ -49,5 +49,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[DISTR_TYPE_UPDATE] TO rl_distr_type_u;
 GO

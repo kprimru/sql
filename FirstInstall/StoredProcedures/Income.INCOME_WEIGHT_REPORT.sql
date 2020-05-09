@@ -40,5 +40,6 @@ BEGIN
 		AND DT_NAME NOT IN ('—пец. выпуск', 'Ћьготный —пец.выпуск')
 	ORDER BY IN_DATE DESC, CL_NAME
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_WEIGHT_REPORT] TO rl_income_personal;
 GO

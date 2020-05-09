@@ -13,4 +13,4 @@ AS
 	FROM
 		Security.Roles CROSS JOIN
 		Security.UserLast
-	WHERE US_REF = 1
+	WHERE US_REF = 1GO

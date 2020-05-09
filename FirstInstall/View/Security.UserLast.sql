@@ -14,3 +14,4 @@ AS
 	FROM
 		Security.UserAll a
 	WHERE US_REF IN (1, 3)
+GO

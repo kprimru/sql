@@ -58,5 +58,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Новая запись', @MASTERID, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_INSERT] TO rl_install_act_i;
 GO

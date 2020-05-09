@@ -13,4 +13,4 @@ AS
 		PT_ID, PT_ID_MASTER, PT_NAME
 	FROM
 		Salary.SalaryConditionDetail	INNER JOIN
-		Personal.PersonalTypeLast	ON	SC_ID_PER_TYPE	=	PT_ID_MASTER
+		Personal.PersonalTypeLast	ON	SC_ID_PER_TYPE	=	PT_ID_MASTERGO

@@ -29,3 +29,4 @@ AS
 		AND DT_REF IN (1, 3)
 		AND NT_REF IN (1, 3)
 		AND TT_REF IN (1, 3)
+GO

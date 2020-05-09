@@ -94,5 +94,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'BONUS_CONDITION', 'Хронологическое изменение', @BC_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Salary].[BONUS_CONDITION_CHRONO] TO rl_bonus_condition_u;
 GO

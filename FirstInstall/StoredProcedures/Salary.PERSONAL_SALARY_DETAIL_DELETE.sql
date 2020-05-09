@@ -14,5 +14,6 @@ BEGIN
 	FROM	Salary.PersonalSalaryDetail
 	WHERE	PSD_ID	=	@PSD_ID
 END
+GO
 GRANT EXECUTE ON [Salary].[PERSONAL_SALARY_DETAIL_DELETE] TO rl_salary_w;
 GO

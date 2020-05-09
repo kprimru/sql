@@ -35,5 +35,6 @@ BEGIN
 			)
 	ORDER BY DF_CREATE DESC, SystemOrder, DF_DISTR
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_IMPORT_NEW_SELECT] TO rl_distr_income_w;
 GO

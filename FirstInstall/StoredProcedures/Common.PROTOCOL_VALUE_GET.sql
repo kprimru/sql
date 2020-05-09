@@ -137,3 +137,4 @@ BEGIN
 	IF OBJECT_ID('tempdb..#values') IS NOT NULL
 		DROP TABLE #values
 END
+GO

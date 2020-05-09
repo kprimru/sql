@@ -75,5 +75,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[TECH_TYPE_CHRONO] TO rl_tech_type_u;
 GO

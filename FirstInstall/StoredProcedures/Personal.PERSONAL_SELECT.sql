@@ -22,5 +22,6 @@ BEGIN
 
 	SELECT @RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_SELECT] TO rl_personal_r;
 GO

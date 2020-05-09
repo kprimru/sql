@@ -11,4 +11,4 @@ AS
 		WG_ID_MASTER, WG_ID, WG_ID_SYSTEM, WG_NAME,
 		WG_VALUE, WG_DATE, WG_END, WG_REF
 	FROM
-		Distr.WeightDetail
+		Distr.WeightDetailGO

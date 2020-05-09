@@ -15,3 +15,4 @@ AS
 	FROM
 		Distr.SystemAll a
 	WHERE SYS_REF IN (1, 3)
+GO

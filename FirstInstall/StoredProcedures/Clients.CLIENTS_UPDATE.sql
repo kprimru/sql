@@ -44,5 +44,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Clients].[CLIENTS_UPDATE] TO rl_clients_u;
 GO

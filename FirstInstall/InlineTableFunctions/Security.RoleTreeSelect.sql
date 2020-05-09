@@ -35,3 +35,4 @@ RETURN
 	FROM Security.Roles
 	WHERE RL_ID = @RL_ID
 	)
+GO

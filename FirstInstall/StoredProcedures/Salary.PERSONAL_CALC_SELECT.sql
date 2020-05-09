@@ -28,5 +28,6 @@ BEGIN
 	*/
 END
 
+GO
 GRANT EXECUTE ON [Salary].[PERSONAL_CALC_SELECT] TO rl_salary_r;
 GO

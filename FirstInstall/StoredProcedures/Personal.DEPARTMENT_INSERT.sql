@@ -59,5 +59,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[DEPARTMENT_INSERT] TO rl_department_i;
 GO

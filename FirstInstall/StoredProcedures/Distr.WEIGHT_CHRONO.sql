@@ -72,5 +72,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[WEIGHT_CHRONO] TO rl_weight_u;
 GO

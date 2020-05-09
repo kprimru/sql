@@ -74,5 +74,6 @@ BEGIN
 	FROM	@TBL
 END
 
+GO
 GRANT EXECUTE ON [Security].[USER_INSERT] TO rl_user_i;
 GO

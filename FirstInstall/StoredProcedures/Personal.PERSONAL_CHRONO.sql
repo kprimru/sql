@@ -68,5 +68,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_CHRONO] TO rl_personal_u;
 GO

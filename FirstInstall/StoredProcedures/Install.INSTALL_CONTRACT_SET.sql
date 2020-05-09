@@ -45,5 +45,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Install].[INSTALL_CONTRACT_SET] TO rl_install_contract;
 GO

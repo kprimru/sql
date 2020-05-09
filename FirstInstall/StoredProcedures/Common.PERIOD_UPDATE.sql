@@ -48,5 +48,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Common].[PERIOD_UPDATE] TO rl_period_u;
 GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(LAST)
 	FROM	Distr.Subhost
 END
+GO
 GRANT EXECUTE ON [Distr].[SUBHOST_LAST] TO rl_distr_income_r;
 GO

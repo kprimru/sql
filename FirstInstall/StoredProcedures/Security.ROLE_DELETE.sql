@@ -49,3 +49,4 @@ BEGIN
 			EXEC ('DROP ROLE [' + @ROLE + ']')
 	END
 END
+GO

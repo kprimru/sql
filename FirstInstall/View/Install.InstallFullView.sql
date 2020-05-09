@@ -44,3 +44,4 @@ SELECT
 	FROM
 		Install.InstallMasterView a WITH(NOEXPAND) INNER JOIN
 		Install.InstallDetailFullView b ON a.INS_ID = b.INS_ID
+GO

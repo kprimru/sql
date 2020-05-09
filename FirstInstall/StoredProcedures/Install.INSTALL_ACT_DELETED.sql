@@ -15,5 +15,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_DELETED] TO rl_install_act_r;
 GO

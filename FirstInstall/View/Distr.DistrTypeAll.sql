@@ -11,4 +11,4 @@ AS
 		DT_ID_MASTER, DT_ID, DT_NAME,
 		DT_SHORT, DT_REG, DT_DATE, DT_END, DT_REF
 	FROM
-		Distr.DistrTypeDetail
+		Distr.DistrTypeDetailGO

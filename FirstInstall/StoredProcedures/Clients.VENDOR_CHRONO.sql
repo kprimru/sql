@@ -66,5 +66,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Clients].[VENDOR_CHRONO] TO rl_vendor_u;
 GO

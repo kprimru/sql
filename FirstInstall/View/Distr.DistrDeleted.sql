@@ -18,4 +18,4 @@ AS
 	FROM
 		Distr.DistrAll
 	WHERE DH_REF = 3
-		
+		GO

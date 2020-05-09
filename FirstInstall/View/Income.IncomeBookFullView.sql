@@ -54,4 +54,4 @@ AS
 		END AS IB_REPAYED
 	FROM
 		Income.IncomeBookView a LEFT OUTER JOIN
-		Personal.PersonalDetail ON PER_ID_MASTER = IB_ID_PERSONAL
+		Personal.PersonalDetail ON PER_ID_MASTER = IB_ID_PERSONALGO

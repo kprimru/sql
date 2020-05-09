@@ -54,5 +54,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'DISTR', 'Редактирование', @DS_ID, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_UPDATE] TO rl_distr_store_u;
 GO

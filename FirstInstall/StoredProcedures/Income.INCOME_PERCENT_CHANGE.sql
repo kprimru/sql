@@ -19,5 +19,6 @@ BEGIN
 			FROM Common.TableFromList(@IP_ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_PERCENT_CHANGE] TO rl_income_personal;
 GO

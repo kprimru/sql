@@ -12,4 +12,4 @@ AS
 		NT_FULL, NT_COEF, NT_DATE, NT_END
 	FROM
 		Distr.NetTypeAll a
-	WHERE NT_REF = 3
+	WHERE NT_REF = 3GO

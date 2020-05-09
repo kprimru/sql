@@ -14,3 +14,4 @@ AS
 	FROM
 		Distr.NetTypeAll a
 	WHERE NT_REF IN (1, 3)
+GO

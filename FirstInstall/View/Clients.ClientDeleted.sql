@@ -12,4 +12,4 @@ AS
 	FROM
 		Clients.ClientAll a
 	WHERE CL_REF = 3
-		
+		GO

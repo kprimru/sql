@@ -14,3 +14,4 @@ AS
 	FROM
 		Distr.HostAll a
 	WHERE HST_REF IN (1, 3)
+GO

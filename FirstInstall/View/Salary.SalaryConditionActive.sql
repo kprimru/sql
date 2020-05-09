@@ -13,4 +13,4 @@ AS
 		PT_ID, PT_ID_MASTER, PT_NAME
 	FROM
 		Salary.SalaryConditionAll
-	WHERE SC_REF = 1
+	WHERE SC_REF = 1GO

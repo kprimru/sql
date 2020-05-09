@@ -56,5 +56,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Clients].[CLIENTS_INSERT] TO rl_clients_i;
 GO

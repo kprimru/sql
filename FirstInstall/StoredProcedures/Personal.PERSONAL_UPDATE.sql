@@ -48,5 +48,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_UPDATE] TO rl_personal_u;
 GO

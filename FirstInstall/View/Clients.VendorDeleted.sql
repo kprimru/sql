@@ -11,4 +11,4 @@ AS
 		VD_ID_MASTER, VD_ID, VD_NAME, VD_DATE, VD_END
 	FROM
 		Clients.VendorAll a
-	WHERE VD_REF = 3
+	WHERE VD_REF = 3GO

@@ -10,4 +10,4 @@ AS
 	SELECT
 		VD_ID_MASTER, VD_ID, VD_NAME, VD_DATE, VD_END, VD_REF
 	FROM
-		Clients.VendorDetail
+		Clients.VendorDetailGO

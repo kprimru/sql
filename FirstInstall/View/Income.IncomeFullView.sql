@@ -55,3 +55,4 @@ SELECT
 	FROM
 		Income.IncomeMasterView a WITH(NOEXPAND) INNER JOIN
 		Income.IncomeDetailFullView b ON a.IN_ID = b.IN_ID
+GO

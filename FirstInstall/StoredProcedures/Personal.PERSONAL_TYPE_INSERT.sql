@@ -57,5 +57,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'PERSONAL_TYPE', 'Новая запись', @MASTERID, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_INSERT] TO rl_personal_type_i;
 GO

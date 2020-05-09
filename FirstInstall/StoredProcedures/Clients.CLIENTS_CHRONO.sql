@@ -66,5 +66,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Clients].[CLIENTS_CHRONO] TO rl_clients_u;
 GO

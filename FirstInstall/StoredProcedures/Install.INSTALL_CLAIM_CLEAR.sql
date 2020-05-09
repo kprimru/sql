@@ -44,5 +44,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Install].[INSTALL_CLAIM_CLEAR] TO rl_install_claim_w;
 GO

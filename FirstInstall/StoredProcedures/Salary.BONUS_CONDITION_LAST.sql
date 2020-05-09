@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	= MAX(BCMS_LAST)
 	FROM	Salary.BonusCondition
 END
+GO
 GRANT EXECUTE ON [Salary].[BONUS_CONDITION_LAST] TO rl_bonus_condition_r;
 GO

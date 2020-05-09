@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(CPMS_LAST)
 	FROM	Book.Competition
 END
+GO
 GRANT EXECUTE ON [Book].[COMPETITION_LAST] TO rl_competition_r;
 GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(HLFMS_LAST)
 	FROM	Common.Half
 END
+GO
 GRANT EXECUTE ON [Common].[HALF_LAST] TO rl_half_r;
 GO

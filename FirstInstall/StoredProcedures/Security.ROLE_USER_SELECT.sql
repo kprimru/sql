@@ -42,3 +42,4 @@ BEGIN
 		) b ON a.RL_ID = b.RL_ID LEFT OUTER JOIN
 		Security.RoleMessages ON RM_ID_ROLE = a.RL_ID AND RM_ID_USER = US_ID_MASTER
 END
+GO

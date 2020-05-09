@@ -13,4 +13,4 @@ AS
 		PER_DATE, PER_END
 	FROM
 		Personal.PersonalAll
-	WHERE PER_REF = 1
+	WHERE PER_REF = 1GO

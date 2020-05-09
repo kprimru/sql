@@ -62,5 +62,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[DISTR_TYPE_INSERT] TO rl_distr_type_i;
 GO

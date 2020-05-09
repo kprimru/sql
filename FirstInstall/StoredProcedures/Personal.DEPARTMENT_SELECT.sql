@@ -15,5 +15,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Personal].[DEPARTMENT_SELECT] TO rl_department_r;
 GO

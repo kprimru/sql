@@ -61,5 +61,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Common].[HALF_INSERT] TO rl_half_i;
 GO

@@ -21,5 +21,6 @@ BEGIN
 			FROM	Common.TableFromList(@ID_ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_PERSONAL_SELECT] TO rl_income_personal;
 GO

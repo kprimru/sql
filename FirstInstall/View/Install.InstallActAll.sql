@@ -11,4 +11,4 @@ AS
 		IA_ID_MASTER, IA_ID, IA_NAME,
 		IA_NORM, IA_DATE, IA_END, IA_REF
 	FROM
-		Install.InstallActDetail
+		Install.InstallActDetailGO

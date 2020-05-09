@@ -63,5 +63,6 @@ BEGIN
 	DROP TABLE #temp
 
 END
+GO
 GRANT EXECUTE ON [Common].[LOCK_SELECT] TO rl_lock_r;
 GO

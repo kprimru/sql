@@ -14,3 +14,4 @@ BEGIN
 	INSERT INTO Security.RoleMessages(RM_ID_ROLE, RM_ID_USER)
 		VALUES(@RL_ID, @US_ID)
 END
+GO

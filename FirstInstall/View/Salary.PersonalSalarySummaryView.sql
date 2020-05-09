@@ -44,4 +44,4 @@ AS
 		Personal.PersonalLast	INNER JOIN
 		Salary.PersonalSalary	ON	PER_ID_MASTER	=	PS_ID_PERSONAL
 
-		
+		GO

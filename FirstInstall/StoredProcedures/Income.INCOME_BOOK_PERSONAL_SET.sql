@@ -43,5 +43,6 @@ BEGIN
 	DEALLOCATE ID
 
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_BOOK_PERSONAL_SET] TO rl_income_book_personal;
 GO

@@ -71,5 +71,6 @@ EXEC sp_executesql @SQL, N'
 
 	SELECT @RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Common].[PROTOCOL_SELECT] TO rl_protocol_r;
 GO

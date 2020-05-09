@@ -11,4 +11,4 @@ AS
 		PT_ID_MASTER, PT_ID, PT_NAME,
 		PT_ALIAS, PT_DATE, PT_END, PT_REF
 	FROM
-		Personal.PersonalTypeDetail
+		Personal.PersonalTypeDetailGO

@@ -46,5 +46,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_PRICE_UPDATE] TO rl_book_price_u;
 GO

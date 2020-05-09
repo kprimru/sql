@@ -53,5 +53,6 @@ BEGIN
 	DEALLOCATE ID
 
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_PREPAY_DATES_SET] TO rl_income_prepay_dates;
 GO

@@ -61,5 +61,6 @@ BEGIN
 
 	EXEC Common.PROTOCOL_INSERT 'INCOME', 'Новая запись', @IN_ID, @OLD, @NEW
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_INSERT] TO rl_income_w;
 GO

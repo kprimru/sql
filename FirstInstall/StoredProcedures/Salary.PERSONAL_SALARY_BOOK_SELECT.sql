@@ -14,5 +14,6 @@ BEGIN
 	FROM	Salary.PersonalSalaryBookView
 	WHERE	PS_ID	=	@PS_ID
 END
+GO
 GRANT EXECUTE ON [Salary].[PERSONAL_SALARY_BOOK_SELECT] TO rl_salary_r;
 GO

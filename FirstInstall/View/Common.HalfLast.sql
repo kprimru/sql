@@ -15,3 +15,4 @@ AS
 	FROM
 		Common.HalfAll a
 	WHERE HLF_REF IN (1, 3)
+GO

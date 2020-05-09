@@ -14,4 +14,4 @@ AS
 		CP_DATE, CP_END
 	FROM
 		Book.CompetitionAll a
-	WHERE CP_REF IN (1, 3)
+	WHERE CP_REF IN (1, 3)GO

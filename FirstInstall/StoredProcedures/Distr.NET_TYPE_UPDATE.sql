@@ -50,5 +50,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[NET_TYPE_UPDATE] TO rl_net_type_u;
 GO

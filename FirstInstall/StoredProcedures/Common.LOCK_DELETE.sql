@@ -18,5 +18,6 @@ BEGIN
 			FROM Common.TableFromList(@ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Common].[LOCK_DELETE] TO rl_lock_d;
 GO

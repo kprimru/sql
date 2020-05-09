@@ -27,5 +27,6 @@ BEGIN
 	FROM	Install.Install
 	WHERE	INS_ID	=	@INS_ID
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_DELETE] TO rl_install_d;
 GO

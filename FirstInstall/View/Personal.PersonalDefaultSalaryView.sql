@@ -14,4 +14,4 @@ AS
 		Personal.PersonalActive INNER JOIN
 		Personal.PersonalDefaultSalary ON PDS_ID_PERSONAL = PER_ID_MASTER INNER JOIN
 		Common.PeriodLast ON PR_ID_MASTER = PDS_ID_PERIOD
-									
+									GO

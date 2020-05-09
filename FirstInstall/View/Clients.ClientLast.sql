@@ -12,4 +12,4 @@ AS
 		CL_ID_MASTER, CL_ID, CL_NAME, CL_DATE, CL_END
 	FROM
 		Clients.ClientAll a
-	WHERE CL_REF IN (1, 3)
+	WHERE CL_REF IN (1, 3)GO

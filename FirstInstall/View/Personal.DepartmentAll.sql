@@ -11,4 +11,4 @@ AS
 		DP_ID_MASTER, DP_ID, DP_NAME,
 		DP_FULL, DP_DATE, DP_END, DP_REF
 	FROM
-		Personal.DepartmentDetail
+		Personal.DepartmentDetailGO

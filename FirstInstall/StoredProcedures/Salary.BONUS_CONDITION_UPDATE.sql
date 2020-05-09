@@ -63,5 +63,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Salary].[BONUS_CONDITION_UPDATE] TO rl_bonus_condition_u;
 GO

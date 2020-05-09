@@ -61,5 +61,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_INSERT] TO rl_personal_i;
 GO

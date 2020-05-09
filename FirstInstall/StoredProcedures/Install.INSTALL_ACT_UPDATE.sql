@@ -45,5 +45,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Редактирование', @IA_ID_MASTER, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_UPDATE] TO rl_install_act_u;
 GO

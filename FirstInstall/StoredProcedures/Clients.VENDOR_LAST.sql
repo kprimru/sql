@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(VDMS_LAST)
 	FROM	Clients.Vendors
 END
+GO
 GRANT EXECUTE ON [Clients].[VENDOR_LAST] TO rl_vendor_r;
 GO

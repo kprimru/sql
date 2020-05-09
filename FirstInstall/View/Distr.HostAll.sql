@@ -11,4 +11,4 @@ AS
 		HST_ID_MASTER, HST_ID, HST_NAME,
 		HST_REG, HST_DATE, HST_END, HST_REF
 	FROM
-		Distr.HostDetail
+		Distr.HostDetailGO

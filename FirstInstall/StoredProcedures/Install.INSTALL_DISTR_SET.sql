@@ -34,5 +34,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'INSTALL_DETAIL', 'Указание дистрибутива', @IND_ID, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_DISTR_SET] TO rl_install_distr;
 GO

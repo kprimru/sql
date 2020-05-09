@@ -15,5 +15,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Salary].[SALARY_CONDITION_SELECT] TO rl_salary_condition_r;
 GO

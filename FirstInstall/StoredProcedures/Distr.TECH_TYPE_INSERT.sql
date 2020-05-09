@@ -65,5 +65,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[TECH_TYPE_INSERT] TO rl_tech_type_i;
 GO

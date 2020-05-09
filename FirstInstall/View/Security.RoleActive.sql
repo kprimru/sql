@@ -13,4 +13,4 @@ AS
 		Security.Roles LEFT OUTER JOIN
 		Security.DBRoles ON ROLE_NAME = RL_ROLE
 
-		
+		GO

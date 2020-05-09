@@ -56,5 +56,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Clients].[VENDOR_INSERT] TO rl_vendor_i;
 GO

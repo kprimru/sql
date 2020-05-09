@@ -15,3 +15,4 @@ BEGIN
 	FROM Security.RoleMessages
 	WHERE RM_ID_ROLE = @RL_ID AND RM_ID_USER = @US_ID
 END
+GO

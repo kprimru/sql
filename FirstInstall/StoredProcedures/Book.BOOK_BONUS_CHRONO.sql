@@ -67,5 +67,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'BOOK_BONUS', 'Хронологическое изменение', @BB_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_BONUS_CHRONO] TO rl_book_bonus_u;
 GO

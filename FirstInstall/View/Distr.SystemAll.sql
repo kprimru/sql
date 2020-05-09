@@ -20,4 +20,4 @@ AS
 		END AS SYS_MAIN,
 		SYS_DATE, SYS_END, SYS_REF
 	FROM
-		Distr.SystemDetail
+		Distr.SystemDetailGO

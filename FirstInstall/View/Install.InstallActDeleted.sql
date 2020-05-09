@@ -12,4 +12,4 @@ AS
 		IA_NORM, IA_DATE, IA_END
 	FROM
 		Install.InstallActAll a
-	WHERE IA_REF = 3
+	WHERE IA_REF = 3GO

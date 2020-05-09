@@ -14,4 +14,4 @@ AS
 		CP_DATE, CP_END, CP_REF
 	FROM
 		Book.CompetitionDetail	INNER JOIN
-		Common.HalfLast			ON	HLF_ID_MASTER = CP_ID_HALF
+		Common.HalfLast			ON	HLF_ID_MASTER = CP_ID_HALFGO

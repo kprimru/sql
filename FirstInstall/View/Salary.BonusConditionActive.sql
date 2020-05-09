@@ -15,4 +15,4 @@ AS
 		BC_ORDER, BC_DATE, BC_END
 	FROM
 		Salary.BonusConditionAll
-	WHERE BC_REF = 1
+	WHERE BC_REF = 1GO

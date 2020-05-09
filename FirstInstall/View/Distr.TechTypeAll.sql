@@ -11,4 +11,4 @@ AS
 		TT_ID_MASTER, TT_ID, TT_NAME, TT_SHORT,
 		TT_REG, TT_COEF, TT_DATE, TT_END, TT_REF
 	FROM
-		Distr.TechTypeDetail
+		Distr.TechTypeDetailGO

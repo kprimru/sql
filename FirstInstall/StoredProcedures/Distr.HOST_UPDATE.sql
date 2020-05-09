@@ -46,5 +46,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[HOST_UPDATE] TO rl_host_u;
 GO

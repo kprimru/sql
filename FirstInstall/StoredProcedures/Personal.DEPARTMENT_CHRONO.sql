@@ -69,5 +69,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[DEPARTMENT_CHRONO] TO rl_department_u;
 GO

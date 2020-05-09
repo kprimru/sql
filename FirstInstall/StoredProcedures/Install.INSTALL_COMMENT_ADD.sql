@@ -16,5 +16,6 @@ BEGIN
 		SELECT ID, @IC_USER, @IC_TEXT
 		FROM Common.TableFromList(@IND_ID, ',')
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_COMMENT_ADD] TO rl_install_comment_i;
 GO

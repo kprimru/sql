@@ -73,5 +73,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Salary].[SALARY_CONDITION_CHRONO] TO rl_salary_condition_u;
 GO

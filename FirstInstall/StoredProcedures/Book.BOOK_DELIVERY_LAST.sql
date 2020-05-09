@@ -13,3 +13,4 @@ BEGIN
 	SELECT	@DT	=	MAX(BDMS_LAST)
 	FROM	Book.BookDelivery
 END
+GO

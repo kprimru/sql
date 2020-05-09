@@ -18,3 +18,4 @@ BEGIN
 	IF @ROLE <> ''
 		EXEC ('CREATE ROLE [' + @ROLE + ']')
 END
+GO

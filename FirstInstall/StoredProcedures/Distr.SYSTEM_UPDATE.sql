@@ -51,5 +51,6 @@ BEGIN
 	--EXEC [Distr].[SYSTEM_WEIGHT]
 END
 
+GO
 GRANT EXECUTE ON [Distr].[SYSTEM_UPDATE] TO rl_system_u;
 GO

@@ -44,5 +44,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'PERSONAL_TYPE', 'Редактирование', @PT_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_UPDATE] TO rl_personal_type_u;
 GO

@@ -45,5 +45,6 @@ BEGIN
 				)
 	END
 END
+GO
 GRANT EXECUTE ON [Claim].[CLAIM_DETAIL_PROCESS] TO rl_claim_w;
 GO

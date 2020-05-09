@@ -49,5 +49,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Common].[HALF_UPDATE] TO rl_half_u;
 GO

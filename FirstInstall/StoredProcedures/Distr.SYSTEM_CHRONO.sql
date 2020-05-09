@@ -76,5 +76,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[SYSTEM_CHRONO] TO rl_system_u;
 GO

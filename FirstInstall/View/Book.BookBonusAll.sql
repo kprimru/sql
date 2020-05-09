@@ -14,4 +14,4 @@ AS
 		BB_DATE, BB_END, BB_REF
 	FROM
 		Book.BookBonusDetail		INNER JOIN
-		Personal.PersonalTypeLast	ON	PT_ID_MASTER = BB_ID_PT
+		Personal.PersonalTypeLast	ON	PT_ID_MASTER = BB_ID_PTGO

@@ -24,5 +24,6 @@ BEGIN
 
 	SELECT @RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Security].[USER_SELECT] TO rl_user_r;
 GO

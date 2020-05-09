@@ -64,5 +64,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Book].[COMPETITION_INSERT] TO rl_competition_i;
 GO

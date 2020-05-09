@@ -21,5 +21,6 @@ BEGIN
 	FROM Install.InstallDetailFullView
 	WHERE INS_ID = @INS_ID
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_DETAIL_SELECT] TO rl_install_r;
 GO

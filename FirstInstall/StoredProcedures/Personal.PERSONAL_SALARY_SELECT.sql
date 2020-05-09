@@ -20,5 +20,6 @@ BEGIN
 	WHERE (@PT_ID IS NULL OR PER_ID_TYPE = @PT_ID)
 
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_SALARY_SELECT] TO rl_personal_default_salary_r;
 GO

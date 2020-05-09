@@ -61,5 +61,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[WEIGHT_INSERT] TO rl_weight_i;
 GO

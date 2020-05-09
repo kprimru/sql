@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(DPMS_LAST)
 	FROM	Personal.Department
 END
+GO
 GRANT EXECUTE ON [Personal].[DEPARTMENT_LAST] TO rl_department_r;
 GO

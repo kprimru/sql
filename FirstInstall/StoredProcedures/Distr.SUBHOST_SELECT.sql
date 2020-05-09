@@ -16,5 +16,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
-GRANT EXECUTE ON [Distr].[SUBHOST_SELECT] TO rl_distr_income_rGRANT EXECUTE ON [Distr].[SUBHOST_SELECT] TO rl_distr_income_r;
+GRANT EXECUTE ON [Distr].[SUBHOST_SELECT] TO rl_distr_income_rGO
+GRANT EXECUTE ON [Distr].[SUBHOST_SELECT] TO rl_distr_income_r;
 GO

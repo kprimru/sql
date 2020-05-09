@@ -46,5 +46,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Personal].[DEPARTMENT_UPDATE] TO rl_department_u;
 GO

@@ -11,4 +11,4 @@ AS
 		NT_ID_MASTER, NT_ID, NT_NAME, NT_SHORT,
 		NT_FULL, NT_COEF, NT_DATE, NT_END, NT_REF
 	FROM
-		Distr.NetTypeDetail
+		Distr.NetTypeDetailGO

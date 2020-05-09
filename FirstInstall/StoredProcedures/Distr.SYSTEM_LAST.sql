@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(SYSMS_LAST)
 	FROM	Distr.Systems
 END
+GO
 GRANT EXECUTE ON [Distr].[SYSTEM_LAST] TO rl_system_r;
 GO

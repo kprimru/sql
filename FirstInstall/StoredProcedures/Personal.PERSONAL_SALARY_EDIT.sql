@@ -46,5 +46,6 @@ BEGIN
 
 	EXEC Common.PROTOCOL_INSERT 'PERSONAL_DEFAULT_SALARY', 'Оклад', @PDS_ID, @OLD, @NEW
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_SALARY_EDIT] TO rl_personal_default_salary_w;
 GO

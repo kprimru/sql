@@ -12,4 +12,4 @@ AS
 		DT_SHORT, DT_REG, DT_DATE, DT_END
 	FROM
 		Distr.DistrTypeAll
-	WHERE DT_REF = 1
+	WHERE DT_REF = 1GO

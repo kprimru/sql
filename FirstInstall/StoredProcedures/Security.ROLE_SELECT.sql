@@ -14,3 +14,4 @@ BEGIN
 	FROM
 		Security.RoleActive
 END
+GO

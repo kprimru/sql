@@ -13,4 +13,4 @@ AS
 		BD_DATE, BD_END
 	FROM
 		Book.BookDeliveryAll
-	WHERE BD_REF = 1
+	WHERE BD_REF = 1GO

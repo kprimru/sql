@@ -64,5 +64,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[NET_TYPE_INSERT] TO rl_net_type_i;
 GO

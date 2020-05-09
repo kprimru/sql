@@ -13,4 +13,4 @@ AS
 		DP_FULL, DP_DATE, DP_END
 	FROM
 		Personal.DepartmentAll
-	WHERE DP_REF IN (1, 3)
+	WHERE DP_REF IN (1, 3)GO

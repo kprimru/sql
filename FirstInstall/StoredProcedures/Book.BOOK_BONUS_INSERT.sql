@@ -58,5 +58,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'BOOK_BONUS', 'Новая запись', @MASTERID, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_BONUS_INSERT] TO rl_book_bonus_i;
 GO

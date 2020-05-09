@@ -14,4 +14,4 @@ AS
 		BP_DATE, BP_END
 	FROM
 		Book.BookPriceAll a
-	WHERE BP_REF = 3
+	WHERE BP_REF = 3GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(PTMS_LAST)
 	FROM	Personal.PersonalType
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_LAST] TO rl_personal_type_r;
 GO

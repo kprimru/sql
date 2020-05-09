@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(PRMS_LAST)
 	FROM	Common.Period
 END
+GO
 GRANT EXECUTE ON [Common].[PERIOD_LAST] TO rl_period_r;
 GO

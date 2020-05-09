@@ -12,4 +12,4 @@ AS
 		BD_PRICE, BD_COUNT,
 		BD_DATE, BD_END, BD_REF
 	FROM
-		Book.BookDeliveryDetail
+		Book.BookDeliveryDetailGO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(PERMS_LAST)
 	FROM	Personal.Personals
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_LAST] TO rl_personal_r;
 GO

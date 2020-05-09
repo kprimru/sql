@@ -17,5 +17,6 @@ BEGIN
 	FROM Income.IncomeMasterView
 	WHERE IN_ID = @IN_ID
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_SELECT] TO rl_income_r;
 GO

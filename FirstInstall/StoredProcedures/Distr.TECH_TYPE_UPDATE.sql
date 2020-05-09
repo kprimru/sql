@@ -50,5 +50,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[TECH_TYPE_UPDATE] TO rl_tech_type_u;
 GO

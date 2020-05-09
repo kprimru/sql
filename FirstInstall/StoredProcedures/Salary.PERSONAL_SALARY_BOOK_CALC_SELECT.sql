@@ -55,5 +55,6 @@ BEGIN
 				)
 		) AS o_O
 END
+GO
 GRANT EXECUTE ON [Salary].[PERSONAL_SALARY_BOOK_CALC_SELECT] TO rl_salary_w;
 GO

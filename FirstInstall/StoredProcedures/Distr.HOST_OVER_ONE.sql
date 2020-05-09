@@ -33,3 +33,4 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'HOST', 'Удаление', @MASTERID, @OLD, @NEW
 END
 
+GO

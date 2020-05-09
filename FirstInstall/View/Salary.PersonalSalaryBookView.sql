@@ -17,4 +17,4 @@ AS
 		Salary.PersonalSalaryBook INNER JOIN
 		Salary.PersonalSalary ON PS_ID = PSB_ID_MASTER INNER JOIN
 		Income.IncomeBook ON IB_ID = PSB_ID_IB
-	
+	GO

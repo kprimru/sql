@@ -33,5 +33,6 @@ BEGIN
 	DEALLOCATE LST
 END
 
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_OVER] TO rl_personal_type_d;
 GO

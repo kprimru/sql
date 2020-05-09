@@ -67,5 +67,6 @@ BEGIN
 
 	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Хронологическое изменение', @IA_ID_MASTER, @OLD, @NEW
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_CHRONO] TO rl_install_act_u;
 GO

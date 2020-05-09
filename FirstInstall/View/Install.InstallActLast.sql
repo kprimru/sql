@@ -13,4 +13,4 @@ AS
 		IA_NORM, IA_DATE, IA_END
 	FROM
 		Install.InstallActAll
-	WHERE IA_REF IN (1, 3)
+	WHERE IA_REF IN (1, 3)GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(BBMS_LAST)
 	FROM	Book.BookBonus
 END
+GO
 GRANT EXECUTE ON [Book].[BOOK_BONUS_LAST] TO rl_book_bonus_r;
 GO

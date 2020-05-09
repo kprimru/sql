@@ -45,5 +45,6 @@ BEGIN
 	DEALLOCATE ID
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_PERSONAL_SET] TO rl_install_personal;
 GO

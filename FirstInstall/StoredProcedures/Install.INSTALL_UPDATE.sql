@@ -29,5 +29,6 @@ BEGIN
 
 	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'Редактирование', @INS_ID, @OLD, @NEW
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_UPDATE] TO rl_install_u;
 GO

@@ -26,5 +26,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_DELETE] TO rl_distr_store_d;
 GO

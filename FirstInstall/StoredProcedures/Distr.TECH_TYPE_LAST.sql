@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(TTMS_LAST)
 	FROM	Distr.TechType
 END
+GO
 GRANT EXECUTE ON [Distr].[TECH_TYPE_LAST] TO rl_tech_type_r;
 GO

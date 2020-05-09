@@ -34,5 +34,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Удаление', @MASTERID, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_OVER_ONE] TO rl_install_act_d;
 GO

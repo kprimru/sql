@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(SCMS_LAST)
 	FROM	Salary.SalaryCondition
 END
+GO
 GRANT EXECUTE ON [Salary].[SALARY_CONDITION_LAST] TO rl_salary_condition_r;
 GO

@@ -17,4 +17,4 @@ AS
 				'db_backupoperator', 'db_datareader',
 				'db_datawriter', 'db_denydatareader',
 				'db_denydatawriter'
-			)
+			)GO

@@ -54,4 +54,4 @@ AS
 		Book.CompetitionLast ON CP_ID_MASTER = PS_ID_COMPETITION  LEFT OUTER JOIN
 		Common.PeriodLast c ON c.PR_ID_MASTER = PS_ID_PAY
 
-		
+		GO

@@ -11,4 +11,4 @@ AS
 		US_ID_MASTER, US_ID, US_NAME,
 		US_LOGIN, US_NOTE, US_DATE, US_END, US_REF
 	FROM
-		Security.UserDetail
+		Security.UserDetailGO

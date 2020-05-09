@@ -13,4 +13,4 @@ AS
 		PR_DATE, PR_END
 	FROM
 		Common.PeriodAll a
-	WHERE PR_REF = 3
+	WHERE PR_REF = 3GO

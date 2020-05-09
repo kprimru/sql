@@ -14,3 +14,4 @@ AS
 	FROM
 		Personal.PersonalTypeAll a
 	WHERE PT_REF IN (1, 3)
+GO

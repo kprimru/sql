@@ -15,4 +15,4 @@ AS
 		BC_ORDER,
 		BC_DATE, BC_END, BC_REF
 	FROM
-		Salary.BonusConditionDetail
+		Salary.BonusConditionDetailGO

@@ -13,4 +13,4 @@ AS
 		IC_DATE, IC_USER, IC_TEXT
 	FROM
 		Install.InstallCommentsView a LEFT OUTER JOIN
-		Distr.DistrLast ON DH_ID = IND_ID_DISTR
+		Distr.DistrLast ON DH_ID = IND_ID_DISTRGO

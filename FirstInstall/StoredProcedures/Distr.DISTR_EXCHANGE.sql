@@ -50,5 +50,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_EXCHANGE] TO rl_distr_store_u;
 GO

@@ -34,6 +34,7 @@ GO
 		ORDER BY
 			4, 5, 1
 	END
-	DENY EXECUTE ON [dbo].[sp_helpdiagrams] TO guest;
+	GO
+DENY EXECUTE ON [dbo].[sp_helpdiagrams] TO guest;
 GRANT EXECUTE ON [dbo].[sp_helpdiagrams] TO public;
 GO

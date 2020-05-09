@@ -19,5 +19,6 @@ BEGIN
 			FROM Common.TableFromList(@IND_ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_BOX_DATE_SET] TO rl_install_box;
 GO

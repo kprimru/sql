@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(DTMS_LAST)
 	FROM	Distr.DistrType
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_TYPE_LAST] TO rl_distr_type_r;
 GO

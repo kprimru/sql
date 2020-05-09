@@ -34,3 +34,4 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'HALF', 'Удаление', @MASTERID, @OLD, @NEW
 END
 
+GO

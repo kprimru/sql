@@ -22,5 +22,6 @@ BEGIN
 
 	SET @RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Distr].[NET_TYPE_FSELECT] TO rl_net_type_r;
 GO

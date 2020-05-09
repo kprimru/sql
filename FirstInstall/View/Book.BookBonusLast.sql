@@ -14,4 +14,4 @@ AS
 		BB_DATE, BB_END
 	FROM
 		Book.BookBonusAll a
-	WHERE BB_REF IN (1, 3)
+	WHERE BB_REF IN (1, 3)GO

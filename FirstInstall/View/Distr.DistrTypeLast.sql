@@ -13,4 +13,4 @@ AS
 		DT_SHORT, DT_REG, DT_DATE, DT_END
 	FROM
 		Distr.DistrTypeAll a
-	WHERE DT_REF IN (1, 3)
+	WHERE DT_REF IN (1, 3)GO

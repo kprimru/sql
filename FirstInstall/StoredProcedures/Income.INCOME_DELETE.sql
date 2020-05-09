@@ -27,5 +27,6 @@ BEGIN
 	FROM	Income.Incomes
 	WHERE	IN_ID	=	@IN_ID
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_DELETE] TO rl_income_d;
 GO

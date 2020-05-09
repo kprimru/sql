@@ -36,3 +36,4 @@ BEGIN
 			'0c3cb75e-0fba-df11-b163-000c2986905f'
 		)
 END
+GO

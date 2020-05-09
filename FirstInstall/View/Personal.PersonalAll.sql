@@ -12,4 +12,4 @@ AS
 		PER_ID_DEP, PER_ID_TYPE,
 		PER_DATE, PER_END, PER_REF
 	FROM
-		Personal.PersonalDetail
+		Personal.PersonalDetailGO

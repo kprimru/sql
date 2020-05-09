@@ -65,5 +65,6 @@ BEGIN
 	--EXEC [Distr].[SYSTEM_WEIGHT]
 END
 
+GO
 GRANT EXECUTE ON [Distr].[SYSTEM_INSERT] TO rl_system_i;
 GO

@@ -18,5 +18,6 @@ BEGIN
 			FROM Common.TableFromList(@ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Claim].[CLAIM_DETAIL_DELETE] TO rl_claim_w;
 GO

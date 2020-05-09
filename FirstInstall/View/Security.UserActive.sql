@@ -12,4 +12,4 @@ AS
 		US_LOGIN, US_NOTE, US_DATE, US_END
 	FROM
 		Security.UserAll
-	WHERE US_REF = 1
+	WHERE US_REF = 1GO

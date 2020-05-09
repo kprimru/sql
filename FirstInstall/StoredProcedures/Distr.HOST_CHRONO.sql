@@ -68,5 +68,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[HOST_CHRONO] TO rl_host_u;
 GO

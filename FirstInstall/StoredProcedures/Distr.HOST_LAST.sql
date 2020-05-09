@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(HSTMS_LAST)
 	FROM	Distr.Hosts
 END
+GO
 GRANT EXECUTE ON [Distr].[HOST_LAST] TO rl_host_r;
 GO

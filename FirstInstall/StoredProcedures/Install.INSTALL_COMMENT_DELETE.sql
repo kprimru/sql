@@ -15,5 +15,6 @@ BEGIN
 		Install.InstallComments
 	WHERE IC_ID = @IC_ID
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_COMMENT_DELETE] TO rl_install_comment_d;
 GO

@@ -15,5 +15,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_DELETED] TO rl_personal_type_r;
 GO

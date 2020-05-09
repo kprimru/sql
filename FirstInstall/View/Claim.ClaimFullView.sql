@@ -20,4 +20,4 @@ AS
 		CLD_COUNT, CLD_COMMENT
 	FROM
 		Claim.ClaimMasterView INNER JOIN
-		Claim.ClaimDetailView ON CLM_ID = CLD_ID_CLAIM
+		Claim.ClaimDetailView ON CLM_ID = CLD_ID_CLAIMGO

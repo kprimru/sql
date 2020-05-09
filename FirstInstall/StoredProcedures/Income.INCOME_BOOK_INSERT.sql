@@ -49,5 +49,6 @@ BEGIN
 
 	EXEC Common.PROTOCOL_INSERT 'INCOME_BOOK', 'Ввод оплаты ГК', @IB_ID, @OLD, @NEW
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_BOOK_INSERT] TO rl_income_book_i;
 GO

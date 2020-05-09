@@ -61,5 +61,6 @@ BEGIN
         COMMIT TRANSACTION
 END
 
+GO
 GRANT EXECUTE ON [Security].[USER_CHRONO] TO rl_user_u;
 GO

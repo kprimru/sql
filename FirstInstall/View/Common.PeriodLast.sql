@@ -15,3 +15,4 @@ AS
 	FROM
 		Common.PeriodAll a
 	WHERE PR_REF IN (1, 3)
+GO

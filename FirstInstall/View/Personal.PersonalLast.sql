@@ -14,4 +14,4 @@ AS
 		PER_DATE, PER_END
 	FROM
 		Personal.PersonalAll a
-	WHERE PER_REF IN (1, 3)
+	WHERE PER_REF IN (1, 3)GO

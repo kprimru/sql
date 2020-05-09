@@ -17,5 +17,6 @@ BEGIN
 	FROM Install.InstallMasterView
 	WHERE INS_ID = @INS_ID
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_SELECT] TO rl_install_r;
 GO

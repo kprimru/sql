@@ -12,4 +12,4 @@ AS
 		US_ID, US_ID_MASTER, US_NAME
 	FROM
 		Claim.Claims INNER JOIN
-		Security.UserLast ON US_ID_MASTER = CLM_ID_USER	
+		Security.UserLast ON US_ID_MASTER = CLM_ID_USER	GO

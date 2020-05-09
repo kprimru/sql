@@ -15,5 +15,6 @@ BEGIN
 
 	SELECT	@RC = @@ROWCOUNT
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_DELETED] TO rl_distr_store_r;
 GO

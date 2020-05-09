@@ -12,4 +12,4 @@ AS
 		WG_VALUE, WG_DATE, WG_END
 	FROM
 		Distr.WeightAll
-	WHERE WG_REF = 1
+	WHERE WG_REF = 1GO

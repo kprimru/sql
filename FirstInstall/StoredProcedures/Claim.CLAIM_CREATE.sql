@@ -56,5 +56,6 @@ BEGIN
 			FROM Common.TableFromList(@IND_ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Claim].[CLAIM_CREATE] TO rl_claim_w;
 GO

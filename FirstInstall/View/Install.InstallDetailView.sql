@@ -30,4 +30,4 @@ AS
 		Distr.NetTypeDetail		ON	NT_ID_MASTER	=	IND_ID_NET		INNER JOIN
 		Distr.TechTypeDetail	ON	TT_ID_MASTER	=	IND_ID_TECH
 	WHERE SYS_REF IN (1, 3) AND DT_REF IN (1, 3) AND NT_REF IN (1, 3) AND TT_REF IN (1, 3)
-		
+		GO

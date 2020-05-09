@@ -48,5 +48,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_PERSONAL_DELETE] TO rl_income_personal;
 GO

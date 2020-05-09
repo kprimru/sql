@@ -13,4 +13,4 @@ AS
 		SYS_DATE, SYS_END
 	FROM
 		Distr.SystemAll a
-	WHERE SYS_REF = 3
+	WHERE SYS_REF = 3GO

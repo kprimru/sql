@@ -528,5 +528,6 @@ END
 
 
 
+GO
 GRANT EXECUTE ON [Install].[INSTALL_FULL_SELECT_NEW] TO rl_install_r;
 GO

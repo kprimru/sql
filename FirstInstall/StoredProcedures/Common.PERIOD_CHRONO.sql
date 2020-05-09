@@ -73,5 +73,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'PERIOD', 'Хронологическое изменение', @PR_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Common].[PERIOD_CHRONO] TO rl_period_u;
 GO

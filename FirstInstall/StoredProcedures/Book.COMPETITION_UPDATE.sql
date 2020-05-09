@@ -52,5 +52,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Book].[COMPETITION_UPDATE] TO rl_competition_u;
 GO

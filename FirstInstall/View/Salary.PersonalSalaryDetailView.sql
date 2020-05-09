@@ -19,4 +19,4 @@ AS
 		Salary.PersonalSalary ON PS_ID = PSD_ID_MASTER INNER JOIN
 		Income.IncomeDetail a ON ID_ID = PSD_ID_INCOME INNER JOIN
 		Income.IncomeFullView b ON a.ID_ID = b.ID_ID
-	
+	GO

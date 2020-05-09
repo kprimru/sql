@@ -60,5 +60,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[HOST_INSERT] TO rl_host_i;
 GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(WGMS_LAST)
 	FROM	Distr.Weight
 END
+GO
 GRANT EXECUTE ON [Distr].[WEIGHT_LAST] TO rl_weight_r;
 GO

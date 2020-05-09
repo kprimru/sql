@@ -35,5 +35,6 @@ BEGIN
 	SELECT	@RC	=	@@ROWCOUNT
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_BONUS_OVER] TO rl_book_bonus_d;
 GO

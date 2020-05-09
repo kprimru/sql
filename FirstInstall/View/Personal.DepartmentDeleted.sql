@@ -12,4 +12,4 @@ AS
 		DP_FULL, DP_DATE, DP_END
 	FROM
 		Personal.DepartmentAll a
-	WHERE DP_REF = 3
+	WHERE DP_REF = 3GO

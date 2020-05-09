@@ -60,5 +60,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_PRICE_INSERT] TO rl_book_price_i;
 GO

@@ -44,5 +44,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'VENDOR', 'Редактирование', @VD_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Clients].[VENDOR_UPDATE] TO rl_vendor_u;
 GO

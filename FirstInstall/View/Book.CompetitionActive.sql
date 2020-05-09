@@ -14,4 +14,4 @@ AS
 		CP_DATE, CP_END
 	FROM
 		Book.CompetitionAll
-	WHERE CP_REF = 1
+	WHERE CP_REF = 1GO

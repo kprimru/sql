@@ -12,4 +12,4 @@ AS
 		PT_ALIAS, PT_DATE, PT_END
 	FROM
 		Personal.PersonalTypeAll
-	WHERE PT_REF = 1
+	WHERE PT_REF = 1GO

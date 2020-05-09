@@ -53,5 +53,6 @@ BEGIN
 
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_DETAIL_INSERT] TO rl_install_i;
 GO

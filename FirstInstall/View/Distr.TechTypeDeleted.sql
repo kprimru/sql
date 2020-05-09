@@ -12,4 +12,4 @@ AS
 		TT_REG, TT_COEF, TT_DATE, TT_END
 	FROM
 		Distr.TechTypeAll a
-	WHERE TT_REF = 3
+	WHERE TT_REF = 3GO

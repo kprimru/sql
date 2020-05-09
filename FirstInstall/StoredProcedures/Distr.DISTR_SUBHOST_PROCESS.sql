@@ -22,5 +22,6 @@ BEGIN
 			FROM Common.TableFromList(@ID, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_SUBHOST_PROCESS] TO rl_distr_income_w;
 GO

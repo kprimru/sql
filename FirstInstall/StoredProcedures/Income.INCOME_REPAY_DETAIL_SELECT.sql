@@ -62,5 +62,6 @@ BEGIN
 			FROM Income.IncomeMasterGet(@ID_ID)
 		)
 END
+GO
 GRANT EXECUTE ON [Income].[INCOME_REPAY_DETAIL_SELECT] TO rl_income_w;
 GO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(BPMS_LAST)
 	FROM	Book.BookPrice
 END
+GO
 GRANT EXECUTE ON [Book].[BOOK_PRICE_LAST] TO rl_book_price_r;
 GO

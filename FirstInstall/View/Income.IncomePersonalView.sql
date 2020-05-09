@@ -15,4 +15,4 @@ AS
 		Income.IncomePersonal INNER JOIN
 		Personal.PersonalDetail ON PER_ID_MASTER = IP_ID_PERSONAL
 	WHERE PER_REF IN (1, 3)
-		
+		GO

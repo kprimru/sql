@@ -48,5 +48,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Distr].[WEIGHT_UPDATE] TO rl_weight_u;
 GO

@@ -78,5 +78,6 @@ BEGIN
 		SET @result = 0
 	END
 END
+GO
 GRANT EXECUTE ON [Common].[LOCK_RECORD] TO public;
 GO

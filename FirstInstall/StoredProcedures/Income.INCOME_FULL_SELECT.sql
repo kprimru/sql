@@ -126,5 +126,6 @@ BEGIN
 END
 
 
+GO
 GRANT EXECUTE ON [Income].[INCOME_FULL_SELECT] TO rl_income_r;
 GO

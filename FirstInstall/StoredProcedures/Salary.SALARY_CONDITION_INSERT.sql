@@ -61,5 +61,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Salary].[SALARY_CONDITION_INSERT] TO rl_salary_condition_i;
 GO

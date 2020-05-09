@@ -13,5 +13,6 @@ BEGIN
 	FROM Personal.PersonalLast
 	ORDER BY PER_NAME
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_PERSONAL_SELECT] TO rl_install_personal;
 GO

@@ -21,4 +21,4 @@ AS
 		Clients.ClientDetail ON CL_ID_MASTER = IB_ID_CLIENT INNER JOIN
 		Clients.VendorDetail ON VD_ID_MASTER = IB_ID_VENDOR
 	WHERE HLF_REF IN (1, 3) AND CL_REF IN (1, 3) AND VD_REF IN (1, 3)
-		
+		GO

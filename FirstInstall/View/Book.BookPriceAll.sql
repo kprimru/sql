@@ -14,4 +14,4 @@ AS
 		BP_DATE, BP_END, BP_REF
 	FROM
 		Book.BookPriceDetail	INNER JOIN
-		Common.HalfLast			ON	HLF_ID_MASTER	=	BP_ID_HALF
+		Common.HalfLast			ON	HLF_ID_MASTER	=	BP_ID_HALFGO

@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(USMS_LAST)
 	FROM	Security.Users
 END
+GO
 GRANT EXECUTE ON [Security].[USER_LAST] TO rl_user_r;
 GO

@@ -72,5 +72,6 @@ BEGIN
 
 END
 
+GO
 GRANT EXECUTE ON [Common].[HALF_CHRONO] TO rl_half_u;
 GO

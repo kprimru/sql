@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(DS_LAST)
 	FROM	Distr.DistrStore
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_LAST] TO rl_distr_store_r;
 GO

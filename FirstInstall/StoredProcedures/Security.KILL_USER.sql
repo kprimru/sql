@@ -19,3 +19,4 @@ BEGIN
 
 	EXEC (@SQL)
 END
+GO

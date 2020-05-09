@@ -14,4 +14,4 @@ AS
 		BB_DATE, BB_END
 	FROM
 		Book.BookBonusAll
-	WHERE BB_REF = 1
+	WHERE BB_REF = 1GO

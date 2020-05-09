@@ -12,5 +12,6 @@ BEGIN
 
 	DELETE FROM Distr.DistrIncome WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Distr].[DISTR_INCOME_DELETE] TO rl_distr_income_w;
 GO

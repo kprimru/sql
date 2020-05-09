@@ -10,4 +10,4 @@ AS
 	SELECT
 		CL_ID_MASTER, CL_ID, CL_NAME, CL_DATE, CL_END, CL_REF
 	FROM
-		Clients.ClientDetail
+		Clients.ClientDetailGO

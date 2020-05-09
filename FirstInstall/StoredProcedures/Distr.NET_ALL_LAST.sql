@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT = MAX(LAST)
 	FROM	Distr.NetAll
 END
+GO
 GRANT EXECUTE ON [Distr].[NET_ALL_LAST] TO rl_distr_income_r;
 GO

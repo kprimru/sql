@@ -12,4 +12,4 @@ AS
 		PT_ALIAS, PT_DATE, PT_END
 	FROM
 		Personal.PersonalTypeAll a
-	WHERE PT_REF = 3
+	WHERE PT_REF = 3GO

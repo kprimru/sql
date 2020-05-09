@@ -12,4 +12,4 @@ AS
 		PR_BEGIN_DATE, PR_END_DATE,
 		PR_DATE, PR_END, PR_REF
 	FROM
-		Common.PeriodDetail
+		Common.PeriodDetailGO

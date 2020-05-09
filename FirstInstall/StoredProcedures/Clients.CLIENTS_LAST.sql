@@ -13,5 +13,6 @@ BEGIN
 	SELECT	@DT	=	MAX(CLMS_LAST)
 	FROM	Clients.Clients
 END
+GO
 GRANT EXECUTE ON [Clients].[CLIENTS_LAST] TO rl_clients_r;
 GO

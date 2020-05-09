@@ -67,5 +67,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'BOOK_PRICE', 'Хронологическое изменение', @BP_ID_MASTER, @OLD, @NEW
 END
 
+GO
 GRANT EXECUTE ON [Book].[BOOK_PRICE_CHRONO] TO rl_book_price_u;
 GO

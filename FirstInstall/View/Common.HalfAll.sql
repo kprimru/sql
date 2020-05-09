@@ -12,4 +12,4 @@ AS
 		HLF_BEGIN_DATE, HLF_END_DATE,
 		HLF_DATE, HLF_END, HLF_REF
 	FROM
-		Common.HalfDetail
+		Common.HalfDetailGO

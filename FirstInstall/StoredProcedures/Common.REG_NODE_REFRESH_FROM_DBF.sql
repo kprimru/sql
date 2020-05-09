@@ -15,3 +15,4 @@ BEGIN
 	INSERT INTO Common.RegNode
 		SELECT * FROM DBF.dbo.RegNodeTable
 END
+GO

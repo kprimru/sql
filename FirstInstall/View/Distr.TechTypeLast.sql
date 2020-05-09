@@ -14,3 +14,4 @@ AS
 	FROM
 		Distr.TechTypeAll a
 	WHERE TT_REF IN (1, 3)
+GO

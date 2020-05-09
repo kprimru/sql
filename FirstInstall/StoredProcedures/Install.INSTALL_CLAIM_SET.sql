@@ -43,5 +43,6 @@ BEGIN
 	DEALLOCATE ID
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_CLAIM_SET] TO rl_install_claim_w;
 GO

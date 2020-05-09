@@ -13,4 +13,4 @@ AS
 		HLF_DATE, HLF_END
 	FROM
 		Common.HalfAll
-	WHERE HLF_REF = 1
+	WHERE HLF_REF = 1GO

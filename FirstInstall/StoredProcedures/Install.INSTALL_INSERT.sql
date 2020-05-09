@@ -35,5 +35,6 @@ BEGIN
 	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'Новая запись', @INS_ID, @OLD, @NEW
 
 END
+GO
 GRANT EXECUTE ON [Install].[INSTALL_INSERT] TO rl_install_i;
 GO

@@ -20,5 +20,6 @@ BEGIN
 			FROM	Common.TableFromList(@docid, ',')
 		)
 END
+GO
 GRANT EXECUTE ON [Common].[LOCK_RELEASE] TO public;
 GO
