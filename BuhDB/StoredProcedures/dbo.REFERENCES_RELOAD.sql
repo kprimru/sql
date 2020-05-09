@@ -31,3 +31,4 @@ BEGIN
 				AND SP.ID_PRICE = P.ID
 		)
 END
+GO

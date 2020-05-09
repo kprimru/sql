@@ -40,5 +40,6 @@ BEGIN
 			AND ContractDate = @DATE
 			AND ProviderName = @PROVIDER
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_COPY] TO DBCount;
 GO

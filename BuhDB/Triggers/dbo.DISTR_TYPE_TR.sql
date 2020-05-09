@@ -22,3 +22,4 @@ BEGIN
 					AND ID_TYPE = DistrTypeID
 			)
 END
+GO

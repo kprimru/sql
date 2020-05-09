@@ -24,3 +24,4 @@ as
 		select property, version, value, lvalue
 			from dbo.dtproperties
 			where  @id=objectid and @property=property
+GO

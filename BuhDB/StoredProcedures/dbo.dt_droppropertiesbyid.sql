@@ -22,3 +22,4 @@ as
 		delete from dbo.dtproperties
 			where objectid=@id and property=@property
 
+GO

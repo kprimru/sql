@@ -63,5 +63,6 @@ BEGIN
 		ORDER BY SystemGroupOrder, SystemOrder
 	END
 END
+GO
 GRANT EXECUTE ON [dbo].[SYSTEM_LIST_SELECT] TO DBPrice;
 GO

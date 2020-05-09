@@ -21,3 +21,4 @@ select @VSSGUID = 'SQLVersionControl.VCS_SQL'
     if @iReturn <> 0 raiserror('', 16, -1) /* Can't Load Helper DLLC */
 
 
+GO

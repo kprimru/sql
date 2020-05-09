@@ -15,5 +15,6 @@ BEGIN
 	WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%פכ‎ר%')
 	ORDER BY SystemOrder
 END
+GO
 GRANT EXECUTE ON [dbo].[ACT_DETAIL_PRINT] TO DBCount;
 GO

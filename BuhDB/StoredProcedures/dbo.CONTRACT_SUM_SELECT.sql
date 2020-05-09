@@ -109,5 +109,6 @@ BEGIN
 			) AS o_O
 		ORDER BY SystemGroupOrder, SystemOrder
 END
+GO
 GRANT EXECUTE ON [dbo].[CONTRACT_SUM_SELECT] TO DBCount;
 GO

@@ -28,3 +28,4 @@ declare @iReturn int
     return @iReturn
 
 
+GO
