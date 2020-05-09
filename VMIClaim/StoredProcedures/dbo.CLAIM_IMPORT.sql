@@ -37,5 +37,6 @@ BEGIN
 					AND PHONE = @PHONE
 			)
 END
+GO
 GRANT EXECUTE ON [dbo].[CLAIM_IMPORT] TO rl_robot;
 GO

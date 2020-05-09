@@ -14,5 +14,6 @@ BEGIN
 	FROM dbo.ClaimWork
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [dbo].[CLAIM_WORK_DELETE] TO rl_write;
 GO

@@ -18,5 +18,6 @@ BEGIN
 		INSERT INTO dbo.ClaimEmail2(ID_CLAIM)
 			VALUES(@ID)
 END
+GO
 GRANT EXECUTE ON [dbo].[CLAIM_SEND] TO rl_robot;
 GO

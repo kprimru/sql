@@ -13,5 +13,6 @@ BEGIN
 	FROM dbo.ClaimTypeView
 	ORDER BY NAME
 END
+GO
 GRANT EXECUTE ON [dbo].[CLAIM_TYPE_SELECT] TO rl_read;
 GO
