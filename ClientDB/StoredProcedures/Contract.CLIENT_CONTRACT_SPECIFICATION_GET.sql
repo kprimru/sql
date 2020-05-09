@@ -4,9 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_ADDITIONALS]
-	@Contract_Id	UniqueIdentifier,
-	@HideUnsigned	Bit					= 0
+ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SPECIFICATION_GET]
+	@Id	UniqueIdentifier
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,11 +22,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CA.ID, CA.NUM, CA.REG_DATE, CA.NOTE, CA.Comment, CA.DateFrom, CA.DateTo, CA.SignDate
-		FROM Contract.Additional AS CA
-		WHERE ID_CONTRACT = @Contract_Id
-			AND (@HideUnsigned = 0 OR @HideUnsigned = 1 AND CA.SignDate IS NOT NULL)
-		ORDER BY CA.DATE DESC;
+		SELECT ID_SPECIFICATION, NUM, CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate
+		FROM Contract.ContractSpecification AS CS
+		WHERE ID = @Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -39,6 +36,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_ADDITIONALS] TO rl_client_contract_r;
-GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_ADDITIONALS] TO rl_client_contract_r;
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SPECIFICATION_GET] TO rl_client_contract_r;
 GO

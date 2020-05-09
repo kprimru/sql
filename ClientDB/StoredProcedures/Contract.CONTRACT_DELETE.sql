@@ -34,6 +34,30 @@ BEGIN
 			RETURN
 		END
 
+		IF EXISTS
+			(
+				SELECT *
+				FROM Contract.ContractSpecification
+				WHERE ID_CONTRACT = @ID
+					AND SignDate IS NOT NULL
+			)
+		BEGIN
+			RAISERROR('У договора есть действующие спецификации', 16, 1)
+			RETURN
+		END;
+
+		IF EXISTS
+			(
+				SELECT *
+				FROM Contract.Additional
+				WHERE ID_CONTRACT = @ID
+					AND SignDate IS NOT NULL
+			)
+		BEGIN
+			RAISERROR('У договора есть действующие допсоглашения', 16, 1)
+			RETURN
+		END;
+
 		DELETE FROM Contract.ContractSpecification WHERE ID_CONTRACT = @ID
 		DELETE FROM Contract.Additional WHERE ID_CONTRACT = @ID
 		DELETE FROM Contract.Contract WHERE ID = @ID
@@ -48,5 +72,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CONTRACT_DELETE] TO rl_contract_register_d;
 GRANT EXECUTE ON [Contract].[CONTRACT_DELETE] TO rl_contract_register_d;
 GO

@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS]
-	@Contract_Id	UniqueIdentifier
+	@Contract_Id	UniqueIdentifier,
+	@HideUnsigned	Bit					= 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -22,10 +23,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME
+		SELECT CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME, CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate
 		FROM Contract.ContractSpecification AS CS
 		INNER JOIN Contract.Specification	AS S ON CS.ID_SPECIFICATION = S.ID
 		WHERE ID_CONTRACT = @Contract_Id
+			AND (@HideUnsigned = 0 OR @HideUnsigned = 1 AND CS.SignDate IS NOT NULL)
 		ORDER BY CS.DATE DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -38,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS] TO rl_client_contract_r;
 GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_SPECIFICATIONS] TO rl_client_contract_r;
 GO

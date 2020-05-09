@@ -152,6 +152,7 @@ BEGIN
 
 			DELETE FROM Contract.ContractSpecification
 			WHERE ID_CONTRACT = @ID
+				AND SignDate IS NULL
 				AND
 					ID NOT IN
 					(
@@ -211,6 +212,7 @@ BEGIN
 
 			DELETE FROM Contract.Additional
 			WHERE ID_CONTRACT = @ID
+				AND SignDate IS NULL
 				AND ID NOT IN
 				(
 					SELECT c.value('@id[1]', 'UNIQUEIDENTIFIER')
@@ -257,5 +259,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GRANT EXECUTE ON [Contract].[CONTRACT_SAVE] TO rl_contract_register_w;
 GRANT EXECUTE ON [Contract].[CONTRACT_SAVE] TO rl_contract_register_w;
 GO
