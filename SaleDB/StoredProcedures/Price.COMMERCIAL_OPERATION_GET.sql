@@ -14,3 +14,4 @@ BEGIN
 	FROM Price.CommercialOperation
 	WHERE ID = @ID
 END
+GO

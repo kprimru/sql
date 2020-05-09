@@ -62,5 +62,6 @@ BEGIN
 		OR IsNull([DBFPrice], 0) - IsNull([ClientPrice], 0) != 0
 	ORDER BY S.[ORD]
 END
+GO
 GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT_SELECT] TO rl_price_import;
 GO

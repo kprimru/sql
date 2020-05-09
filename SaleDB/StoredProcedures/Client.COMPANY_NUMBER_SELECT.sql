@@ -12,6 +12,7 @@ BEGIN
 	FROM Client.Company
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_NUMBER_SELECT] TO rl_company_number;
 GRANT EXECUTE ON [Client].[COMPANY_NUMBER_SELECT] TO rl_company_r;
 GO

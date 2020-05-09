@@ -71,5 +71,6 @@ BEGIN
 		WHERE ID_MEMO = @ID
 	END
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_SAVE] TO rl_client_memo_w;
 GO

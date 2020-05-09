@@ -10,3 +10,4 @@ AS
 	SELECT ID, ID_COMPANY
 	FROM Client.CompanyArchive a
 	WHERE a.STATUS = 1
+GO

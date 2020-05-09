@@ -8,4 +8,4 @@ ALTER VIEW [Personal].[OfficePersonalTestView]
 AS
 	SELECT SHORT, LOGIN
 	FROM Personal.OfficePersonal
-	WHERE END_DATE IS NULL
+	WHERE END_DATE IS NULLGO

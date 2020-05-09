@@ -13,5 +13,6 @@ BEGIN
 	SELECT @LAST = MAX(LAST)
 	FROM Common.Tax
 END
+GO
 GRANT EXECUTE ON [Common].[TAX_LAST] TO rl_offer_r;
 GO

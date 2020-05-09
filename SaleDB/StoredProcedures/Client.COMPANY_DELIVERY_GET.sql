@@ -14,5 +14,6 @@ BEGIN
 	FROM Client.CompanyDelivery
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_DELIVERY_GET] TO rl_delivery_r;
 GO

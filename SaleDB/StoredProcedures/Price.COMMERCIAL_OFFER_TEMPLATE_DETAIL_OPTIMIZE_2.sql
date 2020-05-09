@@ -140,3 +140,4 @@ BEGIN
 			ELSE RN_MIN + 1
 		END
 END
+GO

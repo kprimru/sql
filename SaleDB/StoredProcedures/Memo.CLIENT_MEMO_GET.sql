@@ -28,5 +28,6 @@ BEGIN
 	FROM Memo.ClientMemo a
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_GET] TO rl_client_memo_r;
 GO

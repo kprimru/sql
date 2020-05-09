@@ -14,3 +14,4 @@ BEGIN
 	FROM Price.Action
 	WHERE ID = @ID
 END
+GO

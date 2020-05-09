@@ -42,5 +42,6 @@ BEGIN
 	FROM @DBFPrice D
 	INNER JOIN System.Systems S ON S.REG = D.SYS_REG;
 END
+GO
 GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT] TO rl_price_import;
 GO

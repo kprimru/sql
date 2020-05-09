@@ -31,4 +31,4 @@ AS
 						AND z.STATUS = 1
 				) AS o_O
 			ORDER BY BDATE
-		) AS c
+		) AS cGO

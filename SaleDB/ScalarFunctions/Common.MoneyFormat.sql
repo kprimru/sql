@@ -46,3 +46,4 @@ BEGIN
 
 	RETURN @RUB_STR + ',' + RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2)
 END
+GO

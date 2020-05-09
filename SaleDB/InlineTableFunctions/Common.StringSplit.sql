@@ -37,3 +37,4 @@ RETURN
 	SELECT [Order], String, Proposition
 	FROM Proposition
 )
+GO

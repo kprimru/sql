@@ -14,5 +14,6 @@ BEGIN
 	FROM Client.Company
 	WHERE STATUS IN (1, 3)
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_NUMBER_GET] TO rl_company_r;
 GO

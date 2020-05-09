@@ -16,5 +16,6 @@ BEGIN
 	INSERT INTO Client.CompanyOdd(Company_Id, Host_Id, Distr, Comp)
 	VALUES(@Company_Id, @Host_Id, @Distr, @Comp)
 END
+GO
 GRANT EXECUTE ON [dbo].[ODD_DIN_SAVE] TO rl_odd_din_r;
 GO

@@ -86,5 +86,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[PERSONAL_PROCESS_REPORT] TO rl_personal_process_report;
 GO

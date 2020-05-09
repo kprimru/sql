@@ -14,5 +14,6 @@ BEGIN
 	FROM Price.OfferTemplate
 	ORDER BY SHORT
 END
+GO
 GRANT EXECUTE ON [Price].[OFFER_TEMPLATE_SELECT] TO rl_offer_r;
 GO

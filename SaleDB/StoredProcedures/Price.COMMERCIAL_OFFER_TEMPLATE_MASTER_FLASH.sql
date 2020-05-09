@@ -171,3 +171,4 @@ BEGIN
 		INNER JOIN Client.Company d ON a.ID_CLIENT = d.ID
 	WHERE a.ID = @ID
 END
+GO

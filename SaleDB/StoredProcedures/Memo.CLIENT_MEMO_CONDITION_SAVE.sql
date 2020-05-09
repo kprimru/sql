@@ -21,5 +21,6 @@ BEGIN
 					WHERE ID_MEMO = @ID
 				), 1)
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_CONDITION_SAVE] TO rl_client_memo_w;
 GO

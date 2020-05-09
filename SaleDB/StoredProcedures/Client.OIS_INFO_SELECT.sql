@@ -14,5 +14,6 @@ BEGIN
 	FROM Client.OISInfo
 	WHERE ID_COMPANY = @ID
 END
+GO
 GRANT EXECUTE ON [Client].[OIS_INFO_SELECT] TO rl_client_ois_r;
 GO

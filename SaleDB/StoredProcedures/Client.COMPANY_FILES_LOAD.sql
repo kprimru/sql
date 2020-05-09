@@ -14,5 +14,6 @@ BEGIN
 	FROM Client.CompanyFiles
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_FILES_LOAD] TO rl_company_files_r;
 GO

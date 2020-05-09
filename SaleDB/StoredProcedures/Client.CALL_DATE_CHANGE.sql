@@ -44,5 +44,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[CALL_DATE_CHANGE] TO rl_company_call_date;
 GO

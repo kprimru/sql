@@ -69,5 +69,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_PROCESS_MANAGER_RETURN] TO rl_company_process_return_manager;
 GO

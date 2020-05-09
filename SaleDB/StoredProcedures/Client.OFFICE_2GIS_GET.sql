@@ -19,5 +19,6 @@ BEGIN
 		INNER JOIN Address.Street c ON b.ID_STREET = c.ID
 	WHERE a.ID = @ID
 END
+GO
 GRANT EXECUTE ON [Client].[OFFICE_2GIS_GET] TO rl_office_r;
 GO

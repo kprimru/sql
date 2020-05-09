@@ -10,3 +10,4 @@ AS
 	SELECT ID, ID_COMPANY
 	FROM Client.CompanyWarning a
 	WHERE a.STATUS = 1 AND a.END_DATE IS NULL
+GO

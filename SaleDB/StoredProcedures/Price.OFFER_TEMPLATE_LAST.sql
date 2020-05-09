@@ -13,5 +13,6 @@ BEGIN
 	SELECT @LAST = MAX(LAST)
 	FROM Price.OfferTemplate
 END
+GO
 GRANT EXECUTE ON [Price].[OFFER_TEMPLATE_LAST] TO rl_offer_r;
 GO

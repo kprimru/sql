@@ -125,5 +125,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[CompanyDepo@Load] TO rl_depo_file_process;
 GO

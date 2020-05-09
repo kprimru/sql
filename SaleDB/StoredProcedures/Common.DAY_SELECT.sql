@@ -13,5 +13,6 @@ BEGIN
 	FROM Common.Day
 	ORDER BY NUM
 END
+GO
 GRANT EXECUTE ON [Common].[DAY_SELECT] TO public;
 GO

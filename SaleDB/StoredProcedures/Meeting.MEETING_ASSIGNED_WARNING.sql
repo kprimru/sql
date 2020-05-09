@@ -45,5 +45,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Meeting].[MEETING_ASSIGNED_WARNING] TO rl_warning_meeting_assigned;
 GO

@@ -20,5 +20,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_DEPO_DELETE] TO rl_depo_d;
 GO

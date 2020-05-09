@@ -20,5 +20,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[CompanyDepo@Set Number] TO rl_depo_number;
 GO

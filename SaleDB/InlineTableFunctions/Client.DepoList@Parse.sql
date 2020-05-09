@@ -29,3 +29,4 @@ RETURN
 		[Rival]				= Node.value('@Rival[1]',				'VarChar(50)')
 	FROM @Data.nodes('/DEPO/ITEM') Data(Node)
 )
+GO

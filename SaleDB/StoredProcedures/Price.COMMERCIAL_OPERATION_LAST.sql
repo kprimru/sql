@@ -13,5 +13,6 @@ BEGIN
 	SELECT @LAST = MAX(LAST)
 	FROM Price.CommercialOperation
 END
+GO
 GRANT EXECUTE ON [Price].[COMMERCIAL_OPERATION_LAST] TO rl_offer_r;
 GO

@@ -40,5 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[CompanyDepo@UnStage] TO rl_depo_w;
 GO

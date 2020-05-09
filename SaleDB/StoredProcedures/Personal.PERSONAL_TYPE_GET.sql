@@ -32,5 +32,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Personal].[PERSONAL_TYPE_GET] TO rl_personal_type_r;
 GO

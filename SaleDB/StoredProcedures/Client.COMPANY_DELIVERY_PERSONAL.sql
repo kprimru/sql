@@ -13,5 +13,6 @@ BEGIN
 	FROM Client.CompanyDelivery
 	ORDER BY PERSONAL
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_DELIVERY_PERSONAL] TO rl_delivery_filter;
 GO

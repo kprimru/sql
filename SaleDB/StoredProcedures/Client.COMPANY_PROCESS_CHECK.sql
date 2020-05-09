@@ -102,6 +102,7 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_manager;
 GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_phone;
 GRANT EXECUTE ON [Client].[COMPANY_PROCESS_CHECK] TO rl_company_process_return_manager;

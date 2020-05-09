@@ -967,5 +967,6 @@ BEGIN
 		DROP TABLE #address
 	*/
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_SELECT] TO rl_company_r;
 GO

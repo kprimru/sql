@@ -13,3 +13,4 @@ AS
 		INNER JOIN Client.Call b ON a.ID = b.ID_COMPANY
 	WHERE a.STATUS = 1 AND b.STATUS = 1
 	GROUP BY a.ID
+GO

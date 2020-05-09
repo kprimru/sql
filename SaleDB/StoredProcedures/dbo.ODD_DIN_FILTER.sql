@@ -69,5 +69,6 @@ BEGIN
 		DistrNumber,
 		CompNumber
 END
+GO
 GRANT EXECUTE ON [dbo].[ODD_DIN_FILTER] TO rl_odd_din_r;
 GO

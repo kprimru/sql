@@ -125,3 +125,4 @@ BEGIN
 		INNER JOIN Price.OfferTemplate c ON c.ID = a.ID_TEMPLATE
 	WHERE a.ID = @ID
 END
+GO

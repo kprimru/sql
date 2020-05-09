@@ -61,3 +61,4 @@ AS
 			, '') AS DATA
 	FROM Client.Company a
 	WHERE a.STATUS = 1
+GO

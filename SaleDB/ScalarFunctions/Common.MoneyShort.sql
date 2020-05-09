@@ -31,3 +31,4 @@ BEGIN
 
 	RETURN CAST(@rpart AS VARCHAR(20)) + ' руб. ' + RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2) + ' коп.'
 END
+GO

@@ -11,3 +11,4 @@ AS
 	FROM Client.Company a
 	WHERE a.STATUS = 1
 		AND NUMBER IS NOT NULL
+GO

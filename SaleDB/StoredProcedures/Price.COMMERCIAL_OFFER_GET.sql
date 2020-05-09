@@ -17,5 +17,6 @@ BEGIN
 	FROM Price.CommercialOffer
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Price].[COMMERCIAL_OFFER_GET] TO rl_offer_w;
 GO

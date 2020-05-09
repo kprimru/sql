@@ -37,5 +37,6 @@ BEGIN
 		LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.ContractPayTable g ON g.ContractPayID = a.ID_CONTRACT_PAY
 	WHERE a.ID = @ID
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_PRINT] TO rl_client_memo_r;
 GO

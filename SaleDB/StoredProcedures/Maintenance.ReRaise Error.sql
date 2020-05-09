@@ -26,3 +26,4 @@ BEGIN
 
 	RaisError(@ErrorMessage, @ErrorSeverity, @ErrorState)
 END
+GO

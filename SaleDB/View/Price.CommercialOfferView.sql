@@ -90,3 +90,4 @@ AS
 		LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemDocsView l ON l.SystemBaseName = f.REG
 		LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemDocsView m ON m.SystemBaseName = g.REG
 		LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemDocsView n ON n.SystemBaseName = h.REG
+GO

@@ -16,5 +16,6 @@ BEGIN
 	INSERT INTO Client.ManagerOdd(Manager_Id, Host_Id, Distr, Comp)
 	VALUES(@Manager_Id, @Host_Id, @Distr, @Comp)
 END
+GO
 GRANT EXECUTE ON [dbo].[ODD_DIN_MANAGER_SAVE] TO rl_odd_manager;
 GO

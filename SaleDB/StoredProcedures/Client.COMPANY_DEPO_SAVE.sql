@@ -120,5 +120,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_DEPO_SAVE] TO rl_depo_w;
 GO

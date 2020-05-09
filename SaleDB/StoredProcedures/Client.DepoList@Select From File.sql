@@ -96,5 +96,6 @@ BEGIN
 	ORDER BY D.[Action], D.[Number]
 	OPTION(RECOMPILE)
 END
+GO
 GRANT EXECUTE ON [Client].[DepoList@Select From File] TO rl_depo_file_process;
 GO

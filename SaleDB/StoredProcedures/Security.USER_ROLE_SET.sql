@@ -36,5 +36,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Security].[USER_ROLE_SET] TO rl_user_role_w;
 GO

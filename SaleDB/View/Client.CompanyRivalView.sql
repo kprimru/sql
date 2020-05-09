@@ -14,3 +14,4 @@ AS
 			WHERE STATUS = 1
 		) AS o_O
 	WHERE RN = 1
+GO

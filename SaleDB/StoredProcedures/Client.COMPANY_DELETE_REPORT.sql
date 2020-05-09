@@ -49,5 +49,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [Client].[COMPANY_DELETE_REPORT] TO rl_company_delete_report;
 GO

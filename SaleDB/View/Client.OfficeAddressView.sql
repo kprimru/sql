@@ -17,4 +17,4 @@ AS
 		INNER JOIN Client.OfficeAddress a ON z.ID = a.ID_OFFICE
 		LEFT OUTER JOIN Address.Area b ON a.ID_AREA = b.ID
 		LEFT OUTER JOIN Address.Street c ON a.ID_STREET = c.ID
-		LEFT OUTER JOIN Address.City d ON c.ID_CITY = d.ID
+		LEFT OUTER JOIN Address.City d ON c.ID_CITY = d.IDGO

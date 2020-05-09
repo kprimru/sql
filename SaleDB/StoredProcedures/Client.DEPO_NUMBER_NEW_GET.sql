@@ -12,5 +12,6 @@ BEGIN
 	WHERE	STATUS = 1 AND
 			DEPO_NUM > 6229 -- бнр щрн мюдн асдер сапюрэ, йнцдю бяеу дн 6000 днаюбър
 END
+GO
 GRANT EXECUTE ON [Client].[DEPO_NUMBER_NEW_GET] TO rl_depo_info_r;
 GO

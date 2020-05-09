@@ -17,4 +17,4 @@ AS
 		INNER JOIN Client.OfficeAddress a ON z.ID = a.ID_OFFICE
 		INNER JOIN Address.Street c ON a.ID_STREET = c.ID
 		INNER JOIN Address.City d ON c.ID_CITY = d.ID
-	WHERE z.STATUS = 1
+	WHERE z.STATUS = 1GO

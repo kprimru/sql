@@ -17,5 +17,6 @@ BEGIN
 	FROM Memo.ClientMemo
 	WHERE ID = @ID
 END
+GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_DELETE] TO rl_client_memo_d;
 GO

@@ -25,3 +25,4 @@ RETURN
 	) AS N
 	ORDER BY [Ord]
 )
+GO

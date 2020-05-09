@@ -83,5 +83,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
 GRANT EXECUTE ON [System].[WEIGHT_IMPORT] TO rl_system_weight_import;
 GO
