@@ -95,7 +95,7 @@ BEGIN
 					SELECT StatisticDate, InfoBankName, Docs
 					FROM
 						dbo.StatisticTable a
-						INNER JOIN dbo.SystemBanksView b WITH(NOEXPAND) ON a.InfoBankID = b.InfoBankID
+						INNER JOIN dbo.InfoBankTable b ON a.InfoBankID = b.InfoBankID
 					WHERE StatisticDate >= dbo.DateOf(DATEADD(MONTH, -1, GETDATE()))
 				) AS a
 			FOR XML RAW('ITEM'), ROOT('STAT')

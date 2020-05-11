@@ -22,9 +22,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT *
-		FROM dbo.SystemBanksView WITH(NOEXPAND)
-		WHERE SystemID = @SYSTEM
+		SELECT
+            InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
+            SystemID, SystemFullName, SystemActive, SystemOrder, SystemShortName, SystemBaseName, Required, HostID, InfoBankStart
+		FROM dbo.SystemBankGet(@SYSTEM, 2) a
 		ORDER BY InfoBankOrder
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

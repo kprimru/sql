@@ -4,9 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[STATISTIC_GET]
-	@DATE		SMALLDATETIME,
-	@SYSTEM_ID	INT
+CREATE PROCEDURE [dbo].[STATISTIC_SELECT]
+	@DATE	SMALLDATETIME
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,18 +22,15 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT
-			a.[InfoBankID], a.[InfoBankName], a.[InfoBankFullName],
-			(
-				SELECT TOP 1 b.DOCS
-				FROM dbo.StatisticTable b
-				WHERE	b.InfoBankID = a.InfoBankID
-					AND b.StatisticDate <= @DATE
-				ORDER BY StatisticDate DESC
-			) as DOCS
-        -- ToDo хардкод
-		FROM dbo.SystemBankGet(@SYSTEM_ID, 2) a
-		ORDER BY a.InfoBankOrder
+		SELECT SystemFullName, InfoBankFullName, InfoBankName, Docs
+		FROM
+			dbo.StatisticTable a INNER JOIN
+			dbo.SystemBanksView b WITH(NOEXPAND) ON a.InfoBankID = b.InfoBankID
+		WHERE StatisticDate = @DATE
+			AND SystemActive = 1
+			AND InfoBankActive = 1
+			AND Required IN (1, 2)
+		ORDER BY SystemOrder, InfoBankOrder
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -47,5 +43,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [dbo].[STATISTIC_GET] TO DBStatistic;
+GRANT EXECUTE ON [dbo].[=STATISTIC_SELECT] TO DBStatistic;
 GO

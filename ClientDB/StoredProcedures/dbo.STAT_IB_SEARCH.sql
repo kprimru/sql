@@ -71,9 +71,9 @@ BEGIN
 						FROM
 							(
 								SELECT SystemID, a.InfoBankID, MAX(b.StatisticDate) AS StatisticDate
-								FROM
-									dbo.SystemBanksView a WITH(NOEXPAND)
-									INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+								FROM dbo.SystemTable
+                                CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+								INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
 								WHERE b.StatisticDate <= t.StatisticDate AND t.SystemID = a.SystemID AND SystemActive = 1 AND InfoBankActive = 1
 								GROUP BY SystemID, a.InfoBankID
 							) AS p
@@ -81,13 +81,13 @@ BEGIN
 					), SystemOrder, 2
 				FROM
 					(
-						SELECT DISTINCT SystemID, SystemOrder, StatisticDate
-						FROM
-							dbo.SystemBanksView a WITH(NOEXPAND)
-							INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+						SELECT DISTINCT a.SystemID, a.SystemOrder, StatisticDate
+						FROM dbo.SystemTable
+                        CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+						INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
 						WHERE (StatisticDate >= @BEGIN  OR @BEGIN IS NULL)
 							AND (StatisticDate <= @END OR @END IS NULL)
-							AND SystemActive = 1 AND InfoBankActive = 1
+							AND a.SystemActive = 1 AND InfoBankActive = 1
 					) AS t
 
 			UPDATE a
@@ -125,17 +125,18 @@ BEGIN
 
 			INSERT INTO #result(ID, ID_MASTER, SYS_ID, IB_ID, NAME, ORD, LVL)
 				SELECT NEWID(), (SELECT ID FROM #result WHERE LVL = 1 AND SYS_ID = SystemID), SystemID, InfoBankID, InfoBankShortName, InfoBankOrder, 2
-				FROM dbo.SystemBanksView WITH(NOEXPAND)
-				WHERE SystemActive = 1 AND InfoBankActive = 1
+				FROM dbo.SystemTable
+                CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+				WHERE a.SystemActive = 1 AND InfoBankActive = 1
 
 			INSERT INTO #result(ID, ID_MASTER, SYS_ID, IB_ID, NAME, DATE, DOCS, LVL)
 				SELECT NEWID(), (SELECT ID FROM #result WHERE SYS_ID = SystemID AND IB_ID = a.InfoBankID AND LVL = 2), SystemID, a.InfoBankID, CONVERT(VARCHAR(20), StatisticDate, 104), StatisticDate, Docs, 3
-				FROM
-					dbo.SystemBanksView a WITH(NOEXPAND)
-					INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+				FROM dbo.SystemTable
+                CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+				INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
 				WHERE (StatisticDate >= @BEGIN  OR @BEGIN IS NULL)
 					AND (StatisticDate <= @END OR @END IS NULL)
-					AND SystemActive = 1 AND InfoBankActive = 1
+					AND a.SystemActive = 1 AND InfoBankActive = 1
 
 			UPDATE a
 			SET DELTA = DOCS -
@@ -185,12 +186,12 @@ BEGIN
 						SELECT SUM(Docs)
 						FROM
 							(
-								SELECT SystemID, a.InfoBankID, MAX(b.StatisticDate) AS StatisticDate
-								FROM
-									dbo.SystemBanksView a WITH(NOEXPAND)
-									INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
-								WHERE b.StatisticDate <= t.StatisticDate AND SystemActive = 1 AND InfoBankActive = 1
-								GROUP BY SystemID, a.InfoBankID
+								SELECT a.SystemID, a.InfoBankID, MAX(b.StatisticDate) AS StatisticDate
+								FROM dbo.SystemTable
+                                CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+								INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+								WHERE b.StatisticDate <= t.StatisticDate AND a.SystemActive = 1 AND InfoBankActive = 1
+								GROUP BY a.SystemID, a.InfoBankID
 							) AS p
 							INNER JOIN dbo.StatisticTable q ON q.InfoBankID = p.InfoBankID AND q.StatisticDate = p.StatisticDate
 					),
@@ -209,13 +210,13 @@ BEGIN
 					SystemID, SystemShortName, StatisticDate, SystemOrder, 2
 				FROM
 					(
-						SELECT DISTINCT SystemID, SystemShortName, SystemOrder, StatisticDate
-						FROM
-							dbo.SystemBanksView a WITH(NOEXPAND)
-							INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+						SELECT DISTINCT a.SystemID, a.SystemShortName, a.SystemOrder, StatisticDate
+						FROM dbo.SystemTable
+                        CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+						INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
 						WHERE (StatisticDate >= @BEGIN  OR @BEGIN IS NULL)
 							AND (StatisticDate <= @END OR @END IS NULL)
-							AND SystemActive = 1 AND InfoBankActive = 1
+							AND a.SystemActive = 1 AND InfoBankActive = 1
 					) AS o_O
 
 			INSERT INTO #result(ID, ID_MASTER, SYS_ID, IB_ID, NAME, DOCS, ORD, LVL)
@@ -224,13 +225,13 @@ BEGIN
 					SystemID, InfoBankID, InfoBankShortName, Docs, InfoBankOrder, 3
 				FROM
 					(
-						SELECT DISTINCT SystemID, a.InfoBankID, InfoBankShortName, InfoBankOrder, StatisticDate, Docs
-						FROM
-							dbo.SystemBanksView a WITH(NOEXPAND)
-							INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
+						SELECT DISTINCT a.SystemID, a.InfoBankID, InfoBankShortName, InfoBankOrder, StatisticDate, Docs
+						FROM dbo.SystemTable
+                        CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
+						INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
 						WHERE (StatisticDate >= @BEGIN  OR @BEGIN IS NULL)
 							AND (StatisticDate <= @END OR @END IS NULL)
-							AND SystemActive = 1 AND InfoBankActive = 1
+							AND a.SystemActive = 1 AND InfoBankActive = 1
 					) AS o_O
 
 			UPDATE a
