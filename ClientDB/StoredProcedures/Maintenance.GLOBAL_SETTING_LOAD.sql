@@ -55,8 +55,15 @@ BEGIN
 
 			Maintenance.GlobalControlDocumentURL() AS CONTROL_DOCUMENT_URL,
 			Maintenance.GlobalControlDocumentUser() AS CONTROL_DOCUMENT_USER,
-			Maintenance.GlobalControlDocumentPass() AS CONTROL_DOCUMENT_PASS
+			Maintenance.GlobalControlDocumentPass() AS CONTROL_DOCUMENT_PASS,
 
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_HOST') AS SEMINAR_MAIL_HOST,
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_ADDRESS') AS SEMINAR_MAIL_ADDRESS,
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_PASS') AS SEMINAR_MAIL_PASS,
+
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_HOST') AS ONLINE_SERVICES_MAIL_HOST,
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_ADDRESS') AS ONLINE_SERVICES_MAIL_ADDRESS,
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_PASS') AS ONLINE_SERVICES_MAIL_PASS
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
