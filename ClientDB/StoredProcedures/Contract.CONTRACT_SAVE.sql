@@ -259,7 +259,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-GRANT EXECUTE ON [Contract].[CONTRACT_SAVE] TO rl_contract_register_w;
 GO
 GRANT EXECUTE ON [Contract].[CONTRACT_SAVE] TO rl_contract_register_w;
 GO

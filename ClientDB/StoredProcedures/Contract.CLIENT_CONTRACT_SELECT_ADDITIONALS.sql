@@ -39,7 +39,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_ADDITIONALS] TO rl_client_contract_r;
 GO
 GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_ADDITIONALS] TO rl_client_contract_r;
 GO
