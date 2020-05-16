@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT ID, SHORT, HOST
 	FROM System.Systems a
 	WHERE EXISTS
@@ -21,6 +31,7 @@ BEGIN
 		)
 	ORDER BY ORD
 END
+
 GO
 GRANT EXECUTE ON [System].[SYSTEM_EXCHANGE_SELECT] TO rl_system_r;
 GO

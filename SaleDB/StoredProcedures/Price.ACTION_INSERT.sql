@@ -14,6 +14,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 
 	INSERT INTO Price.Action(NAME, DELIVERY, SUPPORT, DELIVERY_FIXED)
@@ -23,4 +33,5 @@ BEGIN
 	SELECT @ID = ID
 	FROM @TBL
 END
+
 GO

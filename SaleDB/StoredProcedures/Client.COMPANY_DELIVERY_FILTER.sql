@@ -15,6 +15,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT
 		b.ID, b.NAME, b.NUMBER, a.PERSONAL AS SHORT, a.FIO, a.POS, a.EMAIL, a.DATE, a.PLAN_DATE, a.OFFER,
 		CASE a.STATE WHEN 1 THEN 'Подписан' WHEN 2 THEN 'Снят с подписки' ELSE '???' END AS STATE_STR
@@ -29,6 +39,7 @@ BEGIN
 		AND (a.PERSONAL = @PERSONAL OR @PERSONAL IS NULL)
 	ORDER BY b.NAME
 END
+
 GO
 GRANT EXECUTE ON [Client].[COMPANY_DELIVERY_FILTER] TO rl_delivery_filter;
 GO

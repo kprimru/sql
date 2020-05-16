@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		DECLARE @CUR_MONTH	UNIQUEIDENTIFIER
 
@@ -59,23 +69,16 @@ BEGIN
 		ORDER BY  ORD
 
 		SET @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
 GO
 GRANT EXECUTE ON [System].[SYSTEM_PRICE_SIZE_SELECT] TO rl_complect_calc;

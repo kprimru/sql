@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DELETE FROM Memo.ClientMemoConditions
 	WHERE ID_MEMO = @ID
 
@@ -17,6 +27,7 @@ BEGIN
 	FROM Memo.ClientMemo
 	WHERE ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_DELETE] TO rl_client_memo_d;
 GO

@@ -24,6 +24,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	IF @ID IS NULL
 		INSERT INTO Client.OISInfo(ID_COMPANY, COMPLECT, TP, SERVICE, LPR, WORK_PERSONAL, CONS_PERSONAL, RIVAL, RIVAL_PARALLEL, CONDITIONS, ACITVITY, NOTE, SALE_DATE, SERVICE_DATE)
 			VALUES(@COMPANY, @COMPLECT, @TP, @SERVICE, @LPR, @WORK_PERSONAL, @CONS_PERSONAL, @RIVAL, @RIVAL_PARALLEL, @CONDITIONS, @ACITVITY, @NOTE, @SALE_DATE, @SERVICE_DATE)
@@ -44,6 +54,7 @@ BEGIN
 			SERVICE_DATE	=	@SERVICE_DATE
 		WHERE ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Client].[OIS_INFO_SAVE] TO rl_client_ois_w;
 GO

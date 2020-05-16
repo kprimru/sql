@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @DBFDate SmallDateTime;
 
 	SELECT @DBFDate = DATE
@@ -42,6 +52,7 @@ BEGIN
 	FROM @DBFPrice D
 	INNER JOIN System.Systems S ON S.REG = D.SYS_REG;
 END
+
 GO
 GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT] TO rl_price_import;
 GO

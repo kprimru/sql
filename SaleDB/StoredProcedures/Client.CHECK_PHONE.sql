@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @PHONE_LIST NVARCHAR(MAX)
 
 	IF @COMPANY IS NULL
@@ -72,6 +82,7 @@ BEGIN
 
 	SELECT @PHONE_LIST AS PHONE_LIST
 END
+
 GO
 GRANT EXECUTE ON [Client].[CHECK_PHONE] TO rl_company_r;
 GO

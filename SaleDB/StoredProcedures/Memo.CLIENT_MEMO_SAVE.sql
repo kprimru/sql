@@ -29,6 +29,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	IF @ID IS NULL
 	BEGIN
 		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
@@ -71,6 +81,7 @@ BEGIN
 		WHERE ID_MEMO = @ID
 	END
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_SAVE] TO rl_client_memo_w;
 GO

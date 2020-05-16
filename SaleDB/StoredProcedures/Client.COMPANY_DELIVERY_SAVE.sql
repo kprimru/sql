@@ -18,6 +18,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	IF @ID IS NULL
 		INSERT INTO Client.CompanyDelivery(ID_COMPANY, FIO, POS, EMAIL, DATE, PLAN_DATE, OFFER, STATE)
 			VALUES(@COMPANY, @FIO, @POS, @EMAIL, @DATE, @PLAN_DATE, @OFFER, @STATE)
@@ -32,6 +42,7 @@ BEGIN
 			STATE		=	@STATE
 		WHERE ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Client].[COMPANY_DELIVERY_SAVE] TO rl_delivery_w;
 GO

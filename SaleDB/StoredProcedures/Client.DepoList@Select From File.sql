@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @DepoFile Table
 	(
 		[Ric]				SmallInt,
@@ -96,6 +106,7 @@ BEGIN
 	ORDER BY D.[Action], D.[Number]
 	OPTION(RECOMPILE)
 END
+
 GO
 GRANT EXECUTE ON [Client].[DepoList@Select From File] TO rl_depo_file_process;
 GO

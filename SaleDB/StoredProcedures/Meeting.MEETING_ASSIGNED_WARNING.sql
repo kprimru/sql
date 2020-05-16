@@ -9,6 +9,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		SELECT b.ID, b.NAME, b.NUMBER, a.EXPECTED_DATE, c.SHORT, d.NAME
 		FROM
@@ -27,23 +37,16 @@ BEGIN
 			AND a.ID_MASTER IS NULL
 			AND a.ID_PARENT IS NULL
 			AND (d.STATUS IS NULL OR d.STATUS IN (0, 3))
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
 GO
 GRANT EXECUTE ON [Meeting].[MEETING_ASSIGNED_WARNING] TO rl_warning_meeting_assigned;

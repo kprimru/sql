@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT @NUM = ISNULL(MAX(NUMBER) + 1, 1)
 	FROM Client.Company
 	WHERE STATUS IN (1, 3)

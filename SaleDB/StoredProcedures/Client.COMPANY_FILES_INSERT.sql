@@ -14,6 +14,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 
 	BEGIN TRY
@@ -52,6 +62,7 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [Client].[COMPANY_FILES_INSERT] TO rl_company_files_w;
 GO

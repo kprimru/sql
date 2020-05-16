@@ -10,6 +10,16 @@ BEGIN
     SET NOCOUNT ON;
 
     DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+    DECLARE
         @Status_ACCEPT      SmallInt,
         @Status_STAGE       SmallInt,
         @CurNumber          Int;
@@ -61,6 +71,7 @@ BEGIN
         EXEC [Maintenance].[ReRaise Error];
     END CATCH
 END
+
 GO
 GRANT EXECUTE ON [Client].[CompanyDepo@StageToDepo] TO rl_depo_stage_filter;
 GO

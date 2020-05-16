@@ -12,6 +12,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT
 		R.[HostId],
 		R.[DistrNumber],
@@ -69,6 +79,7 @@ BEGIN
 		DistrNumber,
 		CompNumber
 END
+
 GO
 GRANT EXECUTE ON [dbo].[ODD_DIN_FILTER] TO rl_odd_din_r;
 GO

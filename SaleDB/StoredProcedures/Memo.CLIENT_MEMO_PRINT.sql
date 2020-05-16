@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT
 		f.NAME AS CLIENT, d.NAME AS DOC_TYPE, b.NAME AS SERVICE,
 		c.SHORT AS VENDOR,
@@ -37,6 +47,7 @@ BEGIN
 		LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.ContractPayTable g ON g.ContractPayID = a.ID_CONTRACT_PAY
 	WHERE a.ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_PRINT] TO rl_client_memo_r;
 GO

@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	INSERT INTO Memo.ClientMemoConditions(ID_MEMO, CONDITION, ORD)
 		SELECT
 			@ID, @CONDITION,
@@ -21,6 +31,7 @@ BEGIN
 					WHERE ID_MEMO = @ID
 				), 1)
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_CONDITION_SAVE] TO rl_client_memo_w;
 GO

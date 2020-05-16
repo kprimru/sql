@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT
 		a.ID, Common.DateOf(a.DATE) AS DATE, c.SHORT, b.NAME AS SER_NAME,
 		d.NAME AS DOC_NAME, START, FINISH, PayTypeName AS ContractPayName,
@@ -27,6 +37,7 @@ BEGIN
 
 	SELECT @RC = @@ROWCOUNT
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_SELECT] TO rl_client_memo_r;
 GO

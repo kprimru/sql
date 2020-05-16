@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT
 		ID_DOC_TYPE, ID_SERVICE, ID_VENDOR, START, FINISH,
 		MONTH_PRICE, PERIOD_PRICE, PERIOD_START, PERIOD_FINISH, PERIOD_FULL_PRICE,
@@ -28,6 +38,7 @@ BEGIN
 	FROM Memo.ClientMemo a
 	WHERE ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_GET] TO rl_client_memo_r;
 GO

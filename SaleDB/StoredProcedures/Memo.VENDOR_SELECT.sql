@@ -12,8 +12,19 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	EXEC [PC275-SQL\ALPHA].ClientDB.dbo.VENDOR_SELECT
 END
+
 GO
 GRANT EXECUTE ON [Memo].[VENDOR_SELECT] TO rl_client_memo_ref;
 GO

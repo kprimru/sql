@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @IDs Table
 	(
 		[Id]				UniqueIdentifier,
@@ -54,4 +64,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO

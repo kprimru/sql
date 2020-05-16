@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		SELECT
 			FIO, b.NAME AS POS_NAME, a.NOTE AS PER_NOTE, d.NAME AS PT_NAME, PHONE, c.NOTE AS PH_NOTE, a.EMAIL
@@ -20,23 +30,16 @@ BEGIN
 			LEFT OUTER JOIN Client.PhoneType d ON d.ID = c.ID_TYPE
 		WHERE a.ID_COMPANY = @ID
 		ORDER BY a.FIO, d.NAME, c.PHONE
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
 GO
 GRANT EXECUTE ON [Client].[COMPANY_PERSONAL_PRINT] TO rl_company_p;

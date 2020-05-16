@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT RN,
 		SYS_FULL_STR AS SYSTEM, NET_STR AS NET, ISNULL(b.REG, d.REG) AS SYS_REG,
 		ISNULL(b.ORD, c.ORD) AS SYS_ORDER,

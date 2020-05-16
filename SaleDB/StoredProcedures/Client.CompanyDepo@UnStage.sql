@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE
 		@Company_Id			UniqueIdentifier,
 		@Status_STAGE		SmallInt;
@@ -40,6 +50,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [Client].[CompanyDepo@UnStage] TO rl_depo_w;
 GO

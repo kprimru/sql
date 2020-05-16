@@ -10,10 +10,21 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT FILE_NAME, FILE_DATA
 	FROM Client.CompanyFiles
 	WHERE ID = @ID
 END
+
 GO
 GRANT EXECUTE ON [Client].[COMPANY_FILES_LOAD] TO rl_company_files_r;
 GO

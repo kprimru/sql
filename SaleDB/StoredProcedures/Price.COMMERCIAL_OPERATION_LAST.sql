@@ -10,9 +10,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT @LAST = MAX(LAST)
 	FROM Price.CommercialOperation
 END
+
 GO
 GRANT EXECUTE ON [Price].[COMMERCIAL_OPERATION_LAST] TO rl_offer_r;
 GO

@@ -13,9 +13,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	INSERT INTO Client.ManagerOdd(Manager_Id, Host_Id, Distr, Comp)
 	VALUES(@Manager_Id, @Host_Id, @Distr, @Comp)
 END
+
 GO
 GRANT EXECUTE ON [dbo].[ODD_DIN_MANAGER_SAVE] TO rl_odd_manager;
 GO

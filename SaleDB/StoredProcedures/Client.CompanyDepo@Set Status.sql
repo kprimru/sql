@@ -11,6 +11,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		UPDATE Client.CompanyDepo
 		SET [Status_Id] = @Status_Id
@@ -20,6 +30,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [Client].[CompanyDepo@Set Status] TO rl_depo_status;
 GO

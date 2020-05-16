@@ -10,6 +10,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE
 		@ErrorNumbers VarChar(Max),
 		@DepoStatus_ACTIVE	SmallInt;
@@ -125,6 +135,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [Client].[CompanyDepo@Load] TO rl_depo_file_process;
 GO

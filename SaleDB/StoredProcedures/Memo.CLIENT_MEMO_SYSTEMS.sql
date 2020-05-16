@@ -15,6 +15,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @XML XML
 
 	SET @XML = CAST(@LIST AS XML)
@@ -68,6 +78,7 @@ BEGIN
 	WHERE (@TP IS NULL OR @TP = 1 AND ISNULL(DELIVERY, 0) = 0 OR @TP = 2 AND ISNULL(DELIVERY, 0) <> 0)
 	ORDER BY SystemOrder, DistrTypeCoef
 END
+
 GO
 GRANT EXECUTE ON [Memo].[CLIENT_MEMO_SYSTEMS] TO rl_client_memo_r;
 GO

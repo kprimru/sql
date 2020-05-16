@@ -12,6 +12,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @DBFDate SmallDateTime;
 
 	SELECT @DBFDate = DATE
@@ -62,6 +72,7 @@ BEGIN
 		OR IsNull([DBFPrice], 0) - IsNull([ClientPrice], 0) != 0
 	ORDER BY S.[ORD]
 END
+
 GO
 GRANT EXECUTE ON [Price].[PRICE_DBF_IMPORT_SELECT] TO rl_price_import;
 GO
