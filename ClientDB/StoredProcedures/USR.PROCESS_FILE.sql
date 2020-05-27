@@ -57,7 +57,6 @@ BEGIN
 			Primary Key Clustered (ID)
 		);
 
-
 		SET	@res = '';
 		SET @resstatus = 0;
 
@@ -558,7 +557,6 @@ BEGIN
 		UPDATE @Usr
 		SET ClientID = ISNULL(@Client_Id, 0);
 
-
 		INSERT INTO @Ib(DistrNumber, CompNumber, DirectoryName, [Name], NCat, [NText], N3, N4, N5, N6, Compliance)
 		SELECT DISTINCT
 			c.value('(@nDistr)[1]',		'Int')			AS DistrNumber,
@@ -715,7 +713,6 @@ BEGIN
 				SET UD_ID_CLIENT = @Client_Id
 				WHERE UD_ID = @Complect_Id;
 		END;
-
 
 		IF NOT EXISTS
 			(
@@ -1012,7 +1009,6 @@ BEGIN
 		INNER JOIN dbo.SystemTable ON SystemBaseName = LEFT(PackageName, CHARINDEX('_', PackageName) - 1)
 									AND SystemNumber = RIGHT(PackageName, LEN(PackageName) - CHARINDEX('_', PackageName));
 
-
 		INSERT INTO USR.USRIB
 			   (
 					UI_ID_USR,
@@ -1068,7 +1064,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [USR].[PROCESS_FILE] TO rl_usr_process;
 GO
