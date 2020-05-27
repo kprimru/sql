@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Client].[COMPANY_PROCESS_MANAGER_RETURN]
-	@COMPANY	NVARCHAR(MAX)
+	@COMPANY	NVARCHAR(MAX),
+	@COMPANYW   NVARCHAR(MAX)       = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -15,22 +16,35 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
+    DECLARE @DATE SMALLDATETIME
+    SET @DATE = Common.DateOf(GETDATE())
+    DECLARE @Companies Table (ID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY CLUSTERED);
+
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
         @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
-		DECLARE @DATE SMALLDATETIME
-		SET @DATE = Common.DateOf(GETDATE())
 
-		SET @COMPANY = Client.CompanyFilterWrite(@COMPANY)
+		IF @COMPANYW IS NOT NULL
+		    SET @COMPANY = @COMPANYW
+		ELSE
+		    SET @COMPANY = Client.CompanyFilterWrite(@COMPANY);
+
+		INSERT INTO @Companies
+        SELECT ID
+        FROM Common.TableGUIDFromXML(@COMPANY);
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Companies';
 
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
 			SELECT a.ID, @DATE, 10, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'Изменение менеждера - Возврат'
 			FROM
 				Client.Company a
-				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID
+				INNER JOIN @Companies b ON a.ID = b.ID
 				INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON c.ID = a.ID
 
 		UPDATE Client.CompanyProcess
@@ -42,7 +56,7 @@ BEGIN
 			AND ID_COMPANY IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
 		DECLARE @WS UNIQUEIDENTIFIER
@@ -57,7 +71,7 @@ BEGIN
 			WHERE ID IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
 		EXEC Client.COMPANY_REINDEX NULL, @COMPANY
