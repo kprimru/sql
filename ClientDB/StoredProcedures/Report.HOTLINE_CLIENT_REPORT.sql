@@ -40,6 +40,10 @@ BEGIN
 			AND START < GetDate()
 			AND START > DateAdd(Year, -1, GetDate());
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Monthes';
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
@@ -94,6 +98,9 @@ BEGIN
 		) AS R
 		GROUP BY H.HostId, H.Distr, H.Comp, M.Name, R.Id, D.ID_CLIENT;
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO #distrs';
 
 		SET @SQL = 'ALTER TABLE #result ADD '
 
@@ -163,6 +170,10 @@ BEGIN
 						AND CD.COMP = R.CompNumber
 				)
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO #result';
+
 		SET @SQL = ''
 		SELECT @SQL = @SQL + '
 		UPDATE #result
@@ -189,6 +200,10 @@ BEGIN
 		) AS M
 
 		EXEC (@SQL)
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE #result';
 
 		SET @SQL = 'SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент], DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть], HotlineEnable AS [Кнопка включена], HotlineDate AS [Дата подключения],'
 		SELECT @SQL = @SQL + '[' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '],'

@@ -45,6 +45,10 @@ BEGIN
 			DECLARE @RESULT INT
 			EXEC @RESULT = master..xp_cmdshell @CMD, NO_OUTPUT
 
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'Загрузили файл от КЦ';
+
 			IF (@RESULT <> 0)
 				RETURN
 		END
@@ -94,6 +98,10 @@ BEGIN
 					'
 
 		EXEC sp_executesql @sql
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'BULK INSERT #tp';
 
 		DECLARE @COLCOUNT SMALLINT
 
@@ -159,7 +167,7 @@ BEGIN
 					KRF1		VARCHAR(50),
 					ADDPARAM	VARCHAR(20),
 					ODON		VARCHAR(20),
-					ODOFF		VARCHAR(20)
+					ODOFF		VARCHAR(20),
 			)
 
 		IF @TYPE = 'SIMPLE'
@@ -194,9 +202,17 @@ BEGIN
 					)'
 			EXEC sp_executesql @SQL
 
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'BULK INSERT #reg_simple';
+
 			INSERT INTO #reg(SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, FIRST_REG, COMMENT, COMPLECT)
 				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, NULL, COMMENT, COMPLECT
 				FROM #reg_simple
+
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'INSERT INTO #reg';
 
 			IF OBJECT_ID('tempdb..#reg_simple') IS NOT NULL
 				DROP TABLE #reg_simple
@@ -243,9 +259,17 @@ BEGIN
 					)'
 			EXEC sp_executesql @SQL
 
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'BULK INSERT #reg_ex';
+
 			INSERT INTO #reg(SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, FIRST_REG, COMMENT, COMPLECT, OFFLINE)
 				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, FIRST_REG, COMMENT, COMPLECT, SYS_OFFLINE
 				FROM #reg_ex
+
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'INSERT INTO #reg';
 
 			IF OBJECT_ID('tempdb..#reg_ex') IS NOT NULL
 				DROP TABLE #reg_ex
@@ -295,34 +319,73 @@ BEGIN
 					)'
 			EXEC sp_executesql @SQL
 
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'BULK INSERT #reg_ex2';
+
 			INSERT INTO #reg--(SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, FIRST_REG, COMMENT, COMPLECT, OFFLINE)
 				SELECT *--SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, FIRST_REG, COMMENT, COMPLECT, SYS_OFFLINE
 				FROM #reg_ex2
+
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'INSERT INTO #reg';
 
 			IF OBJECT_ID('tempdb..#reg_ex2') IS NOT NULL
 				DROP TABLE #reg_ex2
 		END
 
-		CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON #reg (SYS_NAME, DISTR, COMP)
+		CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON #reg (DISTR, SYS_NAME, COMP)
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON #reg';
 
 		IF @REG IS NULL
 		BEGIN
 			SET @CMD = 'DEL ' + @SAVE
 
 			EXEC master..xp_cmdshell @CMD, NO_OUTPUT
+
+			EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'DELETE FILE';
 		END
 
+        UPDATE #reg
+        SET ODON = CASE WHEN ODON IS NULL THEN 0 ELSE ODON END,
+            ODOFF = CASE WHEN ODOFF IS NULL THEN 0 ELSE ODOFF END,
+            COMMENT = CASE WHEN SUBSTRING(COMMENT, 1, 1) = '"' AND SUBSTRING(COMMENT, LEN(COMMENT), 1) = '"' THEN REPLACE(LEFT(RIGHT(COMMENT, LEN(COMMENT) - 1), LEN(COMMENT) - 2), '""', '"') ELSE COMMENT END;
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE #reg SET COMMENT, ODON, ODOFF';
+
+        /*
 		UPDATE #reg
 		SET COMMENT = REPLACE(LEFT(RIGHT(COMMENT, LEN(COMMENT) - 1), LEN(COMMENT) - 2), '""', '"')
 		WHERE SUBSTRING(COMMENT, 1, 1) = '"' AND SUBSTRING(COMMENT, LEN(COMMENT), 1) = '"'
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE #reg SET COMMENT';
 
 		UPDATE #reg
 		SET ODON = 0
 		WHERE ODON IS NULL
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE #reg SET ODON';
+
 		UPDATE #reg
 		SET ODOFF = 0
 		WHERE ODOFF IS NULL
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE #reg SET ODOFF';
+		*/
 
 		SELECT @ERROR = TP + ': ' + MSG + CHAR(10)
 		FROM
@@ -379,6 +442,10 @@ BEGIN
 					)
 			) AS o_O
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'SELECT @ERROR = ';
+
 		IF @ERROR IS NOT NULL
 		BEGIN
 			PRINT @ERROR
@@ -406,6 +473,10 @@ BEGIN
 						AND b.COMP = a.COMP
 				)
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO Reg.RegDistr';
+
 		/* если есть кому сменить статус в основной таблице - меняем
 		 вернуть в активный список*/
 		UPDATE a
@@ -422,6 +493,11 @@ BEGIN
 						AND a.DISTR = b.DISTR
 						AND a.COMP = b.COMP
 				)
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE Reg.RegDistr SET STATUS = 1';
+
 		/* или удалить из списка*/
 		UPDATE a
 		SET STATUS = 2
@@ -437,6 +513,10 @@ BEGIN
 						AND a.DISTR = b.DISTR
 						AND a.COMP = b.COMP
 				)
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE Reg.RegDistr SET STATUS = 2';
 
 		/* добавляем записи в таблицу истории, делая все предыдущие записи этого дистрибутива неактивными*/
 		INSERT INTO Reg.RegHistory(
@@ -480,6 +560,10 @@ BEGIN
 						AND ISNULL(t.COMMENT, '') = ISNULL(a.COMMENT, '')
 				)
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO Reg.RegHistory';
+
 		/*
 			Закинуть данные в активную таблицу
 		*/
@@ -517,6 +601,10 @@ BEGIN
 								)
 					) AS o_O
 
+			EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'INSERT INTO Task.Tasks';
+
 			DECLARE @EMSG NVARCHAR(MAX)
 
 			SELECT @EMSG =
@@ -541,6 +629,10 @@ BEGIN
 				)
 
 			SELECT @EMSG = 'Был включен/зарегистрирован дистрибутив, внесенный в черный список ИнтернетПополнения: ' + CHAR(10) + @EMSG
+
+			EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'SELECT @EMSG = ';
 
 			IF @EMSG IS NOT NULL
 			BEGIN
@@ -578,6 +670,10 @@ BEGIN
 					)
 
 				SELECT @MSG = 'Зарегистрированы ОДД: ' + CHAR(10) + @MSG
+
+				EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'SELECT @MSG = (ОДД)';
 
 				IF @MSG IS NOT NULL
 					EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss', @MSG, 0
@@ -646,6 +742,10 @@ BEGIN
 
 			END
 
+		    EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'Автоматическое создание заявок на восстановление';
+
 			DELETE
 			FROM dbo.RegNodeTable
 			WHERE NOT EXISTS
@@ -656,6 +756,10 @@ BEGIN
 						AND DISTR = DistrNumber
 						AND COMP = CompNumber
 				)
+
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'DELETE FROM dbo.RegNodeTable';
 
 			UPDATE t
 			SET t.DistrType = DIS_TYPE,
@@ -700,6 +804,10 @@ BEGIN
 					OR	ISNULL(t.ODOFF, '') <> ISNULL(r.ODOFF, '')
 				)
 
+            EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'UPDATE dbo.RegNodeTable';
+
 			INSERT INTO dbo.RegNodeTable(SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft, Service, RegisterDate, Comment, Complect, Offline, Yubikey, KrfNeed, KrfDop, AddParam, ODON, ODOFF)
 				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, COMMENT, COMPLECT, OFFLINE, Yubikey, KRF, KRF1, AddParam, ODON, ODOFF
 				FROM #reg a
@@ -711,6 +819,10 @@ BEGIN
 								AND DISTR = DistrNumber
 								AND COMP = CompNumber
 						)
+
+			EXEC [Debug].[Execution@Point]
+                @DebugContext   = @DebugContext,
+                @Name           = 'INSERT INTO dbo.RegNodeTable';
 
 			IF EXISTS
 				(
@@ -736,6 +848,10 @@ BEGIN
 																				AND a.COMP = b.CompNumber
 							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
 						)
+
+				EXEC [Debug].[Execution@Point]
+                    @DebugContext   = @DebugContext,
+                    @Name           = 'INSERT INTO dbo.ClientDistr';
 
 				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
 				BEGIN
@@ -779,6 +895,10 @@ BEGIN
 					DEALLOCATE CL
 				END
 
+				EXEC [Debug].[Execution@Point]
+                    @DebugContext   = @DebugContext,
+                    @Name           = 'Автоматическое создание заявок на замену';
+
 				UPDATE a
 				SET a.ID_SYSTEM	= ISNULL(b.ID_SYSTEM, a.ID_SYSTEM),
 					a.ID_NET	= ISNULL(b.ID_NET, a.ID_NET),
@@ -816,6 +936,10 @@ BEGIN
 																			AND a.COMP = b.CompNumber
 						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
 					)
+
+			    EXEC [Debug].[Execution@Point]
+                    @DebugContext   = @DebugContext,
+                    @Name           = 'UPDATE dbo.ClientDistr';
 			END
 		END
 
