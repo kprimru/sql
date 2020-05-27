@@ -22,7 +22,7 @@ BEGIN
         @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
-		SELECT	ID,	NAME
+		SELECT	ID,	NAME, COLOR
 		FROM	Client.Availability
 		WHERE	@FILTER IS NULL
 				OR (NAME LIKE @FILTER)
