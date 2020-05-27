@@ -5,426 +5,132 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Client].[COMPANY_REINDEX]
-	@ID		UNIQUEIDENTIFIER	=	NULL,
-	@LIST	NVARCHAR(MAX)		=	NULL
+    @ID     UNIQUEIDENTIFIER    =   NULL,
+    @LIST   NVARCHAR(MAX)       =   NULL
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
     DECLARE
         @DebugError     VarChar(512),
         @DebugContext   Xml,
         @Params         Xml;
 
+    DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER PRIMARY KEY);
+
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
         @DebugContext   = @DebugContext OUT
 
-	BEGIN TRY
-		IF @ID IS NOT NULL OR @LIST IS NOT NULL
-		BEGIN
-			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER PRIMARY KEY)
+    BEGIN TRY
 
-			IF @ID IS NOT NULL
-				INSERT INTO @TBL(ID)
-					SELECT @ID
+        IF @ID IS NULL AND @LIST IS NULL
+            INSERT INTO @TBL
+            SELECT ID
+            FROM Client.Company
+            WHERE STATUS = 1;
 
-			IF @LIST IS NOT NULL
-				INSERT INTO @TBL(ID)
-					SELECT ID
-					FROM Common.TableGUIDFromXML(@LIST)
+        IF @ID IS NOT NULL
+            INSERT INTO @TBL(ID)
+            SELECT @ID
 
-				UPDATE z
-				SET DATA =
-					(
-						SELECT
-							ISNULL(a.SHORT, '') + ' ' +
-							ISNULL(a.NAME, '') + ' ' +
-							ISNULL(a.EMAIL, '') + ' ' +
-							ISNULL(CONVERT(VARCHAR(20), a.NUMBER), '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(b.NAME, '') + ' ' +
-										ISNULL(b.SHORT, '') + ' ' +
-										ISNULL(d.NAME, '') + ' ' +
-										ISNULL(e.NAME, '') + ' ' +
-										ISNULL(f.NAME, '') + ' ' +
-										ISNULL(c.HOME, '') + ' ' +
-										ISNULL(c.ROOM, '') + ' ' +
-										ISNULL(c.NOTE, '')
-									FROM
-										Client.Office b
-										LEFT OUTER JOIN Client.OfficeAddress c ON c.ID_OFFICE = b.ID
-										LEFT OUTER JOIN Address.Street d ON d.ID = c.ID_STREET
-										LEFT OUTER JOIN Address.City e ON e.ID = d.ID_CITY
-										LEFT OUTER JOIN Address.Area f ON f.ID = c.ID_AREA
-									WHERE b.ID_COMPANY = a.ID AND b.STATUS = 1
-									FOR XML PATH('')
-								), '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(PHONE, '') + ' ' +
-										ISNULL(PHONE_S, '') + ' '
-									FROM Client.CompanyPhone b
-									WHERE b.ID_COMPANY = a.ID
-									FOR XML PATH('')
-								)
-								, '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(FIO, '') + ' ' +
-										ISNULL(EMAIL, '') + ' ' +
-										ISNULL(
-											(
-												SELECT
-													ISNULL(PHONE, '') + ' ' +
-													ISNULL(PHONE_S, '') + ' '
-												FROM Client.CompanyPersonalPhone c
-												WHERE b.ID = c.ID_PERSONAL
-												FOR XML PATH('')
-											)
-											, '') + ' '
-									FROM Client.CompanyPersonal b
-									WHERE b.ID_COMPANY = a.ID
-									FOR XML PATH('')
-								)
-								, '')  +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessPhoneView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '') +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '') +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessSaleView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '')
-						FROM Client.Company a
-						WHERE a.STATUS = 1 AND a.ID = z.ID_COMPANY
-					),
-					ADDRESS =
-						(
-							SELECT TOP 1 AD_STR
-							FROM Client.OfficeAddressMainView WITH(NOEXPAND)
-							WHERE CO_ID = z.ID_COMPANY
-							ORDER BY MAIN DESC, ID
-						)
-				FROM Client.CompanyIndex z
-				WHERE ID_COMPANY IN (SELECT ID FROM @TBL)
+        IF @LIST IS NOT NULL
+            INSERT INTO @TBL(ID)
+            SELECT ID
+            FROM Common.TableGUIDFromXML(@LIST);
 
-				INSERT INTO Client.CompanyIndex(ID_COMPANY, DATA, ADDRESS)
-					SELECT
-						a.ID,
-						ISNULL(a.SHORT, '') + ' ' +
-						ISNULL(a.NAME, '') + ' ' +
-						ISNULL(CONVERT(VARCHAR(20), a.NUMBER), '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(b.NAME, '') + ' ' +
-									ISNULL(b.SHORT, '') + ' ' +
-									ISNULL(d.NAME, '') + ' ' +
-									ISNULL(e.NAME, '') + ' ' +
-									ISNULL(f.NAME, '') + ' ' +
-									ISNULL(c.HOME, '') + ' ' +
-									ISNULL(c.ROOM, '') + ' ' +
-									ISNULL(c.NOTE, '')
-								FROM
-									Client.Office b
-									LEFT OUTER JOIN Client.OfficeAddress c ON c.ID_OFFICE = b.ID
-									LEFT OUTER JOIN Address.Street d ON d.ID = c.ID_STREET
-									LEFT OUTER JOIN Address.City e ON e.ID = d.ID_CITY
-									LEFT OUTER JOIN Address.Area f ON f.ID = c.ID_AREA
-								WHERE b.ID_COMPANY = a.ID AND b.STATUS = 1
-								FOR XML PATH('')
-							), '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(PHONE, '') + ' ' +
-									ISNULL(PHONE_S, '') + ' '
-								FROM Client.CompanyPhone b
-								WHERE b.ID_COMPANY = a.ID
-								FOR XML PATH('')
-							)
-							, '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(FIO, '') + ' ' +
-									ISNULL(
-										(
-											SELECT
-												ISNULL(PHONE, '') + ' ' +
-												ISNULL(PHONE_S, '') + ' '
-											FROM Client.CompanyPersonalPhone c
-											WHERE b.ID = c.ID_PERSONAL
-											FOR XML PATH('')
-										)
-										, '') + ' '
-								FROM Client.CompanyPersonal b
-								WHERE b.ID_COMPANY = a.ID
-								FOR XML PATH('')
-							)
-							, '') +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessPhoneView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '') +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '') +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessSaleView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '')
-						AS DATA,
-						(
-							SELECT TOP 1 AD_STR
-							FROM Client.OfficeAddressMainView WITH(NOEXPAND)
-							WHERE CO_ID = a.ID
-							ORDER BY MAIN DESC, ID
-						)
-					FROM
-						Client.Company a
-						INNER JOIN @TBL z ON z.ID = a.ID
-					WHERE a.STATUS = 1 AND NOT EXISTS
-						(
-							SELECT *
-							FROM Client.CompanyIndex t
-							WHERE t.ID_COMPANY = a.ID
-						)
+        UPDATE z
+        SET ADDRESS =
+                (
+                    SELECT TOP 1 AD_STR
+                    FROM Client.OfficeAddressMainView WITH(NOEXPAND)
+                    WHERE CO_ID = z.ID_COMPANY
+                    ORDER BY MAIN DESC, ID
+                ),
+            EMAILS = Reverse(Stuff(Reverse(
+                (
+                    SELECT EML.[EMAIL] + ','
+                    FROM
+                    (
+                        SELECT b.[EMAIL]
+                        FROM Client.Company b
+                        WHERE b.ID = z.ID_COMPANY
+                        --
+                        UNION
+                        --
+                        SELECT P.[EMAIL]
+                        FROM Client.CompanyPersonal AS P
+                        WHERE P.ID_COMPANY = Z.ID_COMPANY
+                    ) AS EML
+                    WHERE EML.[EMAIL] IS NOT NULL
+                        AND EML.[EMAIL] NOT IN ('', '-')
+                    FOR XML PATH('')
+                )), 1, 1, '')),
+            PROJECTS = REVERSE(STUFF(REVERSE(
+                (
+                    SELECT y.NAME + ', '
+                    FROM Client.CompanyProject cp
+                    INNER JOIN Client.Project y ON cp.ID_PROJECT = y.ID
+                    WHERE cp.ID_COMPANY = t.ID
+                    FOR XML PATH('')
+            )), 1, 2, '')),
+            AVA_COLOR = I.AVA_COLOR,
+            SenderIndex = I.SenderIndex
+        FROM @TBL t
+        INNER JOIN Client.CompanyIndex z ON T.ID = z.ID_COMPANY
+        INNER JOIN [Client].[CompanyIndexView] AS I ON I.ID = z.ID_COMPANY
+        OPTION (RECOMPILE);
 
-		END
-		ELSE
-		BEGIN
-			UPDATE t
-			SET DATA =
-					(
-							ISNULL(a.SHORT, '') + ' ' +
-							ISNULL(a.NAME, '') + ' ' +
-							ISNULL(a.EMAIL, '') + ' ' +
-							ISNULL(CONVERT(VARCHAR(20), a.NUMBER), '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(b.NAME, '') + ' ' +
-										ISNULL(b.SHORT, '') + ' ' +
-										ISNULL(d.NAME, '') + ' ' +
-										ISNULL(e.NAME, '') + ' ' +
-										ISNULL(f.NAME, '') + ' ' +
-										ISNULL(c.HOME, '') + ' ' +
-										ISNULL(c.ROOM, '') + ' ' +
-										ISNULL(c.NOTE, '')
-									FROM
-										Client.Office b
-										LEFT OUTER JOIN Client.OfficeAddress c ON c.ID_OFFICE = b.ID
-										LEFT OUTER JOIN Address.Street d ON d.ID = c.ID_STREET
-										LEFT OUTER JOIN Address.City e ON e.ID = d.ID_CITY
-										LEFT OUTER JOIN Address.Area f ON f.ID = c.ID_AREA
-									WHERE b.ID_COMPANY = a.ID AND b.STATUS = 1
-									FOR XML PATH('')
-								), '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(PHONE, '') + ' ' +
-										ISNULL(PHONE_S, '') + ' '
-									FROM Client.CompanyPhone b
-									WHERE b.ID_COMPANY = a.ID
-									FOR XML PATH('')
-								)
-								, '') + ' ' +
-							ISNULL(
-								(
-									SELECT
-										ISNULL(FIO, '') + ' ' +
-										ISNULL(EMAIL, '') + ' ' +
-										ISNULL(
-											(
-												SELECT
-													ISNULL(PHONE, '') + ' ' +
-													ISNULL(PHONE_S, '') + ' '
-												FROM Client.CompanyPersonalPhone c
-												WHERE b.ID = c.ID_PERSONAL
-												FOR XML PATH('')
-											)
-											, '') + ' '
-									FROM Client.CompanyPersonal b
-									WHERE b.ID_COMPANY = a.ID
-									FOR XML PATH('')
-								)
-								, '')  +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessPhoneView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '') +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '') +
-							ISNULL(
-								(
-									SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-									FROM
-										Personal.OfficePersonal b
-										INNER JOIN Client.CompanyProcessSaleView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-									WHERE c.ID = a.ID
-								)
-							, '')
-					),
-					ADDRESS =
-						(
-							SELECT TOP 1 AD_STR
-							FROM Client.OfficeAddressMainView WITH(NOEXPAND)
-							WHERE CO_ID = a.ID
-							ORDER BY MAIN DESC, ID
-						)
-				FROM
-					Client.CompanyIndex t
-					INNER JOIN Client.Company a ON t.ID_COMPANY = a.ID
-				WHERE a.STATUS = 1
+        INSERT INTO Client.CompanyIndex(ID_COMPANY, ADDRESS, EMAILS, PROJECTS, AVA_COLOR, SenderIndex)
+        SELECT
+            Z.ID,
+            (
+                SELECT TOP 1 AD_STR
+                FROM Client.OfficeAddressMainView WITH(NOEXPAND)
+                WHERE CO_ID = Z.ID
+                ORDER BY MAIN DESC, ID
+            ),
+            Reverse(Stuff(Reverse(
+                (
+                    SELECT EML.[EMAIL] + ','
+                    FROM
+                    (
+                        SELECT b.[EMAIL]
+                        FROM Client.Company b
+                        WHERE b.ID = z.ID
+                        --
+                        UNION
+                        --
+                        SELECT P.[EMAIL]
+                        FROM Client.CompanyPersonal AS P
+                        WHERE P.ID_COMPANY = Z.ID
+                    ) AS EML
+                    WHERE EML.[EMAIL] IS NOT NULL
+                        AND EML.[EMAIL] NOT IN ('', '-')
+                    FOR XML PATH('')
+                )), 1, 1, '')),
+            REVERSE(STUFF(REVERSE(
+                (
+                    SELECT y.NAME + ', '
+                    FROM Client.CompanyProject cp
+                    INNER JOIN Client.Project y ON cp.ID_PROJECT = y.ID
+                    WHERE cp.ID_COMPANY = Z.ID
+                    FOR XML PATH('')
+            )), 1, 2, '')),
+            I.AVA_COLOR,
+            I.SenderIndex
+        FROM @TBL z
+        INNER JOIN [Client].[CompanyIndexView] AS I ON I.ID = Z.ID
+        WHERE NOT EXISTS
+            (
+                SELECT *
+                FROM Client.CompanyIndex t
+                WHERE t.ID_COMPANY = Z.ID
+            )
+        OPTION (RECOMPILE);
 
-			INSERT INTO Client.CompanyIndex(ID_COMPANY, DATA, ADDRESS)
-				SELECT
-						a.ID,
-						ISNULL(a.SHORT, '') + ' ' +
-						ISNULL(a.NAME, '') + ' ' +
-						ISNULL(CONVERT(VARCHAR(20), a.NUMBER), '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(b.NAME, '') + ' ' +
-									ISNULL(b.SHORT, '') + ' ' +
-									ISNULL(d.NAME, '') + ' ' +
-									ISNULL(e.NAME, '') + ' ' +
-									ISNULL(f.NAME, '') + ' ' +
-									ISNULL(c.HOME, '') + ' ' +
-									ISNULL(c.ROOM, '') + ' ' +
-									ISNULL(c.NOTE, '')
-								FROM
-									Client.Office b
-									LEFT OUTER JOIN Client.OfficeAddress c ON c.ID_OFFICE = b.ID
-									LEFT OUTER JOIN Address.Street d ON d.ID = c.ID_STREET
-									LEFT OUTER JOIN Address.City e ON e.ID = d.ID_CITY
-									LEFT OUTER JOIN Address.Area f ON f.ID = c.ID_AREA
-								WHERE b.ID_COMPANY = a.ID AND b.STATUS = 1
-								FOR XML PATH('')
-							), '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(PHONE, '') + ' ' +
-									ISNULL(PHONE_S, '') + ' '
-								FROM Client.CompanyPhone b
-								WHERE b.ID_COMPANY = a.ID
-								FOR XML PATH('')
-							)
-							, '') + ' ' +
-						ISNULL(
-							(
-								SELECT
-									ISNULL(FIO, '') + ' ' +
-									ISNULL(
-										(
-											SELECT
-												ISNULL(PHONE, '') + ' ' +
-												ISNULL(PHONE_S, '') + ' '
-											FROM Client.CompanyPersonalPhone c
-											WHERE b.ID = c.ID_PERSONAL
-											FOR XML PATH('')
-										)
-										, '') + ' '
-								FROM Client.CompanyPersonal b
-								WHERE b.ID_COMPANY = a.ID
-								FOR XML PATH('')
-							)
-							, '')  +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessPhoneView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '') +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '') +
-						ISNULL(
-							(
-								SELECT ISNULL(b.SHORT, '') + ' ' + ISNULL(b.SURNAME, '')
-								FROM
-									Personal.OfficePersonal b
-									INNER JOIN Client.CompanyProcessSaleView c WITH(NOEXPAND) ON b.ID = c.ID_PERSONAL
-								WHERE c.ID = a.ID
-							)
-						, '') AS DATA,
-					(
-						SELECT TOP 1 AD_STR
-						FROM Client.OfficeAddressMainView WITH(NOEXPAND)
-						WHERE CO_ID = a.ID
-						ORDER BY MAIN DESC, ID
-					)
-				FROM Client.Company a
-				WHERE a.STATUS = 1 AND NOT EXISTS(SELECT * FROM Client.CompanyIndex t WHERE a.ID = t.ID_COMPANY)
-		END
-
-		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
     BEGIN CATCH
         SET @DebugError = Error_Message();
