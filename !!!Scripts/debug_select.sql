@@ -18,10 +18,18 @@ FROM
 ) AS O
 GROUP BY O.[Object]
 ORDER BY
-	[ExecutionCount] DESC
+	--[ExecutionCount] DESC
 	--, 
-	--[AvgDelta] DESC
+	[AvgDelta] DESC
 --/*
+
+/*
+EXEC [Debug].[Executions@Read]
+    @Object = '[Report].[HOTLINE_CLIENT_REPORT]';
+    
+EXEC [Debug].[Executions@Read]
+    @Exec_Id = 6155472
+*/
 
 /*
 SELECT [Object], [Delta], [Cnt] = Count(*)
@@ -80,6 +88,9 @@ ORDER BY S.[name], O.[name]
 --*/
 
 /*
-TRUNCATE TABLE [Debug].[Executions:Start]
+TRUNCATE TABLE [Debug].[Executions:Point:Params]
+TRUNCATE TABLE [Debug].[Executions:Start:Params]
+TRUNCATE TABLE [Debug].[Executions:Point]
 TRUNCATE TABLE [Debug].[Executions:Finish]
+TRUNCATE TABLE [Debug].[Executions:Start]
 --*/
