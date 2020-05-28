@@ -115,9 +115,31 @@ BEGIN
 			AND O.[IsOnline] = 0;
 
 		INSERT INTO @Clientdistr
-		SELECT c.CL_ID, c.Complect, d.HostId, d.SystemId, d.DISTR, d.COMP, d.DistrTypeId, d.SystemBaseName, SystemBaseCheck, DistrTypeBaseCheck, d.SystemOrder, d.DistrStr, d.DistrTypeName
-		FROM @Client c
+		SELECT c.CL_ID, IsNull(CC2.Complect, CC.Complect), d.HostId, d.SystemId, d.DISTR, d.COMP, d.DistrTypeId, d.SystemBaseName, SystemBaseCheck, DistrTypeBaseCheck, d.SystemOrder, d.DistrStr, d.DistrTypeName
+		FROM
+		(
+		    SELECT DISTINCT C.CL_ID
+		    FROM @Client c
+		) AS C
 		INNER JOIN dbo.CLientDistrView d WITH(NOEXPAND) ON d.ID_CLIENT = c.CL_ID
+		CROSS APPLY
+		(
+		    -- чтобы хоть к какому-то комплекту привязать
+		    SELECT TOP (1) CC.Complect
+		    FROM @Client AS CC
+		    WHERE CC.CL_ID = C.CL_ID
+		    ORDER BY Complect
+		) AS CC
+		OUTER APPLY
+		(
+		    SELECT TOP (1) CC.Complect
+		    FROM @Client AS CC
+		    INNER JOIN Reg.RegNodeSearchView AS R WITH(NOEXPAND) ON CC.Complect = R.Complect
+		    WHERE CC.CL_ID = C.CL_ID
+		        AND R.HostId = d.HostId
+		        AND R.DistrNumber = d.DISTR
+		        AND R.CompNumber = d.COMP
+		) AS CC2
 		WHERE d.DS_REG = 0;
 
 		DECLARE @ip Table
@@ -617,7 +639,7 @@ BEGIN
 								WHERE z.ClientID = a.ClientID
 									AND z.COmplect = a.Complect
 									AND Comp IS NOT NULL
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
@@ -648,7 +670,7 @@ BEGIN
 								SELECT *
 								FROM @skip z
 								WHERE z.ClientID = a.ClientID
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
@@ -682,7 +704,7 @@ BEGIN
 								WHERE z.ClientID = a.ClientID
 									AND z.Complect = a.COmplect
 									AND LostList IS NOT NULL
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')

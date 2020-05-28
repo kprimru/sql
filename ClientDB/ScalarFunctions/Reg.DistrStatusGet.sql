@@ -25,7 +25,7 @@ BEGIN
 	IF @DIS_ID IS NULL
 	BEGIN
 		SELECT @RES = Service
-		FROM Reg.RegNodeSerachView a WITH(NOEXPAND)
+		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE a.HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP
 	END
 	ELSE
