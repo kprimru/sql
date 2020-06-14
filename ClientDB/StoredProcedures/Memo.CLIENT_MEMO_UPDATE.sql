@@ -24,7 +24,9 @@ ALTER PROCEDURE [Memo].[CLIENT_MEMO_UPDATE]
 	@DOCUMENTS	NVARCHAR(1024),
 	@CANCEL		BIT,
 	@SYSTEM		NVARCHAR(MAX) = NULL,
-	@ID_CONTRACT_PAY INT = NULL
+	@ID_CONTRACT_PAY INT = NULL,
+	@Contract_Id        UniqueIdentifier = NULL,
+	@SPECIFICATIONS NVarChar(Max) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -47,6 +49,7 @@ BEGIN
 			ID_DOC_TYPE			=	@DOC_TYPE,
 			ID_SERVICE			=	@SERVICE,
 			ID_VENDOR			=	@VENDOR,
+			Contract_Id         = @Contract_Id,
 			START				=	@START,
 			FINISH				=	@FINISH,
 			MONTH_PRICE			=	@MONTH,
@@ -64,6 +67,13 @@ BEGIN
 
 		DELETE FROM Memo.ClientMemoConditions
 		WHERE ID_MEMO = @ID
+
+		DELETE FROM Memo.ClientMemoSpecifications
+		WHERE Memo_Id = @ID
+
+		INSERT INTO Memo.ClientMemoSpecifications
+		SELECT @ID, Id
+		FROM dbo.TableGUIDFromXML(@SPECIFICATIONS) AS I
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -38,7 +38,16 @@ BEGIN
 					FROM Memo.ClientMemoConditions z
 					WHERE z.ID_MEMO = a.ID
 					ORDER BY ORD FOR XML PATH(''), TYPE
-				), '') AS CONDITION
+				), '') AS CONDITION,
+			ISNULL(
+				(
+					SELECT S.NAME + CHAR(10)
+					FROM Memo.ClientMemoSpecifications z
+					INNER JOIN Contract.ContractSpecification AS CS ON Z.Specification_Id = CS.ID
+					INNER JOIN Contract.Specification AS S ON S.[ID] = CS.[ID_SPECIFICATION]
+					WHERE z.Memo_Id = a.ID
+					FOR XML PATH(''), TYPE
+				), '') AS SPECIFICATIONS
 		FROM
 			Memo.ClientMemo a
 			INNER JOIN Memo.Service b ON a.ID_SERVICE = b.ID

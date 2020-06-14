@@ -23,7 +23,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			DATE,
+			DATE, Contract_Id,
 			CURRENT_CONTRACT, DISTR, ID_DOC_TYPE, ID_SERVICE, ID_VENDOR, START, FINISH,
 			MONTH_PRICE, PERIOD_PRICE, PERIOD_START, PERIOD_END, PERIOD_FULL_PRICE,
 			ID_PAY_TYPE, ID_CONTRACT_PAY_TYPE, FRAMEWORK, DOCUMENTS, LETTER_CANCEL,
@@ -37,8 +37,14 @@ BEGIN
 						WHERE a.ID = b.ID_MEMO
 					) AS o_O
 				ORDER BY ORD FOR XML PATH(''), TYPE
-			).value('.', 'nvarchar(max)') AS CONDITION
-		FROM Memo.ClientMemo a
+			).value('.', 'nvarchar(max)') AS CONDITION,
+			(
+			    SELECT '{' + Cast(S.[Specification_Id] AS VarChar(100)) + '}'
+			    FROM Memo.ClientMemoSpecifications AS S
+			    WHERE S.[Memo_Id] = A.ID
+			    FOR XML PATH('ITEM'), ROOT('LIST')
+			) AS SPECIFICATIONS
+		FROM Memo.ClientMemo AS A
 		WHERE ID = @ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

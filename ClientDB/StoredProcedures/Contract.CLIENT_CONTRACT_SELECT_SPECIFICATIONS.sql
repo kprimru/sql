@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME, CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate
+		SELECT CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME, [Code] = S.[NUM], CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate
 		FROM Contract.ContractSpecification AS CS
 		INNER JOIN Contract.Specification	AS S ON CS.ID_SPECIFICATION = S.ID
 		WHERE ID_CONTRACT = @Contract_Id
