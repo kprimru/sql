@@ -65,7 +65,7 @@ BEGIN
 		FROM Common.TableGUIDFromXML(@GUIds);
 
 		SET @Status_Id_NEW			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
-		SET @Status_Id_TAG			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
+		SET @Status_Id_TAG			= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG');
 		SET @Status_Id_ACCEPT		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACCEPT');
 		SET @Status_Id_ACTIVE		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
 		SET @Status_Id_REFUSED		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'REFUSED');

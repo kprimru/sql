@@ -94,21 +94,30 @@ BEGIN
 					@DepoPerson3FIO, @DepoPerson3Phone, @DepoRival, @SortIndex
 				)
 		END ELSE BEGIN
-			IF
-				(
-					SELECT S.[Code]
-					FROM Client.CompanyDepo D
-					INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
-					WHERE D.[Id] = @Id
-				) NOT IN ('NEW', 'STAGE', 'TAG')
-				RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
+			IF @Tag = 1 BEGIN
+			    IF
+				    (
+					    SELECT S.[Code]
+					    FROM Client.CompanyDepo D
+					    INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
+					    WHERE D.[Id] = @Id
+				    ) NOT IN ('ACTIVE', 'TAG')
+				    RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
 
-			IF @Tag = 1
 				UPDATE Client.CompanyDepo
 				SET [Status_Id]				= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG'),
 					[Depo:Rival]			= @DepoRival
 				WHERE [Id] = @Id
-			ELSE
+			END ELSE BEGIN
+			    IF
+				    (
+					    SELECT S.[Code]
+					    FROM Client.CompanyDepo D
+					    INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
+					    WHERE D.[Id] = @Id
+				    ) NOT IN ('NEW', 'STAGE')
+				    RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
+
 				UPDATE Client.CompanyDepo
 				SET [Depo:Name]				= @DepoName,
 					[Depo:Inn]				= @DepoInn,
@@ -123,6 +132,7 @@ BEGIN
 					[Depo:Person3Phone]		= @DepoPerson3Phone,
 					[Depo:Rival]			= @DepoRival
 				WHERE [Id] = @Id
+			END
 		END;
 	END TRY
 	BEGIN CATCH
