@@ -28,5 +28,5 @@ BEGIN
 END
 
 GO
-GRANT EXECUTE ON [dbo].[ODD_DIN_SAVE] TO rl_odd_din_r;
+GRANT EXECUTE ON [dbo].[ODD_DIN_SAVE] TO rl_odd_company;
 GO
