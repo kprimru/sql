@@ -112,7 +112,8 @@ BEGIN
 		) O
 		WHERE ClientServiceID  = @SERVICE
 			AND STATUS = 1
-			AND O.[IsOnline] = 0;
+			-- 02.06.2020 сказали выводить всех
+			--AND O.[IsOnline] = 0;
 
 		INSERT INTO @Clientdistr
 		SELECT c.CL_ID, IsNull(CC2.Complect, CC.Complect), d.HostId, d.SystemId, d.DISTR, d.COMP, d.DistrTypeId, d.SystemBaseName, SystemBaseCheck, DistrTypeBaseCheck, d.SystemOrder, d.DistrStr, d.DistrTypeName
@@ -453,7 +454,7 @@ BEGIN
 									CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
 									WHERE z.ClientId = CL_ID
 										AND z.Complect = c.Complect
-										AND z.SystemBaseName NOT IN (/*'RGU', 'RGN', */'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP')
+										AND z.SystemBaseName NOT IN (/*'RGU', 'RGN', */'CMT', 'QSA', 'ARB', 'JUR', 'BUD', 'MBP', 'BVP', 'JURP', 'BUDP', 'SOJ')
 										AND InfoBankActive = 1
 										AND Required = 1
 										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
@@ -551,6 +552,32 @@ BEGIN
 													AND InfoBankActive = 1
 													AND Required = 1
 													AND q.SystemBaseName = 'BUD'
+											)
+
+									UNION
+
+									SELECT ID_CLIENT = z.ClientId, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
+									FROM @ClientDistr z
+									CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
+									WHERE z.ClientId = CL_ID
+										AND z.Complect = c.Complect
+										AND z.SystemBaseName = 'SOJ'
+										AND InfoBankActive = 1
+										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
+										AND InfoBankName IN ('KSOJ009', 'SODV')
+										AND	InfoBankStart <= WBEGIN
+										AND NOT EXISTS
+											(
+												SELECT *
+												FROM @ClientDIstr t
+												CROSS APPLY dbo.SystemBankGet(t.SystemID, t.DistrTypeId) q
+												WHERE t.ClientId = z.ClientId
+													AND t.SystemID = q.SystemID
+													AND t.Complect = z.Complect
+													AND InfoBankActive = 1
+													AND Required = 1
+													AND q.SystemBaseName = 'SBOP'
 											)
 								) AS z
 							WHERE NOT EXISTS
@@ -702,7 +729,7 @@ BEGIN
 								SELECT *
 								FROM @lost z
 								WHERE z.ClientID = a.ClientID
-									AND z.Complect = a.COmplect
+									AND z.Complect = a.Complect
 									AND LostList IS NOT NULL
 							) THEN '' +
 								(
@@ -742,5 +769,5 @@ BEGIN
 END
 
 GO
-GRANT EXECUTE ON [USR].[SERVICE_COMMON_NEW_GRAPH] TO rl_report_graf_common;
+GRANT EXECUTE ON [USR].[SERVICE_COMMON_NEW_GRAPH] TO rl_report_graf_common_new;
 GO
