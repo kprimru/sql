@@ -60,6 +60,9 @@ BEGIN
     DECLARE @wlist Table (ID  UniqueIdentifier Primary Key Clustered);
     DECLARE @tsearch Table(WRD VarChar(250) Primary Key Clustered);
 
+    DECLARE
+        @SearchWordCount    SmallInt;
+
     DECLARE @IdByFilterType Table
     (
         [Id]        UniqueIdentifier    NOT NULL,
@@ -275,22 +278,38 @@ BEGIN
             END;
 
             IF @NAME IS NOT NULL BEGIN
+                INSERT INTO @tsearch(WRD)
+                SELECT DISTINCT '%' + Word + '%'
+                FROM Common.SplitString(@NAME);
+
+                SET @SearchWordCount = (SELECT COUNT(*) FROM @tsearch);
+
                 INSERT INTO @IdByFilterType
                 SELECT ID, @FilterType_NAME
                 FROM
                 (
                     SELECT a.ID
                     FROM Client.CompanyActiveView a WITH(NOEXPAND)
-                    WHERE a.NAME LIKE @NAME
-                        AND (a.STATUS = 1 OR a.STATUS = 3 AND @DELETED = 1)
+                    WHERE (a.STATUS = 1 OR a.STATUS = 3 AND @DELETED = 1)
+                        AND
+                            (
+                                SELECT Count(*)
+                                FROM @tsearch AS T
+                                WHERE a.NAME LIKE WRD
+                            ) = @SearchWordCount
 
                     UNION
 
                     SELECT a.ID
                     FROM Client.CompanyActiveView a WITH(NOEXPAND)
                     INNER JOIN Client.Office b ON a.ID = b.ID_COMPANY
-                    WHERE b.NAME LIKE @NAME
-                        AND (a.STATUS = 1 OR a.STATUS = 3 AND @DELETED = 1) AND b.STATUS = 1
+                    WHERE (a.STATUS = 1 OR a.STATUS = 3 AND @DELETED = 1) AND b.STATUS = 1
+                        AND
+                            (
+                                SELECT Count(*)
+                                FROM @tsearch AS T
+                                WHERE a.NAME LIKE WRD
+                            ) = @SearchWordCount
                 ) AS A;
 
                 INSERT INTO @UsedFilterTypes
@@ -633,7 +652,7 @@ BEGIN
                 INNER JOIN @rlist P ON P.[ID] = D.[Id]
             ELSE
                 INSERT @company ([Id])
-                SELECT Id
+                SELECT TOP (500) Id
                 FROM @rlist;
         END;
 
