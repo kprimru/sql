@@ -597,7 +597,7 @@ BEGIN
 
             IF @DEPO = 1 BEGIN
                 INSERT INTO @IdByFilterType
-                SELECT Company_Id, @FilterType_DEPO
+                SELECT DISTINCT Company_Id, @FilterType_DEPO
                 FROM Client.CompanyDepo
                 --ToDo убрать хардкод
                 WHERE STATUS = 1 AND Status_Id IN (1, 2, 3);
