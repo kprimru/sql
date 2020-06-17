@@ -7,6 +7,8 @@ GO
 ALTER PROCEDURE [Client].[COMPANY_DEPO_FILTER]
 	@Statuses	VarChar(Max)	= NULL,
 	@ExpireDate	SmallDateTime	= NULL,
+	@Number     Int             = NULL,
+	@Name       VarChar(100)    = NULL,
 	@FileName	VarChar(250)	= NULL OUTPUT,
 	@RC			Int				= NULL OUTPUT
 AS
@@ -36,6 +38,11 @@ BEGIN
 		SET @Status_TAG = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG');
 		SET @Status_TERMINATION = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
+
+		IF LTrim(Rtrim(@Name)) = ''
+		    SET @Name = NULL
+		ELSE
+		    SET @Name = '%' + Replace(@Name, ' ', '%') + '%';
 
 		INSERT INTO @TStatuses
 		SELECT [Id] FROM Common.TableIDFromXML(@Statuses);
@@ -90,6 +97,8 @@ BEGIN
 			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM @TStatuses))
 			AND (D.[ExpireDate] <= @ExpireDate OR @ExpireDate IS NULL)
 			AND D.[Status_Id] NOT IN (@Status_STAGE)
+			AND (D.[Number] = @Number OR @Number IS NULL)
+			AND (D.[Depo:Name] LIKE @Name OR @Name IS NULL)
 		ORDER BY D.[Number] DESC, D.[DateFrom] DESC
 
 		SELECT @RC = @@ROWCOUNT
