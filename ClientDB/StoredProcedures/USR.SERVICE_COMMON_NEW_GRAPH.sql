@@ -474,6 +474,20 @@ BEGIN
 										AND InfoBankName NOT IN ('PKG', 'PSG', 'PPVS')
 										AND	InfoBankStart <= WBEGIN
 
+                                    UNION
+
+									SELECT ID_CLIENT = z.ClientId, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
+									FROM @ClientDIstr z
+									CROSS APPLY dbo.SystemBankGet(z.SystemID, z.DistrTypeId) x
+									WHERE z.ClientId = CL_ID
+										AND z.Complect = c.Complect
+										AND z.SystemBaseName = 'SOJ'
+										AND InfoBankActive = 1
+										AND Required = 1
+										AND SystemBaseCheck = 1 AND DistrTypeBaseCheck = 1
+										AND InfoBankName NOT IN ('KSOJ009', 'SODV')
+										AND	InfoBankStart <= WBEGIN
+
 									UNION
 
 									SELECT ID_CLIENT = z.ClientId, InfoBankID, DISTR, COMP, InfoBankShortName, InfoBankOrder, z.SystemOrder
