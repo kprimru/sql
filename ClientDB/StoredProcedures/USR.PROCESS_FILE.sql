@@ -84,6 +84,8 @@ BEGIN
 			OSCompatibility		VarChar(50) 		NULL,
 			BootDiskName		VarChar(10) 		NULL,
 			BootDiskFreeSpace	VarChar(20) 		NULL,
+			ConsTmpDir          VarChar(256)        NULL,
+			ConsTmpFree         VarCHar(20)         NULL,
 			Office				VarChar(100) 		NULL,
 			Browser				VarChar(100) 		NULL,
 			MailAgent			VarChar(100) 		NULL,
@@ -356,7 +358,7 @@ BEGIN
 			ProcessorName, ProcessorFrequency, ProcessorCores, RAM,
 			OSName, OSVersionMinor, OSVersionMajor, OSBuild, OSPlatformID,
 			OSEdition, OSCapacity, OSLangID, OSCompatibility,
-			BootDiskName, BootDiskFreeSpace,
+			BootDiskName, BootDiskFreeSpace, ConsTmpDir, ConsTmpFree,
 			Office, Browser, MailAgent, Rights, DiskFreeSpace,
 			ODUsers, UDUsers, TSUsers, VMUsers,
 			USRFileDate, USRFileTime, USRFileKind, USRFileUptime,
@@ -389,6 +391,8 @@ BEGIN
 			c.value('(tech_info[1]/OS/CompatibilityMode)[1]',		'VarChar(50)')	AS OSCompatibility,
 			c.value('(tech_info[1]/BootDisk/Name)[1]',				'VarChar(10)')	AS BootDiskName,
 			c.value('(tech_info[1]/BootDisk/FreeSpace)[1]',			'VarChar(20)')	AS BootDiskFreeSpace,
+			c.value('(tech_info[1]/ConsTmpDir/Path)[1]',			'VarChar(256)')	AS ConsTmpDir,
+			c.value('(tech_info[1]/ConsTmpDir/FreeSpace)[1]',		'VarChar(20)')	AS ConsTmpFree,
 			c.value('(tech_info[1]/Office)[1]',						'VarChar(100)')	AS Office,
 			c.value('(tech_info[1]/Browser)[1]',					'VarChar(100)')	AS Browser,
 			c.value('(tech_info[1]/MailAgent)[1]',					'VarChar(100)')	AS MailAgent,
@@ -402,27 +406,88 @@ BEGIN
 			c.value('(files[1]/USR_FILE[1]/@time)[1]',				'VarChar(20)') 	AS USRFileTime,
 			c.value('(files[1]/USR_FILE[1]/@kind)[1]',				'VarChar(20)') 	AS USRFileKind,
 			c.value('(files[1]/USR_FILE[1]/@uptime)[1]',			'VarChar(20)')	AS USRFileUptime,
-			c.value('(files[1]/info.cod[1]/@date)[1]', 				'VarChar(20)') 	AS InfoCodFileDate,
-			c.value('(files[1]/info.cod[1]/@time)[1]', 				'VarChar(20)') 	AS InfoCodFileTime,
-			c.value('(files[1]/info.cfg[1]/@date)[1]', 				'VarChar(20)') 	AS InfoCodFileDate,
-			c.value('(files[1]/info.cfg[1]/@time)[1]', 				'VarChar(20)') 	AS InfoCodFileTime,
-			c.value('(files[1]/consult.tor[1]/@date)[1]',			'VarChar(20)')	AS ConsultTorFileDate,
-			c.value('(files[1]/consult.tor[1]/@time)[1]',			'VarChar(20)')	AS ConsultTorFileTime,
+
+			IsNull(
+			c.value('(files[1]/info.cod[1]/@date)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO.COD[1]/@date)[1]', 				'VarChar(20)')
+			) AS InfoCodFileDate,
+
+			IsNull(
+			c.value('(files[1]/info.cod[1]/@time)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO.COD[1]/@time)[1]', 				'VarChar(20)')
+			) AS InfoCodFileTime,
+
+			IsNull(
+			c.value('(files[1]/info.cfg[1]/@date)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO.CFG[1]/@date)[1]', 				'VarChar(20)')
+			) AS InfoCodFileDate,
+
+			IsNull(
+			c.value('(files[1]/info.cfg[1]/@time)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO.CFG[1]/@time)[1]', 				'VarChar(20)')
+			) AS InfoCodFileTime,
+
+			IsNull(
+			c.value('(files[1]/consult.tor[1]/@date)[1]',			'VarChar(20)'),
+			c.value('(files[1]/CONSULT.TOR[1]/@date)[1]',			'VarChar(20)')
+			) AS ConsultTorFileDate,
+
+			IsNull(
+			c.value('(files[1]/consult.tor[1]/@time)[1]',			'VarChar(20)'),
+			c.value('(files[1]/CONSULT.TOR[1]/@time)[1]',			'VarChar(20)')
+			) AS ConsultTorFileTime,
+
 			c.value('(tech_info[1]/FileSystem)[1]',					'VarChar(20)')	AS FileSystem,
 
-			c.value('(files[1]/expcons.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS ExpconsDate,
-			c.value('(files[1]/expcons.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS ExpconsTime,
-			c.value('(files[1]/expcons.cfg[1]/@kind)[1]', 			'VarChar(20)') 	AS ExpconsKind,
+            IsNull(
+			c.value('(files[1]/expcons.cfg[1]/@date)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/EXPCONS.CFG[1]/@date)[1]', 			'VarChar(20)')
+			) AS ExpconsDate,
 
-			c.value('(files[1]/expusers.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS ExpusersDate,
-			c.value('(files[1]/expusers.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS ExpusersTime,
+			IsNull(
+			c.value('(files[1]/expcons.cfg[1]/@time)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/EXPCONS.CFG[1]/@time)[1]', 			'VarChar(20)')
+			) AS ExpconsTime,
 
-			c.value('(files[1]/hotline.cfg[1]/@date)[1]', 			'VarChar(20)') 	AS HotlineDate,
-			c.value('(files[1]/hotline.cfg[1]/@time)[1]', 			'VarChar(20)') 	AS HotlineTime,
-			c.value('(files[1]/hotline.cfg[1]/@kind)[1]', 			'VarChar(20)') 	AS HotlineKind,
+			IsNull(
+			c.value('(files[1]/expcons.cfg[1]/@kind)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/EXPCONS.CFG[1]/@kind)[1]', 			'VarChar(20)')
+			) AS ExpconsKind,
 
-			c.value('(files[1]/hotlineusers.cfg[1]/@date)[1]', 		'VarChar(20)') 	AS HotlineUsersDate,
-			c.value('(files[1]/hotlineusers.cfg[1]/@time)[1]', 		'VarChar(20)') 	AS HotlineUsersTime,
+            IsNull(
+			c.value('(files[1]/expusers.cfg[1]/@date)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/EXPUSERS.CFG[1]/@date)[1]', 			'VarChar(20)')
+			) 	AS ExpusersDate,
+
+			IsNull(
+			c.value('(files[1]/expusers.cfg[1]/@time)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/EXPUSERS.CFG[1]/@time)[1]', 			'VarChar(20)')
+			) 	AS ExpusersTime,
+
+            IsNull(
+			c.value('(files[1]/hotline.cfg[1]/@date)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/HOTLINE.CFG[1]/@date)[1]', 			'VarChar(20)')
+			) AS HotlineDate,
+
+			IsNull(
+			c.value('(files[1]/hotline.cfg[1]/@time)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/HOTLINE.CFG[1]/@time)[1]', 			'VarChar(20)')
+			) AS HotlineTime,
+
+			IsNull(
+			c.value('(files[1]/hotline.cfg[1]/@kind)[1]', 			'VarChar(20)'),
+			c.value('(files[1]/HOTLINE.CFG[1]/@kind)[1]', 			'VarChar(20)')
+			) AS HotlineKind,
+
+            IsNull(
+			c.value('(files[1]/hotlineusers.cfg[1]/@date)[1]', 		'VarChar(20)'),
+			c.value('(files[1]/HOTLINEUSERS.CFG[1]/@date)[1]', 		'VarChar(20)')
+			) AS HotlineUsersDate,
+
+			IsNull(
+			c.value('(files[1]/hotlineusers.cfg[1]/@time)[1]', 		'VarChar(20)'),
+			c.value('(files[1]/HOTLINEUSERS.CFG[1]/@time)[1]', 		'VarChar(20)')
+			) AS HotlineUsersTime,
 
 			c.value('(tech_info[1]/wine[1]/@exist)[1]',				'VarChar(20)')	AS WineExists,
 			c.value('(tech_info[1]/wine[1]/@version)[1]',			'VarChar(20)')	AS WineExists,
@@ -922,7 +987,7 @@ BEGIN
 						UF_INFO_COD, UF_INFO_CFG, UF_CONSULT_TOR, UF_FILE_SYSTEM, UF_EXPCONS,
 						UF_EXPCONS_KIND, UF_EXPUSERS, UF_HOTLINE, UF_HOTLINE_KIND, UF_HOTLINEUSERS,
 						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND,
-						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE)
+						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE, UF_TEMP_DIR, UF_TEMP_FREE)
 		SELECT
 			@Usr_Id, FormatVersion, Ric, ResVersionID, ConsExeVersionID, ID,
 			(
@@ -986,7 +1051,7 @@ BEGIN
 				121
 			),
 
-			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType
+			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType, ConsTmpDir, ConsTmpFree
 		FROM @Usr
 		INNER JOIN dbo.ResVersionTable		ON ResVersionNumber = ResVersion
 		INNER JOIN dbo.ConsExeVersionTable	ON ConsExeVersionName = ConsExeVersion
