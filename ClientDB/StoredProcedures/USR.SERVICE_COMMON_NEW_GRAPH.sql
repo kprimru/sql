@@ -51,6 +51,7 @@ BEGIN
 			CL_ID		INT,
 			Complect	VarChar(100),
 			ComplectStr	VarChar(100),
+			IsOnline    Bit,
 			Primary Key Clustered (CL_ID, Complect)
 		);
 
@@ -73,7 +74,7 @@ BEGIN
 		);
 
 		INSERT INTO @client
-		SELECT ClientID, Complect, ComplectStr
+		SELECT ClientID, Complect, ComplectStr, IsOnline
 		FROM dbo.ClientTable a
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 		CROSS APPLY
@@ -241,12 +242,15 @@ BEGIN
 						AND EventTypeName NOT IN ('КГС 223', 'КГС 94')
 					ORDER BY EventDate FOR XML PATH('')
 				)), 1, 2, '')),
+				/*
 				(
 					SELECT MAX(CONVERT(TINYINT, DistrTypeBaseCheck))
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
 					WHERE z.ID_CLIENT = a.ClientID
 						AND DS_REG = 0
 				),
+				*/
+				CASE t.IsOnline WHEN 1 THEN 0 ELSE 1 END,
 				ISNULL(CONVERT(VARCHAR(20), dbo.DateOf(
 					(
 						SELECT MAX(DATE)
@@ -637,7 +641,12 @@ BEGIN
 			(
 				SELECT DISTINCT
 					ID, a.ClientID, a.Complect, a.ComplectStr, CLientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, DayOrder, DayTime,
-					ClientEvent, LastSTT, LastUpdate,
+					ClientEvent,
+					CASE DistrTypeBaseCheck
+						WHEN 0 THEN '-'
+						ELSE LastSTT
+					END AS LastSTT,
+					LastUpdate,
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' +
 						/*DATENAME(WEEKDAY, UpdateDateTime) + ' ' + */
 						WD + ' ' +
@@ -660,49 +669,61 @@ BEGIN
 						ELSE ConsExeActual
 					END AS ConsExeActual, UpdateDateTime,
 					UF_PATH,
-					CASE
-						WHEN EXISTS
-							(
-								SELECT *
-								FROM @compl z
-								WHERE z.ClientID = a.ClientID
-									AND z.Complect= a.Complect
-									AND Comp IS NOT NULL
-							) THEN 1
-						ELSE 0
+					CASE DistrTypeBaseCheck
+						WHEN 0 THEN 0
+						ELSE
+					        CASE
+						        WHEN EXISTS
+							        (
+								        SELECT *
+								        FROM @compl z
+								        WHERE z.ClientID = a.ClientID
+									        AND z.Complect= a.Complect
+									        AND Comp IS NOT NULL
+							        ) THEN 1
+						        ELSE 0
+					        END
 					END AS ComplianceError,
-					CASE
-						WHEN DistrTypeBaseCheck = 0 THEN ''
-						WHEN EXISTS
-							(
-								SELECT *
-								FROM @compl z
-								WHERE z.ClientID = a.ClientID
-									AND z.COmplect = a.Complect
-									AND Comp IS NOT NULL
-							) THEN '' +
-								(
-									SELECT
-										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
-									FROM
-										@WEEK
-										INNER JOIN @compl z ON Week_ID = WeekID
-									WHERE z.ClientID = a.ClientID
-										AND z.Complect = a.Complect
-									ORDER BY Week_ID FOR XML PATH('')
-								)
-						ELSE 'Совпадает'
+					CASE DistrTypeBaseCheck
+						WHEN 0 THEN ''
+						ELSE
+					        CASE
+						        WHEN DistrTypeBaseCheck = 0 THEN ''
+						        WHEN EXISTS
+							        (
+								        SELECT *
+								        FROM @compl z
+								        WHERE z.ClientID = a.ClientID
+									        AND z.COmplect = a.Complect
+									        AND Comp IS NOT NULL
+							        ) THEN '' +
+								        (
+									        SELECT
+										        ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
+									        FROM
+										        @WEEK
+										        INNER JOIN @compl z ON Week_ID = WeekID
+									        WHERE z.ClientID = a.ClientID
+										        AND z.Complect = a.Complect
+									        ORDER BY Week_ID FOR XML PATH('')
+								        )
+						        ELSE 'Совпадает'
+						    END
 					END AS Compliance,
-					CASE
-						WHEN DIstrTypeBaseCheck = 0 THEN 0
-						WHEN EXISTS
-							(
-								SELECT *
-								FROM @skip z
-								WHERE z.ClientID = a.ClientID
-									AND z.COmplect = a.Complect
-							) THEN 1
-						ELSE 0
+					CASE DistrTypeBaseCheck
+						WHEN 0 THEN ''
+						ELSE
+					        CASE
+						        WHEN DIstrTypeBaseCheck = 0 THEN 0
+						        WHEN EXISTS
+							        (
+								        SELECT *
+								        FROM @skip z
+								        WHERE z.ClientID = a.ClientID
+									        AND z.COmplect = a.Complect
+							        ) THEN 1
+						        ELSE 0
+						    END
 					END AS UpdateSkipError,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN ''
