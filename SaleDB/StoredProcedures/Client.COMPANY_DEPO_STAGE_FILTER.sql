@@ -5,6 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Client].[COMPANY_DEPO_STAGE_FILTER]
+    @Number     Int             = NULL,
+	@Name       VarChar(100)    = NULL,
 	@RC			Int				= NULL OUTPUT
 AS
 BEGIN
@@ -26,6 +28,11 @@ BEGIN
 	BEGIN TRY
 		SET @Status_STAGE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
 
+		IF LTrim(Rtrim(@Name)) = ''
+		    SET @Name = NULL
+		ELSE
+		    SET @Name = '%' + Replace(@Name, ' ', '%') + '%';
+
 		SELECT
 			D.[Id],
 			[Company_Id],
@@ -45,6 +52,8 @@ BEGIN
 		FROM Client.CompanyDepo				AS D
 		WHERE D.STATUS = 1
 			AND D.[Status_Id] IN (@Status_STAGE)
+			AND (D.[SortIndex] = @Number OR @Number IS NULL)
+			AND (D.[Depo:Name] LIKE @Name OR @Name IS NULL)
 		ORDER BY D.[SortIndex]
 
 		SELECT @RC = @@ROWCOUNT
