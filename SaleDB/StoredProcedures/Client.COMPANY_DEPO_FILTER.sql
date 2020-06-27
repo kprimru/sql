@@ -95,7 +95,7 @@ BEGIN
 		) AS DS
 		WHERE D.STATUS = 1
 			AND (@Statuses IS NULL OR D.[Status_Id] IN (SELECT [Id] FROM @TStatuses))
-			AND (D.[ExpireDate] <= @ExpireDate OR @ExpireDate IS NULL)
+			AND (D.[ExpireDate] = @ExpireDate OR @ExpireDate IS NULL)
 			AND D.[Status_Id] NOT IN (@Status_STAGE)
 			AND (D.[Number] = @Number OR @Number IS NULL)
 			AND (D.[Depo:Name] LIKE @Name OR @Name IS NULL)

@@ -48,8 +48,18 @@ BEGIN
 			[Depo:Person2Phone],
 			[Depo:Person3FIO],
 			[Depo:Person3Phone],
-			[Depo:Rival]
+			[Depo:Rival],
+			[StatusName] = C.[Name]
 		FROM Client.CompanyDepo				AS D
+		OUTER APPLY
+		(
+		    SELECT TOP (1) S.Name
+		    FROM Client.CompanyDepo AS C
+		    INNER JOIN [Client].[Depo->Statuses] AS S ON C.Status_Id = S.[Id]
+		    WHERE C.Company_Id = D.Company_Id
+		        AND C.[Status_Id] NOT IN (@Status_STAGE)
+		    ORDER BY C.[DateFrom] DESC
+		) AS C
 		WHERE D.STATUS = 1
 			AND D.[Status_Id] IN (@Status_STAGE)
 			AND (D.[SortIndex] = @Number OR @Number IS NULL)
