@@ -70,12 +70,12 @@ BEGIN
 						SELECT SUM(Docs)
 						FROM
 							(
-								SELECT SystemID, a.InfoBankID, MAX(b.StatisticDate) AS StatisticDate
+								SELECT a.SystemID, a.InfoBankID, MAX(b.StatisticDate) AS StatisticDate
 								FROM dbo.SystemTable
                                 CROSS APPLY dbo.SystemBankGet(SystemId, 2) a
 								INNER JOIN dbo.StatisticTable b ON a.InfoBankID = b.InfoBankID
-								WHERE b.StatisticDate <= t.StatisticDate AND t.SystemID = a.SystemID AND SystemActive = 1 AND InfoBankActive = 1
-								GROUP BY SystemID, a.InfoBankID
+								WHERE b.StatisticDate <= t.StatisticDate AND t.SystemID = a.SystemID AND a.SystemActive = 1 AND InfoBankActive = 1
+								GROUP BY a.SystemID, a.InfoBankID
 							) AS p
 							INNER JOIN dbo.StatisticTable q ON q.InfoBankID = p.InfoBankID AND q.StatisticDate = p.StatisticDate
 					), SystemOrder, 2

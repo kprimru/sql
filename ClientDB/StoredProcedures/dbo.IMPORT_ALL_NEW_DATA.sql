@@ -747,6 +747,28 @@ BEGIN
 					AND SP.ID_MONTH = P.ID
 			);
 
+		-- обновляем количество документов
+
+		INSERT INTO dbo.StatisticTable(StatisticDate, InfoBankID, Docs)
+		SELECT IDate, y.InfoBankID, IDOCS
+		FROM
+			(
+				SELECT
+					c.value('(@IB)', 'VARCHAR(50)') AS IBase,
+					c.value('(@Date)', 'SmallDateTime') AS IDate,
+					c.value('(@Docs)', 'INT') AS IDOCS
+				FROM @Data.nodes('/DATA[1]/STAT[1]/ITEM') AS a(c)
+			) AS z
+			INNER JOIN dbo.InfoBankTable y ON z.IBase = y.InfoBankName
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM dbo.StatisticTable x
+				WHERE x.InfoBankID = y.InfoBankID
+					AND z.IDate = x.StatisticDate
+					AND x.Docs = z.IDOCS
+			)
+
 		-- Обновляем РЦ
 
 		DELETE FROM dbo.RegNodeTable;
