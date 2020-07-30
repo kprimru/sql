@@ -73,14 +73,14 @@ BEGIN
 				FROM
 					#client b
 					INNER JOIN dbo.ClientTypeTable c ON b.CLT_ID = c.CLT_ID
-				WHERE b.CT_ID = a.CT_ID
-					AND CLT_NAME LIKE '%สรั%'
+				WHERE /*b.CT_ID = a.CT_ID
+					AND */CLT_NAME LIKE '%สรั%'
 			) AS DECIMAL(8, 4)) /
 			NULLIF((
 				SELECT COUNT(*)
 				FROM
 					#client b
-				WHERE b.CT_ID = a.CT_ID
+				--WHERE b.CT_ID = a.CT_ID
 					--AND CLT_NAME LIKE '%สรั%'
 			), 0)
 		FROM #client a
