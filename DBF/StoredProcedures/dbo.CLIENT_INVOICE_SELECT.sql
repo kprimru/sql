@@ -4,14 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 /*
 Автор:			Денисов Алексей/Богдан Владимир
 Дата создания:  24.03.2009
 Описание:		все счета-фактуры клиента
 */
-
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_SELECT]
 	@clientid INT
 AS
@@ -60,7 +57,7 @@ BEGIN
 			)) AS PURCHASE_SUM
 		FROM
 			dbo.InvoiceSaleTable
-			INNER JOIN dbo.ClientTable ON INS_ID_CLIENT = CL_ID
+			--INNER JOIN dbo.ClientTable ON INS_ID_CLIENT = CL_ID
 			INNER JOIN dbo.OrganizationTable ON ORG_ID = INS_ID_ORG
 			LEFT OUTER JOIN dbo.InvoiceTypeTable ON INT_ID = INS_ID_TYPE
 			LEFT OUTER JOIN dbo.ActTable ON ACT_ID_INVOICE = INS_ID

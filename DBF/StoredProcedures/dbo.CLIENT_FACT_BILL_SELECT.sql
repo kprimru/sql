@@ -19,12 +19,34 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE @Bill Table
+    (
+        BFM_ID          BigInt,
+        BFM_DATE        DateTime,
+        BFM_NUM         VarChar(50),
+        BFM_ID_PERIOD   SmallInt,
+        BILL_DATE       SmallDateTime,
+        ORG_ID          SmallInt
+        PRIMARY KEY CLUSTERED (BFM_ID)
+    );
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+	    INSERT INTO @Bill
+	    SELECT
+	        BFM_ID,
+			BFM_DATE,
+			BFM_NUM,
+			BFM_ID_PERIOD,
+			BILL_DATE,
+			ORG_ID
+		FROM dbo.BillFactMasterTable a
+		WHERE CL_ID = @clientid;
 
 		SELECT
 			BFM_ID,
@@ -35,10 +57,8 @@ BEGIN
 				WHERE BFD_ID_BFM = BFM_ID
 			) AS BD_TOTAL_PRICE,
 			BFM_NUM, BFM_ID_PERIOD, BILL_DATE, ORG_PSEDO
-		FROM
-			dbo.BillFactMasterTable a INNER JOIN
-			dbo.OrganizationTable b ON a.ORG_ID = b.ORG_ID
-		WHERE CL_ID = @clientid
+		FROM @Bill a
+		INNER MERGE JOIN dbo.OrganizationTable b ON a.ORG_ID = b.ORG_ID
 		ORDER BY BFM_DATE DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

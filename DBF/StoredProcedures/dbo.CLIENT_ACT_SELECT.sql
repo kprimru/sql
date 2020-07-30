@@ -35,6 +35,8 @@ BEGIN
 			SO_CODE = (
 				-- ToDo это нужно, чтобы понимать по какой форме печатать акт.
 				-- В принципе, акты, которые печатаются по разным формам должно быть нельзя пихать в один
+
+				-- ToDo очень медленно работает
 				SELECT TOP (1) SO_CODE
 				FROM dbo.ActDistrTable
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR

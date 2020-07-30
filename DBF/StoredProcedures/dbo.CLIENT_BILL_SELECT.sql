@@ -34,7 +34,7 @@ BEGIN
 			SO_ID			SmallInt,
 			ORG_ID			SmallInt,
 			BL_PRICE		Money,
-			PRIMARY KEY CLUSTERED(PR_ID, BL_ID, SO_ID)
+			PRIMARY KEY CLUSTERED(BL_ID, PR_ID, SO_ID)
 		);
 
 		INSERT INTO @Bill(BL_ID, PR_ID, SO_ID, ORG_ID, BL_PRICE)
@@ -71,11 +71,12 @@ BEGIN
 			SO_NAME, B.SO_ID,
 			BL_PRICE - ISNULL(I.IN_PRICE, 0)AS BL_UNPAY,
 			ORG_PSEDO
-		FROM @bill							B
-		INNER JOIN dbo.OrganizationTable	O ON	B.ORG_ID = O.ORG_ID
-		INNER JOIN dbo.PeriodTable			P ON	P.PR_ID = B.PR_ID
-		INNER JOIN dbo.SaleObjectTable		S ON	S.SO_ID = B.SO_ID
-		LEFT JOIN @income					I ON	I.BL_ID = B.BL_ID
+		FROM @bill							    B
+		-- ToDo это должны быть лукапы :(
+		INNER MERGE JOIN dbo.OrganizationTable	O ON	B.ORG_ID = O.ORG_ID
+		INNER MERGE JOIN dbo.PeriodTable		P ON	P.PR_ID = B.PR_ID
+		INNER MERGE JOIN dbo.SaleObjectTable	S ON	S.SO_ID = B.SO_ID
+		LEFT MERGE JOIN @income					I ON	I.BL_ID = B.BL_ID
 												AND B.SO_ID = I.SO_ID
 												AND	I.PR_ID	= B.PR_ID
 		ORDER BY PR_DATE DESC;
