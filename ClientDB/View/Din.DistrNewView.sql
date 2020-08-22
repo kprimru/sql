@@ -38,7 +38,7 @@ AS
 				AND x.NEW_NUM = a.DF_DISTR
 				AND x.NEW_COMP = a.DF_COMP
 				AND z.DF_ID <> a.DF_ID
-		) AND NOT EXISTS
+		) /*AND NOT EXISTS
 		(
 			SELECT *
 			FROM
@@ -49,4 +49,4 @@ AS
 				AND z.COMP = a.DF_COMP
 				AND y.DATE < a.DF_CREATE
 		)
-GO
+*/GO
