@@ -12,109 +12,131 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @LEN INT
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @LEN = LEN(@FILES)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @LSTR VARCHAR(50)
+	BEGIN TRY
 
-	SET @LSTR = CONVERT(VARCHAR(50), @LEN)
+	    DECLARE @LEN INT
+    
+	    SET @LEN = LEN(@FILES)
+    
+	    DECLARE @LSTR VARCHAR(50)
+    
+	    SET @LSTR = CONVERT(VARCHAR(50), @LEN)
+    
+	    --RAISERROR(@LSTR, 16, 1)
+    
+	    --RETURN
 
-	--RAISERROR(@LSTR, 16, 1)
+	    DECLARE @XML XML
+	    DECLARE @HDOC INT
+    
+	    SET @XML = CAST(@FILES AS XML)
 
-	--RETURN
+	    EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
 
-	DECLARE @XML XML
-	DECLARE @HDOC INT
+	    IF OBJECT_ID('tempdb..#filelist') IS NOT NULL
+		    DROP TABLE #filelist
 
-	SET @XML = CAST(@FILES AS XML)
+	    CREATE TABLE #filelist
+		    (
+			    FILE_PATH	NVARCHAR(512),
+			    FILE_SIZE	BIGINT,
+			    /*
+				    тип файла - 3-х видов:
+					    CLIENT
+					    SERVER
+					    LOG
+			    */
+			    FILE_TYPE	NVARCHAR(64)
+		    )
 
-	EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
+	    INSERT INTO #filelist
+		    (
+			    FILE_PATH, FILE_SIZE, FILE_TYPE
+		    )
+		    SELECT 
+			    c.value('(@NAME)', 'NVARCHAR(512)') AS FILE_PATH,
+			    c.value('(@SIZE)', 'BIGINT') AS FILE_SIZE,
+			    c.value('(@TYPE)', 'NVARCHAR(64)') AS FILE_TYPE
+		    FROM @xml.nodes('/FILELIST/FILE') AS a(c)
 
-	IF OBJECT_ID('tempdb..#filelist') IS NOT NULL
-		DROP TABLE #filelist
+	    DECLARE FILES CURSOR LOCAL FOR
+		    SELECT FILE_PATH, FILE_SIZE, FILE_TYPE
+		    FROM #filelist
+		    WHERE FILE_TYPE IN ('CLIENT', 'SERVER', 'LOG')
+			    AND NOT EXISTS
+				    (
+					    SELECT *
+					    FROM dbo.Files
+					    WHERE FL_NAME = FILE_PATH
+						    AND FL_SIZE = FILE_SIZE
+				    )
+    
+	    OPEN FILES
 
-	CREATE TABLE #filelist
-		(
-			FILE_PATH	NVARCHAR(512),
-			FILE_SIZE	BIGINT,
-			/*
-				тип файла - 3-х видов:
-					CLIENT
-					SERVER
-					LOG
-			*/
-			FILE_TYPE	NVARCHAR(64)
-		)
+	    DECLARE @FILE_PATH	NVARCHAR(512)
+	    DECLARE @FILE_SIZE	BIGINT
+	    DECLARE @FILE_TYPE	NVARCHAR(64)
 
-	INSERT INTO #filelist
-		(
-			FILE_PATH, FILE_SIZE, FILE_TYPE
-		)
-		SELECT 
-			c.value('(@NAME)', 'NVARCHAR(512)') AS FILE_PATH,
-			c.value('(@SIZE)', 'BIGINT') AS FILE_SIZE,
-			c.value('(@TYPE)', 'NVARCHAR(64)') AS FILE_TYPE
-		FROM @xml.nodes('/FILELIST/FILE') AS a(c)
+	    FETCH NEXT FROM FILES INTO
+		    @FILE_PATH, @FILE_SIZE, @FILE_TYPE
 
-	DECLARE FILES CURSOR LOCAL FOR
-		SELECT FILE_PATH, FILE_SIZE, FILE_TYPE
-		FROM #filelist
-		WHERE FILE_TYPE IN ('CLIENT', 'SERVER', 'LOG')
-			AND NOT EXISTS
-				(
-					SELECT *
-					FROM dbo.Files
-					WHERE FL_NAME = FILE_PATH
-						AND FL_SIZE = FILE_SIZE
-				)
+	    DECLARE @SERVER_PATH	NVARCHAR(512)
 
-	OPEN FILES
+	    IF @SERVER IS NULL
+		    SELECT @SERVER_PATH = ST_VALUE
+		    FROM dbo.Settings
+		    WHERE ST_NAME = N'SERVER_PATH'
+	    ELSE
+		    SELECT @SERVER_PATH = SRV_PATH
+		    FROM dbo.Servers
+		    WHERE SRV_ID = @SERVER
 
-	DECLARE @FILE_PATH	NVARCHAR(512)
-	DECLARE @FILE_SIZE	BIGINT
-	DECLARE @FILE_TYPE	NVARCHAR(64)
+	    WHILE @@FETCH_STATUS = 0
+	    BEGIN
+		    SET @FILE_PATH = @SERVER_PATH + @FILE_PATH
 
-	FETCH NEXT FROM FILES INTO
-		@FILE_PATH, @FILE_SIZE, @FILE_TYPE
+		    IF @FILE_TYPE = 'LOG'
+		    BEGIN
+			    EXEC dbo.LOG_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
+		    END
+		    ELSE IF @FILE_TYPE = 'CLIENT'
+		    BEGIN
+			    EXEC dbo.CLIENT_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
+		    END
+		    ELSE IF @FILE_TYPE = 'SERVER'
+		    BEGIN
+			    EXEC dbo.SERVER_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
+		    END
 
-	DECLARE @SERVER_PATH	NVARCHAR(512)
+		    FETCH NEXT FROM FILES INTO
+			    @FILE_PATH, @FILE_SIZE, @FILE_TYPE
+	    END
 
-	IF @SERVER IS NULL
-		SELECT @SERVER_PATH = ST_VALUE
-		FROM dbo.Settings
-		WHERE ST_NAME = N'SERVER_PATH'
-	ELSE
-		SELECT @SERVER_PATH = SRV_PATH
-		FROM dbo.Servers
-		WHERE SRV_ID = @SERVER
+	    CLOSE FILES
+	    DEALLOCATE FILES
 
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		SET @FILE_PATH = @SERVER_PATH + @FILE_PATH
+	    IF OBJECT_ID('tempdb..#filelist') IS NOT NULL
+		    DROP TABLE #filelist
 
-		IF @FILE_TYPE = 'LOG'
-		BEGIN
-			EXEC dbo.LOG_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
-		END
-		ELSE IF @FILE_TYPE = 'CLIENT'
-		BEGIN
-			EXEC dbo.CLIENT_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
-		END
-		ELSE IF @FILE_TYPE = 'SERVER'
-		BEGIN
-			EXEC dbo.SERVER_FILE_PROCESS @FILE_PATH, @FILE_SIZE, @SERVER
-		END
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-		FETCH NEXT FROM FILES INTO
-			@FILE_PATH, @FILE_SIZE, @FILE_TYPE
-	END
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-	CLOSE FILES
-	DEALLOCATE FILES
-
-	IF OBJECT_ID('tempdb..#filelist') IS NOT NULL
-		DROP TABLE #filelist
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO
 GRANT EXECUTE ON [dbo].[PROCESS_FILES] TO rl_ip_refresh;

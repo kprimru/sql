@@ -12,16 +12,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	/*
-	UPDATE USR.USRFile
-	SET UF_HASH = @HASH
-	WHERE UF_HASH IS NULL
-		AND UF_ID = @ID;
-	*/
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE dbo.USRFiles
-	SET UF_MD5 = @HASH
-	WHERE UF_MD5 IS NULL
-		AND UF_ID = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+	    /*
+	    UPDATE USR.USRFile
+	    SET UF_HASH = @HASH
+	    WHERE UF_HASH IS NULL
+		    AND UF_ID = @ID;
+	    */
+
+	    UPDATE dbo.USRFiles
+	    SET UF_MD5 = @HASH
+	    WHERE UF_MD5 IS NULL
+		    AND UF_ID = @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO

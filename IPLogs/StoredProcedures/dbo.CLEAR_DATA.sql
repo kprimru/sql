@@ -9,23 +9,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE FROM dbo.ServerStatDetail
-	DELETE FROM dbo.ClientStatDetail
-	DELETE FROM dbo.LogFiles
-	DELETE FROM dbo.USRFiles
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE FROM dbo.ServerStat
-	DELETE FROM dbo.ClientStat
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE FROM dbo.Files
+	BEGIN TRY
 
+	    DELETE FROM dbo.ServerStatDetail
+	    DELETE FROM dbo.ClientStatDetail
+	    DELETE FROM dbo.LogFiles
+	    DELETE FROM dbo.USRFiles
 
-	DBCC CHECKIDENT (ServerStatDetail, RESEED, 1)
-	DBCC CHECKIDENT (ClientStatDetail, RESEED, 1)
-	DBCC CHECKIDENT (LogFiles, RESEED, 1)
-	DBCC CHECKIDENT (USRFiles, RESEED, 1)
-	DBCC CHECKIDENT (ServerStat, RESEED, 1)
-	DBCC CHECKIDENT (ClientStat, RESEED, 1)
-	DBCC CHECKIDENT (Files, RESEED, 1)
+	    DELETE FROM dbo.ServerStat
+	    DELETE FROM dbo.ClientStat
+    
+	    DELETE FROM dbo.Files
+    
+
+	    DBCC CHECKIDENT (ServerStatDetail, RESEED, 1)
+	    DBCC CHECKIDENT (ClientStatDetail, RESEED, 1)
+	    DBCC CHECKIDENT (LogFiles, RESEED, 1)
+	    DBCC CHECKIDENT (USRFiles, RESEED, 1)
+	    DBCC CHECKIDENT (ServerStat, RESEED, 1)
+	    DBCC CHECKIDENT (ClientStat, RESEED, 1)
+	    DBCC CHECKIDENT (Files, RESEED, 1)
+
+	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO

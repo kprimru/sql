@@ -11,29 +11,51 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF NOT EXISTS
-		(
-			SELECT *
-			FROM sys.server_principals
-			WHERE [name] = @US_NAME
-				AND [type] = 'U'
-		)
-	BEGIN
-		EXEC('CREATE LOGIN [' + @US_NAME + '] FROM WINDOWS')
-	END
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF EXISTS
-		(
-			SELECT *
-			FROM sys.server_principals
-			WHERE [name] = @US_NAME
-				AND [type] = 'U'
-		)
-	BEGIN
-		EXEC('CREATE USER [' + @US_NAME + '] FOR LOGIN [' + @US_NAME + ']')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		EXEC sp_addrolemember 'rl_common', @US_NAME
-	END
+	BEGIN TRY
+
+	    IF NOT EXISTS
+		    (
+			    SELECT *
+			    FROM sys.server_principals
+			    WHERE [name] = @US_NAME
+				    AND [type] = 'U'
+		    )
+	    BEGIN
+		    EXEC('CREATE LOGIN [' + @US_NAME + '] FROM WINDOWS')
+	    END
+
+	    IF EXISTS
+		    (
+			    SELECT *
+			    FROM sys.server_principals
+			    WHERE [name] = @US_NAME
+				    AND [type] = 'U'
+		    )
+	    BEGIN
+		    EXEC('CREATE USER [' + @US_NAME + '] FOR LOGIN [' + @US_NAME + ']')
+
+		    EXEC sp_addrolemember 'rl_common', @US_NAME
+	    END
+
+	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO
 GRANT EXECUTE ON [dbo].[USER_CREATE] TO rl_admin;

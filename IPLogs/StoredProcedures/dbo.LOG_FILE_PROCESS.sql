@@ -12,80 +12,102 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @FILEID	INT
-	DECLARE @RESULT	TINYINT
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE	@TEXT	NVARCHAR(MAX)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 1, @FILEID OUTPUT, @RESULT OUTPUT
+	BEGIN TRY
 
-	IF @FILEID IS NOT NULL
-	BEGIN
-		IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
-			DROP TABLE #logfile
+	    DECLARE @FILEID	INT
+	    DECLARE @RESULT	TINYINT
 
-		CREATE TABLE #logfile
-			(
-				LOG_ROW	NVARCHAR(MAX)
-			)
+	    DECLARE	@TEXT	NVARCHAR(MAX)
 
-		EXEC('
-		BULK INSERT #logfile
-		FROM ''' + @filename + '''
-		WITH
-			(
-				ROWTERMINATOR = ''\n'',
-				CODEPAGE = 1251
-			)')
+	    EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 1, @FILEID OUTPUT, @RESULT OUTPUT
 
-		SET @TEXT = N''
+	    IF @FILEID IS NOT NULL
+	    BEGIN
+		    IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
+			    DROP TABLE #logfile
+    
+		    CREATE TABLE #logfile
+			    (
+				    LOG_ROW	NVARCHAR(MAX)
+			    )
 
-		SELECT @TEXT = @TEXT + LOG_ROW + CHAR(10)
-		FROM #logfile
+		    EXEC('
+		    BULK INSERT #logfile
+		    FROM ''' + @filename + '''
+		    WITH
+			    (
+				    ROWTERMINATOR = ''\n'',
+				    CODEPAGE = 1251
+			    )')
 
-		IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
-			DROP TABLE #logfile
+		    SET @TEXT = N''
+    
+		    SELECT @TEXT = @TEXT + LOG_ROW + CHAR(10)
+		    FROM #logfile
 
-		DECLARE
-			@LOG_SYS	SmallInt,
-			@LOG_DISTR	Int,
-			@LOG_COMP	TinyInt,
-			@LOG_DATE	DateTime;
+		    IF OBJECT_ID('tempdb..#logfile') IS NOT NULL
+			    DROP TABLE #logfile
+    
+		    DECLARE
+			    @LOG_SYS	SmallInt,
+			    @LOG_DISTR	Int,
+			    @LOG_COMP	TinyInt,
+			    @LOG_DATE	DateTime;
+    
+		    SELECT
+			    @LOG_SYS = dbo.LOG_SYS(@FILENAME), @LOG_DISTR = dbo.LOG_DISTR(@FILENAME),
+			    @LOG_COMP = dbo.LOG_COMP(@FILENAME), @LOG_DATE = dbo.LOG_DATE(@FILENAME);
+    
+		    /*
+		    обновляем кэш в ДК
+		    */
+		    UPDATE [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast]
+		    SET DATE = @LOG_DATE
+		    WHERE SYS = @LOG_SYS
+			    AND DISTR = @LOG_DISTR
+			    AND COMP = @LOG_COMP;
+    
+		    IF @@ROWCOUNT = 0
+			    INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
+			    SELECT @LOG_SYS, @LOG_DISTR, @LOG_COMP, @LOG_DATE
+    
+		    IF @RESULT = 1
+		    BEGIN
+			    UPDATE dbo.LogFiles
+			    SET LF_TEXT = @TEXT
+			    WHERE LF_ID_FILE = @FILEID
+		    END
+		    ELSE IF (@RESULT = 2) OR (@RESULT = 0)
+		    BEGIN
+			    INSERT INTO dbo.LogFiles(
+					    LF_ID_FILE, LF_TEXT, LF_SHORT, LF_DATE, LF_TYPE, LF_SYS, LF_DISTR, LF_COMP
+					    )
+			    SELECT
+				    @FILEID, @TEXT,
+				    dbo.LOG_FILE(@FILENAME), dbo.LOG_DATE(@FILENAME),
+				    dbo.LOG_TYPE(@FILENAME), dbo.LOG_SYS(@FILENAME),
+				    dbo.LOG_DISTR(@FILENAME), dbo.LOG_COMP(@FILENAME)
+		    END
+	    END
 
-		SELECT
-			@LOG_SYS = dbo.LOG_SYS(@FILENAME), @LOG_DISTR = dbo.LOG_DISTR(@FILENAME),
-			@LOG_COMP = dbo.LOG_COMP(@FILENAME), @LOG_DATE = dbo.LOG_DATE(@FILENAME);
+	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-		/*
-		обновляем кэш в ДК
-		*/
-		UPDATE [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast]
-		SET DATE = @LOG_DATE
-		WHERE SYS = @LOG_SYS
-			AND DISTR = @LOG_DISTR
-			AND COMP = @LOG_COMP;
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-		IF @@ROWCOUNT = 0
-			INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
-			SELECT @LOG_SYS, @LOG_DISTR, @LOG_COMP, @LOG_DATE
-
-		IF @RESULT = 1
-		BEGIN
-			UPDATE dbo.LogFiles
-			SET LF_TEXT = @TEXT
-			WHERE LF_ID_FILE = @FILEID
-		END
-		ELSE IF (@RESULT = 2) OR (@RESULT = 0)
-		BEGIN
-			INSERT INTO dbo.LogFiles(
-					LF_ID_FILE, LF_TEXT, LF_SHORT, LF_DATE, LF_TYPE, LF_SYS, LF_DISTR, LF_COMP
-					)
-			SELECT
-				@FILEID, @TEXT,
-				dbo.LOG_FILE(@FILENAME), dbo.LOG_DATE(@FILENAME),
-				dbo.LOG_TYPE(@FILENAME), dbo.LOG_SYS(@FILENAME),
-				dbo.LOG_DISTR(@FILENAME), dbo.LOG_COMP(@FILENAME)
-		END
-	END
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO

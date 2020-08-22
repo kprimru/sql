@@ -13,28 +13,50 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @EXIST = 1
-	BEGIN
-		EXEC sp_addrolemember @ROLE, @USER
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-		IF @ROLE = 'rl_admin'
-		BEGIN
-			EXEC sp_dropsrvrolemember @USER, 'securityadmin'
-			EXEC sp_droprolemember 'db_securityadmin', @USER
-			EXEC sp_droprolemember 'db_accessadmin', @USER
-		END
-	END
-	ELSE IF @EXIST = 0
-	BEGIN
-		EXEC sp_droprolemember @ROLE, @USER
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		IF @ROLE = 'rl_admin'
-		BEGIN
-			EXEC sp_addsrvrolemember @USER, 'securityadmin'
-			EXEC sp_addrolemember 'db_securityadmin', @USER
-			EXEC sp_addrolemember 'db_accessadmin', @USER
-		END
-	END
+	BEGIN TRY
+
+	    IF @EXIST = 1
+	    BEGIN
+		    EXEC sp_addrolemember @ROLE, @USER
+
+		    IF @ROLE = 'rl_admin'
+		    BEGIN
+			    EXEC sp_dropsrvrolemember @USER, 'securityadmin'
+			    EXEC sp_droprolemember 'db_securityadmin', @USER
+			    EXEC sp_droprolemember 'db_accessadmin', @USER
+		    END
+	    END
+	    ELSE IF @EXIST = 0
+	    BEGIN
+		    EXEC sp_droprolemember @ROLE, @USER
+    
+		    IF @ROLE = 'rl_admin'
+		    BEGIN
+			    EXEC sp_addsrvrolemember @USER, 'securityadmin'
+			    EXEC sp_addrolemember 'db_securityadmin', @USER
+			    EXEC sp_addrolemember 'db_accessadmin', @USER
+		    END
+	    END
+
+	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 GO
 GRANT EXECUTE ON [dbo].[USER_ROLE_PROCESS] TO rl_admin;
