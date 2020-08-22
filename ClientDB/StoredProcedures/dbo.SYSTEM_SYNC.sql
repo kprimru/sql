@@ -166,6 +166,34 @@ BEGIN
         IF @@RowCount > 0
             PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable]')
 
+        INSERT INTO [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
+        SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
+        FROM dbo.SystemTable AS S
+        WHERE S.SystemID = @System_Id
+            AND NOT EXISTS
+                (
+                    SELECT *
+                    FROM [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable] AS Z
+                    WHERE Z.SystemReg = S.SystemBaseName
+                );
+
+        IF @@RowCount > 0
+            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable]')
+
+        INSERT INTO [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
+        SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
+        FROM dbo.SystemTable AS S
+        WHERE S.SystemID = @System_Id
+            AND NOT EXISTS
+                (
+                    SELECT *
+                    FROM [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable] AS Z
+                    WHERE Z.SystemReg = S.SystemBaseName
+                );
+
+        IF @@RowCount > 0
+            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable]')
+
         IF @@TRANCOUNT > 0
             COMMIT TRAN;
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
