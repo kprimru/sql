@@ -267,11 +267,18 @@ BEGIN
 
             IF @EMAIL IS NOT NULL BEGIN
                 INSERT INTO @IdByFilterType
-                SELECT DISTINCT b.ID, @FilterType_EMAIL
+                SELECT b.ID, @FilterType_EMAIL
                 FROM Client.CompanyPersonal a
                 INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
                 WHERE (a.EMAIL LIKE @EMAIL OR b.EMAIL LIKE @EMAIL)
-                    AND a.STATUS = 1 AND (b.STATUS = 1 OR b.STATUS = 3 AND @DELETED = 1);
+                    AND a.STATUS = 1 AND (b.STATUS = 1 OR b.STATUS = 3 AND @DELETED = 1)
+
+                UNION
+
+                SELECT b.ID, @FilterType_EMAIL
+                FROM Client.Company b
+                WHERE (b.EMAIL LIKE @EMAIL)
+                    AND (b.STATUS = 1 OR b.STATUS = 3 AND @DELETED = 1);
 
                 INSERT INTO @UsedFilterTypes
                 VALUES(@FilterType_EMAIL)
