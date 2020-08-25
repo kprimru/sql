@@ -25,7 +25,14 @@ BEGIN
 	BEGIN TRY
 		SELECT
 			a.ID, a.DATE, a.NOTIFY_DATE, a.REMOVE_DATE, a.REMOVE_USER, a.NOTE, a.STATUS,
-			ISNULL((SELECT TOP 1 SHORT FROM Personal.OfficePersonal WHERE LOGIN = a.UPD_USER), a.UPD_USER) AS CREATE_USER,
+			ISNULL(
+			    (
+			        SELECT TOP 1 SHORT
+			        FROM Personal.OfficePersonal
+			        WHERE LOGIN = a.UPD_USER
+			            AND [END_DATE] IS NULL
+			        ), a.UPD_USER
+			    ) AS CREATE_USER,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), BDATE, 104) + ' ' + CONVERT(VARCHAR(20), BDATE, 108) + '/' + UPD_USER
 				FROM
