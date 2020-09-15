@@ -82,6 +82,7 @@ BEGIN
 								SELECT *
 								FROM dbo.ClientStudyClaim a
 								WHERE ID_CLIENT = @CLIENT
+								    AND STATUS IN (1, 4, 5, 9)
 									AND UPD_USER = 'Автомат'
 							)
 				END
