@@ -37,6 +37,7 @@ BEGIN
 				dbo.ClientStudy a
 				INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
 			WHERE a.STATUS = 1
+			    AND a.AGREEMENT = 1
 				AND DATE BETWEEN @START AND @FINISH
 				AND dbo.ClientServiceDate(ClientID, DATE) = @SERVICE
 

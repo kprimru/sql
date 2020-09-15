@@ -25,7 +25,7 @@ BEGIN
 		SELECT
 			CONVERT(VARCHAR(20), DATE, 104) AS StudyDateStr,
 			LessonPlaceName, TeacherName, '' AS OwnershipName, NEED AS SystemNeed, RECOMEND AS Recomend, NOTE AS StudyNote,
-			NULL AS RepeatDate, TEACHED AS Teached, a.RIVAL,
+			NULL AS RepeatDate, TEACHED AS Teached, a.RIVAL, a.AGREEMENT,
 			REVERSE(
 				STUFF(
 					REVERSE(
