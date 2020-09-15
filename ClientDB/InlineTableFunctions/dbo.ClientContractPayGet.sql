@@ -46,7 +46,7 @@ RETURN
 			) w
 			INNER JOIN dbo.ContractPayTable y ON w.PayType_Id = y.ContractPayID
 			WHERE z.Client_Id = @ClientId
-				AND (@Date IS NULL OR @Date BETWEEN DateFrom AND DateTo)
+				AND (@Date IS NULL OR (@Date >= DateFrom AND (@Date <= DateTo OR DateTo IS NULL)))
 			ORDER BY DateTo DESC
 		) AS A
 	) AS A
