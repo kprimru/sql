@@ -45,10 +45,11 @@ BEGIN
 				CT_NAME		VARCHAR(100),
 				CLT_ID		SMALLINT,
 				KGS			DECIMAL(8, 4),
-				CL_TERR		VARCHAR(10)
+				CL_TERR		VARCHAR(10),
+				TO_RANGE    Decimal(4,2)
 			)
 
-		INSERT INTO #client(TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CL_TERR)
+		INSERT INTO #client(TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CL_TERR, TO_RANGE)
 			SELECT
 				TO_ID, CL_ID, TO_NAME, CL_PSEDO,
 				h.CT_ID, h.CT_NAME, CL_ID_TYPE,
@@ -56,7 +57,7 @@ BEGIN
 					WHEN h.CT_NAME = (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN 'БГ'
 					WHEN h.CT_NAME <> (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN 'УТ'
 					ELSE '-'
-				END AS CL_TERR
+				END AS CL_TERR, a.TO_RANGE
 			FROM
 				dbo.TOTable a
 				INNER JOIN dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID
@@ -95,7 +96,7 @@ BEGIN
 		*/
 
 		SELECT
-			TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE,	CL_TERR,
+			TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE, CL_TERR, TO_RANGE,
 
 			CLIENT_TOTAL_PRICE, TO_COUNT, TO_PRICE, CPS_PERCENT, TO_CALC,
 
@@ -113,7 +114,7 @@ BEGIN
 		FROM
 			(
 				SELECT
-					TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE,	CL_TERR,
+					TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE, CL_TERR, TO_RANGE,
 
 					CLIENT_TOTAL_PRICE, TO_COUNT, TO_PRICE, CPS_PERCENT, TO_CALC,
 
@@ -125,15 +126,16 @@ BEGIN
 
 					NOTE, UPDATES, ACT, INET,
 
+					ROUND(
 					ROUND(CASE
 						WHEN CLT_NAME = 'КГС корп.' /*AND CL_TERR = 'БГ' AND KGS >= 70 */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
 						WHEN CLT_NAME = 'КГС корп.' /*AND CL_TERR = 'УТ' */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
 						ELSE TO_CALC * KOB
-					END, 0) AS TO_RESULT
+					END, 0) * IsNull(TO_RANGE, 1), 0) AS TO_RESULT
 				FROM
 					(
 						SELECT
-							TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE,	CL_TERR,
+							TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, PR_ID, PR_DATE, CL_TERR, TO_RANGE,
 
 							CLIENT_TOTAL_PRICE, TO_COUNT, TO_PRICE, CPS_PERCENT, TO_CALC,
 
@@ -161,7 +163,7 @@ BEGIN
 						FROM
 							(
 								SELECT
-									TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, t.PR_ID, PR_DATE, CL_TERR,
+									TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CLT_NAME, KGS, t.PR_ID, PR_DATE, CL_TERR, TO_RANGE,
 
 									CLIENT_TOTAL_PRICE, TO_COUNT, TO_PRICE, CPS_PERCENT,
 
@@ -185,7 +187,7 @@ BEGIN
 									(
 										SELECT
 											TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, PR_ID,
-											CLT_ID, CLT_NAME, KGS, CL_TERR,
+											CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE,
 											TO_COUNT, SYS_COUNT,
 											CASE
 												-- ToDo очень грязный хардкод - общая стоимость одной ТО по Мировым судьям
@@ -228,7 +230,7 @@ BEGIN
 											*/
 											SELECT
 												TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME,
-												a.CLT_ID, CLT_NAME, KGS, CL_TERR,
+												a.CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE,
 												NULL AS TO_COUNT,
 												CASE
 													WHEN
@@ -358,7 +360,7 @@ BEGIN
 														*/
 													) AS c
 											WHERE CPS_SOURCE IN (1, 4)
-											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT
+											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT, TO_RANGE
 
 											/*
 												фиксированная сумма за клиента
@@ -368,7 +370,7 @@ BEGIN
 
 											SELECT
 												TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME,
-												a.CLT_ID, CLT_NAME, KGS, CL_TERR,
+												a.CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE,
 												NULL AS TO_COUNT,
 												(
 													SELECT COUNT(*)
@@ -393,7 +395,7 @@ BEGIN
 												INNER JOIN dbo.ClientTypeTable b ON a.CLT_ID = b.CLT_ID
 												INNER JOIN dbo.CourierPaySettingsTable d ON d.CPS_ID_TYPE = b.CLT_ID
 											WHERE CPS_SOURCE IN (2)
-											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, CPS_FIXED, a.CLT_ID, CL_TERR, CPS_ACT
+											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, CPS_FIXED, a.CLT_ID, CL_TERR, CPS_ACT, TO_RANGE
 
 											UNION ALL
 
@@ -402,7 +404,7 @@ BEGIN
 											*/
 											SELECT
 												TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME,
-												a.CLT_ID, CLT_NAME, KGS, CL_TERR,
+												a.CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE,
 												CASE
 													WHEN
 														(
@@ -582,7 +584,7 @@ BEGIN
 														WHERE a.CL_ID = z.ID_CLIENT
 															AND z.ID_PERIOD = PR_ID
 													)
-											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT
+											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT, TO_RANGE
 
 											UNION ALL
 
@@ -591,7 +593,7 @@ BEGIN
 											*/
 											SELECT
 												a.TO_ID, CL_ID, a.TO_NAME, a.CL_PSEDO, CT_ID, a.CT_NAME,
-												a.CLT_ID, CLT_NAME, a.KGS, a.CL_TERR,
+												a.CLT_ID, CLT_NAME, a.KGS, a.CL_TERR, a.TO_RANGE,
 												TO_COUNT,
 												(
 													SELECT COUNT(*)
@@ -680,7 +682,7 @@ BEGIN
 													) AS c
 												INNER JOIN Salary.ServiceDetail z ON a.CL_ID = z.ID_CLIENT AND z.ID_PERIOD = PR_ID
 											WHERE CPS_SOURCE IN (3, 5)
-											GROUP BY a.TO_ID, a.CL_ID, a.TO_NAME, TO_COUNT, CLIENT_TOTAL_PRICE, a.CL_PSEDO, CT_ID, a.CT_NAME, c.PR_ID, CLT_NAME, d.CPS_PERCENT, d.CPS_PAY, d.CPS_COEF, d.CPS_MIN, d.CPS_MAX, d.CPS_INET, a.KGS, a.CLT_ID, a.CL_TERR, d.CPS_ACT
+											GROUP BY a.TO_ID, a.CL_ID, a.TO_NAME, TO_COUNT, CLIENT_TOTAL_PRICE, a.CL_PSEDO, CT_ID, a.CT_NAME, c.PR_ID, CLT_NAME, d.CPS_PERCENT, d.CPS_PAY, d.CPS_COEF, d.CPS_MIN, d.CPS_MAX, d.CPS_INET, a.KGS, a.CLT_ID, a.CL_TERR, d.CPS_ACT, a.TO_RANGE
 										) AS o_O
 									) AS o_O
 								INNER JOIN dbo.PeriodTable t ON t.PR_ID = o_O.PR_ID

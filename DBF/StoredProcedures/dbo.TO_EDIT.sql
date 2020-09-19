@@ -24,7 +24,8 @@ ALTER PROCEDURE [dbo].[TO_EDIT]
 	@home VARCHAR(200),
 	@tomain BIT = 0,
 	@toinn varchar(20) = null,
-	@toparent	int = null
+	@toparent	int = null,
+	@range decimal(4,2) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -51,6 +52,7 @@ BEGIN
 			TO_MAIN = @tomain,
 			TO_INN = @toinn,
 			TO_PARENT = @toparent,
+			TO_RANGE = @range,
 			TO_LAST = GETDATE()
 		WHERE TO_ID = @toid
 

@@ -24,6 +24,7 @@ ALTER PROCEDURE [dbo].[TO_ADD]
 	@tomain BIT = 0,
 	@toinn varchar(20) = null,
 	@parent int = null,
+	@range decimal(4,2) = NULL,
 	@returnvalue BIT = 1
 AS
 BEGIN
@@ -45,10 +46,10 @@ BEGIN
 
 		INSERT INTO dbo.TOTable(
 							TO_ID_CLIENT, TO_NAME, TO_NUM,
-							TO_REPORT, TO_ID_COUR, TO_VMI_COMMENT, TO_MAIN, TO_INN, TO_PARENT
+							TO_REPORT, TO_ID_COUR, TO_VMI_COMMENT, TO_MAIN, TO_INN, TO_PARENT, TO_RANGE
 							)
 		VALUES (
-				@clientid, @toname, @tonum, @toreport, @courid, @vmi, @tomain, @toinn, @parent
+				@clientid, @toname, @tonum, @toreport, @courid, @vmi, @tomain, @toinn, @parent, @Range
 				)
 
 		SELECT @toid = SCOPE_IDENTITY()
