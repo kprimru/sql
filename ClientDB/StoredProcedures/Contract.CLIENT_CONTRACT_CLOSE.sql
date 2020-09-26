@@ -7,10 +7,10 @@ GO
 ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_CLOSE]
 	@Contract_Id		UniqueIdentifier,
 	@DateTo				SmallDateTime,
-	@DocumentExists		Bit,
-	@DocumentType_Id	UniqueIdentifier,
-	@DocumentDate		SmallDateTime,
-	@DocumentNote		VarChar(Max)
+	@DocumentExists		Bit                 = NULL,
+	@DocumentType_Id	UniqueIdentifier    = NULL,
+	@DocumentDate		SmallDateTime       = NULL,
+	@DocumentNote		VarChar(Max)        = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
