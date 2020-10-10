@@ -44,7 +44,7 @@ BEGIN
 
 	IF @SYS_NET_XML IS NULL
 		INSERT INTO @sys
-		SELECT SystemID, SystemBaseName, DistrTypeID, DistrTypeName
+		SELECT DISTINCT SystemID, SystemBaseName, DistrTypeID, DistrTypeName
 		FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 		WHERE	Complect = @COMPLECT AND
 				DS_REG = 0
