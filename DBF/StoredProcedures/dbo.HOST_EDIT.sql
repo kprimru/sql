@@ -15,6 +15,7 @@ GO
 ALTER PROCEDURE [dbo].[HOST_EDIT]
 	@hostid SMALLINT,
 	@hostname VARCHAR(250),
+	@HostRegFullName    VarChar(50),
 	@hostregname VARCHAR(20),
 	@active BIT = 1
 AS
@@ -36,6 +37,7 @@ BEGIN
 		UPDATE dbo.HostTable
 		SET HST_NAME = @hostname,
 			HST_REG_NAME = @hostregname,
+			HST_REG_FULL = @HostRegFullName,
 			HST_ACTIVE = @active
 		WHERE HST_ID = @hostid
 

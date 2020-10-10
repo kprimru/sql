@@ -15,6 +15,7 @@ GO
 ALTER PROCEDURE [dbo].[HOST_ADD]
 	@hostname VARCHAR(250),
 	@hostregname VARCHAR(20),
+	@HostRegFullName    VarChar(50),
 	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
@@ -33,8 +34,8 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_ACTIVE)
-		VALUES (@hostname, @hostregname, @active)
+		INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
+		VALUES (@hostname, @hostregname, @HostRegFullName, @active)
 
 		IF @returnvalue = 1
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
