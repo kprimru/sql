@@ -903,6 +903,7 @@ BEGIN
 				SET a.ID_SYSTEM	= ISNULL(b.ID_SYSTEM, a.ID_SYSTEM),
 					a.ID_NET	= ISNULL(b.ID_NET, a.ID_NET),
 					a.ON_DATE	= b.DATE,
+					--a.ID_TYPE   = IsNull(b.ID_TYPE, a.ID_TYPE),
 					a.BDATE		= GETDATE(),
 					a.UPD_USER	= ORIGINAL_LOGIN()
 				FROM
@@ -918,13 +919,17 @@ BEGIN
 								CASE
 									WHEN a.SystemID = b.SystemID THEN NULL
 									ELSE b.SystemID
-								END AS ID_SYSTEM
+								END AS ID_SYSTEM/*,
+								CASE
+									WHEN a.SystemTypeID = b.SystemTypeID THEN NULL
+									ELSE b.SystemTypeID
+								END AS ID_TYPE*/
 							FROM
 								dbo.ClientDistrView a WITH(NOEXPAND)
 								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																				AND a.DISTR = b.DistrNumber
 																				AND a.COMP = b.CompNumber
-							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
+							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID --OR a.SystemTypeID <> b.SystemTypeID
 						) AS b ON a.ID = b.ID
 				WHERE a.ID IN
 					(
@@ -934,7 +939,7 @@ BEGIN
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
 																			AND a.DISTR = b.DistrNumber
 																			AND a.COMP = b.CompNumber
-						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
+						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID --OR a.SystemTypeID <> b.SystemTypeID
 					)
 
 			    EXEC [Debug].[Execution@Point]

@@ -135,6 +135,7 @@ BEGIN
 									END
 								WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
 								WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
+								WHEN [Common].[Is Equal(Int)](e.SST_ID_MASTER, a.SystemTypeID) = 0 THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
 								WHEN
 									ISNULL((
 										SELECT ID_CLIENT
@@ -178,6 +179,7 @@ BEGIN
 											AND c.DistrNumber = a.DISTR
 											AND c.CompNumber = a.COMP
 							LEFT OUTER JOIN dbo.RegNodeTable d ON d.ID = c.ID
+							LEFT JOIN Din.SystemType AS e ON b.SST_ID = e.SST_ID
 						WHERE  ID_CLIENT = @CLIENTID
 
 
