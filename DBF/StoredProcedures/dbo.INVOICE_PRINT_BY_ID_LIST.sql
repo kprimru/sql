@@ -285,7 +285,10 @@ BEGIN
 				SELECT
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
-					INR_GOOD, INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
+					CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					ELSE INR_GOOD END AS INR_GOOD,
+					--INR_GOOD,
+					INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
 					SUM(INR_TNDS) AS INR_TNDS, SUM(INR_SNDS) AS INR_SNDS, SUM(INR_SALL) AS INR_SALL, SUM(INR_COUNT) AS INR_COUNT
 				FROM
 					#detail INNER JOIN
@@ -300,7 +303,10 @@ BEGIN
 				SELECT
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
-					INR_GOOD, INR_NAME + ' (' + CONVERT(VARCHAR(20), COUNT(*)) + ' шт)' AS INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
+					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					--ELSE INR_GOOD END AS INR_GOOD,
+					INR_GOOD,
+					INR_NAME + ' (' + CONVERT(VARCHAR(20), COUNT(*)) + ' шт)' AS INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
 					INR_TNDS, SUM(INR_SNDS) AS INR_SNDS, SUM(INR_SALL) AS INR_SALL,
 					SUM(INR_COUNT) AS INR_COUNT
 				FROM
@@ -311,7 +317,7 @@ BEGIN
 				GROUP BY
 					--INR_ID_INVOICE, INS_ID,
 					IFD_ID_IFM, INR_GOOD, INR_NAME, INR_TNDS,
-					SO_INV_UNIT, SO_INV_OKEI, SYS_ORDER
+					SO_INV_UNIT, SO_INV_OKEI, SYS_ORDER--, CL_ID
 				ORDER BY SYS_ORDER
 			END
 		END
@@ -338,7 +344,10 @@ BEGIN
 				SELECT
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
-					INR_GOOD, INR_NAME, SO_INV_UNIT, SO_INV_OKEI, INR_SUM,
+					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					--ELSE INR_GOOD END AS INR_GOOD,
+					INR_GOOD,
+					INR_NAME, SO_INV_UNIT, SO_INV_OKEI, INR_SUM,
 					INR_TNDS, INR_SNDS, INR_SALL, INR_COUNT
 				FROM
 					#detail INNER JOIN
@@ -352,7 +361,10 @@ BEGIN
 				SELECT
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
-					INR_GOOD, INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
+					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					--ELSE INR_GOOD END AS INR_GOOD,
+					INR_GOOD,
+					INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
 					INR_TNDS, SUM(INR_SNDS) AS INR_SNDS, SUM(INR_SALL) AS INR_SALL,
 					INR_COUNT
 				FROM
@@ -363,7 +375,7 @@ BEGIN
 				GROUP BY
 					--INR_ID_INVOICE, INS_ID,
 					IFD_ID_IFM, INR_GOOD, INR_NAME, INR_ID_DISTR,
-					SO_INV_UNIT, SO_INV_OKEI, INR_TNDS, SYS_ORDER, DIS_NUM, INR_COUNT
+					SO_INV_UNIT, SO_INV_OKEI, INR_TNDS, SYS_ORDER, DIS_NUM, INR_COUNT--, CL_ID
 				ORDER BY SYS_ORDER, DIS_NUM
 			END
 		END

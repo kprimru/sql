@@ -473,4 +473,24 @@ AS
 				WHERE CD_ID_CLIENT = CL_ID
 					AND DSS_REPORT = 1
 			)
-GO
+
+    UNION ALL
+
+    SELECT
+        CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
+        TO_ID, TO_NUM,
+        NULL AS DIS_ID, NULL AS DIS_STR,
+        'Не совпадает руководитель клиента и основной ТО' AS CL_ERROR
+	FROM dbo.TOTable                    AS T
+	INNER JOIN dbo.ClientTable          AS CL ON T.TO_ID_CLIENT = CL.CL_ID
+	INNER JOIN dbo.TOPersonalTable      AS TP ON TP.TP_ID_TO = T.TO_ID
+	INNER JOIN dbo.ReportPositionTable  AS TR ON TR.RP_ID = TP.TP_ID_RP AND TR.RP_PSEDO = 'RES'
+	INNER JOIN dbo.ClientPersonalTable  AS CP ON CP.PER_ID_CLIENT = CL.CL_ID
+	INNER JOIN dbo.ReportPositionTable  AS CR ON CR.RP_ID = CP.PER_ID_REPORT_POS AND CR.RP_PSEDO = 'RES'
+	WHERE T.TO_MAIN = 1
+	    AND
+	    (
+	        TP.TP_SURNAME != CP.PER_FAM
+	        OR TP.TP_NAME != CP.PER_NAME
+	        OR TP.TP_OTCH != CP.PER_OTCH
+	    )GO

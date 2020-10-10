@@ -244,7 +244,7 @@ BEGIN
 				TX_PERCENT decimal,
 				TX_NAME varchar(50),
 				SO_ID smallint,
-				SO_BILL_STR varchar(150),
+				SO_BILL_STR varchar(250),
 				SO_INV_UNIT varchar(150),
 				AD_PAYED_PRICE money,
 				TO_NUM	INT,
@@ -283,6 +283,8 @@ BEGIN
 					AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 					TX_PERCENT, TX_NAME,
 					SO_ID,
+					--CASE WHEN A.ACT_ID_CLIENT = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					--ELSE GD_NAME END,
 					GD_NAME, --SO_BILL_STR,
 					UN_NAME, --SO_INV_UNIT,
 					AD_PAYED_PRICE,
