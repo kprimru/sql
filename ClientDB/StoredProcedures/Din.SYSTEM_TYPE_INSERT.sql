@@ -13,6 +13,7 @@ ALTER PROCEDURE [Din].[SYSTEM_TYPE_INSERT]
 	@COMPLECT	BIT,
 	@MASTER	INT,
 	@SALARY	DECIMAL(8,4),
+	@Synonyms   VarChar(Max),
 	@ID		INT = NULL OUTPUT
 AS
 BEGIN
@@ -34,6 +35,10 @@ BEGIN
 			VALUES(@NAME, @SHORT, @NOTE, @REG, @WEIGHT, @COMPLECT, @MASTER, @SALARY)
 
 		SELECT @ID = SCOPE_IDENTITY()
+
+		EXEC [Din].[SystemType:Synonyms@Save]
+		    @Type_Id    = @ID,
+		    @Synonyms   = @Synonyms;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

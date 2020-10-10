@@ -15,7 +15,8 @@ ALTER PROCEDURE [Din].[NET_TYPE_UPDATE]
 	@VMI_SHORT	VARCHAR(50),
 	@ODOFF	SMALLINT,
 	@ODON	SMALLINT,
-	@TECH_USR	VARCHAR(20)
+	@TECH_USR	VARCHAR(20),
+	@Synonyms   VarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -44,6 +45,10 @@ BEGIN
 			NT_ODON			= @ODON,
 			NT_TECH_USR		= @TECH_USR
 		WHERE NT_ID	= @ID
+
+		EXEC [Din].[NetType:Synonyms@Save]
+		    @Net_Id = @ID,
+		    @Synonyms = @Synonyms;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

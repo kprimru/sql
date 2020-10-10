@@ -15,6 +15,7 @@ ALTER PROCEDURE [Din].[NET_TYPE_INSERT]
 	@ODOFF	SMALLINT,
 	@ODON	SMALLINT,
 	@TECH_USR	VarChar(20),
+	@Synonyms   VarChar(Max),
 	@ID		INT = NULL OUTPUT
 AS
 BEGIN
@@ -36,6 +37,10 @@ BEGIN
 			VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
 
 		SELECT @ID = SCOPE_IDENTITY()
+
+		EXEC [Din].[NetType:Synonyms@Save]
+		    @Net_Id = @ID,
+		    @Synonyms = @Synonyms;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

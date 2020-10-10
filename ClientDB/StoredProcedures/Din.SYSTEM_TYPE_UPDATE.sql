@@ -13,7 +13,8 @@ ALTER PROCEDURE [Din].[SYSTEM_TYPE_UPDATE]
 	@WEIGHT	BIT,
 	@COMPLECT	BIT,
 	@MASTER	INT,
-	@SALARY	DECIMAL(8,4)
+	@SALARY	DECIMAL(8,4),
+	@Synonyms   VarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,6 +41,10 @@ BEGIN
 			SST_ID_MASTER	=	@MASTER,
 			SST_SALARY		=	@SALARY
 		WHERE SST_ID = @ID
+
+		EXEC [Din].[SystemType:Synonyms@Save]
+		    @Type_Id    = @ID,
+		    @Synonyms   = @Synonyms;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
