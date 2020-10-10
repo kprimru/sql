@@ -279,6 +279,7 @@ BEGIN
 		-- ToDo избавиться от лишних подзапросов с помощью OUTER APPLY
 		SELECT
 			ClientID, ServiceFullName, ManagerFullName, ClientFullName, DISTR, NET, PayTypeName, RangeValue, Category, ServicePositionName, ContractTypeName,
+			/*
 			CASE
 				WHEN Category = 'C' AND IsOnline = 1 THEN 1.5
 				ELSE 1
@@ -288,6 +289,13 @@ BEGIN
 				WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') AND ClientBaseCount > 3 THEN 1.2
 				WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
 				WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.2
+				ELSE 1
+			END AS COEF,
+			*/
+			CASE
+				WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') AND ClientBaseCount > 3 THEN 1.2
+				WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.5
+				WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
 				ELSE 1
 			END AS COEF,
 			-- количество визитов (когда было обновлено систем > 0
