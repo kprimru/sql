@@ -37,3 +37,5 @@ BEGIN
     END CATCH
 END
 GO
+GRANT EXECUTE ON [Common].[MONTH_ACTIVE] TO rl_month_w;
+GO

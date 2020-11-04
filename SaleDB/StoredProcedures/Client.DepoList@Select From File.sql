@@ -55,6 +55,7 @@ BEGIN
 									WHEN 'R' THEN 'Отказ во включении в ДЕПО'
 									WHEN 'D' THEN 'Удалена из списка ДЕПО'
 									WHEN 'E' THEN 'Ошибка! Номер ДЕПО не зарегистрирован'
+									WHEN 'X' THEN 'Внимание! Изменилась дата планового истечения'
 									WHEN 'N' THEN 'Ничего не изменилось'
 								END,
 		*
@@ -80,6 +81,8 @@ BEGIN
 							WHEN F.[Code] IS NULL AND D.[StatusCode] = 'ACTIVE' THEN 'D'
 							-- ошибка, такой компании нет в списке задепонированных
 							WHEN D.[Number] IS NULL THEN 'E'
+							-- поменялась дата планового истечения
+							WHEN D.[ExpireDate] != F.[DepoExpireDate] THEN 'X'
 							-- иначе - ничего не изменилось. Это даже неинтересно выводить
 							ELSE 'N'
 						END

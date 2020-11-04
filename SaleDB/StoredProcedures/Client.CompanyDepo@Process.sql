@@ -91,6 +91,18 @@ BEGIN
 		Можно сделать LEFT JOIN на таблицу @DepoFile и с помощью CASE выбрать поля для UPDATE
 		*/
 
+		-- если есть запись ДЕПО со статусом "Действует" и поменяласб дата планового истечения - то меняем
+		UPDATE D
+		SET [ExpireDate]	= F.[DepoExpireDate],
+			[UpdDate]		= GetDate(),
+			[UpdUser]		= Original_Login()
+		FROM Client.CompanyDepo 				AS D
+		INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
+		INNER JOIN @DepoFile					AS F ON F.[Code] = D.[Number]
+		WHERE	D.[Status] = 1
+		    AND D.[ExpireDate] != F.[DepoExpireDate]
+			AND D.[Status_Id] IN (@Status_Id_ACTIVE);
+
 		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта" или "TAG", то делаем ее действующей и
 		UPDATE D
 		SET [Status_Id] 	= @Status_Id_ACTIVE,
