@@ -20,7 +20,7 @@ RETURN
 		FROM
 		(
 			SELECT TOP (1)
-				1 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
+				2 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
 			FROM dbo.ContractTable z
 			INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
 			WHERE z.ClientID = @ClientId
@@ -34,7 +34,7 @@ RETURN
 		FROM
 		(
 			SELECT TOP (1)
-				2 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
+				1 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
 			FROM Contract.ClientContracts z
 			INNER JOIN Contract.Contract x ON x.Id = z.Contract_Id
 			CROSS APPLY

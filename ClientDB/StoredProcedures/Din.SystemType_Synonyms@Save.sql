@@ -23,7 +23,9 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE FROM [Din].[SystemType:Synonyms];
+		DELETE
+		FROM [Din].[SystemType:Synonyms]
+		WHERE [Type_Id] = @Type_Id;
 
 		INSERT INTO [Din].[SystemType:Synonyms]([Type_Id], [SST_NAME], [SST_NOTE])
 		SELECT @Type_Id, c.value('@SST_NAME[1]', 'VarChar(100)'), c.value('@SST_NOTE[1]', 'VarChar(100)')

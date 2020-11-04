@@ -20,7 +20,7 @@ RETURNS TABLE
 AS
 RETURN
 (
-	SELECT HostId, DistrNumber, CompNumber
+	SELECT D.HostId, HostReg, DistrNumber, CompNumber
 	FROM
 	(
 		SELECT
@@ -53,5 +53,6 @@ RETURN
 					AND C.SC_REG = 1
 			)
 	) AS D
+	LEFT JOIN dbo.Hosts AS H ON H.HostID = D.HostID
 )
 GO

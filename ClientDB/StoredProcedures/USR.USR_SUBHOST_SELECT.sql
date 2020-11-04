@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [USR].[USR_SUBHOST_SELECT]
-	@SH_ID	VARCHAR(50)
+	@SH_ID	    VARCHAR(50) = NULL,
+	@SH_NAME    VarChar(50) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -39,7 +40,7 @@ BEGIN
 
 		INSERT INTO @Distrs
 		SELECT HostId, DistrNumber, CompNumber
-		FROM [dbo].[SubhostDistrs@Get](@SH_ID, NULL);
+		FROM [dbo].[SubhostDistrs@Get](@SH_ID, @SH_NAME);
 
 		INSERT INTO @Complects
 		SELECT DISTINCT UD_ID

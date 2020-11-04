@@ -25,7 +25,7 @@ BEGIN
 
 		EXEC msdb.dbo.sp_send_dbmail
 					@profile_name	=	'SQLMail',
-					@recipients		=	'denisov@bazis;blohin@bazis;kudryavtsev@bazis',
+					@recipients		=	'denisov@bazis;blohin@bazis',
 					@body			=	@TEXT,
 					@subject		=	'Уведомление "Досье клиентов"',
 					@query_result_header	=	0

@@ -35,12 +35,12 @@ BEGIN
 
 		INSERT INTO @Result
 		SELECT CLientFulLName, CL_FULL_NAME, CP_FIO, DBF_FIO, CP_POS, POS_NAME, DistrStr
-		FROM [PC275-SQL\GAMMA].[ClientNahDB].[dbo].[ClientTable] C
-		INNER JOIN [PC275-SQL\GAMMA].[ClientNahDB].[dbo].[ClientPersonalDirView] CD WITH(NOEXPAND) ON C.CLientID = CD.CP_ID_CLIENT
+		FROM [PC276-SQL\NKH].[ClientDB].[dbo].[ClientTable] C
+		INNER JOIN [PC276-SQL\NKH].[ClientDB].[dbo].[ClientPersonalDirView] CD WITH(NOEXPAND) ON C.CLientID = CD.CP_ID_CLIENT
 		CROSS APPLY
 		(
 			SELECT TOP (1) SystemBaseName, DISTR, COMP, DIstrStr
-			FROM [PC275-SQL\GAMMA].[ClientNahDB].[dbo].[CLientDistrView] D WITH(NOEXPAND)
+			FROM [PC276-SQL\NKH].[ClientDB].[dbo].[CLientDistrView] D WITH(NOEXPAND)
 			WHERE D.ID_CLIENT = C.ClientID
 				AND D.DS_REG = 0
 			ORDER BY SystemOrder, DISTR, COMP

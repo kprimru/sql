@@ -135,7 +135,8 @@ BEGIN
 									END
 								WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
 								WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
-								WHEN [Common].[Is Equal(Int)](e.SST_ID_MASTER, a.SystemTypeID) = 0 THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
+								-- Внимание! Расчет на то, что при неоднозначности SST_ID_MASTER IS NULL
+								-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
 								WHEN
 									ISNULL((
 										SELECT ID_CLIENT

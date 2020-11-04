@@ -4,9 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Din].[NetType:Synonyms@Save]
-	@Net_Id     Int,
-	@Synonyms   Xml
+ALTER PROCEDURE [dbo].[SubhostDistrs@Select]
+	@SH		NVARCHAR(32)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,14 +22,8 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE
-		FROM [Din].[NetType:Synonyms]
-		WHERE Net_Id = @Net_Id;
-
-		INSERT INTO [Din].[NetType:Synonyms]([Net_Id], [NT_NAME], [NT_NOTE])
-		SELECT @Net_Id, c.value('@NT_NAME[1]', 'VarChar(100)'), c.value('@NT_NOTE[1]', 'VarChar(100)')
-		FROM @Synonyms.nodes('/root/item') a(c)
-
+		SELECT HostID, DistrNumber, CompNumber
+		FROM dbo.SubhostDistrs@Get(NULL, @SH);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -42,4 +35,5 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO
