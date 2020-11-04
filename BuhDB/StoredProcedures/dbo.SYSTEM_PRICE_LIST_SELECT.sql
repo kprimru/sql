@@ -8,7 +8,8 @@ ALTER PROCEDURE [dbo].[SYSTEM_PRICE_LIST_SELECT]
 	@PSEDO	VARCHAR(64),
 	@NOTE	BIT = 1,
 	@TYPE	VARCHAR(64) = '1',
-	@ShowExpired Bit = 1
+	@ShowExpired Bit = 1,
+	@Date   VarChar(20) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,6 +27,14 @@ BEGIN
 	DECLARE @DROUND SMALLINT
 
 	DECLARE @DEPO	DECIMAL(8, 4)
+
+	DECLARE @ArchDate VarChar(20);
+
+	SELECT TOP (1) @ArchDate = PriceDate
+	FROM dbo.SystemHistoryTable
+	WHERE PriceDate <= @Date
+	ORDER BY PriceDate DESC;
+
 
 	SET @DEPO = 0.85
 
@@ -159,7 +168,7 @@ BEGIN
 				SystemPostfix AS SystemNote,
 				LEN(' ' + SystemPrefix + ' ' + SystemName) + 1 AS BoldStart,
 				LEN(SystemPostfix) AS BoldLength,
-				b.SystemGroupID, SystemGroupOrder, SystemName, SystemReg, SystemDocNumber, SystemVolume, SystemOrder,
+				SystemGroupID, SystemGroupOrder, SystemName, SystemReg, SystemDocNumber, SystemVolume, SystemOrder,
 				SystemGroupName, SystemPeriodicity, SystemMain, SystemPeriodicityOnline,
 				CASE @PSEDO
 					WHEN 'MOBILE' THEN
@@ -265,50 +274,76 @@ BEGIN
 				END AS SystemPriceMos,
 				CONVERT(MONEY, 60) AS SystemOnlineDelivery
 			FROM
-				dbo.SystemTable a
+			(
+			    SELECT
+			        SystemID, SystemName, SystemPrefix, a.SystemGroupID, SystemVolume, SystemDocNumber, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, SystemPeriodicityOnline, SystemPriceMos, SystemPriceOnline2, SystemPriceRec, IsExpired,
+			        SystemGroupName, SystemGroupOrder,
+			        [DistrTypeEnable] = c.ENABLE,
+			        DistrTypeID, DistrTypeName, DistrTypeMainStr, DistrTypeCoefficient, DistrTypeStr, DistrTypeNet, DistrTypePrint, DistrTypePsedo, DistrTypeRound,
+			        ID_PRICE,
+			        [PriceEnable] = e.ENABLED
+			    FROM dbo.SystemTable a
 				INNER JOIN dbo.SystemGroupTable b ON a.SystemGroupID = b.SystemGroupID
 				INNER JOIN dbo.SystemDistrType c ON c.ID_SYSTEM = a.SystemID
 				INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = c.ID_TYPE
 				INNER JOIN dbo.SystemPrice e ON e.ID_SYSTEM = a.SystemID
-			WHERE c.ENABLE = 1
+				WHERE @ArchDate IS NULL
+
+				UNION ALL
+
+				SELECT
+				    SystemID, SystemName, SystemPrefix, a.SystemGroupID, SystemVolume, SystemDocNumber, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, SystemPeriodicityOnline, SystemPriceMos, SystemPriceOnline2, SystemPriceRec, IsExpired,
+			        SystemGroupName, SystemGroupOrder,
+			        [DistrTypeEnable] = c.ENABLE,
+			        DistrTypeID, DistrTypeName, DistrTypeMainStr, DistrTypeCoefficient, DistrTypeStr, DistrTypeNet, DistrTypePrint, DistrTypePsedo, DistrTypeRound,
+			        ID_PRICE,
+			        [PriceEnable] = e.ENABLED
+			    FROM dbo.SystemHistoryTable a
+				INNER JOIN dbo.SystemGroupHistoryTable b ON a.SystemGroupID = b.SystemGroupID
+				INNER JOIN dbo.SystemDistrType c ON c.ID_SYSTEM = a.SystemID
+				INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = c.ID_TYPE
+				INNER JOIN dbo.SystemPrice e ON e.ID_SYSTEM = a.SystemID
+				WHERE a.PriceDate = @ArchDate AND b.GroupPriceDate = @ArchDate
+			) AS A
+			WHERE [DistrTypeEnable] = 1
 				AND (a.IsExpired = 0 AND @ShowExpired = 0 OR @ShowExpired = 1)
-				AND (e.ENABLED = 1 OR @PSEDO = 'DEPO_ALL')
-				AND e.ID_PRICE = CONVERT(INT, @TYPE)
+				AND ([PriceEnable] = 1 OR @PSEDO = 'DEPO_ALL')
+				AND ID_PRICE = CONVERT(INT, @TYPE)
 					AND (
-						d.DistrTypePsedo = @PSEDO
-						OR d.DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'ONLINE2_CLIENT'
-						OR d.DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'ONLINE3_CLIENT'
-						OR d.DistrTypePsedo = 'OVM_1' AND @PSEDO = 'OVM_1_CL'
-						OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'OVM_2_CL'
-						OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'OVM_F12_CL'
-						OR d.DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'OVM_F10_CL'
-						OR d.DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'OVM_F01_CL'
-						OR d.DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'ONLINE_EXP_CLIENT'
-						OR d.DistrTypePsedo = 'LOCAL' AND @PSEDO = 'DEPO_LOCAL'
-						OR d.DistrTypePsedo = 'FLASH' AND @PSEDO = 'DEPO_FLASH'
-						OR d.DistrTypePsedo = 'NET1' AND @PSEDO = 'DEPO_NET1'
-						OR d.DistrTypePsedo = 'NET_SMALL' AND @PSEDO = 'DEPO_NET_SMALL'
-						OR d.DistrTypePsedo = 'NET50' AND @PSEDO = 'DEPO_NET50'
-						OR d.DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'DEPO_ONLINE_EXP'
-						OR d.DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'DEPO_ONLINE2'
-						OR d.DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3'
-						OR d.DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1'
-						OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2'
-						OR d.DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'DEPO_ONLINE_EXP_CLIENT'
-						OR d.DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'DEPO_ONLINE2_CLIENT'
-						OR d.DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3_CLIENT'
-						OR d.DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1_CL'
-						OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2_CL'
-						OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12'
-						OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12_CL'
-						OR d.DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10'
-						OR d.DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10_CL'
-						OR d.DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'DEPO_OVM_F01'
-						OR d.DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'DEPO_OVM_F01_CL'
-						OR d.DistrTypePsedo = 'OVS_5' AND @PSEDO = 'DEPO_OVS_5'
-						OR d.DistrTypePsedo = 'OVS_10' AND @PSEDO = 'DEPO_OVS_10'
-						OR d.DistrTypePsedo = 'OVS_20' AND @PSEDO = 'DEPO_OVS_20'
-						OR d.DistrTypePsedo = 'OVS_50' AND @PSEDO = 'DEPO_OVS_50'
+						DistrTypePsedo = @PSEDO
+						OR DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'ONLINE2_CLIENT'
+						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'ONLINE3_CLIENT'
+						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'OVM_1_CL'
+						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'OVM_2_CL'
+						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'OVM_F12_CL'
+						OR DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'OVM_F10_CL'
+						OR DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'OVM_F01_CL'
+						OR DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'ONLINE_EXP_CLIENT'
+						OR DistrTypePsedo = 'LOCAL' AND @PSEDO = 'DEPO_LOCAL'
+						OR DistrTypePsedo = 'FLASH' AND @PSEDO = 'DEPO_FLASH'
+						OR DistrTypePsedo = 'NET1' AND @PSEDO = 'DEPO_NET1'
+						OR DistrTypePsedo = 'NET_SMALL' AND @PSEDO = 'DEPO_NET_SMALL'
+						OR DistrTypePsedo = 'NET50' AND @PSEDO = 'DEPO_NET50'
+						OR DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'DEPO_ONLINE_EXP'
+						OR DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'DEPO_ONLINE2'
+						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3'
+						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1'
+						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2'
+						OR DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'DEPO_ONLINE_EXP_CLIENT'
+						OR DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'DEPO_ONLINE2_CLIENT'
+						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3_CLIENT'
+						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1_CL'
+						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2_CL'
+						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12'
+						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12_CL'
+						OR DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10'
+						OR DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10_CL'
+						OR DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'DEPO_OVM_F01'
+						OR DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'DEPO_OVM_F01_CL'
+						OR DistrTypePsedo = 'OVS_5' AND @PSEDO = 'DEPO_OVS_5'
+						OR DistrTypePsedo = 'OVS_10' AND @PSEDO = 'DEPO_OVS_10'
+						OR DistrTypePsedo = 'OVS_20' AND @PSEDO = 'DEPO_OVS_20'
+						OR DistrTypePsedo = 'OVS_50' AND @PSEDO = 'DEPO_OVS_50'
 						OR @PSEDO = 'DEPO_ALL'
 					)
 
