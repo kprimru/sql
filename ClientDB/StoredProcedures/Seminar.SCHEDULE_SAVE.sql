@@ -14,7 +14,8 @@ ALTER PROCEDURE [Seminar].[SCHEDULE_SAVE]
 	@PERSONAL	BIT,
 	@QUESTIONS	BIT,
 	@INVITE		SMALLDATETIME,
-	@RESERVE	SMALLDATETIME
+	@RESERVE	SMALLDATETIME,
+	@Subhosts   Xml
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -57,6 +58,14 @@ BEGIN
 				LAST		=	GETDATE()
 			WHERE ID = @ID
 		END
+
+		DELETE
+		FROM Seminar.ScheduleSubhosts
+		WHERE Schedule_Id = @Id;
+
+		INSERT INTO Seminar.ScheduleSubhosts(Schedule_Id, Subhost_Id, Limit)
+		SELECT @Id, c.value('@Subhost_Id[1]', 'UniqueIdentifier'), c.value('@Limit[1]', 'SmallInt')
+		FROM @Subhosts.nodes('/root/item') a(c)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
