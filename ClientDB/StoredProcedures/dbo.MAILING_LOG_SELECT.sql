@@ -43,7 +43,7 @@ BEGIN
 		SET @Error = '%' + NullIf(@Error, '') + '%';
 		SET @OnlyError = IsNull(@OnlyError, 0);
 
-		SELECT
+		SELECT TOP (500)
 			Date, MailingTypeName, L.address, L.subject, L.body, L.status, L.error
 		FROM Common.MailingLog			L
 		INNER JOIN Common.MailingType	T ON L.TypeID = T.MailingTypeId
