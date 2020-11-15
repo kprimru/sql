@@ -68,7 +68,7 @@ BEGIN
             RETURN;
         END;
 
-        SET @HOST = (SELECT MainHostID FROM dbo.RegNodeMainDistrView WITH(NOEXPAND) WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP);
+        SET @HOST = (SELECT TOP (1) MainHostID FROM dbo.RegNodeMainDistrView WITH(NOEXPAND) WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP ORDER BY MainHostID);
 
         IF @HOST IS NULL
         BEGIN
