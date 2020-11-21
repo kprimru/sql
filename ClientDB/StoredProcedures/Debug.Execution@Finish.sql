@@ -12,15 +12,18 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE
-		@Id				BigInt,
-		@FinishDateTime	DateTime;
+    IF [Debug].[Execution@Enabled]() = 0
+        RETURN;
 
-	SET @Id				= @DebugContext.value('(/DEBUG/@Id)[1]', 'BigInt');
-	SET @FinishDateTime	= GetDate();
+    DECLARE
+        @Id             BigInt,
+        @FinishDateTime DateTime;
 
-	IF @Id IS NOT NULL
-		INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
-		VALUES(@Id, @FinishDateTime, @Error);
+    SET @Id             = @DebugContext.value('(/DEBUG/@Id)[1]', 'BigInt');
+    SET @FinishDateTime = GetDate();
+
+    IF @Id IS NOT NULL
+        INSERT INTO [Debug].[Executions:Finish]([Id], [FinishDateTime], [Error])
+        VALUES(@Id, @FinishDateTime, @Error);
 END;
 GO

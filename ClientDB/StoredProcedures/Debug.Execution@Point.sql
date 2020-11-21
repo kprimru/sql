@@ -13,7 +13,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    RETURN;
+    IF [Debug].[Execution@Enabled]() = 0
+        RETURN;
 
     DECLARE
         @Id             BigInt,
