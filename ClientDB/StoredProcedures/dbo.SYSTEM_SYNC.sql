@@ -38,11 +38,11 @@ BEGIN
             @Short  = S.SystemShortName,
             @Reg    = S.SystemBaseName,
             @Full   = S.SystemFullName,
-            @Ord    = S.SYstemOrder
+            @Ord    = S.SystemOrder
         FROM dbo.SystemTable AS S
         WHERE SystemID = @System_Id;
 
-        INSERT INTO [PC275-SQL\GAMMA].[SaleDB].[System].[Systems](NAME, SHORT, REG, HOST, ORD)
+        INSERT INTO [SaleDB].[System.Systems](NAME, SHORT, REG, HOST, ORD)
         SELECT S.SystemFullName, S.SystemShortName, S.SystemBaseName, H.HostReg, S.SystemOrder
         FROM dbo.SystemTable AS S
         INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
@@ -50,149 +50,149 @@ BEGIN
             AND NOT EXISTS
             (
                 SELECT *
-                FROM [PC275-SQL\GAMMA].[SaleDB].[System].[Systems] AS Z
+                FROM [SaleDB].[System.Systems] AS Z
                 WHERE Z.[REG] = S.SystemBaseName
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[SaleDB].[System].[Systems]')
+            PRINT ('Добавлено в [SaleDB].[System.Systems]')
 
-        INSERT INTO [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host](SHORT, REG, ORD)
+        INSERT INTO [DocumentClaim].[Distr.Host](SHORT, REG, ORD)
         SELECT HostShort, HostReg, HostOrder
         FROM dbo.Hosts AS D
         WHERE NOT EXISTS
             (
                 SELECT *
-                FROM [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host] AS H
+                FROM [DocumentClaim].[Distr.Host] AS H
                 WHERE D.HostReg = H.REG
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host]')
+            PRINT ('Добавлено в [DocumentClaim].[Distr.Host]')
 
-        INSERT INTO [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System](SHORT, REG, ID_HOST, ORD)
+        INSERT INTO [DocumentClaim].[Distr.System](SHORT, REG, ID_HOST, ORD)
         SELECT S.SystemShortName, S.SystemBaseName, DC.ID, S.SYstemOrder
         FROM dbo.SystemTable AS S
         INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
-        INNER JOIN [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host] AS DC ON DC.REG = H.HostReg
+        INNER JOIN [DocumentClaim].[Distr.Host] AS DC ON DC.REG = H.HostReg
         WHERE S.SystemID = @System_Id
             AND NOT EXISTS
                 (
                     SELECT *
-                    FROM [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System] AS Z
+                    FROM [DocumentClaim].[Distr.System] AS Z
                     WHERE Z.REG = S.SystemBaseName
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System]')
+            PRINT ('Добавлено в [DocumentClaim].[Distr.System]')
 
-        IF NOT EXISTS (SELECT TOP (1) * FROM [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SystemActive] WHERE SYS_REG = @Reg) BEGIN
-            EXEC [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SYSTEM_INSERT]
+        IF NOT EXISTS (SELECT TOP (1) * FROM [FirstInstall].[Distr.SystemActive] WHERE SYS_REG = @Reg) BEGIN
+            EXEC [FirstInstall].[Distr.SYSTEM_INSERT]
                 @SYS_NAME       = @Full,
                 @SYS_SHORT      = @Short,
                 @SYS_DATE       = @Date,
                 @SYS_REG        = @Reg,
                 @SYS_ORDER      = @Ord;
 
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SystemDetail]')
+            PRINT ('Добавлено в [FirstInstall].[Distr.SystemDetail]')
         END;
 
-        IF NOT EXISTS (SELECT TOP (1) * FROM [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SystemActive] WHERE SYS_REG = @Reg) BEGIN
-            EXEC [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SYSTEM_INSERT]
+        IF NOT EXISTS (SELECT TOP (1) * FROM [FirstInstallNah].[Distr.SystemActive] WHERE SYS_REG = @Reg) BEGIN
+            EXEC [FirstInstallNah].[Distr.SYSTEM_INSERT]
                 @SYS_NAME       = @Full,
                 @SYS_SHORT      = @Short,
                 @SYS_DATE       = @Date,
                 @SYS_REG        = @Reg,
                 @SYS_ORDER      = @Ord;
 
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SystemDetail]')
+            PRINT ('Добавлено в [FirstInstallNah].[Distr.SystemDetail]')
         END;
 
-        INSERT INTO [PC275-SQL\DELTA].[DBF].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
+        INSERT INTO [DBF].[dbo.HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
         FROM dbo.Hosts AS C
         WHERE NOT EXISTS
             (
                 SELECT *
-                FROM [PC275-SQL\DELTA].[DBF].[dbo].[HostTable] AS D
+                FROM [DBF].[dbo.HostTable] AS D
                 WHERE D.HST_REG_FULL = C.HostReg
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF].[dbo].[HostTable]')
+            PRINT ('Добавлено в [DBF].[dbo.HostTable]')
 
-        INSERT INTO [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
+        INSERT INTO [DBF_NAH].[dbo.HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
         FROM dbo.Hosts AS C
         WHERE NOT EXISTS
             (
                 SELECT *
-                FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable] AS D
+                FROM [DBF_NAH].[dbo.HostTable] AS D
                 WHERE D.HST_REG_FULL = C.HostReg
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable]')
+            PRINT ('Добавлено в [DBF_NAH].[dbo.HostTable]')
 
-        INSERT INTO [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
+        INSERT INTO [DBF].[dbo.SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
         SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
         FROM dbo.SystemTable AS S
         INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
-        INNER JOIN [PC275-SQL\DELTA].[DBF].[dbo].[HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
+        INNER JOIN [DBF].[dbo.HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
         WHERE S.SystemId = @System_Id
             AND NOT EXISTS
                 (
                     SELECT *
-                    FROM [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable] AS Z
+                    FROM [DBF].[dbo.SystemTable] AS Z
                     WHERE Z.SYS_REG_NAME = S.SystemBaseName
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable]')
+            PRINT ('Добавлено в [DBF].[dbo.SystemTable]')
 
-        INSERT INTO [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
+        INSERT INTO [DBF_NAH].[dbo.SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
         SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
         FROM dbo.SystemTable AS S
         INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
-        INNER JOIN [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
+        INNER JOIN [DBF_NAH].[dbo.HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
         WHERE S.SystemId = @System_Id
             AND NOT EXISTS
                 (
                     SELECT *
-                    FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable] AS Z
+                    FROM [DBF_NAH].[dbo.SystemTable] AS Z
                     WHERE Z.SYS_REG_NAME = S.SystemBaseName
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable]')
+            PRINT ('Добавлено в [DBF_NAH].[dbo.SystemTable]')
 
-        INSERT INTO [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
+        INSERT INTO [BuhDB].[dbo.SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
         SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
         FROM dbo.SystemTable AS S
         WHERE S.SystemID = @System_Id
             AND NOT EXISTS
                 (
                     SELECT *
-                    FROM [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable] AS Z
+                    FROM [BuhDB].[dbo.SystemTable] AS Z
                     WHERE Z.SystemReg = S.SystemBaseName
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable]')
+            PRINT ('Добавлено в [BuhDB].[dbo.SystemTable]')
 
-        INSERT INTO [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
+        INSERT INTO [BuhNahDB].[dbo.SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
         SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
         FROM dbo.SystemTable AS S
         WHERE S.SystemID = @System_Id
             AND NOT EXISTS
                 (
                     SELECT *
-                    FROM [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable] AS Z
+                    FROM [BuhNahDB].[dbo.SystemTable] AS Z
                     WHERE Z.SystemReg = S.SystemBaseName
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable]')
+            PRINT ('Добавлено в [BuhNahDB].[dbo.SystemTable]')
 
         IF @@TRANCOUNT > 0
             COMMIT TRAN;

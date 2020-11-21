@@ -34,13 +34,13 @@ BEGIN
 		);
 
 		INSERT INTO @Result
-		SELECT CLientFulLName, CL_FULL_NAME, CP_FIO, DBF_FIO, CP_POS, POS_NAME, DistrStr
-		FROM [PC276-SQL\NKH].[ClientDB].[dbo].[ClientTable] C
-		INNER JOIN [PC276-SQL\NKH].[ClientDB].[dbo].[ClientPersonalDirView] CD WITH(NOEXPAND) ON C.CLientID = CD.CP_ID_CLIENT
+		SELECT CLientFullName, CL_FULL_NAME, CP_FIO, DBF_FIO, CP_POS, POS_NAME, DistrStr
+		FROM [ClientDB?Nkh].[dbo.ClientTable] C
+		INNER JOIN [ClientDB?Nkh].[dbo.ClientPersonalDirView] CD ON C.CLientID = CD.CP_ID_CLIENT
 		CROSS APPLY
 		(
 			SELECT TOP (1) SystemBaseName, DISTR, COMP, DIstrStr
-			FROM [PC276-SQL\NKH].[ClientDB].[dbo].[CLientDistrView] D WITH(NOEXPAND)
+			FROM [ClientDB?Nkh].[dbo.CLientDistrView] D
 			WHERE D.ID_CLIENT = C.ClientID
 				AND D.DS_REG = 0
 			ORDER BY SystemOrder, DISTR, COMP
@@ -48,13 +48,13 @@ BEGIN
 		OUTER APPLY
 		(
 			SELECT TOP (1) CL_FULL_NAME, DBF_FIO, POS_NAME
-			FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientTable] DC
-			INNER JOIN [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientDistrView] DD ON DD.CD_ID_CLIENT = DC.CL_ID
+			FROM [DBF_NAH].[dbo.ClientTable] DC
+			INNER JOIN [DBF_NAH].[dbo.ClientDistrView] DD ON DD.CD_ID_CLIENT = DC.CL_ID
 			OUTER APPLY
 			(
 				SELECT TOP (1) [DBF_FIO] = PER_FAM + ' ' + PER_NAME + ' ' + PER_OTCH, PP.POS_NAME
-				FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientPersonalTable] DCP
-				INNER JOIN [PC275-SQL\DELTA].[DBF_NAH].[dbo].[PositionTable] PP ON POS_ID = PER_ID_POS
+				FROM [DBF_NAH].[dbo.ClientPersonalTable] DCP
+				INNER JOIN [DBF_NAH].[dbo.PositionTable] PP ON POS_ID = PER_ID_POS
 				WHERE DCP.PER_ID_CLIENT = DC.CL_ID AND DCP.PER_ID_REPORT_POS = 1
 			) P
 			WHERE DD.SYS_REG_NAME = D.SystemBaseName AND DD.DIS_NUM = D.DISTR AND DD.DIS_COMP_NUM = D.COMP

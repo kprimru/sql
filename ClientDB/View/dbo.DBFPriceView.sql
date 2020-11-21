@@ -7,6 +7,6 @@ GO
 ALTER VIEW [dbo].[DBFPriceView]
 AS
 	SELECT SYS_REG_NAME, PR_DATE, PT_NAME, PS_PRICE
-	FROM [PC275-SQL\DELTA].[DBF].[dbo].[PriceExportView]
+	FROM [DBF].[dbo.PriceExportView]
 	WHERE SYS_REG_NAME NOT IN ('-', '--')
 GO

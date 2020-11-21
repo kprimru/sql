@@ -85,7 +85,7 @@ BEGIN
 
 		INSERT INTO @Distr(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, UPD_DATE)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, UPD_DATE
-		FROM [PC275-SQL\DELTA].[DBF].[Sync].[DistrFinancing];
+		FROM [DBF].[Sync.DistrFinancing];
 
 		-- нет дистрибутивов - нет обработки
 		IF @@ROWCOUNT = 0 BEGIN
@@ -99,43 +99,43 @@ BEGIN
 		INSERT INTO @Act(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, SUM(A.AD_TOTAL_PRICE)
 		FROM @Distr D
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ActAllIXView A WITH(NOEXPAND) ON	D.SYS_REG_NAME	= A.SYS_REG_NAME
-																			AND	D.DIS_NUM		= A.DIS_NUM
-																			AND D.DIS_COMP_NUM	= A.DIS_COMP_NUM
-																			AND D.PR_DATE		= A.PR_DATE
+		INNER JOIN [DBF].[dbo.ActAllIXView] A ON	D.SYS_REG_NAME	= A.SYS_REG_NAME
+												AND	D.DIS_NUM		= A.DIS_NUM
+												AND D.DIS_COMP_NUM	= A.DIS_COMP_NUM
+												AND D.PR_DATE		= A.PR_DATE
 		GROUP BY D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE;
 
 		INSERT INTO @Bill(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_TOTAL_PRICE)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, B.BD_TOTAL_PRICE
 		FROM @Distr D
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.BillAllIXView B WITH(NOEXPAND) ON	D.SYS_REG_NAME	= B.SYS_REG_NAME
-																			AND	D.DIS_NUM		= B.DIS_NUM
-																			AND D.DIS_COMP_NUM	= B.DIS_COMP_NUM
-																			AND D.PR_DATE		= B.PR_DATE;
+		INNER JOIN [DBF].[dbo.BillAllIXView] B ON	D.SYS_REG_NAME	= B.SYS_REG_NAME
+												AND	D.DIS_NUM		= B.DIS_NUM
+												AND D.DIS_COMP_NUM	= B.DIS_COMP_NUM
+												AND D.PR_DATE		= B.PR_DATE;
 
 		INSERT INTO @Income(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, I.ID_PRICE
 		FROM @Distr D
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.IncomeAllIXView I WITH(NOEXPAND) ON	D.SYS_REG_NAME	= I.SYS_REG_NAME
-																				AND	D.DIS_NUM		= I.DIS_NUM
-																				AND D.DIS_COMP_NUM	= I.DIS_COMP_NUM
-																				AND D.PR_DATE		= I.PR_DATE;
+		INNER JOIN [DBF].[dbo.IncomeAllIXView] I ON	    D.SYS_REG_NAME	= I.SYS_REG_NAME
+													AND	D.DIS_NUM		= I.DIS_NUM
+													AND D.DIS_COMP_NUM	= I.DIS_COMP_NUM
+													AND D.PR_DATE		= I.PR_DATE;
 
 		INSERT INTO @IncomeDate(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, I.IN_DATE
 		FROM @Distr D
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.IncomeDateIXView I WITH(NOEXPAND) ON	D.SYS_REG_NAME	= I.SYS_REG_NAME
-																				AND	D.DIS_NUM		= I.DIS_NUM
-																				AND D.DIS_COMP_NUM	= I.DIS_COMP_NUM
-																				AND D.PR_DATE		= I.PR_DATE;
+		INNER JOIN [DBF].[dbo.IncomeDateIXView] I ON	D.SYS_REG_NAME	= I.SYS_REG_NAME
+													AND	D.DIS_NUM		= I.DIS_NUM
+													AND D.DIS_COMP_NUM	= I.DIS_COMP_NUM
+													AND D.PR_DATE		= I.PR_DATE;
 
 		INSERT INTO @BillRest(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_REST)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, B.BD_REST
 		FROM @Distr D
-		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.BillAllRestView B WITH(NOEXPAND) ON	D.SYS_REG_NAME	= B.SYS_REG_NAME
-																				AND	D.DIS_NUM		= B.DIS_NUM
-																				AND D.DIS_COMP_NUM	= B.DIS_COMP_NUM
-																				AND D.PR_DATE		= B.PR_DATE;
+		INNER JOIN [DBF].[dbo.BillAllRestView] B ON	    D.SYS_REG_NAME	= B.SYS_REG_NAME
+													AND	D.DIS_NUM		= B.DIS_NUM
+													AND D.DIS_COMP_NUM	= B.DIS_COMP_NUM
+													AND D.PR_DATE		= B.PR_DATE;
 
 		-- теперь уже локально начинаем разбираться, что из этого добавить, что изменить, а что удалить
 
@@ -346,7 +346,7 @@ BEGIN
 		-- удаляем из DBF дистрибутивы которые синхронизировали.
 		-- Если UPD_DATE не совпадает, значит были еще изменения и из синхронизации дистрибутив не удаляем
 		DELETE S
-		FROM [PC275-SQL\DELTA].[DBF].[Sync].[DistrFinancing] S
+		FROM [DBF].[Sync.DistrFinancing] S
 		INNER JOIN @Distr D ON	D.SYS_REG_NAME	= S.SYS_REG_NAME
 							AND	D.DIS_NUM		= S.DIS_NUM
 							AND D.DIS_COMP_NUM	= S.DIS_COMP_NUM

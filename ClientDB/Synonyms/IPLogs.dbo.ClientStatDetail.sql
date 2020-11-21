@@ -1,0 +1,7 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE SYNONYM [IPLogs].[dbo.ClientStatDetail] FOR [PC275-SQL\OMEGA].[IPLogs].[dbo].[ClientStatDetail];GO

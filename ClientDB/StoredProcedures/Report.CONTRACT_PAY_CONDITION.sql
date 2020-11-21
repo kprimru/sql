@@ -51,17 +51,17 @@ BEGIN
 			(
 				SELECT CL_PSEDO, COP_NAME, COP_MONTH, COP_DAY, SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM
 				FROM
-					[PC275-SQL\DELTA].DBF.dbo.ClientTable a
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientDistrTable b ON a.CL_ID = CD_ID_CLIENT
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView c ON b.CD_ID_DISTR = c.DIS_ID
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrServiceStatusTable d ON d.DSS_ID = b.CD_ID_SERVICE AND DSS_REPORT = 1
+					[DBF].[dbo.ClientTable] a
+					INNER JOIN [DBF].[dbo.ClientDistrTable] b ON a.CL_ID = CD_ID_CLIENT
+					INNER JOIN [DBF].[dbo.DistrView] c ON b.CD_ID_DISTR = c.DIS_ID
+					INNER JOIN [DBF].[dbo.DistrServiceStatusTable] d ON d.DSS_ID = b.CD_ID_SERVICE AND DSS_REPORT = 1
 					CROSS APPLY
 					(
 						SELECT TOP 1 COP_NAME, COP_DAY, COP_MONTH
 						FROM
-							[PC275-SQL\DELTA].DBF.dbo.ContractDistrTable e
-							INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ContractTable f ON f.CO_ID = e.COD_ID_CONTRACT
-							INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ContractPayTable g ON g.COP_ID = CO_ID_PAY
+							[DBF].[dbo.ContractDistrTable] e
+							INNER JOIN [DBF].[dbo.ContractTable] f ON f.CO_ID = e.COD_ID_CONTRACT
+							INNER JOIN [DBF].[dbo.ContractPayTable] g ON g.COP_ID = CO_ID_PAY
 						WHERE COD_ID_DISTR = DIS_ID AND CO_ACTIVE = 1 AND CO_ID_CLIENT = CL_ID
 					) AS u
 			) AS DBF ON SYS_REG_NAME = SystemBaseName AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM

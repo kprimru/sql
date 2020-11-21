@@ -30,12 +30,12 @@ BEGIN
 
         INSERT INTO @ClientsWithSPK
         SELECT C.CL_ID, SPK.CNT
-        FROM [PC275-SQL\DELTA].DBF.dbo.ClientTable AS C
+        FROM [DBF].[dbo.ClientTable] AS C
         CROSS APPLY
         (
             SELECT CNT = COUNT(*)
-            FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
-            INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView AS R WITH(NOEXPAND) ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
+            FROM [DBF].[dbo.ClientDistrView] AS D
+            INNER JOIN [DBF].[dbo.RegNodeView] AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
             WHERE D.CD_ID_CLIENT = C.CL_ID
                 AND D.SYS_REG_NAME IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
                 AND R.RN_SERVICE = 0
@@ -51,8 +51,8 @@ BEGIN
             [Перечень СПК] = REVERSE(STUFF(REVERSE(
             (
                 SELECT D.DIS_STR + ', '
-                FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
-                INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView AS R WITH(NOEXPAND) ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
+                FROM [DBF].[dbo.ClientDistrView] AS D
+                INNER JOIN [DBF].[dbo.RegNodeView] AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
                 WHERE D.CD_ID_CLIENT = C.CL_ID
                     AND D.SYS_REG_NAME IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
                     AND R.RN_SERVICE = 0
@@ -81,8 +81,8 @@ BEGIN
                         WHEN 13 THEN 'ОВС ' + CAST(RN_ODON AS VarCHar(100))
 						ELSE 'Неизвестно'
 					END + ')' + ', '
-                FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
-                INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
+                FROM [DBF].[dbo.ClientDistrView] AS D
+                INNER JOIN [DBF].[dbo.RegNodeTable] AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
                 WHERE D.CD_ID_CLIENT = C.CL_ID
                     AND D.SYS_REG_NAME NOT IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
                     AND R.RN_SERVICE = 0
@@ -112,8 +112,8 @@ BEGIN
                                             WHEN RN_TECH_TYPE = 11 THEN 1
                                             ELSE 0
                                         END
-                    FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
-                    INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView AS R WITH(NOEXPAND) ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
+                    FROM [DBF].[dbo.ClientDistrView] AS D
+                    INNER JOIN [DBF].[dbo.RegNodeView] AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
                     WHERE D.CD_ID_CLIENT = C.CL_ID
                         AND D.SYS_REG_NAME NOT IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
                         AND R.RN_SERVICE = 0
@@ -122,7 +122,7 @@ BEGIN
                 ) AS SPK
             ) AS SPK
         ) AS SPK
-        INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable AS C ON C.CL_ID = SPK.CL_ID
+        INNER JOIN [DBF].[dbo.ClientTable] AS C ON C.CL_ID = SPK.CL_ID
         --WHERE SPK_CNT > SPK_AVAILABLE
         ORDER BY CL_PSEDO
 

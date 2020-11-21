@@ -1,0 +1,7 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE SYNONYM [ContractDB].[dbo.Vendor] FOR [PC275-SQL\GAMMA].[ContractDB].[dbo].[Vendor];GO

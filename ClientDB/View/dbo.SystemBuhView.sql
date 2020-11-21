@@ -7,5 +7,5 @@ GO
 ALTER VIEW [dbo].[SystemBuhView]
 AS
 	SELECT SystemID, SystemName, SystemPrefix, SystemOrder, SystemPostfix, SystemReg
-	FROM [PC275-SQL\GAMMA].[BuhDB].dbo.SystemTable
+	FROM [BuhDB].[dbo.SystemTable]
 GO

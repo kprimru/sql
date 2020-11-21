@@ -7,7 +7,6 @@ GO
 ALTER VIEW [dbo].[IPConsErrView]
 AS
 	SELECT ERROR_DATA, UF_DATE, UF_DISTR, UF_COMP, UF_SYS
-	FROM
-		[PC275-SQL\OMEGA].IPLogs.dbo.USRFiles b
-		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ConsErr a ON b.UF_ID = a.ID_USR
+	FROM [IPLogs].[dbo.USRFiles] b
+	INNER JOIN [IPLogs].[dbo.ConsErr] a ON b.UF_ID = a.ID_USR
 GO
