@@ -84,26 +84,26 @@ BEGIN
                 @DEPO           = NULL,
                 @DEPO_NUM       = NULL,
                 @ID             = @Company_Id OUTPUT;
-
-            EXEC [SaleDB].[Client.COMPANY_PERSONAL_INSERT]
-                @COMPANY    = @Company_Id,
-                @OFFICE     = NULL,
-                @SURNAME    = '',
-                @Name       = @FIO,
-                @PATRON     = '',
-                @POSITION   = NULL,
-                @NOTE       = @Special,
-                @EMAIL      = @Email,
-                @Mailing    = NULL,
-                @ID         = @Personal_Id OUTPUT;
-
-            EXEC [SaleDB].[Client.COMPANY_PERSONAL_PHONE_INSERT]
-                @PERSONAL   = @Personal_Id,
-                @TYPE       = NULL,
-                @PHONE      = @Phone,
-                @PHONE_S    = @Phone,
-                @NOTE       = NULL;
         END;
+
+        EXEC [SaleDB].[Client.COMPANY_PERSONAL_INSERT]
+            @COMPANY    = @Company_Id,
+            @OFFICE     = NULL,
+            @SURNAME    = '',
+            @Name       = @FIO,
+            @PATRON     = '',
+            @POSITION   = NULL,
+            @NOTE       = @Special,
+            @EMAIL      = @Email,
+            @Mailing    = NULL,
+            @ID         = @Personal_Id OUTPUT;
+
+        EXEC [SaleDB].[Client.COMPANY_PERSONAL_PHONE_INSERT]
+            @PERSONAL   = @Personal_Id,
+            @TYPE       = NULL,
+            @PHONE      = @Phone,
+            @PHONE_S    = @Phone,
+            @NOTE       = NULL;
 
         SET @Call_Id = (SELECT TOP (1) Call_Id FROM dbo.Claim WHERE ID = @Id);
 
