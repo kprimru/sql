@@ -41,12 +41,15 @@ BEGIN
 			AND (ManagerID = @managerid OR @ManagerId IS NULL)
 			AND (StatusID = @statusid OR @StatusId IS NULL)
 			AND STATUS = 1
-			AND NOT EXISTS
+			AND
+			(   NOT EXISTS
 				(
 					SELECT *
 					FROM Contract.ClientContracts CC
 					WHERE CC.Client_Id = b.CLientID
 				)
+				OR [Maintenance].[GlobalContractOld]() = 1
+			)
 		GROUP BY b.ClientID, ClientFullName
 
 		UNION ALL
@@ -76,6 +79,7 @@ BEGIN
 			AND (ManagerID = @managerid OR @ManagerId IS NULL)
 			AND (StatusID = @statusid OR @StatusId IS NULL)
 			AND b.STATUS = 1
+			AND [Maintenance].[GlobalContractOld]() = 0
 		GROUP BY b.ClientID, ClientFullName
 
 		ORDER BY ClientFullName

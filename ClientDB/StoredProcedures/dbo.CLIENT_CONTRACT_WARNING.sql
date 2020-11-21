@@ -53,6 +53,7 @@ BEGIN
 		WHERE
 			C.DateTo IS NULL
 			AND D.ExpireDate <= @CONTROL_DATE
+			AND [Maintenance].[GlobalContractOld]() = 0
 
 		UNION ALL
 
@@ -68,12 +69,16 @@ BEGIN
 					WHERE e.ClientID = a.ClientID
 						AND e.ContractEnd >= @CONTROL_DATE
 				)
-			AND NOT EXISTS
+			AND
+			(
+			    NOT EXISTS
 				(
 					SELECT *
 					FROM Contract.ClientContracts CC
 					WHERE CC.Client_Id = b.Client_Id
 				)
+				OR [Maintenance].[GlobalContractOld]() = 1
+			)
 		GROUP BY b.Client_Id, ClientFullName, ManagerName
 
 		ORDER BY ClientFullName

@@ -5,48 +5,49 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Maintenance].[GLOBAL_SETTING_SAVE]
-	@ORG_NAME			            NVARCHAR(256),
-	@UINF				            NVARCHAR(128),
-	@TENDER_PATH		            NVARCHAR(512),
-	@STT_PATH			            NVARCHAR(512),
-	@SERV_REPORT		            NVARCHAR(512),
-	@USR_PATH			            NVARCHAR(512),
-	@USR_IP_PATH		            NVARCHAR(512),
-	@USR_CONTROL_PATH	            NVARCHAR(512),
-	@SUBHOST_NAME		            NVARCHAR(32),
-	@CLAIM_PATH			            NVARCHAR(512),
-	@JUR_NAME			            NVARCHAR(512),
-	@JUR_EMAIL			            NVARCHAR(512),
-	@CLIENT_AUTO_CLAIM	            BIT,
-	@RIC_ADDRESS		            NVARCHAR(512),
-	@RIC_LOGIN			            NVARCHAR(512),
-	@RIC_PASS			            NVARCHAR(512),
-	@CONTRACT_YEAR		            NVARCHAR(512),
-    @SEMINAR_MAIL_HOST	            NVARCHAR(512),
-	@SEMINAR_MAIL_ADDRESS	        NVARCHAR(512),
-	@SEMINAR_MAIL_PASS		        NVARCHAR(512),
-    @ONLINE_SERVICES_MAIL_HOST	    NVARCHAR(512),
-	@ONLINE_SERVICES_MAIL_ADDRESS	NVARCHAR(512),
-	@ONLINE_SERVICES_MAIL_PASS		NVARCHAR(512)
+    @ORG_NAME                       NVARCHAR(256),
+    @UINF                           NVARCHAR(128),
+    @TENDER_PATH                    NVARCHAR(512),
+    @STT_PATH                       NVARCHAR(512),
+    @SERV_REPORT                    NVARCHAR(512),
+    @USR_PATH                       NVARCHAR(512),
+    @USR_IP_PATH                    NVARCHAR(512),
+    @USR_CONTROL_PATH               NVARCHAR(512),
+    @SUBHOST_NAME                   NVARCHAR(32),
+    @CLAIM_PATH                     NVARCHAR(512),
+    @JUR_NAME                       NVARCHAR(512),
+    @JUR_EMAIL                      NVARCHAR(512),
+    @CLIENT_AUTO_CLAIM              BIT,
+    @RIC_ADDRESS                    NVARCHAR(512),
+    @RIC_LOGIN                      NVARCHAR(512),
+    @RIC_PASS                       NVARCHAR(512),
+    @CONTRACT_YEAR                  NVARCHAR(512),
+    @SEMINAR_MAIL_HOST              NVARCHAR(512),
+    @SEMINAR_MAIL_ADDRESS           NVARCHAR(512),
+    @SEMINAR_MAIL_PASS              NVARCHAR(512),
+    @ONLINE_SERVICES_MAIL_HOST      NVARCHAR(512),
+    @ONLINE_SERVICES_MAIL_ADDRESS   NVARCHAR(512),
+    @ONLINE_SERVICES_MAIL_PASS      NVARCHAR(512),
+    @CONTRACT_OLD                   BIT
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	DECLARE
-		@DebugError		VarChar(512),
-		@DebugContext	Xml,
-		@Params			Xml;
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
 
-	EXEC [Debug].[Execution@Start]
-		@Proc_Id		= @@ProcId,
-		@Params			= @Params,
-		@DebugContext	= @DebugContext OUT
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
-	BEGIN TRY
+    BEGIN TRY
 
-		UPDATE Maintenance.GlobalSettings
-		SET GS_VALUE = @ORG_NAME
-		WHERE GS_NAME = 'ORG_NAME'
+        UPDATE Maintenance.GlobalSettings
+        SET GS_VALUE = @ORG_NAME
+        WHERE GS_NAME = 'ORG_NAME'
 
 		IF @@ROWCOUNT = 0
 			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
@@ -180,6 +181,13 @@ BEGIN
 			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
 				SELECT 'CONTRACT_YEAR', CONVERT(VARCHAR(500), @CONTRACT_YEAR), ''
 
+		UPDATE Maintenance.GlobalSettings
+		SET GS_VALUE = CONVERT(VARCHAR(500), @CONTRACT_OLD)
+		WHERE GS_NAME = 'CONTRACT_OLD'
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Maintenance.GlobalSettings(GS_NAME, GS_VALUE, GS_NOTE)
+				SELECT 'CONTRACT_OLD', CONVERT(VARCHAR(500), @CONTRACT_OLD), ''
 
         UPDATE Maintenance.GlobalSettings
 		SET GS_VALUE = CONVERT(VARCHAR(500), @SEMINAR_MAIL_HOST)

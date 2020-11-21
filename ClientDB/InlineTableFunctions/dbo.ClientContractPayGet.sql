@@ -6,50 +6,62 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER FUNCTION [dbo].[ClientContractPayGet]
 (
-	@ClientId		Int,
-	@Date			SmallDateTime
+    @ClientId       Int,
+    @Date           SmallDateTime
 )
 RETURNS TABLE
 AS
 RETURN
 (
-	SELECT TOP (1) ContractPayName, ContractPayDay, ContractPayMonth
-	FROM
-	(
-		SELECT Ord, ContractPayName, ContractPayDay, ContractPayMonth
-		FROM
-		(
-			SELECT TOP (1)
-				2 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
-			FROM dbo.ContractTable z
-			INNER JOIN dbo.ContractPayTable y ON z.ContractPayID = y.ContractPayID
-			WHERE z.ClientID = @ClientId
-				AND (@Date IS NULL OR @Date BETWEEN ContractBegin AND ContractEnd)
-			ORDER BY ContractEnd DESC
-		) AS A
+    SELECT TOP (1)
+        C.[ContractPayName],
+        C.[ContractPayDay],
+        C.[ContractPayMonth]
+    FROM
+    (
+        SELECT [Ord], [ContractPayName], [ContractPayDay], [ContractPayMonth]
+        FROM
+        (
+            SELECT TOP (1)
+                [Ord]               = 2,
+                [ContractPayName]   = CP.[ContractPayName],
+                [ContractPayDay]    = CP.[ContractPayDay],
+                [ContractPayMonth]  = CP.[ContractPayMonth]
+            FROM [dbo].[ContractTable]          AS C
+            INNER JOIN [dbo].[ContractPayTable] AS CP ON C.[ContractPayID] = CP.[ContractPayID]
+            WHERE   C.[ClientID] = @ClientId
+                AND (@Date IS NULL OR (@Date >= C.[ContractBegin] AND (@Date <= C.[ContractEnd] OR C.[ContractEnd] IS NULL)))
+            ORDER BY C.[ContractEnd] DESC
+        ) AS C
 
-		UNION ALL
+        UNION ALL
 
-		SELECT Ord, ContractPayName, ContractPayDay, ContractPayMonth
-		FROM
-		(
-			SELECT TOP (1)
-				1 AS Ord, ContractPayName, ContractPayDay, ContractPayMonth
-			FROM Contract.ClientContracts z
-			INNER JOIN Contract.Contract x ON x.Id = z.Contract_Id
-			CROSS APPLY
-			(
-				SELECT TOP (1) PayType_Id
-				FROM Contract.ClientContractsDetails w
-				WHERE w.Contract_Id = z.Contract_Id
-					AND (@Date IS NULL OR DATE < @Date)
-			) w
-			INNER JOIN dbo.ContractPayTable y ON w.PayType_Id = y.ContractPayID
-			WHERE z.Client_Id = @ClientId
-				AND (@Date IS NULL OR (@Date >= DateFrom AND (@Date <= DateTo OR DateTo IS NULL)))
-			ORDER BY DateTo DESC
-		) AS A
-	) AS A
-	ORDER BY Ord
-)
+        SELECT [Ord], [ContractPayName], [ContractPayDay], [ContractPayMonth]
+        FROM
+        (
+            SELECT TOP (1)
+                [Ord]               = 2,
+                [ContractPayName]   = CP.[ContractPayName],
+                [ContractPayDay]    = CP.[ContractPayDay],
+                [ContractPayMonth]  = CP.[ContractPayMonth]
+            FROM [Contract].[ClientContracts]   AS CC
+            INNER JOIN [Contract].[Contract]    AS C ON C.[Id] = CC.[Contract_Id]
+            CROSS APPLY
+            (
+                SELECT TOP (1)
+                    [PayType_Id] = CCD.[PayType_Id]
+                FROM [Contract].[ClientContractsDetails] AS CCD
+                WHERE CCD.[Contract_Id] = CC.[Contract_Id]
+                    AND (@Date IS NULL OR CCD.[DATE] < @Date)
+            ) AS CCD
+            INNER JOIN [dbo].[ContractPayTable] AS CP ON CCD.[PayType_Id] = CP.[ContractPayID]
+            WHERE   CC.[Client_Id] = @ClientId
+                AND (@Date IS NULL OR (@Date >= C.[DateFrom] AND (@Date <= C.[DateTo] OR C.[DateTo] IS NULL)))
+            ORDER BY C.[DateTo] DESC
+        ) AS C
+        WHERE [Maintenance].[GlobalContractOld]() = 0
+    ) AS C
+    ORDER BY
+        C.[Ord]
+);
 GO

@@ -26,43 +26,80 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT
-			ContractID = C.ID, ClientFullName, ManagerName, MaxContractEnd = ExpireDate, ContractDate = SignDate,
-			ContractNumber = NUM_S, ServiceStatusName, ContractTypeName,
-			ServiceName, ContractPayName,
-			REVERSE(STUFF(REVERSE(
-				(
-					SELECT SystemShortName + ', '
-					FROM
-						(
-							SELECT DISTINCT SystemShortName, SystemOrder
-							FROM
-								dbo.ClientDistrView z WITH(NOEXPAND)
-							WHERE z.ID_CLIENT = CL.ClientID AND DS_REG = 0
-						) AS o_O
-					ORDER BY SystemOrder FOR XML PATH('')
-				)
-			), 1, 2, '')) AS SystemList
-		FROM [dbo].[ClientList@Get?Read]()	R
-		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID
-		INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
-		CROSS APPLY
-		(
-			SELECT TOP (1) PayType_Id, Discount_Id, Type_Id, ExpireDate
-			FROM Contract.ClientContractsDetails D
-			WHERE D.Contract_Id = C.ID
-			ORDER BY DATE DESC
-		) CD
-		INNER JOIN dbo.ClientView CL WITH(NOEXPAND) ON CL.ClientID = R.WCL_ID
-		INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
-		INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = CD.PayType_Id
-		WHERE DateTo IS NULL
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			AND (ServiceStatusID = @STATUS	OR @STATUS IS NULL)
-			AND (P.ContractPayID = @PAY OR @PAY IS NULL)
-			AND (T.ContractTypeID = @TYPE OR @TYPE IS NULL)
-		ORDER BY ClientFullName, ExpireDate DESC
+        IF [Maintenance].[GlobalContractOld]() = 1
+            SELECT
+		        ContractID, ClientFullName, ManagerName, ContractEnd AS MaxContractEnd, ContractDate,
+		        ContractNumber, ServiceStatusName, ContractTypeName,
+		        ServiceName, ContractPayName,
+		        REVERSE(STUFF(REVERSE(
+			        (
+				        SELECT SystemShortName + ', '
+				        FROM
+					        (
+						        SELECT DISTINCT SystemShortName, SystemOrder
+						        FROM
+							        dbo.ClientDistrView z WITH(NOEXPAND)
+						        WHERE z.ID_CLIENT = a.ClientID AND DS_REG = 0
+					        ) AS o_O
+				        ORDER BY SystemOrder FOR XML PATH('')
+			        )
+		        ), 1, 2, '')) AS SystemList
+	        FROM
+		        dbo.ClientReadList()
+		        INNER JOIN dbo.ContractTable a ON RCL_ID = ClientID
+		        INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
+		        INNER JOIN dbo.ContractTypeTable e ON a.ContractTypeID = e.ContractTypeID
+		        INNER JOIN dbo.ContractPayTable f ON f.ContractPayID = a.ContractPayID
+	        WHERE ContractEnd =
+		        (
+			        SELECT Max(z.ContractEnd) AS MaxContractEnd
+			        FROM dbo.ContractTable z
+			        WHERE a.ClientID = z.ClientID
+		        )
+		        AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+		        AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+		        AND (ServiceStatusID = @STATUS	OR @STATUS IS NULL)
+		        AND (f.ContractPayID = @PAY OR @PAY IS NULL)
+		        AND (e.ContractTypeID = @TYPE OR @TYPE IS NULL)
+	        ORDER BY ClientFullName, ContractEnd DESC
+        ELSE
+		    SELECT
+			    ContractID = C.ID, ClientFullName, ManagerName, MaxContractEnd = ExpireDate, ContractDate = SignDate,
+			    ContractNumber = NUM_S, ServiceStatusName, ContractTypeName,
+			    ServiceName, ContractPayName,
+			    REVERSE(STUFF(REVERSE(
+				    (
+					    SELECT SystemShortName + ', '
+					    FROM
+						    (
+							    SELECT DISTINCT SystemShortName, SystemOrder
+							    FROM
+								    dbo.ClientDistrView z WITH(NOEXPAND)
+							    WHERE z.ID_CLIENT = CL.ClientID AND DS_REG = 0
+						    ) AS o_O
+					    ORDER BY SystemOrder FOR XML PATH('')
+				    )
+			    ), 1, 2, '')) AS SystemList
+		    FROM [dbo].[ClientList@Get?Read]()	R
+		    INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID
+		    INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
+		    CROSS APPLY
+		    (
+			    SELECT TOP (1) PayType_Id, Discount_Id, Type_Id, ExpireDate
+			    FROM Contract.ClientContractsDetails D
+			    WHERE D.Contract_Id = C.ID
+			    ORDER BY DATE DESC
+		    ) CD
+		    INNER JOIN dbo.ClientView CL WITH(NOEXPAND) ON CL.ClientID = R.WCL_ID
+		    INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
+		    INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = CD.PayType_Id
+		    WHERE DateTo IS NULL
+			    AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+			    AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+			    AND (ServiceStatusID = @STATUS	OR @STATUS IS NULL)
+			    AND (P.ContractPayID = @PAY OR @PAY IS NULL)
+			    AND (T.ContractTypeID = @TYPE OR @TYPE IS NULL)
+		    ORDER BY ClientFullName, ExpireDate DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -56,7 +56,8 @@ BEGIN
 		IF @NUM_FIXED IS NOT NULL
 			SET @NUM_S = @NUM_FIXED
 		ELSE BEGIN
-			IF @NUM IS NULL
+			IF @NUM IS NULL BEGIN
+			    /*
 				SELECT @NUM = ISNULL(
 										(
 											SELECT MAX(NUM)
@@ -67,6 +68,13 @@ BEGIN
 												AND DATEPART(YEAR, START) = @YEAR
 										) + 1,
 										1)
+			    */
+			    SELECT TOP (1) @NUM = N.ID
+				FROM dbo.Numbers AS N
+				LEFT JOIN Contract.Contract AS C ON C.NUM = N.ID AND C.ID_VENDOR = @VENDOR AND C.ID_YEAR = @ID_YEAR
+				WHERE C.ID IS NULL
+				ORDER BY N.ID;
+			END;
 
 			SELECT @NUM_S = CONVERT(NVARCHAR(16), @YEAR) + '-' + CASE WHEN PREFIX = '' THEN '' ELSE PREFIX + ' ' END + REPLICATE('0', 4 - LEN(CONVERT(NVARCHAR(16), @NUM))) + CONVERT(NVARCHAR(16), @NUM)
 			FROM Contract.Type

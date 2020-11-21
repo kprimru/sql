@@ -26,28 +26,45 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT
-			CL.ClientID, ClientFullName, ContractNumber = NUM_S,
-			ContractBegin = DateFrom, ContractTypeName, DiscountValue
-		FROM [dbo].[ClientList@Get?Read]()			R
-		INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID
-		INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
-		CROSS APPLY
-		(
-			SELECT TOP (1) PayType_Id, Discount_Id, Type_Id
-			FROM Contract.ClientContractsDetails D
-			WHERE D.Contract_Id = C.ID
-			ORDER BY DATE DESC
-		) CD
-		INNER JOIN dbo.ClientTable CL ON CL.ClientID = R.WCL_ID
-		LEFT JOIN dbo.DiscountTable D ON D.DiscountID = CD.Discount_Id
-		LEFT JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
-		WHERE
-				(CD.Type_Id = @contracttypeid	OR @contracttypeid IS NULL)
-			AND (CD.Discount_ID = @discountid	OR @discountid IS NULL)
-			AND (C.DateFrom >= @startdate		OR @startdate IS NULL)
-			AND (C.DateFrom <= @enddate			OR @enddate IS NULL)
-		ORDER BY DiscountOrder, ClientFullName
+        IF [Maintenance].[GlobalContractOld]() = 1
+            SELECT
+		        a.ClientID, ClientFullName, ContractNumber,
+		        ContractBegin, ContractTypeName, DiscountValue
+	        FROM
+		        dbo.ClientReadList()
+		        INNER JOIN dbo.ContractTable a ON ClientID = RCL_ID
+		        INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID 
+		        LEFT OUTER JOIN dbo.DiscountTable c ON a.DiscountID = c.DiscountID
+		        LEFT OUTER JOIN dbo.ContractTypeTable d ON d.ContractTypeID = a.ContractTypeID
+	        WHERE
+		        (a.ContractTypeID = @contracttypeid OR @contracttypeid IS NULL)
+		        AND (a.DiscountID = @discountid OR @discountid IS NULL)
+		        AND (a.ContractBegin >= @startdate OR @startdate IS NULL)
+		        AND (a.ContractBegin <= @enddate OR @enddate IS NULL)
+	        ORDER BY DiscountOrder, ClientFullName
+	    ELSE
+		    SELECT
+			    CL.ClientID, ClientFullName, ContractNumber = NUM_S,
+			    ContractBegin = DateFrom, ContractTypeName, DiscountValue
+		    FROM [dbo].[ClientList@Get?Read]()			R
+		    INNER JOIN Contract.ClientContracts	CC	ON CC.Client_Id = R.WCL_ID
+		    INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
+		    CROSS APPLY
+		    (
+			    SELECT TOP (1) PayType_Id, Discount_Id, Type_Id
+			    FROM Contract.ClientContractsDetails D
+			    WHERE D.Contract_Id = C.ID
+			    ORDER BY DATE DESC
+		    ) CD
+		    INNER JOIN dbo.ClientTable CL ON CL.ClientID = R.WCL_ID
+		    LEFT JOIN dbo.DiscountTable D ON D.DiscountID = CD.Discount_Id
+		    LEFT JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
+		    WHERE
+				    (CD.Type_Id = @contracttypeid	OR @contracttypeid IS NULL)
+			    AND (CD.Discount_ID = @discountid	OR @discountid IS NULL)
+			    AND (C.DateFrom >= @startdate		OR @startdate IS NULL)
+			    AND (C.DateFrom <= @enddate			OR @enddate IS NULL)
+		    ORDER BY DiscountOrder, ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
