@@ -84,6 +84,10 @@ BEGIN
                 @DEPO           = NULL,
                 @DEPO_NUM       = NULL,
                 @ID             = @Company_Id OUTPUT;
+        END ELSE BEGIN
+            UPDATE [SaleDB].[Client.Company] SET
+                SENDER_NOTE = @ClaimNum
+            WHERE ID = @Company_Id;
         END;
 
         EXEC [SaleDB].[Client.COMPANY_PERSONAL_INSERT]

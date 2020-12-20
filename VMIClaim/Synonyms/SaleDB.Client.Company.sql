@@ -1,0 +1,7 @@
+USE [VMIClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE SYNONYM [SaleDB].[Client.Company] FOR [SaleDB].[Client].[Company];GO
