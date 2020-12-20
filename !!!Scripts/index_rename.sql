@@ -1,6 +1,6 @@
 DECLARE @chngmode BIT
 
-SET @chngmode = 0 --ВОТ ТУТ МЕНЯТЬ, ПРОСТО СРАВНИТЬ В ТАБЛИЦЕ - 0, ПЕРЕИМЕНОВАТЬ - 1
+SET @chngmode = 1 --ВОТ ТУТ МЕНЯТЬ, ПРОСТО СРАВНИТЬ В ТАБЛИЦЕ - 0, ПЕРЕИМЕНОВАТЬ - 1
 
 DECLARE @diff TABLE
 (
@@ -370,5 +370,65 @@ IF @err = 0
 ELSE
 	PRINT 'Скрипт FK выполнен с ошибками ('+CONVERT(NVARCHAR, @err)+')'
 	
+CLOSE cur
+DEALLOCATE cur
+
+
+
+---------------------------------------------*************************DEFAULTS*************************---------------------------------------------
+
+DECLARE cur CURSOR
+FOR 
+SELECT
+	sch.name AS 'schema', t.name AS 'table', sch.name + '.[' + kc.name + ']' AS 'index',
+	'DF_'+sch.name+'.'+t.name + '(' + c.name + ')' AS 'right name'
+FROM
+	sys.default_constraints kc
+	INNER JOIN sys.tables t ON kc.parent_object_id=t.object_id
+	INNER JOIN sys.schemas sch ON sch.schema_id=kc.schema_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id AND c.column_id = kc.parent_column_id
+WHERE
+	kc.type='D'
+ORDER BY
+	'schema', 'table', 'index'
+
+OPEN cur
+
+SET @err = 0
+SET @counter = 0
+
+FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	SET @index_name = @index
+	IF LEN(@index_right)>100
+	BEGIN
+		PRINT 'Объект '+@index+' не был переименован, так как сгенерированное имя слишком длинное' -- ЕСЛИ И ПОСЛЕ ЭТОГО СЛИШКОМ ДЛИННОЕ, ТОГДА НИЧЕГО НЕ ДЕЛАТЬ
+		FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
+		CONTINUE
+	END
+	IF (@index <> @index_right)AND(@index<>'pk_dtproperties')AND(@chngmode=1) -- ИСКЛЮЧАЕМ ЕЩЕ И ПОПЫТКУ ИЗМЕНЕНИЯ СИСТЕМНОГО PK
+	BEGIN TRY
+		EXEC sp_rename @index_name, @index_right
+	END TRY
+	BEGIN CATCH
+		SET @err = @err + 1 
+		PRINT @index
+		PRINT ERROR_MESSAGE()
+	END CATCH
+	ELSE IF ((@index <> @index_right)AND(@index<>'pk_dtproperties')AND(@chngmode=0))
+	BEGIN
+		INSERT INTO @diff([oldname],[newname]) VALUES(@index, @index_right)
+	END
+	SET @counter = @counter + 1
+	FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
+END
+
+IF @err = 0
+	PRINT 'Скрипт DF был выполнен без ошибок'
+ELSE
+	PRINT 'Скрипт DF выполнен с ошибками ('+CONVERT(NVARCHAR, @err)+')'
+
 CLOSE cur
 DEALLOCATE cur

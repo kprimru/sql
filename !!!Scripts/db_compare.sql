@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC275-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC275-SQL\GAMMA].[ClientSlavDB]';
+SET @Dst = '[PC111TS\DEV].[ClientArtDB]';
 
 DECLARE @SrcSchemas Table
 (
@@ -106,6 +106,8 @@ DECLARE @SrcRouties Table
     [Name]          SysName,
     [Type]          VarChar(10),
     [Definition]    NVarChar(Max),
+    [TblSchema]     SysName NULL,
+    [TblName]       SysName NULL,
     PRIMARY KEY CLUSTERED([Schema], [Name])
 );
 
@@ -115,6 +117,8 @@ DECLARE @DstRouties Table
     [Name]          SysName,
     [Type]          VarChar(10),
     [Definition]    NVarChar(Max),
+    [TblSchema]     SysName NULL,
+    [TblName]       SysName NULL,
     PRIMARY KEY CLUSTERED([Schema], [Name])
 );
 
@@ -230,17 +234,21 @@ INNER JOIN ' + @Dst + '.[sys].[schemas]  S ON S.[schema_id] = V.[schema_id]
 INNER JOIN ' + @Dst + '.[sys].[sql_modules] M ON M.[object_id] = V.[object_id];');
 
 INSERT INTO @SrcRouties
-EXEC ('SELECT S.[name], O.[name], O.[type], M.[definition]
+EXEC ('SELECT S.[name], O.[name], O.[type], M.[definition], PS.[Name], PO.[name]
 FROM ' + @Src + '.[sys].[objects] O
 INNER JOIN ' + @Src + '.[sys].[schemas] S ON O.[schema_id] = S.[schema_id]
 INNER JOIN ' + @Src + '.[sys].[sql_modules] M ON M.[object_id] = O.[object_id]
+LEFT JOIN ' + @Src + '.[sys].[objects] PO ON PO.[object_id] = O.[parent_object_id]
+LEFT JOIN ' + @Src + '.[sys].[schemas] PS ON PO.[schema_id] = PS.[schema_id]
 WHERE O.[type] IN (''FN'', ''TF'', ''P'', ''TR'', ''IF'');');
 
 INSERT INTO @DstRouties
-EXEC ('SELECT S.[name], O.[name], O.[type], M.[definition]
+EXEC ('SELECT S.[name], O.[name], O.[type], M.[definition], PS.[Name], PO.[name]
 FROM ' + @Dst + '.[sys].[objects] O
 INNER JOIN ' + @Dst + '.[sys].[schemas] S ON O.[schema_id] = S.[schema_id]
 INNER JOIN ' + @Dst + '.[sys].[sql_modules] M ON M.[object_id] = O.[object_id]
+LEFT JOIN ' + @Dst + '.[sys].[objects] PO ON PO.[object_id] = O.[parent_object_id]
+LEFT JOIN ' + @Dst + '.[sys].[schemas] PS ON PO.[schema_id] = PS.[schema_id]
 WHERE O.[type] IN (''FN'', ''TF'', ''P'', ''TR'', ''IF'');');
 
 INSERT INTO @SrcRoles
@@ -251,6 +259,7 @@ EXEC('SELECT R.[name],
 			FROM ' + @Src + '.sys.database_role_members rm
 			INNER JOIN ' + @Src + '.sys.database_principals u ON rm.member_principal_id = u.principal_id
 			WHERE r.principal_id = rm.role_principal_id
+			    AND u.type = ''R''
 			FOR XML PATH('''')
 		)
 		), 1, 1, ''''))
@@ -265,6 +274,7 @@ EXEC('SELECT R.[name],
 			FROM ' + @Dst + '.sys.database_role_members rm
 			INNER JOIN ' + @Dst + '.sys.database_principals u ON rm.member_principal_id = u.principal_id
 			WHERE r.principal_id = rm.role_principal_id
+			    AND u.type = ''R''
 			FOR XML PATH('''')
 		)
 		), 1, 1, ''''))
@@ -593,8 +603,15 @@ SELECT
                         ELSE 2
                     END,
     [SQL]       =   CASE
-						--ToDo сделать чтобы созадвались заглушечные объекты, а потом ALTER
-                        WHEN D.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''' + S.[Type] + ''') IS NULL EXEC(''CREATE ' + T.[TypeFull] + ' [' + S.[Schema] + '].[' + S.[Name] + '] ' + CASE WHEN S.[Type] = 'TR' THEN ' ON [' + S.[Schema] + '].[' + Replace(S.[Name], '_LAST_UPDATE', '') + '] AFTER INSERT,UPDATE,DELETE ' ELSE '' END + ' AS SELECT 1'')'
+                        --ToDo сделать чтобы созадвались заглушечные объекты, а потом ALTER
+                        WHEN D.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''' + S.[Type] + ''') IS NULL EXEC(''CREATE ' + T.[TypeFull] + ' [' + S.[Schema] + '].[' + S.[Name] + '] ' +
+                                CASE WHEN S.[Type] = 'TR' THEN ' ON [' + S.[TblSchema] + '].[' + Replace(S.[TblName], '_LAST_UPDATE', '') + '] AFTER INSERT,UPDATE,DELETE ' ELSE '' END +
+                                    CASE
+                                        WHEN S.[Type] = 'FN' THEN '() RETURNS Int AS BEGIN RETURN NULL END'
+                                        WHEN S.[Type] = 'IF' THEN '() RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)'
+                                        WHEN S.[Type] = 'TF' THEN '() RETURNS @output TABLE(Id Int) AS BEGIN RETURN END'
+                                        ELSE ' AS SELECT 1'
+                                    END + ''')'
                         WHEN S.[Name] IS NULL THEN 'IF OBJECT_ID(''[' + D.[Schema] + '].[' + D.[Name] + ']'', ''' + D.[Type] + ''') IS NOT NULL DROP ' + T.[TypeFull] + ' [' + D.[Schema] + '].[' + D.[Name] + ']'
                         ELSE Replace(S.[Definition], 'CREATE ' + T.[TypeFull], 'ALTER ' + T.[TypeFull])
                     END
@@ -790,3 +807,4 @@ FULL JOIN @DstDefaults D ON S.[Schema] = D.[Schema]
 							AND S.[Name] = D.[Name]
 WHERE S.[Name] IS NULL OR D.[Name] IS NULL
 ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Name], D.[Name])
+GO
