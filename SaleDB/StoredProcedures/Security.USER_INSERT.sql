@@ -60,6 +60,7 @@ BEGIN
 		IF @AUTH = 0
 		BEGIN
 			-- доменный пользователь
+			/*
 			IF @LG_EXISTS = 1
 			BEGIN
 				SET @ER_TXT = 'ѕользователь или роль "' + @LOGIN + '" уже существует на сервере. ¬ыберите другое им€.'
@@ -76,6 +77,7 @@ BEGIN
 			END
 			ELSE
 			BEGIN
+			*/
 				IF @LG_EXISTS = 0
 				BEGIN
 					SET @SQL = N'CREATE LOGIN ' + QUOTENAME(@LOGIN) + ' FROM WINDOWS'
@@ -101,7 +103,7 @@ BEGIN
 				PRINT @LOGIN
 
 				SET @TYPE = 1
-			END
+			--END
 		END
 		ELSE IF @AUTH = 1
 		BEGIN
