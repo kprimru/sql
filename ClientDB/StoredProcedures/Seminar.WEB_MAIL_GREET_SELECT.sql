@@ -27,10 +27,10 @@ BEGIN
 			a.EMAIL,
 			--'denisov@bazis' AS EMAIL,
 			d.NAME, b.DATE, b.TIME,
-			'Запись на семинар' AS SUBJ,
+			'Запись на вебинар' AS SUBJ,
 			'no-reply@kprim.ru' AS FROM_ADDRESS,
 			'ООО Базис' AS FROM_NAME,
-			--'Здравствуйте, ' + a.PSEDO + '! Вы получили это письмо, потому что записались на семинар "' + d.NAME + '", который пройдет ' + CONVERT(NVARCHAR(MAX), b.DATE, 104) + ' в ' + LEFT(CONVERT(NVARCHAR(MAX), b.TIME, 108), 5) + ' в офисе ООО "Базис"' AS MAIL_BODY
+			/*
 			'<html>
 			<head>
 			</head>
@@ -41,6 +41,24 @@ BEGIN
 				<br/>
 				<div style="font-size:12">
 					Данное письмо сформировано автоматически, не отвечайте на него. Если у Вас есть вопросы, обратитесь к обслуживающему Вас специалисту или по телефону 24-25-600.
+				</div>
+			</body>
+			</html>' AS MAIL_BODY
+			*/
+
+			'<html>
+			<head>
+			</head>
+			<body>
+				<div style="font-size:16">
+					Здравствуйте, ' + a.PSEDO + '! Вы получили это письмо, потому что записались на вебинар "' + d.NAME + '", который пройдет ' + CONVERT(VARCHAR(20), DATEPART(DAY, b.DATE)) + ' ' + e.ROD + ' ' + CONVERT(VARCHAR(20), DATEPART(YEAR, b.DATE)) + ' года в  ' + LEFT(CONVERT(NVARCHAR(MAX), b.TIME, 108), 5) + '.
+				</div>
+				<br/>
+				<div style="font-size:12">
+					Данное письмо сформировано автоматически, не отвечайте на него.
+				</div>
+				<div style="font-size:12">
+					Если у Вас есть вопросы, обратитесь к обслуживающему Вас специалисту или по телефону 24-25-600.
 				</div>
 			</body>
 			</html>' AS MAIL_BODY
