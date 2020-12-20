@@ -34,12 +34,13 @@ BEGIN
 
 		DECLARE @ClientsComplects Table
 		(
-			ClientId		Int				NOT NULL,
-			Complect		VarChar(100)	NOT NULL,
-			UF_ID			Int					NULL,
-			UF_DATE			SmallDateTime		NULL,
-			InfoBanks		VarChar(Max)		NULL,
-			InfoBanksCodes	VarChar(Max)		NULL,
+			ClientId		        Int				NOT NULL,
+			Complect		        VarChar(100)	NOT NULL,
+			UF_ID			        Int					NULL,
+			UF_DATE			        SmallDateTime		NULL,
+			InfoBanks		        VarChar(Max)		NULL,
+			InfoBanksCodes	        VarChar(Max)		NULL,
+			USRFileKindShortName    VarCHar(128)        NULL
 			Primary Key Clustered(ClientId, Complect)
 		);
 
@@ -69,8 +70,8 @@ BEGIN
 			AND (ClientId = @CLIENT		OR @CLIENT IS NULL);
 
 
-		INSERT INTO @ClientsComplects(ClientId, Complect, UF_ID, UF_DATE)
-		SELECT DISTINCT C.ClientId, R.Complect, U.UF_ID, U.UF_DATE
+		INSERT INTO @ClientsComplects(ClientId, Complect, UF_ID, UF_DATE, USRFileKindShortName)
+		SELECT DISTINCT C.ClientId, R.Complect, U.UF_ID, U.UF_DATE, U.USRFileKindShortName
 		FROM @Clients							C
 		INNER JOIN dbo.ClientDistrView			D WITH(NOEXPAND)	ON	D.ID_CLIENT = C.ClientId
 		INNER JOIN dbo.RegNodeMainDistrView		R WITH(NOEXPAND)	ON	D.DISTR = R.DistrNumber
@@ -79,7 +80,7 @@ BEGIN
 																	AND D.HostID = S.HostId
 		OUTER APPLY
 		(
-			SELECT TOP (1) UF_ID, UF_DATE
+			SELECT TOP (1) UF_ID, UF_DATE, USRFileKindShortName
 			FROM USR.USRActiveView			U
 			WHERE	U.UD_DISTR = R.MainDistrNumber
 				AND	U.UD_COMP = R.MainCompNumber
@@ -140,9 +141,12 @@ BEGIN
 		OPTION(RECOMPILE);
 
 		SELECT
-			C.ClientID, CC.Complect, C.ManagerName, C.ServiceName, C.ClientFullName, CC.Complect, Banks = CC.InfoBanks, BanksEn = CC.InfoBanksCodes, LAST_DATE = NULL, CC.UF_DATE
+			C.ClientID, CC.Complect, C.ManagerName, C.ServiceName, C.ClientFullName, CC.Complect,
+			Banks = CC.InfoBanks, BanksEn = CC.InfoBanksCodes, LAST_DATE = NULL, CC.UF_DATE,
+			ST.ServiceTypeName, CC.USRFileKindShortName
 		FROM @ClientsComplects		CC
 		INNER JOIN dbo.ClientView	C	WITH(NOEXPAND)	ON C.ClientID = CC.ClientID
+		INNER JOIN dbo.ServiceTypeTable AS ST ON ST.ServiceTypeID = C.ServiceTypeID
 		WHERE CC.InfoBanks IS NOT NULL
 		ORDER BY ManagerName, ServiceName, ClientFullName, CC.Complect
 

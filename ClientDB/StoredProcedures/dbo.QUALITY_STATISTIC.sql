@@ -66,7 +66,10 @@ BEGIN
 				InfoBankShortName VARCHAR(Max),
 				InfoBankCode VARCHAR(Max),
 				LAST_DATE DATETIME,
-				UF_DATE DATETIME
+				UF_DATE DATETIME,
+			ServiceTypeName		VARCHAR(100),
+			UsrFileKindShortName VARCHAR(100)
+
 			)
 
 		INSERT INTO #uninstall
