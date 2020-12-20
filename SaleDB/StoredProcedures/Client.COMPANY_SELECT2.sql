@@ -199,7 +199,7 @@ BEGIN
                         SELECT *
                         FROM @tsearch
                         WHERE NOT (DATA LIKE WRD)
-                    )
+                    ) OR DATA IS NULL
             );
 
             IF @SELECT = 1
@@ -661,6 +661,15 @@ BEGIN
                 INSERT @company ([Id])
                 SELECT TOP (500) Id
                 FROM @rlist;
+
+            IF @SELECT = 1
+                DELETE FROM @company
+                WHERE ID NOT IN
+                    (
+                        SELECT ID_COMPANY
+                        FROM Client.CompanySelection
+                        WHERE USR_NAME = ORIGINAL_LOGIN()
+                    );
         END;
 
         SELECT
