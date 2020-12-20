@@ -23,12 +23,12 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], Comment AS [Название клиента в РЦ],
+			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], [Сеть] = NT_SHORT, Comment AS [Название клиента в РЦ],
 			Systems AS [Подчиненные системы в комплекте], ManagerName AS [Рук-ль], a.RegisterDate AS [Дата регистрации]
 		FROM
 			(
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -54,7 +54,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT
@@ -81,7 +81,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -107,7 +107,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -133,7 +133,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -159,7 +159,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -185,7 +185,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -211,7 +211,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -230,7 +230,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -256,7 +256,7 @@ BEGIN
 				UNION ALL
 
 				SELECT
-					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate,
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
 					REVERSE(STUFF(REVERSE(
 						(
 							SELECT DistrStr + ','
@@ -279,6 +279,32 @@ BEGIN
 								AND b.SystemBaseName IN ('FIN')
 						)
 
+				UNION ALL
+
+				SELECT
+					SystemBaseName, DistrNumber, CompNumber, Comment, RegisterDate, NT_SHORT,
+					REVERSE(STUFF(REVERSE(
+						(
+							SELECT DistrStr + ','
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+							WHERE a.Complect = b.Complect
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('SVRAPS', 'SVA', 'SOJ')
+							ORDER BY SystemOrder FOR XML PATH('')
+					)), 1, 1, '')) AS Systems
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DS_REG = 0
+					AND DistrNumber <> 20
+					AND SystemBaseName IN ('SKJP', 'SKUP', 'SBOP')
+					AND NT_SHORT IN ('лок', 'флеш')
+					AND EXISTS
+						(
+							SELECT *
+							FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+							WHERE a.Complect = b.Complect
+								AND b.DS_REG = 0
+								AND b.SystemBaseName IN ('SVRAPS', 'SVA', 'SOJ')
+						)
 				) AS a
 			INNER JOIN dbo.SystemTable z ON z.SystemBaseName = a.SystemBaseName
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.SystemBaseName = b.SystemBaseName AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
