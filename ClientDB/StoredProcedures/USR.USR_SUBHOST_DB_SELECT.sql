@@ -29,8 +29,9 @@ BEGIN
 				FROM
 					(
 						SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
-						FROM [ClientDB?Art].[USR.USRFile] a
-						INNER JOIN [ClientDB?Art].[USR.USRFileData] b ON a.UF_ID = b.UF_ID
+						FROM
+							[PC276-SQL\ART].ClientDB.USR.USRFile a
+							INNER JOIN [PC276-SQL\ART].ClientDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 						WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 							AND NOT EXISTS
 								(
@@ -45,8 +46,9 @@ BEGIN
 						UNION ALL
 
 						SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
-						FROM [ClientDB?Nkh].[USR.USRFile] a
-						INNER JOIN [ClientDB?Nkh].[USR.USRFileData] b ON a.UF_ID = b.UF_ID
+						FROM
+							[PC276-SQL\NKH].ClientDB.USR.USRFile a
+							INNER JOIN [PC276-SQL\NKH].ClientDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 						WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 							AND NOT EXISTS
 								(
@@ -61,8 +63,9 @@ BEGIN
 						UNION ALL
 
 						SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
-						FROM [ClientDB?Slv].[USR.USRFile] a
-						INNER JOIN [ClientDB?Slv].[USR.USRFileData] b ON a.UF_ID = b.UF_ID
+						FROM
+							[PC276-SQL\SLV].ClientDB.USR.USRFile a
+							INNER JOIN [PC276-SQL\SLV].ClientDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 						WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 							AND NOT EXISTS
 								(
@@ -77,8 +80,9 @@ BEGIN
 						UNION ALL
 
 						SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
-						FROM [ClientDB?Uss].[USR.USRFile] a
-						INNER JOIN [ClientDB?Uss].[USR.USRFileData] b ON a.UF_ID = b.UF_ID
+						FROM
+							[PC276-SQL\USS].ClientDB.USR.USRFile a
+							INNER JOIN [PC276-SQL\USS].ClientDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 						WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 							AND NOT EXISTS
 								(

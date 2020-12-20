@@ -24,20 +24,26 @@ BEGIN
 
 		SELECT
 			CL_PSEDO AS [Псевдоним], TO_NAME AS [Название ТО], CL_SHORT_NAME AS [Короткое название клиента],
-			DIS_STR AS [Основной дистрибутив]
-		FROM [DBF].[dbo.TOTable]
-		INNER JOIN [DBF].[dbo.ClientTable] ON TO_ID_CLIENT = CL_ID
-		CROSS APPLY
-		(
-		    SELECT TOP (1) DIS_STR
-		    FROM [DBF].[dbo.ClientDistrView]
-			WHERE CD_ID_CLIENT = CL_ID
-				AND DSS_REPORT = 1
-			ORDER BY SYS_ORDER
-		) AS D
+			(
+				SELECT TOP 1 DIS_STR
+				FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
+				WHERE CD_ID_CLIENT = CL_ID
+					AND DSS_REPORT = 1
+				ORDER BY SYS_ORDER
+			) AS [Основной дистрибутив]
+		FROM
+			[PC275-SQL\DELTA].DBF.dbo.TOTable
+			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID
 		WHERE TO_REPORT = 1
 			AND LTRIM(RTRIM(TO_NAME)) NOT LIKE RTRIM(LTRIM(CL_SHORT_NAME)) + '%'
 			--AND TO_NAME LIKE CL_SHORT_NAME + '%'
+			AND EXISTS
+				(
+					SELECT *
+					FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
+					WHERE CD_ID_CLIENT = CL_ID
+						AND DSS_REPORT = 1
+				)
 		ORDER BY CL_PSEDO
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

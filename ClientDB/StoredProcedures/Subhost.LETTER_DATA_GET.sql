@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		EXEC [Letters].[dbo.LETTER_DATA_GET] @ID
+		EXEC [PC275-SQL\GAMMA].Letters.dbo.LETTER_DATA_GET @ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

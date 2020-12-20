@@ -7,5 +7,5 @@ GO
 ALTER VIEW [dbo].[IPClientDetailView]
 AS
 	SELECT CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_USR
-	FROM [IPLogs].[dbo.ClientStatDetail]
+	FROM [PC275-SQL\OMEGA].IPLogs.dbo.ClientStatDetail
 GO

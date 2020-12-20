@@ -7,5 +7,5 @@ GO
 ALTER VIEW [dbo].[DBFTODistrView]
 AS
 	SELECT DIS_NUM, TD_ID_TO
-	FROM [DBF].[dbo.TODistrView]
+	FROM [PC275-SQL\DELTA].DBF.dbo.TODistrView
 GO

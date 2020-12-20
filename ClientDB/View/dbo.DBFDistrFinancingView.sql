@@ -11,16 +11,16 @@ AS
 		DF_ID_PRICE,
 		(
 			SELECT TOP 1 DIS_PRICE
-			FROM [DBF].[dbo.DistrPriceView]
+			FROM [PC275-SQL\DELTA].DBF.dbo.DistrPriceView
 			WHERE /*PR_DATE = dbo.MonthOf(GETDATE())
 				AND */DIS_ID = DF_ID_DISTR
 			ORDER BY PR_DATE DESC
 		) AS DEPO_PRICE
 	FROM
-		[DBF].[dbo.SystemTable]
-		INNER JOIN [DBF].[dbo.DistrTable] ON DIS_ID_SYSTEM = SYS_ID
-		INNER JOIN [DBF].[dbo.ClientDistrTable] ON DIS_ID = CD_ID_DISTR
-		INNER JOIN [DBF].[dbo.DistrServiceStatusTable] ON CD_ID_SERVICE = DSS_ID
-		LEFT JOIN [DBF].[dbo.DistrFinancingTable] ON DIS_ID = DF_ID_DISTR
+		[PC275-SQL\DELTA].[DBF].[dbo].[SystemTable]
+		INNER JOIN [PC275-SQL\DELTA].[DBF].[dbo].[DistrTable] ON DIS_ID_SYSTEM = SYS_ID
+		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientDistrTable ON DIS_ID = CD_ID_DISTR
+		INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrServiceStatusTable ON CD_ID_SERVICE = DSS_ID
+		LEFT JOIN [PC275-SQL\DELTA].DBF.dbo.DistrFinancingTable ON DIS_ID = DF_ID_DISTR
 
 GO

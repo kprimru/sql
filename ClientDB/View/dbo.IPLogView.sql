@@ -7,5 +7,5 @@ GO
 ALTER VIEW [dbo].[IPLogView]
 AS
 	SELECT LF_DATE, LF_SYS, LF_DISTR, LF_COMP
-	FROM [IPLogs].[dbo.LogFiles]
+	FROM [PC275-SQL\OMEGA].IPLogs.dbo.LogFiles
 GO

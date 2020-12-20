@@ -31,7 +31,7 @@ BEGIN
 			CSD_COMP,
 			CSD_START,
 			CSD_END
-		FROM [IPLogs].[dbo.ClientStatDetail]
+		FROM [PC275-SQL\OMEGA].[IPLogs].[dbo].[ClientStatDetail]
 		WHERE CSD_START IS NOT NULL
 			AND CSD_STT_SEND = 1
 			AND CSD_STT_RESULT = 1
@@ -45,4 +45,5 @@ BEGIN
 
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-END;GO
+END
+GO
