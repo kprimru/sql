@@ -31,6 +31,7 @@ BEGIN
 		RegisterDate,
 		DS_INDEX,
 		RPR_OPER,
+		RPR_DATE,
 		O.[Company_Id],
 		C.[Name],
 		C.[Number],
@@ -39,7 +40,7 @@ BEGIN
 	FROM [PC275-SQL\ALPHA].[ClientDB].[Reg].[RegNodeSearchView] AS R  WITH(NOEXPAND)
 	OUTER APPLY
 	(
-		SELECT TOP (1) P.RPR_OPER
+		SELECT TOP (1) P.RPR_OPER, P.RPR_DATE
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[RegProtocol] AS P
 		WHERE P.RPR_ID_HOST = R.HostId
 			AND P.RPR_DISTR = R.DistrNumber
