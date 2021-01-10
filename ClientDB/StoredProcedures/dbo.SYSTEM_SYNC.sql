@@ -18,11 +18,12 @@ BEGIN
 		@Params			Xml;
 
     DECLARE
-        @Short  VarChar(100),
-        @Reg    VarChar(100),
-        @Full   VarCHar(256),
-        @Ord    SmallInt,
-        @Date   SmallDateTime;
+        @Short      VarChar(100),
+        @Reg        VarChar(100),
+        @Full       VarCHar(256),
+        @Ord        SmallInt,
+        @Host_Id    SmallInt,
+        @Date       SmallDateTime;
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -35,10 +36,11 @@ BEGIN
         BEGIN TRAN;
 
         SELECT
-            @Short  = S.SystemShortName,
-            @Reg    = S.SystemBaseName,
-            @Full   = S.SystemFullName,
-            @Ord    = S.SYstemOrder
+            @Short      = S.SystemShortName,
+            @Reg        = S.SystemBaseName,
+            @Full       = S.SystemFullName,
+            @Ord        = S.SYstemOrder,
+            @Host_Id    = S.HostId
         FROM dbo.SystemTable AS S
         WHERE SystemID = @System_Id;
 
@@ -60,7 +62,8 @@ BEGIN
         INSERT INTO [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host](SHORT, REG, ORD)
         SELECT HostShort, HostReg, HostOrder
         FROM dbo.Hosts AS D
-        WHERE NOT EXISTS
+        WHERE D.HostID = @Host_Id
+            AND NOT EXISTS
             (
                 SELECT *
                 FROM [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host] AS H
@@ -111,7 +114,8 @@ BEGIN
         INSERT INTO [PC275-SQL\DELTA].[DBF].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
         FROM dbo.Hosts AS C
-        WHERE NOT EXISTS
+        WHERE C.HostID = @Host_Id
+            AND NOT EXISTS
             (
                 SELECT *
                 FROM [PC275-SQL\DELTA].[DBF].[dbo].[HostTable] AS D
@@ -124,7 +128,8 @@ BEGIN
         INSERT INTO [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
         FROM dbo.Hosts AS C
-        WHERE NOT EXISTS
+        WHERE C.HostID = @Host_Id
+            AND NOT EXISTS
             (
                 SELECT *
                 FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable] AS D
@@ -196,17 +201,18 @@ BEGIN
 
         IF @@TRANCOUNT > 0
             COMMIT TRAN;
-		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
-	END TRY
-	BEGIN CATCH
-		SET @DebugError = Error_Message();
 
-		IF @@TRANCOUNT > 0
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
+
+        IF @@TRANCOUNT > 0
             ROLLBACK TRAN;
 
-		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-		EXEC [Maintenance].[ReRaise Error];
-	END CATCH
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
 GO
