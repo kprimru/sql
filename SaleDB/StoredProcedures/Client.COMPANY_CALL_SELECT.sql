@@ -25,7 +25,7 @@ BEGIN
 
 	BEGIN TRY
 		SELECT
-			a.ID, b.SHORT, b.NAME, CL_PERSONAL, c.SHORT AS PER_SHORT, DATE, NOTE,
+			a.ID, [Claim_Id] = Cast(NULL AS Int), [ClaimActionIndex] = Cast(NULL AS TinyInt), b.SHORT, b.NAME, CL_PERSONAL, c.SHORT AS PER_SHORT, DATE, NOTE,
 			CONVERT(BIT,
 				(
 					SELECT COUNT(*)
@@ -81,6 +81,19 @@ BEGIN
 		WHERE a.ID_COMPANY = @ID
 			AND (a.STATUS = 1 OR a.STATUS = 3 AND @DEL = 1)
 			AND (@CONTROL = 0 OR CONTROL = 1 AND @CONTROL = 1 OR @CONTROL IS NULL)
+
+		UNION ALL
+
+		SELECT
+		    NewId(), C.[Id], CA.[Index],
+		    NULL, NULL, NULL,
+		    --Cast(C.[Number] AS VarChar(256)), Cast(C.[Number] AS VarChar(256)), NULL,
+		    P.[SHORT], CA.[DateTime], CA.[Note], CA.[Meeting], 1, NULL, NULL, NULL
+		FROM [Claim].[Claims] AS C
+		INNER JOIN [Claim].[Claims:Actions] AS CA ON C.[Id] = CA.[Claim_Id]
+		INNER JOIN [Personal].[OfficePersonal] AS P ON CA.[Personal_Id] = P.[Id]
+		WHERE C.[Company_Id] = @ID
+
 		ORDER BY DATE DESC
 
 		SELECT @RC = @@ROWCOUNT
