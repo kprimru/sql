@@ -23,7 +23,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CA.ID, CA.NUM, CA.REG_DATE, CA.NOTE, CA.Comment, CA.DateFrom, CA.DateTo, CA.SignDate
+		SELECT
+		    CA.ID, CA.NUM, CA.REG_DATE, CA.NOTE, CA.Comment, CA.DateFrom, CA.DateTo, CA.SignDate,
+		    [IsActive] = Cast(CASE WHEN CA.SignDate IS NOT NULL AND CA.DateTo IS NULL THEN 1 ELSE 0 END AS Bit)
 		FROM Contract.Additional AS CA
 		WHERE ID_CONTRACT = @Contract_Id
 			AND (@HideUnsigned = 0 OR @HideUnsigned = 1 AND CA.SignDate IS NOT NULL)

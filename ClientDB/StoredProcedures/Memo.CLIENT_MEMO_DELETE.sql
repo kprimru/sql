@@ -28,6 +28,9 @@ BEGIN
 		    DELETE FROM Memo.ClientMemoSpecifications
 		    WHERE Memo_Id = @ID
 
+		    DELETE FROM Memo.ClientMemoAdditionals
+		    WHERE Memo_Id = @ID
+
 			DELETE FROM Memo.ClientMemoConditions
 			WHERE ID_MEMO = @ID
 

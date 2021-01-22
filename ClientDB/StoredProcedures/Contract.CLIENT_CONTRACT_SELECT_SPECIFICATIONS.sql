@@ -23,7 +23,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME, [Code] = S.[NUM], CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate
+		SELECT
+		    CS.ID, CS.NUM, CS.DATE, CS.FINISH_DATE, CS.NOTE, S.NAME, [Code] = S.[NUM], CS.Comment, CS.DateFrom, CS.DateTo, CS.SignDate,
+		    [IsActive] = Cast(CASE WHEN CS.SignDate IS NOT NULL AND CS.DateTo IS NULL THEN 1 ELSE 0 END AS Bit)
 		FROM Contract.ContractSpecification AS CS
 		INNER JOIN Contract.Specification	AS S ON CS.ID_SPECIFICATION = S.ID
 		WHERE ID_CONTRACT = @Contract_Id

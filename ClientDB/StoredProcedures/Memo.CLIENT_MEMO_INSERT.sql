@@ -26,7 +26,8 @@ ALTER PROCEDURE [Memo].[CLIENT_MEMO_INSERT]
 	@ID			UNIQUEIDENTIFIER = NULL OUTPUT,
 	@ID_CONTRACT_PAY	INT = NULL,
 	@Contract_Id    UniqueIdentifier,
-	@SPECIFICATIONS NvarChar(Max) = NULL
+	@SPECIFICATIONS NvarChar(Max) = NULL,
+	@ADDITIONALS    NvarChar(Max) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -61,6 +62,10 @@ BEGIN
 		INSERT INTO Memo.ClientMemoSpecifications
 		SELECT @ID, I.Id
 		FROM dbo.TableGUIDFromXML(@SPECIFICATIONS) AS I
+
+		INSERT INTO Memo.ClientMemoAdditionals
+		SELECT @ID, I.Id
+		FROM dbo.TableGUIDFromXML(@ADDITIONALS) AS I
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

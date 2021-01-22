@@ -43,7 +43,13 @@ BEGIN
 			    FROM Memo.ClientMemoSpecifications AS S
 			    WHERE S.[Memo_Id] = A.ID
 			    FOR XML PATH('ITEM'), ROOT('LIST')
-			) AS SPECIFICATIONS
+			) AS SPECIFICATIONS,
+			(
+			    SELECT '{' + Cast(S.[Additional_Id] AS VarChar(100)) + '}'
+			    FROM Memo.ClientMemoAdditionals AS S
+			    WHERE S.[Memo_Id] = A.ID
+			    FOR XML PATH('ITEM'), ROOT('LIST')
+			) AS ADDITIONALS
 		FROM Memo.ClientMemo AS A
 		WHERE ID = @ID
 

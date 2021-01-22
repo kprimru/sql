@@ -47,7 +47,15 @@ BEGIN
 					INNER JOIN Contract.Specification AS S ON S.[ID] = CS.[ID_SPECIFICATION]
 					WHERE z.Memo_Id = a.ID
 					FOR XML PATH(''), TYPE
-				), '') AS SPECIFICATIONS
+				), '') AS SPECIFICATIONS,
+			ISNULL(
+				(
+					SELECT '¹ ' + Cast(CS.NUM AS VarChar(100)) + CHAR(10)
+					FROM Memo.ClientMemoAdditionals z
+					INNER JOIN Contract.Additional AS CS ON Z.Additional_Id = CS.ID
+					WHERE z.Memo_Id = a.ID
+					FOR XML PATH(''), TYPE
+				), '') AS ADDITIONALS
 		FROM
 			Memo.ClientMemo a
 			INNER JOIN Memo.Service b ON a.ID_SERVICE = b.ID
