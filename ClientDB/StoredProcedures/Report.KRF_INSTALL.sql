@@ -80,6 +80,7 @@ BEGIN
 					AND Complect NOT LIKE 'RGN%'
 					AND Complect NOT LIKE 'RLAW%'
 					AND Complect NOT LIKE 'NBU%'
+					AND Complect NOT LIKE 'SKS%'
 				)
 
 		UNION ALL
