@@ -19,67 +19,67 @@ BEGIN
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
+    DECLARE @Distr Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		UPD_DATE		DateTime		NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
+	);
+
+	DECLARE @Act Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		AD_TOTAL_PRICE	Money			NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
+	)
+
+	DECLARE @Bill Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		BD_TOTAL_PRICE	Money			NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
+	)
+
+	DECLARE @Income Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		ID_PRICE		Money			NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
+	)
+
+	DECLARE @IncomeDate Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		IN_DATE			SmallDateTime	NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM, IN_DATE)
+	)
+
+	DECLARE @BillRest Table
+	(
+		SYS_REG_NAME	VarChar(50)		NOT NULL,
+		DIS_NUM			Int				NOT NULL,
+		DIS_COMP_NUM	TinyInt			NOT NULL,
+		PR_DATE			SmallDateTime	NOT NULL,
+		BD_REST			Money			NOT NULL,
+		PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
+	)
+
 	BEGIN TRY
-
-		DECLARE @Distr Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			UPD_DATE		DateTime		NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		);
-
-		DECLARE @Act Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			AD_TOTAL_PRICE	Money			NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
-
-		DECLARE @Bill Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			BD_TOTAL_PRICE	Money			NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
-
-		DECLARE @Income Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			ID_PRICE		Money			NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
-
-		DECLARE @IncomeDate Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			IN_DATE			SmallDateTime	NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM, IN_DATE)
-		)
-
-		DECLARE @BillRest Table
-		(
-			SYS_REG_NAME	VarChar(50)		NOT NULL,
-			DIS_NUM			Int				NOT NULL,
-			DIS_COMP_NUM	TinyInt			NOT NULL,
-			PR_DATE			SmallDateTime	NOT NULL,
-			BD_REST			Money			NOT NULL,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
 
 		-- вытаскиваем из DBF перечень дистрибутивов по которым что-то обновилось
 
@@ -94,8 +94,31 @@ BEGIN
 			RETURN;
 		END;
 
-		-- и забираем по этим дистрибутивам данные
+        SET @Params =
+            (
+                SELECT
+                    [Name] = 'DISTRS',
+                    [Value] =
+                        (
+                            SELECT
+                                SYS_REG_NAME,
+                                DIS_NUM,
+                                DIS_COMP_NUM,
+                                PR_DATE
+                            FROM @Distr
+                            FOR XML RAW('DISTR')
+                        )
+                FOR XML RAW('PARAM'), ROOT('PARAMS')
+            );
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'Получили список дистрибутивов для синхронизации',
+            @Params         = @Params;
+
+        --BEGIN TRAN;
+
+		-- и забираем по этим дистрибутивам данные
 		INSERT INTO @Act(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE)
 		SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, D.PR_DATE, SUM(A.AD_TOTAL_PRICE)
 		FROM @Distr D
@@ -250,7 +273,7 @@ BEGIN
 							AND	Z.DIS_NUM		= A.DIS_NUM
 							AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
 							AND Z.PR_DATE		= A.PR_DATE
-		WHERE A.ID_PRICE != Z.ID_PRICE;
+		WHERE IsNull(A.ID_PRICE, 0) != IsNull(Z.ID_PRICE, 0);
 
 		INSERT INTO dbo.DBFIncome(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE
@@ -353,9 +376,19 @@ BEGIN
 							AND D.PR_DATE		= S.PR_DATE
 							AND D.UPD_DATE		= S.UPD_DATE;
 
+        /*
+        IF @@TranCount > 0
+            COMMIT TRAN;
+        */
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
+	    /*
+	    IF @@TranCount > 0
+	        ROLLBACK TRAN;
+	    */
+
 		SET @DebugError = Error_Message();
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
