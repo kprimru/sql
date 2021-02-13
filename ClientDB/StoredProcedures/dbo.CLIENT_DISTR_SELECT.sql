@@ -144,8 +144,8 @@ BEGIN
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
 																			z.HostID = y.MainHostID
-																			AND z.DISTR = y.MainDistrNumber
-																			AND z.COMP = y.MainCompNumber
+																			AND z.DISTR = Cast(y.MainDistrNumber AS Int)
+																			AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
 										WHERE y.SystemBaseName = a.SystemBaseName
 											AND y.DistrNumber = a.DISTR
 											AND y.CompNumber = a.COMP
@@ -156,8 +156,8 @@ BEGIN
 											dbo.ClientDistrView z WITH(NOEXPAND)
 											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
 																			z.HostID = y.MainHostID
-																			AND z.DISTR = y.MainDistrNumber
-																			AND z.COMP = y.MainCompNumber
+																			AND z.DISTR = Cast(y.MainDistrNumber AS Int)
+																			AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
 											INNER JOIN dbo.ClientTable x ON x.ClientID = z.ID_CLIENT
 										WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
 									)

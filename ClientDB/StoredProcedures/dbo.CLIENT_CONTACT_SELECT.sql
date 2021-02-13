@@ -35,12 +35,24 @@ BEGIN
 			dbo.ClientContact a
 			INNER JOIN dbo.ClientContactType b ON a.ID_TYPE = b.ID
 			OUTER APPLY
-				(
-					SELECT TOP 1 UPD_DATE, UPD_USER
-					FROM dbo.ClientContact z
-					WHERE z.ID_MASTER = a.ID OR z.ID = a.ID
-					ORDER BY UPD_DATE
+			(
+			    SELECT TOP (1) UPD_DATE, UPD_USER
+			    FROM
+			    (
+				    SELECT TOP 1 UPD_DATE, UPD_USER
+				    FROM dbo.ClientContact z
+				    WHERE z.ID_MASTER = a.ID
+				    ORDER BY UPD_DATE
+    
+				    UNION ALL
+    
+				    SELECT TOP 1 UPD_DATE, UPD_USER
+				    FROM dbo.ClientContact z
+				    WHERE z.ID = a.ID
+				    ORDER BY UPD_DATE
 				) AS z
+				ORDER BY UPD_DATE
+			) AS z
 		WHERE STATUS = 1
 			AND ID_CLIENT = @CLIENT
 			AND (DATE >= @START OR @START IS NULL)

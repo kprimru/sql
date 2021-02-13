@@ -43,9 +43,13 @@ BEGIN
 		FROM
 			Reg.RegDistr a
 			INNER JOIN Reg.RegHistoryView b WITH(NOEXPAND)ON a.ID = b.ID_DISTR
-			/*INNER JOIN dbo.ClientSystemsTable c ON SystemDistrNumber = DISTR AND CompNumber = Comp
-			INNER JOIN dbo.SystemTable d ON ID_HOST = HostID*/
-			LEFT OUTER JOIN Reg.RegHistoryOperationView e ON e.ID = b.ID
+			OUTER APPLY
+			(
+			    SELECT TOP (1) e.CHANGES
+			    FROM Reg.RegHistoryOperationView e
+			    WHERE e.ID = b.ID
+			        AND e.ID_DISTR = b.ID_DISTR
+			) AS e
 		WHERE ID_HOST = @HST AND DISTR = @DISTR AND COMP = @COMP
 		ORDER BY DATE DESC
 
