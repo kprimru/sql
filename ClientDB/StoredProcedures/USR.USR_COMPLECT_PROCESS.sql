@@ -14,6 +14,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @UD_ID          Int;
+
+    DECLARE @Complects Table
+    (
+        UD_ID       Int     NOT NULL,
+        ID_CLIENT   Int     NOT NULL,
+        PRIMARY KEY (UD_ID)
+    );
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -21,9 +31,9 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE D
-		SET UD_ID_CLIENT = C.ID_CLIENT
-		FROM USR.USRData D
+        INSERT INTO @Complects
+        SELECT D.UD_ID, C.ID_CLIENT
+        FROM USR.USRData D
 		CROSS APPLY
 		(
 			SELECT TOP (1) UF_ID
@@ -41,7 +51,29 @@ BEGIN
 			WHERE F.UF_ID = UP_ID_USR
 			ORDER BY SystemOrder, DISTR, COMP
 		) C
-		WHERE UD_ID_CLIENT IS NULL
+		WHERE UD_ID_CLIENT IS NULL;
+
+		UPDATE D
+		SET UD_ID_CLIENT = C.ID_CLIENT
+		FROM USR.USRData AS D
+		INNER JOIN @Complects AS C ON D.UD_ID = C.UD_ID;
+
+		SET @UD_ID = 0;
+
+		WHILE (1 = 1) BEGIN
+		    SELECT TOP (1)
+		        @UD_ID = UD_ID
+		    FROM @Complects AS C
+		    WHERE C.UD_ID > @UD_ID
+		    ORDER BY
+		        C.UD_ID;
+
+		    IF @@RowCount < 1
+		        BREAK;
+
+		    EXEC USR.USR_ACTIVE_CACHE_REBUILD
+		        @UD_ID = @UD_ID;
+		END;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

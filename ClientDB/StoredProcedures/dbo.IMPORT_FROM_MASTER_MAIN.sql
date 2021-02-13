@@ -134,7 +134,7 @@ BEGIN
 		        WHERE   C.SYS = AC.SYS
 		            AND C.DISTR = AC.DISTR
 		            AND C.COMP = AC.COMP
-		            AND C.START = AC.START
+		            AND IsNull(C.START, '20000101') = IsNull(AC.START, '20000101')
 		            AND C.FIRST_DATE = AC.FIRST_DATE
 		            AND C.FINISH = AC.FINISH
 		            AND C.PROFILE = AC.PROFILE

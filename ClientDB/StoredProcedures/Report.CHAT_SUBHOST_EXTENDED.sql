@@ -52,7 +52,7 @@ BEGIN
 						WHERE SubhostName = SH_NAME
 							AND DS_REG = 0
 					) AS CLIENT
-					CROSS APPLY
+					OUTER APPLY
 					(
 						SELECT TOP (1) RPR_DATE_S
 						FROM dbo.RegProtocol  AS P
