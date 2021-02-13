@@ -9,7 +9,7 @@ GO
 Дата создания:  
 Описание:
 */
-ALTER PROCEDURE [dbo].[ACT_PRINT?UPD]
+ALTER PROCEDURE [dbo].[ACT_PRINT?UPD_OLD]
     @Act_Id INT
 AS
 BEGIN
@@ -20,10 +20,7 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
-    DECLARE
-        @Data           Xml,
-        @Content        Xml,
-        @ContentBase64  NVarChar(Max);
+    DECLARE @Data Xml;
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -32,7 +29,7 @@ BEGIN
 
     BEGIN TRY
 
-        SET @Content =
+        SET @Data =
         (
             SELECT
                 [ИдФайл]    = 'ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + Cast(NewId() AS VarChar(100)),
@@ -258,28 +255,7 @@ BEGIN
             FOR XML RAW('Файл'), TYPE
         );
 
-        --SET @ContentBase64 = (SELECT CAST(@Content as varbinary(max)) FOR XML PATH(''), BINARY base64);
-        /*
-        SET @Data =
-        (
-            SELECT
-                [ИдТрПакет]     = Cast(NewId() AS VarChar(100)),
-                [ИдФайл]        = 'ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + Cast(NewId() AS VarChar(100)),
-                [ВерсФорм]      = '1.01',
-                [ТипПрилож]     = 'УПДПрод',
-                [ИдОтпр]        = '2ZK-SUP-00019034428',
-                [ИдПол]         = '2ZK-CUS-03201000193',
-                [ДатаВрФормир]  = GetDate(),
-                (
-                    SELECT
-                        [Контент] = @ContentBase64
-                    FOR XML RAW('Документ'), TYPE
-                )
-            FOR XML RAW('ФайлПакет'), TYPE
-        );
-        */
-
-        SELECT /*'<?xml version ="1.0" encoding ="windows-1251"?>' + */Cast(@Content AS VarChar(Max)) AS DATA;
+        SELECT /*'<?xml version ="1.0" encoding ="windows-1251"?>' + */Cast(@Data AS VarChar(Max)) AS DATA;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
@@ -291,6 +267,4 @@ BEGIN
         EXEC [Maintenance].[ReRaise Error];
     END CATCH
 END
-GO
-GRANT EXECUTE ON [dbo].[ACT_PRINT?UPD] TO rl_act_p;
 GO
