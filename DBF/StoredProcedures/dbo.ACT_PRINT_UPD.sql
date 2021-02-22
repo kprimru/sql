@@ -4,11 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-/*
-Автор:
-Дата создания:  
-Описание:
-*/
 ALTER PROCEDURE [dbo].[ACT_PRINT?UPD]
     @Act_Id INT
 AS
@@ -22,8 +17,11 @@ BEGIN
 
     DECLARE
         @Data           Xml,
-        @Content        Xml,
-        @ContentBase64  NVarChar(Max);
+        @MainContent    Xml,
+        @ApplyContent   Xml,
+        @File_Id        VarChar(100),
+        @MainBase64     VarChar(Max),
+        @ApplyBase64    VarChar(Max);
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -32,16 +30,18 @@ BEGIN
 
     BEGIN TRY
 
-        SET @Content =
+        SET @File_Id = Cast(NewId() AS VarChar(100));
+
+        SET @MainContent =
         (
             SELECT
-                [ИдФайл]    = 'ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + Cast(NewId() AS VarChar(100)),
+                [ИдФайл]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
                 [ВерсФорм]  = '5.01',
                 [ВерсПрог]  = '11.0',
                 (
                     SELECT
-                        [ИдОтпр]    = '2ZK-SUP-00019034428',
-                        [ИдПол]     = '2ZK-CUS-03201000193',
+                        [ИдОтпр]    = O.[EIS_CODE],
+                        [ИдПол]     = F.[EIS_CODE],
                         (
                             SELECT
                                 [ИННЮЛ]     = '7710568760',
@@ -248,38 +248,227 @@ BEGIN
                                 )
                             FOR XML RAW('Подписант'), TYPE
                         )
-                    FROM dbo.ActTable AS A
-                    INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
-                    INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
-                    INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
-                    WHERE ACT_ID = @Act_Id
                     FOR XML RAW('Документ'), TYPE
                 )
+            FROM dbo.ActTable AS A
+            INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
+            INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
+            INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
+            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );
 
-        --SET @ContentBase64 = (SELECT CAST(@Content as varbinary(max)) FOR XML PATH(''), BINARY base64);
         /*
+        SET @ApplyContent =
+        (
+            SELECT
+                [ИдПрилож]  = 'PRIL_ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [ИдФайл]    = 'ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [ВерсФорм]  = '1.00',
+                [РукОрг]    = '1',
+                (
+                    SELECT
+                        [РеестрНомКонт] = '1466444832220000232',
+                        [ИдВерсКонт]    = '6680248',
+                        [ИдЭтапКонт]    = 'E5C48CDDA292433CBB49ABDEDB4C3040'
+                    FOR XML RAW('СведКонт'), TYPE
+                ),
+                (
+                    SELECT
+                        (
+                            SELECT
+                                [ФирмНаимОрг] = O.[ORG_SHORT_NAME]
+                            FOR XML RAW('ЮЛ'), TYPE
+                        )
+                    FOR XML RAW('СведПоставщик'), TYPE
+                ),
+                (
+                    SELECT
+                        (
+                            SELECT
+                                (
+                                    SELECT
+                                        (
+                                            SELECT
+                                                [ИдТРУ]         = '58894AF915B04D34932EE9828F94190A',
+                                                [КодТов]        = '01.11.11.111',
+                                                [НаимТов]       = 'Пшеница',
+                                                [ПрТовРаб]      = '1',
+                                                [КодЕдИзм]      = '166',
+                                                [НаимЕдИзм]     = 'Килограмм',
+                                                [ЦенаЕдИзм]     = '9.09090909091',
+                                                [КолТов]        = '2',
+                                                [СтТовБезНДС]   = '18.18',
+                                                [НалСт]         = '10%',
+                                                [СтТовУчНал]    = '20',
+
+                                                (
+                                                    SELECT
+                                                        (
+                                                            SELECT
+                                                                [СумНал] = '1.82'
+                                                            FOR XML PATH(''), TYPE
+                                                        )
+                                                    FOR XML RAW('СумНал'), TYPE
+                                                ),
+                                                (
+                                                    SELECT
+                                                        (
+                                                            SELECT
+                                                                [БезАкциз] = 'без акциза'
+                                                            FOR XML PATH(''), TYPE
+                                                        )
+                                                    FOR XML RAW('Акциз'), TYPE
+                                                ),
+                                                (
+                                                    SELECT
+                                                        [Код]   = '112',
+                                                        [Наим]  = 'БЕЛАРУСЬ'
+                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                )
+                                            FOR XML RAW('СведРод'), TYPE
+                                        ),
+                                        -- ToDo детализаций много
+
+                                        (
+                                            SELECT
+                                                [НомСтр]    = '1',
+                                                [ИдТРУ]     = 'b1e0dc2d926c44deac422b08d13d50f1',
+                                                [ЦенаСНДС]  = '10',
+                                                (
+                                                    SELECT
+                                                        [Код]   = '112',
+                                                        [Наим]  = 'БЕЛАРУСЬ'
+                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                )
+                                            FOR XML RAW('СведДетал'), TYPE
+                                        )
+                                    FOR XML RAW('ДеталТРУ'), TYPE
+                                )
+                            FOR XML RAW('СведТРУ'), TYPE
+                        )
+                    FOR XML RAW('СведТов'), TYPE
+                )
+            FROM dbo.ActTable AS A
+            INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
+            INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
+            INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
+            WHERE ACT_ID = @Act_Id
+            FOR XML RAW('ФайлУПДПрод'), TYPE
+        );
+        */
+        SET @ApplyContent =
+        (
+            SELECT
+                [ИдПрилож]  = 'PRIL_ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [ИдФайл]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [ВерсФорм]  = '1.00',
+                [РукОрг]    = '1',
+                (
+                    SELECT
+                        [РеестрНомКонт] = '1466444832220000232',
+                        [ИдВерсКонт]    = '6680248',
+                        [ИдЭтапКонт]    = 'E5C48CDDA292433CBB49ABDEDB4C3040'
+                    FOR XML RAW('СведКонт'), TYPE
+                ),
+                (
+                    SELECT
+                        (
+                            SELECT
+                                (
+                                    SELECT
+                                        [ИдТРУ]         = 'FA9435F511C34B7281000F31878FF3F1',
+                                        [ТехИдТРУ]      = '220476392',
+                                        [НаимТовИсх]    = R.[INR_GOOD],
+                                        (
+                                            SELECT
+                                                [НомСтр]            = '1',
+                                                [ЦенаИзКонтСНДС]    = dbo.MoneyFormatCustom(Sum(R.[INR_SALL]), '.'),
+                                                (
+                                                    SELECT
+                                                        [Код]   = '643',
+                                                        [Наим]  = 'РОССИЯ'
+                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                )
+                                            FOR XML RAW('НеЛПСвед'), TYPE
+                                        )
+                                    FROM dbo.InvoiceRowTable      AS R
+                                    WHERE I.INS_ID = INR_ID_INVOICE
+                                    GROUP BY R.[INR_GOOD]
+                                    FOR XML RAW('НедеталТРУ'), TYPE
+                                )
+                            FOR XML RAW('СведТРУ'), TYPE
+                        )
+                    FOR XML RAW('СведТов'), TYPE
+                )
+            FROM dbo.ActTable AS A
+            INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
+            INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
+            INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
+            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            WHERE ACT_ID = @Act_Id
+            FOR XML RAW('ФайлУПДПрод'), TYPE
+        );
+
+        SET @MainBase64 = (SELECT CAST('<?xml version="1.0" encoding="windows-1251" standalone="yes"?>' + Convert(VarChar(Max), @MainContent, 1) AS VarBinary(Max)) FOR XML PATH(''), BINARY BASE64);
+        SET @ApplyBase64 = (SELECT CAST('<?xml version="1.0" encoding="windows-1251" standalone="yes"?>' + Convert(VarChar(Max), @ApplyContent, 1) AS VarBinary(Max)) FOR XML PATH(''), BINARY BASE64);
+
+        --SELECT @MainContent, @ApplyContent
+        --SELECT @MainBase64, @ApplyBase64
+
         SET @Data =
         (
             SELECT
                 [ИдТрПакет]     = Cast(NewId() AS VarChar(100)),
-                [ИдФайл]        = 'ON_NSCHFDOPPR_2ZK-CUS-03201000193_2ZK-SUP-00019034428_' + Convert(VarChar(20), GetDate(), 112) + '_' + Cast(NewId() AS VarChar(100)),
+                [ИдФайл]        = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
                 [ВерсФорм]      = '1.01',
                 [ТипПрилож]     = 'УПДПрод',
-                [ИдОтпр]        = '2ZK-SUP-00019034428',
-                [ИдПол]         = '2ZK-CUS-03201000193',
+                [ИдОтпр]        = O.[EIS_CODE],
+                [ИдПол]         = F.[EIS_CODE],
                 [ДатаВрФормир]  = GetDate(),
                 (
                     SELECT
-                        [Контент] = @ContentBase64
-                    FOR XML RAW('Документ'), TYPE
+                        [Контент] = @MainBase64
+                    FOR XML PATH('Документ'), TYPE
+                ),
+                (
+                    SELECT
+                        [Контент] = @ApplyBase64
+                    FOR XML PATH('Прилож'), TYPE
                 )
+            FROM dbo.ActTable AS A
+            INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
+            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлПакет'), TYPE
         );
-        */
 
-        SELECT /*'<?xml version ="1.0" encoding ="windows-1251"?>' + */Cast(@Content AS VarChar(Max)) AS DATA;
+        SELECT
+            [Folder]        = C.CL_PSEDO,
+            [FileName]      = F.[FileName],
+            [Data]          = F.[Data]
+        FROM dbo.ActTable           AS A
+        INNER JOIN dbo.ClientTable  AS C ON A.ACT_ID_CLIENT = C.CL_ID
+        CROSS APPLY
+        (
+            SELECT
+                [FileName]  = 'УПД_' + C.CL_PSEDO + '_' + Convert(VarChar(50), ACT_DATE, 112) + '.xml',
+                [Data]      = Cast(@Data AS VarChar(Max))
+            ---
+            UNION ALL
+            ---
+            SELECT
+                [FileName]  = @MainContent.value('(/Файл/@ИдФайл)[1]', 'VarChar(256)') + '.xml',
+                [Data]      = Cast(@MainContent AS VarChar(Max))
+            ---
+            UNION ALL
+            ---
+            SELECT
+                [FileName]  = @ApplyContent.value('(/ФайлУПДПрод/@ИдПрилож)[1]', 'VarChar(256)') + '.xml',
+                [Data]      = Cast(@ApplyContent AS VarChar(Max))
+        )AS F
+        WHERE A.ACT_ID = @Act_Id;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

@@ -22,8 +22,8 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ClientFinancing(ID_CLIENT, BILL_GROUP)
-			VALUES(@ID, 0)
+		INSERT INTO dbo.ClientFinancing(ID_CLIENT, BILL_GROUP, UPD_PRINT)
+			VALUES(@ID, 0, 0)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
