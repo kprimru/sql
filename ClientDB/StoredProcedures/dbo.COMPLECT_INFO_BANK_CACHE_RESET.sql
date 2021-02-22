@@ -80,11 +80,11 @@ BEGIN
 			SELECT DISTINCT rns.Complect
 			FROM Reg.RegNodeSearchView rns WITH(NOEXPAND)
 			WHERE	DS_REG = 0
-				AND SubhostName NOT IN ('Ó1', 'Í1', 'Ì', 'Ë1')
+				--AND SubhostName NOT IN ('Ó1', 'Í1', 'Ì', 'Ë1')
 				AND (rns.Complect = @Complect OR @Complect IS NULL)
 		) rns
 		CROSS APPLY dbo.ComplectGetBanks(rns.Complect, NULL) cgl
-		--/*
+		/*
 		WHERE NOT EXISTS
 			(
 				SELECT *
