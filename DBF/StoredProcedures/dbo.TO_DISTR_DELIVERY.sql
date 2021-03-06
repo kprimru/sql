@@ -30,6 +30,15 @@ BEGIN
 
 	BEGIN TRY
 
+        IF EXISTS
+            (
+                SELECT TOP (1) 1
+                FROM dbo.TOTable
+                WHERE TO_ID = @toid
+                    AND TO_DELETED = 1
+            )
+            RaisError('ТО исключена из отчета, невозможно перенести дистрибутив', 16, 2);
+
 		DECLARE @list TABLE
 			(
 				TD_ID INT
