@@ -32,6 +32,13 @@ BEGIN
 
 	BEGIN TRY
 
+        IF @Date > GetDate()
+        BEGIN
+			RAISERROR ('Нельзя вносить записи в будущем!!!', 16, 1)
+
+			RETURN
+		END
+
 		IF @ID IS NULL
 		BEGIN
 			IF @DATE < DATEADD(WEEK, -1, GETDATE())
