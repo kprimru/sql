@@ -54,7 +54,7 @@ BEGIN
                 (
                     SELECT
                         [КНД]               = '1115131',
-                        [Функция]           = 'ДОП',
+                        [Функция]           = 'СЧФДОП',
                         [ДатаИнфПр]         = Convert(VarChar(20), GetDate(), 104),
                         [ВремИнфПр]         = Replace(Convert(VarChar(20), GetDate(), 108), ':', '.'),
                         [ПоФактХЖ]          = 'Документ об отгрузке товаров (выполнении работ), передаче имущественных прав (документ об оказании услуг)',
@@ -164,7 +164,8 @@ BEGIN
                                 (
                                     SELECT
                                         [НомСтр]        = 1,
-                                        [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                        --[НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                        [НаимТов]       = Max(INR_GOOD),
                                         [ОКЕИ_Тов]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
                                         [КолТов]        = 1,
                                         [ЦенаТов]       = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
@@ -218,8 +219,8 @@ BEGIN
                                         [СодОпер]   = 'Услуги оказаны в полном объеме',
                                         --ToDo оказание информационных услуг?
                                         [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
-                                        --[ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
-                                        [ДатаПер]   = Convert(VarChar(20), GetDate(), 104),
+                                        [ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
+                                        --[ДатаПер]   = Convert(VarChar(20), GetDate(), 104),
                                         [ДатаНач]   = Convert(VarChar(20), PR_DATE, 104),
                                         [ДатаОкон]  = Convert(VarChar(20), PR_END_DATE, 104),
                                         (
@@ -302,7 +303,8 @@ BEGIN
                                             SELECT
                                                 [ИдТРУ]         = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
                                                 [КодТов]        = F.EIS_DATA.value('(/export/contract/products/product/OKPD2/code)[1]', 'VarChar(100)'),
-                                                [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                                --[НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                                [НаимТов]       = Max(INR_GOOD),
                                                 [КодЕдИзм]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
                                                 [НаимЕдИзм]     = F.EIS_DATA.value('(/export/contract/products/product/OKEI/fullName)[1]', 'VarChar(100)'),
                                                 [ЦенаЕдИзм]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
