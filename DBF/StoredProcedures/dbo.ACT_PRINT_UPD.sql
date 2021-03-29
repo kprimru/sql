@@ -164,8 +164,8 @@ BEGIN
                                 (
                                     SELECT
                                         [НомСтр]        = 1,
-                                        --[НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
-                                        [НаимТов]       = Max(INR_GOOD),
+                                        [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                        --[НаимТов]       = Max(INR_GOOD),
                                         [ОКЕИ_Тов]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
                                         [КолТов]        = 1,
                                         [ЦенаТов]       = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
@@ -303,8 +303,8 @@ BEGIN
                                             SELECT
                                                 [ИдТРУ]         = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
                                                 [КодТов]        = F.EIS_DATA.value('(/export/contract/products/product/OKPD2/code)[1]', 'VarChar(100)'),
-                                                --[НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
-                                                [НаимТов]       = Max(INR_GOOD),
+                                                [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                                --[НаимТов]       = Max(INR_GOOD),
                                                 [КодЕдИзм]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
                                                 [НаимЕдИзм]     = F.EIS_DATA.value('(/export/contract/products/product/OKEI/fullName)[1]', 'VarChar(100)'),
                                                 [ЦенаЕдИзм]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
@@ -369,15 +369,14 @@ BEGIN
                     SELECT
                         (
                             SELECT
-                                [Место] = 'пр-кт Острякова, д 8',
-
+                                [Место] = IsNull(ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
                                 (
                                     SELECT
                                         (
                                             SELECT
                                                 [Код]   = '25000001000',
-                                                [Наим]  = 'Владивосток г',
-                                                [Адрес] = 'Российская Федерация, Приморский край, Владивосток г'
+                                                [Наим]  = CT_NAME,
+                                                [Адрес] = 'Российская Федерация, ' + RG_NAME + ', ' + CT_NAME + ' ' + CT_PREFIX
                                             FOR XML RAW('КЛАДР'), TYPE
                                         )
                                     FOR XML RAW('ПоКЛАДР'), TYPE
@@ -391,6 +390,9 @@ BEGIN
                                     FOR XML RAW('ПоОКТМО'), TYPE
                                 )
                                 */
+                            FROM dbo.ClientAddressView AS CA
+                            WHERE CA.CA_ID_CLIENT = A.ACT_ID_CLIENT
+                                AND CA.CA_ID_TYPE = 1
                             FOR XML RAW('СведМестоПоставки'), TYPE
 
                         )
