@@ -69,6 +69,7 @@ BEGIN
             AND RP.RPR_DATE_S >= '20201228'
             AND R.HostID = 1
             AND R.DS_REG = 0
+            AND R.DistrType NOT IN ('NEK') -- ToDo - именованное множество
             AND Cast(RegisterDate AS SmallDateTime) >= '20201228';
 
         INSERT INTO @SksDistrs(Host_Id, Distr, Comp, SubhostName, SksDistr)
