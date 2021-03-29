@@ -53,6 +53,8 @@ BEGIN
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
 
+		EXEC [dbo].[TO-Lock@Create (Auto)] @TO_Id = @toid;
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
