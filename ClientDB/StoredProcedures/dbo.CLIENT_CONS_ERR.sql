@@ -25,7 +25,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT TOP 1 ERROR_DATA AS UF_ERROR_LOG
+		SELECT TOP 1 Replace(ERROR_DATA  Collate Cyrillic_General_BIN, Char(0), '') AS UF_ERROR_LOG
 		FROM
 			dbo.IPConsErrView b
 			INNER JOIN dbo.SystemTable c ON b.UF_SYS = c.SystemNumber
