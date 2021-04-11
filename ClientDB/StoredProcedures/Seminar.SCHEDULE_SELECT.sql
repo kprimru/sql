@@ -36,10 +36,11 @@ BEGIN
 				WHERE z.ID_SCHEDULE = a.ID
 					AND z.INDX = 1
 			) AS PER_COUNT,
-			CONVERT(VARCHAR(20), DATE, 104) + ' ' + b.NAME AS TSC_LOOKUP
-		FROM
-			Seminar.Schedule a
-			INNER JOIN Seminar.Subject b ON a.ID_SUBJECT = b.ID
+			CONVERT(VARCHAR(20), DATE, 104) + ' ' + b.NAME AS TSC_LOOKUP,
+			[TypeName] = T.[Name]
+		FROM Seminar.Schedule                   AS a
+		INNER JOIN Seminar.Subject              AS b    ON a.ID_SUBJECT = b.ID
+		LEFT JOIN [Seminar].[Schedules->Types] AS T    ON T.[Id] = a.[Type_Id]
 		WHERE (a.DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (a.DATE <= @END OR @END IS NULL)
 			AND (a.ID_SUBJECT = @SUBJECT OR @SUBJECT IS NULL)

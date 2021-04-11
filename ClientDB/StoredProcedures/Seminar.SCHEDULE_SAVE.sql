@@ -16,6 +16,8 @@ ALTER PROCEDURE [Seminar].[SCHEDULE_SAVE]
     @INVITE     SmallDateTime,
     @RESERVE    SmallDateTime,
     @PROFILE    SmallDateTime,
+    @Type_Id    SmallInt,
+    @Link       VarChar(Max),
     @Subhosts   Xml
 AS
 BEGIN
@@ -37,9 +39,9 @@ BEGIN
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 
-			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE)
-				OUTPUT inserted.ID INTO @TBL
-				VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE)
+			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE, [Type_Id], [Link])
+			OUTPUT inserted.ID INTO @TBL
+			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE, @Type_Id, @Link)
 
 			SELECT @ID = ID
 			FROM @TBL
@@ -47,16 +49,18 @@ BEGIN
 		ELSE
 		BEGIN
 			UPDATE Seminar.Schedule
-			SET ID_SUBJECT	=	@SUBJECT,
-				DATE		=	@DATE,
-				TIME		=	@TIME,
-				LIMIT		=	@LIMIT,
-				WEB			=	@WEB,
-				PERSONAL	=	@PERSONAL,
-				QUESTIONS	=	@QUESTIONS,
-				INVITE_DATE	=	@INVITE,
-				RESERVE_DATE	=	@RESERVE,
-				PROFILE_DATE    = @PROFILE,
+			SET ID_SUBJECT	    =   @SUBJECT,
+			    [Type_Id]       =   @Type_Id,
+				DATE		    =   @DATE,
+				TIME		    =   @TIME,
+				LIMIT		    =   @LIMIT,
+				WEB			    =   @WEB,
+				PERSONAL	    =   @PERSONAL,
+				QUESTIONS	    =   @QUESTIONS,
+				INVITE_DATE	    =   @INVITE,
+				RESERVE_DATE    =   @RESERVE,
+				PROFILE_DATE    =   @PROFILE,
+				[Link]          =   @Link,
 				LAST		=	GETDATE()
 			WHERE ID = @ID
 		END
