@@ -16,6 +16,11 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @Now            SmallDateTime,
+        @Month          SmallDateTime,
+        @USRKind_KEY    TinyInt;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -23,13 +28,13 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @NOW SMALLDATETIME
-
-		SET @NOW = dbo.DateOf(GETDATE())
-
-		DECLARE @MONTH SMALLDATETIME
+        SET @NOW = dbo.DateOf(GETDATE())
 
 		SET @MONTH = DATEADD(MONTH, -2, @NOW)
+
+        SELECT @USRKind_KEY = USRFileKindID
+        FROM dbo.USRFileKindTable
+        WHERE USRFileKindName = 'K';
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
@@ -113,6 +118,21 @@ BEGIN
 				#complect a
 				LEFT OUTER JOIN USR.USRFileTech b ON a.UF_ID = b.UF_ID
 			ORDER BY UD_NAME
+
+        INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
+		SELECT UD_NAME, 'ОС на станции администратора', OS_NAME, 0
+		FROM #complect AS C
+		OUTER APPLY
+		(
+		    SELECT TOP (1) O.OS_NAME
+		    FROM USR.USRFile AS F
+		    INNER JOIN USR.USRFileTech AS T ON F.UF_ID = T.UF_ID
+		    INNER JOIN USR.OS AS O ON O.OS_ID = T.UF_ID_OS
+		    WHERE F.UF_ID_COMPLECT = C.UD_ID
+		        AND F.UF_ID_KIND != @USRKind_KEY
+		    ORDER BY UF_DATE DESC, UF_CREATE DESC
+		) AS O
+		ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
