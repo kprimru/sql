@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [dbo].[SYSTEM_BANK_PRINT_SELECT]
-    @DistrType_Id   SmallInt = NULL
+    @DistrType_Id   SmallInt = NULL,
+    @Hosts_IDs      VarChar(Max) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -14,6 +15,8 @@ BEGIN
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
 		@Params			Xml;
+
+    DECLARE @Hosts Table (Id SmallInt Primary Key Clustered);
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -38,7 +41,11 @@ BEGIN
 			    INNER JOIN dbo.InfoBankTable c ON c.InfoBankID = b.InfoBankID
 		    WHERE SystemActive = 1 AND InfoBankActive = 1
 		    ORDER BY SystemOrder, SystemID, InfoBankOrder, InfoBankID
-		ELSE
+		ELSE BEGIN
+		    INSERT INTO @Hosts
+		    SELECT Item
+		    FROM SQL.Split(@Hosts_IDs, ',');
+
 		    SELECT
 			    a.SystemID, SystemShortName, SystemBaseName, SystemFullName, SystemNumber,
 			    (
@@ -52,8 +59,10 @@ BEGIN
 		    FROM dbo.SystemTable a
 			INNER JOIN dbo.SystemsBanks b ON a.SystemID = b.System_Id AND b.DistrType_Id = @DistrType_Id
 			INNER JOIN dbo.InfoBankTable c ON c.InfoBankID = b.InfoBank_Id
+			INNER JOIN @Hosts AS h ON a.HostID = h.Id
 		    WHERE SystemActive = 1 AND InfoBankActive = 1
 		    ORDER BY SystemOrder, SystemID, InfoBankOrder, InfoBankID
+		END;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -14,6 +14,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @Host_Id        SmallInt,
+        @DistrType_Id   SmallInt;
+
     DECLARE @DistrsTypes Table
     (
         Id      SmallInt,
@@ -28,6 +32,9 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+        SET @Host_Id = (SELECT TOP (1) [HostId] FROM [dbo].[Hosts] WHERE [HostReg] = 'LAW');
+        SET @DistrType_Id = (SELECT TOP (1) [DistrTypeId] FROM [dbo].[DistrTypeTable] WHERE [DistrTypeCode] = 'LOCAL');
 
         INSERT INTO @DistrsTypes
         SELECT D.DistrTypeID, D.DistrTypeName, Cast(I.[Data] AS VarChar(Max))
@@ -44,13 +51,16 @@ BEGIN
                         INNER JOIN dbo.InfoBankTable    AS I ON I.InfoBankID = B.InfoBank_Id
                         WHERE B.Required = 1
                             AND B.DistrType_Id = D.DistrTypeID
+                            AND S.[HostId] = @Host_Id
                         ORDER BY S.SystemID, I.InfoBankID FOR XML PATH('')
                     )
         ) AS I;
 
         SELECT
-            [DistrType_Id] = T.[Id],
-            N.[GroupName]
+            [SortIndex]     = 1,
+            [DistrType_Id]  = T.[Id],
+            [Host_Id]       = Cast(@Host_Id AS VarChar(Max)),
+            [GroupName]     = N.[GroupName]
         FROM
         (
 		    SELECT DISTINCT DATA
@@ -77,7 +87,23 @@ BEGIN
 		            )
 		        ), 1, 2, ''))
 		) AS N
-		ORDER BY [Id] DESC;
+
+		UNION ALL
+
+		SELECT
+		    [SortIndex]     = 2,
+		    [DistrType_Id]  = @DistrType_Id,
+            [Host_Id]       =   Reverse(Stuff(Reverse(
+                                    (
+                                        SELECT Convert(VarChar(10), HostId) + ','
+                                        FROM dbo.Hosts
+                                        WHERE HostId != @Host_Id
+                                        FOR XML PATH('')
+                                    )
+                                ), 1, 1, '')),
+            [GroupName]     = 'Дополнительные системы'
+
+		ORDER BY [SortIndex] DESC, [DistrType_Id] DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
