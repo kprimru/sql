@@ -40,7 +40,7 @@ RETURN
         FROM
         (
             SELECT TOP (1)
-                [Ord]               = 2,
+                [Ord]               = 1,
                 [ContractPayName]   = CP.[ContractPayName],
                 [ContractPayDay]    = CP.[ContractPayDay],
                 [ContractPayMonth]  = CP.[ContractPayMonth]
@@ -53,11 +53,14 @@ RETURN
                 FROM [Contract].[ClientContractsDetails] AS CCD
                 WHERE CCD.[Contract_Id] = CC.[Contract_Id]
                     AND (@Date IS NULL OR CCD.[DATE] < @Date)
+                ORDER BY CCD.[Date] DESC
             ) AS CCD
             INNER JOIN [dbo].[ContractPayTable] AS CP ON CCD.[PayType_Id] = CP.[ContractPayID]
             WHERE   CC.[Client_Id] = @ClientId
                 AND (@Date IS NULL OR (@Date >= C.[DateFrom] AND (@Date <= C.[DateTo] OR C.[DateTo] IS NULL)))
-            ORDER BY C.[DateTo] DESC
+            ORDER BY
+                CASE WHEN C.[DateTo] IS NULL THEN 1 ELSE 2 END,
+                C.[DateTo] DESC
         ) AS C
         WHERE [Maintenance].[GlobalContractOld]() = 0
     ) AS C

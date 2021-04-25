@@ -96,7 +96,7 @@ BEGIN
 					FROM
 						dbo.StatisticTable a
 						INNER JOIN dbo.InfoBankTable b ON a.InfoBankID = b.InfoBankID
-					--WHERE StatisticDate >= dbo.DateOf(DATEADD(MONTH, -6, GETDATE()))
+					WHERE StatisticDate >= dbo.DateOf(DATEADD(MONTH, -3, GETDATE()))
 				) AS a
 			FOR XML RAW('ITEM'), ROOT('STAT')
 		)
