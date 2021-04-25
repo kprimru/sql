@@ -152,6 +152,30 @@ BEGIN
             AND D.MainDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
+        DELETE D
+        FROM @Distrs AS D
+        CROSS APPLY
+        (
+            SELECT TOP (1)
+                CD.ID_CLIENT,
+                C.ClientFullName,
+                C.ServiceName,
+                C.ManagerName
+            FROM dbo.ClientDistrView AS CD WITH(NOEXPAND)
+            INNER JOIN dbo.ClientView AS C WITH(NOEXPAND) ON CD.ID_CLIENT = C.ClientID
+            WHERE CD.HostID = D.Host_Id
+                AND CD.DISTR = D.Distr
+                AND CD.COMP = D.Comp
+        ) AS C
+        WHERE EXISTS
+            (
+                SELECT *
+                FROM [dbo].[Clients:Restrictions] AS CR
+                INNER JOIN [dbo].[Clients:Restrictions->Types] AS CRT ON CR.[Type_Id] = CRT.[Id]
+                WHERE CRT.[Code] = 'NO-OFFLINE'
+                    AND CR.[Client_Id] = C.ID_CLIENT
+            )
+
         UPDATE D SET
             ClientName = C.ClientFullName,
             ServiceName = C.ServiceName,

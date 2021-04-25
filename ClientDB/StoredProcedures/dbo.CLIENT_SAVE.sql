@@ -38,7 +38,9 @@ ALTER PROCEDURE [dbo].[CLIENT_SAVE]
 	@INET_CHECK		Bit = 1,
 	@IsLarge		Bit = 0,
 	@IsDebtor		Bit = 0,
-	@VISIT_COUNT	SmallInt = NULL
+	@VISIT_COUNT	SmallInt = NULL,
+	@RestrictionsData    VarChar(Max) = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -190,6 +192,10 @@ BEGIN
 				UPD_USER				=	ORIGINAL_LOGIN()
 			WHERE ClientID = @ID
 		END
+
+		EXEC [dbo].[Client:Restrictions@Save]
+            @Client_Id  = @Id,
+            @Data       = @RestrictionsData;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
