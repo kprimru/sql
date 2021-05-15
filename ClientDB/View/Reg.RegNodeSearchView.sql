@@ -14,7 +14,7 @@ AS
 		dbo.DistrString(SystemShortName, DistrNumber, CompNumber) AS DistrStr,
 		DistrType, SST_ID, SST_SHORT, NT_ID, NT_SHORT, NT_TECH, TransferCount, TransferLeft, Comment, Complect, RegisterDate,
 		DS_ID, DS_INDEX, DS_REG, DS_NAME,
-		dbo.SubhostByComment(Comment, DistrNumber) AS SubhostName,
+		dbo.SubhostByComment2(Comment, DistrNumber, a.SystemName) AS SubhostName,
 		SystemBaseName,
 		DIstrTypeId, DistrTypeName, a.Service
 	FROM

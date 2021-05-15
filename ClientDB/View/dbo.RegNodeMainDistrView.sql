@@ -18,7 +18,7 @@ AS
 		--Cast([Reg].[Complect@Extract?Params](R.Complect, 'COMP') AS TinyInt) AS MainCompNumber,
 		--Cast([Reg].[Complect@Extract?Params](R.Complect, 'DISTR') AS Int) AS MainDistrNumber,
 		R.Service,
-		dbo.GET_HOST_BY_COMMENT(R.Comment) AS SubhostName
+		dbo.SubhostByComment2(R.Comment, R.DistrNumber, R.SystemName) AS SubhostName
 	FROM dbo.RegNodeTable R
 	INNER JOIN dbo.SystemTable S ON S.SystemBaseName = [Reg].[Complect@Extract?Params](R.Complect, 'SYSTEM')
 	WHERE R.Service = 0
