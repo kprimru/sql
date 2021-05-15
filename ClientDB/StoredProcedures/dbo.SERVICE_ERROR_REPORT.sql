@@ -113,12 +113,15 @@ BEGIN
 
 		DECLARE @UNSERV TABLE
 			(
-				UD_NAME				VARCHAR(50),
+			    UD_ID_CLIENT        Int,
 				UF_CREATE			DATETIME,
 				UF_DATE				DATETIME,
 				Serviced			VARCHAR(1024),
 				Unserviced			VARCHAR(1024),
-				Complect			VARCHAR(50)
+				Complect			VARCHAR(50),
+				ManagerName         VarChar(100),
+				ServiceName         VarChar(100),
+				ClientFullName      VarChar(512)
 			)
 
 

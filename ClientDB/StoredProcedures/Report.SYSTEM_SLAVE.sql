@@ -224,7 +224,7 @@ BEGIN
 				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 				WHERE DS_REG = 0
 					AND Complect IS NULL
-					AND dbo.SubhostByComment(Comment, DistrNumber) != '490'
+					AND dbo.SubhostByComment2(Comment, DistrNumber, SystemBaseName) != '490'
 					AND DistrType NOT IN ('HSS', 'NCT', 'DSP')
 
 				UNION ALL
