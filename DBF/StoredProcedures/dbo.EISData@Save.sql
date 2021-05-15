@@ -21,6 +21,9 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
+    DECLARE
+        @Inn            VarChar(100)
+
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
@@ -28,14 +31,22 @@ BEGIN
 
     BEGIN TRY
 
+        SET @Inn = (SELECT CL_INN FROM dbo.ClientTable WHERE CL_ID = @ExpectedClient_Id);
+
         IF @Client_Id IS NULL AND @ExpectedClient_Id IS NOT NULL BEGIN
             UPDATE dbo.ClientFinancing SET
                 EIS_CODE = @Code,
                 EIS_DATA = @Data,
                 EIS_REG_NUM = @RegNum,
                 EIS_CONTRACT = @Contract,
-                EIS_LINK = @Url
-            WHERE ID_CLIENT = @ExpectedClient_Id;
+                EIS_LINK = @Url,
+                UPD_PRINT = 1
+            WHERE ID_CLIENT IN
+                (
+                    SELECT CL_ID
+                    FROM dbo.ClientTable
+                    WHERE CL_INN = @Inn
+                );
 
             SET @Client_Id = @ExpectedClient_Id;
         END;

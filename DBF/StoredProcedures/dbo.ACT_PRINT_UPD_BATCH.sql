@@ -39,7 +39,7 @@ BEGIN
     BEGIN TRY
 
         INSERT INTO @IDs
-        SELECT TOP 10 A.ACT_ID
+        SELECT A.ACT_ID
         FROM dbo.ClientFinancing AS F
         INNER JOIN dbo.ActTable AS A ON F.ID_CLIENT = A.ACT_ID_CLIENT
         WHERE F.UPD_PRINT = 1

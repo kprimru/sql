@@ -68,7 +68,7 @@ BEGIN
                 SELECT TOP(1) [Client_Id] = [CL_ID]
                 FROM dbo.ClientTable AS L
                 WHERE L.[CL_INN] = @Inn
-                    AND I.[ClientCountByInn] = 1
+                    --AND I.[ClientCountByInn] = 1
             ) AS L;
 
         SELECT
