@@ -15,12 +15,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE @RestrictionType_Id_INET SmallInt;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+        SET @RestrictionType_Id_INET = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'INET');
 
 		SELECT
 				ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientName AS [Клиент], a.DistrStr AS [Дистрибутив], a.NT_SHORT AS [Сеть], a.SST_SHORT AS [Тип],
@@ -54,12 +58,12 @@ BEGIN
 					WHERE z.DISTR = a.DistrNumber AND z.COMP = a.CompNumber AND y.HostID = a.HostID
 				)) AS [Последний сеанс чата]
 			FROM dbo.RegNodeComplectClientView a
-			LEFT JOIN dbo.ClientTable c ON c.ClientID = a.ClientID
+			LEFT JOIN [dbo].[Clients:Restrictions] c ON c.Client_Id = a.ClientID AND c.[Type_Id] = @RestrictionType_Id_INET
 			--LEFT OUTER JOIN  ON d.RPR_DISTR = a.DistrNumber AND a.HostID = d.RPR_ID_HOST AND a.CompNumber = d.RPR_COMP
 			WHERE /*NT_TECH IN (0, 1)
 				AND */a.DS_REG = 0
 				AND a.SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ОДД')
-				AND (c.INET_CHECK IS NULL OR c.INET_CHECK = 0)
+				AND (c.Id IS NULL)
 				/*
 				AND EXISTS
 					(

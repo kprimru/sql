@@ -18,12 +18,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @RestrictionType_Id_STT SmallInt;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+        SET @RestrictionType_Id_STT = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'STT');
 
 		SET @END = DATEADD(DAY, 1, @END)
 
@@ -102,7 +106,7 @@ BEGIN
 			CASE
 				WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 				ELSE STT_COUNT
-			END AS STT_COUNT, STT_CHECK
+			END AS STT_COUNT, CASE WHEN d.[Id] IS NULL THEN 1 ELSE 0 END
 		FROM
 			(
 				SELECT
@@ -130,7 +134,7 @@ BEGIN
 			) AS a
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
-			LEFT OUTER JOIN dbo.ClientTable d ON c.ClientID = d.ClientID
+			LEFT JOIN [dbo].[Clients:Restrictions] AS d ON d.Client_Id = c.ClientID AND d.[Type_Id] = @RestrictionType_Id_STT
 		WHERE @SERVICE IS NULL OR ServiceID = @SERVICE
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 2 END, ManagerName, ServiceName, c.ClientFullName, a.SystemOrder, a.DistrStr
 

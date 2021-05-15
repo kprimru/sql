@@ -23,23 +23,12 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			b.ManagerName AS [Рук-ль], b.ServiceName AS [СИ], a.ClientFullName AS [Клиент],
-			USR_CHECK AS [Файлы USR], STT_CHECK AS [Файлы STT], HST_CHECK AS [Файлы HST], INET_CHECK AS [Нет Интернета]
-		FROM
-			dbo.ClientTable a
-			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
-		WHERE STATUS = 1
-			AND
-				(
-					HST_CHECK = 0
-					OR
-					STT_CHECK = 0
-					OR
-					USR_CHECK = 0
-					OR
-					INET_CHECK = 1
-				)
+			b.ManagerName AS [Рук-ль], b.ServiceName AS [СИ], b.ClientFullName AS [Клиент],
+			T.Name AS [Тип ограничения], R.[Comment] AS [Описание]
+		FROM dbo.ClientView b WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+		INNER JOIN [dbo].[Clients:Restrictions] AS r ON r.Client_Id = b.ClientID
+		INNER JOIN [dbo].[Clients:Restrictions->Types] AS T ON t.Id = R.[Type_Id]
 		ORDER BY ManagerName, ServiceName, b.ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

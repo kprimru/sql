@@ -20,12 +20,16 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @RestrictionType_Id_STT SmallInt;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+        SET @RestrictionType_Id_STT = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'STT');
 
 		IF @SERVICE IS NOT NULL
 		BEGIN
@@ -96,14 +100,14 @@ BEGIN
 			) AS a
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
-			LEFT OUTER JOIN dbo.ClientTable d ON d.ClientID = c.CLientID
+			LEFT JOIN [dbo].[Clients:Restrictions] AS d ON d.Client_Id = c.ClientID AND d.[Type_Id] = @RestrictionType_Id_STT
 		WHERE (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
 			AND (ServiceID IN (SELECT ID FROM dbo.TableIDFromXML(@SERVICE)) OR @SERVICE IS NULL)
 			AND (
 					CASE
 						WHEN STT_COUNT = 0 AND IP_DISTR IS NOT NULL THEN -1
 						ELSE STT_COUNT
-					END = 0 AND (STT_CHECK = 1 OR STT_CHECK IS NULL)
+					END = 0 AND d.[Id] IS NULL
 					OR
 					@EMPTY = 0)
 		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 2 END, ManagerName, ServiceName, c.ClientFullName, a.SystemOrder, a.DistrStr
