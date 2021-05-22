@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER FUNCTION [Seminar].[Template@Get]
 (
-    @Id             UniqueIdentifier,   -- учасник семинара
+    @Id             UniqueIdentifier,   -- участник семинара
     @TemplateCode   VarChar(100)        -- шаблон
 )
 RETURNS VarChar(Max)
@@ -53,11 +53,13 @@ BEGIN
                     Replace(
                     Replace(
                     Replace(
+                    Replace(
                     Replace(T.[Data]
                     , '{ClientPsedo}', IsNull(P.[PSEDO], ''))
                     , '{SeminarName}', SS.[NAME])
                     , '{SeminarDate}', Convert(VarChar(20), DatePart(Day, S.DATE)) + ' ' + M.ROD + ' ' + Convert(VarChar(20), DatePart(Year, S.DATE)))
                     , '{SeminarTime}', LEFT(Convert(VarChar(100), S.TIME, 108), 5))
+                    , '{ConfirmLink}', 'http://86.102.88.244/seminar/?type=confirm&id=' + CONVERT(VARCHAR(64), P.ID))
                     , '{SeminarLink}', IsNull(S.[Link], ''))
         FROM [dbo].[Month] AS M
         WHERE DatePart(Month, S.DATE) = M.NUM
