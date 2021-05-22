@@ -29,7 +29,7 @@ BEGIN
 		FROM Contract.Additional AS CA
 		WHERE ID_CONTRACT = @Contract_Id
 			AND (@HideUnsigned = 0 OR @HideUnsigned = 1 AND CA.SignDate IS NOT NULL)
-		ORDER BY CA.DATE DESC;
+		ORDER BY CA.NUM DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

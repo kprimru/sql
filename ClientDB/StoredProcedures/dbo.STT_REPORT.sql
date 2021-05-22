@@ -67,7 +67,7 @@ BEGIN
 			WHERE CSD_START >= @BEGIN AND CSD_START < @END
 
 		SELECT
-			c.ClientID, ISNULL(c.ClientFullName, Comment) AS ClientFullName,
+			c.ClientID, ISNULL(c.ClientFullName, a.Comment) AS ClientFullName,
 			ISNULL(ManagerName, SubhostName) AS ManagerName, ServiceName,
 			a.DistrStr, SST_SHORT, NT_SHORT,
 			CASE
@@ -77,7 +77,7 @@ BEGIN
 		FROM
 			(
 				SELECT
-					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
+					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, a.Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
 					(
 						SELECT COUNT(DISTINCT OTHER)
 						FROM

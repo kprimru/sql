@@ -110,7 +110,7 @@ BEGIN
 		FROM
 			(
 				SELECT
-					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
+					DistrStr, SubhostName, a.HostID, DistrNumber, CompNumber, a.Comment, SST_SHORT, NT_SHORT, a.SystemOrder,
 					(
 						SELECT COUNT(DISTINCT OTHER)
 						FROM
