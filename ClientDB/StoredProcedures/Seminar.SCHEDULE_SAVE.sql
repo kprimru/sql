@@ -28,6 +28,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE
+        @Status_Id_ACTIVE   Char(1);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -35,13 +38,15 @@ BEGIN
 
 	BEGIN TRY
 
+        SET @Status_Id_ACTIVE = 'A';
+
 		IF @ID IS NULL
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 
-			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE, [Type_Id], [Link])
+			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE, [Type_Id], [Link], [Status_Id])
 			OUTPUT inserted.ID INTO @TBL
-			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE, @Type_Id, @Link)
+			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE, @Type_Id, @Link, @Status_Id_ACTIVE)
 
 			SELECT @ID = ID
 			FROM @TBL
