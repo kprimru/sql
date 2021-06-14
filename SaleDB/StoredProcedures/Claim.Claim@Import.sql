@@ -78,7 +78,7 @@ BEGIN
                 FROM [Claim].[Claims]
                 WHERE   [Type_Id] = @Type_Id
                     AND [Number] = @Number
-                    AND CreateDateTime = @CreateDateTime
+                    AND [CreateDateTime] = @CreateDateTime
             );
 
         IF @@RowCount != 0 BEGIN

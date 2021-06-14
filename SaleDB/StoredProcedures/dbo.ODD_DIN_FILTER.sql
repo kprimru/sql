@@ -32,6 +32,7 @@ BEGIN
 		DS_INDEX,
 		RPR_OPER,
 		RPR_DATE,
+		PS.[Password],
 		O.[Company_Id],
 		C.[Name],
 		C.[Number],
@@ -48,6 +49,14 @@ BEGIN
 			AND RPR_OPER LIKE 'Изменен email%'
 		ORDER BY RPR_DATE DESC
 	) AS P
+	OUTER APPLY
+	(
+	    SELECT TOP (1) PS.[Password]
+	    FROM [PC275-SQL\ALPHA].[ClientDB].[Queue].[Online Passwords] AS PS
+	    WHERE PS.[Login] = Cast(R.[DistrNumber] AS VarChar(100))
+	        AND R.[HostID] = 1
+	    ORDER BY [CreateDateTime] DESC
+	) AS PS
 	OUTER APPLY
 	(
 		SELECT TOP (1) O.[Company_Id]

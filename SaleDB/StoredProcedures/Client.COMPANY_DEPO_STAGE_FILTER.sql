@@ -64,7 +64,7 @@ BEGIN
 			AND D.[Status_Id] IN (@Status_STAGE)
 			AND (D.[SortIndex] = @Number OR @Number IS NULL)
 			AND (D.[Depo:Name] LIKE @Name OR @Name IS NULL)
-		ORDER BY D.[SortIndex]
+		ORDER BY D.[SortIndex] DESC
 
 		SELECT @RC = @@ROWCOUNT
 

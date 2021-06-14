@@ -99,7 +99,8 @@ BEGIN
 			AND D.[Status_Id] NOT IN (@Status_STAGE)
 			AND (D.[Number] = @Number OR @Number IS NULL)
 			AND (D.[Depo:Name] LIKE @Name OR @Name IS NULL)
-		ORDER BY D.[Number] DESC, D.[DateFrom] DESC
+		--ORDER BY D.[Number] DESC, D.[DateFrom] DESC
+		ORDER BY D.[Number], D.[DateFrom]
 
 		SELECT @RC = @@ROWCOUNT
 

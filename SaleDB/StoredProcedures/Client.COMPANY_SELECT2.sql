@@ -5,47 +5,48 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Client].[COMPANY_SELECT2]
-    @SEARCH     NVarChar(MAX)    =    NULL,
-    @NAME       NVarChar(512)    =    NULL,
-    @NUMBER     NVarChar(MAX)    =    NULL,
-    @PHONE      NVarChar(128)    =    NULL,
-    @PERSONAL   NVarChar(256)    =    NULL,
-    @ACTIVITY   NVarChar(MAX)    =    NULL,
-    @PAY_CAT    NVarChar(MAX)    =    NULL,
-    @AREA       NVarChar(MAX)    =    NULL,
-    @STREET     NVarChar(MAX)    =    NULL,
-    @HOME       NVarChar(128)    =    NULL,
-    @ROOM       NVarChar(128)    =    NULL,
-    @AVAILAB    NVarChar(MAX)    =    NULL,
-    @SENDER     NVarChar(MAX)    =    NULL,
-    @WSTATE     NVarChar(MAX)    =    NULL,
-    @WSTATUS    NVarChar(MAX)    =    NULL,
-    @DBEGIN     SmallDateTime    =    NULL,
-    @DEND       SmallDateTime    =    NULL,
-    @POTENT     NVARCHAR(MAX)    =    NULL,
-    @MONTH      NVarChar(MAX)    =    NULL,
-    @TAXING     NVarChar(MAX)    =    NULL,
-    @SALE       NVarChar(MAX)    =    NULL,
-    @AGENT      NVarChar(MAX)    =    NULL,
-    @RIVAL      NVarChar(MAX)    =    NULL,
-    @CHARACTER  NVarChar(MAX)    =    NULL,
-    @REMOTE     NVarChar(MAX)    =    NULL,
-    @SELECT     Bit              =    NULL,
-    @RC         Int              =    NULL OUTPUT,
-    @MANAGER    NVarChar(MAX)    =    NULL,
-    @CARD       TINYINT          =    NULL,
-    @DELETED    Bit              =    NULL,
-    @HISTORY    Bit              =    NULL,
-    @RIVAL_PERS NVarChar(MAX)    =    NULL,
-    @CALL_BEGIN SmallDateTime    =    NULL,
-    @CALL_END   SmallDateTime    =    NULL,
-    @BLACK      Bit              =    NULL,
-    @BLACK_NOTE NVarChar(128)    =    NULL,
-    @PROJECT    NVarChar(MAX)    =    NULL,
-    @EMAIL      NVarChar(256)    =    NULL,
-    @DEPO       Bit              =    NULL,
-    @DEPO_NUM   NVarChar(MAX)    =    NULL,
-    @RIVALV     NVarChar(MAX)    =    NULL
+    @SEARCH     NVarChar(MAX)       = NULL,
+    @NAME       NVarChar(512)       = NULL,
+    @NUMBER     NVarChar(MAX)       = NULL,
+    @PHONE      NVarChar(128)       = NULL,
+    @PERSONAL   NVarChar(256)       = NULL,
+    @ACTIVITY   NVarChar(MAX)       = NULL,
+    @PAY_CAT    NVarChar(MAX)       = NULL,
+    @AREA       NVarChar(MAX)       = NULL,
+    @STREET     NVarChar(MAX)       = NULL,
+    @HOME       NVarChar(128)       = NULL,
+    @ROOM       NVarChar(128)       = NULL,
+    @AVAILAB    NVarChar(MAX)       = NULL,
+    @SENDER     NVarChar(MAX)       = NULL,
+    @WSTATE     NVarChar(MAX)       = NULL,
+    @WSTATUS    NVarChar(MAX)       = NULL,
+    @DBEGIN     SmallDateTime       = NULL,
+    @DEND       SmallDateTime       = NULL,
+    @POTENT     NVARCHAR(MAX)       = NULL,
+    @MONTH      NVarChar(MAX)       = NULL,
+    @TAXING     NVarChar(MAX)       = NULL,
+    @SALE       NVarChar(MAX)       = NULL,
+    @AGENT      NVarChar(MAX)       = NULL,
+    @RIVAL      NVarChar(MAX)       = NULL,
+    @CHARACTER  NVarChar(MAX)       = NULL,
+    @REMOTE     NVarChar(MAX)       = NULL,
+    @SELECT     Bit                 = NULL,
+    @RC         Int                 = NULL OUTPUT,
+    @MANAGER    NVarChar(MAX)       = NULL,
+    @CARD       TINYINT             = NULL,
+    @DELETED    Bit                 = NULL,
+    @HISTORY    Bit                 = NULL,
+    @RIVAL_PERS NVarChar(MAX)       = NULL,
+    @CALL_BEGIN SmallDateTime       = NULL,
+    @CALL_END   SmallDateTime       = NULL,
+    @BLACK      Bit                 = NULL,
+    @BLACK_NOTE NVarChar(128)       = NULL,
+    @PROJECT    NVarChar(MAX)       = NULL,
+    @EMAIL      NVarChar(256)       = NULL,
+    @DEPO       Bit                 = NULL,
+    @DEPO_NUM   NVarChar(MAX)       = NULL,
+    @RIVALV     NVarChar(MAX)       = NULL,
+    @ShowAll    Bit                 = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -108,7 +109,8 @@ BEGIN
         @FilterType_BLACK_NOTE  TinyInt,
         @FilterType_DEPO        TinyInt,
         @FilterType_DEPO_NUM    TinyInt,
-        @FilterType_HISTORY     TinyInt;
+        @FilterType_HISTORY     TinyInt,
+        @FilterType_SELECTION   TinyInt;
 
         SET @FilterType_NUMBER      = 1;
         SET @FilterType_PHONE       = 2;
@@ -142,6 +144,7 @@ BEGIN
         SET @FilterType_DEPO        = 30;
         SET @FilterType_DEPO_NUM    = 31;
         SET @FilterType_HISTORY     = 32;
+        SET @FilterType_SELECTION   = 33;
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -163,10 +166,15 @@ BEGIN
             SET @HOME = LTRIM(RTRIM(@HOME));
         END
 
-
-        INSERT INTO @rlist(ID)
-        SELECT ID
-        FROM Client.CompanyReadList();
+        IF @ShowAll = 1
+            INSERT INTO @rlist(ID)
+            SELECT ID
+            FROM Client.Company
+            WHERE STATUS = 1;
+        ELSE
+            INSERT INTO @rlist(ID)
+            SELECT ID
+            FROM Client.CompanyReadList();
 
         INSERT INTO @wlist(ID)
         SELECT ID
@@ -638,6 +646,16 @@ BEGIN
                 VALUES(@FilterType_HISTORY)
             END;
 
+            IF @SELECT = 1 BEGIN
+                INSERT INTO @company([Id])
+                SELECT ID_COMPANY
+                FROM Client.CompanySelection
+                WHERE USR_NAME = ORIGINAL_LOGIN();
+
+                INSERT INTO @UsedFilterTypes
+                VALUES(@FilterType_SELECTION)
+            END
+
             IF EXISTS (SELECT * FROM @UsedFilterTypes)
                 INSERT @company ([Id])
                 SELECT
@@ -661,15 +679,6 @@ BEGIN
                 INSERT @company ([Id])
                 SELECT TOP (500) Id
                 FROM @rlist;
-
-            IF @SELECT = 1
-                DELETE FROM @company
-                WHERE ID NOT IN
-                    (
-                        SELECT ID_COMPANY
-                        FROM Client.CompanySelection
-                        WHERE USR_NAME = ORIGINAL_LOGIN()
-                    );
         END;
 
         SELECT

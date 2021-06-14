@@ -6,7 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Claim].[Claim@Set Company]
     @Id             Int,
-    @Company_Id     UniqueIdentifier
+    @Company_Id     UniqueIdentifier OUT,
+    @Name           VarChar(512)
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -54,7 +55,7 @@ BEGIN
 
             EXEC [Client].[COMPANY_INSERT]
                 @SHORT          = '',
-                @NAME           = @Client,
+                @NAME           = @Name,
                 @NUMBER         = @Number,
                 @PAY_CAT        = NULL,
                 @WORK_STATE     = NULL,
@@ -86,6 +87,7 @@ BEGIN
                 @ID             = @Company_Id OUTPUT;
         END ELSE BEGIN
             UPDATE [Client].[Company] SET
+                ID_SENDER   = 'F7B1B2FF-9E21-EB11-891B-0007E92AAFC5',
                 SENDER_NOTE = @ClaimNum
             WHERE ID = @Company_Id;
         END;
