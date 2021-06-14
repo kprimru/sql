@@ -56,7 +56,7 @@ BEGIN
                     Replace(
                     Replace(T.[Data]
                     , '{ClientPsedo}', IsNull(P.[PSEDO], ''))
-                    , '{SeminarName}', SS.[NAME])
+                    , '{SeminarName}', LTrim(RTrim(SS.[NAME])))
                     , '{SeminarDate}', Convert(VarChar(20), DatePart(Day, S.DATE)) + ' ' + M.ROD + ' ' + Convert(VarChar(20), DatePart(Year, S.DATE)))
                     , '{SeminarTime}', LEFT(Convert(VarChar(100), S.TIME, 108), 5))
                     , '{ConfirmLink}', 'http://86.102.88.244/seminar/?type=confirm&id=' + CONVERT(VARCHAR(64), P.ID))
