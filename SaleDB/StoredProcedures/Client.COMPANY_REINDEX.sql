@@ -40,6 +40,7 @@ BEGIN
             SELECT ID
             FROM Common.TableGUIDFromXML(@LIST);
 
+        /*
         UPDATE z
         SET ADDRESS =
                 (
@@ -76,13 +77,14 @@ BEGIN
                     FOR XML PATH('')
             )), 1, 2, '')),
             AVA_COLOR = I.AVA_COLOR,
-            SenderIndex = I.SenderIndex
+            SenderIndex = I.SenderIndex,
+            DATA = I.[Data]
         FROM @TBL t
         INNER JOIN Client.CompanyIndex z ON T.ID = z.ID_COMPANY
         INNER JOIN [Client].[CompanyIndexView] AS I ON I.ID = z.ID_COMPANY
         OPTION (RECOMPILE);
 
-        INSERT INTO Client.CompanyIndex(ID_COMPANY, ADDRESS, EMAILS, PROJECTS, AVA_COLOR, SenderIndex)
+        INSERT INTO Client.CompanyIndex(ID_COMPANY, ADDRESS, EMAILS, PROJECTS, AVA_COLOR, SenderIndex, [Data])
         SELECT
             Z.ID,
             (
@@ -119,7 +121,8 @@ BEGIN
                     FOR XML PATH('')
             )), 1, 2, '')),
             I.AVA_COLOR,
-            I.SenderIndex
+            I.SenderIndex,
+            I.[Data]
         FROM @TBL z
         INNER JOIN [Client].[CompanyIndexView] AS I ON I.ID = Z.ID
         WHERE NOT EXISTS
@@ -129,6 +132,10 @@ BEGIN
                 WHERE t.ID_COMPANY = Z.ID
             )
         OPTION (RECOMPILE);
+        */
+        INSERT INTO Client.CompanyIndexQueue(ID_COMPANY)
+        SELECT [ID]
+        FROM @TBL;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
