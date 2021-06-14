@@ -10,11 +10,15 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT SystemSet, SystemPrefix, SystemName, DistrTypeName, DistrNumber, NetVersion, DocCount, SystemPrice, TaxPrice, SystemPrice + TaxPrice AS TotalPrice, SystemNote
+	SELECT
+	    SystemSet, SystemPrefix, SystemName, DistrTypeName, DistrNumber, NetVersion, DocCount,
+	    SystemPrice, TaxPrice, SystemPrice + TaxPrice AS TotalPrice, SystemNote,
+	    SystemExpire
 	FROM ActSystemsTable WITH(NOLOCK)
 	WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%פכ‎ר%')
 	ORDER BY SystemOrder
 END
+
 GO
 GRANT EXECUTE ON [dbo].[ACT_DETAIL_PRINT] TO DBCount;
 GO

@@ -13,7 +13,7 @@ BEGIN
 	SELECT
 		ProviderName, ProviderCity, ProviderDistributor, ActYear,
 		TaxName, TaxRate, TotalTaxPrice, TotalPrice, TotalPrice + TotalTaxPrice AS Total, TotalStr,
-		ProviderDirector, ProviderDirectorRod, ProviderFullName
+		ProviderDirector, ProviderDirectorRod, ProviderFullName, CustomerName
 	FROM ActTable WITH(NOLOCK)
 	WHERE ActID = @ACT
 END
