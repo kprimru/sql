@@ -293,7 +293,7 @@ BEGIN
 			END AS COEF,
 			*/
 			CASE
-				WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') AND ClientBaseCount > 3 THEN 1.2
+				WHEN Category IN ('A', 'B') AND ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') THEN 1.2
 				WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.5
 				WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
 				ELSE 1
