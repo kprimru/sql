@@ -283,6 +283,7 @@ BEGIN
 			IF (SELECT TOP 1 INS_ID_TYPE FROM #master) = (SELECT INT_ID FROM dbo.InvoiceTypeTable WHERE INT_PSEDO = 'SIMPLE')
 			BEGIN
 				SELECT
+				    RN = Row_Number() Over(PARTITION BY IFD_ID_IFM ORDER BY SYS_ORDER, DIS_NUM),
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
 					CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
@@ -301,6 +302,7 @@ BEGIN
 			ELSE
 			BEGIN
 				SELECT
+				    RN = Row_Number() Over(PARTITION BY IFD_ID_IFM ORDER BY SYS_ORDER),
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
 					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
@@ -342,6 +344,7 @@ BEGIN
 			IF (SELECT TOP 1 INS_ID_TYPE FROM #master) = (SELECT INT_ID FROM dbo.InvoiceTypeTable WHERE INT_PSEDO = 'SIMPLE')
 			BEGIN
 				SELECT
+				    RN = Row_Number() Over(PARTITION BY IFD_ID_IFM ORDER BY SYS_ORDER, DIS_NUM),
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
 					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
@@ -359,6 +362,7 @@ BEGIN
 			ELSE
 			BEGIN
 				SELECT
+				    RN = Row_Number() Over(PARTITION BY IFD_ID_IFM ORDER BY SYS_ORDER, DIS_NUM),
 					--INR_ID_INVOICE,	INS_ID,
 					IFD_ID_IFM,
 					--CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
@@ -414,7 +418,7 @@ BEGIN
 						INR_ID, INR_ID_INVOICE,
 						INR_ID_DISTR, INR_ID_PERIOD,
 						INR_GOOD, INR_NAME, SO_INV_UNIT, SO_INV_OKEI, INR_SUM, INR_TNDS, INR_SNDS, INR_SALL,
-						INR_ID_TAX, INR_COUNT
+						INR_ID_TAX, INR_COUNT, INR_RN
 					)
 				SELECT
 					(
@@ -425,7 +429,8 @@ BEGIN
 					INR_ID, INR_ID_INVOICE,
 					INR_ID_DISTR, INR_ID_PERIOD,
 					INR_GOOD, INR_NAME, SO_INV_UNIT, SO_INV_OKEI, INR_SUM, INR_TNDS, INR_SNDS, INR_SALL,
-					INR_ID_TAX, INR_COUNT
+					INR_ID_TAX, INR_COUNT,
+					RN = Row_Number() Over(PARTITION BY IFD_ID_IFM ORDER BY SYS_ORDER, DIS_NUM)
 				FROM	#detail B
 		END
 
