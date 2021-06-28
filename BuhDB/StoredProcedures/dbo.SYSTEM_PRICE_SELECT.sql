@@ -24,50 +24,11 @@ BEGIN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
-			WHERE SystemReg IN
-				(
-					'SKBEM',
-					'SKJEM',
-					'SBOEM',
-					'SKUEM'
-				)
-		)
-	BEGIN
+			WHERE SystemReg IN ('SKBEM', 'SKJEM', 'SBOEM','SKUEM')
+		) BEGIN
 		SET @DCOEF = 1
 		SET @DROUND = 2
-	END
-	/*
-	ELSE IF @SYSTEM IN
-		(
-			SELECT SystemName
-			FROM dbo.SystemTable
-			WHERE SystemReg IN
-				(
-					'SKBP',
-					'SKBO',
-					'SKBB',
-					'SKJE',
-					'SKJP',
-					'SKJO',
-					'SKJB',
-					'SBOE',
-					'SBOP',
-					'SBOO',
-					'SBOB',
-					'SKUE',
-					'SKUP',
-					'SKUO',
-					'SKUB',
-					'SKZO',
-					'SKZB'
-				)
-		) AND @DISTR IN ('Îíëàéí-âåðñèÿ Ïàðîëü')
-	BEGIN
-		SET @DCOEF = 1.1
-		SET @DROUND = 2
-	END
-	*/
-	ELSE IF (@SYSTEM IN
+	END ELSE IF (@SYSTEM IN
 		(
 			SELECT SystemName
 			FROM dbo.SystemTable
@@ -78,7 +39,6 @@ BEGIN
 		) AND @DISTR IN ('ÎÂÌ-Ô (1;2)')
 		)
 		OR
-
 		(@SYSTEM IN
 		(
 			SELECT SystemName
@@ -153,6 +113,54 @@ BEGIN
 		) AND @DISTR IN ('ÎÂÑ (50 ÎÄ)')
 	BEGIN
 		SET @DCOEF = 2.86
+		SET @DROUND = 2
+	END ELSE IF @SYSTEM IN
+		(
+			SELECT SystemName
+			FROM dbo.SystemTable
+			WHERE SystemReg IN
+				(
+					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
+				)
+		) AND @DISTR IN ('ÎÂÌ1')
+	BEGIN
+		SET @DCOEF = 1.25
+		SET @DROUND = 2
+	END ELSE IF @SYSTEM IN
+		(
+			SELECT SystemName
+			FROM dbo.SystemTable
+			WHERE SystemReg IN
+				(
+					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
+				)
+		) AND @DISTR IN ('ÎÂÌ2')
+	BEGIN
+		SET @DCOEF = 1.5
+		SET @DROUND = 2
+	END ELSE IF @SYSTEM IN
+		(
+			SELECT SystemName
+			FROM dbo.SystemTable
+			WHERE SystemReg IN
+				(
+					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
+				)
+		) AND @DISTR IN ('ÎÂÌ3')
+	BEGIN
+		SET @DCOEF = 2
+		SET @DROUND = 2
+	END ELSE IF @SYSTEM IN
+		(
+			SELECT SystemName
+			FROM dbo.SystemTable
+			WHERE SystemReg IN
+				(
+					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
+				)
+		) AND @DISTR IN ('ÎÂÌ5')
+	BEGIN
+		SET @DCOEF = 3
 		SET @DROUND = 2
 	END
 
