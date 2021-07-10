@@ -1,0 +1,28 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[DOC_SALE_OBJECT_DEF_DELETE]
+	@id SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM dbo.DocumentSaleObjectDefaultTable WHERE DSD_ID = @id
+END
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[DOC_SALE_OBJECT_DEF_DELETE] TO rl_doc_sale_object_def_d;
+GO

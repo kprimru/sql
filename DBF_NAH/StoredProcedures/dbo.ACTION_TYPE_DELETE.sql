@@ -1,0 +1,28 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[ACTION_TYPE_DELETE]
+	@id SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.ActionType
+	WHERE ACTT_ID = @id
+
+	SET NOCOUNT OFF
+END
+
+GO
+GRANT EXECUTE ON [dbo].[ACTION_TYPE_DELETE] TO rl_action_type_d;
+GO

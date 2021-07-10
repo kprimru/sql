@@ -1,0 +1,36 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[INVOICE_GET_LAST_NUM]
+	@date SMALLDATETIME,
+	@orgid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @insnum INT
+
+	SELECT @insnum = MAX(INS_NUM) + 1
+	FROM dbo.InvoiceSaleTable
+	WHERE INS_NUM_YEAR = RIGHT(DATEPART(yy, @date),2)
+		AND INS_ID_ORG = @orgid
+
+
+	IF @insnum IS NULL
+		SET @insnum = 1
+
+	SELECT @insnum AS INS_NUM, RIGHT(DATEPART(yy, @date),2) AS INS_NUM_YEAR
+END
+
+GO
+GRANT EXECUTE ON [dbo].[INVOICE_GET_LAST_NUM] TO rl_invoice_w;
+GO

@@ -1,0 +1,31 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_DELETE]
+  @addressid int
+
+AS
+
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE FROM dbo.ClientAddressTable WHERE CA_ID = @addressid
+
+	SET NOCOUNT OFF
+END
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_DELETE] TO rl_client_address_d;
+GRANT EXECUTE ON [dbo].[CLIENT_ADDRESS_DELETE] TO rl_client_d;
+GO

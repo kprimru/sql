@@ -1,0 +1,27 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[AUDIT_PRICE_SELECT]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT ER_MSG
+	FROM dbo.AuditPriceView
+	ORDER BY ER_MSG
+
+END
+
+GO
+GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_financing_r;
+GRANT EXECUTE ON [dbo].[AUDIT_PRICE_SELECT] TO rl_audit_price;
+GO

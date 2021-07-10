@@ -1,0 +1,27 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[COURIER_DELETE]
+	@courierid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.CourierTable
+	WHERE COUR_ID = @courierid
+
+	SET NOCOUNT OFF
+END
+GO
+GRANT EXECUTE ON [dbo].[COURIER_DELETE] TO rl_courier_d;
+GO

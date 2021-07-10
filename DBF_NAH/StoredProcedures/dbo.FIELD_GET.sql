@@ -1,0 +1,29 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[FIELD_GET]
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT FL_NAME, FL_WIDTH, FL_CAPTION
+	FROM dbo.FieldTable
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[FIELD_GET] TO rl_all_r;
+GO

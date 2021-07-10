@@ -1,0 +1,30 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_DELETE]
+	@contractid INT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.ContractTable
+	WHERE CO_ID = @contractid
+
+	SET NOCOUNT OFF
+END
+
+
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_DELETE] TO rl_client_contract_d;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_DELETE] TO rl_client_d;
+GO

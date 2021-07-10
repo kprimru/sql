@@ -1,0 +1,30 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_CHECK_REPORT_POS]
+	@clientid INT,
+	@reportposid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT PER_ID
+	FROM dbo.ClientPersonalTable
+	WHERE PER_ID_CLIENT = @clientid AND PER_ID_REPORT_POS = @reportposid
+
+	SET NOCOUNT OFF
+END
+
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_CHECK_REPORT_POS] TO rl_client_personal_w;
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_CHECK_REPORT_POS] TO rl_client_w;
+GO

@@ -1,0 +1,42 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CONSIGNMENT_ONE_PRINT]
+	@consid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	EXEC dbo.CONSIGNMENT_PRINT_BY_ID_LIST @consid
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_ONE_PRINT] TO rl_consignment_p;
+GO

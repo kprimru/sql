@@ -1,0 +1,26 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[PLUG_DEL_CONS]
+	@consid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.ConsignmentTable
+	SET CSG_ID_INVOICE = NULL
+	WHERE CSG_ID = @consid
+END
+
+GO
+GRANT EXECUTE ON [dbo].[PLUG_DEL_CONS] TO rl_invoice_w;
+GO

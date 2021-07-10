@@ -1,0 +1,25 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[COUNTRY_DELETE]
+	@countryid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE FROM dbo.CountryTable WHERE CNT_ID = @countryid
+
+	SET NOCOUNT OFF
+END
+GO
+GRANT EXECUTE ON [dbo].[COUNTRY_DELETE] TO rl_country_d;
+GO

@@ -1,0 +1,30 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CONSIGNMENT_DETAIL_TRY_DELETE]
+	@csdid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @res INT
+	DECLARE @txt VARCHAR(1000)
+
+	SET @res = 0
+	SET @txt = ''
+
+	SELECT @res AS RES, @txt AS TXT
+END
+
+GO
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_DETAIL_TRY_DELETE] TO rl_consignment_d;
+GO

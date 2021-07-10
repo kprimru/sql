@@ -1,0 +1,23 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+ALTER PROCEDURE [dbo].[INCOME_REPORT_DEFAULT_GET]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT ORG_ID, ORG_PSEDO
+	FROM dbo.OrganizationTable
+	WHERE ORG_PSEDO = 'Базис'
+END
+GO
+GRANT EXECUTE ON [dbo].[INCOME_REPORT_DEFAULT_GET] TO rl_report_income_r;
+GO

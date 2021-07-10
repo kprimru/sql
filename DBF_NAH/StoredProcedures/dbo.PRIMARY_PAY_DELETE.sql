@@ -1,0 +1,25 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[PRIMARY_PAY_DELETE]
+	@prpid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM dbo.PrimaryPayTable
+	WHERE PRP_ID = @prpid
+END
+
+GO
+GRANT EXECUTE ON [dbo].[PRIMARY_PAY_DELETE] TO rl_primary_pay_w;
+GO

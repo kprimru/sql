@@ -1,0 +1,28 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[INVOICE_TYPE_DELETE]
+	@id SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE FROM dbo.InvoiceTypeTable WHERE INT_ID = @id
+END
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[INVOICE_TYPE_DELETE] TO rl_invoice_type_d;
+GO

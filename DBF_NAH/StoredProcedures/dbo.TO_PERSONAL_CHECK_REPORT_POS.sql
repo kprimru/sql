@@ -1,0 +1,30 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[TO_PERSONAL_CHECK_REPORT_POS]
+	@toid INT,
+	@reportposid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT TP_ID
+	FROM dbo.TOPersonalTable
+	WHERE TP_ID_TO = @toid AND TP_ID_RP = @reportposid
+
+	SET NOCOUNT OFF
+END
+
+
+GO
+GRANT EXECUTE ON [dbo].[TO_PERSONAL_CHECK_REPORT_POS] TO rl_to_personal_w;
+GO

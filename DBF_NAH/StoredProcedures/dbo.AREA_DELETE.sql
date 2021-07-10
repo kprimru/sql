@@ -1,0 +1,26 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:	  */
+
+ALTER PROCEDURE [dbo].[AREA_DELETE]
+	@areaid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.AreaTable
+	WHERE AR_ID = @areaid
+
+	SET NOCOUNT OFF
+END
+GO
+GRANT EXECUTE ON [dbo].[AREA_DELETE] TO rl_area_d;
+GO

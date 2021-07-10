@@ -1,0 +1,28 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[CONSIGNMENT_CALC_DEFAULT_GET]
+	@clientid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT SO_ID, SO_NAME
+	FROM dbo.SaleObjectTable
+	WHERE SO_ID = 2
+END
+
+
+GO
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_CALC_DEFAULT_GET] TO rl_consignment_w;
+GO

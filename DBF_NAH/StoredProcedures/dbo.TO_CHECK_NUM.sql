@@ -1,0 +1,26 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[TO_CHECK_NUM]
+	@num INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TO_ID
+	FROM dbo.TOTable
+	WHERE TO_NUM = @num
+END
+
+GO
+GRANT EXECUTE ON [dbo].[TO_CHECK_NUM] TO rl_to_w;
+GO

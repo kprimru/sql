@@ -1,0 +1,26 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[PLUG_DEL_INCOME]
+	@incomeid INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE dbo.IncomeTable
+	SET IN_ID_INVOICE = NULL
+	WHERE IN_ID = @incomeid
+END
+
+GO
+GRANT EXECUTE ON [dbo].[PLUG_DEL_INCOME] TO rl_invoice_w;
+GO

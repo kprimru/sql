@@ -1,0 +1,31 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[DISTR_SERVICE_DELETE]
+	@dsid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.SystemServiceTable
+	WHERE DSS_ID = @dsid
+
+	SET NOCOUNT OFF
+END
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[DISTR_SERVICE_DELETE] TO rl_distr_service_d;
+GO

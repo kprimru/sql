@@ -1,0 +1,29 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[GOOD_GET]
+	@goodid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT GD_ID, GD_NAME, GD_ACTIVE
+	FROM
+		dbo.GoodTable
+	WHERE GD_ID = @goodid
+END
+
+
+GO
+GRANT EXECUTE ON [dbo].[GOOD_GET] TO rl_good_r;
+GO

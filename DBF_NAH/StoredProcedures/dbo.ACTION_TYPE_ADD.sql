@@ -1,0 +1,32 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[ACTION_TYPE_ADD]
+	@NAME VARCHAR(50),
+	@ACTIVE BIT = 1,
+	@returnvalue BIT = 1
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	INSERT INTO dbo.ActionType(ACTT_NAME, ACTT_ACTIVE)
+	VALUES (@NAME, @ACTIVE)
+
+	IF @returnvalue = 1
+		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+	SET NOCOUNT OFF
+END
+
+GO
+GRANT EXECUTE ON [dbo].[ACTION_TYPE_ADD] TO rl_action_type_w;
+GO

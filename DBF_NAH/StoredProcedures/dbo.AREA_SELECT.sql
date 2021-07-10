@@ -1,0 +1,38 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[AREA_SELECT]
+	@active BIT = NULL
+AS
+
+BEGIN
+	SET NOCOUNT ON
+
+
+	SELECT AR_ID, AR_NAME
+	FROM dbo.AreaTable
+	WHERE AR_ACTIVE = ISNULL(@active, AR_ACTIVE)
+	ORDER BY AR_NAME
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[AREA_SELECT] TO rl_area_r;
+GO

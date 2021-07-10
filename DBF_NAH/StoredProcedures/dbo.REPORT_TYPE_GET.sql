@@ -1,0 +1,29 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  коллектив авторов
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[REPORT_TYPE_GET]
+  @rtid int = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT RTY_ID, RTY_NAME
+	FROM dbo.ReportTypeTable
+	WHERE RTY_ID = @rtid
+
+	SET NOCOUNT OFF
+END
+
+
+GO
+GRANT EXECUTE ON [dbo].[REPORT_TYPE_GET] TO rl_report_type_r;
+GO

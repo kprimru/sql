@@ -1,0 +1,32 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_SELECT]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT RT_ID, RT_NAME		--, RT_TEXT
+	FROM dbo.ReportTemplateTable
+	ORDER BY RT_NAME
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_SELECT] TO rl_report_r;
+GO

@@ -1,0 +1,32 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[FINANCING_SELECT]
+	@active BIT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT FIN_ID, FIN_NAME
+	FROM dbo.FinancingTable
+	WHERE FIN_ACTIVE = ISNULL(@active, FIN_ACTIVE)
+	ORDER BY FIN_NAME
+
+	SET NOCOUNT OFF
+END
+
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[FINANCING_SELECT] TO rl_financing_r;
+GO

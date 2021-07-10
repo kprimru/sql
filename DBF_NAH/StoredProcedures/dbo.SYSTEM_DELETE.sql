@@ -1,0 +1,30 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*
+Автор:		  Денисов Алексей
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[SYSTEM_DELETE]
+	@systemid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DELETE
+	FROM dbo.SystemTable
+	WHERE SYS_ID = @systemid
+
+	SET NOCOUNT OFF
+END
+
+
+
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_DELETE] TO rl_system_d;
+GO

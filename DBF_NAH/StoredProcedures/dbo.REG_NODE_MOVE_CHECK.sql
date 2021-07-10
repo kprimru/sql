@@ -1,0 +1,32 @@
+USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
+*/
+
+ALTER PROCEDURE [dbo].[REG_NODE_MOVE_CHECK]
+	@periodid SMALLINT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF EXISTS
+		(
+			SELECT *
+			FROM dbo.PeriodRegTable
+			WHERE REG_ID_PERIOD = @periodid
+		)
+		SELECT 1 AS RES
+	ELSE
+		SELECT 0 AS RES
+END
+
+GO
+GRANT EXECUTE ON [dbo].[REG_NODE_MOVE_CHECK] TO rl_reg_node_history_w;
+GO
