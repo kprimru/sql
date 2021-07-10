@@ -30,23 +30,44 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.SubhostTable
-	SET SH_FULL_NAME = @subhostfullname,
-		SH_SHORT_NAME = @subhostshortname,
-		SH_SUBHOST = @subhostric,
-		SH_LST_NAME = @subhostlstname,
-		SH_REG = @reg,
-		SH_CALC_STUDY = @study,
-		SH_CALC_SYSTEM = @system,
-		SH_ORDER = @subhostorder,
-		SH_CALC	= @calc,
-		SH_PENALTY = @penalty,
-		SH_PERIODICITY = @periodicity,
-		SH_ACTIVE = @active
-	WHERE SH_ID = @subhostid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.SubhostTable
+		SET SH_FULL_NAME = @subhostfullname,
+			SH_SHORT_NAME = @subhostshortname,
+			SH_SUBHOST = @subhostric,
+			SH_LST_NAME = @subhostlstname,
+			SH_REG = @reg,
+			SH_CALC_STUDY = @study,
+			SH_CALC_SYSTEM = @system,
+			SH_ORDER = @subhostorder,
+			SH_CALC	= @calc,
+			SH_PENALTY = @penalty,
+			SH_PERIODICITY = @periodicity,
+			SH_ACTIVE = @active
+		WHERE SH_ID = @subhostid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[SUBHOST_EDIT] TO rl_subhost_w;
 GO

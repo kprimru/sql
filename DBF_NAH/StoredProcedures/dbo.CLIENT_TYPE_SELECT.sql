@@ -18,12 +18,32 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT CLT_NAME, CLT_ID
-	FROM dbo.ClientTypeTable
-	WHERE CLT_ACTIVE = ISNULL(@active, CLT_ACTIVE)
-	ORDER BY CLT_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT CLT_NAME, CLT_ID
+		FROM dbo.ClientTypeTable
+		WHERE CLT_ACTIVE = ISNULL(@active, CLT_ACTIVE)
+		ORDER BY CLT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

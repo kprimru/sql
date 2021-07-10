@@ -10,10 +10,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT NT_ID, NT_SHORT
-	FROM dbo.NetType
-	--WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
-	ORDER BY NT_NET, NT_TECH
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT NT_ID, NT_SHORT
+		FROM dbo.NetType
+		--WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
+		ORDER BY NT_NET, NT_TECH
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

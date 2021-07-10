@@ -18,13 +18,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.AddressTypeTable
-	SET AT_NAME = @addresstypename,
-		AT_ACTIVE = @active
-	WHERE AT_ID = @addresstypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.AddressTypeTable
+		SET AT_NAME = @addresstypename,
+			AT_ACTIVE = @active
+		WHERE AT_ID = @addresstypeid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_EDIT] TO rl_address_type_w;
 GO

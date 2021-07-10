@@ -16,15 +16,36 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT
-			TP_ID, (TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS TP_FIO,
-			TP_PHONE, POS_NAME, RP_NAME, TP_LAST
-	FROM dbo.TOPersonalView
-	WHERE TP_ID_TO = @toid
-	ORDER BY RP_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+				TP_ID, (TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS TP_FIO,
+				TP_PHONE, POS_NAME, RP_NAME, TP_LAST
+		FROM dbo.TOPersonalView
+		WHERE TP_ID_TO = @toid
+		ORDER BY RP_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[TO_PERSONAL_SELECT] TO rl_client_r;
 GRANT EXECUTE ON [dbo].[TO_PERSONAL_SELECT] TO rl_to_personal_r;

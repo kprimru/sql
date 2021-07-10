@@ -29,15 +29,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.SubhostTable(SH_FULL_NAME, SH_SHORT_NAME, SH_SUBHOST, SH_LST_NAME,
-			SH_REG, SH_CALC_STUDY, SH_CALC_SYSTEM, SH_ORDER, SH_CALC, SH_PENALTY, SH_PERIODICITY, SH_ACTIVE)
-	VALUES (@subhostfullname, @subhostshortname, @subhostric, @subhostlstname,
-			@reg, @study, @system, @subhostorder, @calc, @penalty, @periodicity, @active)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.SubhostTable(SH_FULL_NAME, SH_SHORT_NAME, SH_SUBHOST, SH_LST_NAME,
+				SH_REG, SH_CALC_STUDY, SH_CALC_SYSTEM, SH_ORDER, SH_CALC, SH_PENALTY, SH_PERIODICITY, SH_ACTIVE)
+		VALUES (@subhostfullname, @subhostshortname, @subhostric, @subhostlstname,
+				@reg, @study, @system, @subhostorder, @calc, @penalty, @periodicity, @active)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

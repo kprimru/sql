@@ -16,23 +16,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT PP_ID, PP_NAME, PT_NAME, PP_COEF_MUL, PP_COEF_ADD
-	FROM
-		dbo.PriceTable a INNER JOIN
-		dbo.PriceTypeTable b ON a.PP_ID_TYPE = b.PT_ID
-	WHERE PP_ACTIVE = ISNULL(@active, PP_ACTIVE)
-	ORDER BY PP_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PP_ID, PP_NAME, PT_NAME, PP_COEF_MUL, PP_COEF_ADD
+		FROM
+			dbo.PriceTable a INNER JOIN
+			dbo.PriceTypeTable b ON a.PP_ID_TYPE = b.PT_ID
+		WHERE PP_ACTIVE = ISNULL(@active, PP_ACTIVE)
+		ORDER BY PP_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[PRICE_SELECT] TO rl_price_r;

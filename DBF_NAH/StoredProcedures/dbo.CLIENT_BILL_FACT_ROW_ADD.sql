@@ -29,9 +29,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.BillFactDetailTable(BFD_ID_BFM, BILL_STR, TX_PERCENT, TX_NAME, SYS_NAME, SYS_ORDER, DIS_ID, DIS_NUM, PR_ID, PR_MONTH, PR_DATE, BD_UNPAY, BD_TAX_UNPAY, BD_TOTAL_UNPAY)
-	VALUES(@BFD_ID_BFM, @BILL_STR, @TX_PERCENT, @TX_NAME, @SYS_NAME, @SYS_ORDER, @DIS_ID, @DIS_NUM, @PR_ID, @PR_MONTH, @PR_DATE, @BD_UNPAY, @BD_TAX_UNPAY, @BD_TOTAL_UNPAY)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.BillFactDetailTable(BFD_ID_BFM, BILL_STR, TX_PERCENT, TX_NAME, SYS_NAME, SYS_ORDER, DIS_ID, DIS_NUM, PR_ID, PR_MONTH, PR_DATE, BD_UNPAY, BD_TAX_UNPAY, BD_TOTAL_UNPAY)
+		VALUES(@BFD_ID_BFM, @BILL_STR, @TX_PERCENT, @TX_NAME, @SYS_NAME, @SYS_ORDER, @DIS_ID, @DIS_NUM, @PR_ID, @PR_MONTH, @PR_DATE, @BD_UNPAY, @BD_TAX_UNPAY, @BD_TOTAL_UNPAY)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_BILL_FACT_ROW_ADD] TO rl_bill_w;
 GO

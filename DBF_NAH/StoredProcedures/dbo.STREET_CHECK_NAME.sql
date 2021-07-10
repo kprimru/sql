@@ -21,13 +21,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT ST_ID
-	FROM dbo.StreetTable
-	WHERE ST_NAME = @streetname AND ST_ID_CITY = @cityid
-		AND ST_PREFIX = @prefix
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ST_ID
+		FROM dbo.StreetTable
+		WHERE ST_NAME = @streetname AND ST_ID_CITY = @cityid
+			AND ST_PREFIX = @prefix
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[STREET_CHECK_NAME] TO rl_street_w;
 GO

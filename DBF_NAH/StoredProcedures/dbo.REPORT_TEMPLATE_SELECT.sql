@@ -15,17 +15,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT RT_ID, RT_NAME		--, RT_TEXT
-	FROM dbo.ReportTemplateTable
-	ORDER BY RT_NAME
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT RT_ID, RT_NAME		--, RT_TEXT
+		FROM dbo.ReportTemplateTable
+		ORDER BY RT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_SELECT] TO rl_report_r;

@@ -16,13 +16,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT PT_ID, PT_NAME, PG_ID, PG_NAME, PT_COEF, PT_ORDER, PT_ACTIVE
-	FROM
-		dbo.PriceTypeTable LEFT OUTER JOIN
-		dbo.PriceGroupTable ON PG_ID = PT_ID_GROUP
-	WHERE PT_ID = @pricetypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PT_ID, PT_NAME, PG_ID, PG_NAME, PT_COEF, PT_ORDER, PT_ACTIVE
+		FROM
+			dbo.PriceTypeTable LEFT OUTER JOIN
+			dbo.PriceGroupTable ON PG_ID = PT_ID_GROUP
+		WHERE PT_ID = @pricetypeid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

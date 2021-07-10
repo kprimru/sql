@@ -21,33 +21,53 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_POS = @positionid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' +
-						  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
-						  'бы у одного сотрудника.'
-	  END
+	BEGIN TRY
 
-	-- добавлено 29.04.2009, ¬.Ѕогдан
-	IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_POS = @positionid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' +
-						  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
-						  'бы у одного сотрудника.'
-	  END
-	--
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SELECT @res AS RES, @txt AS TXT
+		SET @res = 0
+		SET @txt = ''
 
-	SET NOCOUNT OFF
+		IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_POS = @positionid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' +
+							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
+							  'бы у одного сотрудника.'
+		  END
+
+		-- добавлено 29.04.2009, ¬.Ѕогдан
+		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_POS = @positionid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' +
+							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
+							  'бы у одного сотрудника.'
+		  END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

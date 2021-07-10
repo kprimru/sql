@@ -18,8 +18,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	EXEC dbo.ACT_PRINT_BY_ID_LIST @actid, 0, @contract, @group, @apply
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		EXEC dbo.ACT_PRINT_BY_ID_LIST @actid, 0, @contract, @group, @apply
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[ACT_PRINT] TO rl_act_p;
 GO

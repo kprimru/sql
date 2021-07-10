@@ -16,23 +16,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_LST_NAME, SH_ORDER, SH_ACTIVE
-	FROM dbo.SubhostTable
-	WHERE SH_ACTIVE = ISNULL(@active, SH_ACTIVE)
-	ORDER BY SH_ORDER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_LST_NAME, SH_ORDER, SH_ACTIVE
+		FROM dbo.SubhostTable
+		WHERE SH_ACTIVE = ISNULL(@active, SH_ACTIVE)
+		ORDER BY SH_ORDER
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[SUBHOST_SELECT] TO rl_subhost_r;

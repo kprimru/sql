@@ -16,42 +16,53 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @cd TABLE
-		(
-			CD_ID INT
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @cd
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@cdid, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @dislist VARCHAR(MAX)
-	SET @dislist = ''
+	BEGIN TRY
 
-	SELECT @dislist = @dislist + DIS_STR + ','
-	FROM dbo.ClientDistrView
-	WHERE CD_ID IN
-		(
-			SELECT CD_ID
-			FROM @cd
-		)
+		DECLARE @cd TABLE
+			(
+				CD_ID INT
+			)
 
-	IF LEN(@dislist) > 0
-		SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
+		INSERT INTO @cd
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@cdid, ',')
 
-	SELECT @dislist AS DIS_STR
+		DECLARE @dislist VARCHAR(MAX)
+		SET @dislist = ''
 
-	SET NOCOUNT OFF
+		SELECT @dislist = @dislist + DIS_STR + ','
+		FROM dbo.ClientDistrView
+		WHERE CD_ID IN
+			(
+				SELECT CD_ID
+				FROM @cd
+			)
+
+		IF LEN(@dislist) > 0
+			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
+
+		SELECT @dislist AS DIS_STR
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_DISTR_LIST_GET] TO rl_client_distr_r;

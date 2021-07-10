@@ -17,15 +17,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE
-	FROM dbo.SaldoTable
-	WHERE SL_ID_CONSIG_DIS = @csdid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE
-	FROM dbo.ConsignmentDetailTable
-	WHERE CSD_ID = @csdid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE
+		FROM dbo.SaldoTable
+		WHERE SL_ID_CONSIG_DIS = @csdid
+
+		DELETE
+		FROM dbo.ConsignmentDetailTable
+		WHERE CSD_ID = @csdid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
 
 GO
 GRANT EXECUTE ON [dbo].[CONSIGNMENT_DETAIL_DELETE] TO rl_consignment_d;

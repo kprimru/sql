@@ -26,23 +26,40 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.CityTable
-	SET CT_NAME = @cityname,
-	    CT_PREFIX = @cityprefix,
-	    CT_PHONE = @phone,
-		CT_ID_RG = @regionid,
-		CT_ID_AREA = @areaid,
-		CT_ID_COUNTRY = @countryid,
-		CT_REGION = @region,
-		CT_ID_BASE = @base,
-		CT_ACTIVE = @active
-	WHERE CT_ID = @cityid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.CityTable
+		SET CT_NAME = @cityname,
+			CT_PREFIX = @cityprefix,
+			CT_PHONE = @phone,
+			CT_ID_RG = @regionid,
+			CT_ID_AREA = @areaid,
+			CT_ID_COUNTRY = @countryid,
+			CT_REGION = @region,
+			CT_ID_BASE = @base,
+			CT_ACTIVE = @active
+		WHERE CT_ID = @cityid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[CITY_EDIT] TO rl_city_w;

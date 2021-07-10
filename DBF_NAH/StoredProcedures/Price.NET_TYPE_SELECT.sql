@@ -9,9 +9,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT NT_ID, NT_SHORT, 'NET' + CONVERT(VARCHAR(20), NT_ID) AS NT_FIELD
-	FROM dbo.NetType
-	ORDER BY NT_NET, NT_TECH
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT NT_ID, NT_SHORT, 'NET' + CONVERT(VARCHAR(20), NT_ID) AS NT_FIELD
+		FROM dbo.NetType
+		ORDER BY NT_NET, NT_TECH
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

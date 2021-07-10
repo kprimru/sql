@@ -16,12 +16,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT AR_ID
-	FROM dbo.AreaTable
-	WHERE AR_NAME = @areaname
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT AR_ID
+		FROM dbo.AreaTable
+		WHERE AR_NAME = @areaname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[AREA_CHECK_NAME] TO rl_area_w;
 GO

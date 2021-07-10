@@ -19,17 +19,39 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Subhost.SubhostCompensationTable
-	SET SCP_ID_SUBHOST = @SH_ID,
-		SCP_ID_PERIOD = @PR_ID,
-		SCP_ID_SYSTEM = @SYS_ID,
-		SCP_ID_NET = @SN_ID,
-		SCP_ID_TYPE = @SST_ID,
-		SCP_ID_TECH = @TT_ID,
-		SCP_DISTR = @DISTR,
-		SCP_COMP = @COMP,
-		SCP_COMMENT = @COMMENT
-	WHERE SCP_ID = @SCP_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Subhost.SubhostCompensationTable
+		SET SCP_ID_SUBHOST = @SH_ID,
+			SCP_ID_PERIOD = @PR_ID,
+			SCP_ID_SYSTEM = @SYS_ID,
+			SCP_ID_NET = @SN_ID,
+			SCP_ID_TYPE = @SST_ID,
+			SCP_ID_TECH = @TT_ID,
+			SCP_DISTR = @DISTR,
+			SCP_COMP = @COMP,
+			SCP_COMMENT = @COMMENT
+		WHERE SCP_ID = @SCP_ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

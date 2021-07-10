@@ -13,11 +13,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE Subhost.SubhostProductGroup
-	SET SPG_NAME = @SPG_NAME,
-		SPG_ORDER = @SPG_ORDER,
-		SPG_ACTIVE = @ACTIVE
-	WHERE SPG_ID = @SPG_ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE Subhost.SubhostProductGroup
+		SET SPG_NAME = @SPG_NAME,
+			SPG_ORDER = @SPG_ORDER,
+			SPG_ACTIVE = @ACTIVE
+		WHERE SPG_ID = @SPG_ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

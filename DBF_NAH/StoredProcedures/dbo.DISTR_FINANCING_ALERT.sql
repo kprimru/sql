@@ -10,20 +10,41 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @DATE IS NULL
-		SET @DATE = DATEADD(MONTH, 1, GETDATE())
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT b.CL_ID, b.CL_PSEDO, DIS_STR, DF_FIXED_PRICE, DF_DISCOUNT, DF_END, SST_CAPTION, COUR_NAME
-	FROM
-		dbo.DistrFinancingView a
-		INNER JOIN dbo.ClientTable b ON a.CD_ID_CLIENT = CL_ID
-		LEFT OUTER JOIN dbo.ClientCourView c ON c.CL_ID = b.CL_ID
-	WHERE DSS_REPORT = 1
-		--AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
-		AND ((DF_END <= @DATE) OR DF_END IS NULL)
-		AND DIS_STR NOT LIKE 'ÃÊ%'
-	ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, DIS_STR
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
+	BEGIN TRY
+
+		IF @DATE IS NULL
+			SET @DATE = DATEADD(MONTH, 1, GETDATE())
+
+		SELECT b.CL_ID, b.CL_PSEDO, DIS_STR, DF_FIXED_PRICE, DF_DISCOUNT, DF_END, SST_CAPTION, COUR_NAME
+		FROM
+			dbo.DistrFinancingView a
+			INNER JOIN dbo.ClientTable b ON a.CD_ID_CLIENT = CL_ID
+			LEFT OUTER JOIN dbo.ClientCourView c ON c.CL_ID = b.CL_ID
+		WHERE DSS_REPORT = 1
+			--AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
+			AND ((DF_END <= @DATE) OR DF_END IS NULL)
+			AND DIS_STR NOT LIKE 'ÃÊ%'
+		ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, DIS_STR
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

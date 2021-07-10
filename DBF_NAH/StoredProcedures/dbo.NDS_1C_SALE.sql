@@ -12,89 +12,111 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ID	UNIQUEIDENTIFIER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = ID
-	FROM dbo.NDS1C
-	WHERE ID_ORG = @ORG
-		AND ID_TAX = @TAX
-		AND ID_PERIOD = @PERIOD
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @PR_BEGIN	SMALLDATETIME
-	DECLARE @PR_END		SMALLDATETIME
+	BEGIN TRY
 
-	SELECT @PR_BEGIN = PR_DATE, @PR_END = PR_END_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @PERIOD
+		DECLARE @ID	UNIQUEIDENTIFIER
 
-	IF OBJECT_ID('tempdb..#nds') IS NOT NULL
-		DROP TABLE #nds
+		SELECT @ID = ID
+		FROM dbo.NDS1C
+		WHERE ID_ORG = @ORG
+			AND ID_TAX = @TAX
+			AND ID_PERIOD = @PERIOD
 
-	IF OBJECT_ID('tempdb..#c')	 IS NOT NULL
-		DROP TABLE #c
+		DECLARE @PR_BEGIN	SMALLDATETIME
+		DECLARE @PR_END		SMALLDATETIME
 
-	SELECT CLIENT, /*SUM(PRICE) AS PRICE, */SUM(PRICE2) AS PRICE2
-	INTO #c
-	FROM dbo.NDS1CDetail
-	WHERE (TP = '50' OR TP = '51') AND ID_MASTER = @ID AND ISNULL(PRICE2, 0) <> 0
-	GROUP BY CLIENT
+		SELECT @PR_BEGIN = PR_DATE, @PR_END = PR_END_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @PERIOD
 
-	SELECT CL_1C, SUM(NDS) AS NDS
-		INTO #nds
-	FROM
-		(
-			SELECT
-				NUM, DATE, ISNULL(CL_1C, '!!!Õ≈“  À»≈Õ“¿!!!') AS CL_1C,
-				(
-					SELECT SUM(ROUND(S_NDS, 2))
-					FROM dbo.BookSaleDetail b
-					WHERE a.ID = b.ID_SALE
-						AND b.ID_TAX = @TAX
-				) AS NDS
-			FROM
-				dbo.BookSale a
-				INNER JOIN dbo.InvoiceSaleTable c ON c.INS_ID = a.ID_INVOICE
-				LEFT OUTER JOIN dbo.ClientTable ON c.INS_ID_CLIENT = CL_ID
-			WHERE DATE BETWEEN @PR_BEGIN AND @PR_END
-				AND ID_ORG = @ORG
-				AND CODE = '02'
-		) AS o_O
-	WHERE ISNULL(NDS, 0)  <> 0
-	GROUP BY CL_1C
+		IF OBJECT_ID('tempdb..#nds') IS NOT NULL
+			DROP TABLE #nds
 
-	SELECT CLIENT, PRICE2 AS [1C_PRICE], NDS AS [DBF_PRICE], PRICE2 - NDS AS [DIFF]
-	FROM
-		#c a
-		INNER JOIN #nds b ON a.CLIENT = b.CL_1C
-	WHERE a.PRICE2 <> b.NDS
+		IF OBJECT_ID('tempdb..#c')	 IS NOT NULL
+			DROP TABLE #c
 
-	UNION ALL
+		SELECT CLIENT, /*SUM(PRICE) AS PRICE, */SUM(PRICE2) AS PRICE2
+		INTO #c
+		FROM dbo.NDS1CDetail
+		WHERE (TP = '50' OR TP = '51') AND ID_MASTER = @ID AND ISNULL(PRICE2, 0) <> 0
+		GROUP BY CLIENT
 
-	SELECT CL_1C, 0 AS [1C_PRICE], NDS AS [DBF_PRICE], NDS AS [DIFF]
-	FROM
-		#nds b
-	WHERE NDS <> 0 AND
-		NOT EXISTS
-		(
-			SELECT *
-			FROM #c a
-			WHERE a.CLIENT = b.CL_1C
-		)
+		SELECT CL_1C, SUM(NDS) AS NDS
+			INTO #nds
+		FROM
+			(
+				SELECT
+					NUM, DATE, ISNULL(CL_1C, '!!!Õ≈“  À»≈Õ“¿!!!') AS CL_1C,
+					(
+						SELECT SUM(ROUND(S_NDS, 2))
+						FROM dbo.BookSaleDetail b
+						WHERE a.ID = b.ID_SALE
+							AND b.ID_TAX = @TAX
+					) AS NDS
+				FROM
+					dbo.BookSale a
+					INNER JOIN dbo.InvoiceSaleTable c ON c.INS_ID = a.ID_INVOICE
+					LEFT OUTER JOIN dbo.ClientTable ON c.INS_ID_CLIENT = CL_ID
+				WHERE DATE BETWEEN @PR_BEGIN AND @PR_END
+					AND ID_ORG = @ORG
+					AND CODE = '02'
+			) AS o_O
+		WHERE ISNULL(NDS, 0)  <> 0
+		GROUP BY CL_1C
 
-	UNION ALL
+		SELECT CLIENT, PRICE2 AS [1C_PRICE], NDS AS [DBF_PRICE], PRICE2 - NDS AS [DIFF]
+		FROM
+			#c a
+			INNER JOIN #nds b ON a.CLIENT = b.CL_1C
+		WHERE a.PRICE2 <> b.NDS
 
-	SELECT CLIENT, PRICE2 AS [1C_PRICE], 0 AS [DBF_PRICE], PRICE2 AS [DIFF]
-	FROM
-		#c a
-	WHERE PRICE2 <> 0
-		AND NOT EXISTS
-		(
-			SELECT *
-			FROM #nds b
-			WHERE a.CLIENT = b.CL_1C
-		)
+		UNION ALL
 
-	ORDER BY CLIENT
+		SELECT CL_1C, 0 AS [1C_PRICE], NDS AS [DBF_PRICE], NDS AS [DIFF]
+		FROM
+			#nds b
+		WHERE NDS <> 0 AND
+			NOT EXISTS
+			(
+				SELECT *
+				FROM #c a
+				WHERE a.CLIENT = b.CL_1C
+			)
+
+		UNION ALL
+
+		SELECT CLIENT, PRICE2 AS [1C_PRICE], 0 AS [DBF_PRICE], PRICE2 AS [DIFF]
+		FROM
+			#c a
+		WHERE PRICE2 <> 0
+			AND NOT EXISTS
+			(
+				SELECT *
+				FROM #nds b
+				WHERE a.CLIENT = b.CL_1C
+			)
+
+		ORDER BY CLIENT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

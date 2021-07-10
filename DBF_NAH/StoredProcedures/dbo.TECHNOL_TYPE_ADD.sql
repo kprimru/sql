@@ -23,22 +23,43 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @ID	SMALLINT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.TechnolTypeTable(TT_NAME, TT_REG, TT_COEF, TT_CALC, TT_ACTIVE)
-	VALUES (@name, @reg, @coef, @calc, @active)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET @ID = SCOPE_IDENTITY()
+	BEGIN TRY
 
-	IF @returnvalue = 1
-		SELECT @ID AS NEW_IDEN
+		DECLARE @ID	SMALLINT
 
-	INSERT INTO dbo.TechnolTypePeriod(TTP_ID_TECH, TTP_ID_PERIOD, TTP_COEF)
-		SELECT @ID, PR_ID, @coef
-		FROM dbo.PeriodTable
+		INSERT INTO dbo.TechnolTypeTable(TT_NAME, TT_REG, TT_COEF, TT_CALC, TT_ACTIVE)
+		VALUES (@name, @reg, @coef, @calc, @active)
 
-	SET NOCOUNT OFF
+		SET @ID = SCOPE_IDENTITY()
+
+		IF @returnvalue = 1
+			SELECT @ID AS NEW_IDEN
+
+		INSERT INTO dbo.TechnolTypePeriod(TTP_ID_TECH, TTP_ID_PERIOD, TTP_COEF)
+			SELECT @ID, PR_ID, @coef
+			FROM dbo.PeriodTable
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_ADD] TO rl_technol_type_w;
 GO

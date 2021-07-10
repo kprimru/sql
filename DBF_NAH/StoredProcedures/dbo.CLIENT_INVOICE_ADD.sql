@@ -33,75 +33,92 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ID INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE @payer INT
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @payer = CL_ID_PAYER
-	FROM dbo.ClientTable
-	WHERE CL_ID = @INS_ID_CLIENT
+	BEGIN TRY
 
-	INSERT INTO dbo.InvoiceSaleTable
-		(
-		INS_ID_ORG,
-		INS_DATE,
-		INS_NUM,
-		INS_NUM_YEAR,
-		INS_ID_CLIENT,
---		INS_CLIENT_PSEDO,
-		INS_CLIENT_NAME,
-		INS_CLIENT_ADDR,
-		INS_CONSIG_NAME,
-		INS_CONSIG_ADDR,
-		INS_CLIENT_INN,
-		INS_CLIENT_KPP,
-		INS_DOC_STRING,
-		INS_STORNO,
-		INS_COMMENT,
-		INS_ID_TYPE,
-		INS_ID_PAYER,
-		INS_IDENT
-		)
-	VALUES
-		(
-		@INS_ID_ORG,
-		@INS_DATE,
-		@INS_NUM,
-		@INS_NUM_YEAR,
-		@INS_ID_CLIENT,
---		@INS_CLIENT_PSEDO,
-		@INS_CLIENT_NAME,
-		@INS_CLIENT_ADDR,
-		@INS_CONSIG_NAME,
-		@INS_CONSIG_ADDR,
-		@INS_CLIENT_INN,
-		@INS_CLIENT_KPP,
-		@INS_DOC_STRING,
-		@INS_STORNO,
-		@INS_COMMENT,
-		@INS_TYPE,
-		@payer,
-		@INS_IDENT
-		)
+		DECLARE @ID INT
 
-	SELECT @ID = SCOPE_IDENTITY()
+		DECLARE @payer INT
 
-	SELECT @ID AS NEW_IDEN
+		SELECT @payer = CL_ID_PAYER
+		FROM dbo.ClientTable
+		WHERE CL_ID = @INS_ID_CLIENT
 
-	INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-		SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
-		FROM
-			dbo.InvoiceSaleTable
-		WHERE INS_ID = @ID
+		INSERT INTO dbo.InvoiceSaleTable
+			(
+			INS_ID_ORG,
+			INS_DATE,
+			INS_NUM,
+			INS_NUM_YEAR,
+			INS_ID_CLIENT,
+	--		INS_CLIENT_PSEDO,
+			INS_CLIENT_NAME,
+			INS_CLIENT_ADDR,
+			INS_CONSIG_NAME,
+			INS_CONSIG_ADDR,
+			INS_CLIENT_INN,
+			INS_CLIENT_KPP,
+			INS_DOC_STRING,
+			INS_STORNO,
+			INS_COMMENT,
+			INS_ID_TYPE,
+			INS_ID_PAYER,
+			INS_IDENT
+			)
+		VALUES
+			(
+			@INS_ID_ORG,
+			@INS_DATE,
+			@INS_NUM,
+			@INS_NUM_YEAR,
+			@INS_ID_CLIENT,
+	--		@INS_CLIENT_PSEDO,
+			@INS_CLIENT_NAME,
+			@INS_CLIENT_ADDR,
+			@INS_CONSIG_NAME,
+			@INS_CONSIG_ADDR,
+			@INS_CLIENT_INN,
+			@INS_CLIENT_KPP,
+			@INS_DOC_STRING,
+			@INS_STORNO,
+			@INS_COMMENT,
+			@INS_TYPE,
+			@payer,
+			@INS_IDENT
+			)
 
-	EXEC dbo.BOOK_SALE_PROCESS @ID
-	EXEC dbo.BOOK_PURCHASE_PROCESS @ID
+		SELECT @ID = SCOPE_IDENTITY()
+
+		SELECT @ID AS NEW_IDEN
+
+		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
+			FROM
+				dbo.InvoiceSaleTable
+			WHERE INS_ID = @ID
+
+		EXEC dbo.BOOK_SALE_PROCESS @ID
+		EXEC dbo.BOOK_PURCHASE_PROCESS @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_INVOICE_ADD] TO rl_invoice_w;

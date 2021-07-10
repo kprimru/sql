@@ -12,25 +12,47 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF EXISTS (
-			SELECT *
-			FROM Subhost.SubhostCalcReport
-			WHERE SCR_ID_SUBHOST = @SH_ID
-				AND SCR_ID_PERIOD = @PR_ID
-		)
-		RETURN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE Subhost.SubhostCalc
-	SET SHC_TOTAL_STUDY = @TOTAL
-	WHERE SHC_ID_SUBHOST = @SH_ID AND SHC_ID_PERIOD = @PR_ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @@ROWCOUNT = 0
-		INSERT INTO Subhost.SubhostCalc(
-				SHC_ID_SUBHOST, SHC_ID_PERIOD, SHC_TOTAL_STUDY
+	BEGIN TRY
+
+		IF EXISTS (
+				SELECT *
+				FROM Subhost.SubhostCalcReport
+				WHERE SCR_ID_SUBHOST = @SH_ID
+					AND SCR_ID_PERIOD = @PR_ID
 			)
-			VALUES(
-				@SH_ID, @PR_ID, @TOTAL
+			RETURN
+
+		UPDATE Subhost.SubhostCalc
+		SET SHC_TOTAL_STUDY = @TOTAL
+		WHERE SHC_ID_SUBHOST = @SH_ID AND SHC_ID_PERIOD = @PR_ID
+
+		IF @@ROWCOUNT = 0
+			INSERT INTO Subhost.SubhostCalc(
+					SHC_ID_SUBHOST, SHC_ID_PERIOD, SHC_TOTAL_STUDY
 				)
+				VALUES(
+					@SH_ID, @PR_ID, @TOTAL
+					)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

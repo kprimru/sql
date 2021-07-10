@@ -12,13 +12,14 @@ RETURNS @tbl TABLE (ITEM SMALLINT NOT NULL) AS
 BEGIN
 	INSERT INTO @tbl
   		SELECT PR_ID
-		FROM PeriodTable
+		FROM dbo.PeriodTable
 		WHERE PR_DATE <= DATEADD(MONTH, -1, @date) AND @date <= DATEADD(MONTH, 1, PR_END_DATE)
 
 
 	-- Возвращение результата работы функции
 	RETURN
 END
+
 
 
 GO

@@ -9,8 +9,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT ID, ID_OLD_PRICE, ID_NEW_PRICE, ID_OLD_SYS_TYPE, ID_NEW_SYS_TYPE, ID_OLD_NET, ID_NEW_NET, COEF
-	FROM Price.PriceDepend
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ID, ID_OLD_PRICE, ID_NEW_PRICE, ID_OLD_SYS_TYPE, ID_NEW_SYS_TYPE, ID_OLD_NET, ID_NEW_NET, COEF
+		FROM Price.PriceDepend
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

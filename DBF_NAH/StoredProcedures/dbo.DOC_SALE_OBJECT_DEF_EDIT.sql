@@ -27,20 +27,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.DocumentSaleObjectDefaultTable
-	SET DSD_ID_SO = @soid,
-		DSD_ID_DOC = @docid,
-		DSD_ID_GOOD	= @goodid,
-		DSD_ID_UNIT = @unitid,
-		DSD_PRINT = @print,
-		DSD_ACTIVE = @active
-	WHERE DSD_ID = @id
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.DocumentSaleObjectDefaultTable
+		SET DSD_ID_SO = @soid,
+			DSD_ID_DOC = @docid,
+			DSD_ID_GOOD	= @goodid,
+			DSD_ID_UNIT = @unitid,
+			DSD_PRINT = @print,
+			DSD_ACTIVE = @active
+		WHERE DSD_ID = @id
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[DOC_SALE_OBJECT_DEF_EDIT] TO rl_doc_sale_object_def_w;

@@ -16,17 +16,32 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT AC_ID
-	FROM dbo.ActivityTable
-	WHERE AC_NAME = @activityname
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT AC_ID
+		FROM dbo.ActivityTable
+		WHERE AC_NAME = @activityname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[ACTIVITY_CHECK_NAME] TO rl_activity_w;

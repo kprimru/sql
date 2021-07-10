@@ -16,18 +16,40 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @list TABLE (ROW_ID INT)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @list
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@ROWLIST, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE
-	FROM dbo.BillFactDetailTable
-	WHERE BFD_ID IN
-		(
-			SELECT ROW_ID FROM @list
-		)
+	BEGIN TRY
+
+		DECLARE @list TABLE (ROW_ID INT)
+
+		INSERT INTO @list
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@ROWLIST, ',')
+
+		DELETE
+		FROM dbo.BillFactDetailTable
+		WHERE BFD_ID IN
+			(
+				SELECT ROW_ID FROM @list
+			)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

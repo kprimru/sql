@@ -34,61 +34,72 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @reporttemplateid SMALLINT
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @reporttemplateid = NULL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @reporttemplateid = RT_ID
-	FROM dbo.ReportTemplateTable
-	WHERE RT_NAME = @reporttemplatename
+	BEGIN TRY
 
-	IF @reporttemplateid IS NULL
-		BEGIN
-			INSERT INTO dbo.ReportTemplateTable (
-						RT_NAME, RT_ID_REPORT_TYPE,
-						RT_LIST_STATUS, RT_LIST_SUBHOST, RT_LIST_SYSTEM,
-						RT_LIST_SYSTYPE, RT_LIST_NETTYPE, RT_LIST_PERIOD,
-						RT_LIST_TECHTYPE,
-						RT_TOTALRIC,
-						RT_TOTALCOUNT
-						)
-			VALUES		(
-						@reporttemplatename, @reporttype,			--@reporttemplatetext
-						@statuslist, @subhostlist, @systemlist,
-						@systypelist, @nettypelist, @periodlist,
-						@techtypelist,
-						@totalric,
-						@totalcount
-						)
-		END
-	ELSE
-		BEGIN
-			UPDATE		dbo.ReportTemplateTable
-			SET			RT_NAME = @reporttemplatename,		--RT_TEXT = @reporttemplatetext
-						RT_ID_REPORT_TYPE = @reporttype,
-						RT_LIST_STATUS = @statuslist,
-						RT_LIST_SUBHOST = @subhostlist,
-						RT_LIST_SYSTEM = @systemlist,
-						RT_LIST_SYSTYPE = @systypelist,
-						RT_LIST_NETTYPE = @nettypelist,
-						RT_LIST_PERIOD = @periodlist,
-						RT_LIST_TECHTYPE = @techtypelist,
-						RT_TOTALRIC=@totalric,
-						RT_TOTALCOUNT=@totalcount
-			WHERE RT_ID = @reporttemplateid
-		END
+		DECLARE @reporttemplateid SMALLINT
 
+		SET @reporttemplateid = NULL
+
+		SELECT @reporttemplateid = RT_ID
+		FROM dbo.ReportTemplateTable
+		WHERE RT_NAME = @reporttemplatename
+
+		IF @reporttemplateid IS NULL
+			BEGIN
+				INSERT INTO dbo.ReportTemplateTable (
+							RT_NAME, RT_ID_REPORT_TYPE,
+							RT_LIST_STATUS, RT_LIST_SUBHOST, RT_LIST_SYSTEM,
+							RT_LIST_SYSTYPE, RT_LIST_NETTYPE, RT_LIST_PERIOD,
+							RT_LIST_TECHTYPE,
+							RT_TOTALRIC,
+							RT_TOTALCOUNT
+							)
+				VALUES		(
+							@reporttemplatename, @reporttype,			--@reporttemplatetext
+							@statuslist, @subhostlist, @systemlist,
+							@systypelist, @nettypelist, @periodlist,
+							@techtypelist,
+							@totalric,
+							@totalcount
+							)
+			END
+		ELSE
+			BEGIN
+				UPDATE		dbo.ReportTemplateTable
+				SET			RT_NAME = @reporttemplatename,		--RT_TEXT = @reporttemplatetext
+							RT_ID_REPORT_TYPE = @reporttype,
+							RT_LIST_STATUS = @statuslist,
+							RT_LIST_SUBHOST = @subhostlist,
+							RT_LIST_SYSTEM = @systemlist,
+							RT_LIST_SYSTYPE = @systypelist,
+							RT_LIST_NETTYPE = @nettypelist,
+							RT_LIST_PERIOD = @periodlist,
+							RT_LIST_TECHTYPE = @techtypelist,
+							RT_TOTALRIC=@totalric,
+							RT_TOTALCOUNT=@totalcount
+				WHERE RT_ID = @reporttemplateid
+			END
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_SAVE] TO rl_report_w;

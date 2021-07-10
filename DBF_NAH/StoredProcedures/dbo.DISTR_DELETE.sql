@@ -18,29 +18,44 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DELETE
-	FROM dbo.DistrDeliveryHistoryTable
-	WHERE DDH_ID_DISTR = @distrid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE
-	FROM dbo.DistrFinancingTable
-	WHERE DF_ID_DISTR = @distrid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE
-	FROM dbo.DistrDocumentTable
-	WHERE DD_ID_DISTR = @distrid
+	BEGIN TRY
 
-	DELETE
-	FROM dbo.DistrTable
-	WHERE DIS_ID = @distrid
+		DELETE
+		FROM dbo.DistrDeliveryHistoryTable
+		WHERE DDH_ID_DISTR = @distrid
 
-	SET NOCOUNT OFF
+		DELETE
+		FROM dbo.DistrFinancingTable
+		WHERE DF_ID_DISTR = @distrid
+
+		DELETE
+		FROM dbo.DistrDocumentTable
+		WHERE DD_ID_DISTR = @distrid
+
+		DELETE
+		FROM dbo.DistrTable
+		WHERE DIS_ID = @distrid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[DISTR_DELETE] TO rl_distr_d;

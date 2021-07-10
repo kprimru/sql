@@ -21,14 +21,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.DocumentTable(DOC_NAME, DOC_PSEDO, DOC_ACTIVE)
-	VALUES (@name, @psedo, @active)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.DocumentTable(DOC_NAME, DOC_PSEDO, DOC_ACTIVE)
+		VALUES (@name, @psedo, @active)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[DOCUMENT_ADD] TO rl_document_w;

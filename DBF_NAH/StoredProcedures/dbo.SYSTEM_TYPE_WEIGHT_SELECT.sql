@@ -10,12 +10,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT STW_ID, SYS_ID, SYS_SHORT_NAME, SST_ID, SST_CAPTION, STW_WEIGHT
-	FROM
-		dbo.SystemTypeWeightTable INNER JOIN
-		dbo.SystemTable ON STW_ID_SYSTEM = SYS_ID INNER JOIN
-		dbo.SystemTypeTable ON STW_ID_TYPE = SST_ID
-	WHERE STW_ACTIVE = ISNULL(@ACTIVE, STW_ACTIVE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT STW_ID, SYS_ID, SYS_SHORT_NAME, SST_ID, SST_CAPTION, STW_WEIGHT
+		FROM
+			dbo.SystemTypeWeightTable INNER JOIN
+			dbo.SystemTable ON STW_ID_SYSTEM = SYS_ID INNER JOIN
+			dbo.SystemTypeTable ON STW_ID_TYPE = SST_ID
+		WHERE STW_ACTIVE = ISNULL(@ACTIVE, STW_ACTIVE)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

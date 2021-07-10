@@ -11,16 +11,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.ActTable
-	SET ACT_ID_COUR = @courid
-	WHERE ACT_ID = @actid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE @CLIENT	INT
-	DECLARE @TXT	VARCHAR(MAX)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
+	BEGIN TRY
 
-	EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Смена СИ', @TXT, @CLIENT, @actid
+		UPDATE dbo.ActTable
+		SET ACT_ID_COUR = @courid
+		WHERE ACT_ID = @actid
+
+		DECLARE @CLIENT	INT
+		DECLARE @TXT	VARCHAR(MAX)
+
+		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
+
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Смена СИ', @TXT, @CLIENT, @actid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

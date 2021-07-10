@@ -4,12 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-/*
-Автор:		  Денисов Алексей
-Описание:
-*/
-
 ALTER PROCEDURE [dbo].[CLIENT_CONTRACT_ADD]
 	@clientid INT,
 	@contractnumber VARCHAR(500),
@@ -30,16 +24,37 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.ContractTable(CO_ID_CLIENT, CO_NUM, CO_ID_TYPE, CO_DATE, CO_BEG_DATE, CO_END_DATE, CO_ID_PAY, CO_ID_KIND,
-							  CO_ACTIVE, CO_IDENT, CO_KEY, CO_NUM_FROM, CO_NUM_TO, CO_EMAIL)
-	VALUES (@clientid, @contractnumber, @contracttypeid, @contractdate, @contractbegin, @contractend, @pay, @kind,
-			@active, @ident, @key, @num_from, @num_to, @email)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.ContractTable(CO_ID_CLIENT, CO_NUM, CO_ID_TYPE, CO_DATE, CO_BEG_DATE, CO_END_DATE, CO_ID_PAY, CO_ID_KIND,
+								  CO_ACTIVE, CO_IDENT, CO_KEY, CO_NUM_FROM, CO_NUM_TO, CO_EMAIL)
+		VALUES (@clientid, @contractnumber, @contracttypeid, @contractdate, @contractbegin, @contractend, @pay, @kind,
+				@active, @ident, @key, @num_from, @num_to, @email)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_ADD] TO rl_client_contract_w;
 GRANT EXECUTE ON [dbo].[CLIENT_CONTRACT_ADD] TO rl_client_w;

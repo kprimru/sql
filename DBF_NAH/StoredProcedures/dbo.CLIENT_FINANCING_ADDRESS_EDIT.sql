@@ -27,32 +27,47 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	IF ((@cfaid IS NOT NULL) AND (@cfaid <> 0))
-		BEGIN
-			UPDATE dbo.ClientFinancingAddressTable
-			SET CFA_ID_ATL = @atlid
-			WHERE CFA_ID = @cfaid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-			SELECT @cfaid AS NEW_IDEN
-		END
-	ELSE
-		BEGIN
-			INSERT INTO dbo.ClientFinancingAddressTable (
-					CFA_ID_CLIENT, CFA_ID_FAT, CFA_ID_ATL
-				) VALUES (
-					@clid, @fatid, @atlid
-				)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-			SELECT SCOPE_IDENTITY() AS NEW_IDEN
-		END
+	BEGIN TRY
 
-	SET NOCOUNT OFF
+		IF ((@cfaid IS NOT NULL) AND (@cfaid <> 0))
+			BEGIN
+				UPDATE dbo.ClientFinancingAddressTable
+				SET CFA_ID_ATL = @atlid
+				WHERE CFA_ID = @cfaid
+
+				SELECT @cfaid AS NEW_IDEN
+			END
+		ELSE
+			BEGIN
+				INSERT INTO dbo.ClientFinancingAddressTable (
+						CFA_ID_CLIENT, CFA_ID_FAT, CFA_ID_ATL
+					) VALUES (
+						@clid, @fatid, @atlid
+					)
+
+				SELECT SCOPE_IDENTITY() AS NEW_IDEN
+			END
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ADDRESS_EDIT] TO rl_client_fin_template_w;

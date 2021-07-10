@@ -24,18 +24,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.TOPersonalTable
-	SET
-		TP_ID_RP = @rpid,
-		TP_ID_POS = @posid,
-		TP_SURNAME = @surname,
-		TP_NAME = @name,
-		TP_OTCH = @otch,
-		TP_PHONE = @phone,
-		TP_LAST = GETDATE()
-	WHERE TP_ID = @tpid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.TOPersonalTable
+		SET
+			TP_ID_RP = @rpid,
+			TP_ID_POS = @posid,
+			TP_SURNAME = @surname,
+			TP_NAME = @name,
+			TP_OTCH = @otch,
+			TP_PHONE = @phone,
+			TP_LAST = GETDATE()
+		WHERE TP_ID = @tpid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

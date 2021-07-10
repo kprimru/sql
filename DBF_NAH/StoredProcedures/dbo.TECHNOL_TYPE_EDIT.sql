@@ -23,24 +23,44 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.TechnolTypeTable
-	SET TT_NAME = @name,
-		TT_REG = @reg,
-		TT_COEF = @coef,
-		TT_CALC = @calc,
-		TT_ACTIVE = @active
-	WHERE TT_ID = @id
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE t
-	SET TTP_COEF = @coef
-	FROM
-		dbo.TechnolTypePeriod t
-		INNER JOIN dbo.PeriodTable ON TTP_ID_PERIOD = PR_ID
-	WHERE TTP_ID_TECH = @id AND PR_DATE > GETDATE()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
+	BEGIN TRY
 
-	SET NOCOUNT OFF
+		UPDATE dbo.TechnolTypeTable
+		SET TT_NAME = @name,
+			TT_REG = @reg,
+			TT_COEF = @coef,
+			TT_CALC = @calc,
+			TT_ACTIVE = @active
+		WHERE TT_ID = @id
+
+		UPDATE t
+		SET TTP_COEF = @coef
+		FROM
+			dbo.TechnolTypePeriod t
+			INNER JOIN dbo.PeriodTable ON TTP_ID_PERIOD = PR_ID
+		WHERE TTP_ID_TECH = @id AND PR_DATE > GETDATE()
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_EDIT] TO rl_technol_type_w;
 GO

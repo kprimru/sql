@@ -16,19 +16,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SN_NAME, SN_ID, SNC_NET_COUNT, SNC_TECH, SNC_ACTIVE, SNC_ODON, SNC_ODOFF, SNC_SHORT
-	FROM
-		dbo.SystemNetCountTable a INNER JOIN
-		dbo.SystemNetTable b ON a.SNC_ID_SN = b.SN_ID
-	WHERE SNC_ID = @systemnetcountid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SN_NAME, SN_ID, SNC_NET_COUNT, SNC_TECH, SNC_ACTIVE, SNC_ODON, SNC_ODOFF, SNC_SHORT
+		FROM
+			dbo.SystemNetCountTable a INNER JOIN
+			dbo.SystemNetTable b ON a.SNC_ID_SN = b.SN_ID
+		WHERE SNC_ID = @systemnetcountid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_GET] TO rl_system_net_count_r;

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:
-Дата создания:
+Дата создания:  
 Описание:
 Правка:			21.07.2009
 Описание:		Добавлена группировка по деталь-данным
@@ -452,6 +452,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[INVOICE_PRINT_BY_ID_LIST] TO rl_invoice_p;
 GO

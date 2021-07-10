@@ -20,14 +20,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.DistrStatusTable
-	SET DS_NAME = @dsname,
-		DS_REG = @dsreg,
-		DS_ACTIVE = @active
-	WHERE DS_ID = @dsid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.DistrStatusTable
+		SET DS_NAME = @dsname,
+			DS_REG = @dsreg,
+			DS_ACTIVE = @active
+		WHERE DS_ID = @dsid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[DISTR_STATUS_EDIT] TO rl_distr_status_w;
 GO

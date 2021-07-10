@@ -17,24 +17,39 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT
-			CT_ID, CT_NAME, CT_PREFIX, RG_NAME, RG_ID,
-			AR_NAME, AR_ID, CNT_NAME, CNT_ID
-	FROM
-		dbo.CityTable ct LEFT OUTER JOIN
-		dbo.RegionTable rt ON rt.RG_ID = CT_ID_RG LEFT OUTER JOIN
-		dbo.AreaTable art ON art.AR_ID = CT_ID_AREA LEFT OUTER JOIN
-		dbo.CountryTable cnt ON cnt.CNT_ID = ct.CT_ID_COUNTRY
-	WHERE CT_ACTIVE = ISNULL(@active, CT_ACTIVE)
-	ORDER BY CT_NAME, RG_NAME, AR_NAME, CNT_NAME
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		SELECT
+				CT_ID, CT_NAME, CT_PREFIX, RG_NAME, RG_ID,
+				AR_NAME, AR_ID, CNT_NAME, CNT_ID
+		FROM
+			dbo.CityTable ct LEFT OUTER JOIN
+			dbo.RegionTable rt ON rt.RG_ID = CT_ID_RG LEFT OUTER JOIN
+			dbo.AreaTable art ON art.AR_ID = CT_ID_AREA LEFT OUTER JOIN
+			dbo.CountryTable cnt ON cnt.CNT_ID = ct.CT_ID_COUNTRY
+		WHERE CT_ACTIVE = ISNULL(@active, CT_ACTIVE)
+		ORDER BY CT_NAME, RG_NAME, AR_NAME, CNT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[CITY_SELECT] TO rl_city_r;

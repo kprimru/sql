@@ -24,4 +24,5 @@ RETURN
 		) AS SSC_COEF
 	FROM dbo.SystemTable
 )
+
 GO

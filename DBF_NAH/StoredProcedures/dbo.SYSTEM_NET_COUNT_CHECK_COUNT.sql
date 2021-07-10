@@ -18,12 +18,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SNC_ID
-	FROM dbo.SystemNetCountTable
-	WHERE SNC_NET_COUNT = @netcount
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SNC_ID
+		FROM dbo.SystemNetCountTable
+		WHERE SNC_NET_COUNT = @netcount
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
 GO
 GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] TO rl_system_net_count_w;
 GO

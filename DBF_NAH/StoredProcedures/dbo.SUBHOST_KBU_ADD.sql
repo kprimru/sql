@@ -15,11 +15,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.SubhostKBUTable(SK_ID_HOST, SK_ID_SYSTEM, SK_ID_PERIOD, SK_KBU, SK_ACTIVE)
-		VALUES(@SH_ID, @SYS_ID, @PR_ID, @KBU, @ACTIVE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @RETURN = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.SubhostKBUTable(SK_ID_HOST, SK_ID_SYSTEM, SK_ID_PERIOD, SK_KBU, SK_ACTIVE)
+			VALUES(@SH_ID, @SYS_ID, @PR_ID, @KBU, @ACTIVE)
+
+		IF @RETURN = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

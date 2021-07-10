@@ -12,31 +12,53 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @PR_ALG
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @RES	DECIMAL(10, 4)
+	BEGIN TRY
 
-	IF @PR_DATE >= '20120601'
-	BEGIN
-		IF @STOCK < 1
-			SELECT @RES = MIN(VAL)
-			FROM
-				(
-					SELECT @KBU AS VAL
+		DECLARE @PR_DATE SMALLDATETIME
 
-					UNION ALL
+		SELECT @PR_DATE = PR_DATE
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @PR_ALG
 
-					SELECT (@KBU + @STOCK) / 2
-				) AS o_O
-		ELSE
-			SET @RES = @KBU
-	END
+		DECLARE @RES	DECIMAL(10, 4)
 
-	SELECT ROUND(@RES, 4) AS KBU_TOTAL
+		IF @PR_DATE >= '20120601'
+		BEGIN
+			IF @STOCK < 1
+				SELECT @RES = MIN(VAL)
+				FROM
+					(
+						SELECT @KBU AS VAL
+
+						UNION ALL
+
+						SELECT (@KBU + @STOCK) / 2
+					) AS o_O
+			ELSE
+				SET @RES = @KBU
+		END
+
+		SELECT ROUND(@RES, 4) AS KBU_TOTAL
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

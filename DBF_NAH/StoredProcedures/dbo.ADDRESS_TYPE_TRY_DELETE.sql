@@ -16,31 +16,44 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_TYPE = @addresstypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный тип адреса указан в одном или нескольких адресах. ' +
-							  'Удаление невозможно, пока выбранный тип адреса будет указан хотя ' +
-							  'бы в одном адресе.'
-		END
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
+		SET @res = 0
+		SET @txt = ''
 
-	SET	NOCOUNT OFF
+		IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_TYPE = @addresstypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Данный тип адреса указан в одном или нескольких адресах. ' +
+								  'Удаление невозможно, пока выбранный тип адреса будет указан хотя ' +
+								  'бы в одном адресе.'
+			END
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_TRY_DELETE] TO rl_address_type_d;

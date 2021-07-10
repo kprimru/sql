@@ -24,83 +24,105 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @ID IS NULL
-	BEGIN
-		IF @TYPE = N'SALE'
-			INSERT INTO dbo.BookSale(ID_ORG, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE)
-				VALUES(@ORG, @INVOICE, @CODE, @NUM, @DATE, @NAME, @INN, @KPP, @IN_NUM, @IN_DATE)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF @ID IS NULL
+		BEGIN
+			IF @TYPE = N'SALE'
+				INSERT INTO dbo.BookSale(ID_ORG, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE)
+					VALUES(@ORG, @INVOICE, @CODE, @NUM, @DATE, @NAME, @INN, @KPP, @IN_NUM, @IN_DATE)
+			ELSE
+				INSERT INTO dbo.BookPurchase(ID_ORG, ID_AVANS, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, PURCHASE_DATE)
+					VALUES (@ORG, @AVANS, @INVOICE, @CODE, @NUM, @DATE, @NAME, @INN, @KPP, @IN_NUM, @IN_DATE, @PURCHASE)
+
+			SELECT @ID = SCOPE_IDENTITY()
+		END
 		ELSE
-			INSERT INTO dbo.BookPurchase(ID_ORG, ID_AVANS, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, PURCHASE_DATE)
-				VALUES (@ORG, @AVANS, @INVOICE, @CODE, @NUM, @DATE, @NAME, @INN, @KPP, @IN_NUM, @IN_DATE, @PURCHASE)
+		BEGIN
+			IF @TYPE = N'SALE'
+				UPDATE dbo.BookSale
+				SET ID_ORG		=	@ORG,
+					ID_INVOICE	=	@INVOICE,
+					CODE		=	@CODE,
+					NUM			=	@NUM,
+					DATE		=	@DATE,
+					NAME		=	@NAME,
+					INN			=	@INN,
+					KPP			=	@KPP,
+					IN_NUM		=	@IN_NUM,
+					IN_DATE		=	@IN_DATE
+				WHERE ID = @ID
+			ELSE
+				UPDATE dbo.BookPurchase
+				SET	ID_ORG			=	@ORG,
+					ID_AVANS		=	@AVANS,
+					ID_INVOICE		=	@INVOICE,
+					CODE			=	@CODE,
+					NUM				=	@NUM,
+					DATE			=	@DATE,
+					NAME			=	@NAME,
+					INN				=	@INN,
+					KPP				=	@KPP,
+					IN_NUM			=	@IN_NUM,
+					IN_DATE			=	@IN_DATE,
+					PURCHASE_DATE	=	@PURCHASE
+				WHERE ID = @ID
+		END
 
-		SELECT @ID = SCOPE_IDENTITY()
-	END
-	ELSE
-	BEGIN
 		IF @TYPE = N'SALE'
-			UPDATE dbo.BookSale
-			SET ID_ORG		=	@ORG,
-				ID_INVOICE	=	@INVOICE,
-				CODE		=	@CODE,
-				NUM			=	@NUM,
-				DATE		=	@DATE,
-				NAME		=	@NAME,
-				INN			=	@INN,
-				KPP			=	@KPP,
-				IN_NUM		=	@IN_NUM,
-				IN_DATE		=	@IN_DATE
-			WHERE ID = @ID
+			DELETE
+			FROM dbo.BookSaleDetail
+			WHERE ID_SALE = @ID
 		ELSE
-			UPDATE dbo.BookPurchase
-			SET	ID_ORG			=	@ORG,
-				ID_AVANS		=	@AVANS,
-				ID_INVOICE		=	@INVOICE,
-				CODE			=	@CODE,
-				NUM				=	@NUM,
-				DATE			=	@DATE,
-				NAME			=	@NAME,
-				INN				=	@INN,
-				KPP				=	@KPP,
-				IN_NUM			=	@IN_NUM,
-				IN_DATE			=	@IN_DATE,
-				PURCHASE_DATE	=	@PURCHASE
-			WHERE ID = @ID
-	END
-
-	IF @TYPE = N'SALE'
-		DELETE
-		FROM dbo.BookSaleDetail
-		WHERE ID_SALE = @ID
-	ELSE
-		DELETE
-		FROM dbo.BookPurchaseDetail
-		WHERE ID_PURCHASE = @ID
+			DELETE
+			FROM dbo.BookPurchaseDetail
+			WHERE ID_PURCHASE = @ID
 
 
-	DECLARE @XML XML
+		DECLARE @XML XML
 
-	SET @XML = CAST(@TAX AS XML)
+		SET @XML = CAST(@TAX AS XML)
 
-	IF @TYPE = N'SALE'
-		INSERT INTO dbo.BookSaleDetail(ID_SALE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
-			SELECT
-				@ID,
-				c.value('@tax', 'SMALLINT'),
-				c.value('@bez_nds', 'MONEY'),
-				c.value('@nds', 'MONEY'),
-				c.value('@all', 'MONEY')
-			FROM
-				@XML.nodes('/root/item') AS a(c)
-	ELSE
-		INSERT INTO dbo.BookPurchaseDetail(ID_PURCHASE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
-			SELECT
-				@ID,
-				c.value('@tax', 'SMALLINT'),
-				c.value('@bez_nds', 'MONEY'),
-				c.value('@nds', 'MONEY'),
-				c.value('@all', 'MONEY')
-			FROM
-				@XML.nodes('/root/item') AS a(c)
+		IF @TYPE = N'SALE'
+			INSERT INTO dbo.BookSaleDetail(ID_SALE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
+				SELECT
+					@ID,
+					c.value('@tax', 'SMALLINT'),
+					c.value('@bez_nds', 'MONEY'),
+					c.value('@nds', 'MONEY'),
+					c.value('@all', 'MONEY')
+				FROM
+					@XML.nodes('/root/item') AS a(c)
+		ELSE
+			INSERT INTO dbo.BookPurchaseDetail(ID_PURCHASE, ID_TAX, S_BEZ_NDS, S_NDS, S_ALL)
+				SELECT
+					@ID,
+					c.value('@tax', 'SMALLINT'),
+					c.value('@bez_nds', 'MONEY'),
+					c.value('@nds', 'MONEY'),
+					c.value('@all', 'MONEY')
+				FROM
+					@XML.nodes('/root/item') AS a(c)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 GO

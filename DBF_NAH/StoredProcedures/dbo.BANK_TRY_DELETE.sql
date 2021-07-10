@@ -18,35 +18,54 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_BANK = @bankid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный банк указан у одного или нескольких клиентов. ' +
-							  'Удаление невозможно, пока выбранный банк будет указан хотя ' +
-							  'бы у одного клиента.' + CHAR(13)
-		END
+	BEGIN TRY
 
-	-- добавлено 30.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_ID_BANK = @bankid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный банк указан у одной или нескольких обслуживающих организаций. ' +
-							  'Удаление невозможно, пока выбранный банк будет указан хотя ' +
-							  'бы у одной обслуживающей организации.' + CHAR(13)
-		END
-	--
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SELECT @res AS RES, @txt AS TXT
+		SET @res = 0
+		SET @txt = ''
 
-	SET NOCOUNT OFF
+		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_BANK = @bankid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Данный банк указан у одного или нескольких клиентов. ' +
+								  'Удаление невозможно, пока выбранный банк будет указан хотя ' +
+								  'бы у одного клиента.' + CHAR(13)
+			END
+
+		-- добавлено 30.04.2009, В.Богдан
+		IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_ID_BANK = @bankid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Данный банк указан у одной или нескольких обслуживающих организаций. ' +
+								  'Удаление невозможно, пока выбранный банк будет указан хотя ' +
+								  'бы у одной обслуживающей организации.' + CHAR(13)
+			END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
 
 GO
 GRANT EXECUTE ON [dbo].[BANK_TRY_DELETE] TO rl_bank_d;

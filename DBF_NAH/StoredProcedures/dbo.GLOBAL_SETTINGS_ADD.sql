@@ -19,26 +19,42 @@ ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
 	@returnvalue BIT = 1
 AS
 BEGIN
-	-- SET NOCOUNT ON обязателен для использования в хранимых процедурах.
-	-- Позволяет избежать лишней информации и сетевого траффика.
-
 	SET NOCOUNT ON;
 
-	-- Текст процедуры ниже
-	INSERT INTO dbo.GlobalSettingsTable
-							(
-								GS_NAME, GS_VALUE, GS_ACTIVE
-							)
-	VALUES
-							(
-								@gsname, @gsvalue, @active
-							)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.GlobalSettingsTable
+								(
+									GS_NAME, GS_VALUE, GS_ACTIVE
+								)
+		VALUES
+								(
+									@gsname, @gsvalue, @active
+								)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
 
 GO
 GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_ADD] TO rl_global_settings_w;
