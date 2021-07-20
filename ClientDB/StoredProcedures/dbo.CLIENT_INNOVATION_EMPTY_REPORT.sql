@@ -35,10 +35,10 @@ BEGIN
 				WHERE UD_ID_CLIENT = ClientID
 				ORDER BY UIU_DATE_S DESC
 			) AS LAST_UPDATE
-		FROM
-			dbo.ClientInnovation a
-			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID
-			INNER JOIN dbo.Innovation c ON c.ID = a.ID_INNOVATION
+		FROM dbo.ClientInnovation a
+		INNER JOIN dbo.ClientView cv WITH(NOEXPAND) ON ID_CLIENT = ClientID
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON cv.ServiceStatusId = s.ServiceStatusId
+		INNER JOIN dbo.Innovation c ON c.ID = a.ID_INNOVATION
 		WHERE --ID_INNOVATION = @INNOVATION
 			(ID_INNOVATION IN (SELECT ID FROM dbo.TableGUIDFromXML(@INNOVATION)) OR @INNOVATION IS NULL)
 			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXML(@MANAGER)) OR @MANAGER IS NULL)
