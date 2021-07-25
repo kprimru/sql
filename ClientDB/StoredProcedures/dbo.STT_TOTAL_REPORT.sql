@@ -20,6 +20,23 @@ BEGIN
 
     DECLARE
         @RestrictionType_Id_STT SmallInt;
+    
+    
+    DECLARE @ExcludedSystemsTypes Table
+        (
+            SST_ID  SmallInt PRIMARY KEY CLUSTERED
+        );
+        
+    DECLARE @ExcludedSystems Table
+        (
+            SYS_ID  SmallInt PRIMARY KEY CLUSTERED
+        );
+        
+        
+    DECLARE @ExcludedNetTypes Table
+        (
+            NT_ID  SmallInt PRIMARY KEY CLUSTERED
+        );
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -28,6 +45,18 @@ BEGIN
 
 	BEGIN TRY
         SET @RestrictionType_Id_STT = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'STT');
+
+        INSERT INTO @ExcludedSystemsTypes
+        SELECT Cast(SetItem AS SmallInt)
+        FROM dbo.NamedSetItemsSelect('Din.SystemType', 'Не отправлять STT');
+
+        INSERT INTO @ExcludedSystems
+        SELECT Cast(SetItem AS SmallInt)
+        FROM dbo.NamedSetItemsSelect('dbo.SystemTable', 'Не отправлять STT');
+
+        INSERT INTO @ExcludedNetTypes
+        SELECT Cast(SetItem AS SmallInt)
+        FROM dbo.NamedSetItemsSelect('Din.NetType', 'Не отправлять STT');
 
 		SET @END = DATEADD(DAY, 1, @END)
 
@@ -128,9 +157,12 @@ BEGIN
 				WHERE DS_REG = 0
 					--AND (SubhostName = @SUBHOST OR @SUBHOST IS NULL)
 					AND (a.HostID = @HOST OR a.SystemID = @SYSTEM)
-					AND SST_SHORT NOT IN ('ОДД', /*'ДИУ', */'АДМ', 'ДСП')
-					AND a.SystemBaseName NOT IN ('SKS')
-					AND NT_SHORT NOT IN ('онлайн', 'онлайн2', 'онлайн3', 'мобильная', 'ОВМ (ОД 1)', 'ОВМ (ОД 2)', 'ОВМ (ОД 10)', 'ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф')
+					--AND SST_SHORT NOT IN ('ОДД', /*'ДИУ', */'АДМ', 'ДСП')
+					AND SST_ID NOT IN (SELECT SST_ID FROM @ExcludedSystemsTypes)
+					AND a.SystemID NOT IN (SELECT SST_ID FROM @ExcludedSystems)
+					AND a.SystemID NOT IN (SELECT SST_ID FROM @ExcludedNetTypes)
+					--AND a.NT_ID NOT IN ('SKS')
+					--AND NT_SHORT NOT IN ('онлайн', 'онлайн2', 'онлайн3', 'мобильная', 'ОВМ (ОД 1)', 'ОВМ (ОД 2)', 'ОВМ (ОД 10)', 'ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф')
 					AND a.Complect LIKE a.SystemBaseName + '%'
 			) AS a
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
