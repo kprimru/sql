@@ -23,7 +23,8 @@ ALTER PROCEDURE [dbo].[CLIENT_DUTY_FILTER2]
 	@RESULT		TINYINT			= NULL,
 	@NOTIFY		TINYINT			= NULL,
 	@CATEGORY	TinyInt			= NULL,
-	@LINK		TINYINT			= NULL
+	@LINK		TINYINT			= NULL,
+	@ORI		TINYINT			= NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -111,6 +112,7 @@ BEGIN
 				)
 			AND (@STATUS IS NULL OR @STATUS = 0 OR @STATUS = 1 AND ClientDutyComplete = 1 OR @STATUS = 2 AND ClientDutyComplete = 0)
 			AND (@NPO IS NULL OR @NPO = 0 OR @NPO = 1 AND ClientDutyNPO = 1 OR @NPO = 2 AND ClientDutyNPO = 0)
+			AND (@ORI IS NULL OR @ORI = 0 OR @ORI = 1 AND ClientDutyGive IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ÎÐÈ') OR @ORI = 2 AND ClientDutyGive NOT IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ÎÐÈ'))
 			AND (
 					@RESULT IS NULL
 					OR @RESULT = 0
