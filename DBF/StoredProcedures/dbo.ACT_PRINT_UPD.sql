@@ -16,6 +16,10 @@ BEGIN
         @Params         Xml;
 
     DECLARE
+        @Stage          VarChar(100),
+        @ActDate        SmallDateTime,
+        @Client_Id      Int,
+        @EISData        Xml,
         @Data           Xml,
         @MainContent    Xml,
         @ApplyContent   Xml,
@@ -31,6 +35,16 @@ BEGIN
     BEGIN TRY
 
         SET @File_Id = Cast(NewId() AS VarChar(100));
+        SELECT
+            @ActDate = ACT_DATE,
+            @Client_Id  = ACT_ID_CLIENT
+        FROM dbo.ActTable
+        WHERE ACT_ID = @Act_Id;
+
+        SELECT @Data = EIS_DATA
+        FROM dbo.ClientFinancing
+        WHERE EIS_DATA IS NOT NULL
+            AND ID_CLIENT = @Client_Id;
 
         SET @MainContent =
         (
@@ -97,18 +111,27 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [Id] = NULL
-                                            FOR XML RAW('СвБанк'), TYPE, ROOT('БанкРекв')
+                                                [НомерСчета] = O.ORG_ACCOUNT,
+                                                (
+                                                    SELECT
+                                                        [НаимБанк]  = BA.BA_NAME,
+                                                        [БИК]       = O.ORG_BIK,
+                                                        [КорСчет]   = O.ORG_LORO
+                                                    FROM dbo.BankTable AS BA
+                                                    WHERE BA_ID = ORG_ID_BANK
+                                                    FOR XML RAW('СвБанк'), TYPE
+                                                )
+                                            FOR XML RAW('БанкРекв'), TYPE
                                         )
                                     FOR XML RAW ('СвПрод'), TYPE
                                 ),
                                 (
                                     SELECT
                                         [ОКПО]      = CL.CL_OKPO,
-                                        [КраткНазв] = CL.CL_SHORT_NAME,
+                                        [КраткНазв] = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
                                         (
                                             SELECT
-                                                [НаимОрг]   = CL.CL_FULL_NAME,
+                                                [НаимОрг]   = F.EIS_DATA.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),--CL.CL_FULL_NAME,
                                                 [ИННЮЛ]     = CL.CL_INN,
                                                 [КПП]       = CL.CL_KPP
                                             FOR XML RAW('СвЮЛУч'), TYPE, ROOT('ИдСв')
@@ -164,11 +187,14 @@ BEGIN
                                 (
                                     SELECT
                                         [НомСтр]        = 1,
-                                        [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                        [НаимТов]       = ED.[ProductName],
                                         --[НаимТов]       = Max(INR_GOOD),
-                                        [ОКЕИ_Тов]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
+                                        [ОКЕИ_Тов]      = ED.[ProductOKEICode],
                                         [КолТов]        = 1,
-                                        [ЦенаТов]       = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        [ЦенаТов]       = [Common].[Trim#Right](Convert(VarChar(100), Cast(Cast(Sum(R.INR_SALL) AS Decimal(20, 12)) / (1 + 20.0/100) AS Decimal(20, 11))), '0'),
+                                        --CASE WHEN ACT_ID_CLIENT = 4707 THEN '27217.66666666667' ELSE dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.') END,
+                                        --Replace(Cast(Round(Cast()/1.2, 11) As VarChar(50)), ',', '.'),
+                                        --
                                         [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                         [НалСт]         = '20%',
                                         [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
@@ -184,10 +210,10 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [ПрТовРаб]      = 2,
-                                                [НаимЕдИзм]     = F.EIS_DATA.value('(/export/contract/products/product/OKEI/fullName)[1]', 'VarChar(100)'),
+                                                [ПрТовРаб]      = 3,
+                                                [НаимЕдИзм]     = ED.[ProductOKEIFullName],
                                                 [КрНаимСтрПр]   = 'Российская Федерация',
-                                                [КодТов]        = F.EIS_DATA.value('(/export/contract/products/product/OKPD2/code)[1]', 'VarChar(100)')
+                                                [КодТов]        = ED.[ProductOKPD2Code]
                                             FOR XML RAW('ДопСведТов'), TYPE
                                         )
                                     FROM dbo.InvoiceRowTable AS R
@@ -266,6 +292,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );
@@ -301,15 +328,15 @@ BEGIN
                                     SELECT
                                         (
                                             SELECT
-                                                [ИдТРУ]         = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
-                                                [КодТов]        = F.EIS_DATA.value('(/export/contract/products/product/OKPD2/code)[1]', 'VarChar(100)'),
-                                                [НаимТов]       = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(Max)'),
+                                                [ИдТРУ]         = ED.[Product_GUId],
+                                                [КодТов]        = ED.[ProductOKPD2Code],
+                                                [НаимТов]       = ED.[ProductName],
                                                 --[НаимТов]       = Max(INR_GOOD),
-                                                [КодЕдИзм]      = F.EIS_DATA.value('(/export/contract/products/product/OKEI/code)[1]', 'VarChar(100)'),
-                                                [НаимЕдИзм]     = F.EIS_DATA.value('(/export/contract/products/product/OKEI/fullName)[1]', 'VarChar(100)'),
+                                                [КодЕдИзм]      = ED.[ProductOKEICode],
+                                                [НаимЕдИзм]     = ED.[ProductOKEIFullName],
                                                 [ЦенаЕдИзм]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                                 [КолТов]        = 1,
-                                                [ПрТовРаб]      = 2,
+                                                [ПрТовРаб]      = 3,
                                                 [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                                 [НалСт]         = '20%',
                                                 [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
@@ -343,10 +370,11 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [НомСтр]    = '1',
+                                                [НомСтр]        = '1',
                                                 --[ИдТРУ]     = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
-                                                [ИдТРУ]     = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                                                [ЦенаСНДС]  = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.')
+                                                [ИдТРУ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                                [ПрУлучшХаракт] = 1
                                                 /*,
                                                 (
                                                     SELECT
@@ -403,6 +431,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлУПДПрод'), TYPE
         );
