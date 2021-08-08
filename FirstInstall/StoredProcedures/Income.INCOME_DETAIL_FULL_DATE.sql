@@ -77,6 +77,7 @@ BEGIN
 									AND h.DT_ID_MASTER = d.DT_ID_MASTER
 									AND h.NT_ID_MASTER = d.NT_ID_MASTER
 									AND h.TT_ID_MASTER = d.TT_ID_MASTER
+									AND h.ID_RESTORE = d.ID_RESTORE
 						WHERE d.IN_ID = g.IN_ID_INCOME OR d.IN_ID = g.IN_ID
 					) AS ID_DEL_SUM,
 					(
@@ -88,6 +89,7 @@ BEGIN
 									AND h.DT_ID_MASTER = d.DT_ID_MASTER
 									AND h.NT_ID_MASTER = d.NT_ID_MASTER
 									AND h.TT_ID_MASTER = d.TT_ID_MASTER
+									AND h.ID_RESTORE = d.ID_RESTORE
 						WHERE d.IN_ID = g.IN_ID_INCOME OR d.IN_ID = g.IN_ID
 					) AS ID_SUP_PRICE
 				FROM
