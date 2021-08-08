@@ -22,18 +22,18 @@ BEGIN
 
     DECLARE
         @RestrictionType_Id_STT SmallInt;
-        
+
     DECLARE @ExcludedSystemsTypes Table
         (
             SST_ID  SmallInt PRIMARY KEY CLUSTERED
         );
-        
+
     DECLARE @ExcludedSystems Table
         (
             SYS_ID  SmallInt PRIMARY KEY CLUSTERED
         );
-        
-        
+
+
     DECLARE @ExcludedNetTypes Table
         (
             NT_ID  SmallInt PRIMARY KEY CLUSTERED
@@ -46,7 +46,7 @@ BEGIN
 
 	BEGIN TRY
         SET @RestrictionType_Id_STT = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'STT');
-        
+
         INSERT INTO @ExcludedSystemsTypes
         SELECT Cast(SetItem AS SmallInt)
         FROM dbo.NamedSetItemsSelect('Din.SystemType', 'Не отправлять STT');
@@ -123,9 +123,9 @@ BEGIN
 				WHERE DS_REG = 0
 					AND (SubhostName = @SUBHOST OR @SUBHOST IS NULL)
 					AND (a.HostID = @HOST OR a.SystemID = @SYSTEM)
-					AND SST_ID NOT IN (SELECT SST_ID FROM @ExcludedSystemsTypes)
-					AND a.SystemID NOT IN (SELECT SST_ID FROM @ExcludedSystems)
-					AND a.SystemID NOT IN (SELECT SST_ID FROM @ExcludedNetTypes)
+					AND a.SST_ID NOT IN (SELECT E.SST_ID FROM @ExcludedSystemsTypes AS E)
+					AND a.SystemID NOT IN (SELECT E.SYS_ID FROM @ExcludedSystems AS E)
+					AND a.NT_ID NOT IN (SELECT E.NT_ID FROM @ExcludedNetTypes AS E)
 					--AND SST_SHORT NOT IN ('ОДД', /*'ДИУ', */'АДМ', 'ДСП')
 					--AND a.SystemBaseName NOT IN ('SKS')
 					--AND NT_SHORT NOT IN ('онлайн', 'онлайн2', 'онлайн3', 'мобильная', 'ОВМ (ОД 1)', 'ОВМ (ОД 2)', 'ОВМ (ОД 10)', 'ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф')
