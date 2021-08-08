@@ -146,7 +146,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [Report].[KRF_INSTALL] TO rl_report;
 GO

@@ -257,7 +257,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[SERVICE_ERROR_REPORT] TO rl_service_error_report;
 GO

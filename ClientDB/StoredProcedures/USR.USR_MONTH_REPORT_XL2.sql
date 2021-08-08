@@ -426,7 +426,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [USR].[USR_MONTH_REPORT_XL2] TO rl_report_month_xl;
 GO

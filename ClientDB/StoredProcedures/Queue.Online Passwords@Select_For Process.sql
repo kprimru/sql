@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Queue].[Online Password@Select?For Process]
+ALTER PROCEDURE [Queue].[Online Passwords@Select?For Process]
 AS
 BEGIN
     SET NOCOUNT ON;

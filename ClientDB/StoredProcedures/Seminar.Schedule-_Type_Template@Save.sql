@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [Seminar].[Schedule->Type:Template@Save]
+ALTER PROCEDURE [Seminar].[Schedule->Type_Template@Save]
     @Type_Id        SmallInt,
     @Template_Id    SmallInt,
     @Date           SmallDateTime,

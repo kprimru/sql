@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER TRIGGER [dbo].[ClientDistr Insert/Update/Delete] ON  dbo.ClientDistr
+ALTER TRIGGER [dbo].[ClientDistr Insert/Update/Delete] ON  [dbo].[ClientDistr]
    AFTER INSERT,DELETE,UPDATE
 AS
 BEGIN
