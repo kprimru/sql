@@ -186,18 +186,16 @@ BEGIN
                             SELECT
                                 (
                                     SELECT
-                                        [НомСтр]        = 1,
-                                        [НаимТов]       = ED.[ProductName],
-                                        --[НаимТов]       = Max(INR_GOOD),
+                                        [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+                                        --[НаимТов]       = ED.[ProductName],
+                                        [НаимТов]       = R.INR_GOOD + ' ' + R.INR_NAME,
                                         [ОКЕИ_Тов]      = ED.[ProductOKEICode],
                                         [КолТов]        = 1,
-                                        [ЦенаТов]       = [Common].[Trim#Right](Convert(VarChar(100), Cast(Cast(Sum(R.INR_SALL) AS Decimal(20, 12)) / (1 + 20.0/100) AS Decimal(20, 11))), '0'),
-                                        --CASE WHEN ACT_ID_CLIENT = 4707 THEN '27217.66666666667' ELSE dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.') END,
-                                        --Replace(Cast(Round(Cast()/1.2, 11) As VarChar(50)), ',', '.'),
-                                        --
-                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        -- ToDo хардкод 20%
+                                        [ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
+                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(R.INR_SUM * IsNull(R.INR_COUNT, 1), '.'),
                                         [НалСт]         = '20%',
-                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
                                         (
                                             SELECT
                                                 [БезАкциз] = 'без акциза'
@@ -205,7 +203,7 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [СумНал] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
+                                                [СумНал] = dbo.MoneyFormatCustom(R.INR_SNDS, '.')
                                             FOR XML PATH('СумНал'), TYPE
                                         ),
                                         (
@@ -220,8 +218,13 @@ BEGIN
                                     INNER JOIN dbo.DistrView AS D WITH(NOEXPAND) ON R.INR_ID_DISTR = D.DIS_ID
                                     INNER JOIN dbo.SaleObjectTable AS S ON S.SO_ID = D.SYS_ID_SO
                                     INNER JOIN dbo.TaxTable AS T ON T.TX_ID = R.INR_ID_TAX
+                                    OUTER APPLY
+                                    (
+                                        SELECT
+                                            [Price] = [Common].[Trim#Right](Convert(VarChar(100), Cast(Cast(R.INR_SALL AS Decimal(20, 12)) / (1 + 20.0/100) AS Decimal(20, 11))), '0')
+                                    ) AS P
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
-                                    FOR XML RAW('СведТов'), TYPE
+                                    ORDER BY D.SYS_ORDER, D.DIS_NUM FOR XML RAW('СведТов'), TYPE
                                 ),
                                 (
                                     SELECT
