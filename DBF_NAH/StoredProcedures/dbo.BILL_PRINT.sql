@@ -416,7 +416,6 @@ BEGIN
 					)
 		ORDER BY SYS_ORDER, DIS_NUM, PR_DATE
 
-
 		DELETE FROM #master
 		WHERE NOT EXISTS
 			(
@@ -801,7 +800,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[BILL_PRINT] TO rl_bill_p;
 GO

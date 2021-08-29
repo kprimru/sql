@@ -69,7 +69,7 @@ BEGIN
 			(
 				AD_ID_ACT, AD_ID_DISTR, AD_ID_PERIOD,
 				AD_ID_TAX, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
-				AD_PAYED_PRICE
+				AD_PAYED_PRICE, AD_EXPIRE
 			)
 			SELECT
 				@actid, BD_ID_DISTR, @periodid,
@@ -88,12 +88,12 @@ BEGIN
 							--AND ID_PREPAY = 0
 							AND a.SO_ID = b.SYS_ID_SO
 						), 0)
-				) AS AD_PAYED_RICE
-			FROM
-				dbo.BillDistrTable INNER JOIN
-				dbo.BillTable ON BL_ID = BD_ID_BILL INNER JOIN
-				dbo.DistrDocumentView c ON DIS_ID = BD_ID_DISTR INNER JOIN
-				dbo.DistrView b WITH(NOEXPAND) ON c.DIS_ID = b.DIS_ID
+				) AS AD_PAYED_RICE, F.DF_EXPIRE
+			FROM dbo.BillDistrTable
+			INNER JOIN dbo.BillTable ON BL_ID = BD_ID_BILL
+			INNER JOIN dbo.DistrDocumentView c ON DIS_ID = BD_ID_DISTR
+			INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON c.DIS_ID = b.DIS_ID
+			INNER JOIN dbo.DistrFinancingView AS F ON F.DIS_ID = b.DIS_ID
 			WHERE	BL_ID_PERIOD = @periodid
 				AND BL_ID_CLIENT = @clientid
 				AND	BD_ID_DISTR = @distrid

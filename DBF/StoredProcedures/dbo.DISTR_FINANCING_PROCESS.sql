@@ -28,7 +28,8 @@ ALTER PROCEDURE [dbo].[DISTR_FINANCING_PROCESS]
 	@pay SMALLINT = NULL,
 	@END	SMALLDATETIME = NULL,
 	@BEGIN	SMALLDATETIME = NULL,
-	@DF_NAME	NVARCHAR(256) = NULL
+	@DF_NAME	NVARCHAR(256) = NULL,
+	@Expire SmallDateTime = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -53,11 +54,11 @@ BEGIN
 				--настройки не заданы. Создаем новые по параметрам
 				INSERT INTO dbo.DistrFinancingTable(
 						DF_ID_DISTR, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_PRICE, DF_DISCOUNT, DF_COEF,
-						DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT, DF_DEBT, DF_ID_PAY, DF_END, DF_BEGIN, DF_NAME
+						DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT, DF_DEBT, DF_ID_PAY, DF_END, DF_BEGIN, DF_NAME, DF_EXPIRE
 						)
 				VALUES (
 					@distrid, @netid, @techtypeid, @systypeid, @priceid, @discount, @coef,
-					@fixedprice, @periodid, @moncount, @debt, @pay, @END, @BEGIN, @DF_NAME)
+					@fixedprice, @periodid, @moncount, @debt, @pay, @END, @BEGIN, @DF_NAME, @Expire)
 
 				SELECT SCOPE_IDENTITY() AS NEW_IDEN
 			END
@@ -78,7 +79,8 @@ BEGIN
 					DF_ID_PAY = @pay,
 					DF_END = @END,
 					DF_BEGIN = @BEGIN,
-					DF_NAME = @DF_NAME
+					DF_NAME = @DF_NAME,
+					DF_EXPIRE = @Expire
 				WHERE DF_ID = @clientfinancingid
 			END
 

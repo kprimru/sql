@@ -17,7 +17,8 @@ ALTER PROCEDURE [dbo].[ACT_DISTR_EDIT]
 	@adid INT,
 	@price MONEY,
 	@taxprice MONEY,
-	@totalprice MONEY
+	@totalprice MONEY,
+	@Expire SmalLDateTime
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -46,7 +47,8 @@ BEGIN
 		UPDATE dbo.ActDistrTable
 		SET AD_PRICE = @price,
 			AD_TAX_PRICE = @taxprice,
-			AD_TOTAL_PRICE = @totalprice
+			AD_TOTAL_PRICE = @totalprice,
+			AD_EXPIRE = @expire
 		WHERE AD_ID = @adid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -59,7 +61,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[ACT_DISTR_EDIT] TO rl_act_w;
 GO

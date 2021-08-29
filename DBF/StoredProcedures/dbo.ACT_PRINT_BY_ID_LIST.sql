@@ -248,7 +248,9 @@ BEGIN
 				SO_INV_UNIT varchar(150),
 				AD_PAYED_PRICE money,
 				TO_NUM	INT,
-				TO_NAME	VARCHAR(255)
+				TO_NAME	VARCHAR(255),
+				SYS_ADD VarChar(512),
+				DF_EXPIRE SmallDateTime
 			)
 
 		INSERT INTO #detail (
@@ -258,7 +260,7 @@ BEGIN
 				AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME,
 				SO_ID, SO_BILL_STR, SO_INV_UNIT,
-				AD_PAYED_PRICE, TO_NUM, TO_NAME
+				AD_PAYED_PRICE, TO_NUM, TO_NAME, SYS_ADD, DF_EXPIRE
 				)
 			SELECT
 					(
@@ -301,19 +303,27 @@ BEGIN
 							dbo.TODistrTable INNER JOIN
 							dbo.TOTable ON TO_ID = TD_ID_TO
 						WHERE TD_ID_DISTR = AD_ID_DISTR
-					)
-				FROM
-					dbo.ActTable			A			INNER JOIN
-					#act				Y	ON	Y.ACT_ID		= A.ACT_ID	INNER JOIN
-					dbo.ActDistrTable		Z	ON	Z.AD_ID_ACT		= A.ACT_ID	INNER JOIN
+					),
+					CASE WHEN IsOnline = 1 AND A.ACT_DATE > '20210801' THEN ' (в т.ч. специальной копии системы)' ELSE '' END AS SYS_ADD,
+					DF_EXPIRE
+				FROM dbo.ActTable       A
+				INNER JOIN #act         Y   ON Y.ACT_ID     = A.ACT_ID
+				INNER JOIN dbo.ActDistrTable		Z	ON	Z.AD_ID_ACT		= A.ACT_ID	INNER JOIN
 					dbo.PeriodTable			I	ON	Z.AD_ID_PERIOD	= I.PR_ID	INNER JOIN
 					dbo.DistrView			B WITH(NOEXPAND)	ON	Z.AD_ID_DISTR	= B.DIS_ID	INNER JOIN
 					dbo.SaleObjectTable		C	ON	B.SYS_ID_SO		= C.SO_ID	INNER JOIN
 					dbo.TaxTable			D	ON	D.TX_ID			= C.SO_ID_TAX	INNER JOIN
 					dbo.DistrDocumentView	E	ON	E.DIS_ID		= B.DIS_ID LEFT OUTER JOIN
-					dbo.DistrFinancingTable		ON DF_ID_DISTR = e.DIS_ID/*LEFT JOIN
-					dbo.ContractDistrTable	H	ON	H.COD_ID_DISTR	= B.DIS_ID *//*LEFT JOIN
-					#master				G	ON	H.COD_ID_CONTRACT = G.CO_ID*/
+					dbo.DistrFinancingTable		ON DF_ID_DISTR = e.DIS_ID
+					OUTER APPLY
+					(
+					    SELECT TOP (1)
+					        [IsOnline] = 1
+					    FROM dbo.SystemNetTable AS SN
+				        INNER JOIN dbo.SystemNetCountTable AS SNC ON SNC_ID_SN = SN_ID
+				        WHERE DF_ID_NET = SN.SN_ID
+				            AND SNC_TECH IN (3, 7, 9)
+				    ) AS O
 				WHERE
 					DOC_PSEDO = 'ACT' AND DD_PRINT = 1
 
@@ -353,10 +363,10 @@ BEGIN
 				SUM(AD_TOTAL_PRICE) AS AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME, SO_ID,
 				SO_BILL_STR, SO_INV_UNIT, SUM(AD_PAYED_PRICE) AS AD_PAYED_PRICE,
-				NULL AS TO_NUM, NULL AS TO_NAME
+				NULL AS TO_NUM, NULL AS TO_NAME, SYS_ADD, DF_EXPIRE
 			FROM #detail
 			GROUP BY
-				ACT_ID, AFD_ID_AFM, /*DIS_ID, DIS_NUM, */SYS_NAME, SYS_ORDER,
+				ACT_ID, AFD_ID_AFM, /*DIS_ID, DIS_NUM, */SYS_NAME, SYS_ORDER, SYS_ADD, DF_EXPIRE,
 				TX_PERCENT, TX_NAME,
 				SO_ID, SO_INV_UNIT, SO_BILL_STR/*, TO_NUM, TO_NAME*/
 			ORDER BY AFD_ID_AFM, /*TO_NUM, */SYS_ORDER/*, DIS_NUM	*/
@@ -369,10 +379,10 @@ BEGIN
 				SUM(AD_TOTAL_PRICE) AS AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME, SO_ID,
 				SO_BILL_STR, SO_INV_UNIT, SUM(AD_PAYED_PRICE) AS AD_PAYED_PRICE,
-				TO_NUM, TO_NAME
+				TO_NUM, TO_NAME, SYS_ADD, DF_EXPIRE
 			FROM #detail
 			GROUP BY
-				ACT_ID, AFD_ID_AFM, DIS_ID, DIS_NUM, SYS_NAME, SYS_ORDER,
+				ACT_ID, AFD_ID_AFM, DIS_ID, DIS_NUM, SYS_NAME, SYS_ORDER, SYS_ADD, DF_EXPIRE,
 				TX_PERCENT, TX_NAME,
 				SO_ID, SO_INV_UNIT, SO_BILL_STR, TO_NUM, TO_NAME
 			ORDER BY AFD_ID_AFM, TO_NUM, SYS_ORDER, DIS_NUM
