@@ -341,37 +341,6 @@ BEGIN
 				DIR_FIO_LAST = L.ClientLast,
 				DIR_POS_LAST = L.ClientLast,
 				DIR_PHONE_LAST = L.ClientLast
-				/*
-				DIR_FIO_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalDirLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND
-									(
-										z.CP_SURNAME <> b.CP_SURNAME
-										OR z.CP_NAME <> b.CP_NAME
-										OR z.CP_PATRON <> b.CP_PATRON
-									)
-							ORDER BY ClientLast DESC
-						),
-				DIR_POS_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalDirLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_POS <> b.CP_POS
-							ORDER BY ClientLast DESC
-						),
-				DIR_PHONE_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalDirLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_PHONE <> b.CP_PHONE
-							ORDER BY ClientLast DESC
-						)
-				*/
 			FROM
 				#client a
 				INNER JOIN dbo.ClientPersonalDirView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT
@@ -432,37 +401,6 @@ BEGIN
 				BUH_FIO_LAST = L.ClientLast,
 				BUH_POS_LAST = L.ClientLast,
 				BUH_PHONE_LAST = L.ClientLast
-				/*
-				BUH_FIO_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalBuhLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND
-									(
-										z.CP_SURNAME <> b.CP_SURNAME
-										OR z.CP_NAME <> b.CP_NAME
-										OR z.CP_PATRON <> b.CP_PATRON
-									)
-							ORDER BY ClientLast DESC
-						),
-				BUH_POS_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalBuhLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_POS <> b.CP_POS
-							ORDER BY ClientLast DESC
-						),
-				BUH_PHONE_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalBuhLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_PHONE <> b.CP_PHONE
-							ORDER BY ClientLast DESC
-						)
-						*/
 
 			FROM
 				#client a
@@ -524,37 +462,6 @@ BEGIN
 				RES_FIO_LAST = L.ClientLast,
 				RES_POS_LAST = L.ClientLast,
 				RES_PHONE_LAST = L.ClientLast
-				/*
-				RES_FIO_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalResLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND
-									(
-										z.CP_SURNAME <> b.CP_SURNAME
-										OR z.CP_NAME <> b.CP_NAME
-										OR z.CP_PATRON <> b.CP_PATRON
-									)
-							ORDER BY ClientLast DESC
-						),
-				RES_POS_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalResLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_POS <> b.CP_POS
-							ORDER BY ClientLast DESC
-						),
-				RES_PHONE_LAST =
-						(
-							SELECT TOP 1 ClientLast
-							FROM dbo.ClientPersonalResLastView z
-							WHERE a.ClientID = z.ID_MASTER
-								AND z.CP_PHONE <> b.CP_PHONE
-							ORDER BY ClientLast DESC
-						)
-				*/
 			FROM
 				#client a
 				INNER JOIN dbo.ClientPersonalResView b WITH(NOEXPAND) ON a.ClientID = b.CP_ID_CLIENT

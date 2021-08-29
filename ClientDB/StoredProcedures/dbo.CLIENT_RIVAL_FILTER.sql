@@ -52,25 +52,10 @@ BEGIN
 					), 1, 1, ''
 				)
 			) AS CR_PERSONAL,
-			(
-				SELECT TOP 1 CRR_DATE
-				FROM dbo.ClientRivalReaction
-				WHERE CRR_ID_RIVAL = y.CR_ID AND CRR_ACTIVE = 1
-				ORDER BY CRR_DATE DESC, CRR_ID DESC
-			) AS CRR_DATE,
-			(
-				SELECT TOP 1 CRR_COMMENT
-				FROM dbo.ClientRivalReaction
-				WHERE CRR_ID_RIVAL = y.CR_ID AND CRR_ACTIVE = 1
-				ORDER BY CRR_DATE DESC, CRR_ID DESC
-			) AS CRR_COMMENT,
+			CRR.CRR_DATE,
+			CRR.CRR_COMMENT,
 			ServiceName, ManagerName,
-			(
-				SELECT TOP 1 CRR_CREATE_USER
-				FROM dbo.ClientRivalReaction
-				WHERE CRR_ID_RIVAL = y.CR_ID AND CRR_ACTIVE = 1
-				ORDER BY CRR_DATE, CRR_ID DESC
-			) AS CR_AUTHOR,
+			CRR.CRR_CREATE_USER AS CR_AUTHOR,
 			CASE CR_CONTROL
 				WHEN 1 THEN 'На контроле ' + CONVERT(VARCHAR(20), CR_CONTROL_DATE, 104)
 				ELSE ''
@@ -80,13 +65,43 @@ BEGIN
 				ELSE 'Не отработана'
 			END AS CR_COMPLETE_S,
 			CRR_CLAIM, CRR_COMPARE, CRR_REJECT, CRR_PARTNER
-		FROM
-			[dbo].[ClientList@Get?Read]() INNER JOIN
-			dbo.ClientRival y ON WCL_ID = CL_ID
-			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = CL_ID 
-			LEFT OUTER JOIN dbo.RivalTypeTable ON RivalTypeID = CR_ID_TYPE
-			LEFT OUTER JOIN dbo.RivalStatus ON RS_ID = CR_ID_STATUS
-			LEFT OUTER JOIN dbo.RivalDataView z ON y.CR_ID = z.CR_ID
+		FROM [dbo].[ClientList@Get?Read]()
+	    INNER JOIN dbo.ClientRival y ON WCL_ID = CL_ID
+		INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = CL_ID
+		LEFT JOIN dbo.RivalTypeTable ON RivalTypeID = CR_ID_TYPE
+		LEFT JOIN dbo.RivalStatus ON RS_ID = CR_ID_STATUS
+		OUTER APPLY
+		(
+		    --ToDo - это можно кэшировать
+		    SELECT
+		        ISNULL(CONVERT(BIT,(
+			        SELECT MAX(CONVERT(INT, CRR_CLAIM))
+			        FROM dbo.ClientRivalReaction
+			        WHERE CRR_ID_RIVAL = CR_ID
+		        )), 0) AS CRR_CLAIM,
+		        ISNULL(CONVERT(BIT,(
+			        SELECT MAX(CONVERT(INT, CRR_COMPARE))
+			        FROM dbo.ClientRivalReaction
+			        WHERE CRR_ID_RIVAL = CR_ID
+		        )), 0) AS CRR_COMPARE,
+		        ISNULL(CONVERT(BIT,(
+			        SELECT MAX(CONVERT(INT, CRR_REJECT))
+			        FROM dbo.ClientRivalReaction
+			        WHERE CRR_ID_RIVAL = CR_ID
+		        )), 0) AS CRR_REJECT,
+		        ISNULL(CONVERT(BIT,(
+			        SELECT MAX(CONVERT(INT, CRR_PARTNER))
+			        FROM dbo.ClientRivalReaction
+			        WHERE CRR_ID_RIVAL = CR_ID
+		        )), 0) AS CRR_PARTNER
+		) AS V
+		OUTER APPLY
+		(
+		    SELECT TOP 1 CRR_COMMENT, CRR_DATE, CRR_CREATE_USER
+			FROM dbo.ClientRivalReaction
+			WHERE CRR_ID_RIVAL = y.CR_ID AND CRR_ACTIVE = 1
+			ORDER BY CRR_DATE DESC, CRR_ID DESC
+		) AS CRR
 		WHERE CR_ACTIVE = 1
 			AND (CR_DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (CR_DATE <= @END OR @END IS NULL)

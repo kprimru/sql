@@ -53,7 +53,9 @@ BEGIN
 				) AS CALL_CLIENT_COUNT,
 				(
 					SELECT COUNT(*)
-					FROM dbo.ClientSatisfactionView WITH(NOEXPAND)
+					FROM dbo.ClientSatisfaction
+	                INNER JOIN dbo.ClientCall ON CS_ID_CALL = CC_ID
+	                INNER JOIN dbo.SatisfactionType ON STT_ID = CS_ID_TYPE
 					WHERE STT_RESULT = 0
 						AND CC_DATE BETWEEN START AND FINISH
 				) AS SATISF_CNT,
