@@ -38,5 +38,5 @@ BEGIN
     END CATCH
 END
 GO
-GRANT EXECUTE ON [Claim].[Claims-&gt;Types@Select] TO rl_claim_type_r;
+GRANT EXECUTE ON [Claim].[Claims->Types@Select] TO rl_claim_type_r;
 GO

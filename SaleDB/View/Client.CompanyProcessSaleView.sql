@@ -14,4 +14,8 @@ AS
 		INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
 		INNER JOIN Personal.OfficePersonal c ON c.ID = b.ID_PERSONAL
 	WHERE a.STATUS = 1 AND b.EDATE IS NULL AND PROCESS_TYPE = N'SALE'
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyProcessSaleView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_PERS] ON [Client].[CompanyProcessSaleView] ([ID_PERSONAL] ASC);
 GO

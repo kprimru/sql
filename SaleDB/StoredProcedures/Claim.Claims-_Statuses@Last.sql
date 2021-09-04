@@ -35,5 +35,5 @@ BEGIN
     END CATCH
 END
 GO
-GRANT EXECUTE ON [Claim].[Claims-&gt;Statuses@Last] TO rl_claim_status_r;
+GRANT EXECUTE ON [Claim].[Claims->Statuses@Last] TO rl_claim_status_r;
 GO

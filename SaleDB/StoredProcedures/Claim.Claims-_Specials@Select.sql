@@ -17,5 +17,5 @@ BEGIN
 	ORDER BY [Special];
 END
 GO
-GRANT EXECUTE ON [Claim].[Claims-&gt;Specials@Select] TO rl_claim_r;
+GRANT EXECUTE ON [Claim].[Claims->Specials@Select] TO rl_claim_r;
 GO

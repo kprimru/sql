@@ -17,4 +17,8 @@ AS
 		INNER JOIN Client.OfficeAddress a ON z.ID = a.ID_OFFICE
 		INNER JOIN Address.Street c ON a.ID_STREET = c.ID
 		INNER JOIN Address.City d ON c.ID_CITY = d.ID
-	WHERE z.STATUS = 1GO
+	WHERE z.STATUS = 1
+GO
+CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[OfficeAddressMainView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_COMPANY] ON [Client].[OfficeAddressMainView] ([CO_ID] ASC) INCLUDE ([AD_STR], [MAIN]);
+GO
