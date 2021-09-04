@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW dbo.SystemView
+ALTER VIEW dbo.SystemView
 AS
 SELECT     dbo.SystemTable.SYS_ID, dbo.SystemTable.SYS_PREFIX, dbo.SystemTable.SYS_NAME, dbo.SystemTable.SYS_SHORT_NAME,
                       dbo.SystemTable.SYS_PSEDO, dbo.SystemTable.SYS_REG_NAME, dbo.SystemTable.SYS_REPORT, dbo.SystemTable.SYS_MAIN,

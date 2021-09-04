@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE dbo.dt_displayoaerror_u
+ALTER PROCEDURE dbo.dt_displayoaerror_u
     @iObject int,
     @iresult int
 as

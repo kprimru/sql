@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-	CREATE PROCEDURE dbo.sp_upgraddiagrams
+	ALTER PROCEDURE dbo.sp_upgraddiagrams
 	AS
 	BEGIN
 		IF OBJECT_ID(N'dbo.sysdiagrams') IS NOT NULL

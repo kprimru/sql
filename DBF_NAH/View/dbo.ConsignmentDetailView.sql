@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW dbo.ConsignmentDetailView
+ALTER VIEW dbo.ConsignmentDetailView
 AS
 SELECT     dbo.ConsignmentDetailTable.CSD_ID, dbo.ConsignmentTable.CSG_ID, dbo.ConsignmentTable.CSG_ID_ORG, dbo.ConsignmentTable.CSG_ID_CLIENT,
                       dbo.ConsignmentTable.CSG_CONSIGN_NAME, dbo.ConsignmentTable.CSG_NUM, dbo.ConsignmentTable.CSG_DATE,
