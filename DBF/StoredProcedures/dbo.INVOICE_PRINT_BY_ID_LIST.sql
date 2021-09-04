@@ -88,7 +88,8 @@ BEGIN
 				INS_ID_TYPE SMALLINT,
 				COUR_NAME VARCHAR(100),
 				INS_IDENT NVARCHAR(128),
-				ACT_DATE    SmallDateTime
+				ACT_DATE    SmallDateTime,
+				ACT_NUM     VarChar(100)
 			)
 
 		INSERT INTO #master (
@@ -101,7 +102,7 @@ BEGIN
 						ORG_DIR_SHORT, ORG_BUH_SHORT,
 						CL_ID, CL_PSEDO, CL_FULL_NAME,
 						CL_SHORT_NAME, CL_KPP, CL_INN, INS_CLIENT_ADDR,
-						INS_CONSIG_ADDR, INS_CONSIG_NAME, INS_ID_TYPE, COUR_NAME, INS_IDENT, ACT_DATE
+						INS_CONSIG_ADDR, INS_CONSIG_NAME, INS_ID_TYPE, COUR_NAME, INS_IDENT, ACT_DATE, ACT_NUM
 					)
 			SELECT
 					@date,
@@ -122,7 +123,7 @@ BEGIN
 						WHERE TO_ID_CLIENT = INS_ID_CLIENT
 						ORDER BY TO_MAIN DESC
 					),
-					INS_IDENT, ACT_DATE
+					INS_IDENT, IsNUll(ACT_DATE, CSG_DATE), IsNull(Cast(CSG_NUM AS VarChar(100)), 'á/í')
 				FROM	dbo.InvoiceSaleTable	A									INNER JOIN
 						#inv				B	ON	A.INS_ID = B.INV_ID			INNER JOIN
 						dbo.OrganizationView	C	ON	A.INS_ID_ORG=C.ORG_ID		INNER JOIN
@@ -134,6 +135,13 @@ BEGIN
 						    FROM dbo.ActTable
 						    WHERE ACT_ID_INVOICE = A.INS_ID
 						) AS ACT
+						OUTER APPLY
+						(
+						    SELECT TOP (1)
+						        CSG_DATE, CSG_NUM
+						    FROM dbo.ConsignmentTable
+						    WHERE CSG_ID_INVOICE = A.INS_ID
+						) AS CONS
 
 		IF OBJECT_ID('tempdb..#detail') IS NOT NULL
 			DROP TABLE #detail
@@ -349,7 +357,7 @@ BEGIN
 				    INS_DATE,INS_NUM,INS_NUM_YEAR,
 				    CL_ID,CL_PSEDO,CL_FULL_NAME,CL_SHORT_NAME,CL_INN,CL_KPP,
 				    INS_CLIENT_ADDR,INS_CONSIG_NAME,INS_CONSIG_ADDR,INS_DOC_STRING,
-				    ORG_DIR_SHORT,ORG_BUH_SHORT, INS_IDENT, ACT_DATE, Convert(VarChar(20), ACT_DATE, 104) AS ACT_DATE_S
+				    ORG_DIR_SHORT,ORG_BUH_SHORT, INS_IDENT, ACT_DATE, Convert(VarChar(20), ACT_DATE, 104) AS ACT_DATE_S, ACT_NUM
 			    FROM
 				    #master AS IFM INNER JOIN
 				    #inv ON INV_ID = INS_ID
