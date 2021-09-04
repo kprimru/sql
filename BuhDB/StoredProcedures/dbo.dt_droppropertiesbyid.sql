@@ -10,7 +10,7 @@ GO
 **	dt_dropproperties objid, null or '' -- drop all properties of the object itself
 **	dt_dropproperties objid, property -- drop the property
 */
-create procedure dbo.dt_droppropertiesbyid
+ALTER PROCEDURE dbo.dt_droppropertiesbyid
 	@id int,
 	@property varchar(64)
 as

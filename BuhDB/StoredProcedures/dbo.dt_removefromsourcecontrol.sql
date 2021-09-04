@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create procedure dbo.dt_removefromsourcecontrol
+ALTER PROCEDURE dbo.dt_removefromsourcecontrol
 
 as
 
