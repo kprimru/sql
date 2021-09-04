@@ -36,7 +36,7 @@ BEGIN
 				(
 					'SKBO', 'SKUO', 'SBOO', 'SKJP', 'SKZO', 'SKZB'
 				)
-		) AND @DISTR IN ('нбл-т (1;2)')
+		) AND @DISTR IN ('нбл-т(3)')
 		)
 		OR
 		(@SYSTEM IN
@@ -61,7 +61,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('нбл-т (1;2)')
+		) AND @DISTR IN ('нбл-т(3)')
 	BEGIN
 		SET @DCOEF = 1.5
 		SET @DROUND = 2
