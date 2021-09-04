@@ -7,7 +7,7 @@ GO
 /*
 **	Retrieve the owner object(s) of a given property
 */
-create procedure dbo.dt_getobjwithprop_u
+ALTER PROCEDURE dbo.dt_getobjwithprop_u
 	@property varchar(30),
 	@uvalue nvarchar(255)
 as

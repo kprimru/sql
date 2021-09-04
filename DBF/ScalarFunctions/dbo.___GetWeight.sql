@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE FUNCTION [dbo].[GetWeight]
+ALTER FUNCTION [dbo].[GetWeight]
 (
 	@SYS_ID INT,
 	@NT_ID	INT,

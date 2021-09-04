@@ -11,7 +11,7 @@ GO
 **		uvalue -- the text value of the property
 **		lvalue -- the binary value of the property (image)
 */
-create procedure dbo.dt_setpropertybyid_u
+ALTER PROCEDURE dbo.dt_setpropertybyid_u
 	@id int,
 	@property varchar(64),
 	@uvalue nvarchar(255),

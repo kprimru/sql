@@ -7,7 +7,7 @@ GO
 /*
 	Показатель среднесетевого роста
 */
-CREATE FUNCTION [Ric].[GrowNetworkAvg]
+ALTER FUNCTION [Ric].[GrowNetworkAvg]
 (
 	@PR_ID	SMALLINT
 )

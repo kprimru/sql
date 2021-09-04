@@ -7,7 +7,7 @@ GO
 /*
 **	Add an object to the dtproperties table
 */
-create procedure dbo.dt_adduserobject
+ALTER PROCEDURE dbo.dt_adduserobject
 as
 	set nocount on
 	/*

@@ -7,7 +7,7 @@ GO
 /*
 **	Generate an ansi name that is unique in the dtproperties.value column
 */
-create procedure dbo.dt_generateansiname(@name varchar(255) output)
+ALTER PROCEDURE dbo.dt_generateansiname(@name varchar(255) output)
 as
 	declare @prologue varchar(20)
 	declare @indexstring varchar(20)
