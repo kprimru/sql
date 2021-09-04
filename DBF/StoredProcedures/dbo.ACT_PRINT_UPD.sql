@@ -373,10 +373,10 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [НомСтр]        = '1',
+                                                [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
                                                 --[ИдТРУ]     = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
                                                 [ИдТРУ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
                                                 [ПрУлучшХаракт] = 1
                                                 /*,
                                                 (
@@ -387,6 +387,7 @@ BEGIN
                                                 )
                                                 */
                                             FROM dbo.InvoiceRowTable AS R
+                                            INNER JOIN dbo.DistrView AS D WITH(NOEXPAND) ON R.INR_ID_DISTR = D.DIS_ID
                                             WHERE R.INR_ID_INVOICE = I.INS_ID
                                             FOR XML RAW('СведДетал'), TYPE
                                         )
