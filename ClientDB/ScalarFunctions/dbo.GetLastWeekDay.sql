@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE FUNCTION dbo.GetLastWeekDay -- находит последний указанный день недели (wday) в указанном месяце (@day)
+ALTER FUNCTION dbo.GetLastWeekDay -- находит последний указанный день недели (wday) в указанном месяце (@day)
 (
 	@wday	INT,
 	@day	DATETIME

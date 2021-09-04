@@ -16,4 +16,7 @@ AS
 		INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
 		INNER JOIN dbo.InfoBankTable d ON d.InfoBankName = 'DOF'
 	WHERE a.Service = 0 AND b.SystemBaseName IN ('LAW', 'ROS')
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.DistrRequiredDofView(DistrNumber,CompNumber,SystemID,InfoBankID)] ON [dbo].[DistrRequiredDofView] ([DistrNumber] ASC, [CompNumber] ASC, [SystemID] ASC, [InfoBankID] ASC);
 GO

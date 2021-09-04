@@ -17,4 +17,8 @@ AS
 		dbo.SystemTable a INNER JOIN
 		dbo.SystemBankTable b ON a.SystemID = b.SystemID INNER JOIN
 		dbo.InfoBankTable c ON c.InfoBankID = b.InfoBankID
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.SystemBanksView(InfoBankID,SystemID)] ON [dbo].[SystemBanksView] ([InfoBankID] ASC, [SystemID] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.SystemBanksView(SystemID,InfoBankID)+(InfoBankFullName,InfoBankName,InfoBankOrder)] ON [dbo].[SystemBanksView] ([SystemID] ASC, [InfoBankID] ASC) INCLUDE ([InfoBankFullName], [InfoBankName], [InfoBankOrder]);
 GO

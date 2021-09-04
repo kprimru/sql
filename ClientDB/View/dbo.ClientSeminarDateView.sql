@@ -13,4 +13,7 @@ AS
 		dbo.ClientStudy a
 		INNER JOIN dbo.ClientStudyPeople b ON a.ID = b.ID_STUDY
 	WHERE ID_PLACE = 3 AND STATUS = 1
-	GROUP BY ID_CLIENT, DATEGO
+	GROUP BY ID_CLIENT, DATE
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientSeminarDateView(ID_CLIENT,DATE)] ON [dbo].[ClientSeminarDateView] ([ID_CLIENT] ASC, [DATE] ASC);
+GO

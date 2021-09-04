@@ -19,4 +19,7 @@ AS
 	INNER JOIN Din.NetType NT ON W.NetCount = NT_NET
 								AND W.NetTech = NT_TECH
 								AND W.NetOdon = NT_ODON
-								AND W.NetOdoff = NT_ODOFFGO
+								AND W.NetOdoff = NT_ODOFF
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.WeightView(SystemID,NT_ID,SST_ID,Date)] ON [dbo].[WeightView] ([SystemID] ASC, [NT_ID] ASC, [SST_ID] ASC, [Date] ASC);
+GO

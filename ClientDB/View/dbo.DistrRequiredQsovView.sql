@@ -33,4 +33,7 @@ AS
 							(a.NetCount = 1 AND a.TechnolType = 11 AND a.ODON = 1 AND a.ODOFF = 2)
 					)
 			)
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.DistrRequiredQsovView(DistrNumber,CompNumber,SystemID,InfoBankID)] ON [dbo].[DistrRequiredQsovView] ([DistrNumber] ASC, [CompNumber] ASC, [SystemID] ASC, [InfoBankID] ASC);
 GO

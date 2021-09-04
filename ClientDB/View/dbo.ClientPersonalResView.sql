@@ -15,4 +15,7 @@ AS
 		dbo.ClientPersonal a
 		INNER JOIN dbo.ClientPersonalType b ON a.CP_ID_TYPE = b.CPT_ID
 	WHERE CPT_PSEDO = 'RES'
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientPersonalResView(CP_ID_CLIENT)] ON [dbo].[ClientPersonalResView] ([CP_ID_CLIENT] ASC);
 GO

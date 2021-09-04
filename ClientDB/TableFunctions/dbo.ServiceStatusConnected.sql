@@ -7,7 +7,7 @@ GO
 ALTER FUNCTION [dbo].[ServiceStatusConnected]()
 RETURNS @Result TABLE
 (
-	ServiceStatusId SmallInt
+	ServiceStatusId SmallInt PRIMARY KEY CLUSTERED
 )
 AS
 BEGIN

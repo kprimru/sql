@@ -24,6 +24,14 @@ AS
 		INNER JOIN dbo.Hosts e ON e.HostID = ID_HOST
 		INNER JOIN dbo.DistrStatus f ON f.DS_ID = a.ID_STATUS
 	WHERE STATUS = 1
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientDistrView(DISTR,HostID,COMP)] ON [dbo].[ClientDistrView] ([DISTR] ASC, [HostID] ASC, [COMP] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrView(DISTR,HostID,COMP)+(ID_CLIENT)] ON [dbo].[ClientDistrView] ([DISTR] ASC, [HostID] ASC, [COMP] ASC) INCLUDE ([ID_CLIENT]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrView(DS_REG)+(COMP,DISTR,ID_CLIENT,SystemID,SystemShortName)] ON [dbo].[ClientDistrView] ([DS_REG] ASC) INCLUDE ([COMP], [DISTR], [ID_CLIENT], [SystemID], [SystemShortName]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrView(DS_REG,SystemBaseName)+(ID_CLIENT,SystemID,SystemOrder,DISTR,COMP,DistrStr)] ON [dbo].[ClientDistrView] ([DS_REG] ASC, [SystemBaseName] ASC) INCLUDE ([ID_CLIENT], [SystemID], [SystemOrder], [DISTR], [COMP], [DistrStr]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrView(ID)] ON [dbo].[ClientDistrView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrView(ID_CLIENT,DS_REG,DistrTypeBaseCheck,SystemBaseCheck)+INCL] ON [dbo].[ClientDistrView] ([ID_CLIENT] ASC, [DS_REG] ASC, [DistrTypeBaseCheck] ASC, [SystemBaseCheck] ASC) INCLUDE ([COMP], [DISTR], [DistrStr], [DistrTypeID], [DistrTypeName], [DS_ID], [DS_INDEX], [HostID], [SystemBaseName], [SystemID], [SystemOrder], [SystemTypeID], [SystemTypeName], [DS_NAME], [SystemReg], [SystemShortName]);
 GO
 GRANT SELECT ON [dbo].[ClientDistrView] TO COMPLECTBASE;
 GO

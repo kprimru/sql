@@ -15,4 +15,7 @@ AS
 										AND c.DISTR = a.DISTR
 										AND c.COMP = a.COMP
 	WHERE c.STATUS = 1
-	GROUP BY ID_CLIENT, dbo.DateOf(DATE)GO
+	GROUP BY ID_CLIENT, dbo.DateOf(DATE)
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientStatView(ClientID,DATE_S)] ON [dbo].[ClientStatView] ([ClientID] ASC, [DATE_S] ASC);
+GO

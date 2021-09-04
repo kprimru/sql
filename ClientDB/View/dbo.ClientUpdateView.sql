@@ -15,4 +15,9 @@ AS
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceTable b ON a.ClientServiceID = b.ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
-		INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID	GO
+		INNER JOIN dbo.ServiceStatusTable d ON d.ServiceStatusID = a.StatusID
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientUpdateView(ClientID)] ON [dbo].[ClientUpdateView] ([ClientID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientUpdateView(ClientLast)+(ClientFullName,ClientID,ID_MASTER,ClientINN)] ON [dbo].[ClientUpdateView] ([ClientLast] ASC) INCLUDE ([ClientFullName], [ClientID], [ID_MASTER], [ClientINN]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientUpdateView(ID_MASTER)+(ClientID,ClientLast,UPD_USER)] ON [dbo].[ClientUpdateView] ([ID_MASTER] ASC) INCLUDE ([ClientID], [ClientLast], [UPD_USER]);
+GO

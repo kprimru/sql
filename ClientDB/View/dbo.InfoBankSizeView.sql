@@ -12,4 +12,8 @@ AS
 		dbo.InfoBankSize
 		INNER JOIN dbo.InfoBankFile ON IBS_ID_FILE = IBF_ID
 	GROUP BY IBS_DATE, IBF_ID_IB
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.InfoBankSizeView(IBF_ID_IB,IBS_DATE)] ON [dbo].[InfoBankSizeView] ([IBF_ID_IB] ASC, [IBS_DATE] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.InfoBankSizeView(IBS_DATE)+(IBS_SIZE)] ON [dbo].[InfoBankSizeView] ([IBS_DATE] ASC) INCLUDE ([IBS_SIZE]);
 GO

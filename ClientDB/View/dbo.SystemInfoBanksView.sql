@@ -17,4 +17,7 @@ AS
 	INNER JOIN dbo.SystemTable S ON SB.System_Id = S.SystemID
 	INNER JOIN dbo.DistrTypeTable D ON SB.DistrType_Id = D.DistrTypeID
 	INNER JOIN dbo.InfoBankTable I ON SB.InfoBank_Id = I.InfoBankID
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.SystemInfoBanksView(System_Id,DistrType_Id,InfoBank_Id)] ON [dbo].[SystemInfoBanksView] ([System_Id] ASC, [DistrType_Id] ASC, [InfoBank_Id] ASC);
 GO

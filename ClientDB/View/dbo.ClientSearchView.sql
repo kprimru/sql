@@ -11,4 +11,8 @@ AS
 		ClientID, SearchMonthDate, COUNT_BIG(*) AS CNT
 	FROM dbo.ClientSearchTable
 	GROUP BY ClientID, SearchMonthDate
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientSearchView(ClientID,SearchMonthDate)] ON [dbo].[ClientSearchView] ([ClientID] ASC, [SearchMonthDate] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientSearchView(SearchMonthDate)+(ClientID,CNT)] ON [dbo].[ClientSearchView] ([SearchMonthDate] ASC) INCLUDE ([ClientID], [CNT]);
 GO

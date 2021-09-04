@@ -13,4 +13,8 @@ AS
 		INNER JOIN dbo.ServiceTable b ON a.ID_SERVICE = b.ServiceID
 		INNER JOIN dbo.ManagerTable c ON c.ManagerID = b.ManagerID
 		INNER JOIN dbo.City d ON d.CT_ID = a.ID_CITY
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.PersonalCityView(ServiceID,CT_ID)] ON [dbo].[PersonalCityView] ([ServiceID] ASC, [CT_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.PersonalCityView(ManagerID,CT_ID)] ON [dbo].[PersonalCityView] ([ManagerID] ASC, [CT_ID] ASC);
 GO

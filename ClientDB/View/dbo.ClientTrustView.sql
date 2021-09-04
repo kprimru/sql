@@ -70,4 +70,9 @@ AS
 	FROM
 		dbo.ClientTrust
 		INNER JOIN dbo.ClientCall ON CC_ID = CT_ID_CALL
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientTrustView(CT_ID)] ON [dbo].[ClientTrustView] ([CT_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientTrustView(CC_DATE,CT_TRUST)] ON [dbo].[ClientTrustView] ([CC_DATE] ASC, [CT_TRUST] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientTrustView(CC_ID_CLIENT,CT_TRUST,CT_MAKE)] ON [dbo].[ClientTrustView] ([CC_ID_CLIENT] ASC, [CT_TRUST] ASC, [CT_MAKE] ASC);
 GO

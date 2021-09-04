@@ -28,4 +28,10 @@ AS
 		INNER JOIN dbo.ServiceTable d ON d.ServiceID = b.ClientServiceID
 		INNER JOIN dbo.ServiceStatusTable e ON e.ServiceStatusID = b.StatusID
 		INNER JOIN Seminar.Schedule f ON f.ID = a.ID_SCHEDULE
-	WHERE a.STATUS = 1GO
+	WHERE a.STATUS = 1
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_Seminar.PersonalView(ID)] ON [Seminar].[PersonalView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Seminar.PersonalView(ClientID)] ON [Seminar].[PersonalView] ([ClientID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Seminar.PersonalView(ID_SCHEDULE)] ON [Seminar].[PersonalView] ([ID_SCHEDULE] ASC);
+CREATE NONCLUSTERED INDEX [IX_Seminar.PersonalView(ID_SUBJECT)+(ClientID,ClientFullName,FIO,INDX)] ON [Seminar].[PersonalView] ([ID_SUBJECT] ASC) INCLUDE ([ClientID], [ClientFullName], [FIO], [INDX]);
+GO

@@ -13,4 +13,7 @@ AS
 	FROM
 		dbo.ClientStudy a
 		INNER JOIN dbo.ClientStudyPeople b ON a.ID = b.ID_STUDY
-	WHERE ID_PLACE = 3 AND STATUS = 1GO
+	WHERE ID_PLACE = 3 AND STATUS = 1
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientSeminarView(StudyPeopleID)] ON [dbo].[ClientSeminarView] ([StudyPeopleID] ASC);
+GO

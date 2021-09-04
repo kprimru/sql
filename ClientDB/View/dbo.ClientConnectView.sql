@@ -15,4 +15,7 @@ AS
 		INNER JOIN dbo.SystemTable e ON e.SystemID = c.ID_SYSTEM
 		INNER JOIN dbo.RegProtocol f ON f.RPR_ID_HOST = e.HostID AND f.RPR_DISTR = c.DISTR AND f.RPR_COMP = c.COMP
 	WHERE /*DS_REG = 0 AND *//*RPR_OPER = 'ÍÎÂÀß' AND */a.STATUS = 1 AND c.STATUS = 1
-	GROUP BY a.ClientID, dbo.DateOf(RPR_DATE)GO
+	GROUP BY a.ClientID, dbo.DateOf(RPR_DATE)
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientConnectView(ClientID,ConnectDate)] ON [dbo].[ClientConnectView] ([ClientID] ASC, [ConnectDate] ASC);
+GO

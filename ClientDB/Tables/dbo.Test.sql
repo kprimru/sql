@@ -1,0 +1,11 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Test]
+(
+        [Id]   Int      NOT NULL,
+        CONSTRAINT [PK_dbo.Test] PRIMARY KEY CLUSTERED ([Id])
+);GO
