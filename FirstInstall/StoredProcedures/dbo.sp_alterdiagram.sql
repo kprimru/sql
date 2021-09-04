@@ -5,7 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-	CREATE PROCEDURE dbo.sp_alterdiagram
+	ALTER PROCEDURE dbo.sp_alterdiagram
 	(
 		@diagramname 	sysname,
 		@owner_id	int	= null,

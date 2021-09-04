@@ -15,4 +15,8 @@ AS
 		Income.IncomePersonal INNER JOIN
 		Personal.PersonalDetail ON PER_ID_MASTER = IP_ID_PERSONAL
 	WHERE PER_REF IN (1, 3)
-		GO
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Income].[IncomePersonalView] ([IP_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_ID] ON [Income].[IncomePersonalView] ([ID_ID] ASC, [PER_NAME] ASC) INCLUDE ([IP_PERCENT], [IP_PERCENT2]);
+GO
