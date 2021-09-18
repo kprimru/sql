@@ -22,7 +22,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ServiceStatusID, ServiceStatusName, ServiceDefault, ServiceStatusReg, ServiceCode
+		SELECT ServiceStatusID, ServiceStatusName, ServiceDefault, ServiceStatusReg, ServiceCode, ServiceStatusIndex
 		FROM dbo.ServiceStatusTable
 		WHERE @FILTER IS NULL
 			OR ServiceStatusName LIKE @FILTER
