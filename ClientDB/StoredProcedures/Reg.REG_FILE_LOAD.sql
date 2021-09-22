@@ -778,7 +778,8 @@ BEGIN
 				t.KrfDop = r.KRF1,
 				t.AddParam = r.AddParam,
 				t.ODON = r.ODON,
-				t.ODOFF = r.ODOFF
+				t.ODOFF = r.ODOFF,
+				t.FirstReg = Convert(SmallDateTime, r.FIRST_REG, 104)
 			FROM dbo.RegNodeTable t
 				INNER JOIN #reg r ON SystemName = SYS_NAME
 								AND DistrNumber = DISTR
@@ -793,6 +794,7 @@ BEGIN
 					OR	TRANS_LEFT <> TransferLeft
 					OR	r.SERVICE <> t.Service
 					OR	ISNULL(REG_DATE, '19910101') <> ISNULL(RegisterDate, '19910101')
+					OR	ISNULL(FIRST_REG, '19910101') <> ISNULL(FirstReg, '19910101')
 					OR	ISNULL(r.Comment, '') <> ISNULL(t.Comment, '')
 					OR	ISNULL(r.Complect, '') <> ISNULL(t.Complect, '')
 					OR	ISNULL(r.Offline, '') <> ISNULL(t.Offline, '')
@@ -808,8 +810,8 @@ BEGIN
                 @DebugContext   = @DebugContext,
                 @Name           = 'UPDATE dbo.RegNodeTable';
 
-			INSERT INTO dbo.RegNodeTable(SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft, Service, RegisterDate, Comment, Complect, Offline, Yubikey, KrfNeed, KrfDop, AddParam, ODON, ODOFF)
-				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, COMMENT, COMPLECT, OFFLINE, Yubikey, KRF, KRF1, AddParam, ODON, ODOFF
+			INSERT INTO dbo.RegNodeTable(SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft, Service, RegisterDate, Comment, Complect, Offline, Yubikey, KrfNeed, KrfDop, AddParam, ODON, ODOFF, FirstReg)
+				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, COMMENT, COMPLECT, OFFLINE, Yubikey, KRF, KRF1, AddParam, ODON, ODOFF, Convert(SmallDateTime, FIRST_REG, 104)
 				FROM #reg a
 				WHERE NOT EXISTS
 						(

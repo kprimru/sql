@@ -16,7 +16,7 @@ AS
 		DS_ID, DS_INDEX, DS_REG, DS_NAME,
 		dbo.SubhostByComment2(Comment, DistrNumber, a.SystemName) AS SubhostName,
 		SystemBaseName,
-		DIstrTypeId, DistrTypeName, a.Service
+		DIstrTypeId, DistrTypeName, a.Service, FirstReg
 	FROM
 		dbo.RegNodeTable a
 		INNER JOIN dbo.SystemTable b ON a.SystemName = b.SystemBaseName
@@ -24,6 +24,7 @@ AS
 		INNER JOIN Din.NetType d ON d.NT_NET = a.NetCount AND d.NT_TECH = a.TechnolType AND d.NT_ODON = a.ODON AND d.NT_ODOFF = a.ODOFF
 		INNER JOIN dbo.DistrStatus ON DS_REG = Service
 		INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeId = d.NT_ID_MASTER
+
 
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegNodeSearchView(ID)] ON [Reg].[RegNodeSearchView] ([ID] ASC);
