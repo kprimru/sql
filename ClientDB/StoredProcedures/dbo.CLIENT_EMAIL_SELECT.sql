@@ -15,6 +15,12 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE @Emails Table
+    (
+        EMail       VarChar(256),
+        Source      VarChar(100)
+    );
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -22,37 +28,55 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DISTINCT ML
-		FROM
-			(
-				SELECT ClientEMail AS ML
-				FROM dbo.ClientTable
-				WHERE ClientID = @CLIENT
-					AND STATUS = 1
+        INSERT INTO @EMails
+        SELECT ML, Source
+        FROM
+        (
+            SELECT ClientEMail AS ML, 'Карточка' AS Source
+			FROM dbo.ClientTable
+			WHERE ClientID = @CLIENT
+				AND STATUS = 1
 
-				UNION ALL
+			UNION ALL
 
-				SELECT DISTINCT CP_EMAIL
-				FROM
-					dbo.ClientPersonal
-					INNER JOIN dbo.ClientTable ON ClientID = CP_ID_CLIENT
-				WHERE CP_ID_CLIENT = @CLIENT
-					AND STATUS = 1
+			SELECT DISTINCT CP_EMAIL, 'Сотрудник'
+			FROM
+				dbo.ClientPersonal
+				INNER JOIN dbo.ClientTable ON ClientID = CP_ID_CLIENT
+			WHERE CP_ID_CLIENT = @CLIENT
+				AND STATUS = 1
 
-				UNION ALL
+			UNION ALL
 
-				SELECT DISTINCT EMAIL
-				FROM dbo.ClientDelivery
-				WHERE ID_CLIENT = @CLIENT
+			SELECT DISTINCT EMAIL, 'Рассылка'
+			FROM dbo.ClientDelivery
+			WHERE ID_CLIENT = @CLIENT
 
-				UNION ALL
+			UNION ALL
 
-				SELECT DISTINCT EMAIL
-				FROM dbo.ClientDutyTable
-				WHERE ClientID = @CLIENT
-					AND STATUS = 1
-			) AS o_O
-		WHERE ISNULL(ML, '') <> ''
+			SELECT DISTINCT EMAIL, 'Запись ДС'
+			FROM dbo.ClientDutyTable
+			WHERE ClientID = @CLIENT
+				AND STATUS = 1
+        ) AS E
+        WHERE ISNULL(ML, '') <> ''
+
+        SELECT
+            E.EMail,
+            Source =
+            Reverse(Stuff(Reverse(
+                (
+                    SELECT Source + ','
+                    FROM @Emails AS S
+                    WHERE S.Email = E.Email
+                    FOR XML PATH('')
+                )
+            ), 1, 1, ''))
+        FROM
+        (
+		    SELECT DISTINCT EMail
+		    FROM @Emails
+		) AS E;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
