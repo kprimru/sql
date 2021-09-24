@@ -27,9 +27,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ORG_ID, ORG_PSEDO
+		SELECT TOP (1) ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
-		WHERE ORG_ID = 1
+		ORDER BY ORG_ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -41,7 +41,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[CONSIGNMENT_DEFAULT_GET] TO rl_consignment_r;
 GO

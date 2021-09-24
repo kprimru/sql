@@ -26,9 +26,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ORG_ID, ORG_PSEDO
+		SELECT TOP (1) ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
-		WHERE ORG_PSEDO = 'Базис'
+		ORDER BY ORG_ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -40,7 +40,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[INCOME_REPORT_DEFAULT_GET] TO rl_report_income_r;
 GO

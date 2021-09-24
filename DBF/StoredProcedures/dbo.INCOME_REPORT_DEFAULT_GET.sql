@@ -26,9 +26,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ORG_ID, ORG_PSEDO
+		SELECT TOP (1) ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
-		WHERE ORG_PSEDO = 'Базис'
+		ORDER BY ORG_ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

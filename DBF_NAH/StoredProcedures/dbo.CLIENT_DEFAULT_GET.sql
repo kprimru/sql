@@ -28,8 +28,17 @@ BEGIN
 	BEGIN TRY
 
 		SELECT (SELECT MAX(CL_NUM) + 1 FROM ClientTable) AS CL_NUM, ORG_ID, ORG_PSEDO, SH_ID, SH_SHORT_NAME, 'устава' AS CL_FOUND
-		FROM dbo.OrganizationTable, dbo.SubhostTable
-		WHERE ORG_ID = 1 AND SH_ID = 1
+		FROM
+		(
+		    SELECT TOP (1) ORG_ID, ORG_PSEDO
+		    FROM dbo.OrganizationTable
+		    ORDER BY ORG_ID
+		) AS O,
+		(
+		    SELECT TOP (1) SH_ID, SH_SHORT_NAME
+		    FROM dbo.SubhostTable
+		    ORDER BY SH_ID
+		) AS S;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -41,7 +50,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_DEFAULT_GET] TO rl_client_r;
 GO
