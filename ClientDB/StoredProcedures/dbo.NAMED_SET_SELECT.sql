@@ -67,7 +67,7 @@ BEGIN
 		WHERE RCM.RefName = @REFNAME;
 
 		--PRINT(@VALUE_TYPE)
-		--PRINT @SQL
+		PRINT @SQL
 		EXEC (@SQL)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

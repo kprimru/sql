@@ -34,6 +34,7 @@ BEGIN
 		FROM dbo.NamedSets
 		WHERE RefName=@REF_NAME AND SetName=@SET_NAME
 
+        -- ToDo переделать на Split
 		WHILE LEN(@VALUES)>0
 		BEGIN
 			IF CHARINDEX(',', @VALUES)<>0
