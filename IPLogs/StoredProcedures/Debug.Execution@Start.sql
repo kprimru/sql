@@ -13,6 +13,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    --/*--
+    RETURN
+    --*/--
+
 	DECLARE
 		@Id				BigInt,
 		@StartDateTime	DateTime,

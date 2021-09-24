@@ -13,7 +13,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    RETURN;
+    --/*--
+    RETURN
+    --*/--
 
     DECLARE
         @Id             BigInt,

@@ -65,10 +65,14 @@ ORDER BY
 --*/
 
 /*	
-SELECT [Object], S.[StartDateTime], F.[Error], S.[UserName]
+SELECT [Object], S.[StartDateTime], F.[Error], S.[UserName], [Duration] = -DateDiff(Second, F.[FinishDateTime], S.[StartDateTime])
 FROM [Debug].[Executions:Start]			AS S	WITH(NOLOCK)	
 INNER JOIN [Debug].[Executions:Finish]	AS F	WITH(NOLOCK)	ON	S.[Id] = F.[Id]
-WHERE F.[Error] IS NOT NULL
+WHERE [StartDateTime] >= '2021-08-13T10:33:59.783'
+    AND [StartDateTime] <= '2021-08-13T10:46:13.847'
+    
+    
+    --F.[Error] IS NOT NULL
 	--AND S.[Object] != '[dbo].[CONTROL_DOCUMENT_LOAD]'
 ORDER BY S.[StartDateTime] DESC
 --*/	
