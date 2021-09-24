@@ -58,6 +58,22 @@ BEGIN
 			FROM dbo.ClientDutyTable
 			WHERE ClientID = @CLIENT
 				AND STATUS = 1
+
+			UNION ALL
+
+			SELECT DISTINCT E.EMail, 'Протокол РЦ'
+            FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
+            CROSS APPLY
+            (
+                SELECT [EMail] = LTrim(RTrim(SubString(RPR_OPER, CharIndex('->', RPR_OPER) + 2, Len(RPR_OPER))))
+                FROM dbo.RegProtocol AS R
+                WHERE R.RPR_OPER LIKE 'Изменен email:%->%'
+                    AND R.RPR_ID_HOST = D.HostID
+                    AND R.RPR_DISTR = D.DISTR
+                    AND R.RPR_COMP = D.COMP
+            ) AS E
+            WHERE D.ID_CLIENT = @CLIENT
+                AND E.[EMail] != 'nov1@consultant.ru'
         ) AS E
         WHERE ISNULL(ML, '') <> ''
 
