@@ -22,13 +22,24 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
-		SELECT [HotlineCount] = Count(*)
-		FROM dbo.HotlineChatView a WITH(NOEXPAND)
-		INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
-		INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
-		WHERE a.START >= @BEGIN
-		    AND a.START <= DateAdd(Day, 1, @END)
+    
+		SELECT
+		    [HotlineCount] =
+		    (
+		        SELECT Count(*)
+		        FROM dbo.HotlineChatView a WITH(NOEXPAND)
+		        INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
+		        INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
+		        WHERE a.START >= @BEGIN
+		            AND a.START <= DateAdd(Day, 1, @END)
+		    ),
+		    [HotlineAllCount] = 
+		    (
+		        SELECT Count(*)
+		        FROM dbo.HotlineChatView a WITH(NOEXPAND)
+		        WHERE a.START >= @BEGIN
+		            AND a.START <= DateAdd(Day, 1, @END)
+		    )
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
