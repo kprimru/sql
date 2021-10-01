@@ -81,6 +81,14 @@ BEGIN
             SELECT HostID, DistrNumber, CompNumber
             FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
             INNER JOIN dbo.TableStringFromXML(@SH) e ON a.SubhostName = e.ID
+
+            UNION
+
+            SELECT SC.SC_ID_HOST, SC.SC_DISTR, SC.SC_COMP
+            FROM dbo.SubhostComplect AS SC
+            INNER JOIN dbo.Subhost AS S ON S.SH_ID = SC.SC_ID_SUBHOST
+            INNER JOIN dbo.TableStringFromXML(@SH) e ON S.SH_REG= e.ID
+            WHERE SC_COMPLECT IS NULL
         ELSE IF @STATUS IS NOT NULL
             INSERT INTO #temp(HST, DISTR, COMP)
             SELECT HostID, DistrNumber, CompNumber
@@ -183,6 +191,15 @@ BEGIN
                     WHERE HST = HostID
                         AND DISTR = DistrNumber
                         AND COMP = CompNumber
+                ) AND NOT EXISTS
+                (
+                    SELECT *
+                    FROM dbo.SubhostComplect AS SC
+                    INNER JOIN dbo.Subhost AS S ON S.SH_ID = SC.SC_ID_SUBHOST
+                    INNER JOIN dbo.TableStringFromXML(@SH) e ON S.SH_REG= e.ID
+                    WHERE SC.SC_ID_HOST = HST
+                        AND SC.SC_DISTR = DISTR
+                        AND SC.SC_COMP = COMP
                 )
 
         IF @STATUS IS NOT NULL

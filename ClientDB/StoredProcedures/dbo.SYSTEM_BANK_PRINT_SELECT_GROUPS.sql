@@ -16,7 +16,7 @@ BEGIN
 
     DECLARE
         @Host_Id        SmallInt,
-        @DistrType_Id   SmallInt;
+        @DistrType_Id   SmallInt;
 
     DECLARE @DistrsTypes Table
     (
@@ -24,7 +24,7 @@ BEGIN
         Name    VarChar(100),
         Data    VarChar(Max),
         Primary Key Clustered([Id])
-    );
+    );
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -34,7 +34,7 @@ BEGIN
 	BEGIN TRY
 
         SET @Host_Id = (SELECT TOP (1) [HostId] FROM [dbo].[Hosts] WHERE [HostReg] = 'LAW');
-        SET @DistrType_Id = (SELECT TOP (1) [DistrTypeId] FROM [dbo].[DistrTypeTable] WHERE [DistrTypeCode] = 'LOCAL');
+        SET @DistrType_Id = (SELECT TOP (1) [DistrTypeId] FROM [dbo].[DistrTypeTable] WHERE [DistrTypeCode] = 'LOCAL');
 
         INSERT INTO @DistrsTypes
         SELECT D.DistrTypeID, D.DistrTypeName, Cast(I.[Data] AS VarChar(Max))
@@ -54,7 +54,7 @@ BEGIN
                             AND S.[HostId] = @Host_Id
                         ORDER BY S.SystemID, I.InfoBankID FOR XML PATH('')
                     )
-        ) AS I;
+        ) AS I;
 
         SELECT
             [SortIndex]     = 1,
@@ -86,9 +86,9 @@ BEGIN
 		                ORDER BY N.Id FOR XML PATH('')
 		            )
 		        ), 1, 2, ''))
-		) AS N
+		) AS N
 
-		UNION ALL
+		UNION ALL
 
 		SELECT
 		    [SortIndex]     = 2,
@@ -101,7 +101,7 @@ BEGIN
                                         FOR XML PATH('')
                                     )
                                 ), 1, 1, '')),
-            [GroupName]     = 'Дополнительные системы'
+            [GroupName]     = 'Дополнительные системы'
 
 		ORDER BY [SortIndex] DESC, [DistrType_Id] DESC;
 

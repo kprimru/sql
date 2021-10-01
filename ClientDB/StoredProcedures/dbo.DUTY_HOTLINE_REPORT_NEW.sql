@@ -22,7 +22,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-    
+
 		SELECT
 		    [HotlineCount] =
 		    (
@@ -33,7 +33,7 @@ BEGIN
 		        WHERE a.START >= @BEGIN
 		            AND a.START <= DateAdd(Day, 1, @END)
 		    ),
-		    [HotlineAllCount] = 
+		    [HotlineAllCount] =
 		    (
 		        SELECT Count(*)
 		        FROM dbo.HotlineChatView a WITH(NOEXPAND)

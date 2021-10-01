@@ -30,7 +30,7 @@ BEGIN
 			DIS_COMP_NUM	TINYINT,
 			PR_DATE			SMALLDATETIME,
 			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
+		)
 
 		INSERT INTO @TBL (ID, OLD_STATUS)
 		SELECT ID, ISNULL(CALC_STATUS, 'Не расчитан')
@@ -40,7 +40,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO @TBL (ID, OLD_STATUS)';
+            @Name           = 'INSERT INTO @TBL (ID, OLD_STATUS)';
 
 		INSERT INTO @act(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE)
 		SELECT DISTINCT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE
@@ -49,7 +49,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO @act';
+            @Name           = 'INSERT INTO @act';
 
 		--ToDo переписать это убожество
 		UPDATE z
@@ -142,7 +142,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE @TBL SET NEW_STATUS';
+            @Name           = 'UPDATE @TBL SET NEW_STATUS';
 
 		UPDATE @TBL
 		SET NEW_STATUS = 'Расчитан частично'
@@ -150,7 +150,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE @TBL SET NEW_STATUS X3';
+            @Name           = 'UPDATE @TBL SET NEW_STATUS X3';
 
 		UPDATE a
 		SET CALC_STATUS = z.NEW_STATUS
@@ -161,7 +161,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE dbo.ActCalc SET NEW_STATUS';
+            @Name           = 'UPDATE dbo.ActCalc SET NEW_STATUS';
 
 		--EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss',  @MSG, 0
 
@@ -174,7 +174,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO dbo.ClientMessage';
+            @Name           = 'INSERT INTO dbo.ClientMessage';
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -1,7 +1,0 @@
-USE [ClientDB]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE SYNONYM [BuhDB].[dbo.SystemTable] FOR [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable];GO

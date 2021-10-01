@@ -1,7 +1,0 @@
-USE [ClientDB]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE SYNONYM [DBF].[Subhost.RegNodeSubhostTable] FOR [PC275-SQL\DELTA].[DBF].[Subhost].[RegNodeSubhostTable];GO

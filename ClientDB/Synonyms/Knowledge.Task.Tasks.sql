@@ -1,7 +1,0 @@
-USE [ClientDB]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE SYNONYM [Knowledge].[Task.Tasks] FOR [PC275-SQL\GAMMA].[Knowledge].[Task].[Tasks];GO
