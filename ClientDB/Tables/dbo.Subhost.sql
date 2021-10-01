@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[Subhost]
         [SH_EMAIL]                   VarChar(50)               NULL,
         [SH_ID_CLIENT]               Int                       NULL,
         [SH_SEMINAR_DEFAULT_COUNT]   SmallInt                  NULL,
+        [SH_ODD_EMAIL]               VarChar(256)              NULL,
         CONSTRAINT [PK_dbo.Subhost] PRIMARY KEY CLUSTERED ([SH_ID]),
         CONSTRAINT [FK_dbo.Subhost(SH_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([SH_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );GO

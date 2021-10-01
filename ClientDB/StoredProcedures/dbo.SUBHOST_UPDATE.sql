@@ -10,6 +10,7 @@ ALTER PROCEDURE [dbo].[SUBHOST_UPDATE]
     @Reg            VarChar(20),
     @RegAdd         VarChar(20),
     @Email          VarChar(50),
+    @OddEmail       VarChar(256),
     @Client_Id      Int,
     @SeminarDefault Int
 AS
@@ -28,11 +29,14 @@ BEGIN
 
 	BEGIN TRY
 
+        SET @RegAdd = NullIf(@RegAdd, '');
+
 		UPDATE dbo.Subhost SET
 		    SH_NAME                     = @Name,
 		    SH_REG                      = @Reg,
 		    SH_REG_ADD                  = @RegAdd,
 		    SH_EMAIL                    = @Email,
+		    SH_ODD_EMAIL                = @OddEmail,
 		    SH_ID_CLIENT                = @Client_Id,
 		    SH_SEMINAR_DEFAULT_COUNT    = @SeminarDefault
 		WHERE SH_ID = @Id;

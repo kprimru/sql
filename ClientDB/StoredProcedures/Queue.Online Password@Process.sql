@@ -27,7 +27,8 @@ BEGIN
         @DistrStr           VarChar(128),
         @Comment            VarChar(256),
         @DistrNumber        Int,
-        @CompNumber         TinyInt;
+        @CompNumber         TinyInt,
+        @Subhost_Id         UniqueIdentifier;
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -64,6 +65,21 @@ BEGIN
 
         -- ToDo именованные множества
         IF @DistrTypeCode = 'NEK' BEGIN
+            SELECT @Subhost_Id = SC_ID_SUBHOST
+            FROM dbo.SubhostComplect AS SC
+            WHERE SC.SC_ID_HOST = 1
+                AND SC.SC_DISTR = @DistrNumber
+                AND SC.SC_COMP = @CompNumber;
+
+            IF @Subhost_Id IS NULL
+                SELECT @Subhost_Id = SH_ID
+                FROM dbo.Subhost
+                WHERE SH_REG = '';
+
+            SELECT @EmailRecipients = SH_ODD_EMAIL
+            FROM dbo.Subhost
+            WHERE SH_ID = @Subhost_Id;
+
             SET @EmailRecipients    = 'urazova@bazis;nalunina@bazis';
             SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
             SET @EmailBody          = '<table bgcolor="#ffffff">
