@@ -29,7 +29,7 @@ BEGIN
 			FROM dbo.TableIDFromXML(@LIST)
 
 		SELECT
-			a.ClientID, ClientFullName, ServiceName = ServiceName + ' (' + ManagerName + ')', CA_STR_PRNT AS ClientAdress,
+			a.ClientID, ClientFullName, ServiceName = ServiceName + ' (' + ManagerName + ')', CA_STR_PRNT AS ClientAdress, ClientINN,
 			ClientActivity, ClientDayBegin, ClientDayEnd,
 			ServiceTypeName,
 			DinnerBegin, DinnerEnd,

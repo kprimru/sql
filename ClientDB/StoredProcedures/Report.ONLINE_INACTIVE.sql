@@ -35,8 +35,8 @@ BEGIN
             [Сеть]                                  = R.NT_SHORT,
             [Тип]                                   = R.SST_SHORT,
             [Последняя неделя активности]           = LOA.NAME,
-            [Недель без активности]                 = DateDiff(Week, LOA.Start, OA.Start),
-            [Недель с момента первой регистрации]   = DateDiff(Week, R.FirstReg, OA.Start)
+            [Недель с момента первой регистрации]   = DateDiff(Week, R.FirstReg, OA.Start),
+            [Недель без активности]                 = DateDiff(Week, LOA.Start, OA.Start)
         FROM
         (
             SELECT DISTINCT OA.ID_HOST, OA.DISTR, OA.COMP, P.NAME, P.START
