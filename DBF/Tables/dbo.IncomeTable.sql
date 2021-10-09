@@ -21,6 +21,7 @@ CREATE TABLE [dbo].[IncomeTable]
         [IN_STATUS]       TinyInt                         NOT NULL,
         [IN_UPD_DATE]     DateTime                        NOT NULL,
         [IN_UPD_USER]     NVarChar(256)                   NOT NULL,
+        [Raw_Id]          bigint                              NULL,
         CONSTRAINT [PK_dbo.IncomeTable] PRIMARY KEY NONCLUSTERED ([IN_ID]),
         CONSTRAINT [FK_dbo.IncomeTable(IN_ID_ORG)_dbo.OrganizationTable(ORG_ID)] FOREIGN KEY  ([IN_ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID]),
         CONSTRAINT [FK_dbo.IncomeTable(IN_ID_CLIENT)_dbo.ClientTable(CL_ID)] FOREIGN KEY  ([IN_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([CL_ID]),
