@@ -21,9 +21,18 @@ RETURN
         PP.[Product_GUId],
         PP.[ProductOKPD2Code],
         PP.[ProductOKEICode],
-        PP.[ProductOKEIFullName]
+        PP.[ProductOKEIFullName],
+        R.[RegNum],
+        R.[Number]
 
     FROM @Data.nodes('(/export/contract)') AS E(C)
+    OUTER APPLY
+    (
+        SELECT
+            [RegNum]    = C.value('(./regNum)[1]', 'VarChar(100)'),
+            [Number]    = C.value('(./number)[1]', 'VarChar(100)')
+
+    ) AS R
     OUTER APPLY
     (
         SELECT

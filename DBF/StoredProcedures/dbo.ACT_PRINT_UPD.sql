@@ -252,9 +252,24 @@ BEGIN
                                         --[ƒатаѕер]   = Convert(VarChar(20), GetDate(), 104),
                                         [ƒатаЌач]   = Convert(VarChar(20), PR_DATE, 104),
                                         [ƒатаќкон]  = Convert(VarChar(20), PR_END_DATE, 104),
-                                        (
+                                        /*(
                                             SELECT
                                                 [Ќаимќсн]   = 'Ѕез документа-основани€'
+                                            FOR XML RAW('ќснѕер'), TYPE
+                                        ),*/
+                                        --<ќснѕер Ќаимќсн=" онтракт" Ќомќсн="01-2021" ƒатаќсн="31.05.2021" ƒоп—вќсн="–еестровый номер в реестре контрактов: 1253603519021000006"/>
+                                        (
+                                            SELECT TOP (1)
+                                                [Ќаимќсн]   = CK.CK_NAME,
+                                                [Ќомќсн]    = CO.CO_NUM,
+                                                [ƒатаќсн]   = Convert(VarChar(20), CO.CO_DATE, 104),
+                                                [ƒоп—вќсн]  = '–еестровый номер в реестре контрактов: ' + ED.[RegNum]
+                                            FROM dbo.ContractTable AS CO
+                                            INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
+                                            INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
+                                            INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
+                                            WHERE CO_ID_CLIENT = A.ACT_ID_CLIENT
+                                                AND CO_ACTIVE = 1
                                             FOR XML RAW('ќснѕер'), TYPE
                                         ),
                                         (
