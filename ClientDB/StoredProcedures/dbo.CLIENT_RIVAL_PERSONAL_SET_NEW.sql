@@ -1,33 +1,56 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_RIVAL_PERSONAL_SET_NEW]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_PERSONAL_SET_NEW]
 	@CR_ID	INT,
 	@LIST	VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @table TABLE (PT_ID INT)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @table
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@LIST, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM dbo.ClientRivalPersonal
-	WHERE CRP_ID_RIVAL = @CR_ID
-		AND NOT EXISTS
-			(
-				SELECT *
-				FROM @table
-				WHERE PT_ID = CRP_ID_PERSONAL
-			)
+	BEGIN TRY
 
-	INSERT INTO dbo.ClientRivalPersonal(CRP_ID_RIVAL, CRP_ID_PERSONAL)
-		SELECT DISTINCT @CR_ID, PT_ID
-		FROM @table	
+		DECLARE @table TABLE (PT_ID INT)
+
+		INSERT INTO @table
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@LIST, ',')
+
+		DELETE
+		FROM dbo.ClientRivalPersonal
+		WHERE CRP_ID_RIVAL = @CR_ID
+			AND NOT EXISTS
+				(
+					SELECT *
+					FROM @table
+					WHERE PT_ID = CRP_ID_PERSONAL
+				)
+
+		INSERT INTO dbo.ClientRivalPersonal(CRP_ID_RIVAL, CRP_ID_PERSONAL)
+			SELECT DISTINCT @CR_ID, PT_ID
+			FROM @table
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

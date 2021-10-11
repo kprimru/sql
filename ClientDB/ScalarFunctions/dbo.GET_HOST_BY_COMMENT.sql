@@ -1,19 +1,19 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 02.10.2008
--- Описание:	  Возвращает название подхоста 
+-- Описание:	  Возвращает название подхоста
 --                по комментарию из рег.узла
 -- =============================================
-CREATE FUNCTION [dbo].[GET_HOST_BY_COMMENT]
+ALTER FUNCTION [dbo].[GET_HOST_BY_COMMENT]
 (
   @comment varchar(200)
 )
@@ -22,17 +22,17 @@ WITH SCHEMABINDING
 AS
 BEGIN
   DECLARE @res varchar(10)
- 
+
   SET @res = ''
- 
+
   DECLARE @temp varchar(200)
 
   SET @comment = ISNULL(@comment, '')
 
-  IF CHARINDEX('(', @comment) <> 1 
+  IF CHARINDEX('(', @comment) <> 1
     RETURN @res
 
-  SET @temp = SUBSTRING(@comment, CHARINDEX('(', @comment) + 1, 
+  SET @temp = SUBSTRING(@comment, CHARINDEX('(', @comment) + 1,
                         LEN(@comment) - CHARINDEX('(', @comment))
 
   IF CHARINDEX(')', @temp) < 2
@@ -45,3 +45,4 @@ END
 
 
 
+GO

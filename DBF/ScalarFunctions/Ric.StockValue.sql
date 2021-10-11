@@ -1,13 +1,13 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 	Функция, возвращающая задел
 */
-CREATE FUNCTION [Ric].[Stock]
+ALTER FUNCTION [Ric].[StockValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -33,3 +33,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

@@ -1,16 +1,16 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:			
-Дата создания:  	
-Описание:		
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD]
+ALTER PROCEDURE [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD]
 	@clientid INT,
 	@actcontract VARCHAR(100),
 	@actpos VARCHAR(200),
@@ -24,17 +24,42 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ClientDocumentSettingsTable
-			(
-				CDS_ID_CLIENT, CDS_ACT_CONTRACT, 
-				CDS_ACT_POS, CDS_ACT_POS_F, CDS_ACT_NAME, CDS_ACT_NAME_F, 
-				CDS_BILL_REST, CDS_INS_CONTRACT, CDS_INS_NAME
-			)
-	VALUES 
-			(
-				@clientid, @actcontract, @actpos, @actposf, @actname, 
-				@actnamef, @billrest, @inscontract, @insname
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ClientDocumentSettingsTable
+				(
+					CDS_ID_CLIENT, CDS_ACT_CONTRACT,
+					CDS_ACT_POS, CDS_ACT_POS_F, CDS_ACT_NAME, CDS_ACT_NAME_F,
+					CDS_BILL_REST, CDS_INS_CONTRACT, CDS_INS_NAME
+				)
+		VALUES
+				(
+					@clientid, @actcontract, @actpos, @actposf, @actname,
+					@actnamef, @billrest, @inscontract, @insname
+				)
+
+		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_DOCUMENT_SETTINGS_ADD] TO rl_client_w;
+GO

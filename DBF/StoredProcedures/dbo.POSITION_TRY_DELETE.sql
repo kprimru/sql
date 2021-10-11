@@ -1,51 +1,74 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 /*
 јвтор:		  ƒенисов јлексей
 ƒата создани€: 25.08.2008
-ќписание:	  ¬озвращает 0, в случае если 
-               должность можно удалить 
-               (она не указана ни у одного сотрудника), 
+ќписание:	  ¬озвращает 0, в случае если
+               должность можно удалить
+               (она не указана ни у одного сотрудника),
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[POSITION_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[POSITION_TRY_DELETE]
 	@positionid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_POS = @positionid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' + 
-						  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
-						  'бы у одного сотрудника.'
-	  END
-	
-	-- добавлено 29.04.2009, ¬.Ѕогдан
-	IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_POS = @positionid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' + 
-						  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
-						  'бы у одного сотрудника.'
-	  END
-	--
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.ClientPersonalTable WHERE PER_ID_POS = @positionid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников клиента. ' +
+							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
+							  'бы у одного сотрудника.'
+		  END
+
+		-- добавлено 29.04.2009, ¬.Ѕогдан
+		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_POS = @positionid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'ƒанна€ должность указана у одного или нескольких сотрудников “ќ клиента. ' +
+							  '”даление невозможно, пока выбранна€ должность будет указан хот€ ' +
+							  'бы у одного сотрудника.'
+		  END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[POSITION_TRY_DELETE] TO rl_position_d;
+GO

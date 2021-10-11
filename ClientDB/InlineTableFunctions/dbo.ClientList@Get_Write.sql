@@ -1,0 +1,15 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[ClientList@Get?Write]()
+RETURNS TABLE
+AS
+RETURN
+(
+	SELECT WCL_ID = ClientID
+	FROM [dbo].[ClientList@Get]('WRITE')
+)
+GO

@@ -1,21 +1,46 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_SEARCH_HISTORY_DELETE_LAST]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[CLIENT_SEARCH_HISTORY_DELETE_LAST]
 	@CLIENTID	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @DATE DATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @DATE = MAX(SearchGet)
-	FROM dbo.ClientSearchTable
-	WHERE ClientID = @CLIENTID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE FROM dbo.ClientSearchTable
-	WHERE ClientID = @CLIENTID AND SearchGet = @DATE
+	BEGIN TRY
+
+		DECLARE @DATE DATETIME
+
+		SELECT @DATE = MAX(SearchGet)
+		FROM dbo.ClientSearchTable
+		WHERE ClientID = @CLIENTID
+
+		DELETE FROM dbo.ClientSearchTable
+		WHERE ClientID = @CLIENTID AND SearchGet = @DATE
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_SEARCH_HISTORY_DELETE_LAST] TO rl_client_search_d;
+GO

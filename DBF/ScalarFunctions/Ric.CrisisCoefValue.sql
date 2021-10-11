@@ -1,13 +1,13 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 	Получение кризисного коэффициента
 */
-CREATE FUNCTION [Ric].[CrisisCoef]
+ALTER FUNCTION [Ric].[CrisisCoefValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +20,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
-CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
+ALTER FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
 (
 	-- Список параметров функции
 	@refname VARCHAR(100),
@@ -34,9 +34,9 @@ BEGIN
 	-- Текст процедуры ниже
 	DECLARE @temp TABLE (ID INT)
 
-	
-	DECLARE @tmp TABLE	(DATA_ID INT, DATA_NAME VARCHAR(100))	
-	
+
+	DECLARE @tmp TABLE	(DATA_ID INT, DATA_NAME VARCHAR(100))
+
 	IF @refname = 'SYSTEM'
 		INSERT INTO @tmp
 		SELECT SYS_ID, SYS_SHORT_NAME
@@ -71,8 +71,8 @@ BEGIN
 	ELSE IF @refname = 'DISTR_STATUS'
 		INSERT INTO @tmp
 		SELECT DS_ID, DS_NAME
-		FROM dbo.DistrStatusTable		
-	
+		FROM dbo.DistrStatusTable
+
 	--SELECT * FROM #temp
 
 	--SELECT * FROM #tmp
@@ -83,20 +83,21 @@ BEGIN
 		INSERT INTO @temp SELECT DATA_ID FROM @tmp
 	ELSE
 	*/
-	
+
 	INSERT INTO @temp
 		SELECT * FROM dbo.GET_TABLE_FROM_LIST(@idlist, ',')
 
 	SET @result = ''
 
-	SELECT @result = @result + ISNULL(DATA_NAME, '') + ', ' 
-	FROM @tmp INNER JOIN 
+	SELECT @result = @result + ISNULL(DATA_NAME, '') + ', '
+	FROM @tmp INNER JOIN
 		@temp ON DATA_ID = ID
 
 	IF LEN(@result) > 2
-		SET @result = LEFT(@result, LEN(@result) - 1)	
-			
+		SET @result = LEFT(@result, LEN(@result) - 1)
+
 	END
 	-- Возвращение результата работы функции
-	RETURN @result	
+	RETURN @result
 END
+GO

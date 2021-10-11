@@ -1,18 +1,18 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_ADD] 
-	@countryname VARCHAR(100), 
+ALTER PROCEDURE [dbo].[COUNTRY_ADD]
+	@countryname VARCHAR(100),
 	@active BIT = 1,
 	@oldcode INT = NULL,
 	@returnvalue BIT = 1
@@ -20,11 +20,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.CountryTable(CNT_NAME, CNT_ACTIVE, CNT_OLD_CODE) 
-	VALUES (@countryname, @active, @oldcode)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.CountryTable(CNT_NAME, CNT_ACTIVE, CNT_OLD_CODE)
+		VALUES (@countryname, @active, @oldcode)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[COUNTRY_ADD] TO rl_country_w;
+GO

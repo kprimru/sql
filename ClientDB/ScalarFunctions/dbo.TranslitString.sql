@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[TranslitString]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[TranslitString]
 (
 	@SOURCE	VARCHAR(4000)
 )
@@ -24,7 +24,7 @@ BEGIN
 	DECLARE	@lat3 VARCHAR(100)
 
 	SET @rus =  'אבגדהו¸זחטיךכלםמןנסעףפץצקרשתûü‎‏ÿ'
-	SET @lat1 = 'abvgdejzzijklmnoprstufkccss"y''ejj' 
+	SET @lat1 = 'abvgdejzzijklmnoprstufkccss"y''ejj'
 	SET @lat2 = '      oh  j           h hhh   hua'
 	SET @lat3 = '                          h      '
 
@@ -55,5 +55,6 @@ BEGIN
 	SET @RES = @str_lat
 
 
-	RETURN @RES		
+	RETURN @RES
 END
+GO

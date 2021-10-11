@@ -1,57 +1,80 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 јвтор:		  ƒенисов јлексей
 ƒата создани€: 18.12.2008
 ќписание:	  ¬озвращает 0, если технологический признак
-               можно удалить, 
+               можно удалить,
                -1 в противном случае
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_TRY_DELETE]
 	@technoltypeid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 28.04.2009, ¬.Ѕогдан
-	IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_TECH_TYPE = @technoltypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как с ним был зарегистрирован дистрибутив.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.RegNodeTable WHERE RN_TECH_TYPE = @technoltypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
-							+ 'с ним был зарегистрирован дистрибутив.'  + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_TECH_TYPE = @technoltypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
-							+ 'имеютс€ записи в истории рег.узла с данным признаком.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_TECH_TYPE = @technoltypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
-					+ 'имеютс€ записи о регистрации новых систем с данным признаком.'
-		END
-	--
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		-- добавлено 28.04.2009, ¬.Ѕогдан
+		IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_TECH_TYPE = @technoltypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как с ним был зарегистрирован дистрибутив.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.RegNodeTable WHERE RN_TECH_TYPE = @technoltypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
+								+ 'с ним был зарегистрирован дистрибутив.'  + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_TECH_TYPE = @technoltypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
+								+ 'имеютс€ записи в истории рег.узла с данным признаком.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_TECH_TYPE = @technoltypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Ќевозможно удалить технологический признак, так как '
+						+ 'имеютс€ записи о регистрации новых систем с данным признаком.'
+			END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_TRY_DELETE] TO rl_technol_type_d;
+GO

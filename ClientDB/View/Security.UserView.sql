@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Security].[UserView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [Security].[UserView]
 AS
 	SELECT principal_id AS US_ID, name AS US_SQL_NAME, name AS US_NAME, 1 AS US_USER
 	FROM sys.database_principals
@@ -19,4 +19,4 @@ AS
 	FROM
 		sys.database_principals
 		INNER JOIN dbo.RoleTable ON RoleName = name
-	WHERE [TYPE] = 'R'
+	WHERE [TYPE] = 'R'GO

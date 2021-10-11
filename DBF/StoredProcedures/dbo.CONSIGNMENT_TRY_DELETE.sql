@@ -1,27 +1,52 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:			
-Дата создания:  	
-Описание:		
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
+Автор:
+Дата создания:  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_TRY_DELETE]
+ALTER PROCEDURE [dbo].[CONSIGNMENT_TRY_DELETE]
 	@csgid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(1000)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @res AS RES, @txt AS TXT
+	BEGIN TRY
 
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(1000)
+
+		SET @res = 0
+		SET @txt = ''
+
+		SELECT @res AS RES, @txt AS TXT
+
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_TRY_DELETE] TO rl_consignment_d;
+GO

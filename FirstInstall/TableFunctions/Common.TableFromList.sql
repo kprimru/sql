@@ -1,40 +1,40 @@
 USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE FUNCTION [Common].[TableFromList]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER FUNCTION [Common].[TableFromList]
 	(
-		@List VARCHAR(MAX), 
+		@List VARCHAR(MAX),
 		@Delimiter VARCHAR(10) = ','
 	)
 RETURNS @tbl TABLE (ID UNIQUEIDENTIFIER NOT NULL) AS
 BEGIN
 	IF ISNULL(@List, '') = ''
 		RETURN
-  
+
 	DECLARE @idxb INT
-	DECLARE @idxe INT 
+	DECLARE @idxe INT
     DECLARE @item VARCHAR(MAX)
     DECLARE @lend INT
 	DECLARE @lenl INT
 	DECLARE @i INT
 
 	SET @lend = DATALENGTH(@Delimiter)
-	SET @lenl = DATALENGTH(@List) 
+	SET @lenl = DATALENGTH(@List)
 	SET @idxb = 1
-  
-	WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter 
-								AND @idxb < @lenl - @lend + 1 
+
+	WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter
+								AND @idxb < @lenl - @lend + 1
 		SET @idxb = @idxb + @lend
 
 	SET @idxe = @idxb
 
 	WHILE @idxb <= @lenl AND @idxe <= @lenl
 	BEGIN
-		IF SUBSTRING(@List, @idxe + 1, @lend) = @Delimiter 
+		IF SUBSTRING(@List, @idxe + 1, @lend) = @Delimiter
 		BEGIN
 			SET @item = SUBSTRING(@List, @idxb, @idxe - @idxb + 1)
 			IF NOT EXISTS
@@ -47,7 +47,7 @@ BEGIN
 
 			SET @idxb = @idxe + @lend + 1
 
-			WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1 
+			WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1
 				SET @idxb = @idxb + @lend
 
 			SET @idxe = @idxb
@@ -56,8 +56,8 @@ BEGIN
 		BEGIN
 			SET @item = SUBSTRING(@List, @idxb, @idxe - @idxb + 1)
 
-			IF @item <> @Delimiter 
-			BEGIN 
+			IF @item <> @Delimiter
+			BEGIN
 				IF NOT EXISTS
 					(
 						SELECT *
@@ -71,8 +71,9 @@ BEGIN
 		ELSE
 		BEGIN
 			SET @idxe = @idxe + 1
-		END 
+		END
 	END
 
 	RETURN
 END
+GO

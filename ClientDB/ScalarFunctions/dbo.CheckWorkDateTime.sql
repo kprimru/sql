@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[CheckWorkDateTime]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[CheckWorkDateTime]
 (
 	@DT	DATETIME
 )
@@ -21,7 +21,7 @@ BEGIN
 
 	DECLARE @WORK BIT
 
-	SELECT @WORK = CalendarWork	
+	SELECT @WORK = CalendarWork
 	FROM dbo.Calendar
 	WHERE CalendarDate = @T
 
@@ -32,3 +32,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientLargeView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [dbo].[ClientLargeView]
 AS
 	SELECT ClientID
 	FROM dbo.ClientView a WITH(NOEXPAND)
@@ -17,16 +17,17 @@ AS
 				WHERE z.ID_CLIENT = a.ClientID
 					AND DS_REG = 0
 					AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
-					AND 
+					AND
 						(
 							z.HostID = 1
-							AND 
+							AND
 							y.NT_NET > 1
-									
+
 							OR
-										
+
 							y.NT_NET = 1
 							AND
 							z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 						)
 			)
+GO

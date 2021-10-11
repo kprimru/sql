@@ -1,12 +1,12 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[WorkDaysAdd]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[WorkDaysAdd]
 (
-	@DATE	SMALLDATETIME,	
+	@DATE	SMALLDATETIME,
 	@DAYS	INT
 )
 RETURNS SMALLDATETIME
@@ -17,14 +17,14 @@ BEGIN
 	DECLARE @INDEX	INT
 
 	SELECT TOP 1 @INDEX = CalendarIndex
-	FROM 
+	FROM
 		dbo.Calendar INNER JOIN
 		dbo.DayTable ON DayID = CalendarWeekDayID
 	WHERE CalendarDate >= @DATE
 		AND DayOrder = 1
 		AND CalendarWork = 1
 	ORDER BY CalendarDate
-	
+
 
 	SELECT TOP 1 @RESULT = CalendarDate
 	FROM dbo.Calendar
@@ -34,3 +34,4 @@ BEGIN
 
 	RETURN @RESULT
 END
+GO

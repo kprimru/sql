@@ -1,44 +1,70 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[TO_DISTR_GET]
+ALTER PROCEDURE [dbo].[TO_DISTR_GET]
 	@tdid VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @td TABLE
-		(
-			TD_ID INT
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @td
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @dislist VARCHAR(MAX)
-	SET @dislist = ''
+	BEGIN TRY
 
-	SELECT @dislist = @dislist + DIS_STR + ','
-	FROM dbo.TODistrView
-	WHERE TD_ID IN
-		(
-			SELECT TD_ID
-			FROM @td
-		)
+		DECLARE @td TABLE
+			(
+				TD_ID INT
+			)
 
-	IF LEN(@dislist) > 0
-		SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)	
+		INSERT INTO @td
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
 
-	SELECT @dislist AS DIS_STR
+		DECLARE @dislist VARCHAR(MAX)
+		SET @dislist = ''
+
+		SELECT @dislist = @dislist + DIS_STR + ','
+		FROM dbo.TODistrView
+		WHERE TD_ID IN
+			(
+				SELECT TD_ID
+				FROM @td
+			)
+
+		IF LEN(@dislist) > 0
+			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
+
+		SELECT @dislist AS DIS_STR
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TO_DISTR_GET] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_DISTR_GET] TO rl_to_distr_r;
+GO

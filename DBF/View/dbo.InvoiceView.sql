@@ -1,11 +1,11 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE VIEW [dbo].[InvoiceView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER VIEW [dbo].[InvoiceView]
 AS
 SELECT	INS_ID,
 		INS_ID_TYPE,
@@ -33,7 +33,7 @@ SELECT	INS_ID,
 		INS_DOC_STRING,
 		(SELECT SUM(INR_SALL) FROM dbo.InvoiceRowTable WHERE INR_ID_INVOICE=INS_ID) AS IF_TOTAL_PRICE,
 		INT_NAME
-FROM	
+FROM
 		dbo.InvoiceSaleTable	a									LEFT JOIN
 		--IncomeTable			b	ON	a.INS_ID_INCOME=b.IN_ID		LEFT JOIN
 		dbo.ClientView			c	ON	a.INS_ID_CLIENT=c.CL_ID		LEFT JOIN --INNER JOIN
@@ -41,3 +41,4 @@ FROM
 									and d.CA_ID_TYPE = 1		LEFT JOIN
 		dbo.OrganizationTable	e	ON	a.INS_ID_ORG=e.ORG_ID		LEFT JOIN
 		dbo.InvoiceTypeTable	f	ON	a.INS_ID_TYPE = f.INT_ID
+GO

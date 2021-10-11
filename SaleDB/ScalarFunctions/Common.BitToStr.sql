@@ -1,0 +1,16 @@
+USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [Common].[BitToStr]
+(
+    @Value      Bit
+)
+RETURNS NVarChar(50)
+AS
+BEGIN
+    RETURN CASE @Value WHEN 1 THEN 'Да' WHEN 0 THEN 'Нет' ELSE 'Неизв.' END
+END
+GO

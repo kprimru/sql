@@ -1,13 +1,13 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*
 	Коэффициент насыщенности
 */
-CREATE FUNCTION [Ric].[DepthCoef]
+ALTER FUNCTION [Ric].[DepthCoefValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +20,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

@@ -1,11 +1,11 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE FUNCTION _GET_TYPE_BY_NAME
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER FUNCTION _GET_TYPE_BY_NAME
 (
   @tname VARCHAR(20)
 )
@@ -14,7 +14,7 @@ AS
 BEGIN
   DECLARE @res INT
 
-  IF @tname = 'юдл' 
+  IF @tname = 'юдл'
     SET @res = 1
   ELSE IF @tname = 'я.я'
     SET @res = 2
@@ -34,6 +34,7 @@ BEGIN
     SET @res = 9
   ELSE IF @tname = 'я.й'
     SET @res = 10
-  
+
   RETURN @res
 END
+GO

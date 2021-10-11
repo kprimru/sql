@@ -1,0 +1,22 @@
+USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[ClientMainDistrSelect]()
+RETURNS TABLE AS RETURN
+(
+	SELECT C.ClientId, D.DistrStr
+	FROM dbo.ClientTable C
+	OUTER APPLY
+	(
+		SELECT TOP (1) D.DistrStr
+		FROM dbo.ClientDistrView D WITH(NOEXPAND)
+		WHERE D.ID_CLIENT = C.ClientID
+			AND D.DS_REG = 0
+		ORDER BY D.SystemOrder, D.DISTR, D.COMP
+	) D
+	WHERE STATUS = 1
+)
+GO

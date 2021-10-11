@@ -1,12 +1,12 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
-CREATE FUNCTION [dbo].[_GET_SYS_BY_SYM]
+
+ALTER FUNCTION [dbo].[_GET_SYS_BY_SYM]
 (
   @sname VARCHAR(20)
 )
@@ -15,7 +15,7 @@ AS
 BEGIN
   DECLARE @res INT
 
-  IF @sname = 'P' 
+  IF @sname = 'P'
     SET @res = 1
   ELSE IF @sname = 'E'
     SET @res = 2
@@ -54,13 +54,13 @@ BEGIN
   ELSE IF @sname = '9'
     SET @res = 19
   ELSE IF @sname = 'D'
-    SET @res = 20 
+    SET @res = 20
   ELSE IF @sname = 'I'
     SET @res = 21
   ELSE IF @sname = 'G'
     SET @res = 22
   ELSE IF @sname = 'Z'
-    SET @res = 23 
+    SET @res = 23
   ELSE IF @sname = 'J'
     SET @res = 24
   ELSE IF @sname = 'U'
@@ -81,7 +81,8 @@ BEGIN
     SET @res = 32
   ELSE IF @sname = '6'
     SET @res = 33
-  
+
   RETURN @res
 END
 
+GO

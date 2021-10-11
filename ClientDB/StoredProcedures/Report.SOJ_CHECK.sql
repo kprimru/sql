@@ -1,78 +1,75 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[SOJ_CHECK]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [Report].[SOJ_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
-		DROP TABLE #usr
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #usr(UF_ID UNIQUEIDENTIFIER PRIMARY KEY)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO #usr(UF_ID)
-		SELECT UF_ID
-		FROM USR.USRActiveView
-		WHERE UF_DATE >= '20171001'
+	BEGIN TRY
 
-	SELECT 
-		ISNULL(ManagerName, SubhostName) AS [Рук-ль/Подхост], ServiceName AS [СИ], 
-		ISNULL(ClientFullName, Comment) AS [Клиент], t.DistrStr AS [Дистрибутив], 
-		NT_SHORT AS [Сеть], SST_SHORT AS [Тип], 
-		OLD_SOJ_EXISTS AS [Старый ИБ СОЮ], NEW_SOJ_EXISTS AS [Новые ИБ СОЮ],
-		CASE 
-			WHEN OLD_SOJ_EXISTS = 0 AND NEW_SOJ_EXISTS = 0 THEN 'ИБ СОЮ отсутствуют'
-			WHEN OLD_SOJ_EXISTS = 1 AND NEW_SOJ_EXISTS = 0 THEN 'Только старый ИБ СОЮ'
-			WHEN OLD_SOJ_EXISTS = 0 AND NEW_SOJ_EXISTS = 1 THEN 'Только новый ИБ СОЮ'
-			WHEN OLD_SOJ_EXISTS = 1 AND NEW_SOJ_EXISTS = 1 THEN 'Установлены оба ИБ СОЮ'
-		END AS [Заключение]
-	FROM
+		DECLARE @LastUSR Table
 		(
-			SELECT 
-				SubhostName, HostID, DistrNumber, CompNumber, Comment, DistrStr, NT_SHORT, SST_SHORT,
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM 
-								#usr z
-								INNER JOIN USR.USRIB y ON z.UF_ID = y.UI_ID_USR
-								INNER JOIN dbo.InfoBankTable x ON x.InfoBankID = y.UI_ID_BASE
-							WHERE x.InfoBankName = 'SOJ'
-								AND y.UI_DISTR = a.DistrNumber
-								AND y.UI_COMP = a.CompNumber
-						) THEN 1
-						ELSE 0
-				END AS OLD_SOJ_EXISTS,
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM 
-								#usr z
-								INNER JOIN USR.USRIB y ON z.UF_ID = y.UI_ID_USR
-								INNER JOIN dbo.InfoBankTable x ON x.InfoBankID = y.UI_ID_BASE
-							WHERE x.InfoBankName IN ('SOUR', 'SOUG', 'SOSZ', 'SOSK', 'SOSB', 'SOPV', 'SODV', 'SOCN')
-								AND y.UI_DISTR = a.DistrNumber
-								AND y.UI_COMP = a.CompNumber
-						) THEN 1
-						ELSE 0
-				END AS NEW_SOJ_EXISTS
-			FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
-			WHERE SystemBaseName = 'SOJ'
-				AND DS_REG = 0
-				AND NT_SHORT NOT IN ('ОВК', 'ОВП', 'ОВПИ', 'ОВМ1', 'ОВМ2')
-		) AS t
-		LEFT OUTER JOIN dbo.ClientDistrView p WITH(NOEXPAND) ON t.DistrNumber = p.DISTR AND t.CompNumber= p.COMP AND t.HostID = p.HostID
-		LEFT OUTER JOIN dbo.ClientView q WITH(NOEXPAND) ON q.ClientID = p.ID_CLIENT
-	ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 0 END, SubhostName, ManagerName, ServiceName, ClientFullName, Comment, SystemOrder, DistrNumber
+			UF_ID		Int,
+			UF_DATE		DateTime,
+			Primary Key Clustered (UF_ID)
+		);
 
+		INSERT INTO @LastUSR
+		SELECT UF_ID, UF_DATE
+		FROM USR.USRActiveView;
+		--WHERE UF_DATE >= '20200101';
 
-	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
-		DROP TABLE #usr
+		SELECT
+			[Рук-ль/Подхост]	= ISNULL(ManagerName, SubhostName),
+			[СИ]				= ServiceName,
+			[Клиент]			= ISNULL(ClientFullName, Comment),
+			[Дистрибутив]		= D.DistrStr,
+			[Сеть]				= NT_SHORT,
+			[Тип]				= SST_SHORT,
+			[Посл.пополнение]	=
+				(
+					SELECT TOP (1) U.UF_DATE
+					FROM @LastUSR				U
+					INNER JOIN USR.USRPackage	P ON U.UF_ID = P.UP_ID_USR
+					WHERE P.UP_ID_SYSTEM = R.SystemID
+						AND P.UP_DISTR = R.DistrNumber
+						AND P.UP_COMP = R.CompNumber
+					ORDER BY U.UF_DATE DESC
+				)
+		FROM Reg.RegNodeSearchView R WITH(NOEXPAND)
+		INNER JOIN Din.NetTypeOffline() N ON R.NT_ID = N.NT_ID
+		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON R.DistrNumber = D.DISTR AND R.CompNumber = D.COMP AND R.HostID = D.HostID
+		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON C.ClientID = D.ID_CLIENT
+		WHERE R.SystemBaseName = 'SOJ'
+			AND R.DS_REG = 0
+		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 0 END, SubhostName, ManagerName, ServiceName, ClientFullName, Comment, R.SystemOrder, DistrNumber
+		OPTION (RECOMPILE)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[SOJ_CHECK] TO rl_report;
+GO

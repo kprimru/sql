@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[FirstWorkDate]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[FirstWorkDate]
 (
 	@DATE	SMALLDATETIME
 )
@@ -14,11 +14,12 @@ BEGIN
 	DECLARE @RESULT	SMALLDATETIME
 
 	SELECT TOP 1 @RESULT = CalendarDate
-	FROM 
-		dbo.Calendar 
+	FROM
+		dbo.Calendar
 	WHERE CalendarDate >= @DATE
 		AND CalendarWork = 1
 	ORDER BY CalendarDate
 
 	RETURN @RESULT
 END
+GO

@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[DistrWeight]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[DistrWeight]
 (
 	@SYS	INT,
 	@NET	INT,
@@ -18,26 +18,27 @@ BEGIN
 
 	DECLARE @PERIOD	UNIQUEIDENTIFIER
 	DECLARE @SYS_REG NVARCHAR(64)
-	
+
 	SELECT @PERIOD = ID
 	FROM Common.Period
 	WHERE @DATE BETWEEN START_REPORT AND FINISH_REPORT AND TYPE = 2
-		
+
 	SELECT @SYS_REG = SystemBaseName
 	FROM dbo.SystemTable
 	WHERE SystemID = @SYS
-		
-	SELECT @RES = 
+
+	SELECT @RES =
 			CASE
 				WHEN @TYPE IN ('С/В', 'С/В информ.обмен', 'ЛСВ', 'ЛСВ информац.обмен', 'Серия Л', 'ОДД', 'ЛСВ РДД') THEN NULL
 				WHEN @TYPE IN ('ДД3') AND @SYS_REG LIKE 'SPK-%' THEN WEIGHT2
-				WHEN @TYPE = 'ДЗ2' THEN a.WEIGHT2 
-				ELSE a.WEIGHT 
+				WHEN @TYPE = 'ДЗ2' THEN a.WEIGHT2
+				ELSE a.WEIGHT
 			END * b.WEIGHT
-	FROM 
+	FROM
 		dbo.SystemWeight a
-		CROSS JOIN dbo.DistrTypeCoef b 
+		CROSS JOIN dbo.DistrTypeCoef b
 	WHERE ID_SYSTEM = @SYS AND ID_PERIOD = @PERIOD AND ID_MONTH = @PERIOD AND ID_NET = @NET
 
 	RETURN @RES
 END
+GO

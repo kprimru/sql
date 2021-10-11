@@ -1,0 +1,27 @@
+USE [VMIClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[TableStringFromXML]
+	(
+		@SOURCE NVARCHAR(MAX)
+	)
+RETURNS @TBL TABLE
+	(
+		ID VarChar(256)
+	)
+AS
+BEGIN
+	DECLARE @XML XML
+
+	SET @XML = CAST(@SOURCE AS XML)
+
+	INSERT INTO @TBL(ID)
+		SELECT c.value('(@id)', 'VarChar(256)')
+		FROM @xml.nodes('/root/item') AS a(c)
+
+	RETURN
+END
+GO

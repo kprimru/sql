@@ -1,12 +1,12 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientClaimServiceView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [dbo].[ClientClaimServiceView]
 AS
-	SELECT 
+	SELECT
 		CLM_ID, CLM_DATE,
 			CASE WHEN CLM_DATE >= '20130701' THEN
 				(
@@ -16,12 +16,12 @@ AS
 						AND dbo.DateOf(CLM_DATE) BETWEEN START AND FINISH
 					ORDER BY START
 				)
-			ELSE 
+			ELSE
 				(
-					SELECT TOP 1 ID_SERVICE 
+					SELECT TOP 1 ID_SERVICE
 					FROM dbo.CLientService
 					WHERE ID_CLIENT = CLM_ID_CLIENT
 					ORDER BY UPD_DATE
-				) 
+				)
 		END AS ID_SERVICE
-	FROM dbo.ClaimTable
+	FROM dbo.ClaimTableGO

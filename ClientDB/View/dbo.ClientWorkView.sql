@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientWorkView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [dbo].[ClientWorkView]
 AS
 	SELECT ClientID, 'История посещений' AS TP, EventDate AS DT, EventComment AS NOTE, EventCreateUser AS AUTHOR
 	FROM dbo.EventTable
@@ -40,3 +40,4 @@ AS
 		dbo.ClientSatisfaction
 		INNER JOIN dbo.ClientCall ON CC_ID = CS_ID_CALL
 
+GO

@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ServiceStateTypeView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [dbo].[ServiceStateTypeView]
 AS
 	SELECT 'COMPLIANCE' AS TP_NAME, 'Не соответствуют эталону (клиентов)' AS TP_NOTE, 1 AS TP_ORD
 				UNION ALL
@@ -25,3 +25,4 @@ AS
 				SELECT 'INNOVATION' AS TP_NAME, 'Презентации' AS TP_NOTE, 9 AS TP_ORD
 				UNION ALL
 				SELECT 'GRAPH' AS TP_NAME, 'График СИ' AS TP_NOTE, 10 AS TP_ORD
+GO

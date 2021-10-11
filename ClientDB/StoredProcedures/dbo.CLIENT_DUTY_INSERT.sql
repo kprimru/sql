@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_DUTY_INSERT]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[CLIENT_DUTY_INSERT]
 	@CLIENT	INT,
 	@DT	DATETIME,
 	@CONTACT	VARCHAR(150),
@@ -37,22 +37,47 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ClientDutyTable(
-				ClientID, ClientDutyDateTime, 
-				ClientDutyContact, 
-				ClientDutySurname, ClientDutyName, ClientDutyPatron,
-				ClientDutyPos, ClientDutyPhone, 
-				DutyID, CallTypeID, 
-				ClientDutyQuest, ClientDutyDocs, ClientDutyNPO, 
-				ClientDutyComplete, ClientDutyComment, 
-				ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer,	
-				ClientDutyClaimDate, ClientDutyClaimNum, 
-				ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, ID_DIRECTION, EMAIL, LINK)
-		VALUES(@CLIENT, @DT, @CONTACT, @SURNAME, @NAME, @PATRON, @POS, @PHONE, @DUTY, @CALL_TYPE,
-				@QUEST, @DOCS, @NPO, @COMPLETE, @COMMENT, @UNCOMPLETE, @GIVE, @ANSWER,
-				@CLAIM_DATE, @CLAIM_NUM, @CLAIM_ANSWER, @CLAIM_COMMENT, @GRANT_TYPE, @DIRECTION, @EMAIL, @LINK)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
-		
-	EXEC dbo.CLIENT_DUTY_IB_PROCESS @ID, @IB
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ClientDutyTable(
+					ClientID, ClientDutyDateTime,
+					ClientDutyContact,
+					ClientDutySurname, ClientDutyName, ClientDutyPatron,
+					ClientDutyPos, ClientDutyPhone,
+					DutyID, CallTypeID,
+					ClientDutyQuest, ClientDutyDocs, ClientDutyNPO,
+					ClientDutyComplete, ClientDutyComment,
+					ClientDutyUncomplete, ClientDutyGive, ClientDutyAnswer,
+					ClientDutyClaimDate, ClientDutyClaimNum,
+					ClientDutyClaimAnswer, ClientDutyClaimComment, ID_GRANT_TYPE, ID_DIRECTION, EMAIL, LINK)
+			VALUES(@CLIENT, @DT, @CONTACT, @SURNAME, @NAME, @PATRON, @POS, @PHONE, @DUTY, @CALL_TYPE,
+					@QUEST, @DOCS, @NPO, @COMPLETE, @COMMENT, @UNCOMPLETE, @GIVE, @ANSWER,
+					@CLAIM_DATE, @CLAIM_NUM, @CLAIM_ANSWER, @CLAIM_COMMENT, @GRANT_TYPE, @DIRECTION, @EMAIL, @LINK)
+
+		SELECT @ID = SCOPE_IDENTITY()
+
+		EXEC dbo.CLIENT_DUTY_IB_PROCESS @ID, @IB
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_DUTY_INSERT] TO rl_client_duty_i;
+GO

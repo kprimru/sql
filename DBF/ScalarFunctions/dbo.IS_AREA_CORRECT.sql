@@ -1,20 +1,20 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 25.08.2008
 -- Описание:	  Возвращает 0, если название района
---                корректно, то есть присутствует 
+--                корректно, то есть присутствует
 --                в справочнике
 -- =============================================
-CREATE FUNCTION [dbo].[IS_AREA_CORRECT]
+ALTER FUNCTION [dbo].[IS_AREA_CORRECT]
 (
-	@area varchar(100)	
+	@area varchar(100)
 )
 RETURNS int
 AS
@@ -29,3 +29,4 @@ BEGIN
   RETURN 1
 END
 
+GO

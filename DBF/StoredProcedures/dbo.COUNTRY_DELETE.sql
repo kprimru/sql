@@ -1,22 +1,45 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_DELETE] 
+ALTER PROCEDURE [dbo].[COUNTRY_DELETE]
 	@countryid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DELETE FROM dbo.CountryTable WHERE CNT_ID = @countryid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE FROM dbo.CountryTable WHERE CNT_ID = @countryid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[COUNTRY_DELETE] TO rl_country_d;
+GO

@@ -1,12 +1,12 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientGraphView]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER VIEW [dbo].[ClientGraphView]
 AS
-	SELECT 
+	SELECT
 		ID, ClientID, ClientServiceID, ClientFullName,
 		CASE
 			WHEN ServiceStart IS NULL THEN 'Не указано время начала работы'
@@ -14,31 +14,34 @@ AS
 			WHEN ServiceTime < 10 THEN 'Неверная продолжительность работы (не может быть меньше 10 минут)'
 			WHEN DATEPART(HOUR, ServiceStart) = 0 THEN 'Неверное время начала работы'
 			WHEN ID > 1 AND
-				DATEDIFF(MINUTE, 
-					(						
+				DATEDIFF(MINUTE,
+					(
 						SELECT DATEADD(MINUTE, ServiceTime, ServiceStart)
-						FROM 
+						FROM
 							(
-								SELECT 
-									ROW_NUMBER() OVER(PARTITION BY ClientServiceID ORDER BY DayOrder, ServiceStart, ServiceTime, ClientFullName) AS ID, 
+								SELECT
+									ROW_NUMBER() OVER(PARTITION BY ClientServiceID ORDER BY DayOrder, ServiceStart, ServiceTime, ClientFullName) AS ID,
 									ClientID, ClientFullName, ServiceStart, ServiceTime, DayOrder, ClientServiceID
-								FROM 
+								FROM
 									dbo.ClientTable z
+									INNER JOIN [dbo].[ServiceStatusConnected]() s ON z.StatusId = s.ServiceStatusId
 									LEFT OUTER JOIN dbo.DayTable y ON z.DayID = y.DayID
-								WHERE StatusID = 2 AND z.ClientServiceID = a.ClientServiceID AND STATUS = 1
+								WHERE z.ClientServiceID = a.ClientServiceID AND STATUS = 1
 							) b
 						WHERE b.ID = a.ID - 1 AND a.DayOrder = b.DayOrder
-					), ServiceStart) < 0 
+					), ServiceStart) < 0
 				THEN 'Пересечение с предыдущим клиентом'
 			ELSE NULL
 		END AS GR_ERROR
 	FROM
 		(
-			SELECT 
-				ROW_NUMBER() OVER(PARTITION BY ClientServiceID ORDER BY DayOrder, ServiceStart, ServiceTime, ClientFullName) AS ID, 
+			SELECT
+				ROW_NUMBER() OVER(PARTITION BY ClientServiceID ORDER BY DayOrder, ServiceStart, ServiceTime, ClientFullName) AS ID,
 				ClientID, ClientFullName, ServiceStart, ServiceTime, DayOrder, ClientServiceID
-			FROM 
+			FROM
 				dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
 				LEFT OUTER JOIN dbo.DayTable b ON a.DayID = b.DayID
-			WHERE StatusID = 2 AND STATUS = 1
+			WHERE STATUS = 1
 		) AS a
+GO

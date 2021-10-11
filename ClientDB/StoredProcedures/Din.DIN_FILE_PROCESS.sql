@@ -1,10 +1,10 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Din].[DIN_FILE_PROCESS]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [Din].[DIN_FILE_PROCESS]
 	@SYS	INT,
 	@TYPE	INT,
 	@NET	INT,
@@ -23,28 +23,57 @@ USE [ClientDB]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
-	SET @RES = 0
 
-	IF EXISTS
-		(
-			SELECT *
-			FROM Din.DinFiles
-			WHERE DF_MD5 = @MD5
-		)
-	BEGIN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET @RES = 0
+
 		IF EXISTS
 			(
 				SELECT *
 				FROM Din.DinFiles
-				WHERE DF_DIN = @DIN
+				WHERE DF_MD5 = @MD5
 			)
 		BEGIN
-			SET @RES = 1
-			RETURN
-		END
-	END
+			IF EXISTS
+				(
+					SELECT *
+					FROM Din.DinFiles
+					WHERE DF_DIN = @DIN
+						AND DF_MD5 = @MD5
+				)
+			BEGIN
+				SET @RES = 1
 
-	INSERT INTO Din.DinFiles(DF_ID_SYS, DF_ID_TYPE, DF_ID_NET, DF_DISTR, DF_COMP, DF_RIC, DF_FILE, DF_MD5, DF_DIN)
-		VALUES(@SYS, @TYPE, @NET, @DISTR, @COMP, @RIC, @FILE, @MD5, @DIN)
+				EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+
+				RETURN
+			END
+		END
+
+		INSERT INTO Din.DinFiles(DF_ID_SYS, DF_ID_TYPE, DF_ID_NET, DF_DISTR, DF_COMP, DF_RIC, DF_FILE, DF_MD5, DF_DIN)
+			VALUES(@SYS, @TYPE, @NET, @DISTR, @COMP, @RIC, @FILE, @MD5, @DIN)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Din].[DIN_FILE_PROCESS] TO rl_din_import;
+GO

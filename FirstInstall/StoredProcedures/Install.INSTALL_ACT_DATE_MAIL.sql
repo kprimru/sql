@@ -1,10 +1,10 @@
 USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Install].[INSTALL_ACT_DATE_MAIL]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [Install].[INSTALL_ACT_DATE_MAIL]
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -13,7 +13,7 @@ BEGIN
 
 	SET @BODY = N''
 
-	SELECT @BODY = @BODY + 
+	SELECT @BODY = @BODY +
 		'Нет отметки о возврате акта "' + CL_NAME + '", установил "' + PER_NAME + '" ' +
 		CONVERT(VARCHAR(20), IND_INSTALL_DATE, 104) + CHAR(13)
 	FROM
@@ -30,7 +30,7 @@ BEGIN
 		RETURN
 
 	EXEC msdb.dbo.sp_send_dbmail @profile_name = 'SQLMail',
-				@recipients = N'moroz@bazis;denisov@bazis;gvv@bazis',				
+				@recipients = N'moroz@bazis;denisov@bazis;gvv@bazis',
 				@body = @BODY,
 				@subject='Отчет по неподписанных актах при установке'
 
@@ -47,3 +47,4 @@ BEGIN
 
 
 END
+GO

@@ -1,27 +1,47 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_GET] 
+ALTER PROCEDURE [dbo].[FINANCING_GET]
 	@financingid SMALLINT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT FIN_ID, FIN_NAME, FIN_ACTIVE
-	FROM dbo.FinancingTable 
-	WHERE FIN_ID = @financingid 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT FIN_ID, FIN_NAME, FIN_ACTIVE
+		FROM dbo.FinancingTable
+		WHERE FIN_ID = @financingid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[FINANCING_GET] TO rl_financing_r;
+GO

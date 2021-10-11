@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если название страны 
+-- Описание:	  Возвращает 0, если название страны
 --                корректно (присутствует в справочнике)
 -- =============================================
-CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT]
+ALTER FUNCTION [dbo].[IS_COUNTRY_CORRECT]
 (
 	@country varchar(100)
 )
@@ -27,3 +27,4 @@ BEGIN
 
 END
 
+GO

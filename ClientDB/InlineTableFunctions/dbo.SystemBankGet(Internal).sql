@@ -1,17 +1,17 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[SystemBankGet(Internal)]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[SystemBankGet(Internal)]
 (
 	-- Id системы
 	@System		Int
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT
 		InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
@@ -19,3 +19,4 @@ RETURN
 	FROM dbo.SystemBanksView WITH(NOEXPAND)
 	WHERE SystemId = @System
 )
+GO

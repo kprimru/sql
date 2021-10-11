@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
-CREATE FUNCTION [dbo].[PERIOD_PREV]
+ALTER FUNCTION [dbo].[PERIOD_PREV]
 (
 	-- Список параметров функции
 	@prid SMALLINT
@@ -24,12 +24,12 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	-- Тело функции
-	SELECT @result = PR_ID 
+	SELECT @result = PR_ID
 	FROM dbo.PeriodTable
-	WHERE PR_DATE = 
+	WHERE PR_DATE =
 			(
 				SELECT DATEADD(MONTH, -1, PR_DATE)
-				FROM dbo.PeriodTable 
+				FROM dbo.PeriodTable
 				WHERE PR_ID = @prid
 			)
 
@@ -38,3 +38,4 @@ BEGIN
 	RETURN @result
 
 END
+GO

@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
-CREATE FUNCTION [dbo].[GET_PERIOD_BY_DATE]
+ALTER FUNCTION [dbo].[GET_PERIOD_BY_DATE]
 (
 	-- Список параметров функции
 	@date SMALLDATETIME
@@ -33,3 +33,4 @@ BEGIN
 	RETURN @result
 
 END
+GO

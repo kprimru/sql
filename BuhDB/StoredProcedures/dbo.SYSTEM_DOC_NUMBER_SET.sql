@@ -1,0 +1,33 @@
+USE [BuhDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[SYSTEM_DOC_NUMBER_SET]
+	@DATA	NVARCHAR(MAX)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @xml XML
+
+	SET @XML = CAST(@DATA AS XML)
+
+	UPDATE a
+	SET SystemDocNumber = DOC_NUMBER
+	FROM
+		dbo.SystemTable a
+		INNER JOIN
+			(
+				SELECT
+					c.value('@id', 'INT') AS ID,
+					c.value('@doc', 'INT') AS DOC_NUMBER
+				FROM @XML.nodes('/root/item') AS a(c)
+			) AS t ON a.SystemID = t.ID
+
+	SELECT 1
+END
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_DOC_NUMBER_SET] TO DBPrice;
+GO

@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 -- =============================================
 -- Автор:		  Денисов Алексей
 -- Дата создания: 29.10.2008
 -- Описание:	  Выделяет ID типа системы
 -- =============================================
-CREATE FUNCTION [dbo].[RN_GET_SYSTEM_TYPE]
+ALTER FUNCTION [dbo].[RN_GET_SYSTEM_TYPE]
 (
   @systype VARCHAR(20)
 )
@@ -30,3 +30,4 @@ END
 
 
 
+GO

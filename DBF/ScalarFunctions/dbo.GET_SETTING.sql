@@ -1,17 +1,17 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+Дата создания:  
+Описание:
 */
 
-CREATE FUNCTION [dbo].[GET_SETTING]
+ALTER FUNCTION [dbo].[GET_SETTING]
 (
 	-- Список параметров функции
 	@sname VARCHAR(500)
@@ -24,11 +24,12 @@ BEGIN
 	DECLARE @result VARCHAR(500)
 
 	-- Тело функции
-	SELECT @result = GS_VALUE 
-	FROM dbo.GlobalSettingsTable 
+	SELECT @result = GS_VALUE
+	FROM dbo.GlobalSettingsTable
 	WHERE GS_NAME = @sname
 
 	-- Возвращение результата работы функции
 	RETURN @result
 
 END
+GO

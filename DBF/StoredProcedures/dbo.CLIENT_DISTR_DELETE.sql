@@ -1,27 +1,42 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-
-/*
-Автор:         Денисов Алексей
-Описание:      Удалить дистрибутив из списка дистрибутивов клиента
-*/
-
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_DELETE] 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELETE]
 	@id INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DELETE 
-	FROM dbo.ClientDistrTable 
-	WHERE CD_ID = @id
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE
+		FROM dbo.ClientDistrTable
+		WHERE CD_ID = @id
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_DELETE] TO rl_client_d;
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_DELETE] TO rl_client_distr_d;
+GO

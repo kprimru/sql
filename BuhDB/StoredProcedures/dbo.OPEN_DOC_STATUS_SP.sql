@@ -1,13 +1,13 @@
 USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE dbo.OPEN_DOC_STATUS_SP
-	@docid nvarchar(128), 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[OPEN_DOC_STATUS_SP]
+	@docid nvarchar(128),
 	@action tinyint,
-	@hostname varchar(128) out,             
+	@hostname varchar(128) out,
              @loginame varchar(128) out,
              @tablename varchar(128),
              @ntname varchar(128)  = NULL out
@@ -35,10 +35,10 @@ AS
                    DOC_EDITING_STATUS.hostprocess = sysproc.hostprocess AND
                    DOC_EDITING_STATUS.ntname = sysproc.nt_username AND
                    DOC_EDITING_STATUS.loginame = sysproc.loginame AND
-                   DOC_EDITING_STATUS.login_time = sysproc.login_time                   
+                   DOC_EDITING_STATUS.login_time = sysproc.login_time
               WHERE DOC_EDITING_STATUS.docid = @docid AND DOC_EDITING_STATUS.tablename = @tablename) BEGIN
-	      SELECT 
-		@hostname = DOC_EDITING_STATUS.hostname, 
+	      SELECT
+		@hostname = DOC_EDITING_STATUS.hostname,
 		@loginame = DOC_EDITING_STATUS.loginame,
 		@ntname = DOC_EDITING_STATUS.ntname
 	      FROM DOC_EDITING_STATUS
@@ -84,7 +84,7 @@ AS
                    DOC_EDITING_STATUS.loginame = sysproc.loginame AND
                    DOC_EDITING_STATUS.login_time = sysproc.login_time
               WHERE DOC_EDITING_STATUS.docid = @docid AND DOC_EDITING_STATUS.tablename = @tablename) BEGIN
-	      SELECT 
+	      SELECT
 		@hostname = DOC_EDITING_STATUS.hostname,
 		@ntname = DOC_EDITING_STATUS.ntname,
              		@loginame = DOC_EDITING_STATUS.loginame
@@ -100,6 +100,12 @@ AS
       RETURN(0)
     END
   END
-  
+
   SET NOCOUNT OFF
 RETURN(0)
+GO
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBAdministrator;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBCount;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBPrice;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBPriceReader;
+GO

@@ -1,20 +1,48 @@
 USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE PROCEDURE [dbo].[GET_WHITELIST_SYSTEMS]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[GET_WHITELIST_SYSTEMS]
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT R.SystemName, R.DistrNumber, R.CompNumber
-	FROM dbo.RegNodeTable R
-	LEFT JOIN dbo.SystemTable S ON S.SystemBaseName=R.SystemName
-	LEFT JOIN dbo.BLACK_LIST_REG B ON (B.DISTR=R.DistrNumber)
-	AND(B.COMP=R.CompNumber)AND(B.ID_SYS=S.SystemID)AND(B.[P_DELETE]=0)
-	WHERE B.ID IS NULL
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT R.SystemBaseName AS SystemName, R.DistrNumber, R.CompNumber
+		FROM Reg.RegNodeSearchView AS R WITH(NOEXPAND)
+		LEFT JOIN dbo.BLACK_LIST_REG B ON (B.DISTR=R.DistrNumber)
+										AND(B.COMP=R.CompNumber)
+										AND(B.ID_SYS=R.SystemID)
+										AND(B.[P_DELETE]=0)
+		WHERE B.ID IS NULL
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[GET_WHITELIST_SYSTEMS] TO BL_RGT;
+GO

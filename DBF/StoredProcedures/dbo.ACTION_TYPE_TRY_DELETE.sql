@@ -1,36 +1,59 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE]
 	@ID SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.Action WHERE ACTN_ID_TYPE = @ID)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный тип акции указан в одной или нескольких акциях. ' + 
-							  'Удаление невозможно, пока выбранный тип акции будет указан хотя ' +
-							  'бы в одной акции.'
-		END
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.Action WHERE ACTN_ID_TYPE = @ID)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Данный тип акции указан в одной или нескольких акциях. ' +
+								  'Удаление невозможно, пока выбранный тип акции будет указан хотя ' +
+								  'бы в одной акции.'
+			END
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[ACTION_TYPE_TRY_DELETE] TO rl_action_type_d;
+GO

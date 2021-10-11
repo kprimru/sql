@@ -1,16 +1,16 @@
 USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
 /*
 Автор:		  Денисов Алексей
-Описание:	  
+Описание:
 */
 
-CREATE PROCEDURE [dbo].[COURIER_EDIT] 
+ALTER PROCEDURE [dbo].[COURIER_EDIT]
 	@courierid SMALLINT,
 	@couriername VARCHAR(100),
 	@TYPE SMALLINT,
@@ -20,12 +20,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.CourierTable 
-	SET COUR_NAME = @couriername,
-		COUR_ID_TYPE = @TYPE,
-		COUR_ID_CITY = @city,
-		COUR_ACTIVE = @active
-	WHERE COUR_ID = @courierid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.CourierTable
+		SET COUR_NAME = @couriername,
+			COUR_ID_TYPE = @TYPE,
+			COUR_ID_CITY = @city,
+			COUR_ACTIVE = @active
+		WHERE COUR_ID = @courierid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[COURIER_EDIT] TO rl_courier_w;
+GO
