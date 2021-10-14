@@ -40,3 +40,5 @@ BEGIN
     END CATCH
 END
 GO
+GRANT EXECUTE ON [Raw].[Income@Select?Files] TO rl_income_w;
+GO

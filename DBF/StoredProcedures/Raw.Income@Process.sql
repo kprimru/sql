@@ -133,3 +133,5 @@ BEGIN
     END CATCH
 END
 GO
+GRANT EXECUTE ON [Raw].[Income@Process] TO rl_income_w;
+GO
