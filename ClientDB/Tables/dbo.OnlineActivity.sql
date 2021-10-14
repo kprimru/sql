@@ -16,11 +16,11 @@ CREATE TABLE [dbo].[OnlineActivity]
         [LOGIN_CNT]      SmallInt                               NULL,
         [SESSION_TIME]   SmallInt                               NULL,
         [UPD_DATE]       DateTime                           NOT NULL,
-        CONSTRAINT [PK_OnlineActivity] PRIMARY KEY CLUSTERED ([Id]),
+        CONSTRAINT [PK_dbo.OnlineActivity] PRIMARY KEY CLUSTERED ([Id]),
         CONSTRAINT [FK_dbo.OnlineActivity(ID_WEEK)_dbo.Period(ID)] FOREIGN KEY  ([ID_WEEK]) REFERENCES [Common].[Period] ([ID]),
         CONSTRAINT [FK_dbo.OnlineActivity(ID_HOST)_dbo.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_dbo.OnlineActivity(ID_HOST,DISTR,COMP)+(ID,ID_WEEK,LGN,ACTIVITY)] ON [dbo].[OnlineActivity] ([ID_HOST] ASC, [DISTR] ASC, [COMP] ASC) INCLUDE ([ID_WEEK], [LGN], [ACTIVITY]);
-CREATE UNIQUE NONCLUSTERED INDEX [IX_dbo.OnlineActivity(ID_WEEK,ID_HOST,DISTR,COMP,LGN)] ON [dbo].[OnlineActivity] ([ID_WEEK] ASC, [LGN] ASC) INCLUDE ([ID_HOST], [DISTR], [COMP], [ACTIVITY], [LOGIN_CNT], [SESSION_TIME]);
+CREATE NONCLUSTERED INDEX [IX_dbo.OnlineActivity(ID_HOST,DISTR,COMP)+(ID_WEEK,LGN,ACTIVITY)] ON [dbo].[OnlineActivity] ([ID_HOST] ASC, [DISTR] ASC, [COMP] ASC) INCLUDE ([ID_WEEK], [LGN], [ACTIVITY]);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.OnlineActivity(ID_WEEK,LGN)+(ID_HOST,DISTR,COMP,ACTIVITY,LOGIN_CNT,SESSION_TIME)] ON [dbo].[OnlineActivity] ([ID_WEEK] ASC, [LGN] ASC) INCLUDE ([ID_HOST], [DISTR], [COMP], [ACTIVITY], [LOGIN_CNT], [SESSION_TIME]);
 GO

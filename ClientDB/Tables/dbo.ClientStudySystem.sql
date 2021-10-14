@@ -14,5 +14,5 @@ CREATE TABLE [dbo].[ClientStudySystem]
         CONSTRAINT [FK_dbo.ClientStudySystem(ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID])
 );
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [dbo].[ClientStudySystem] ([ID_STUDY] ASC, [ID_SYSTEM] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientStudySystem(ID_STUDY,ID_SYSTEM)] ON [dbo].[ClientStudySystem] ([ID_STUDY] ASC, [ID_SYSTEM] ASC);
 GO

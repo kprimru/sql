@@ -22,7 +22,7 @@ CREATE TABLE [Seminar].[Schedule]
         [Link]           VarChar(Max)                                          NULL,
         [Status_Id]      char(1)            Collate Cyrillic_General_BIN   NOT NULL,
         CONSTRAINT [PK_Seminar.Schedule] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Schedule_Schedules->Statuses] FOREIGN KEY  ([Status_Id]) REFERENCES [Seminar].[Schedules->Statuses] ([Id]),
-        CONSTRAINT [FK_Schedule_Schedules->Types] FOREIGN KEY  ([Type_Id]) REFERENCES [Seminar].[Schedules->Types] ([Id]),
-        CONSTRAINT [FK_Schedule_Subject] FOREIGN KEY  ([ID_SUBJECT]) REFERENCES [Seminar].[Subject] ([ID])
+        CONSTRAINT [FK_Seminar.Schedule(Status_Id)_Seminar.Schedules->Statuses(Id)] FOREIGN KEY  ([Status_Id]) REFERENCES [Seminar].[Schedules->Statuses] ([Id]),
+        CONSTRAINT [FK_Seminar.Schedule(Type_Id)_Seminar.Schedules->Types(Id)] FOREIGN KEY  ([Type_Id]) REFERENCES [Seminar].[Schedules->Types] ([Id]),
+        CONSTRAINT [FK_Seminar.Schedule(ID_SUBJECT)_Seminar.Subject(ID)] FOREIGN KEY  ([ID_SUBJECT]) REFERENCES [Seminar].[Subject] ([ID])
 );GO

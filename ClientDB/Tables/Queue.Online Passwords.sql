@@ -12,9 +12,9 @@ CREATE TABLE [Queue].[Online Passwords]
         [ProcessDateTime]   DateTime                            NULL,
         [Login]             VarChar(100)                        NULL,
         [Password]          VarChar(100)                        NULL,
-        CONSTRAINT [PK__Online Passwords__4C78A835] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_Queue.Online Passwords] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_FILENAME] ON [Queue].[Online Passwords] ([FileName] ASC);
-CREATE NONCLUSTERED INDEX [IX_PROCESS] ON [Queue].[Online Passwords] ([ProcessDateTime] ASC);
+CREATE NONCLUSTERED INDEX [IX_Queue.Online Passwords(ProcessDateTime)] ON [Queue].[Online Passwords] ([ProcessDateTime] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Queue.Online Passwords(FileName)] ON [Queue].[Online Passwords] ([FileName] ASC);
 GO

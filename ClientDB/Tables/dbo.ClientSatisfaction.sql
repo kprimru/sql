@@ -16,5 +16,5 @@ CREATE TABLE [dbo].[ClientSatisfaction]
         CONSTRAINT [FK_dbo.ClientSatisfaction(CS_ID_TYPE)_dbo.SatisfactionType(STT_ID)] FOREIGN KEY  ([CS_ID_TYPE]) REFERENCES [dbo].[SatisfactionType] ([STT_ID])
 );
 GO
-CREATE CLUSTERED INDEX [UC_dbo.ClientSatisfaction(CS_ID_CALL,CS_ID)] ON [dbo].[ClientSatisfaction] ([CS_ID_CALL] ASC);
+CREATE CLUSTERED INDEX [IC_dbo.ClientSatisfaction(CS_ID_CALL)] ON [dbo].[ClientSatisfaction] ([CS_ID_CALL] ASC);
 GO

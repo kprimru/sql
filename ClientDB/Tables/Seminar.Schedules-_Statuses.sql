@@ -14,5 +14,5 @@ CREATE TABLE [Seminar].[Schedules->Statuses]
         CONSTRAINT [PK_Seminar.Schedules->Statuses] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_SSS] ON [Seminar].[Schedules->Statuses] ([Code] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Seminar.Schedules->Statuses(Code)] ON [Seminar].[Schedules->Statuses] ([Code] ASC);
 GO

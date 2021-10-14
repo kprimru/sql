@@ -17,5 +17,5 @@ CREATE TABLE [dbo].[ClientDebt]
         CONSTRAINT [FK_dbo.ClientDebt(ID_DEBT)_dbo.DebtType(ID)] FOREIGN KEY  ([ID_DEBT]) REFERENCES [dbo].[DebtType] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_CLIENT] ON [dbo].[ClientDebt] ([ID_CLIENT] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDebt(ID_CLIENT)] ON [dbo].[ClientDebt] ([ID_CLIENT] ASC);
 GO

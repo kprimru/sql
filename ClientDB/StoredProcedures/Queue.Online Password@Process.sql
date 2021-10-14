@@ -80,7 +80,7 @@ BEGIN
             FROM dbo.Subhost
             WHERE SH_ID = @Subhost_Id;
 
-            SET @EmailRecipients    = 'urazova@bazis;nalunina@bazis';
+            --SET @EmailRecipients    = 'urazova@bazis;nalunina@bazis';
             SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
             SET @EmailBody          = '<table bgcolor="#ffffff">
     <tr>

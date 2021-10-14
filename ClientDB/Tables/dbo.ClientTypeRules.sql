@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[ClientTypeRules]
         [DistrType_Id]    Int          NOT NULL,
         [ClientType_Id]   TinyInt      NOT NULL,
         CONSTRAINT [PK_dbo.ClientTypeRules] PRIMARY KEY CLUSTERED ([System_Id],[DistrType_Id]),
-        CONSTRAINT [FK_Client_Type_Rules_System_Id] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID]),
-        CONSTRAINT [FK_Client_Type_Rules_DistrType_Id] FOREIGN KEY  ([DistrType_Id]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
-        CONSTRAINT [FK_Client_Type_Rules_ClientType_Id] FOREIGN KEY  ([ClientType_Id]) REFERENCES [dbo].[ClientTypeTable] ([ClientTypeID])
+        CONSTRAINT [FK_dbo.ClientTypeRules(System_Id)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID]),
+        CONSTRAINT [FK_dbo.ClientTypeRules(DistrType_Id)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrType_Id]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
+        CONSTRAINT [FK_dbo.ClientTypeRules(ClientType_Id)_dbo.ClientTypeTable(ClientTypeID)] FOREIGN KEY  ([ClientType_Id]) REFERENCES [dbo].[ClientTypeTable] ([ClientTypeID])
 );GO

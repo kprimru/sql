@@ -29,5 +29,5 @@ CREATE TABLE [dbo].[ClientStatDetailAVG]
         CONSTRAINT [FK_dbo.ClientStatDetailAVG(WeekID)_dbo.Period(ID)] FOREIGN KEY  ([WeekID]) REFERENCES [Common].[Period] ([ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UX_Week] ON [dbo].[ClientStatDetailAVG] ([WeekID] ASC, [Net] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.ClientStatDetailAVG(WeekID,Net)] ON [dbo].[ClientStatDetailAVG] ([WeekID] ASC, [Net] ASC);
 GO
