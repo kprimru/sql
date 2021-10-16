@@ -1,15 +1,14 @@
-USE [DBF]
+USE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Raw].[Income@Load]
+ALTER PROCEDURE [Raw].[Income@Seek]
     @Organization_Id    SmallInt,
     @FileName           VarChar(256),
     @FileDateTime       DateTime,
     @FileSize           BigInt,
-    @Data               Xml,
     @Id                 Int = NULL OUTPUT
 AS
 BEGIN
@@ -26,14 +25,14 @@ BEGIN
         @DebugContext   = @DebugContext OUT;
 
     BEGIN TRY
-        INSERT INTO [Raw].[Incomes]([FileName], [FileDateTime], [FileSize], [DateTime], [Organization_Id])
-        VALUES (@FileName, @FileDateTime, @FileSize, GetDate(), @Organization_Id);
 
-        SELECT @Id = Scope_Identity();
-
-        INSERT INTO [Raw].[Incomes:Details]([Income_Id], [Date], [INN], [Name], [Purpose], [Num], [Price])
-        SELECT @Id, [Date], [Inn], [Name], [Purpose], [Num], [Price]
-        FROM [Raw].[Income@Parse](@Data);
+        SELECT TOP (1)
+            @Id = I.[Id]
+        FROM [Raw].[Incomes] AS I
+        WHERE   I.[FileName] = @FileName
+            AND I.[FileDateTime] = @FileDateTime
+            AND I.[FileSize] = @FileSize
+            AND I.[Organization_Id] = @Organization_Id;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
@@ -46,5 +45,5 @@ BEGIN
     END CATCH
 END
 GO
-GRANT EXECUTE ON [Raw].[Income@Load] TO rl_income_w;
+GRANT EXECUTE ON [Raw].[Income@Seek] TO rl_income_w;
 GO

@@ -1,4 +1,4 @@
-USE [DBF]
+USE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,6 +26,9 @@ BEGIN
         @DebugContext   = @DebugContext OUT;
 
     BEGIN TRY
+        -- ToDo
+        DELETE FROM [Raw].[Incomes];
+
         INSERT INTO [Raw].[Incomes]([FileName], [FileDateTime], [FileSize], [DateTime], [Organization_Id])
         VALUES (@FileName, @FileDateTime, @FileSize, GetDate(), @Organization_Id);
 
