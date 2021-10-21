@@ -18,6 +18,80 @@ BEGIN
 	INNER JOIN dbo.TaxSaleObjectTable TS ON T.TaxId = TS.TaxId
 	WHERE SaleObjectID = 1
 
+    SELECT
+        SystemPrefix, SystemName, DistrTypeName, DistrTypeCoefficient, DistrTypeNet,
+        PriceAbonement, DiscountRate, FixedSum, SystemServicePrice, MonthCount, BeginMonth,
+        SystemPriceModeName, SystemSet, MonthPrice, SysPrice, IsGenerated,
+        ROUND(SysPrice * @TaxRate, 2) As SysPriceNDS, ROUND(SysPrice * @TaxRate, 2) + SysPrice AS SysPriceTotalNDS
+    FROM dbo.TempCustomerSystemsTable a
+    INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = a.DistrTypeID
+    CROSS APPLY
+    (
+        SELECT
+            SystemPrefix, SystemName, SystemServicePrice, SystemOrder, SystemGroupOrder
+        FROM dbo.SystemTable b
+        INNER JOIN dbo.SystemGroupTable c ON c.SystemGroupID = b.SystemGroupID
+        WHERE b.SystemID = a.SystemID
+            AND @Date = ''
+
+        UNION ALL
+
+        SELECT
+            SystemPrefix, SystemName, SystemServicePrice, SystemOrder, SystemGroupOrder
+        FROM dbo.SystemHistoryTable b
+        INNER JOIN dbo.SystemGroupHistoryTable c ON c.SystemGroupID = b.SystemGroupID
+        WHERE b.SystemID = a.SystemID
+            AND PriceDate = @DATE
+            AND GroupPriceDate = @DATE
+    ) AS S
+    CROSS APPLY
+    (
+        SELECT
+            CASE SystemPriceModeName
+                WHEN 'PriceAbonement' THEN
+                    PriceAbonement * dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, @DATE)
+                WHEN 'DiscountRate' THEN
+                    ROUND(dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, @DATE) * (100 - DiscountRate) / 100, 2)
+                WHEN 'FixedSum' THEN FixedSum
+                    ELSE 0
+            END AS SysPrice,
+            IsGenerated = Cast(0 AS Bit)
+
+        UNION ALL
+
+        SELECT 60, IsGenerated = Cast(1 AS Bit)
+        WHERE d.GenerateRow = 1
+    ) AS P
+    WHERE CustomerID = @CUSTOMER
+    ORDER BY IsGenerated DESC, SystemGroupOrder, SystemOrder
+
+    /*
+
+			(
+				SELECT
+					SystemPrefix, SystemName, DistrTypeMainStr AS DistrTypeName,
+					DistrTypeCoefficient, DistrTypeNet,
+					PriceAbonement, DiscountRate, FixedSum, SystemServicePrice, MonthCount, BeginMonth,
+					SystemPriceModeName, SystemSet, MonthPrice, SystemOrder, SystemGroupOrder,
+					CASE SystemPriceModeName
+						WHEN 'PriceAbonement' THEN
+							PriceAbonement * MonthPrice
+						WHEN 'DiscountRate' THEN
+							ROUND(dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '') * (100 - DiscountRate) / 100, 2)
+						WHEN 'FixedSum' THEN FixedSum
+						ELSE 0
+					END AS SysPrice
+				FROM
+
+					INNER JOIN dbo.SystemTable b ON b.SystemID = a.SystemID
+					INNER JOIN dbo.SystemGroupTable c ON c.SystemGroupID = b.SystemGroupID
+
+
+			) AS o_O
+		ORDER BY SystemGroupOrder, SystemOrder
+    */
+
+    /*
 	IF @DATE = ''
 		SELECT SystemPrefix, SystemName, DistrTypeName,
 			DistrTypeCoefficient, DistrTypeNet,
@@ -33,23 +107,8 @@ BEGIN
 					SystemPriceModeName, SystemSet, MonthPrice, SystemOrder, SystemGroupOrder,
 					CASE SystemPriceModeName
 						WHEN 'PriceAbonement' THEN
-							/*CASE
-								WHEN DistrTypePsedo = 'NET50' THEN ROUND(SystemServicePrice * DistrTypeCoefficient, -1)
-								ELSE */
-								--PriceAbonement * MonthPrice
-								/*dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '')*/ --ROUND(SystemServicePrice * DistrTypeCoefficient, DistrTypeRound)
-							/*END*/
-							PriceAbonement * MonthPrice--dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '')
+							PriceAbonement * MonthPrice
 						WHEN 'DiscountRate' THEN
-							/*CASE
-								WHEN DistrTypePsedo = 'NET50' THEN ROUND(ROUND(SystemServicePrice * DistrTypeCoefficient, -1) * (100 - DiscountRate) / 100, 2)
-								ELSE */
-								--ROUND(
-								/*ROUND(SystemServicePrice * DistrTypeCoefficient, DistrTypeRound)*/
-								--MonthPrice
-								/*dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '')*/
-								--* (100 - DiscountRate) / 100, 2)
-							/*END*/
 							ROUND(dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '') * (100 - DiscountRate) / 100, 2)
 						WHEN 'FixedSum' THEN FixedSum
 						ELSE 0
@@ -77,23 +136,8 @@ BEGIN
 					SystemPriceModeName, SystemSet, MonthPrice, SystemGroupOrder, SystemOrder,
 					CASE SystemPriceModeName
 						WHEN 'PriceAbonement' THEN
-							/*CASE
-								WHEN DistrTypePsedo = 'NET50' THEN ROUND(SystemServicePrice * DistrTypeCoefficient, -1)
-								ELSE */
-								--PriceAbonement * MonthPrice
-								/*dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '')*/ --ROUND(SystemServicePrice * DistrTypeCoefficient, DistrTypeRound)
-							/*END*/
 							PriceAbonement * dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, @DATE)
 						WHEN 'DiscountRate' THEN
-							/*CASE
-								WHEN DistrTypePsedo = 'NET50' THEN ROUND(ROUND(SystemServicePrice * DistrTypeCoefficient, -1) * (100 - DiscountRate) / 100, 2)
-								ELSE */
-								--ROUND(
-								/*ROUND(SystemServicePrice * DistrTypeCoefficient, DistrTypeRound)*/
-								--MonthPrice
-								/*dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, '')*/
-								--* (100 - DiscountRate) / 100, 2)
-							/*END*/
 							ROUND(dbo.SystemPriceGet(a.SystemID, a.DistrTypeID, @DATE) * (100 - DiscountRate) / 100, 2)
 						WHEN 'FixedSum' THEN FixedSum
 						ELSE 0
@@ -108,6 +152,7 @@ BEGIN
 					AND CustomerID = @CUSTOMER
 			) AS o_O
 		ORDER BY SystemGroupOrder, SystemOrder
+	*/
 END
 GO
 GRANT EXECUTE ON [dbo].[CONTRACT_SUM_SELECT] TO DBCount;

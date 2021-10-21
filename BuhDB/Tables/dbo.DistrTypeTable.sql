@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[DistrTypeTable]
         [DistrTypePrint]         Int                            NOT NULL,
         [DistrTypePsedo]         VarChar(50)                        NULL,
         [DistrTypeRound]         SmallInt                           NULL,
+        [GenerateRow]            Bit                                NULL,
         CONSTRAINT [PK_dbo.DistrTypeTable] PRIMARY KEY CLUSTERED ([DistrTypeID])
 );
 GO

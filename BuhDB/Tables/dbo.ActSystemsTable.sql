@@ -19,7 +19,8 @@ CREATE TABLE [dbo].[ActSystemsTable]
         [SystemPrice]     Money                          NOT NULL,
         [TaxPrice]        Money                          NOT NULL,
         [SystemOrder]     Int                            NOT NULL,
-        [SystemExpire]    VarChar(20)                        NULL,,
+        [SystemExpire]    VarChar(20)                        NULL,
+        [IsGenerated]     Bit                                NULL,,
         CONSTRAINT [FK_dbo.ActSystemsTable(ActID)_dbo.ActTable(ActID)] FOREIGN KEY  ([ActID]) REFERENCES [dbo].[ActTable] ([ActID])
 );
 GO

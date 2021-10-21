@@ -23,6 +23,7 @@ CREATE TABLE [dbo].[ContractSystemsTable]
         [TaxPrice]           Money             NOT NULL,
         [TotalPrice]         Money             NOT NULL,
         [SystemNote]         VarChar(250)          NULL,
+        [IsGenerated]        Bit                   NULL,
 );GO
 GRANT DELETE ON [dbo].[ContractSystemsTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[ContractSystemsTable] TO DBAdministrator;

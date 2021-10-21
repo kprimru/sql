@@ -13,10 +13,10 @@ BEGIN
 	SELECT
 	    SystemSet, SystemPrefix, SystemName, DistrTypeName, DistrNumber, NetVersion, DocCount,
 	    SystemPrice, TaxPrice, SystemPrice + TaxPrice AS TotalPrice, SystemNote,
-	    SystemExpire
+	    SystemExpire, IsGenerated
 	FROM ActSystemsTable WITH(NOLOCK)
 	WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%פכ‎ר%')
-	ORDER BY SystemOrder
+	ORDER BY SystemOrder, DistrNumber, SystemPrice
 END
 
 GO
