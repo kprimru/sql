@@ -38,6 +38,12 @@ BEGIN
         ) AS CC
         WHERE I.[IN_DATE] >= @Date
             AND (I.[IN_ID_ORG] = @Organization_Id OR @Organization_Id IS NULL)
+            AND EXISTS
+                (
+                    SELECT TOP (1) *
+                    FROM [dbo].[PurposesForbiddenWords] AS W
+                    WHERE D.[Purpose] LIKE W.[Mask]
+                )
         ORDER BY CC.[COUR_NAME], C.[CL_PSEDO];
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
