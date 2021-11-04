@@ -56,41 +56,59 @@ BEGIN
 		WHERE SystemNumber = @SystemNumber
 			AND SystemRic = 20;
 
-		INSERT INTO dbo.ClientDutyQuestion(SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, QUEST)
-		OUTPUT inserted.ID INTO @TBL
-		SELECT SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, REPLACE(QUEST, CHAR(10), '')
-		FROM
-		(
-			SELECT
-				@SystemNumber AS SYS,
-				@DistrNumber AS DISTR,
-				@CompNumber AS COMP,
-				@DT AS DATE,
-				@FIO AS FIO,
-				@EMAIL AS EMAIL,
-				@PHONE AS PHONE,
-				@QUEST AS QUEST
-		) AS a
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM dbo.ClientDutyQuestion b
-				WHERE	a.SYS = b.SYS
-					AND a.DISTR = b.DISTR
-					AND a.COMP = b.COMP
-					AND a.DATE = b.DATE
-					AND a.FIO = b.FIO
-					AND a.EMAIL = b.EMAIL
-					AND a.PHONE = b.PHONE
-					AND
-						(
-								REPLACE(a.QUEST, CHAR(10), '') = b.QUEST
-							OR
-								a.QUEST = b.QUEST
-						)
-			);
+        SELECT @ID = ID
+        FROM dbo.ClientDutyQuestion AS b
+        WHERE b.SYS = @SystemNumber
+			AND b.DISTR = @DistrNumber
+			AND b.COMP = @CompNumber
+			AND b.DATE = @DT
+			AND b.FIO = @FIO
+			AND b.EMAIL = @EMAIL
+			AND b.PHONE = @PHONE
+			AND
+				(
+						b.QUEST = REPLACE(@QUEST, CHAR(10), '')
+					OR
+						b.QUEST = @QUEST
+				);
 
-		SELECT @ID = ID FROM @TBL
+        IF @ID IS NULL BEGIN
+		    INSERT INTO dbo.ClientDutyQuestion(SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, QUEST)
+		    OUTPUT inserted.ID INTO @TBL
+		    SELECT SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, REPLACE(QUEST, CHAR(10), '')
+		    FROM
+		    (
+			    SELECT
+				    @SystemNumber AS SYS,
+				    @DistrNumber AS DISTR,
+				    @CompNumber AS COMP,
+				    @DT AS DATE,
+				    @FIO AS FIO,
+				    @EMAIL AS EMAIL,
+				    @PHONE AS PHONE,
+				    @QUEST AS QUEST
+		    ) AS a
+		    WHERE NOT EXISTS
+			    (
+				    SELECT *
+				    FROM dbo.ClientDutyQuestion b
+				    WHERE	a.SYS = b.SYS
+					    AND a.DISTR = b.DISTR
+					    AND a.COMP = b.COMP
+					    AND a.DATE = b.DATE
+					    AND a.FIO = b.FIO
+					    AND a.EMAIL = b.EMAIL
+					    AND a.PHONE = b.PHONE
+					    AND
+						    (
+								    REPLACE(a.QUEST, CHAR(10), '') = b.QUEST
+							    OR
+								    a.QUEST = b.QUEST
+						    )
+			    );
+    
+		    SELECT @ID = ID FROM @TBL
+		END;
 
 		SELECT @Duty_Id = DutyID
 		FROM dbo.DutyTable
@@ -144,6 +162,7 @@ BEGIN
 				AND a.IMPORT IS NULL;
 		END;
 
+				/*
 		UPDATE a
 		SET IMPORT = GETDATE()
 		FROM
@@ -151,6 +170,7 @@ BEGIN
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DISTR = b.DISTR AND a.COMP = b.COMP
 			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
 		WHERE a.IMPORT IS NULL AND DATE >= '20170801'
+		*/
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
