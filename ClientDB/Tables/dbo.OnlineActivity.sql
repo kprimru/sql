@@ -16,6 +16,8 @@ CREATE TABLE [dbo].[OnlineActivity]
         [LOGIN_CNT]      SmallInt                               NULL,
         [SESSION_TIME]   SmallInt                               NULL,
         [UPD_DATE]       DateTime                           NOT NULL,
+        [Email]          VarChar(256)                           NULL,
+        [FIO]            VarChar(256)                           NULL,
         CONSTRAINT [PK_dbo.OnlineActivity] PRIMARY KEY CLUSTERED ([Id]),
         CONSTRAINT [FK_dbo.OnlineActivity(ID_WEEK)_dbo.Period(ID)] FOREIGN KEY  ([ID_WEEK]) REFERENCES [Common].[Period] ([ID]),
         CONSTRAINT [FK_dbo.OnlineActivity(ID_HOST)_dbo.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])

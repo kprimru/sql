@@ -22,7 +22,9 @@ RETURN
         [SessionTime]   = V.[SessionTime],
         [Host_Id]       = D.[Host_Id],
         [Distr]         = D.[Distr],
-        [Comp]          = D.[Comp]
+        [Comp]          = D.[Comp],
+        [Email]         = V.[Email],
+        [FIO]           = V.[FIO]
     FROM @Data.nodes('/ROOT/ITEM') AS n(v)
     CROSS APPLY
     (
@@ -32,7 +34,9 @@ RETURN
             [Login]         = v.value('@Login[1]',        'VarChar(256)'),
             [Activity]      = v.value('@Activity[1]',     'Bit'),
             [LoginCnt]      = v.value('@LoginCnt[1]',     'SmallInt'),
-            [SessionTime]   = v.value('@SessionTime[1]',  'SmallInt')
+            [SessionTime]   = v.value('@SessionTime[1]',  'SmallInt'),
+            [Email]         = v.value('@Email[1]',        'VarChar(256)'),
+            [FIO]           = v.value('@FIO[1]',          'VarChar(256)')
     ) AS V
     OUTER APPLY
     (
