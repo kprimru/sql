@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Raw].[Income@Process]
     @Organization_Id    SmallInt,
+    @InDate             SmallDateTime,
     @Data               VarChar(Max),
     @AutoConvey         Bit = 0
 AS
@@ -50,7 +51,7 @@ BEGIN
     BEGIN TRY
         INSERT INTO dbo.IncomeTable ([IN_ID_ORG], [IN_ID_CLIENT], [IN_DATE], [IN_SUM], [IN_PAY_DATE], [IN_PAY_NUM], [IN_PRIMARY], [Raw_Id])
         OUTPUT inserted.IN_ID INTO @IDs ([Id])
-        SELECT @Organization_Id, C.[CL_ID], D.[Date], D.[Price], D.[Date], D.[Num], 0, D.[Id]
+        SELECT @Organization_Id, C.[CL_ID], @InDate, D.[Price], D.[Date], D.[Num], 0, D.[Id]
         FROM dbo.GET_TABLE_FROM_LIST(@Data, ',') AS IDs
         INNER JOIN [Raw].[Incomes:Details] AS D ON D.[Id] = IDs.[Item]
         CROSS APPLY
