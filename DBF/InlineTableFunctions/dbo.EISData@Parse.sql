@@ -76,7 +76,8 @@ RETURN
                 [ProductPrice]      = V.value('(./sum)[1]', 'VarChar(100)')
             FROM P.[Products].nodes('/products/product') AS PR(V)
         ) AS PP
-        WHERE PP.[ProductPrice] = S.[StagePrice]
+        --WHERE PP.[ProductPrice] = S.[StagePrice]
+        ORDER BY CASE WHEN PP.[ProductPrice] = S.[StagePrice] THEN 1 ELSE 2 END
     ) AS PP
 )
 GO

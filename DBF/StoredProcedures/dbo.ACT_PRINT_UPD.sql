@@ -5,7 +5,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [dbo].[ACT_PRINT?UPD]
-    @Act_Id INT
+    @Act_Id     Int,
+    @ActData    VarBinary(Max) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -16,6 +17,7 @@ BEGIN
         @Params         Xml;
 
     DECLARE
+        @IdentGUId      VarChar(100),
         @Stage          VarChar(100),
         @ActDate        SmallDateTime,
         @Client_Id      Int,
@@ -25,6 +27,7 @@ BEGIN
         @ApplyContent   Xml,
         @File_Id        VarChar(100),
         @MainBase64     VarChar(Max),
+        @ActBase64     VarChar(Max),
         @ApplyBase64    VarChar(Max);
 
     EXEC [Debug].[Execution@Start]
@@ -34,7 +37,8 @@ BEGIN
 
     BEGIN TRY
 
-        SET @File_Id = Cast(NewId() AS VarChar(100));
+        SET @File_Id    = Cast(NewId() AS VarChar(100));
+        SET @IdentGUId  = Replace(Cast(NewId() AS VarChar(100)), '-', '');
         SELECT
             @ActDate = ACT_DATE,
             @Client_Id  = ACT_ID_CLIENT
@@ -127,8 +131,9 @@ BEGIN
                                 ),
                                 (
                                     SELECT
-                                        [ОКПО]      = CL.CL_OKPO,
-                                        [КраткНазв] = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
+                                        [ОКПО]          = CL.CL_OKPO,
+                                        [КраткНазв]     = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
+                                        [ИнфДляУчаст]   = @IdentGUId,
                                         (
                                             SELECT
                                                 [НаимОрг]   = F.EIS_DATA.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),--CL.CL_FULL_NAME,
@@ -416,7 +421,9 @@ BEGIN
                     SELECT
                         (
                             SELECT
-                                [Место] = IsNull(ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
+                                [Место]             = IsNull(ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
+                                [ИнфДляУчаст]       = @IdentGUId,
+                                [ИдМестаПоставки]   = @IdentGUId,
                                 (
                                     SELECT
                                         (
@@ -444,7 +451,24 @@ BEGIN
 
                         )
                     FOR XML RAW('СведМестаПоставки'), TYPE
-                )
+                )/*,
+                (
+                    SELECT
+                        [КонтентИд]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                        [ИмяФайл]           = 'Акт оказания информац услуг от ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
+                        [РасширенФайл]      = 'pdf',
+                        [Содержимое файла]  = @ActBase64,
+                        --[ДатаПрикреплен]    = '2021-07-01T03:35:50.000+03:00'
+                        --[Ссылк]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
+                        (
+                            SELECT
+                                [Код]   = '1',
+                                [Наим]  = 'Документ о приемке'
+                            FOR XML RAW('ВидДок'), TYPE
+                        )
+                    WHERE @ActData IS NOT NULL
+                    FOR XML RAW('Вложен'), TYPE
+                )*/
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
@@ -511,6 +535,7 @@ BEGIN
 
         SET @MainBase64 = (SELECT CAST('<?xml version="1.0" encoding="windows-1251" standalone="yes"?>' + Convert(VarChar(Max), @MainContent, 1) AS VarBinary(Max)) FOR XML PATH(''), BINARY BASE64);
         SET @ApplyBase64 = (SELECT CAST('<?xml version="1.0" encoding="windows-1251" standalone="yes"?>' + Convert(VarChar(Max), @ApplyContent, 1) AS VarBinary(Max)) FOR XML PATH(''), BINARY BASE64);
+        SET @ActBase64 = (SELECT CAST('<?xml version="1.0" encoding="windows-1251" standalone="yes"?>' + Convert(VarChar(Max), @ActData, 1) AS VarBinary(Max)) FOR XML PATH(''), BINARY BASE64);
 
         SET @Data =
         (
@@ -531,6 +556,28 @@ BEGIN
                     SELECT
                         [Контент] = @ApplyBase64
                     FOR XML PATH('Прилож'), TYPE
+                ),
+                (
+                    SELECT
+                        [КонтентИд]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                        [ИмяФайл]           = 'Акт оказания информац услуг от ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
+                        --[РасширенФайл]      = 'pdf',
+                        --[Содержимое файла]  = @ActBase64,
+                        --[ДатаПрикреплен]    = '2021-07-01T03:35:50.000+03:00'
+                        --[Ссылк]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
+                        /*(
+                            SELECT
+                                [Код]   = '1',
+                                [Наим]  = 'Документ о приемке'
+                            FOR XML RAW('ВидДок'), TYPE
+                        )*/
+                        (
+                            SELECT
+                                @ActBase64
+                            FOR XML PATH('Контент'), TYPE
+                        )
+                    WHERE @ActData IS NOT NULL
+                    FOR XML RAW('Вложен'), TYPE
                 )
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
