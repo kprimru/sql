@@ -98,7 +98,7 @@ BEGIN
 	END*/
 
 	SELECT DISTINCT
-		SystemFullName +
+		SystemFullName /*+
 			CASE
 				WHEN @TYPE <> '1' THEN ''
 				ELSE
@@ -128,7 +128,7 @@ BEGIN
 						WHEN 'DEPO_OVM_2_CL' THEN ' нбл (нд 2)'
 						ELSE ''
 					END
-				END AS SystemName,
+				END */AS SystemName,
 				SystemGroupID, SystemGroupOrder, /*SystemName,*/ SystemDocNumber, SystemVolume, SystemOrder, SystemNote,
 		BoldStart, BoldLength,
 		SystemReg,
