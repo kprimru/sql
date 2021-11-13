@@ -116,6 +116,9 @@ BEGIN
 			HotlineKind 		VarChar(20) 		NULL,
 			HotlineUsersDate 	VarChar(20) 		NULL,
 			HotLineUsersTime 	VarChar(20) 		NULL,
+			UserList            VarChar(20)         NULL,
+			UserListOnline      VarChar(20)         NULL,
+			UserListUsersOnline VarChar(20)         NULL,
 			WineExists			VarChar(20) 		NULL,
 			WineVersion 		VarChar(50) 		NULL,
 			NowinName			VarChar(128) 		NULL,
@@ -366,6 +369,7 @@ BEGIN
 			ConsultTorFileDate, ConsultTorFileTime, FileSystem,
 			ExpconsDate, ExpconsTime, ExpconsKind, ExpusersDate, ExpusersTime,
 			HotlineDate, HotlineTime, HotlineKind, HotlineUsersDate, HotlineUsersTime,
+			UserList, UserListOnline, UserListUsersOnline,
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname
 		)
 		SELECT
@@ -488,6 +492,10 @@ BEGIN
 			c.value('(files[1]/hotlineusers.cfg[1]/@time)[1]', 		'VarChar(20)'),
 			c.value('(files[1]/HOTLINEUSERS.CFG[1]/@time)[1]', 		'VarChar(20)')
 			) AS HotlineUsersTime,
+
+			c.value('(files[1]/userlist[1]/@userlist)[1]', 		    'VarChar(20)') AS UserList,
+			c.value('(files[1]/userlist[1]/@online)[1]', 		    'VarChar(20)') AS UserListOnline,
+			c.value('(files[1]/userlist[1]/@usersonline)[1]', 		'VarChar(20)') AS UserListUsersOnline,
 
 			c.value('(tech_info[1]/wine[1]/@exist)[1]',				'VarChar(20)')	AS WineExists,
 			c.value('(tech_info[1]/wine[1]/@version)[1]',			'VarChar(20)')	AS WineExists,
@@ -986,6 +994,7 @@ BEGIN
 						UF_OFFICE, UF_BROWSER, UF_MAIL, UF_RIGHT, UF_OD, UF_UD, UF_TS, UF_VM,
 						UF_INFO_COD, UF_INFO_CFG, UF_CONSULT_TOR, UF_FILE_SYSTEM, UF_EXPCONS,
 						UF_EXPCONS_KIND, UF_EXPUSERS, UF_HOTLINE, UF_HOTLINE_KIND, UF_HOTLINEUSERS,
+						UF_USERLIST, UF_USERLISTONLINE, UF_USERLISTUSERSONLINE,
 						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND,
 						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE, UF_TEMP_DIR, UF_TEMP_FREE)
 		SELECT
@@ -1050,7 +1059,7 @@ BEGIN
 				SUBSTRING(HotlineUsersTime, 1, 2) + ':' + SUBSTRING(HotlineUsersTime, 4, 2) + ':00.000',
 				121
 			),
-
+            Cast(UserList AS Bit), Cast(UserListOnline AS Bit), Cast(UserListUsersOnline AS SmallInt),
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType, ConsTmpDir, ConsTmpFree
 		FROM @Usr
 		INNER JOIN dbo.ResVersionTable		ON ResVersionNumber = ResVersion
