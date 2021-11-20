@@ -36,7 +36,7 @@ BEGIN
 			WHERE y.ID_ANSWER = @ID_ANSWER
 				AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 				AND (DATE <= @END OR @END IS NULL)
-			ORDER BY x.DATE DESC, ClientFullName
+			ORDER BY ClientFullName, x.DATE DESC
 		ELSE
 			SELECT x.ID, ClientFullName, ClientID, ServiceName, ManagerName, x.DATE
 			FROM
@@ -48,7 +48,7 @@ BEGIN
 				AND y.TEXT_ANSWER = @TXT
 				AND (DATE >= @BEGIN OR @BEGIN IS NULL)
 				AND (DATE <= @END OR @END IS NULL)
-			ORDER BY x.DATE DESC, ClientFullName
+			ORDER BY ClientFullName, x.DATE DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

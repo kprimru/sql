@@ -22,11 +22,21 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ID, NAME
-		FROM Poll.Blank
+		SELECT B.ID, B.NAME, D.DATE
+		FROM Poll.Blank AS B
+		OUTER APPLY
+		(
+		    SELECT TOP (1) CP.DATE
+		    FROM Poll.ClientPoll AS CP
+		    WHERE CP.ID_BLANK = B.ID
+		    ORDER BY CP.DATE DESC
+		) AS D
 		WHERE @FILTER IS NULL
 			OR NAME LIKE @FILTER
-		ORDER BY NAME
+		ORDER BY
+		    CASE WHEN D.DATE IS NULL THEN 100 ELSE 1 END,
+		    D.DATE DESC,
+		    B.NAME
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
