@@ -96,7 +96,9 @@ BEGIN
 		SET IB =
 			REVERSE(STUFF(REVERSE(
 				(
-					SELECT InfoBankShortName + ','
+					SELECT
+					    --InfoBankShortName + ','
+					    InfoBankCode + ','
 					FROM @IB b
 					WHERE b.Complect = a.DISTR
 					FOR XML PATH('')
