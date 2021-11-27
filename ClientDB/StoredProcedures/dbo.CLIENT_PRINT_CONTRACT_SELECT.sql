@@ -34,9 +34,9 @@ BEGIN
         SELECT
             [CL_ID],
             [ContractNumber], [ContractTypeName], [ContractBegin], [ContractDate], [ContractEnd],
-            [ContractConditions], [ContractPayName], [ContractYear], [ContractFixed]
+            [ContractDiscount], [ContractConditions], [ContractPayName], [ContractYear], [ContractFixed]
         FROM @Clients                       AS CL
-        INNER MERGE JOIN [dbo].[ClientView] AS CV WITH(NOEXPAND) ON CL.[CL_ID] = CV.[ClientID]
+        INNER JOIN [dbo].[ClientView] AS CV WITH(NOEXPAND) ON CL.[CL_ID] = CV.[ClientID]
         CROSS APPLY
         (
             SELECT
@@ -46,6 +46,7 @@ BEGIN
                 [ContractDate] = [SignDate],
                 [ContractEnd] = [ExpireDate],
                 [ContractConditions] = D.[Comments],
+                [ContractDiscount]  = D.[DiscountValue],
                 [ContractPayName],
                 [ContractYear] = DatePart(Year, P.[START]),
                 [ContractFixed] = [ContractPrice]
@@ -55,10 +56,11 @@ BEGIN
             CROSS APPLY
             (
                 SELECT TOP (1)
-                    [ContractTypeName], [ExpireDate], [Comments], [ContractPayName], [ContractPrice]
+                    [ContractTypeName], [ExpireDate], [Comments], [ContractPayName], [ContractPrice], DT.[DiscountValue]
                 FROM [Contract].[ClientContractsDetails]    AS D
-                INNER JOIN [dbo].[ContractTypeTable]        AS T ON T.[ContractTypeID] = D.[Type_Id]
-                INNER JOIN [dbo].[ContractPayTable]         AS P ON P.[ContractPayID] = D.[PayType_Id]
+                INNER JOIN [dbo].[ContractTypeTable]        AS T    ON T.[ContractTypeID] = D.[Type_Id]
+                LEFT JOIN [dbo].[ContractPayTable]          AS P    ON P.[ContractPayID] = D.[PayType_Id]
+                LEFT JOIN [dbo].[DiscountTable]             AS DT   ON DT.[DiscountID] = D.[Discount_Id]
                 WHERE D.[Contract_Id] = CC.[Contract_Id]
                 ORDER BY
                     D.[Date] DESC
@@ -73,9 +75,9 @@ BEGIN
         SELECT
             [CL_ID],
             [ContractNumber], [ContractTypeName], [ContractBegin], [ContractDate], [ContractEnd],
-            [ContractConditions], [ContractPayName], [ContractYear], [ContractFixed]
+            [ContractDiscount], [ContractConditions], [ContractPayName], [ContractYear], [ContractFixed]
         FROM @Clients                       AS CL
-        INNER MERGE JOIN [dbo].[ClientView] AS CV WITH(NOEXPAND) ON CL.[CL_ID] = CV.[ClientID]
+        INNER JOIN [dbo].[ClientView] AS CV WITH(NOEXPAND) ON CL.[CL_ID] = CV.[ClientID]
         CROSS APPLY
         (
             SELECT TOP (1)
@@ -85,6 +87,7 @@ BEGIN
                 [ContractDate] = [SignDate],
                 [ContractEnd] = [ExpireDate],
                 [ContractConditions] = D.[Comments],
+                [ContractDiscount]  = D.[DiscountValue],
                 [ContractPayName],
                 [ContractYear] = DatePart(Year, P.[START]),
                 [ContractFixed] = [ContractPrice]
@@ -94,10 +97,11 @@ BEGIN
             CROSS APPLY
             (
                 SELECT TOP (1)
-                    [ContractTypeName], [ExpireDate], [Comments], [ContractPayName], [ContractPrice]
+                    [ContractTypeName], [ExpireDate], [Comments], [ContractPayName], [ContractPrice], DT.[DiscountValue]
                 FROM [Contract].[ClientContractsDetails]    AS D
                 INNER JOIN [dbo].[ContractTypeTable]        AS T ON T.[ContractTypeID] = D.[Type_Id]
                 INNER JOIN [dbo].[ContractPayTable]         AS P ON P.[ContractPayID] = D.[PayType_Id]
+                LEFT JOIN [dbo].[DiscountTable]             AS DT   ON DT.[DiscountID] = D.[Discount_Id]
                 WHERE D.[Contract_Id] = CC.[Contract_Id]
                 ORDER BY
                     D.[Date] DESC
@@ -120,16 +124,17 @@ BEGIN
         SELECT
             CL_ID,
             ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
-            ContractConditions, ContractPayName, ContractYear, ContractFixed
+            [ContractDiscount], ContractConditions, ContractPayName, ContractYear, ContractFixed
         FROM @Clients AS CL
         CROSS APPLY
         (
             SELECT TOP (1)
                 ClientID, ContractNumber, ContractTypeName, ContractBegin, ContractDate, ContractEnd,
-                ContractConditions, ContractPayName, ContractYear, ContractFixed
+                ContractConditions, ContractPayName, ContractYear, ContractFixed, [ContractDiscount] = DiscountValue
             FROM dbo.ContractTable              AS z
             INNER JOIN dbo.ContractTypeTable    AS y ON y.ContractTypeID = z.ContractTypeID
             INNER JOIN dbo.ContractPayTable     AS x ON x.ContractPayID = z.ContractPayID
+            LEFT JOIN [dbo].[DiscountTable]     AS DT   ON DT.[DiscountID] = z.[DiscountID]
             WHERE z.ClientID = CL.CL_ID
             ORDER BY ContractBegin DESC
         ) AS T
