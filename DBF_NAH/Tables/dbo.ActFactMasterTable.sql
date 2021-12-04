@@ -45,6 +45,8 @@ CREATE TABLE [dbo].[ActFactMasterTable]
         [CO_NUM_FROM]      VarChar(256)                        NULL,
         [CO_NUM_TO]        VarChar(256)                        NULL,
         [CO_EMAIL]         VarChar(256)                        NULL,
+        [IsOnline]         Bit                                 NULL,
+        [IsLongService]    Bit                                 NULL,
         CONSTRAINT [PK_dbo.ActFactMasterTable] PRIMARY KEY CLUSTERED ([AFM_ID])
 );
 GO

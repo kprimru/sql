@@ -23,6 +23,8 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+    DECLARE @Act_Id     Int;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -56,12 +58,19 @@ BEGIN
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = AD_ID_DISTR
 				INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
 
+        SELECT TOP (1) @Act_Id = D.AD_ID_ACT
+        FROM #act AS A
+        INNER JOIN dbo.ActDistrTable AS D ON A.AID = D.AD_ID
+
 		DELETE
 		FROM dbo.SaldoTable
 		WHERE SL_ID_ACT_DIS IN (SELECT aid FROM #act)
 
 		DELETE FROM dbo.ActDistrTable
 		WHERE AD_ID IN (SELECT aid FROM #act)
+
+		EXEC [dbo].[Act@Recalc?Params] @Act_Id;
+
 
 		IF OBJECT_ID('tempdb..#act') IS NOT NULL
 			DROP TABLE #act
@@ -76,7 +85,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[ACT_DISTR_DELETE] TO rl_act_d;
 GO

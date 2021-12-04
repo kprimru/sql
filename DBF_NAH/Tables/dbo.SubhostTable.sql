@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[SubhostTable]
         [SH_CALC]          decimal                            NULL,
         [SH_PENALTY]       decimal                            NULL,
         [SH_PERIODICITY]   SmallInt                           NULL,
-        CONSTRAINT [PK_SUBHOST] PRIMARY KEY NONCLUSTERED ([SH_ID])
+        CONSTRAINT [PK_dbo.SubhostTable] PRIMARY KEY NONCLUSTERED ([SH_ID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SubhostTable()] ON [dbo].[SubhostTable] ([SH_SHORT_NAME] ASC);

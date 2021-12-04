@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Salary].[SERVICE_CALC_SELECT]
+ALTER PROCEDURE [Salary].[SERVICE_CALC_SELECT2]
 	@COURIER	SMALLINT,
 	@PERIOD		SMALLINT
 AS
@@ -23,44 +23,36 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE
-		    @MIN_PR_DATE        SMALLDATETIME,
-		    @PR_BEGIN	        SMALLDATETIME,
-		    @PR_END		        SMALLDATETIME,
-		    @Status_Id_ACTIVE   SmallInt;
+		DECLARE @MIN_PR_DATE	SMALLDATETIME
 
-        SET @Status_Id_ACTIVE = (SELECT TOP (1) [DS_ID] FROM [dbo].[DistrStatusTable] WHERE [DS_REG] = 0);
-
-        DECLARE @client TABLE
-		(
-			TO_ID		        INT PRIMARY KEY CLUSTERED,
-			CL_ID		        INT,
-			TO_NAME		        VARCHAR(250),
-			CL_PSEDO	        VARCHAR(50),
-			CT_ID		        INT,
-			CT_NAME		        VARCHAR(100),
-			CLT_ID		        SMALLINT,
-			KGS			        DECIMAL(8, 4),
-			CL_TERR		        VARCHAR(10),
-			TO_RANGE            Decimal(4,2),
-			TO_SERVICE          VarChar(50),
-			TO_SERVICE_COEF     Decimal(4,2),
-			TO_SALARY           Money
-		);
-
-        DECLARE @TODistrsCount Table
-        (
-            TO_ID               Int,
-            PR_ID               SmallInt,
-            Cnt                 Int,
-            Primary Key Clustered (TO_ID, PR_ID)
-        );
+		DECLARE @PR_BEGIN	SMALLDATETIME
+		DECLARE @PR_END		SMALLDATETIME
 
 		SELECT @PR_BEGIN = PR_DATE, @PR_END = PR_END_DATE
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @PERIOD
 
-		INSERT INTO @client(TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CL_TERR, TO_RANGE, TO_SERVICE, TO_SALARY)
+		IF OBJECT_ID('tempdb..#client') IS NOT NULL
+			DROP TABLE #client
+
+		CREATE TABLE #client
+		(
+			TO_ID		INT PRIMARY KEY,
+			CL_ID		INT,
+			TO_NAME		VARCHAR(250),
+			CL_PSEDO	VARCHAR(50),
+			CT_ID		INT,
+			CT_NAME		VARCHAR(100),
+			CLT_ID		SMALLINT,
+			KGS			DECIMAL(8, 4),
+			CL_TERR		VARCHAR(10),
+			TO_RANGE    Decimal(4,2),
+			TO_SERVICE  VarChar(50),
+			TO_SERVICE_COEF  Decimal(4,2),
+			TO_SALARY         Money
+		);
+
+		INSERT INTO #client(TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, CLT_ID, CL_TERR, TO_RANGE, TO_SERVICE, TO_SALARY)
 		SELECT
 			TO_ID, CL_ID, TO_NAME, CL_PSEDO,
 			h.CT_ID, h.CT_NAME, CL_ID_TYPE,
@@ -69,36 +61,36 @@ BEGIN
 				WHEN h.CT_NAME <> (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN 'ÓÒ'
 				ELSE '-'
 			END AS CL_TERR, a.TO_RANGE, ServiceTypeShortName, TO_SALARY
-		FROM dbo.TOTable a
-		INNER JOIN dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID
-		INNER JOIN dbo.TOAddressTable e ON e.TA_ID_TO = a.TO_ID
-		INNER JOIN dbo.StreetTable f ON f.ST_ID = e.TA_ID_STREET
-		INNER JOIN dbo.CityTable g ON g.CT_ID = f.ST_ID_CITY
-		LEFT OUTER JOIN dbo.CityTable h ON h.CT_ID = g.CT_ID_BASE
-		OUTER APPLY
-		(
-		    SELECT TOP (1) CT.ServiceTypeShortName
-		    FROM dbo.TODistrView AS D
-		    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS CH ON CH.HostReg = D.HST_REG_NAME
-		    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientDistrView] AS CD WITH (NOEXPAND) ON CD.HostID = CD.HostID
-		                                                                                            AND D.DIS_NUM = CD.DISTR
-		                                                                                            AND D.DIS_COMP_NUM = CD.COMP
-		    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientView] AS CC WITH (NOEXPAND) ON CC.[ClientID] = CD.ID_CLIENT
-		    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ServiceTypeTable] AS CT ON CT.ServiceTypeID = CC.ServiceTypeID
-		    WHERE D.TD_ID_TO = a.TO_ID
-		    ORDER BY CD.DS_REG
-		) AS SS
+		FROM
+			dbo.TOTable a
+			INNER JOIN dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID
+			INNER JOIN dbo.TOAddressTable e ON e.TA_ID_TO = a.TO_ID
+			INNER JOIN dbo.StreetTable f ON f.ST_ID = e.TA_ID_STREET
+			INNER JOIN dbo.CityTable g ON g.CT_ID = f.ST_ID_CITY
+			LEFT OUTER JOIN dbo.CityTable h ON h.CT_ID = g.CT_ID_BASE
+			OUTER APPLY
+			(
+			    SELECT TOP (1) CT.ServiceTypeShortName
+			    FROM dbo.TODistrView AS D
+			    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS CH ON CH.HostReg = D.HST_REG_NAME
+			    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientDistrView] AS CD WITH (NOEXPAND) ON CD.HostID = CD.HostID
+			                                                                                            AND D.DIS_NUM = CD.DISTR
+			                                                                                            AND D.DIS_COMP_NUM = CD.COMP
+			    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientView] AS CC WITH (NOEXPAND) ON CC.[ClientID] = CD.ID_CLIENT
+			    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ServiceTypeTable] AS CT ON CT.ServiceTypeID = CC.ServiceTypeID
+			    WHERE D.TD_ID_TO = a.TO_ID
+			    ORDER BY CD.DS_REG
+			) AS SS
 		WHERE TO_ID_COUR = @COURIER;
 
-        UPDATE @client SET
+        UPDATE #client SET
             TO_SERVICE_COEF = CASE TO_SERVICE WHEN 'ÈÏ' THEN 1 WHEN 'ÎÍËÀÉÍ' THEN 1 ELSE 1.4 END;
 
-        UPDATE @client SET
-            TO_RANGE = TO_RANGE - 0.5
+        UPDATE #client SET TO_RANGE = TO_RANGE - 0.5
         WHERE CT_NAME IN
             (
                 SELECT CT_NAME
-                FROM @client
+                FROM #client
                 WHERE CL_TERR = 'ÓÒ'
                 GROUP BY CT_NAME
                 HAVING COUNT(*) >= 7
@@ -109,7 +101,7 @@ BEGIN
 			CAST((
 				SELECT COUNT(*)
 				FROM
-					@client b
+					#client b
 					INNER JOIN dbo.ClientTypeTable c ON b.CLT_ID = c.CLT_ID
 				WHERE /*b.CT_ID = a.CT_ID
 					AND */CLT_NAME LIKE '%ÊÃÑ%'
@@ -117,46 +109,14 @@ BEGIN
 			NULLIF((
 				SELECT COUNT(*)
 				FROM
-					@client b
+					#client b
 				--WHERE b.CT_ID = a.CT_ID
 					--AND CLT_NAME LIKE '%ÊÃÑ%'
 			), 0)
-		FROM @client a
+		FROM #client a
 
-		UPDATE @client
+		UPDATE #client
 		SET KGS = ROUND(KGS * 100, 2)
-
-		INSERT INTO @TODistrsCount
-		SELECT C.TO_ID, R.REG_ID_PERIOD, COUNT(DISTINCT TD_ID_DISTR)
-		FROM @Client                    AS C
-		INNER JOIN dbo.TODistrTable     AS TD ON TD.TD_ID_TO = C.TO_ID
-		INNER JOIN dbo.DistrView        AS D WITH(NOEXPAND) ON TD.TD_ID_DISTR = D.DIS_ID
-		INNER JOIN dbo.PeriodRegTable   AS R ON R.REG_ID_SYSTEM = D.SYS_ID
-										    AND R.REG_DISTR_NUM = D.DIS_NUM
-										    AND R.REG_COMP_NUM = D.DIS_COMP_NUM
-		WHERE R.REG_ID_STATUS = @Status_Id_ACTIVE
-		GROUP BY C.TO_ID, R.REG_ID_PERIOD
-
-        DECLARE @Acts Table
-        (
-            CL_ID           Int,
-            TO_ID           Int,
-            AD_ID_PERIOD    SmallInt,
-            Cnt             Int,
-            Price           Money,
-
-            PRIMARY KEY CLUSTERED(TO_ID, AD_ID_PERIOD),
-            UNIQUE(CL_ID, AD_ID_PERIOD, TO_ID)
-        );
-
-        INSERT INTO @Acts
-        SELECT C.CL_ID, C.TO_ID, AD.AD_ID_PERIOD, Count(TD_ID_DISTR), Sum(AD_PRICE)
-	    FROM @Client                    AS C
-	    INNER JOIN dbo.ActTable         AS A    ON C.CL_ID = A.ACT_ID_CLIENT
-		INNER JOIN dbo.ActDistrTable    AS AD   ON AD.AD_ID_ACT = A.ACT_ID
-		INNER JOIN dbo.TODistrTable     AS TD   ON TD.TD_ID_DISTR = AD.AD_ID_DISTR
-		                                        AND TD_ID_TO = C.TO_ID
-	    GROUP BY C.CL_ID, C.TO_ID, AD.AD_ID_PERIOD;
 
 		/*
 		ëèáî âñå ïåðèîäû àêòà çà ýòîò ìåñÿö
@@ -315,33 +275,49 @@ BEGIN
 												CASE
 													WHEN
 														ISNULL((
-															SELECT TDC.[Cnt]
-															FROM @TODistrsCount AS TDC
-															WHERE TDC.TO_ID = A.TO_ID
-															    AND TDC.PR_ID = C.PR_ID
+															SELECT COUNT(DISTINCT TD_ID_DISTR)
+															FROM
+																dbo.TODistrTable z
+																INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+																INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+																INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																								AND REG_DISTR_NUM = DIS_NUM
+																								AND REG_COMP_NUM = DIS_COMP_NUM
+																INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+															WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = c.PR_ID AND DS_REG = 0
 														), 0) = 0
 														THEN
 															(
-																SELECT ACTS.Cnt
-																FROM @Acts AS ACTS
-																WHERE ACTS.TO_ID = A.TO_ID
-																    AND ACTS.AD_ID_PERIOD = C.PR_ID
+																SELECT COUNT(DISTINCT TD_ID_DISTR)
+																FROM
+																	dbo.TODistrTable z INNER JOIN
+																	dbo.ActDistrTable ON AD_ID_DISTR = TD_ID_DISTR INNER JOIN
+																	dbo.ActTable ON AD_ID_ACT = ACT_ID
+																WHERE z.TD_ID_TO = a.TO_ID AND AD_ID_PERIOD = c.PR_ID
 															)
 														ELSE
 															(
-																SELECT TDC.[Cnt]
-															    FROM @TODistrsCount AS TDC
-															    WHERE TDC.TO_ID = A.TO_ID
-															        AND TDC.PR_ID = C.PR_ID
+																SELECT COUNT(DISTINCT TD_ID_DISTR)
+																FROM
+																	dbo.TODistrTable z
+																	INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+																	INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+																	INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																									AND REG_DISTR_NUM = DIS_NUM
+																									AND REG_COMP_NUM = DIS_COMP_NUM
+																	INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+																WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = c.PR_ID AND DS_REG = 0
 															)
 												END AS SYS_COUNT,
 												c.PR_ID,
 												ISNULL(
 													(
-													    SELECT ACTS.Price
-														FROM @Acts AS ACTS
-														WHERE ACTS.TO_ID = A.TO_ID
-														    AND ACTS.AD_ID_PERIOD = C.PR_ID
+														SELECT SUM(AD_PRICE)
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+														WHERE AD_ID_PERIOD = PR_ID AND ACT_ID_CLIENT = CL_ID
 													),
 													(
 														SELECT SUM(BD_PRICE)
@@ -383,20 +359,46 @@ BEGIN
 													ELSE 0
 												END AS ACT
 											FROM
-												@client a
+												#client a
 												INNER JOIN dbo.ClientTypeTable b ON a.CLT_ID = b.CLT_ID
 												INNER JOIN dbo.CourierPaySettingsTable d ON d.CPS_ID_TYPE = b.CLT_ID
 												CROSS APPLY
 													(
 														SELECT AD_ID_PERIOD AS PR_ID
-														FROM @Acts AS C
-														INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
-														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND C.CL_ID = A.CL_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
+														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND ACT_ID_CLIENT = CL_ID
 														    AND TO_SALARY IS NULL
 
 														UNION
 
 														SELECT @PERIOD
+
+														/*
+														SELECT AD_ID_PERIOD AS PR_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+														WHERE ACT_DATE BETWEEN @PR_BEGIN AND @PR_END AND ACT_ID_CLIENT = CL_ID
+
+														UNION
+
+														SELECT @PERIOD
+
+														UNION
+
+														SELECT ID_ID_PERIOD AS PR_ID
+														FROM
+															dbo.IncomeTable c
+															INNER JOIN dbo.IncomeDistrTable d ON d.ID_ID_INCOME = c.IN_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = ID_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON ID_ID_PERIOD = PR_ID
+														WHERE IN_DATE BETWEEN @PR_BEGIN AND @PR_END AND IN_ID_CLIENT = CL_ID AND PR_DATE < @PR_BEGIN
+														*/
 													) AS c
 											WHERE CPS_SOURCE IN (1, 4)
 											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT, TO_RANGE, TO_SERVICE, TO_SERVICE_COEF, TO_SALARY
@@ -412,10 +414,16 @@ BEGIN
 												a.CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE, TO_SERVICE, TO_SERVICE_COEF,
 												NULL AS TO_COUNT, TO_SALARY,
 												(
-												    SELECT TDC.[Cnt]
-													FROM @TODistrsCount AS TDC
-													WHERE TDC.TO_ID = A.TO_ID
-													    AND TDC.PR_ID = @PERIOD
+													SELECT COUNT(*)
+													FROM
+														dbo.TODistrTable z
+														INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+														INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+														INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																						AND REG_DISTR_NUM = DIS_NUM
+																						AND REG_COMP_NUM = DIS_COMP_NUM
+														INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+													WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = @PERIOD AND DS_REG = 0
 												) AS SYS_COUNT,
 												@PERIOD AS PR_ID,
 												CPS_FIXED AS TOTAL_PRICE,
@@ -424,7 +432,7 @@ BEGIN
 												NULL AS PAY,
 												NULL AS ACT
 											FROM
-												@client a
+												#client a
 												INNER JOIN dbo.ClientTypeTable b ON a.CLT_ID = b.CLT_ID
 												INNER JOIN dbo.CourierPaySettingsTable d ON d.CPS_ID_TYPE = b.CLT_ID
 											WHERE CPS_SOURCE IN (2)
@@ -483,24 +491,38 @@ BEGIN
 												CASE
 													WHEN
 														(
-															SELECT TDC.[Cnt]
-															FROM @TODistrsCount AS TDC
-															WHERE TDC.TO_ID = A.TO_ID
-															    AND TDC.PR_ID = C.PR_ID
+															SELECT COUNT(DISTINCT TD_ID_DISTR)
+															FROM
+																dbo.TODistrTable z
+																INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+																INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+																INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																								AND REG_DISTR_NUM = DIS_NUM
+																								AND REG_COMP_NUM = DIS_COMP_NUM
+																INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+															WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = c.PR_ID AND DS_REG = 0
 														) = 0
 														THEN
 														(
-															SELECT ACTS.Cnt
-															FROM @Acts AS ACTS
-															WHERE ACTS.TO_ID = A.TO_ID
-															    AND ACTS.AD_ID_PERIOD = C.PR_ID
+															SELECT COUNT(DISTINCT TD_ID_DISTR)
+															FROM
+																dbo.TODistrTable z INNER JOIN
+																dbo.ActDistrTable ON AD_ID_DISTR = TD_ID_DISTR INNER JOIN
+																dbo.ActTable ON AD_ID_ACT = ACT_ID
+															WHERE z.TD_ID_TO = a.TO_ID AND AD_ID_PERIOD = c.PR_ID
 														)
 														ELSE
 														(
-															SELECT TDC.[Cnt]
-															FROM @TODistrsCount AS TDC
-															WHERE TDC.TO_ID = A.TO_ID
-															    AND TDC.PR_ID = C.PR_ID
+															SELECT COUNT(DISTINCT TD_ID_DISTR)
+															FROM
+																dbo.TODistrTable z
+																INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+																INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+																INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																								AND REG_DISTR_NUM = DIS_NUM
+																								AND REG_COMP_NUM = DIS_COMP_NUM
+																INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+															WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = c.PR_ID AND DS_REG = 0
 														)
 												END AS SYS_COUNT,
 												c.PR_ID,
@@ -552,20 +574,46 @@ BEGIN
 													ELSE 0
 												END AS ACT
 											FROM
-												@client a
+												#client a
 												INNER JOIN dbo.ClientTypeTable b ON a.CLT_ID = b.CLT_ID
 												INNER JOIN dbo.CourierPaySettingsTable d ON d.CPS_ID_TYPE = b.CLT_ID
 												CROSS APPLY
 													(
 														SELECT AD_ID_PERIOD AS PR_ID
-														FROM @Acts AS C
-														INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
-														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND C.CL_ID = A.CL_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
+														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND ACT_ID_CLIENT = CL_ID
 														    AND TO_SALARY IS NULL
 
 														UNION
 
 														SELECT @PERIOD
+
+														/*
+														SELECT AD_ID_PERIOD AS PR_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+														WHERE ACT_DATE BETWEEN @PR_BEGIN AND @PR_END AND ACT_ID_CLIENT = CL_ID
+
+														UNION
+
+														SELECT @PERIOD
+
+														UNION
+
+														SELECT ID_ID_PERIOD AS PR_ID
+														FROM
+															dbo.IncomeTable c
+															INNER JOIN dbo.IncomeDistrTable d ON d.ID_ID_INCOME = c.IN_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = ID_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON ID_ID_PERIOD = PR_ID
+														WHERE IN_DATE BETWEEN @PR_BEGIN AND @PR_END AND IN_ID_CLIENT = CL_ID AND PR_DATE < @PR_BEGIN
+														*/
 													) AS c
 											WHERE CPS_SOURCE IN (3, 5)
 												/*
@@ -590,10 +638,16 @@ BEGIN
 												a.CLT_ID, CLT_NAME, a.KGS, a.CL_TERR, a.TO_RANGE, a.TO_SERVICE, a.TO_SERVICE_COEF,
 												TO_COUNT, TO_SALARY,
 												(
-													SELECT TDC.[Cnt]
-													FROM @TODistrsCount AS TDC
-													WHERE TDC.TO_ID = A.TO_ID
-													    AND TDC.PR_ID = C.PR_ID
+													SELECT COUNT(*)
+													FROM
+														dbo.TODistrTable z
+														INNER JOIN dbo.DistrView y WITH(NOEXPAND) ON z.TD_ID_DISTR = y.DIS_ID
+														INNER JOIN dbo.SystemTable x ON x.SYS_ID = y.SYS_ID
+														INNER JOIN dbo.PeriodRegTable w ON w.REG_ID_SYSTEM = x.SYS_ID
+																						AND REG_DISTR_NUM = DIS_NUM
+																						AND REG_COMP_NUM = DIS_COMP_NUM
+														INNER JOIN dbo.DistrStatusTable ON DS_ID = REG_ID_STATUS
+													WHERE z.TD_ID_TO = a.TO_ID AND w.REG_ID_PERIOD = c.PR_ID AND DS_REG = 0
 												) AS SYS_COUNT,
 												c.PR_ID,
 												z.CLIENT_TOTAL_PRICE AS TOTAL_PRICE,
@@ -628,20 +682,46 @@ BEGIN
 													ELSE 0
 												END AS ACT
 											FROM
-												@client a
+												#client a
 												INNER JOIN dbo.ClientTypeTable b ON a.CLT_ID = b.CLT_ID
 												INNER JOIN dbo.CourierPaySettingsTable d ON d.CPS_ID_TYPE = b.CLT_ID
 												CROSS APPLY
 													(
 														SELECT AD_ID_PERIOD AS PR_ID
-														FROM @Acts AS C
-														INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
-														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND C.CL_ID = A.CL_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON PR_ID = AD_ID_PERIOD
+														WHERE PR_DATE >= '20140601' AND PR_DATE <= @PR_BEGIN AND ACT_ID_CLIENT = CL_ID
 														    AND TO_SALARY IS NULL
 
 														UNION
 
 														SELECT @PERIOD
+
+														/*
+														SELECT AD_ID_PERIOD AS PR_ID
+														FROM
+															dbo.ActTable c
+															INNER JOIN dbo.ActDistrTable d ON d.AD_ID_ACT = c.ACT_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = AD_ID_DISTR AND TD_ID_TO = a.TO_ID
+														WHERE ACT_DATE BETWEEN @PR_BEGIN AND @PR_END AND ACT_ID_CLIENT = CL_ID
+
+														UNION
+
+														SELECT @PERIOD
+
+														UNION
+
+														SELECT ID_ID_PERIOD AS PR_ID
+														FROM
+															dbo.IncomeTable c
+															INNER JOIN dbo.IncomeDistrTable d ON d.ID_ID_INCOME = c.IN_ID
+															INNER JOIN dbo.TODistrTable f ON f.TD_ID_DISTR = ID_ID_DISTR AND TD_ID_TO = a.TO_ID
+															INNER JOIN dbo.PeriodTable ON ID_ID_PERIOD = PR_ID
+														WHERE IN_DATE BETWEEN @PR_BEGIN AND @PR_END AND IN_ID_CLIENT = CL_ID AND PR_DATE < @PR_BEGIN
+														*/
 													) AS c
 												INNER JOIN Salary.ServiceDetail z ON a.CL_ID = z.ID_CLIENT AND z.ID_PERIOD = PR_ID
 											WHERE CPS_SOURCE IN (3, 5)
@@ -675,7 +755,8 @@ BEGIN
 							) AS o_O
 					) AS o_O
 			) AS o_O
-		ORDER BY CT_NAME, CL_PSEDO, TO_NAME, PR_DATE;
+		ORDER BY CT_NAME, CL_PSEDO, TO_NAME, PR_DATE
+		OPTION(RECOMPILE)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -687,7 +768,4 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-GO
-GRANT EXECUTE ON [Salary].[SERVICE_CALC_SELECT] TO public;
-GRANT EXECUTE ON [Salary].[SERVICE_CALC_SELECT] TO rl_courier_pay;
 GO

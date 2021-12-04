@@ -58,8 +58,8 @@ BEGIN
 
 		IF @actid IS NULL
 			BEGIN
-				INSERT INTO dbo.ActTable (ACT_DATE, ACT_ID_CLIENT, ACT_ID_ORG, ACT_ID_COUR, ACT_TO, ACT_ID_PAYER)
-					SELECT @date, @clientid, CL_ID_ORG, @courid, @to, CL_ID_PAYER
+				INSERT INTO dbo.ActTable (ACT_DATE, ACT_ID_CLIENT, ACT_ID_ORG, ACT_ID_COUR, ACT_TO, ACT_ID_PAYER, IsOnline, IsLongService)
+					SELECT @date, @clientid, CL_ID_ORG, @courid, @to, CL_ID_PAYER, 0, 0
 						FROM dbo.ClientTable
 						WHERE CL_ID = @clientid
 				SELECT @actid = SCOPE_IDENTITY()
@@ -106,6 +106,8 @@ BEGIN
 		EXEC dbo.ACT_PROTOCOL_DETAIL @ID, @TXT OUTPUT
 
 		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Расчитана строка акта', @TXT, @clientid, @actid
+
+		EXEC [dbo].[Act@Recalc?Params] @Act_Id = @actid;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

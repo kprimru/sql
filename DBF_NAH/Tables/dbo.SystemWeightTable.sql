@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[SystemWeightTable]
         [SW_ID_SYSTEM]   SmallInt                   NOT NULL,
         [SW_ID_PERIOD]   SmallInt                   NOT NULL,
         [SW_WEIGHT]      decimal                    NOT NULL,
-        [SW_PROBLEM]     Bit                            NULL,
+        [SW_PROBLEM]     Bit                        NOT NULL,
         [SW_ACTIVE]      Bit                        NOT NULL,
         CONSTRAINT [PK_dbo.SystemWeightTable] PRIMARY KEY CLUSTERED ([SW_ID]),
         CONSTRAINT [FK_dbo.SystemWeightTable(SW_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([SW_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),

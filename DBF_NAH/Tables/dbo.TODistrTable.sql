@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[TODistrTable]
         [TD_ID]         Int   Identity(1,1)   NOT NULL,
         [TD_ID_DISTR]   Int                   NOT NULL,
         [TD_ID_TO]      Int                   NOT NULL,
-        [TD_FORCED]     Bit                       NULL,
+        [TD_FORCED]     Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.TODistrTable] PRIMARY KEY NONCLUSTERED ([TD_ID]),
         CONSTRAINT [FK_dbo.TODistrTable(TD_ID_TO)_dbo.TOTable(TO_ID)] FOREIGN KEY  ([TD_ID_TO]) REFERENCES [dbo].[TOTable] ([TO_ID]),
         CONSTRAINT [FK_dbo.TODistrTable(TD_ID_DISTR)_dbo.DistrTable(DIS_ID)] FOREIGN KEY  ([TD_ID_DISTR]) REFERENCES [dbo].[DistrTable] ([DIS_ID])

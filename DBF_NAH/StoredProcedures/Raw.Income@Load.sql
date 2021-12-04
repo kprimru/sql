@@ -26,9 +26,6 @@ BEGIN
         @DebugContext   = @DebugContext OUT;
 
     BEGIN TRY
-        -- ToDo
-        DELETE FROM [Raw].[Incomes];
-
         INSERT INTO [Raw].[Incomes]([FileName], [FileDateTime], [FileSize], [DateTime], [Organization_Id])
         VALUES (@FileName, @FileDateTime, @FileSize, GetDate(), @Organization_Id);
 

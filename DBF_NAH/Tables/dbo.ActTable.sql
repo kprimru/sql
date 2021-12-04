@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[ActTable]
         [ACT_STATUS]       TinyInt                         NOT NULL,
         [ACT_UPD_DATE]     DateTime                        NOT NULL,
         [ACT_UPD_USER]     NVarChar(258)                   NOT NULL,
+        [IsOnline]         Bit                                 NULL,
+        [IsLongService]    Bit                                 NULL,
         CONSTRAINT [PK_dbo.ActTable] PRIMARY KEY NONCLUSTERED ([ACT_ID]),
         CONSTRAINT [FK_dbo.ActTable(ACT_ID_ORG)_dbo.OrganizationTable(ORG_ID)] FOREIGN KEY  ([ACT_ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID]),
         CONSTRAINT [FK_dbo.ActTable(ACT_ID_CLIENT)_dbo.ClientTable(CL_ID)] FOREIGN KEY  ([ACT_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([CL_ID]),
