@@ -7,7 +7,8 @@ GO
 ALTER FUNCTION [dbo].[EISData@Parse]
 (
     @Data       Xml,
-    @ActDate    SmallDateTime
+    @ActDate    SmallDateTime,
+    @ActPrice   Money
 )
 RETURNS TABLE
 AS
@@ -68,16 +69,18 @@ RETURN
         FROM
         (
             SELECT
+                [Row_Number]        = Row_Number() Over(ORDER BY (SELECT 0)),
                 [Product_GUId]      = V.value('(./guid)[1]', 'VarChar(100)'),
                 [ProductOKPD2Code]  = V.value('(./OKPD2/code)[1]', 'VarChar(100)'),
                 [ProductOKEICode]  = V.value('(./OKEI/code)[1]', 'VarChar(100)'),
                 [ProductOKEIFullName]  = V.value('(./OKEI/fullName)[1]', 'VarChar(Max)'),
                 [ProductName]       = V.value('(./name)[1]', 'VarChar(Max)'),
-                [ProductPrice]      = V.value('(./sum)[1]', 'VarChar(100)')
+                [ProductSum]        = V.value('(./sum)[1]', 'VarChar(100)'),
+                [ProductPrice]       = V.value('(./price)[1]', 'VarChar(100)')
             FROM P.[Products].nodes('/products/product') AS PR(V)
         ) AS PP
         --WHERE PP.[ProductPrice] = S.[StagePrice]
-        ORDER BY CASE WHEN PP.[ProductPrice] = S.[StagePrice] THEN 1 ELSE 2 END
+        ORDER BY CASE WHEN PP.[ProductPrice] = @ActPrice THEN 1 ELSE 2 END, CASE WHEN PP.[ProductSum] = S.[StagePrice] THEN 1 ELSE 2 END, [Row_Number] DESC
     ) AS PP
 )
 GO

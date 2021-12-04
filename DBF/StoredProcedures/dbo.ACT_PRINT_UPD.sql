@@ -20,6 +20,7 @@ BEGIN
         @IdentGUId      VarChar(100),
         @Stage          VarChar(100),
         @ActDate        SmallDateTime,
+        @ActPrice       Money,
         @Client_Id      Int,
         @EISData        Xml,
         @Data           Xml,
@@ -41,8 +42,15 @@ BEGIN
         SET @IdentGUId  = Replace(Cast(NewId() AS VarChar(100)), '-', '');
         SELECT
             @ActDate = ACT_DATE,
-            @Client_Id  = ACT_ID_CLIENT
+            @Client_Id  = ACT_ID_CLIENT,
+            @ActPrice = ACT_PRICE
         FROM dbo.ActTable
+        OUTER APPLY
+        (
+            SELECT ACT_PRICE = Sum(AD_TOTAL_PRICE)
+            FROM dbo.ActDistrTable
+            WHERE AD_ID_ACT = ACT_ID
+        ) AS AD
         WHERE ACT_ID = @Act_Id;
 
         SELECT @Data = EIS_DATA
@@ -315,7 +323,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate) AS ED
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('‘айл'), TYPE
         );
@@ -331,7 +339,7 @@ BEGIN
                     SELECT
                         [–еестрЌом онт] = F.EIS_REG_NUM,
                         [»д¬ерс онт]    = F.EIS_CONTRACT,
-                        [»дЁтап онт]    = F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)')
+                        [»дЁтап онт]    = IsNull(F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)'), F.EIS_DATA.value('(/export/contract/finances/extrabudgetFunds/stages/guid)[1]', 'VarChar(100)'))
                     FOR XML RAW('—вед онт'), TYPE
                 ),
                 (
@@ -474,7 +482,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate) AS ED
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('‘айл”ѕƒѕрод'), TYPE
         );
@@ -595,7 +603,7 @@ BEGIN
         CROSS APPLY
         (
             SELECT
-                [FileName]  = '”ѕƒ_' + C.CL_PSEDO + '_' + Convert(VarChar(50), ACT_DATE, 112) + '_' + @File_Id + '.xml',
+                [FileName]  = '”ѕƒ_' + Replace(C.CL_PSEDO, ' ', '_') + '_' + Convert(VarChar(50), ACT_DATE, 112) + '_' + @File_Id + '.xml',
                 [Data]      = Cast(@Data AS VarChar(Max))
             ---
             UNION ALL
