@@ -6,7 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [dbo].[CLIENT_SAVE]
 	@ID				Int			OUTPUT,
-	@SHORT			VarChar(100),
 	@FULL			VarChar(250),
 	@OFFICIAL		VarChar(500),
 	@INN			VarChar(50),
@@ -60,7 +59,7 @@ BEGIN
 		IF @ID IS NULL
 		BEGIN
 			INSERT INTO dbo.ClientTable(
-					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
+					ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
 					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
 					OriClient, ClientActivity, ClientPlace, ClientNote,
 					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
@@ -68,7 +67,7 @@ BEGIN
 					ClientEmail, PurchaseTypeID, ID_HEAD, USR_CHECK, STT_CHECK, HST_CHECK, INET_CHECK,
 					ClientVisitCountID, IsLarge, IsDebtor)
 				VALUES (
-					@SHORT, @FULL, @OFFICIAL, @INN, @SERVICE,
+					@FULL, @OFFICIAL, @INN, @SERVICE,
 					@STATUS, @RANGE, @PAY_TYPE, @SERV_TYPE, @CLIENT_KIND,
 					@ORI, @ACTIVITY, @PLACE, @NOTE,
 					@DAY_BEGIN, @DAY_END, @DINNER_BEGIN, @DINNER_END,
@@ -104,7 +103,7 @@ BEGIN
 
 			INSERT INTO dbo.ClientTable(
 					ID_MASTER, STATUS,
-					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
+					ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
 					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
 					OriClient, ClientActivity, ClientPlace, ClientNote,
 					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
@@ -113,7 +112,7 @@ BEGIN
 					ClientVisitCountID, IsLarge, IsDebtor, ClientTypeId, ClientLast, UPD_USER)
 				SELECT
 					@ID, 2,
-					ClientShortName, ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
+					ClientFullName, ClientOfficial, ClientINN, ClientServiceID,
 					StatusID, RangeID, PayTypeID, ServiceTypeID, ClientKind_Id,
 					OriClient, ClientActivity, ClientPlace, ClientNote,
 					ClientDayBegin, ClientDayEnd, DinnerBegin, DinnerEnd,
@@ -155,8 +154,7 @@ BEGIN
 			END
 
 			UPDATE dbo.ClientTable
-			SET ClientShortName			=	@SHORT,
-				ClientFullName			=	@FULL,
+			SET ClientFullName			=	@FULL,
 				ClientOfficial			=	@OFFICIAL,
 				ClientINN				=	@INN,
 				/*ClientServiceID		=	@SERVICE,*/

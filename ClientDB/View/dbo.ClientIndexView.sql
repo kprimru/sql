@@ -10,7 +10,6 @@ AS
 		a.ClientID,
 		CONVERT(VARCHAR(20), ClientID) + ' ' +
 		ClientFullName + ' ' +
-		--ClientShortName + ' ' +
 		ISNULL(ClientOfficial, '') + ' ' +
 		ISNULL(
 			(
@@ -75,4 +74,5 @@ AS
 		INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 		INNER JOIN dbo.ManagerTable d ON d.ManagerID = c.ManagerID
 		INNER JOIN dbo.ServiceTypeTable f ON f.ServiceTypeID = a.ServiceTypeID
-		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_IdGO
+		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_Id
+GO

@@ -42,7 +42,6 @@ BEGIN
 			ClientActivity,
 			ClientNote,
 			ServiceTypeID,
-			ClientShortName,
 			OriClient,
 			ClientEmail,
 			DayID,

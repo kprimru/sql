@@ -104,7 +104,6 @@ BEGIN
 							WHERE ID_CLIENT = ClientID
 								AND NAME LIKE @NAME
 						)
-					OR ClientShortName LIKE @NAME
 					OR ClientOfficial LIKE @NAME
 					OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '');
 			ELSE IF @SERVICE IS NOT NULL
@@ -211,7 +210,6 @@ BEGIN
 								WHERE ID_CLIENT = ClientID
 									AND NAME LIKE @NAME
 							)
-							OR ClientShortName LIKE @NAME
 							OR ClientOfficial LIKE @NAME
 							OR CONVERT(VARCHAR(20), ClientID) = REPLACE(@NAME, '%', '')
 
@@ -219,9 +217,7 @@ BEGIN
 
 						SELECT ID_MASTER
 						FROM dbo.ClientTable
-						WHERE (ClientFullName LIKE @NAME
-								--OR ClientShortName LIKE @NAME
-							)
+						WHERE (ClientFullName LIKE @NAME)
 							AND @HIST = 1
 							AND STATUS <> 1
 					)

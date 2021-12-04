@@ -157,13 +157,6 @@ BEGIN
 					SELECT ClientID
 					FROM dbo.ClientTable AS C
 					WHERE STATUS = 1
-						AND ClientShortName LIKE @NAME
-
-					UNION
-
-					SELECT ClientID
-					FROM dbo.ClientTable AS C
-					WHERE STATUS = 1
 						AND ClientOfficial LIKE @NAME
 
 					UNION
