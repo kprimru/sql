@@ -59,7 +59,7 @@ BEGIN
 		WHERE INR_ID_INVOICE IN (
 			SELECT INS_ID
 				FROM
-					dbo.InvoiceFactMasterTable 
+					dbo.InvoiceFactMasterTable
 				WHERE IFM_DATE = @d AND CL_ID = @clientid
 			)
 		GROUP BY

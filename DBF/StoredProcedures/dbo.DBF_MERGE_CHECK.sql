@@ -438,7 +438,7 @@ BEGIN
 				CASE
 					WHEN ISNULL(y.POS_NAME, '') <> ISNULL(f.POS_NAME, '') THEN 'Должность с "' + ISNULL(y.POS_NAME, '') + '" на "' + ISNULL(f.POS_NAME, '') + '"' + CHAR(10)
 					ELSE ''
-				END 
+				END
 			FROM
 				DBF_NAH.dbo.ClientPersonalTable a INNER JOIN
 				DBF_NAH.dbo.ClientTable b ON a.PER_ID_CLIENT = b.CL_ID INNER JOIN
@@ -556,7 +556,7 @@ BEGIN
 				CASE
 					WHEN t.TA_HOME <> a.TA_HOME THEN 'Дом с "' + t.TA_HOME + '" на "' + a.TA_HOME + '"' + CHAR(10)
 					ELSE ''
-				END 
+				END
 			FROM
 				DBF_NAH.dbo.TOAddressTable a INNER JOIN
 				DBF_NAH.dbo.TOTable b ON a.TA_ID_TO = b.TO_ID INNER JOIN

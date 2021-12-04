@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[CLIENT_ACT_SELECT]
@@ -28,7 +28,12 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ACT_ID, ACT_DATE, ACT_PRICE,
+			ACT_ID, ACT_DATE,
+			(
+				SELECT SUM(AD_TOTAL_PRICE)
+				FROM dbo.ActDistrTable
+				WHERE AD_ID_ACT = a.ACT_ID
+			) AS ACT_PRICE,
 			(CONVERT(VARCHAR, INS_NUM) + '/' + INS_NUM_YEAR) AS INS_NUM,
 			ACT_PRINT, ACT_SIGN, ORG_PSEDO,
 			COUR_ID, COUR_NAME, ISNULL(CL_PSEDO, '') AS PAYER,
@@ -43,12 +48,15 @@ BEGIN
 				INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
 				WHERE AD_ID_ACT = ACT_ID
 				ORDER BY SO_ID
-			)
-		FROM dbo.ActView
-		LEFT JOIN dbo.InvoiceSaleTable	ON INS_ID = ACT_ID_INVOICE
-		LEFT JOIN dbo.ClientTable		ON ACT_ID_PAYER = CL_ID
+			),
+			IsOnline, IsLongService
+		FROM dbo.ActTable                   AS A
+		INNER JOIN dbo.OrganizationTable    AS O ON O.ORG_ID = A.ACT_ID_ORG
+		LEFT JOIN dbo.CourierTable          AS R ON R.COUR_ID = A.ACT_ID_COUR
+		LEFT JOIN dbo.InvoiceSaleTable      AS I ON I.INS_ID = A.ACT_ID_INVOICE
+		LEFT JOIN dbo.ClientTable           AS C ON C.CL_ID = A.ACT_ID_PAYER
 		WHERE ACT_ID_CLIENT = @clientid
-		ORDER BY ACT_DATE DESC
+		ORDER BY ACT_DATE DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
