@@ -111,7 +111,7 @@ BEGIN
                     --RaisError('—вободные места дл€ записи на семинар закончились', 16, 1);
                 END ELSE BEGIN
                     INSERT INTO Seminar.Personal(ID_SCHEDULE, ID_CLIENT, PSEDO, EMAIL, ID_STATUS, ADDRESS, [Host_Id], Distr, Comp)
-                    SELECT @SCHEDULE, @CLIENT, @PSEDO, @EMAIL,
+                    SELECT @SCHEDULE, @CLIENT, @PSEDO, LTrim(RTrim(Replace(@EMAIL, Char(9), ''))),
                         CASE
                             WHEN
                                 (
