@@ -33,7 +33,7 @@ BEGIN
 		OUTER APPLY
 		(
 			SELECT TOP (1) *
-			FROM dbo.DBFDistrLastPayView AS P
+			FROM dbo.DBFDistrLastPayView AS P WITH(NOLOCK)
 			WHERE	P.SYS_REG_NAME = D.SystemBaseName
 				AND P.DIS_NUM = D.DISTR
 				AND P.DIS_COMP_NUM = D.COMP

@@ -4,7 +4,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[ClientTypeRules@Select]
+ALTER PROCEDURE [dbo].[ClientTypeRules@SELECT]
 	@SystemsIDs     VarChar(Max) = NULL,
 	@DistrTypesIDs  VarChar(Max) = NULL,
 	@ClientTypesIDs VarChar(Max) = NULL
@@ -20,15 +20,15 @@ BEGIN
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
-		@DebugContext	= @DebugContext OUT
+		@DebugContext	= @DebugContext OUT;
 
 	BEGIN TRY
 
-		SELECT [System_Id], [DistrType_Id], [ClientType_Id]
+		SELECT R.[System_Id], R.[DistrType_Id], R.[ClientType_Id]
 		FROM dbo.ClientTypeRules AS R
-		WHERE   (@SystemsIDs IS NULL OR R.[System_Id] IN (SELECT ID FROM dbo.TableIDFromXML(@SystemsIDs)))
-		    AND (@DistrTypesIDs IS NULL OR R.[DistrType_Id] IN (SELECT ID FROM dbo.TableIDFromXML(@DistrTypesIDs)))
-		    AND (@ClientTypesIDs IS NULL OR R.[ClientType_Id] IN (SELECT ID FROM dbo.TableIDFromXML(@ClientTypesIDs)))
+		WHERE   (@SystemsIDs IS NULL        OR R.[System_Id]        IN (SELECT ID FROM dbo.TableIDFromXML(@SystemsIDs)))
+		    AND (@DistrTypesIDs IS NULL     OR R.[DistrType_Id]     IN (SELECT ID FROM dbo.TableIDFromXML(@DistrTypesIDs)))
+		    AND (@ClientTypesIDs IS NULL    OR R.[ClientType_Id]    IN (SELECT ID FROM dbo.TableIDFromXML(@ClientTypesIDs)));
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
