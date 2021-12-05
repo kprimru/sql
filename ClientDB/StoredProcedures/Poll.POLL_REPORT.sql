@@ -32,27 +32,25 @@ BEGIN
         CREATE TABLE #Clients
         (
             [Client_Id]         Int                 NOT NULL,
+            [RowNumber]         SmallInt            NOT NULL,
             [ClientFullName]    VarChar(512)        NOT NULL,
             [Blank_Id]          UniqueIdentifier        NULL,
             [BlankDate]         SmallDateTime           NULL,
             [CallNote]          VarChar(Max)            NULL,
-            [TrustStatus]       VarChar(256)            NULL,
-            [TrustDate]         SmallDateTime           NULL
             PRIMARY KEY CLUSTERED([Client_Id])
         );
 
         INSERT INTO #Clients
         SELECT
             C.[ClientID],
+            Row_Number() OVER(ORDER BY [ClientFullName]),
             C.[ClientFullName],
             P.[ID],
             P.[DATE],
-            P.[CC_NOTE],
-            CT.[CT_TRUST_STR],
-            CT.[CC_DATE]
+            P.[CC_NOTE]
         FROM [dbo].[ClientView]                     AS C WITH(NOEXPAND)
         INNER JOIN [dbo].[ServiceStatusConnected]() AS S ON S.[ServiceStatusId] = C.[ServiceStatusID]
-        OUTER APPLY
+        CROSS APPLY
         (
             SELECT TOP (1)
                 P.[ID],
@@ -64,25 +62,10 @@ BEGIN
                 AND P.[ID_BLANK] = @Blank_Id
             ORDER BY DATE DESC
         ) AS P
-        OUTER APPLY
-        (
-            SELECT TOP (1)
-                CT.[CT_TRUST_STR],
-                CT.[CC_DATE]
-            FROM [dbo].[ClientTrustView] AS CT
-            WHERE CT.[CC_ID_CLIENT] = C.[ClientID]
-            ORDER BY
-                CT.[CC_DATE] DESC
-            /*[dbo].[ClientTrust]        AS CT
-            INNER JOIN [dbo].[ClientCall]   AS CC ON CC.[CC_ID] = CT.[CT_ID_CALL]
-            WHERE CC.[CC_ID_CLIENT] = C.[ClientID]
-            ORDER BY CC.[CC_DATE] DESC
-            */
-        ) AS CT
         WHERE C.[ServiceID] = @Service_Id
         ORDER BY C.[ClientFullName];
 
-        SET @SQL = 'SELECT C.[Client_Id], C.[ClientFullName], C.[BlankDate], C.[CallNote], C.[TrustStatus], C.[TrustDate], '
+        SET @SQL = 'SELECT C.[Client_Id], C.[RowNumber], C.[ClientFullName], C.[BlankDate], '
 
         SELECT @SQL = @SQL +
             CASE Q.[TP]
@@ -132,9 +115,9 @@ BEGIN
         WHERE Q.[ID_BLANK] = @Blank_Id
         --ORDER BY Q.[ORD];
 
-        SET @SQL = Left(@SQL, Len(@SQL) - 1)
+        --SET @SQL = Left(@SQL, Len(@SQL) - 1)
 
-        SET @SQL = @SQL + '
+        SET @SQL = @SQL + ' C.[CallNote]
         FROM #Clients AS C'
 
         SET @SQL = @SQL + '
