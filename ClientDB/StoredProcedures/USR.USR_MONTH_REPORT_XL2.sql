@@ -152,6 +152,7 @@ BEGIN
 			FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
 			WHERE	D.ID_CLIENT = C.ClientID
 				AND D.DS_REG = 0
+				AND D.SystemBaseName != 'SKS'
 				AND D.DistrTypeBaseCheck = 1
 				AND D.SystemBaseCheck = 1
 		) AS O
@@ -352,6 +353,7 @@ BEGIN
 					WHERE z.ID_CLIENT = b.ClientID
 						AND z.DS_REG = 0
 						AND z.HostID = @HST
+						AND SystemBaseName != 'SKS'
 					ORDER BY DISTR
 				) AS DISTR,
 				(
@@ -360,6 +362,7 @@ BEGIN
 					WHERE z.ID_CLIENT = b.ClientID
 						AND z.DS_REG = 0
 						AND z.HostID = @HST
+						AND SystemBaseName != 'SKS'
 					ORDER BY DISTR
 				) AS NET,
 				(

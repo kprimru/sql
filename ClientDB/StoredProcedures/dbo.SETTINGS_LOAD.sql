@@ -45,6 +45,8 @@ BEGIN
 
 				ST_OFFER_PATH,
 
+				ST_EXCEL_LONG_STRINGS,
+
 				ST_DEBUG
 			FROM dbo.Settings
 			WHERE ST_USER IS NULL
@@ -66,6 +68,8 @@ BEGIN
 				ST_REP_SAVE, ST_REP_TYPE, ST_REP_PATH,
 
 				ST_OFFER_PATH,
+
+				ST_EXCEL_LONG_STRINGS,
 
 				ST_DEBUG
 			FROM dbo.Settings
