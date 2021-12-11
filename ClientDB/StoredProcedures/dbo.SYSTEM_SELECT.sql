@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.SystemID, SystemShortName, a.SystemBaseName, SystemNumber, HostShort, a.HostID,
+			a.SystemID, SystemShortName, a.SystemBaseName, SystemNumber, HostShort, a.HostID, SystemBaseCheck,
 			dbo.FileByteSizeToStr(
 				(
 					SELECT SUM(IBS_SIZE)

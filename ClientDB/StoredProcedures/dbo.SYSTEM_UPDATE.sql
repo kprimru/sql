@@ -21,6 +21,7 @@ ALTER PROCEDURE [dbo].[SYSTEM_UPDATE]
 	@DEMO	BIT,
 	@COMPLECT	BIT,
 	@REG	BIT,
+	@BASE_CHECK	BIT,
 	@IB_REQ	VARCHAR(MAX),
 	@IB		VARCHAR(MAX),
 	@WEIGHT	DECIMAL(8,4)
@@ -91,6 +92,7 @@ BEGIN
 			SystemDemo	=	@DEMO,
 			SystemComplect	=	@COMPLECT,
 			SystemReg	=	@REG,
+			SystemBaseCheck = @BASE_CHECK,
 			SystemSalaryWeight = @WEIGHT
 		WHERE SystemID = @ID
 

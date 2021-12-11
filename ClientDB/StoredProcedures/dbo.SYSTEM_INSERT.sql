@@ -20,6 +20,7 @@ ALTER PROCEDURE [dbo].[SYSTEM_INSERT]
 	@DEMO	BIT,
 	@COMPLECT	BIT,
 	@REG	BIT,
+	@BASE_CHECK	BIT,
 	@IB_REQ	VARCHAR(MAX),
 	@IB		VARCHAR(MAX),
 	@WEIGHT	DECIMAL(8,4),
@@ -80,8 +81,8 @@ BEGIN
 		INSERT INTO dbo.SystemTable(
 				SystemShortName, SystemName, SystemBaseName, SystemNumber,
 				HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName, SystemActive,
-				SystemDemo, SystemComplect, SystemReg, SystemSalaryWeight)
-			VALUES(@SHORT, @NAME, @BASE, @NUMBER, @HOST, @RIC, @ORDER, @VMI, @FULL, @ACTIVE, @DEMO, @COMPLECT, @REG, @WEIGHT)
+				SystemDemo, SystemComplect, SystemReg, SystemBaseCheck, SystemSalaryWeight)
+			VALUES(@SHORT, @NAME, @BASE, @NUMBER, @HOST, @RIC, @ORDER, @VMI, @FULL, @ACTIVE, @DEMO, @COMPLECT, @REG, @BASE_CHECK, @WEIGHT)
 
 		SELECT @ID = SCOPE_IDENTITY()
 

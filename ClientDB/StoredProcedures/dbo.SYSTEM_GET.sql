@@ -27,7 +27,7 @@ BEGIN
 		SELECT
 			SystemShortName, SystemName, SystemBaseName, SystemNumber,
 			HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName,
-			SystemActive, SystemDemo, SystemComplect, SystemReg, SystemSalaryWeight,
+			SystemActive, SystemDemo, SystemComplect, SystemReg, SystemBaseCheck, SystemSalaryWeight,
             -- устаревшие поля
             NULL AS IB_REQ_ID,
 			NULL AS IB_ID
