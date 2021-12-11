@@ -27,5 +27,6 @@ CREATE TABLE [Claim].[Claims]
         CONSTRAINT [PK_Claim] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
+CREATE NONCLUSTERED INDEX [IX_Claim.Claims(Company_Id] ON [Claim].[Claims] ([Company_Id] ASC);
 CREATE UNIQUE NONCLUSTERED INDEX [IX_NUMBER] ON [Claim].[Claims] ([Number] ASC, [Type_id] ASC, [CreateDateTime] ASC);
 GO
