@@ -13,8 +13,8 @@ CREATE TABLE [System].[Net]
         [WEIGHT]   decimal                   NULL,
         [RND]      SmallInt                  NULL,
         [LAST]     DateTime              NOT NULL,
-        CONSTRAINT [PK_Net] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_System.Net] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [System].[Net] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_System.Net(LAST)] ON [System].[Net] ([LAST] ASC);
 GO

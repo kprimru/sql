@@ -20,10 +20,10 @@ CREATE TABLE [Personal].[OfficePersonal]
         [OLD_ID]         UniqueIdentifier          NULL,
         [PHONE]          NVarChar(256)             NULL,
         [PHONE_OFFICE]   NVarChar(256)             NULL,
-        CONSTRAINT [PK_OfficePersonal] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_OfficePersonal_OfficePersonal] FOREIGN KEY  ([MANAGER]) REFERENCES [Personal].[OfficePersonal] ([ID])
+        CONSTRAINT [PK_Personal.OfficePersonal] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Personal.OfficePersonal(MANAGER)_Personal.OfficePersonal(ID)] FOREIGN KEY  ([MANAGER]) REFERENCES [Personal].[OfficePersonal] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Personal].[OfficePersonal] ([LAST] ASC);
-CREATE NONCLUSTERED INDEX [IX_MANAGER] ON [Personal].[OfficePersonal] ([MANAGER] ASC) INCLUDE ([ID]);
+CREATE NONCLUSTERED INDEX [IX_Personal.OfficePersonal(LAST)] ON [Personal].[OfficePersonal] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Personal.OfficePersonal(MANAGER)+(ID)] ON [Personal].[OfficePersonal] ([MANAGER] ASC) INCLUDE ([ID]);
 GO

@@ -9,8 +9,8 @@ CREATE TABLE [System].[SystemType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_SystemType] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_System.SystemType] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [System].[SystemType] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_System.SystemType(LAST)] ON [System].[SystemType] ([LAST] ASC);
 GO

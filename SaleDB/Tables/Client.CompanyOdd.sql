@@ -13,8 +13,8 @@ CREATE TABLE [Client].[CompanyOdd]
         [Comp]         TinyInt               NOT NULL,
         [UpdDate]      DateTime              NOT NULL,
         [UpdUser]      NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK__CompanyOdd__7D8E7ED7] PRIMARY KEY NONCLUSTERED ([Id])
+        CONSTRAINT [PK_Client.CompanyOdd] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO
-CREATE CLUSTERED INDEX [IX] ON [Client].[CompanyOdd] ([Distr] ASC, [Host_Id] ASC, [Comp] ASC);
+CREATE CLUSTERED INDEX [IC_Client.CompanyOdd(Distr,Host_Id,Comp)] ON [Client].[CompanyOdd] ([Distr] ASC, [Host_Id] ASC, [Comp] ASC);
 GO

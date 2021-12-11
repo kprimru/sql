@@ -11,8 +11,8 @@ CREATE TABLE [Client].[RivalSystem]
         [GR]     NVarChar(512)             NULL,
         [ORD]    Int                       NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_RivalSystem] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.RivalSystem] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[RivalSystem] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.RivalSystem(LAST)] ON [Client].[RivalSystem] ([LAST] ASC);
 GO

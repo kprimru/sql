@@ -12,5 +12,5 @@ AS
     WHERE STATUS IN (1, 3)
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyActiveView] ([ID] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyActiveView(ID)] ON [Client].[CompanyActiveView] ([ID] ASC);
 GO

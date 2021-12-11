@@ -24,9 +24,9 @@ CREATE TABLE [Claim].[Claims]
         [Personal_Id]      UniqueIdentifier                       NULL,
         [Company_Id]       UniqueIdentifier                       NULL,
         [GUId]             UniqueIdentifier                       NULL,
-        CONSTRAINT [PK_Claim] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_Claim.Claims] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_Claim.Claims(Company_Id] ON [Claim].[Claims] ([Company_Id] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [IX_NUMBER] ON [Claim].[Claims] ([Number] ASC, [Type_id] ASC, [CreateDateTime] ASC);
+CREATE NONCLUSTERED INDEX [IX_Claim.Claims(Company_Id)] ON [Claim].[Claims] ([Company_Id] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Claim.Claims(Number,Type_id,CreateDateTime)] ON [Claim].[Claims] ([Number] ASC, [Type_id] ASC, [CreateDateTime] ASC);
 GO

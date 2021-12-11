@@ -32,6 +32,14 @@ BEGIN
         @StatusCode_New     VarChar(100),
         @Status_Id          TinyInt;
 
+    DECLARE @Companies Table
+    (
+        [Id]        UniqueIdentifier,
+        [Name]      VarChar(500),
+        [Number]    VarChar(100),
+        PRIMARY KEY CLUSTERED ([Id])
+    );
+
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
@@ -86,6 +94,14 @@ BEGIN
 
             INSERT INTO [Claim].[Claims:Statuses]([Claim_Id], [Index], [DateTime], [Status_Id])
             SELECT @Id, 1, GetDate(), @Status_Id;
+
+            INSERT INTO @Companies
+            EXEC [Claim].[Claim@Seek?Company]
+                @Id = @Id;
+
+            INSERT INTO [Claim].[Claims:Companies]([Claim_Id], [Company_Id])
+            SELECT @Id, [Id]
+            FROM @Companies;
         END;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

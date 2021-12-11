@@ -9,8 +9,8 @@ CREATE TABLE [System].[ServiceType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_SyrviceType] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_System.ServiceType] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [System].[ServiceType] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_System.ServiceType(LAST)] ON [System].[ServiceType] ([LAST] ASC);
 GO

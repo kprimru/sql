@@ -10,5 +10,5 @@ CREATE TABLE [Price].[OtherServicePrice]
         [ID_SERVICE]   UniqueIdentifier      NOT NULL,
         [ID_PERIOD]    UniqueIdentifier      NOT NULL,
         [PRICE]        Money                 NOT NULL,
-        CONSTRAINT [PK_OtherServicePrice] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.OtherServicePrice] PRIMARY KEY CLUSTERED ([ID])
 );GO

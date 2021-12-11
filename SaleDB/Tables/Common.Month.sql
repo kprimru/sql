@@ -11,8 +11,8 @@ CREATE TABLE [Common].[Month]
         [NAME]     NVarChar(256)         NOT NULL,
         [ACTIVE]   Bit                   NOT NULL,
         [LAST]     DateTime              NOT NULL,
-        CONSTRAINT [PK_Month] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Common.Month] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Common].[Month] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Common.Month(LAST)] ON [Common].[Month] ([LAST] ASC);
 GO

@@ -10,8 +10,8 @@ CREATE TABLE [Client].[DepoNumbers]
         [COMPANY_NAME]     NVarChar(896)          NULL,
         [STATUS]           Int                NOT NULL,
         [COMPANY_NUMBER]   Int                    NULL,
-        CONSTRAINT [PK_DepoNumbers] PRIMARY KEY CLUSTERED ([DEPO_NUM])
+        CONSTRAINT [PK_Client.DepoNumbers] PRIMARY KEY CLUSTERED ([DEPO_NUM])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_Client.DepoNumbers(COMPANY_NUMBER] ON [Client].[DepoNumbers] ([COMPANY_NUMBER] ASC) INCLUDE ([DEPO_NUM], [STATUS]);
+CREATE NONCLUSTERED INDEX [IX_Client.DepoNumbers(COMPANY_NUMBER)+(DEPO_NUM,STATUS)] ON [Client].[DepoNumbers] ([COMPANY_NUMBER] ASC) INCLUDE ([DEPO_NUM], [STATUS]);
 GO

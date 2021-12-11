@@ -19,13 +19,13 @@ CREATE TABLE [Client].[CompanyRival]
         [BDATE]        DateTime              NOT NULL,
         [EDATE]        DateTime                  NULL,
         [UPD_USER]     NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyRival] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CompanyRival_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
-        CONSTRAINT [FK_CompanyRival_Office] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
-        CONSTRAINT [FK_CompanyRival_CompanyRival] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyRival] ([ID]),
-        CONSTRAINT [FK_CompanyRival_RivalSystem] FOREIGN KEY  ([ID_RIVAL]) REFERENCES [Client].[RivalSystem] ([ID])
+        CONSTRAINT [PK_Client.CompanyRival] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.CompanyRival(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
+        CONSTRAINT [FK_Client.CompanyRival(ID_OFFICE)_Client.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
+        CONSTRAINT [FK_Client.CompanyRival(ID_MASTER)_Client.CompanyRival(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyRival] ([ID]),
+        CONSTRAINT [FK_Client.CompanyRival(ID_RIVAL)_Client.RivalSystem(ID)] FOREIGN KEY  ([ID_RIVAL]) REFERENCES [Client].[RivalSystem] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_COMPANY] ON [Client].[CompanyRival] ([ID_COMPANY] ASC) INCLUDE ([ID], [ID_OFFICE], [ID_RIVAL], [INFO_DATE], [NOTE], [ACTIVE]);
-CREATE NONCLUSTERED INDEX [IX_CompanyRival_ID_MASTER_STATUS] ON [Client].[CompanyRival] ([ID_MASTER] ASC, [STATUS] ASC) INCLUDE ([BDATE], [UPD_USER]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyRival(ID_COMPANY)+(ID,ID_OFFICE,ID_RIVAL,INFO_DATE,NOTE,ACTIVE)] ON [Client].[CompanyRival] ([ID_COMPANY] ASC) INCLUDE ([ID], [ID_OFFICE], [ID_RIVAL], [INFO_DATE], [NOTE], [ACTIVE]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyRival(ID_MASTER,STATUS)+(BDATE,UPD_USER)] ON [Client].[CompanyRival] ([ID_MASTER] ASC, [STATUS] ASC) INCLUDE ([BDATE], [UPD_USER]);
 GO

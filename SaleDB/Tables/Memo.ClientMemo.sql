@@ -25,5 +25,5 @@ CREATE TABLE [Memo].[ClientMemo]
         [DOCUMENTS]           NVarChar(2048)            NULL,
         [LETTER_CANCEL]       Bit                       NULL,
         [SYSTEMS]             NVarChar(Max)             NULL,
-        CONSTRAINT [PK_ClientMemo] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Memo.ClientMemo] PRIMARY KEY CLUSTERED ([ID])
 );GO

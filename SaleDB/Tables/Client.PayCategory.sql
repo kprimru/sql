@@ -12,8 +12,8 @@ CREATE TABLE [Client].[PayCategory]
         [GR]      NVarChar(256)             NULL,
         [ORD]     Int                       NULL,
         [LAST]    DateTime              NOT NULL,
-        CONSTRAINT [PK_PayCategory] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.PayCategory] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[PayCategory] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.PayCategory(LAST)] ON [Client].[PayCategory] ([LAST] ASC);
 GO

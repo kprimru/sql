@@ -11,5 +11,5 @@ CREATE TABLE [Client].[CompanyDepoFile]
         [DateTime]   DateTime                           NULL,
         [UserName]   VarChar(128)                       NULL,
         [HostName]   VarChar(128)                       NULL,
-        CONSTRAINT [PK__CompanyDepoFile__66AB197F] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_Client.CompanyDepoFile] PRIMARY KEY CLUSTERED ([Id])
 );GO

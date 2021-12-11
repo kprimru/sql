@@ -10,5 +10,5 @@ CREATE TABLE [Security].[ErrorText]
         [DATE]   DateTime              NOT NULL,
         [HOST]   NVarChar(256)         NOT NULL,
         [TEXT]   NVarChar(Max)         NOT NULL,
-        CONSTRAINT [PK_ErrorText] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Security.ErrorText] PRIMARY KEY CLUSTERED ([ID])
 );GO

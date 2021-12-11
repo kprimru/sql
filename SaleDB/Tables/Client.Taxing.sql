@@ -9,8 +9,8 @@ CREATE TABLE [Client].[Taxing]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Taxing] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.Taxing] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[Taxing] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Taxing(LAST)] ON [Client].[Taxing] ([LAST] ASC);
 GO

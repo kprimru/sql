@@ -11,5 +11,5 @@ CREATE TABLE [System].[SystemAll]
         [SHORT]         NVarChar(128)         NOT NULL,
         [ID_CATEGORY]   UniqueIdentifier      NOT NULL,
         [LAST]          DateTime              NOT NULL,
-        CONSTRAINT [PK_SystemAll] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_System.SystemAll] PRIMARY KEY CLUSTERED ([ID])
 );GO

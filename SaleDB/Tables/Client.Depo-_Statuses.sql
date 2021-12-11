@@ -11,8 +11,8 @@ CREATE TABLE [Client].[Depo->Statuses]
         [Name]        VarChar(100)                   NOT NULL,
         [Last]        DateTime                       NOT NULL,
         [IsVisible]   Bit                            NOT NULL,
-        CONSTRAINT [PK__Depo->Statuses__3ACC9741] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_Client.Depo->Statuses] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [asdasd] ON [Client].[Depo->Statuses] ([Code] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Client.Depo->Statuses(Code)] ON [Client].[Depo->Statuses] ([Code] ASC);
 GO

@@ -10,5 +10,5 @@ CREATE TABLE [Memo].[ClientMemoConditions]
         [ID_MEMO]     UniqueIdentifier          NULL,
         [CONDITION]   NVarChar(Max)         NOT NULL,
         [ORD]         Int                   NOT NULL,
-        CONSTRAINT [PK_ClientMemoConditions] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Memo.ClientMemoConditions] PRIMARY KEY CLUSTERED ([ID])
 );GO

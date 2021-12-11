@@ -9,8 +9,8 @@ CREATE TABLE [Meeting].[MeetingResult]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_MeetingResult] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Meeting.MeetingResult] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Meeting].[MeetingResult] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.MeetingResult(LAST)] ON [Meeting].[MeetingResult] ([LAST] ASC);
 GO

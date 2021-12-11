@@ -17,12 +17,12 @@ CREATE TABLE [Meeting].[ClientMeeting]
         [BDATE]         DateTime              NOT NULL,
         [EDATE]         DateTime                  NULL,
         [UPD_USER]      NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_ClientMeeting_1] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_ClientMeeting_MeetingResult] FOREIGN KEY  ([ID_RESULT]) REFERENCES [Meeting].[MeetingResult] ([ID]),
-        CONSTRAINT [FK_ClientMeeting_AssignedMeeting] FOREIGN KEY  ([ID_ASSIGNED]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
-        CONSTRAINT [FK_ClientMeeting_OfficePersonal] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
-        CONSTRAINT [FK_ClientMeeting_Call] FOREIGN KEY  ([ID_CALL]) REFERENCES [Client].[Call] ([ID])
+        CONSTRAINT [PK_Meeting.ClientMeeting] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Meeting.ClientMeeting(ID_RESULT)_Meeting.MeetingResult(ID)] FOREIGN KEY  ([ID_RESULT]) REFERENCES [Meeting].[MeetingResult] ([ID]),
+        CONSTRAINT [FK_Meeting.ClientMeeting(ID_ASSIGNED)_Meeting.AssignedMeeting(ID)] FOREIGN KEY  ([ID_ASSIGNED]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
+        CONSTRAINT [FK_Meeting.ClientMeeting(ID_PERSONAL)_Meeting.OfficePersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
+        CONSTRAINT [FK_Meeting.ClientMeeting(ID_CALL)_Meeting.Call(ID)] FOREIGN KEY  ([ID_CALL]) REFERENCES [Client].[Call] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_ClientMeeting_ID_ASSIGNED] ON [Meeting].[ClientMeeting] ([ID_ASSIGNED] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.ClientMeeting(ID_ASSIGNED)] ON [Meeting].[ClientMeeting] ([ID_ASSIGNED] ASC);
 GO

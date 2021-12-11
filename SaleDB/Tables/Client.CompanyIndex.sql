@@ -14,9 +14,9 @@ CREATE TABLE [Client].[CompanyIndex]
         [PROJECTS]      NVarChar(Max)             NULL,
         [AVA_COLOR]     Int                       NULL,
         [SenderIndex]   SmallInt                  NULL,
-        CONSTRAINT [PK_CompanyIndex] PRIMARY KEY NONCLUSTERED ([ID])
+        CONSTRAINT [PK_Client.CompanyIndex] PRIMARY KEY NONCLUSTERED ([ID])
 );
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_COMPANY] ON [Client].[CompanyIndex] ([ID_COMPANY] ASC);
-CREATE NONCLUSTERED INDEX [IX_ADDRESS] ON [Client].[CompanyIndex] ([ID_COMPANY] ASC) INCLUDE ([ADDRESS], [EMAILS], [PROJECTS]);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyIndex(ID_COMPANY)] ON [Client].[CompanyIndex] ([ID_COMPANY] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyIndex(ID_COMPANY)+(ADDRESS,EMAILS,PROJECTS)] ON [Client].[CompanyIndex] ([ID_COMPANY] ASC) INCLUDE ([ADDRESS], [EMAILS], [PROJECTS]);
 GO

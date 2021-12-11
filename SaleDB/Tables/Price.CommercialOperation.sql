@@ -11,5 +11,5 @@ CREATE TABLE [Price].[CommercialOperation]
         [UNDERLINE_STRING]   NVarChar(1024)            NULL,
         [STRING]             NVarChar(1024)            NULL,
         [LAST]               DateTime              NOT NULL,
-        CONSTRAINT [PK_CommecialOperation] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.CommercialOperation] PRIMARY KEY CLUSTERED ([ID])
 );GO

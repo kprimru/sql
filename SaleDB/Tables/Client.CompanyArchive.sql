@@ -18,15 +18,15 @@ CREATE TABLE [Client].[CompanyArchive]
         [BDATE]             DateTime              NOT NULL,
         [EDATE]             DateTime                  NULL,
         [UPD_USER]          NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyArchive] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CompanyArchive_Potential] FOREIGN KEY  ([ID_POTENTIAL]) REFERENCES [Client].[Potential] ([ID]),
-        CONSTRAINT [FK_CompanyArchive_Availability] FOREIGN KEY  ([ID_AVAILABILITY]) REFERENCES [Client].[Availability] ([ID]),
-        CONSTRAINT [FK_CompanyArchive_Month] FOREIGN KEY  ([ID_NEXT_MON]) REFERENCES [Common].[Month] ([ID]),
-        CONSTRAINT [FK_CompanyArchive_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
-        CONSTRAINT [FK_CompanyArchive_CompanyArchive] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyArchive] ([ID]),
-        CONSTRAINT [FK_CompanyArchive_Character] FOREIGN KEY  ([ID_CHARACTER]) REFERENCES [Client].[Character] ([ID])
+        CONSTRAINT [PK_Client.CompanyArchive] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_POTENTIAL)_Client.Potential(ID)] FOREIGN KEY  ([ID_POTENTIAL]) REFERENCES [Client].[Potential] ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_AVAILABILITY)_Client.Availability(ID)] FOREIGN KEY  ([ID_AVAILABILITY]) REFERENCES [Client].[Availability] ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_NEXT_MON)_Client.Month(ID)] FOREIGN KEY  ([ID_NEXT_MON]) REFERENCES [Common].[Month] ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_MASTER)_Client.CompanyArchive(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyArchive] ([ID]),
+        CONSTRAINT [FK_Client.CompanyArchive(ID_CHARACTER)_Client.Character(ID)] FOREIGN KEY  ([ID_CHARACTER]) REFERENCES [Client].[Character] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_CompanyArchive_ID_COMPANY_STATUS] ON [Client].[CompanyArchive] ([ID_COMPANY] ASC, [STATUS] ASC) INCLUDE ([ID], [BDATE], [UPD_USER]);
-CREATE NONCLUSTERED INDEX [IX_CompanyArchive_STATUS] ON [Client].[CompanyArchive] ([STATUS] ASC) INCLUDE ([ID], [ID_COMPANY], [BDATE], [UPD_USER]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyArchive(ID_COMPANY,STATUS)+(ID,BDATE,UPD_USER)] ON [Client].[CompanyArchive] ([ID_COMPANY] ASC, [STATUS] ASC) INCLUDE ([ID], [BDATE], [UPD_USER]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyArchive(STATUS)+(ID,ID_COMPANY,BDATE,UPD_USER)] ON [Client].[CompanyArchive] ([STATUS] ASC) INCLUDE ([ID], [ID_COMPANY], [BDATE], [UPD_USER]);
 GO

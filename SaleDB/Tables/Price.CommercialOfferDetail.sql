@@ -33,9 +33,9 @@ CREATE TABLE [Price].[CommercialOfferDetail]
         [SUPPORT_ORIGIN]        Money                     NULL,
         [SUPPORT_PRICE]         Money                     NULL,
         [SUPPORT_FURTHER]       Money                     NULL,
-        CONSTRAINT [PK_CommercialOfferDetail] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CommercialOfferDetail_CommercialOperation] FOREIGN KEY  ([ID_OPERATION]) REFERENCES [Price].[CommercialOperation] ([ID]),
-        CONSTRAINT [FK_CommercialOfferDetail_Tax] FOREIGN KEY  ([ID_TAX]) REFERENCES [Common].[Tax] ([ID]),
-        CONSTRAINT [FK_CommercialOfferDetail_Action] FOREIGN KEY  ([ID_ACTION]) REFERENCES [Price].[Action] ([ID]),
-        CONSTRAINT [FK_CommercialOfferDetail_CommercialOffer] FOREIGN KEY  ([ID_OFFER]) REFERENCES [Price].[CommercialOffer] ([ID])
+        CONSTRAINT [PK_Price.CommercialOfferDetail] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Price.CommercialOfferDetail(ID_OPERATION)_Price.CommercialOperation(ID)] FOREIGN KEY  ([ID_OPERATION]) REFERENCES [Price].[CommercialOperation] ([ID]),
+        CONSTRAINT [FK_Price.CommercialOfferDetail(ID_TAX)_Price.Tax(ID)] FOREIGN KEY  ([ID_TAX]) REFERENCES [Common].[Tax] ([ID]),
+        CONSTRAINT [FK_Price.CommercialOfferDetail(ID_ACTION)_Price.Action(ID)] FOREIGN KEY  ([ID_ACTION]) REFERENCES [Price].[Action] ([ID]),
+        CONSTRAINT [FK_Price.CommercialOfferDetail(ID_OFFER)_Price.CommercialOffer(ID)] FOREIGN KEY  ([ID_OFFER]) REFERENCES [Price].[CommercialOffer] ([ID])
 );GO

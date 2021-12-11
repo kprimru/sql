@@ -11,8 +11,8 @@ CREATE TABLE [Client].[Potential]
         [GR]     NVarChar(512)             NULL,
         [ORD]    Int                       NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Potential] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.Potential] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[Potential] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Potential(LAST)] ON [Client].[Potential] ([LAST] ASC);
 GO

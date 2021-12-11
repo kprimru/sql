@@ -8,8 +8,8 @@ CREATE TABLE [Client].[CompanyIndexQueue]
 (
         [Id]           bigint             Identity(1,1)   NOT NULL,
         [ID_COMPANY]   UniqueIdentifier                   NOT NULL,
-        CONSTRAINT [PK__CompanyIndexQueu__1EEF72A2] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_Client.CompanyIndexQueue] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_COMPANY] ON [Client].[CompanyIndexQueue] ([ID_COMPANY] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyIndexQueue(ID_COMPANY)] ON [Client].[CompanyIndexQueue] ([ID_COMPANY] ASC);
 GO

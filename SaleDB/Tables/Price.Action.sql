@@ -12,5 +12,5 @@ CREATE TABLE [Price].[Action]
         [SUPPORT]          SmallInt                  NULL,
         [DELIVERY_FIXED]   Money                     NULL,
         [LAST]             DateTime              NOT NULL,
-        CONSTRAINT [PK_Action] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.Action] PRIMARY KEY CLUSTERED ([ID])
 );GO

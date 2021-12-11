@@ -10,8 +10,8 @@ CREATE TABLE [System].[Category]
         [NAME]    NVarChar(256)         NOT NULL,
         [SHORT]   NVarChar(128)         NOT NULL,
         [LAST]    DateTime              NOT NULL,
-        CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_System.Category] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [System].[Category] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_System.Category(LAST)] ON [System].[Category] ([LAST] ASC);
 GO

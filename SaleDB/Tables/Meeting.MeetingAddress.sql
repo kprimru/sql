@@ -13,11 +13,11 @@ CREATE TABLE [Meeting].[MeetingAddress]
         [HOME]         NVarChar(128)             NULL,
         [ROOM]         NVarChar(128)             NULL,
         [NOTE]         NVarChar(Max)         NOT NULL,
-        CONSTRAINT [PK_MeetingAddress] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_MeetingAddress_AssignedMeeting] FOREIGN KEY  ([ID_MEETING]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
-        CONSTRAINT [FK_MeetingAddress_Area] FOREIGN KEY  ([ID_AREA]) REFERENCES [Address].[Area] ([ID]),
-        CONSTRAINT [FK_MeetingAddress_Street] FOREIGN KEY  ([ID_STREET]) REFERENCES [Address].[Street] ([ID])
+        CONSTRAINT [PK_Meeting.MeetingAddress] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Meeting.MeetingAddress(ID_MEETING)_Meeting.AssignedMeeting(ID)] FOREIGN KEY  ([ID_MEETING]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
+        CONSTRAINT [FK_Meeting.MeetingAddress(ID_AREA)_Meeting.Area(ID)] FOREIGN KEY  ([ID_AREA]) REFERENCES [Address].[Area] ([ID]),
+        CONSTRAINT [FK_Meeting.MeetingAddress(ID_STREET)_Meeting.Street(ID)] FOREIGN KEY  ([ID_STREET]) REFERENCES [Address].[Street] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_MeetingAddress_ID_MEETING] ON [Meeting].[MeetingAddress] ([ID_MEETING] ASC) INCLUDE ([ID], [ID_AREA], [ID_STREET], [HOME], [ROOM], [NOTE]);
+CREATE NONCLUSTERED INDEX [IX_Meeting.MeetingAddress(ID_MEETING)+(ID,ID_AREA,ID_STREET,HOME,ROOM,NOTE)] ON [Meeting].[MeetingAddress] ([ID_MEETING] ASC) INCLUDE ([ID], [ID_AREA], [ID_STREET], [HOME], [ROOM], [NOTE]);
 GO

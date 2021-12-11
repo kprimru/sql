@@ -9,8 +9,8 @@ CREATE TABLE [Client].[CallDate]
         [ID]           UniqueIdentifier      NOT NULL,
         [ID_COMPANY]   UniqueIdentifier      NOT NULL,
         [DATE]         SmallDateTime         NOT NULL,
-        CONSTRAINT [PK_CallDate] PRIMARY KEY NONCLUSTERED ([ID])
+        CONSTRAINT [PK_Client.CallDate] PRIMARY KEY NONCLUSTERED ([ID])
 );
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CallDate] ON [Client].[CallDate] ([ID_COMPANY] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CallDate(ID_COMPANY)] ON [Client].[CallDate] ([ID_COMPANY] ASC);
 GO

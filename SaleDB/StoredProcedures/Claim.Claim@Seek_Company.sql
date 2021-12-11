@@ -20,6 +20,8 @@ BEGIN
     FROM [Claim].[Claims]
     WHERE [Id] = @Id;
 
+    SET @Email = NullIf(Ltrim(Rtrim(@Email)), '');
+    SET @Phone = NullIf(Ltrim(Rtrim(@Phone)), '');
     SET @Phone = Replace(@Phone, '+7', '8')
 
     EXEC [Client].[Company@Seek-By-Phone-And-Email]

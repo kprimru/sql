@@ -11,7 +11,7 @@ CREATE TABLE [dbo].[sysdiagrams]
         [diagram_id]     Int         Identity(1,1)   NOT NULL,
         [version]        Int                             NULL,
         [definition]     varbinary                       NULL,
-        CONSTRAINT [PK__sysdiagrams__379037E3] PRIMARY KEY CLUSTERED ([diagram_id])
+        CONSTRAINT [PK_dbo.sysdiagrams] PRIMARY KEY CLUSTERED ([diagram_id])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UK_principal_name] ON [dbo].[sysdiagrams] ([principal_id] ASC, [name] ASC);

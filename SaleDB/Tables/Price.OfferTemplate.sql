@@ -14,5 +14,5 @@ CREATE TABLE [Price].[OfferTemplate]
         [DETAIL_1_PROC]   NVarChar(1024)            NULL,
         [DETAIL_2_PROC]   NVarChar(1024)            NULL,
         [LAST]            DateTime              NOT NULL,
-        CONSTRAINT [PK_OfferTemplate] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.OfferTemplate] PRIMARY KEY CLUSTERED ([ID])
 );GO

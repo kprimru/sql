@@ -17,5 +17,5 @@ CREATE TABLE [Client].[CompanyWarning]
         [STATUS]        TinyInt               NOT NULL,
         [UPD_DATE]      DateTime              NOT NULL,
         [UPD_USER]      NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyWarning] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.CompanyWarning] PRIMARY KEY CLUSTERED ([ID])
 );GO

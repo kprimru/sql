@@ -24,17 +24,13 @@ BEGIN
         @DebugContext   = @DebugContext OUT;
 
     BEGIN TRY
-        SELECT @Company_Id = [Company_Id]
-        FROM [Claim].[Claims]
-        WHERE [Id] = @Id;
 
         UPDATE [Client].[Company] SET
             SENDER_NOTE = NULL
-        WHERE ID = @Company_Id;
+        WHERE ID IN (SELECT [Company_Id] FROM [Claim].[Claims:Companies] WHERE [Claim_Id] = @Id);
 
-        UPDATE [Claim].[Claims] SET
-            Company_Id  = NULL
-        WHERE [Id] = @Id;
+        DELETE FROM [Claim].[Claims:Companies]
+        WHERE [Claim_Id] = @Id;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

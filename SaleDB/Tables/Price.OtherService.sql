@@ -9,5 +9,5 @@ CREATE TABLE [Price].[OtherService]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         [ORD]    Int                   NOT NULL,
-        CONSTRAINT [PK_OtherService] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.OtherService] PRIMARY KEY CLUSTERED ([ID])
 );GO

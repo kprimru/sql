@@ -28,21 +28,21 @@ CREATE TABLE [Meeting].[AssignedMeeting]
         [BDATE_S]             AS ([Common].[DateOf]([BDATE])) PERSISTED,
         [EDATE]              DateTime                  NULL,
         [UPD_USER]           NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_AssignedMeeting] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_MeetingStatus] FOREIGN KEY  ([ID_STATUS]) REFERENCES [Meeting].[MeetingStatus] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_AssignedMeeting1] FOREIGN KEY  ([ID_PARENT]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_MeetingResult] FOREIGN KEY  ([ID_RESULT]) REFERENCES [Meeting].[MeetingResult] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_AssignedMeeting] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_OfficePersonal] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_OfficePersonal1] FOREIGN KEY  ([ID_ASSIGNER]) REFERENCES [Personal].[OfficePersonal] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_Call] FOREIGN KEY  ([ID_CALL]) REFERENCES [Client].[Call] ([ID]),
-        CONSTRAINT [FK_AssignedMeeting_Office] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID])
+        CONSTRAINT [PK_Meeting.AssignedMeeting] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_COMPANY)_Meeting.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_STATUS)_Meeting.MeetingStatus(ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [Meeting].[MeetingStatus] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_PARENT)_Meeting.AssignedMeeting(ID)] FOREIGN KEY  ([ID_PARENT]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_RESULT)_Meeting.MeetingResult(ID)] FOREIGN KEY  ([ID_RESULT]) REFERENCES [Meeting].[MeetingResult] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_MASTER)_Meeting.AssignedMeeting(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Meeting].[AssignedMeeting] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_PERSONAL)_Meeting.OfficePersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_ASSIGNER)_Meeting.OfficePersonal(ID)] FOREIGN KEY  ([ID_ASSIGNER]) REFERENCES [Personal].[OfficePersonal] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_CALL)_Meeting.Call(ID)] FOREIGN KEY  ([ID_CALL]) REFERENCES [Client].[Call] ([ID]),
+        CONSTRAINT [FK_Meeting.AssignedMeeting(ID_OFFICE)_Meeting.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_AssignedMeeting_ID_CALL] ON [Meeting].[AssignedMeeting] ([ID_CALL] ASC);
-CREATE NONCLUSTERED INDEX [IX_AssignedMeeting_ID_MASTER_ID_COMPANY_STATUS] ON [Meeting].[AssignedMeeting] ([ID_MASTER] ASC, [ID_COMPANY] ASC, [STATUS] ASC);
-CREATE NONCLUSTERED INDEX [IX_AssignedMeeting_ID_MASTER_ID_PARENT_ID_PERSONAL_STATUS] ON [Meeting].[AssignedMeeting] ([ID_MASTER] ASC, [ID_PARENT] ASC, [ID_PERSONAL] ASC, [STATUS] ASC);
-CREATE NONCLUSTERED INDEX [IX_AssignedMeeting_ID_MASTER_STATUS] ON [Meeting].[AssignedMeeting] ([ID_MASTER] DESC, [STATUS] DESC);
-CREATE NONCLUSTERED INDEX [IX_COMPANY] ON [Meeting].[AssignedMeeting] ([ID_COMPANY] ASC, [BDATE_S] ASC, [SPECIFY] ASC, [ID_MASTER] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.AssignedMeeting(ID_CALL)] ON [Meeting].[AssignedMeeting] ([ID_CALL] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.AssignedMeeting(ID_COMPANY,BDATE_S,SPECIFY,ID_MASTER)] ON [Meeting].[AssignedMeeting] ([ID_COMPANY] ASC, [BDATE_S] ASC, [SPECIFY] ASC, [ID_MASTER] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.AssignedMeeting(ID_MASTER,ID_COMPANY,STATUS)] ON [Meeting].[AssignedMeeting] ([ID_MASTER] ASC, [ID_COMPANY] ASC, [STATUS] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.AssignedMeeting(ID_MASTER,ID_PARENT,ID_PERSONAL,STATUS)] ON [Meeting].[AssignedMeeting] ([ID_MASTER] ASC, [ID_PARENT] ASC, [ID_PERSONAL] ASC, [STATUS] ASC);
+CREATE NONCLUSTERED INDEX [IX_Meeting.AssignedMeeting(ID_MASTER,STATUS)] ON [Meeting].[AssignedMeeting] ([ID_MASTER] DESC, [STATUS] DESC);
 GO

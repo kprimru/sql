@@ -33,7 +33,7 @@ CREATE TABLE [Client].[CompanyDepo]
         CONSTRAINT [PK_Client.CompanyDepo] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO
-CREATE CLUSTERED INDEX [IX_COMPANY] ON [Client].[CompanyDepo] ([Company_Id] ASC);
-CREATE NONCLUSTERED INDEX [IX_COMPANY2] ON [Client].[CompanyDepo] ([Company_Id] ASC, [Status] ASC, [Status_Id] ASC, [DateFrom] ASC) INCLUDE ([Number]);
-CREATE NONCLUSTERED INDEX [IX_NUM] ON [Client].[CompanyDepo] ([Number] ASC, [Status] ASC) INCLUDE ([Company_Id], [Status_Id]);
+CREATE CLUSTERED INDEX [IC_Client.CompanyDepo(Company_Id)] ON [Client].[CompanyDepo] ([Company_Id] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyDepo(Company_Id,Status,Status_Id,DateFrom)+(Number)] ON [Client].[CompanyDepo] ([Company_Id] ASC, [Status] ASC, [Status_Id] ASC, [DateFrom] ASC) INCLUDE ([Number]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyDepo(Number,Status)+(Company_Id,Status_Id)] ON [Client].[CompanyDepo] ([Number] ASC, [Status] ASC) INCLUDE ([Company_Id], [Status_Id]);
 GO

@@ -9,5 +9,5 @@ CREATE TABLE [Client].[Project]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Project] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.Project] PRIMARY KEY CLUSTERED ([ID])
 );GO

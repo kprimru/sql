@@ -12,6 +12,6 @@ CREATE TABLE [Security].[Roles]
         [CAPTION]   NVarChar(512)             NULL,
         [NOTE]      NVarChar(Max)             NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Roles_Roles] FOREIGN KEY  ([MASTER]) REFERENCES [Security].[Roles] ([ID])
+        CONSTRAINT [PK_Security.Roles] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Security.Roles(MASTER)_Security.Roles(ID)] FOREIGN KEY  ([MASTER]) REFERENCES [Security].[Roles] ([ID])
 );GO

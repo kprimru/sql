@@ -10,5 +10,5 @@ CREATE TABLE [Common].[MonthStr]
         [NAME]   VarChar(50)           NOT NULL,
         [ROD]    VarChar(50)           NOT NULL,
         [NUM]    Int                   NOT NULL,
-        CONSTRAINT [PK_MonthStr] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Common.MonthStr] PRIMARY KEY CLUSTERED ([ID])
 );GO

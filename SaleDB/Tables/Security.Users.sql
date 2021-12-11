@@ -12,5 +12,5 @@ CREATE TABLE [Security].[Users]
         [TYPE]     TinyInt               NOT NULL,
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
-        CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Security.Users] PRIMARY KEY CLUSTERED ([ID])
 );GO

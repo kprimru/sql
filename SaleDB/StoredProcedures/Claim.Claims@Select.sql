@@ -94,8 +94,8 @@ BEGIN
             [Actions]           = C.[Actions],
             [PageURL]           = C.[PageURL],
             [PageTitle]         = C.[PageTitle],
-            [Company_Id]        = C.[Company_Id],
-            [CompanyNumber]     = CC.[Number],
+            [Company_Id]        = Reverse(Stuff(Reverse((SELECT '{' + Convert(VarChar(100), CO.[ID]) + '}' + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
+            [CompanyNumber]     = Reverse(Stuff(Reverse((SELECT Convert(VarChar(100), CO.[Number]) + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
             [DeliveryDate]      = CS.[DeliveryDate],
             [ClaimIndex]        = CA.[ClaimIndex],
             [Meeting]           = CA.[Meeting],
@@ -104,7 +104,7 @@ BEGIN
             [Color]             = CCS.[Color]
         FROM [Claim].[Claims] AS C
         INNER JOIN [Claim].[Claims->Statuses] AS CCS ON C.[Status_Id] = CCS.[Id]
-        LEFT JOIN [Client].[Company] AS CC ON C.[Company_Id] = CC.[ID]
+        --LEFT JOIN [Client].[Company] AS CC ON C.[Company_Id] = CC.[ID]
         LEFT JOIN @StatusesIDs AS S ON C.[Status_Id] = S.[Id]
         LEFT JOIN @TypesIDs AS T ON C.[Type_Id] = T.[Id]
         LEFT JOIN @SpecialsIDs AS SP ON C.[Special] = SP.[Id]

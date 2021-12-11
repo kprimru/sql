@@ -13,6 +13,6 @@ AS
 		AND NUMBER IS NOT NULL
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyNumberView] ([ID] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [IX_NUMBER] ON [Client].[CompanyNumberView] ([NUMBER] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyNumberView(ID)] ON [Client].[CompanyNumberView] ([ID] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Client.CompanyNumberView(NUMBER)] ON [Client].[CompanyNumberView] ([NUMBER] ASC);
 GO

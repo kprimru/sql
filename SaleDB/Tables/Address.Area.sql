@@ -10,9 +10,9 @@ CREATE TABLE [Address].[Area]
         [NAME]      NVarChar(512)         NOT NULL,
         [ID_CITY]   UniqueIdentifier      NOT NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_Area] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Area_City] FOREIGN KEY  ([ID_CITY]) REFERENCES [Address].[City] ([ID])
+        CONSTRAINT [PK_Address.Area] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Address.Area(ID_CITY)_Address.City(ID)] FOREIGN KEY  ([ID_CITY]) REFERENCES [Address].[City] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Address].[Area] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Address.Area(LAST)] ON [Address].[Area] ([LAST] ASC);
 GO

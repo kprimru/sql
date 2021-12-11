@@ -16,9 +16,9 @@ CREATE TABLE [Client].[CompanyFiles]
         [BDATE]        DateTime              NOT NULL,
         [EDATE]        DateTime                  NULL,
         [UPD_USER]     NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyFiles] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CompanyFiles_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID])
+        CONSTRAINT [PK_Client.CompanyFiles] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.CompanyFiles(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_COMPANY] ON [Client].[CompanyFiles] ([ID_COMPANY] ASC, [STATUS] ASC) INCLUDE ([ID], [FILE_NAME], [FILE_NOTE]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyFiles(ID_COMPANY,STATUS)+(ID,FILE_NAME,FILE_NOTE)] ON [Client].[CompanyFiles] ([ID_COMPANY] ASC, [STATUS] ASC) INCLUDE ([ID], [FILE_NAME], [FILE_NOTE]);
 GO

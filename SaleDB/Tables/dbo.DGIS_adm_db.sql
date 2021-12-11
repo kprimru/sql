@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[DGIS_adm_db]
         [LastUpd]     DateTime                            NULL,
         [geoSystem]   NVarChar(100)                       NULL,
         [UTMZone]     NVarChar(20)                        NULL,
-        CONSTRAINT [PK__DGIS_adm_db__0658CF02] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_dbo.DGIS_adm_db] PRIMARY KEY CLUSTERED ([ID])
 );GO

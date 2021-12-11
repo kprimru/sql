@@ -10,8 +10,8 @@ CREATE TABLE [Common].[Words]
         [NAME]   NVarChar(128)         NOT NULL,
         [TYPE]   TinyInt               NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Words] PRIMARY KEY NONCLUSTERED ([ID])
+        CONSTRAINT [PK_Common.Words] PRIMARY KEY NONCLUSTERED ([ID])
 );
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_U_NAME] ON [Common].[Words] ([NAME] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Common.Words(NAME)] ON [Common].[Words] ([NAME] ASC);
 GO

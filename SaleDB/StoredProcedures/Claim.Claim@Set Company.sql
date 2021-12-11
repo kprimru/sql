@@ -111,10 +111,22 @@ BEGIN
             @PHONE_S    = @Phone,
             @NOTE       = NULL;
 
+        /*
         UPDATE [Claim].[Claims] SET
             Company_Id  = @Company_Id
         WHERE [Id] = @Id
             AND [Company_Id] IS NULL;
+            */
+
+        INSERT INTO [Claim].[Claims:Companies]([Claim_Id], [Company_Id])
+        SELECT @Id, @Company_Id
+        WHERE NOT EXISTS
+            (
+                SELECT *
+                FROM [Claim].[Claims:Companies]
+                WHERE [Claim_Id] = @Id
+                    AND [Company_Id] = @Company_Id
+            );
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

@@ -18,10 +18,10 @@ CREATE TABLE [Sale].[SaleCompany]
         [BDATE]         DateTime              NOT NULL,
         [EDATE]         DateTime                  NULL,
         [UPD_USER]      NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanySale] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_SaleCompany_SaleCompany] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Sale].[SaleCompany] ([ID]),
-        CONSTRAINT [FK_SaleCompany_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
-        CONSTRAINT [FK_SaleCompany_OfficePersonal] FOREIGN KEY  ([ID_ASSIGNER]) REFERENCES [Personal].[OfficePersonal] ([ID]),
-        CONSTRAINT [FK_SaleCompany_Office] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
-        CONSTRAINT [FK_SaleCompany_RivalSystem] FOREIGN KEY  ([ID_RIVAL]) REFERENCES [Client].[RivalSystem] ([ID])
+        CONSTRAINT [PK_Sale.SaleCompany] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Sale.SaleCompany(ID_MASTER)_Sale.SaleCompany(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Sale].[SaleCompany] ([ID]),
+        CONSTRAINT [FK_Sale.SaleCompany(ID_COMPANY)_Sale.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
+        CONSTRAINT [FK_Sale.SaleCompany(ID_ASSIGNER)_Sale.OfficePersonal(ID)] FOREIGN KEY  ([ID_ASSIGNER]) REFERENCES [Personal].[OfficePersonal] ([ID]),
+        CONSTRAINT [FK_Sale.SaleCompany(ID_OFFICE)_Sale.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
+        CONSTRAINT [FK_Sale.SaleCompany(ID_RIVAL)_Sale.RivalSystem(ID)] FOREIGN KEY  ([ID_RIVAL]) REFERENCES [Client].[RivalSystem] ([ID])
 );GO

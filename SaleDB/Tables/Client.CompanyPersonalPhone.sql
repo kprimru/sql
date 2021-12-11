@@ -15,11 +15,11 @@ CREATE TABLE [Client].[CompanyPersonalPhone]
         [STATUS]        Int                   NOT NULL,
         [UPD_DATE]      DateTime                  NULL,
         [UPD_USER]      NVarChar(256)             NULL,
-        CONSTRAINT [PK_CompanyPersonalPhone] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CompanyPersonalPhone_CompanyPersonal] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Client].[CompanyPersonal] ([ID]),
-        CONSTRAINT [FK_CompanyPersonalPhone_PhoneType] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Client].[PhoneType] ([ID])
+        CONSTRAINT [PK_Client.CompanyPersonalPhone] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.CompanyPersonalPhone(ID_PERSONAL)_Client.CompanyPersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Client].[CompanyPersonal] ([ID]),
+        CONSTRAINT [FK_Client.CompanyPersonalPhone(ID_TYPE)_Client.PhoneType(ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Client].[PhoneType] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_ID_PERSONAL] ON [Client].[CompanyPersonalPhone] ([ID_PERSONAL] ASC) INCLUDE ([ID], [ID_TYPE], [PHONE], [PHONE_S], [NOTE]);
-CREATE NONCLUSTERED INDEX [IX_PHONE] ON [Client].[CompanyPersonalPhone] ([PHONE_S] ASC) INCLUDE ([ID_PERSONAL], [STATUS]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyPersonalPhone(ID_PERSONAL)+(ID,ID_TYPE,PHONE,PHONE_S,NOTE)] ON [Client].[CompanyPersonalPhone] ([ID_PERSONAL] ASC) INCLUDE ([ID], [ID_TYPE], [PHONE], [PHONE_S], [NOTE]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyPersonalPhone(PHONE_S)+(ID_PERSONAL,STATUS)] ON [Client].[CompanyPersonalPhone] ([PHONE_S] ASC) INCLUDE ([ID_PERSONAL], [STATUS]);
 GO

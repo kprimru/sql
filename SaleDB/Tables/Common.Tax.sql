@@ -12,5 +12,5 @@ CREATE TABLE [Common].[Tax]
         [RATE]      decimal               NOT NULL,
         [DEFAULT]   Bit                   NOT NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_Tax] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Common.Tax] PRIMARY KEY CLUSTERED ([ID])
 );GO

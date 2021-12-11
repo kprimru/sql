@@ -14,8 +14,8 @@ CREATE TABLE [Client].[WorkState]
         [GR]             NVarChar(512)             NULL,
         [ORD]            Int                       NULL,
         [LAST]           DateTime              NOT NULL,
-        CONSTRAINT [PK_WorkState] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.WorkState] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[WorkState] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.WorkState(LAST)] ON [Client].[WorkState] ([LAST] ASC);
 GO

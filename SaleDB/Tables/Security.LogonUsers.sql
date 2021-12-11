@@ -14,5 +14,5 @@ CREATE TABLE [Security].[LogonUsers]
         [HOST_PROCESS_ID]   Int                   NOT NULL,
         [FLOGIN]            NVarChar(256)         NOT NULL,
         [USER_ID]           UniqueIdentifier      NOT NULL,
-        CONSTRAINT [PK_LogonUsers] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Security.LogonUsers] PRIMARY KEY CLUSTERED ([ID])
 );GO

@@ -16,6 +16,6 @@ AS
 	WHERE a.STATUS = 1 AND b.EDATE IS NULL AND PROCESS_TYPE = N'RIVAL'
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyProcessRivalView] ([ID] ASC);
-CREATE NONCLUSTERED INDEX [IX_PERSONAL] ON [Client].[CompanyProcessRivalView] ([ID_PERSONAL] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyProcessRivalView(ID)] ON [Client].[CompanyProcessRivalView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyProcessRivalView(ID_PERSONAL)] ON [Client].[CompanyProcessRivalView] ([ID_PERSONAL] ASC);
 GO

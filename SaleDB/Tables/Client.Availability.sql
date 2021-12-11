@@ -12,8 +12,8 @@ CREATE TABLE [Client].[Availability]
         [ORD]     Int                       NULL,
         [COLOR]   Int                       NULL,
         [LAST]    DateTime              NOT NULL,
-        CONSTRAINT [PK_Availability] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.Availability] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[Availability] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Availability(LAST)] ON [Client].[Availability] ([LAST] ASC);
 GO

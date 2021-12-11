@@ -12,8 +12,8 @@ CREATE TABLE [Common].[GlobalSettings]
         [VALUE]     NVarChar(2048)        NOT NULL,
         [NOTE]      NVarChar(Max)         NOT NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_GlobalSettings] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Common.GlobalSettings] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Common].[GlobalSettings] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Common.GlobalSettings(LAST)] ON [Common].[GlobalSettings] ([LAST] ASC);
 GO

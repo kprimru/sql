@@ -9,5 +9,5 @@ CREATE TABLE [Sale].[SaleType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_SaleType] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Sale.SaleType] PRIMARY KEY CLUSTERED ([ID])
 );GO

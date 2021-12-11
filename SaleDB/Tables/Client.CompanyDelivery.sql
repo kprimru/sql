@@ -16,5 +16,5 @@ CREATE TABLE [Client].[CompanyDelivery]
         [OFFER]        NVarChar(512)             NULL,
         [STATE]        SmallInt              NOT NULL,
         [PERSONAL]     NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyDelivery] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.CompanyDelivery] PRIMARY KEY CLUSTERED ([ID])
 );GO

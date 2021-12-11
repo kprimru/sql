@@ -12,9 +12,9 @@ CREATE TABLE [Address].[Street]
         [SUFFIX]    NVarChar(64)          NOT NULL,
         [ID_CITY]   UniqueIdentifier          NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_Street] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Street_City] FOREIGN KEY  ([ID_CITY]) REFERENCES [Address].[City] ([ID])
+        CONSTRAINT [PK_Address.Street] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Address.Street(ID_CITY)_Address.City(ID)] FOREIGN KEY  ([ID_CITY]) REFERENCES [Address].[City] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Address].[Street] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Address.Street(LAST)] ON [Address].[Street] ([LAST] ASC);
 GO

@@ -21,14 +21,14 @@ CREATE TABLE [Client].[Call]
         [UPD_USER]      NVarChar(256)         NOT NULL,
         [CONTROL]       Bit                   NOT NULL,
         [DUTY]          Bit                       NULL,
-        CONSTRAINT [PK_Call] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Call_Office] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
-        CONSTRAINT [FK_Call_Call] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[Call] ([ID]),
-        CONSTRAINT [FK_Call_OfficePersonal] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
-        CONSTRAINT [FK_Call_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID])
+        CONSTRAINT [PK_Client.Call] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.Call(ID_OFFICE)_Client.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
+        CONSTRAINT [FK_Client.Call(ID_MASTER)_Client.Call(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[Call] ([ID]),
+        CONSTRAINT [FK_Client.Call(ID_PERSONAL)_Client.OfficePersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID]),
+        CONSTRAINT [FK_Client.Call(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_Call_ID_COMPANY] ON [Client].[Call] ([ID_COMPANY] ASC);
-CREATE NONCLUSTERED INDEX [IX_Call_ID_MASTER_STATUS] ON [Client].[Call] ([ID_MASTER] ASC, [STATUS] ASC);
-CREATE NONCLUSTERED INDEX [IX_Call_STATUS_DATE_S] ON [Client].[Call] ([STATUS] ASC, [DATE_S] ASC) INCLUDE ([ID_COMPANY], [ID_PERSONAL], [NOTE], [DATE], [CL_PERSONAL]);
+CREATE NONCLUSTERED INDEX [IX_Client.Call(ID_COMPANY)] ON [Client].[Call] ([ID_COMPANY] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Call(ID_MASTER,STATUS)] ON [Client].[Call] ([ID_MASTER] ASC, [STATUS] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Call(STATUS,DATE_S)+(ID_COMPANY,ID_PERSONAL,NOTE,DATE,CL_PERSONAL)] ON [Client].[Call] ([STATUS] ASC, [DATE_S] ASC) INCLUDE ([ID_COMPANY], [ID_PERSONAL], [NOTE], [DATE], [CL_PERSONAL]);
 GO

@@ -15,9 +15,9 @@ CREATE TABLE [Common].[Settings]
         [FONT_SIZE]      SmallInt              NOT NULL,
         [OFFER_PATH]     NVarChar(1024)            NULL,
         [LAST]           DateTime              NOT NULL,
-        CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Settings_Users] FOREIGN KEY  ([ID_USER]) REFERENCES [Security].[Users] ([ID])
+        CONSTRAINT [PK_Common.Settings] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Common.Settings(ID_USER)_Common.Users(ID)] FOREIGN KEY  ([ID_USER]) REFERENCES [Security].[Users] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Common].[Settings] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Common.Settings(LAST)] ON [Common].[Settings] ([LAST] ASC);
 GO

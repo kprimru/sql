@@ -16,6 +16,6 @@ AS
 	WHERE a.STATUS = 1 AND b.EDATE IS NULL AND PROCESS_TYPE = N'MANAGER'
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyProcessManagerView] ([ID] ASC);
-CREATE NONCLUSTERED INDEX [IX_PERS] ON [Client].[CompanyProcessManagerView] ([ID_PERSONAL] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyProcessManagerView(ID)] ON [Client].[CompanyProcessManagerView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyProcessManagerView(ID_PERSONAL)] ON [Client].[CompanyProcessManagerView] ([ID_PERSONAL] ASC);
 GO

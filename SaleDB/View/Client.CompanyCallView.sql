@@ -15,5 +15,5 @@ AS
 	GROUP BY a.ID
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Client].[CompanyCallView] ([ID] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Client.CompanyCallView(ID)] ON [Client].[CompanyCallView] ([ID] ASC);
 GO

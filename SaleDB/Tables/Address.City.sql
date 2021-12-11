@@ -12,8 +12,8 @@ CREATE TABLE [Address].[City]
         [PHONE]     NVarChar(64)          NOT NULL,
         [DISPLAY]   Bit                       NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_City] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Address.City] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Address].[City] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Address.City(LAST)] ON [Address].[City] ([LAST] ASC);
 GO

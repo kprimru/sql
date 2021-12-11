@@ -11,5 +11,5 @@ CREATE TABLE [Claim].[Claims:Statuses]
         [DateTime]      DateTime              NOT NULL,
         [Status_Id]     TinyInt               NOT NULL,
         [Personal_Id]   UniqueIdentifier          NULL,
-        CONSTRAINT [PK__Claims:Statuses__2E31B632] PRIMARY KEY CLUSTERED ([Claim_Id],[Index])
+        CONSTRAINT [PK_Claim.Claims:Statuses] PRIMARY KEY CLUSTERED ([Claim_Id],[Index])
 );GO

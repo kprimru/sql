@@ -12,5 +12,5 @@ CREATE TABLE [Security].[ErrorLog]
         [NUM]         Int                       NULL,
         [PROC_NAME]   NVarChar(256)             NULL,
         [MESSAGE]     NVarChar(4096)            NULL,
-        CONSTRAINT [PK_ErrorLog] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Security.ErrorLog] PRIMARY KEY CLUSTERED ([ID])
 );GO

@@ -10,8 +10,8 @@ CREATE TABLE [Client].[PhoneType]
         [NAME]    NVarChar(256)         NOT NULL,
         [SHORT]   NVarChar(128)         NOT NULL,
         [LAST]    DateTime              NOT NULL,
-        CONSTRAINT [PK_PhoneType] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.PhoneType] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[PhoneType] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.PhoneType(LAST)] ON [Client].[PhoneType] ([LAST] ASC);
 GO

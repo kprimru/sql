@@ -11,5 +11,5 @@ CREATE TABLE [Stat].[SliceDetail]
         [GRP]         NVarChar(512)         NOT NULL,
         [DTL_NAME]    NVarChar(512)         NOT NULL,
         [DTL_COUNT]   Int                   NOT NULL,
-        CONSTRAINT [PK_SliceDetail] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Stat.SliceDetail] PRIMARY KEY CLUSTERED ([ID])
 );GO

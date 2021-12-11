@@ -13,8 +13,8 @@ CREATE TABLE [Personal].[PersonalType]
         [MEETING]   Bit                   NOT NULL,
         [ASSIGN]    Bit                   NOT NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_PersonalType] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Personal.PersonalType] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Personal].[PersonalType] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Personal.PersonalType(LAST)] ON [Personal].[PersonalType] ([LAST] ASC);
 GO

@@ -17,8 +17,8 @@ CREATE TABLE [Client].[CompanyTrust]
         [BDATE]        DateTime              NOT NULL,
         [EDATE]        DateTime                  NULL,
         [UPD_USER]     NVarChar(256)         NOT NULL,
-        CONSTRAINT [PK_CompanyTrust] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_CompanyTrust_Company] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
-        CONSTRAINT [FK_CompanyTrust_Office] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
-        CONSTRAINT [FK_CompanyTrust_CompanyTrust] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyTrust] ([ID])
+        CONSTRAINT [PK_Client.CompanyTrust] PRIMARY KEY CLUSTERED ([ID]),
+        CONSTRAINT [FK_Client.CompanyTrust(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
+        CONSTRAINT [FK_Client.CompanyTrust(ID_OFFICE)_Client.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
+        CONSTRAINT [FK_Client.CompanyTrust(ID_MASTER)_Client.CompanyTrust(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyTrust] ([ID])
 );GO

@@ -9,8 +9,8 @@ CREATE TABLE [Client].[Remote]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Remote] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Client.Remote] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Client].[Remote] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Client.Remote(LAST)] ON [Client].[Remote] ([LAST] ASC);
 GO

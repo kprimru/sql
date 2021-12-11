@@ -11,8 +11,8 @@ CREATE TABLE [Common].[Day]
         [SHORT]   NVarChar(64)          NOT NULL,
         [NUM]     TinyInt               NOT NULL,
         [LAST]    DateTime              NOT NULL,
-        CONSTRAINT [PK_Day] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Common.Day] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_LAST] ON [Common].[Day] ([LAST] ASC);
+CREATE NONCLUSTERED INDEX [IX_Common.Day(LAST)] ON [Common].[Day] ([LAST] ASC);
 GO

@@ -13,5 +13,5 @@ CREATE TABLE [Price].[CommercialOfferOther]
         [ID_PERIOD]    UniqueIdentifier      NOT NULL,
         [ID_TAX]       UniqueIdentifier      NOT NULL,
         [PRICE]        Money                 NOT NULL,
-        CONSTRAINT [PK_CommericalOfferOther] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Price.CommercialOfferOther] PRIMARY KEY CLUSTERED ([ID])
 );GO

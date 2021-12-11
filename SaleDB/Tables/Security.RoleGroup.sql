@@ -11,5 +11,5 @@ CREATE TABLE [Security].[RoleGroup]
         [CAPTION]   NVarChar(512)         NOT NULL,
         [NOTE]      NVarChar(Max)         NOT NULL,
         [LAST]      DateTime              NOT NULL,
-        CONSTRAINT [PK_RoleGroup] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Security.RoleGroup] PRIMARY KEY CLUSTERED ([ID])
 );GO

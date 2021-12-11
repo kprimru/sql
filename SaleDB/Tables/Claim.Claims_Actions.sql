@@ -14,5 +14,5 @@ CREATE TABLE [Claim].[Claims:Actions]
         [Meeting]       Bit                       NULL,
         [Offer]         Bit                       NULL,
         [Mailing]       Bit                       NULL,
-        CONSTRAINT [PK__Claims:Actions__3019FEA4] PRIMARY KEY CLUSTERED ([Claim_Id],[Index])
+        CONSTRAINT [PK_Claim.Claims:Actions] PRIMARY KEY CLUSTERED ([Claim_Id],[Index])
 );GO
