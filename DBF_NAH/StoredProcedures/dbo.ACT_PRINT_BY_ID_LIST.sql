@@ -301,8 +301,8 @@ BEGIN
 							dbo.TOTable ON TO_ID = TD_ID_TO
 						WHERE TD_ID_DISTR = AD_ID_DISTR
 					),
-					CASE WHEN O.IsOnline = 1 AND A.ACT_DATE > '20210801' THEN ' (в т.ч. специальной копии системы)' ELSE '' END AS SYS_ADD,
-					DF_EXPIRE
+					CASE WHEN z.IsOnline = 1 AND A.ACT_DATE > '20210801' THEN ' (в т.ч. специальной копии системы)' ELSE '' END AS SYS_ADD,
+					z.AD_EXPIRE
 				FROM dbo.ActTable               AS A
 				INNER JOIN #act                 AS Y    ON Y.ACT_ID     = A.ACT_ID
 				INNER JOIN dbo.ActDistrTable    AS Z    ON Z.AD_ID_ACT  = A.ACT_ID
@@ -312,13 +312,6 @@ BEGIN
 				INNER JOIN dbo.TaxTable         AS D    ON D.TX_ID = C.SO_ID_TAX
 				INNER JOIN dbo.DistrDocumentView AS E   ON E.DIS_ID = B.DIS_ID
 				LEFT JOIN dbo.DistrFinancingTable AS DF ON DF_ID_DISTR = e.DIS_ID
-				OUTER APPLY
-				(
-				    SELECT TOP (1)
-				        [IsOnline] = 1
-				    FROM [dbo].[NetTypes@Get?Offile]() AS SN
-				    WHERE DF_ID_NET = SN.SNC_ID_SN
-				) AS O
 				WHERE DOC_PSEDO = 'ACT'
 				    AND DD_PRINT = 1;
 

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_CALC]
@@ -42,7 +42,7 @@ BEGIN
 
 		IF @oldactid IS NULL
 			SELECT TOP 1 @actid = a.ACT_ID
-			FROM 
+			FROM
 				dbo.ActTable a INNER JOIN
 				dbo.ActContractView b ON a.ACT_ID = b.ACT_ID
 			WHERE ACT_ID_CLIENT = @clientid
@@ -69,7 +69,7 @@ BEGIN
 			(
 				AD_ID_ACT, AD_ID_DISTR, AD_ID_PERIOD,
 				AD_ID_TAX, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
-				AD_PAYED_PRICE, AD_EXPIRE
+				AD_PAYED_PRICE, AD_EXPIRE, IsOnline
 			)
 			SELECT
 				@actid, BD_ID_DISTR, @periodid,
@@ -88,12 +88,20 @@ BEGIN
 							--AND ID_PREPAY = 0
 							AND a.SO_ID = b.SYS_ID_SO
 						), 0)
-				) AS AD_PAYED_RICE, F.DF_EXPIRE
+				) AS AD_PAYED_RICE, F.DF_EXPIRE, IsNull(O.[IsOnline], 0)
 			FROM dbo.BillDistrTable
 			INNER JOIN dbo.BillTable ON BL_ID = BD_ID_BILL
 			INNER JOIN dbo.DistrDocumentView c ON DIS_ID = BD_ID_DISTR
 			INNER JOIN dbo.DistrView b WITH(NOEXPAND) ON c.DIS_ID = b.DIS_ID
 			INNER JOIN dbo.DistrFinancingView AS F ON F.DIS_ID = b.DIS_ID
+			OUTER APPLY
+			(
+			    SELECT TOP (1)
+			        [IsOnline] = 1
+			        -- todo опечатка!!!
+			    FROM [dbo].[NetTypes@Get?Online]() AS SN
+			    WHERE SN.SNC_ID_SN = F.SN_ID
+			) AS O
 			WHERE	BL_ID_PERIOD = @periodid
 				AND BL_ID_CLIENT = @clientid
 				AND	BD_ID_DISTR = @distrid

@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[ActDistrTable]
         [ACT]              Bit                                 NULL,
         [AD_ID_COUR]       SmallInt                            NULL,
         [AD_EXPIRE]        SmallDateTime                       NULL,
+        [IsOnline]         Bit                                 NULL,
         CONSTRAINT [PK_dbo.ActDistrTable] PRIMARY KEY NONCLUSTERED ([AD_ID]),
         CONSTRAINT [FK_dbo.ActDistrTable(AD_ID_COUR)_dbo.CourierTable(COUR_ID)] FOREIGN KEY  ([AD_ID_COUR]) REFERENCES [dbo].[CourierTable] ([COUR_ID]),
         CONSTRAINT [FK_dbo.ActDistrTable(AD_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([AD_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),

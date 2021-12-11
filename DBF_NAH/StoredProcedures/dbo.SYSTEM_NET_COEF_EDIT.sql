@@ -4,7 +4,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 /*
 Автор:		  Денисов Алексей
 Описание:
@@ -62,7 +61,19 @@ BEGIN
 			FROM
 				dbo.SystemNetCoef
 				INNER JOIN dbo.PeriodTable ON PR_ID = SNCC_ID_PERIOD
-			WHERE PR_DATE > @PR_DATE AND SNCC_ID_SN = @NET
+			WHERE PR_DATE > @PR_DATE AND SNCC_ID_SN = @NET;
+
+			INSERT INTO dbo.SystemNetCoef(SNCC_ID_SN, SNCC_ID_PERIOD, SNCC_VALUE, SNCC_WEIGHT, SNCC_SUBHOST, SNCC_ROUND, SNCC_ACTIVE)
+			SELECT @NET, PR_ID, @COEF, @WEIGHT, @SUBHOST, @ROUND, @ACTIVE
+			FROM dbo.PeriodTable AS P
+			WHERE PR_DATE > @PR_DATE
+			    AND NOT EXISTS
+			        (
+			            SELECT *
+			            FROM dbo.SystemNetCoef AS C
+			            WHERE C.SNCC_ID_PERIOD = P.PR_ID
+			                AND C.SNCC_ID_SN = @NET
+			        );
 		END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -75,7 +86,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_EDIT] TO rl_system_net_w;
 GO

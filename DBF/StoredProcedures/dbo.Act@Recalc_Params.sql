@@ -34,7 +34,7 @@ BEGIN
             WHERE AD.[AD_ID_ACT] = A.[ACT_ID]
                 AND DF.[DF_ID_NET] IN (
                     SELECT [SNC_ID_SN]
-                    FROM [dbo].[NetTypes@Get?Offile]()
+                    FROM [dbo].[NetTypes@Get?Online]()
                 )
         ) AS O
         OUTER APPLY
