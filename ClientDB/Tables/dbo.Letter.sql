@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[Letter]
         [DATA]   NVarChar(Max)         NOT NULL,
         [TXT]    NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_dbo.Letter] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [Memo].[ClientMemoAdditionals]
         CONSTRAINT [PK_Memo.ClientMemoAdditionals] PRIMARY KEY CLUSTERED ([Memo_Id],[Additional_Id]),
         CONSTRAINT [FK_Memo.ClientMemoAdditionals(Memo_Id)_Memo.ClientMemo(ID)] FOREIGN KEY  ([Memo_Id]) REFERENCES [Memo].[ClientMemo] ([ID]),
         CONSTRAINT [FK_Memo.ClientMemoAdditionals(Additional_Id)_Memo.Additional(ID)] FOREIGN KEY  ([Additional_Id]) REFERENCES [Contract].[Additional] ([ID])
-);GO
+);
+GO

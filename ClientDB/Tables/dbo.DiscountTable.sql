@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[DiscountTable]
         [DiscountValue]   VarChar(50)                   NOT NULL,
         [DiscountOrder]   Int                           NOT NULL,
         CONSTRAINT [PK_dbo.DiscountTable] PRIMARY KEY CLUSTERED ([DiscountID])
-);GO
+);
+GO

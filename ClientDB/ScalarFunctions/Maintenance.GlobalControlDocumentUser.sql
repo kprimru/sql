@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Maintenance].[GlobalControlDocumentUser]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalControlDocumentUser] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 ALTER FUNCTION [Maintenance].[GlobalControlDocumentUser]
 ()
 RETURNS VARCHAR(500)

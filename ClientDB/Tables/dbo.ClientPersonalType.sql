@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[ClientPersonalType]
         [CPT_ORDER]      Int                       NULL,
         [CPT_SHORT]      VarChar(20)               NULL,
         CONSTRAINT [PK_dbo.ClientPersonalType] PRIMARY KEY CLUSTERED ([CPT_ID])
-);GO
+);
+GO

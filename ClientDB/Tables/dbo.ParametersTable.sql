@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[ParametersTable]
         [ParamName]    VarChar(20)       NOT NULL,
         [ParamValue]   VarChar(200)          NULL,
         [ParamDesc]    VarChar(200)          NULL,
-);GO
+);
+GO
 GRANT SELECT ON [dbo].[ParametersTable] TO DBStatistic;
 GO

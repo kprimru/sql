@@ -10,4 +10,5 @@ CREATE TABLE [Security].[PersonalInformation]
         [USER_LOGIN]     NVarChar(256)         NOT NULL,
         [OFFER_STRING]   NVarChar(2048)        NOT NULL,
         CONSTRAINT [PK_Security.PersonalInformation] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

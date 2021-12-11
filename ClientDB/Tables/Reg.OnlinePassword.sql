@@ -16,4 +16,5 @@ CREATE TABLE [Reg].[OnlinePassword]
         [UPD_DATE]    DateTime              NOT NULL,
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Reg.OnlinePassword] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

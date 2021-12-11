@@ -11,4 +11,5 @@ CREATE TABLE [Subhost].[TestAnswer]
         [ANS_TEXT]      NVarChar(1024)        NOT NULL,
         [CORRECT]       Bit                   NOT NULL,
         CONSTRAINT [PK_Subhost.TestAnswer] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

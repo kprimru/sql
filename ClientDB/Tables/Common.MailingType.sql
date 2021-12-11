@@ -10,4 +10,5 @@ CREATE TABLE [Common].[MailingType]
         [MailingTypeName]   NVarChar(60)                   NOT NULL,
         [MailingTypeCode]   VarChar(50)                        NULL,
         CONSTRAINT [PK_Common.MailingType] PRIMARY KEY CLUSTERED ([MailingTypeId])
-);GO
+);
+GO

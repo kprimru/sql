@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[OwnershipTable]
         [OwnershipID]     Int            Identity(1,1)   NOT NULL,
         [OwnershipName]   VarChar(100)                   NOT NULL,
         CONSTRAINT [PK_dbo.OwnershipTable] PRIMARY KEY CLUSTERED ([OwnershipID])
-);GO
+);
+GO

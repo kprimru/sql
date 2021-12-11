@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[SystemTable_Rules]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[SystemTable_Rules]  ON [dbo].[SystemTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
+GO
 ALTER TRIGGER [dbo].[SystemTable_Rules] ON [dbo].[SystemTable]
 AFTER INSERT, UPDATE, DELETE
 AS

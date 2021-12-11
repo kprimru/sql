@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Din].[NetType@Select?Synonyms]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[NetType@Select?Synonyms]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Din].[NetType@Select?Synonyms]
 AS
 BEGIN

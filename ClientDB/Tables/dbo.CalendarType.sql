@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[CalendarType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         CONSTRAINT [PK_dbo.CalendarType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[PlacementOrder]
         [PO_NAME]   VarChar(150)          NOT NULL,
         [PO_NUM]    SmallInt              NOT NULL,
         CONSTRAINT [PK_Purchase.PlacementOrder] PRIMARY KEY CLUSTERED ([PO_ID])
-);GO
+);
+GO

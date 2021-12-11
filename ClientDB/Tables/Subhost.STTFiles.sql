@@ -13,4 +13,5 @@ CREATE TABLE [Subhost].[STTFiles]
         [BIN]          varbinary             NOT NULL,
         [PROCESS]      DateTime                  NULL,
         CONSTRAINT [PK_Subhost.STTFiles] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

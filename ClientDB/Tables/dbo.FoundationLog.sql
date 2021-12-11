@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[FoundationLog]
         [UPD_USER]      NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.FoundationLog] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.FoundationLog(ID_CONTRACT)_dbo.ContractTable(ContractID)] FOREIGN KEY  ([ID_CONTRACT]) REFERENCES [dbo].[ContractTable] ([ContractID])
-);GO
+);
+GO

@@ -4,8 +4,8 @@ DECLARE
     @Src        NVarChar(256),
     @Dst        NVarChar(256);
 
-SET @Src = '[PC275-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC276-SQL\NKH].[ClientDB]';
+SET @Src = '[PC275-SQL\DELTA].[DBF]';
+SET @Dst = '[PC275-SQL\DELTA].[DBF_NAH]';
 
 DECLARE @SrcSchemas Table
 (
@@ -807,4 +807,3 @@ FULL JOIN @DstDefaults D ON S.[Schema] = D.[Schema]
 							AND S.[Name] = D.[Name]
 WHERE S.[Name] IS NULL OR D.[Name] IS NULL
 ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Name], D.[Name])
-GO

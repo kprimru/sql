@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[OtherProvision]
         [OP_NAME]    VarChar(4000)         NOT NULL,
         [OP_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.OtherProvision] PRIMARY KEY CLUSTERED ([OP_ID])
-);GO
+);
+GO

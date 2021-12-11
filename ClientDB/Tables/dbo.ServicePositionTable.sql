@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[ServicePositionTable]
         [ServicePositionID]     Int           Identity(1,1)   NOT NULL,
         [ServicePositionName]   VarChar(50)                   NOT NULL,
         CONSTRAINT [PK_dbo.ServicePositionTable] PRIMARY KEY CLUSTERED ([ServicePositionID])
-);GO
+);
+GO

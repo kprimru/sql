@@ -17,4 +17,5 @@ CREATE TABLE [dbo].[CalendarDate]
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.CalendarDate] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.CalendarDate(ID_TYPE)_dbo.CalendarType(ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [dbo].[CalendarType] ([ID])
-);GO
+);
+GO

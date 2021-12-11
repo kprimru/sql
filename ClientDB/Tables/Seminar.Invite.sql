@@ -12,4 +12,5 @@ CREATE TABLE [Seminar].[Invite]
         [BIN]           varbinary             NOT NULL,
         CONSTRAINT [PK_Seminar.Invite] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Seminar.Invite(ID_PERSONAL)_Seminar.Personal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Seminar].[Personal] ([ID])
-);GO
+);
+GO

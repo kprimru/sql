@@ -18,4 +18,5 @@ CREATE TABLE [dbo].[ClientDisconnect]
         CONSTRAINT [PK_dbo.ClientDisconnect] PRIMARY KEY CLUSTERED ([CD_ID]),
         CONSTRAINT [FK_dbo.ClientDisconnect(CD_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([CD_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_dbo.ClientDisconnect(CD_ID_REASON)_dbo.DisconnectReason(DR_ID)] FOREIGN KEY  ([CD_ID_REASON]) REFERENCES [dbo].[DisconnectReason] ([DR_ID])
-);GO
+);
+GO

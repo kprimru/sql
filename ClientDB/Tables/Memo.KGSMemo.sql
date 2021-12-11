@@ -18,4 +18,5 @@ CREATE TABLE [Memo].[KGSMemo]
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Memo.KGSMemo] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Memo.KGSMemo(ID_MONTH)_Memo.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID])
-);GO
+);
+GO

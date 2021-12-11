@@ -11,4 +11,5 @@ CREATE TABLE [Contract].[Status]
         [IND]    SmallInt              NOT NULL,
         [ORD]    SmallInt              NOT NULL,
         CONSTRAINT [PK_Contract.Status] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

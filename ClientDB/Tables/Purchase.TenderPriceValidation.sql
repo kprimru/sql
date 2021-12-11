@@ -12,4 +12,5 @@ CREATE TABLE [Purchase].[TenderPriceValidation]
         CONSTRAINT [PK_Purchase.TenderPriceValidation] PRIMARY KEY CLUSTERED ([TPV_ID]),
         CONSTRAINT [FK_Purchase.TenderPriceValidation(TPV_ID_PV)_Purchase.PriceValidation(PV_ID)] FOREIGN KEY  ([TPV_ID_PV]) REFERENCES [Purchase].[PriceValidation] ([PV_ID]),
         CONSTRAINT [FK_Purchase.TenderPriceValidation(TPV_ID_TENDER)_Purchase.Tender(TD_ID)] FOREIGN KEY  ([TPV_ID_TENDER]) REFERENCES [Purchase].[Tender] ([TD_ID])
-);GO
+);
+GO

@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[ClientErrorReason2]
         [ID_GROUP]   UniqueIdentifier          NULL,
         [RS_TYPE]    TinyInt               NOT NULL,
         [ORD]        Int                   NOT NULL,
-);GO
+);
+GO

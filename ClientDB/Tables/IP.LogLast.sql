@@ -11,4 +11,5 @@ CREATE TABLE [IP].[LogLast]
         [COMP]    TinyInt       NOT NULL,
         [DATE]    DateTime      NOT NULL,
         CONSTRAINT [PK_IP.LogLast] PRIMARY KEY CLUSTERED ([SYS],[DISTR],[COMP])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [Seminar].[Messages]
         [PSEDO]   NVarChar(512)         NOT NULL,
         [TXT]     NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Seminar.Messages] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

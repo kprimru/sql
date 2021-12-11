@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[SystemNote:DistrType]
         [Note]           varbinary          NULL,
         [NoteWTitle]     varbinary          NULL,
         CONSTRAINT [PK_dbo.SystemNote:DistrType] PRIMARY KEY CLUSTERED ([System_Id],[DistrType_Id])
-);GO
+);
+GO

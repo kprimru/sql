@@ -9,4 +9,5 @@ CREATE TABLE [Purchase].[PurchaseKind]
         [PK_ID]     UniqueIdentifier      NOT NULL,
         [PK_NAME]   VarChar(50)           NOT NULL,
         CONSTRAINT [PK_Purchase.PurchaseKind] PRIMARY KEY CLUSTERED ([PK_ID])
-);GO
+);
+GO

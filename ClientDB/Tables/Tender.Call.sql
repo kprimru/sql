@@ -20,4 +20,5 @@ CREATE TABLE [Tender].[Call]
         [UPD_DATE]    DateTime              NOT NULL,
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Tender.Call] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

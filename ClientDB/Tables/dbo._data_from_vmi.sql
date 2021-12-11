@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[_data_from_vmi]
         [tech]          NVarChar(510)          NULL,
         [net]           NVarChar(510)          NULL,
         [comment]       NVarChar(510)          NULL,
-);GO
+);
+GO

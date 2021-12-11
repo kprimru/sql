@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[ContractExecutionProvision]
         [CEP_NAME]    VarChar(4000)         NOT NULL,
         [CEP_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.ContractExecutionProvision] PRIMARY KEY CLUSTERED ([CEP_ID])
-);GO
+);
+GO

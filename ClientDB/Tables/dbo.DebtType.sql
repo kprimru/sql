@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[DebtType]
         [NAME]    NVarChar(512)         NOT NULL,
         [SHORT]   NVarChar(64)          NOT NULL,
         CONSTRAINT [PK_dbo.DebtType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

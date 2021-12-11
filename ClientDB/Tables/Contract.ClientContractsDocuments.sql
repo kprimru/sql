@@ -12,4 +12,5 @@ CREATE TABLE [Contract].[ClientContractsDocuments]
         [Date]          SmallDateTime         NOT NULL,
         [Note]          VarChar(Max)              NULL,
         CONSTRAINT [PK_Contract.ClientContractsDocuments] PRIMARY KEY CLUSTERED ([Contract_Id],[RowIndex])
-);GO
+);
+GO

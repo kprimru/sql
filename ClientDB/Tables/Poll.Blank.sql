@@ -9,4 +9,5 @@ CREATE TABLE [Poll].[Blank]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Poll.Blank] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

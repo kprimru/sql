@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[Complect@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[Complect@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
 ALTER FUNCTION [dbo].[Complect@Parse]
 (
 	@Complect	VarChar(100)

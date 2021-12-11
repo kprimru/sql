@@ -12,4 +12,5 @@ CREATE TABLE [Subhost].[FilesDownload]
         [DATE]         DateTime              NOT NULL,
         [FTYPE]        NVarChar(128)         NOT NULL,
         CONSTRAINT [PK_Subhost.FilesDownload] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -12,4 +12,5 @@ CREATE TABLE [Contract].[Specification]
         [NOTE]        NVarChar(Max)             NULL,
         [FILE_PATH]   NVarChar(1024)            NULL,
         CONSTRAINT [PK_Contract.Specification] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

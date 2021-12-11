@@ -9,4 +9,5 @@ CREATE TABLE [Price].[OfferOther]
         [ID]     UniqueIdentifier      NOT NULL,
         [NOTE]   varbinary             NOT NULL,
         CONSTRAINT [PK_Price.OfferOther] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

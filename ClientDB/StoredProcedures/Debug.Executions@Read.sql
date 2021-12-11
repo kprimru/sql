@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Debug].[Executions@Read]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Executions@Read]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Debug].[Executions@Read]
     @MaxResultCount Int             = 20,
     @Object         NVarChar(512)   = NULL,

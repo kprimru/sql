@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[Region]
         [RG_NUM]       TinyInt                   NULL,
         [RG_DISPLAY]   Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.Region] PRIMARY KEY CLUSTERED ([RG_ID])
-);GO
+);
+GO

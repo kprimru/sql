@@ -19,7 +19,8 @@ CREATE TABLE [dbo].[ServiceTable]
         CONSTRAINT [PK_dbo.ServiceTable] PRIMARY KEY CLUSTERED ([ServiceID]),
         CONSTRAINT [FK_dbo.ServiceTable(ServicePositionID)_dbo.ServicePositionTable(ServicePositionID)] FOREIGN KEY  ([ServicePositionID]) REFERENCES [dbo].[ServicePositionTable] ([ServicePositionID]),
         CONSTRAINT [FK_dbo.ServiceTable(ManagerID)_dbo.ManagerTable(ManagerID)] FOREIGN KEY  ([ManagerID]) REFERENCES [dbo].[ManagerTable] ([ManagerID])
-);GO
+);
+GO
 GRANT SELECT ON [dbo].[ServiceTable] TO BL_ADMIN;
 GRANT SELECT ON [dbo].[ServiceTable] TO BL_EDITOR;
 GRANT SELECT ON [dbo].[ServiceTable] TO BL_PARAM;

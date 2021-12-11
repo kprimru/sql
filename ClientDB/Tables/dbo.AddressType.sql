@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[AddressType]
         [AT_NAME]       VarChar(100)          NOT NULL,
         [AT_REQUIRED]   Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.AddressType] PRIMARY KEY CLUSTERED ([AT_ID])
-);GO
+);
+GO

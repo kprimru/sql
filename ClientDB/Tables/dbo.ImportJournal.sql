@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[ImportJournal]
         [RECORD]   bigint                NOT NULL,
         [TOTAL]    bigint                NOT NULL,
         CONSTRAINT [PK_dbo.ImportJournal] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

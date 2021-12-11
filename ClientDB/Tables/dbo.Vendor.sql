@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[Vendor]
         [DIRECTOR]    NVarChar(1024)        NOT NULL,
         [OFFICIAL]    NVarChar(1024)        NOT NULL,
         CONSTRAINT [PK_dbo.Vendor] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

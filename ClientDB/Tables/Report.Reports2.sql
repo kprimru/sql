@@ -14,4 +14,5 @@ CREATE TABLE [Report].[Reports2]
         [SQL]                 VarChar(Max)                       NULL,
         [AvailableRoleName]   VarChar(128)                       NULL,
         CONSTRAINT [PK_Report.Reports2] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

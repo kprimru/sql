@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientContractWarningView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientContractWarningView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[ClientContractWarningView]
 AS
 	SELECT ClientID

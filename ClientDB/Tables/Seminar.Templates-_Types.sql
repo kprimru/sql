@@ -10,4 +10,5 @@ CREATE TABLE [Seminar].[Templates->Types]
         [Code]   VarChar(100)                   NOT NULL,
         [Name]   VarChar(256)                   NOT NULL,
         CONSTRAINT [PK_Seminar.Templates->Types] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [USR].[USRFromMaster]
         [UF_DATA]   varbinary             NULL,
         [UF_NAME]   VarChar(100)          NULL,
         CONSTRAINT [PK_USR.USRFromMaster] PRIMARY KEY CLUSTERED ([UD_ID])
-);GO
+);
+GO

@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[Subhost]
         [SH_ODD_EMAIL]               VarChar(256)              NULL,
         CONSTRAINT [PK_dbo.Subhost] PRIMARY KEY CLUSTERED ([SH_ID]),
         CONSTRAINT [FK_dbo.Subhost(SH_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([SH_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
-);GO
+);
+GO

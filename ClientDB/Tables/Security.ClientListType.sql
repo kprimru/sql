@@ -11,4 +11,5 @@ CREATE TABLE [Security].[ClientListType]
         [PSEDO]   NVarChar(256)         NOT NULL,
         [LAST]    DateTime              NOT NULL,
         CONSTRAINT [PK_Security.ClientListType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

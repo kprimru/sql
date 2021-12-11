@@ -16,4 +16,5 @@ CREATE TABLE [Mailing].[Requests]
         [SendDate]        DateTime                            NULL,
         [ConfirmDate]     DateTime                            NULL,
         CONSTRAINT [PK_Mailing.Requests] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

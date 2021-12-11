@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[UseCondition]
         [UC_NAME]    VarChar(Max)          NOT NULL,
         [UC_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.UseCondition] PRIMARY KEY CLUSTERED ([UC_ID])
-);GO
+);
+GO

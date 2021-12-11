@@ -19,4 +19,5 @@ CREATE TABLE [Tender].[Calc]
         [UPD_DATE]       DateTime              NOT NULL,
         [UPD_USER]       NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Tender.Calc] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

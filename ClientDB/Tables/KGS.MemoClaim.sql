@@ -32,4 +32,5 @@ CREATE TABLE [KGS].[MemoClaim]
         CONSTRAINT [PK_KGS.MemoClaim] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_KGS.MemoClaim(ID_CLIENT)_KGS.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_KGS.MemoClaim(ID_VENDOR)_KGS.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID])
-);GO
+);
+GO

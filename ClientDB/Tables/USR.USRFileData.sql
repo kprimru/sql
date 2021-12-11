@@ -10,4 +10,5 @@ CREATE TABLE [USR].[USRFileData]
         [UF_DATA]   varbinary      NOT NULL,
         CONSTRAINT [PK_USR.USRFileData] PRIMARY KEY CLUSTERED ([UF_ID]),
         CONSTRAINT [FK_USR.USRFileData(UF_ID)_USR.USRFile(UF_ID)] FOREIGN KEY  ([UF_ID]) REFERENCES [USR].[USRFile] ([UF_ID])
-);GO
+);
+GO

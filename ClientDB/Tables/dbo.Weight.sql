@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[Weight]
         [NetOdoff]   SmallInt           NOT NULL,
         [Weight]     decimal            NOT NULL,
         CONSTRAINT [PK_dbo.Weight] PRIMARY KEY CLUSTERED ([Date],[Sys],[SysType],[NetCount],[NetTech],[NetOdon],[NetOdoff])
-);GO
+);
+GO

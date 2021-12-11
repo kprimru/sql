@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[ContractPayTable]
         [ContractPayDay]     SmallInt                           NULL,
         [ContractPayMonth]   SmallInt                           NULL,
         CONSTRAINT [PK_dbo.ContractPayTable] PRIMARY KEY CLUSTERED ([ContractPayID])
-);GO
+);
+GO

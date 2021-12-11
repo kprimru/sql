@@ -17,4 +17,5 @@ CREATE TABLE [Contract].[AgreementDetail]
         CONSTRAINT [FK_Contract.AgreementDetail(ID_SPECIFICATION)_Contract.ContractSpecification(ID)] FOREIGN KEY  ([ID_SPECIFICATION]) REFERENCES [Contract].[ContractSpecification] ([ID]),
         CONSTRAINT [FK_Contract.AgreementDetail(ID_ADDITIONAL)_Contract.Additional(ID)] FOREIGN KEY  ([ID_ADDITIONAL]) REFERENCES [Contract].[Additional] ([ID]),
         CONSTRAINT [FK_Contract.AgreementDetail(ID_STATUS)_Contract.Status(ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [Contract].[Status] ([ID])
-);GO
+);
+GO

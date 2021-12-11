@@ -11,4 +11,5 @@ CREATE TABLE [Contract].[Forms]
         [NAME]        NVarChar(2048)        NOT NULL,
         [FILE_PATH]   NVarChar(2048)        NOT NULL,
         CONSTRAINT [PK_Contract.Forms] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

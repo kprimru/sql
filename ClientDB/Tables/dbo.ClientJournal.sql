@@ -20,4 +20,5 @@ CREATE TABLE [dbo].[ClientJournal]
         CONSTRAINT [FK_dbo.ClientJournal(ID_MASTER)_dbo.ClientJournal(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [dbo].[ClientJournal] ([ID]),
         CONSTRAINT [FK_dbo.ClientJournal(ID_JOURNAL)_dbo.Journal(ID)] FOREIGN KEY  ([ID_JOURNAL]) REFERENCES [dbo].[Journal] ([ID]),
         CONSTRAINT [FK_dbo.ClientJournal(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
-);GO
+);
+GO

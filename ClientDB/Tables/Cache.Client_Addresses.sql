@@ -11,4 +11,5 @@ CREATE TABLE [Cache].[Client?Addresses]
         [DisplayText]       VarChar(Max)              NULL,
         [DisplayTextFull]   VarChar(512)              NULL,
         CONSTRAINT [PK_Cache.Client?Addresses] PRIMARY KEY CLUSTERED ([Id],[Type_Id])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[RefColumnMeta]
         [IdColumn]      NVarChar(256)                   NOT NULL,
         [ValueColumn]   NVarChar(256)                   NOT NULL,
         CONSTRAINT [PK_dbo.RefColumnMeta] PRIMARY KEY CLUSTERED ([MetaId])
-);GO
+);
+GO

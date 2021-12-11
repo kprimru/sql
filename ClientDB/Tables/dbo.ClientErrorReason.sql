@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[ClientErrorReason]
         [ORD]        Int                   NOT NULL,
         CONSTRAINT [PK_dbo.ClientErrorReason] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.ClientErrorReason(ID_GROUP)_dbo.ClientErrorReason(ID)] FOREIGN KEY  ([ID_GROUP]) REFERENCES [dbo].[ClientErrorReason] ([ID])
-);GO
+);
+GO

@@ -13,4 +13,5 @@ CREATE TABLE [Subhost].[PersonalTest]
         [START]        DateTime              NOT NULL,
         [FINISH]       DateTime                  NULL,
         CONSTRAINT [PK_Subhost.PersonalTest] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[InfoPanel]
         [UPD_DATE]    DateTime              NOT NULL,
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.InfoPanel] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

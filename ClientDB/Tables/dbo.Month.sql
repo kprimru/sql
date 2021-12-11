@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[Month]
         [ROD]    VarChar(50)           NOT NULL,
         [NUM]    Int                   NOT NULL,
         CONSTRAINT [PK_dbo.Month] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

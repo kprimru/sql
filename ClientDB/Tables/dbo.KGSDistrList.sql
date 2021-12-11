@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[KGSDistrList]
         [KDL_NAME]   VarChar(50)                   NOT NULL,
         [KDL_LAST]   DateTime                      NOT NULL,
         CONSTRAINT [PK_dbo.KGSDistrList] PRIMARY KEY CLUSTERED ([KDL_ID])
-);GO
+);
+GO

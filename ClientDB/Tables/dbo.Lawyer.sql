@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[Lawyer]
         [LW_FULL]    VarChar(250)          NOT NULL,
         [LW_LOGIN]   VarChar(100)          NOT NULL,
         CONSTRAINT [PK_dbo.Lawyer] PRIMARY KEY CLUSTERED ([LW_ID])
-);GO
+);
+GO

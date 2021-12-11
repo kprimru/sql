@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[SatisfactionQuestion]
         [SQ_ORDER]    Int                   NOT NULL,
         [SQ_ACTIVE]   Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.SatisfactionQuestion] PRIMARY KEY CLUSTERED ([SQ_ID])
-);GO
+);
+GO

@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[ClientContactType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         CONSTRAINT [PK_dbo.ClientContactType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

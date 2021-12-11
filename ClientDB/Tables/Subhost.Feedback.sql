@@ -11,4 +11,5 @@ CREATE TABLE [Subhost].[Feedback]
         [EMAIL]   NVarChar(512)         NOT NULL,
         [NOTE]    NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Subhost.Feedback] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

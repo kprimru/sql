@@ -12,4 +12,5 @@ CREATE TABLE [Purchase].[TenderDocument]
         CONSTRAINT [PK_Purchase.TenderDocument] PRIMARY KEY CLUSTERED ([TDC_ID]),
         CONSTRAINT [FK_Purchase.TenderDocument(TDC_ID_DC)_Purchase.Document(DC_ID)] FOREIGN KEY  ([TDC_ID_DC]) REFERENCES [Purchase].[Document] ([DC_ID]),
         CONSTRAINT [FK_Purchase.TenderDocument(TDC_ID_TENDER)_Purchase.Tender(TD_ID)] FOREIGN KEY  ([TDC_ID_TENDER]) REFERENCES [Purchase].[Tender] ([TD_ID])
-);GO
+);
+GO

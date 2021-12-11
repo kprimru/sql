@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[Area]
         [AR_SUFFIX]      VarChar(20)           NOT NULL,
         CONSTRAINT [PK_dbo.Area] PRIMARY KEY CLUSTERED ([AR_ID]),
         CONSTRAINT [FK_dbo.Area(AR_ID_REGION)_dbo.Region(RG_ID)] FOREIGN KEY  ([AR_ID_REGION]) REFERENCES [dbo].[Region] ([RG_ID])
-);GO
+);
+GO

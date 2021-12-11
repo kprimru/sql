@@ -11,4 +11,5 @@ CREATE TABLE [Subhost].[Session]
         [LGN]    NVarChar(256)         NOT NULL,
         [IP]     NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Subhost.Session] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

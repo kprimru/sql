@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientTypeRules@RECALCULATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ClientTypeRules@RECALCULATE]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[ClientTypeRules@RECALCULATE]
     @Client_IDs         VarChar(Max)
 AS

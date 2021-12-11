@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[Innovation]
         [START]    SmallDateTime             NULL,
         [FINISH]   SmallDateTime             NULL,
         CONSTRAINT [PK_dbo.Innovation] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -8,4 +8,5 @@ CREATE TABLE [Cache].[Persons=Patrons]
 (
         [Patron]   VarChar(250)      NOT NULL,
         CONSTRAINT [PK_Cache.Persons=Patrons] PRIMARY KEY CLUSTERED ([Patron])
-);GO
+);
+GO

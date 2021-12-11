@@ -13,4 +13,5 @@ CREATE TABLE [Contract].[DocumentHistory]
         [PERSONAL]      NVarChar(256)         NOT NULL,
         [NOTE]          NVarChar(Max)             NULL,
         CONSTRAINT [PK_Contract.DocumentHistory] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

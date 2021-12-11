@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Purchase].[ClaimProvision_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Purchase].[ClaimProvision_LAST_UPDATE]  ON [Purchase].[ClaimProvision] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
+GO
 ALTER TRIGGER [Purchase].[ClaimProvision_LAST_UPDATE] ON [Purchase].[ClaimProvision]
 AFTER INSERT, UPDATE, DELETE
 AS

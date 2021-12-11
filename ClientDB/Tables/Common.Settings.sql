@@ -11,4 +11,5 @@ CREATE TABLE [Common].[Settings]
         [SETTINGS]   xml                       NULL,
         [LAST]       DateTime              NOT NULL,
         CONSTRAINT [PK_Common.Settings] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

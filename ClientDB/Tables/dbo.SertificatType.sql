@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[SertificatType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.SertificatType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

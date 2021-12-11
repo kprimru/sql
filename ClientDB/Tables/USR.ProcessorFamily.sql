@@ -9,4 +9,5 @@ CREATE TABLE [USR].[ProcessorFamily]
         [PF_ID]     Int            Identity(1,1)   NOT NULL,
         [PF_NAME]   VarChar(150)                   NOT NULL,
         CONSTRAINT [PK_USR.ProcessorFamily] PRIMARY KEY CLUSTERED ([PF_ID])
-);GO
+);
+GO

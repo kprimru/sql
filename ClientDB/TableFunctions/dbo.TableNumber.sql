@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[TableNumber]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[TableNumber] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
 ALTER FUNCTION [dbo].[TableNumber]
 (
 	@N INT

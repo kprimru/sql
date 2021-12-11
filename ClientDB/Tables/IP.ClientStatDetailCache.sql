@@ -14,4 +14,5 @@ CREATE TABLE [IP].[ClientStatDetailCache]
         [CSD_CODE_CLIENT_NOTE]   NVarChar(512)          NULL,
         [CSD_USR]                NVarChar(512)      NOT NULL,
         CONSTRAINT [PK_IP.ClientStatDetailCache] PRIMARY KEY CLUSTERED ([CSD_SYS],[CSD_DISTR],[CSD_COMP])
-);GO
+);
+GO

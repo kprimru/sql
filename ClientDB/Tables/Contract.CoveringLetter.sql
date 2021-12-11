@@ -11,4 +11,5 @@ CREATE TABLE [Contract].[CoveringLetter]
         [DATE]          SmallDateTime         NOT NULL,
         [NOTE]          NVarChar(2048)        NOT NULL,
         CONSTRAINT [PK_Contract.CoveringLetter] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[GoodRequirement]
         [GR_NAME]    VarChar(4000)         NOT NULL,
         [GR_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.GoodRequirement] PRIMARY KEY CLUSTERED ([GR_ID])
-);GO
+);
+GO

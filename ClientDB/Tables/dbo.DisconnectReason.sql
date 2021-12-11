@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[DisconnectReason]
         [DR_ID]     UniqueIdentifier      NOT NULL,
         [DR_NAME]   VarChar(100)          NOT NULL,
         CONSTRAINT [PK_dbo.DisconnectReason] PRIMARY KEY CLUSTERED ([DR_ID])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientAddressLastView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientAddressLastView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[ClientAddressLastView]
 AS
 	SELECT a.ID_MASTER, CA_ID_STREET, CA_HOME, CA_OFFICE, MAX(ClientLast) AS ClientLast

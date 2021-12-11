@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientTypeRules@UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ClientTypeRules@UPDATE]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[ClientTypeRules@UPDATE]
 	@System_Id     Int,
 	@DistrType_Id  Int,

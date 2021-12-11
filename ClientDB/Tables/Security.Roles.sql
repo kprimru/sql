@@ -13,4 +13,5 @@ CREATE TABLE [Security].[Roles]
         [RoleNote]       VarChar(Max)                       NULL,
         CONSTRAINT [PK_Security.Roles] PRIMARY KEY CLUSTERED ([RoleID]),
         CONSTRAINT [FK_Security.Roles(RoleMasterID)_Security.Roles(RoleID)] FOREIGN KEY  ([RoleMasterID]) REFERENCES [Security].[Roles] ([RoleID])
-);GO
+);
+GO

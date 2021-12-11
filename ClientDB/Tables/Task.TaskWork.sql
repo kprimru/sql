@@ -13,4 +13,5 @@ CREATE TABLE [Task].[TaskWork]
         [NOTE]      NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Task.TaskWork] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Task.TaskWork(ID_TASK)_Task.Tasks(ID)] FOREIGN KEY  ([ID_TASK]) REFERENCES [Task].[Tasks] ([ID])
-);GO
+);
+GO

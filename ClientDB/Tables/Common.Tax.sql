@@ -14,4 +14,5 @@ CREATE TABLE [Common].[Tax]
         [TOTAL_RATE]    AS (((100)+[RATE])/(100)) PERSISTED,
         [TAX_RATE]      AS ([RATE]/(100)) PERSISTED,
         CONSTRAINT [PK_Common.Tax] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

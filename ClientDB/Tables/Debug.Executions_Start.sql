@@ -12,4 +12,5 @@ CREATE TABLE [Debug].[Executions:Start]
         [UserName]        VarChar(128)                   NOT NULL,
         [HostName]        VarChar(128)                   NOT NULL,
         CONSTRAINT [PK_Debug.Executions:Start] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

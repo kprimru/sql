@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientDistrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientDistrView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[ClientDistrView]
 WITH SCHEMABINDING
 AS

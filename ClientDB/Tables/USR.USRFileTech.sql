@@ -54,4 +54,5 @@ CREATE TABLE [USR].[USRFileTech]
         CONSTRAINT [FK_USR.USRFileTech(UF_ID_RES)_USR.ResVersionTable(ResVersionID)] FOREIGN KEY  ([UF_ID_RES]) REFERENCES [dbo].[ResVersionTable] ([ResVersionID]),
         CONSTRAINT [FK_USR.USRFileTech(UF_ID_KDVERSION)_USR.KDVersion(ID)] FOREIGN KEY  ([UF_ID_KDVERSION]) REFERENCES [dbo].[KDVersion] ([ID]),
         CONSTRAINT [FK_USR.USRFileTech(UF_ID)_USR.USRFile(UF_ID)] FOREIGN KEY  ([UF_ID]) REFERENCES [USR].[USRFile] ([UF_ID])
-);GO
+);
+GO

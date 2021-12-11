@@ -11,4 +11,5 @@ CREATE TABLE [Report].[Reports:Columns]
         [ColumnName]   VarChar(128)      NOT NULL,
         [Params]       xml               NOT NULL,
         CONSTRAINT [PK_Report.Reports:Columns] PRIMARY KEY CLUSTERED ([Report_Id],[Row:Index])
-);GO
+);
+GO

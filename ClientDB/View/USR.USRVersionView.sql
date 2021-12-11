@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[USR].[USRVersionView]', 'V ') IS NULL EXEC('CREATE VIEW [USR].[USRVersionView]  AS SELECT 1')
+GO
 ALTER VIEW [USR].[USRVersionView]
 AS
 	SELECT f.UF_ID, UD_ID_CLIENT, UF_DATE, ResVersionNumber, ResVersionShort, ConsExeVersionName

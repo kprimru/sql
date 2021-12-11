@@ -12,7 +12,8 @@ CREATE TABLE [dbo].[ServiceFlashTable]
         [NUM_COUNT]    Int                    NULL,
         [LAST_DATE]    SmallDateTime          NULL,,
         CONSTRAINT [FK_dbo.ServiceFlashTable(ID_SERVICE)_dbo.ServiceTable(ServiceID)] FOREIGN KEY  ([ID_SERVICE]) REFERENCES [dbo].[ServiceTable] ([ServiceID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[ServiceFlashTable] TO public;
 GRANT INSERT ON [dbo].[ServiceFlashTable] TO public;
 GRANT SELECT ON [dbo].[ServiceFlashTable] TO public;

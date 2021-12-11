@@ -25,4 +25,5 @@ CREATE TABLE [Seminar].[Schedule]
         CONSTRAINT [FK_Seminar.Schedule(Status_Id)_Seminar.Schedules->Statuses(Id)] FOREIGN KEY  ([Status_Id]) REFERENCES [Seminar].[Schedules->Statuses] ([Id]),
         CONSTRAINT [FK_Seminar.Schedule(Type_Id)_Seminar.Schedules->Types(Id)] FOREIGN KEY  ([Type_Id]) REFERENCES [Seminar].[Schedules->Types] ([Id]),
         CONSTRAINT [FK_Seminar.Schedule(ID_SUBJECT)_Seminar.Subject(ID)] FOREIGN KEY  ([ID_SUBJECT]) REFERENCES [Seminar].[Subject] ([ID])
-);GO
+);
+GO

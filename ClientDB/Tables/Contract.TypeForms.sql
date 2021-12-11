@@ -10,4 +10,5 @@ CREATE TABLE [Contract].[TypeForms]
         [ID_TYPE]   UniqueIdentifier      NOT NULL,
         [ID_FORM]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Contract.TypeForms] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -12,4 +12,5 @@ CREATE TABLE [Seminar].[Subject]
         [READER]   NVarChar(2048)        NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Seminar.Subject] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

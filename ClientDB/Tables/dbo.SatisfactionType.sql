@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[SatisfactionType]
         [STT_NAME]     VarChar(50)           NOT NULL,
         [STT_RESULT]   Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.SatisfactionType] PRIMARY KEY CLUSTERED ([STT_ID])
-);GO
+);
+GO

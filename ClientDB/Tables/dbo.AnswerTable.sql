@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[AnswerTable]
         [AnswerName]   VarChar(150)                   NOT NULL,
         CONSTRAINT [PK_dbo.AnswerTable] PRIMARY KEY CLUSTERED ([AnswerID]),
         CONSTRAINT [FK_dbo.AnswerTable(QuestionID)_dbo.QuestionTable(QuestionID)] FOREIGN KEY  ([QuestionID]) REFERENCES [dbo].[QuestionTable] ([QuestionID])
-);GO
+);
+GO

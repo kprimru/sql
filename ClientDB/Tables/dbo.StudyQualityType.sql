@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[StudyQualityType]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.StudyQualityType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[KGSDistr]
         CONSTRAINT [PK_dbo.KGSDistr] PRIMARY KEY CLUSTERED ([KD_ID]),
         CONSTRAINT [FK_dbo.KGSDistr(KD_ID_SYS)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([KD_ID_SYS]) REFERENCES [dbo].[SystemTable] ([SystemID]),
         CONSTRAINT [FK_dbo.KGSDistr(KD_ID_LIST)_dbo.KGSDistrList(KDL_ID)] FOREIGN KEY  ([KD_ID_LIST]) REFERENCES [dbo].[KGSDistrList] ([KDL_ID])
-);GO
+);
+GO

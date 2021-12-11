@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[RichCoefTable]
         [RichCoefEnd]     Int                     NOT NULL,
         [RichCoefVal]     float                   NOT NULL,
         CONSTRAINT [PK_dbo.RichCoefTable] PRIMARY KEY CLUSTERED ([RichCoefID])
-);GO
+);
+GO

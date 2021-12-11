@@ -11,4 +11,5 @@ CREATE TABLE [IP].[ConsErr]
         [COMP]    TinyInt       NOT NULL,
         [DATE]    DateTime      NOT NULL,
         CONSTRAINT [PK_IP.ConsErr] PRIMARY KEY CLUSTERED ([SYS],[DISTR],[COMP])
-);GO
+);
+GO

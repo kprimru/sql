@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[StringDelimiterPartInt]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[StringDelimiterPartInt] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 ALTER FUNCTION [dbo].[StringDelimiterPartInt]
 (
 	@STRING		VARCHAR(MAX),

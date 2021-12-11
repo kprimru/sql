@@ -11,4 +11,5 @@ CREATE TABLE [Seminar].[Status]
         [COLOR]   Int                   NOT NULL,
         [INDX]    SmallInt              NOT NULL,
         CONSTRAINT [PK_Seminar.Status] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -20,4 +20,5 @@ CREATE TABLE [dbo].[ServiceReportClient]
         [SRC_STATUS]       VarChar(50)               NULL,
         CONSTRAINT [PK_dbo.ServiceReportClient] PRIMARY KEY CLUSTERED ([SRC_ID]),
         CONSTRAINT [FK_dbo.ServiceReportClient(SRC_ID_SR)_dbo.ServiceReport(SR_ID)] FOREIGN KEY  ([SRC_ID_SR]) REFERENCES [dbo].[ServiceReport] ([SR_ID])
-);GO
+);
+GO

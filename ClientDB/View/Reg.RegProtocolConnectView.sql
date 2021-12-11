@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Reg].[RegProtocolConnectView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegProtocolConnectView]  AS SELECT 1')
+GO
 ALTER VIEW [Reg].[RegProtocolConnectView]
 WITH SCHEMABINDING
 AS

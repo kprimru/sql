@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[SystemsBanksReserved]
         [Required]       Bit                NOT NULL,
         [Start]          SmallDateTime          NULL,
         CONSTRAINT [PK_dbo.SystemsBanksReserved] PRIMARY KEY CLUSTERED ([System_Id],[DistrType_Id],[InfoBank_Id])
-);GO
+);
+GO

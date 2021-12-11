@@ -9,4 +9,5 @@ CREATE TABLE [Tender].[CalcDirection]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Tender.CalcDirection] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

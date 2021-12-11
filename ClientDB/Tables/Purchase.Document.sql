@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[Document]
         [DC_NAME]    VarChar(4000)         NOT NULL,
         [DC_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.Document] PRIMARY KEY CLUSTERED ([DC_ID])
-);GO
+);
+GO

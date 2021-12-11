@@ -12,4 +12,5 @@ CREATE TABLE [Purchase].[TenderSignPeriod]
         CONSTRAINT [PK_Purchase.TenderSignPeriod] PRIMARY KEY CLUSTERED ([TSP_ID]),
         CONSTRAINT [FK_Purchase.TenderSignPeriod(TSP_ID_SP)_Purchase.SignPeriod(SP_ID)] FOREIGN KEY  ([TSP_ID_SP]) REFERENCES [Purchase].[SignPeriod] ([SP_ID]),
         CONSTRAINT [FK_Purchase.TenderSignPeriod(TSP_ID_TENDER)_Purchase.Tender(TD_ID)] FOREIGN KEY  ([TSP_ID_TENDER]) REFERENCES [Purchase].[Tender] ([TD_ID])
-);GO
+);
+GO

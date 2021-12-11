@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[QuestionTable]
         [QuestionDate]         SmallDateTime                   NOT NULL,
         [QuestionFreeAnswer]   Bit                             NOT NULL,
         CONSTRAINT [PK_dbo.QuestionTable] PRIMARY KEY CLUSTERED ([QuestionID])
-);GO
+);
+GO

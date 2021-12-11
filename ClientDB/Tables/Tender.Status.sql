@@ -11,4 +11,5 @@ CREATE TABLE [Tender].[Status]
         [PSEDO]   NVarChar(128)         NOT NULL,
         [ORD]     Int                   NOT NULL,
         CONSTRAINT [PK_Tender.Status] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

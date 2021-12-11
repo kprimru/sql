@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[BLACK_LIST_PARAMS]
         [PARAMNAME]    VarChar(50)                     NOT NULL,
         [PARAMVALUE]   VarChar(2048)                       NULL,
         CONSTRAINT [PK_dbo.BLACK_LIST_PARAMS] PRIMARY KEY CLUSTERED ([PARAMNAME])
-);GO
+);
+GO

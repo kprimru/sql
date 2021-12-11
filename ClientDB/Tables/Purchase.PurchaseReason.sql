@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[PurchaseReason]
         [PR_NAME]   VarChar(500)          NOT NULL,
         [PR_NUM]    SmallInt              NOT NULL,
         CONSTRAINT [PK_Purchase.PurchaseReason] PRIMARY KEY CLUSTERED ([PR_ID])
-);GO
+);
+GO

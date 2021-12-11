@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[ClientError]
         CONSTRAINT [PK_dbo.ClientError] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.ClientError(ID_MASTER)_dbo.ClientError(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [dbo].[ClientError] ([ID]),
         CONSTRAINT [FK_dbo.ClientError(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
-);GO
+);
+GO

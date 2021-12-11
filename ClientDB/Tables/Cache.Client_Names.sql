@@ -9,4 +9,5 @@ CREATE TABLE [Cache].[Client?Names]
         [Id]      Int               NOT NULL,
         [Names]   VarChar(Max)          NULL,
         CONSTRAINT [PK_Cache.Client?Names] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

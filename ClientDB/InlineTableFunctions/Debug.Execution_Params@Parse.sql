@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Debug].[Execution:Params@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [Debug].[Execution:Params@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
 ALTER FUNCTION [Debug].[Execution:Params@Parse]
 (
 	@Params Xml

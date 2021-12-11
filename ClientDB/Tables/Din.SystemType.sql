@@ -16,4 +16,5 @@ CREATE TABLE [Din].[SystemType]
         [SST_COMPLECT]    Bit                                NULL,
         [SST_SALARY]      decimal                            NULL,
         CONSTRAINT [PK_Din.SystemType] PRIMARY KEY CLUSTERED ([SST_ID])
-);GO
+);
+GO

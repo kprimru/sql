@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[SatisfactionAnswer]
         [SA_ORDER]         SmallInt              NOT NULL,
         CONSTRAINT [PK_dbo.SatisfactionAnswer] PRIMARY KEY CLUSTERED ([SA_ID]),
         CONSTRAINT [FK_dbo.SatisfactionAnswer(SA_ID_QUESTION)_dbo.SatisfactionQuestion(SQ_ID)] FOREIGN KEY  ([SA_ID_QUESTION]) REFERENCES [dbo].[SatisfactionQuestion] ([SQ_ID])
-);GO
+);
+GO

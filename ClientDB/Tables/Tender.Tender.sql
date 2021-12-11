@@ -36,4 +36,5 @@ CREATE TABLE [Tender].[Tender]
         [LET_NUM]           NVarChar(128)             NULL,
         [LET_DATE]          SmallDateTime             NULL,
         CONSTRAINT [PK_Tender.Tender] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[DayTable]
         [DayShort]   char(2)                           NULL,
         [DayOrder]   Int                           NOT NULL,
         CONSTRAINT [PK_dbo.DayTable] PRIMARY KEY CLUSTERED ([DayID])
-);GO
+);
+GO

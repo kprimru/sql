@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[PersonalTable]
         [PersonalShortName]   VarChar(50)                    NOT NULL,
         [PersonalFullName]    VarChar(500)                   NOT NULL,
         CONSTRAINT [PK_dbo.PersonalTable] PRIMARY KEY CLUSTERED ([PersonalID])
-);GO
+);
+GO

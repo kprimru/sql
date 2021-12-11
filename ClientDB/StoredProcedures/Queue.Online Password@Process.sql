@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Queue].[Online Password@Process]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Queue].[Online Password@Process]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Queue].[Online Password@Process]
     @Id             Int,
     @Login          VarChar(100),

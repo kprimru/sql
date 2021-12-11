@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[StudyType]
         [NAME]    NVarChar(256)         NOT NULL,
         [PSEDO]   NVarChar(64)          NOT NULL,
         CONSTRAINT [PK_dbo.StudyType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

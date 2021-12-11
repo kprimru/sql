@@ -12,4 +12,5 @@ CREATE TABLE [Subhost].[TestQuestion]
         [FULL_ANSWER]   NVarChar(Max)         NOT NULL,
         [TP]            TinyInt               NOT NULL,
         CONSTRAINT [PK_Subhost.TestQuestion] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

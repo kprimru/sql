@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[DocumentGrantType]
         [NAME]   VarChar(50)           NOT NULL,
         [DEF]    Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.DocumentGrantType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [Subhost].[CheckTest]
         [RESULT]    TinyInt                   NULL,
         [NOTE]      NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Subhost.CheckTest] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

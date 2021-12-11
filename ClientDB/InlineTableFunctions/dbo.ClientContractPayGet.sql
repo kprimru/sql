@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientContractPayGet]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientContractPayGet] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
 ALTER FUNCTION [dbo].[ClientContractPayGet]
 (
     @ClientId       Int,

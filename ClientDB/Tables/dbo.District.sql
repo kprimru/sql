@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[District]
         [DS_ID_CITY]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_dbo.District] PRIMARY KEY CLUSTERED ([DS_ID]),
         CONSTRAINT [FK_dbo.District(DS_ID_CITY)_dbo.City(CT_ID)] FOREIGN KEY  ([DS_ID_CITY]) REFERENCES [dbo].[City] ([CT_ID])
-);GO
+);
+GO

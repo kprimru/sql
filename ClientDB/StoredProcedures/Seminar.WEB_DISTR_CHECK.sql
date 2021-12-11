@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Seminar].[WEB_DISTR_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[WEB_DISTR_CHECK]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Seminar].[WEB_DISTR_CHECK]
     @ID             UniqueIdentifier,
     @STR            NVarChar(64),

@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[ExpertVMI]
         [MON]     SmallDateTime         NOT NULL,
         [DISTR]   NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_dbo.ExpertVMI] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

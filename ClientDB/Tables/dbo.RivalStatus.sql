@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[RivalStatus]
         [RS_ID]     Int           Identity(1,1)   NOT NULL,
         [RS_NAME]   VarChar(50)                   NOT NULL,
         CONSTRAINT [PK_dbo.RivalStatus] PRIMARY KEY CLUSTERED ([RS_ID])
-);GO
+);
+GO

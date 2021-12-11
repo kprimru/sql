@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Din].[SystemType:Synonyms@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[SystemType:Synonyms@Save]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Din].[SystemType:Synonyms@Save]
 	@Type_Id    Int,
 	@Synonyms   Xml

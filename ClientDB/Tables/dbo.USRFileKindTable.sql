@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[USRFileKindTable]
         [USRFileKindShortName]   VarChar(50)                    NOT NULL,
         [USRFileKindShort]       VarChar(100)                       NULL,
         CONSTRAINT [PK_dbo.USRFileKindTable] PRIMARY KEY CLUSTERED ([USRFileKindID])
-);GO
+);
+GO

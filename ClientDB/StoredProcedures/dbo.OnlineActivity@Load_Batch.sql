@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[OnlineActivity@Load?Batch]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[OnlineActivity@Load?Batch]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[OnlineActivity@Load?Batch]
     @Data Xml
 AS

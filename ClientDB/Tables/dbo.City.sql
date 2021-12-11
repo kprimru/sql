@@ -22,4 +22,5 @@ CREATE TABLE [dbo].[City]
         CONSTRAINT [FK_dbo.City(CT_ID_REGION)_dbo.Region(RG_ID)] FOREIGN KEY  ([CT_ID_REGION]) REFERENCES [dbo].[Region] ([RG_ID]),
         CONSTRAINT [FK_dbo.City(CT_ID_AREA)_dbo.Area(AR_ID)] FOREIGN KEY  ([CT_ID_AREA]) REFERENCES [dbo].[Area] ([AR_ID]),
         CONSTRAINT [FK_dbo.City(CT_ID_CITY)_dbo.City(CT_ID)] FOREIGN KEY  ([CT_ID_CITY]) REFERENCES [dbo].[City] ([CT_ID])
-);GO
+);
+GO

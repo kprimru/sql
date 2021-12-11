@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[ServiceReport]
         [SR_CREATE]    DateTime              NOT NULL,
         [SR_USER]      NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.ServiceReport] PRIMARY KEY CLUSTERED ([SR_ID])
-);GO
+);
+GO

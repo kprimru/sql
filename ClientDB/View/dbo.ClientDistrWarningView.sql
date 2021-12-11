@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ClientDistrWarningView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientDistrWarningView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[ClientDistrWarningView]
 AS
 	-- ToDo - избавиться от этого. План отвратительный

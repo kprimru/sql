@@ -11,4 +11,5 @@ CREATE TABLE [Security].[UserType]
         [UT_ROLE]   NVarChar(512)                   NOT NULL,
         [UT_NOTE]   NVarChar(Max)                       NULL,
         CONSTRAINT [PK_Security.UserType] PRIMARY KEY CLUSTERED ([UT_ID])
-);GO
+);
+GO

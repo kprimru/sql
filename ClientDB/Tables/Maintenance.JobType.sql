@@ -10,4 +10,5 @@ CREATE TABLE [Maintenance].[JobType]
         [Name]         VarChar(250)                   NOT NULL,
         [ExpireTime]   Int                                NULL,
         CONSTRAINT [PK_Maintenance.JobType] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

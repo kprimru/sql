@@ -32,4 +32,5 @@ CREATE TABLE [dbo].[ClientAudit]
         [CA_USER]              NVarChar(256)                   NOT NULL,
         CONSTRAINT [PK_dbo.ClientAudit] PRIMARY KEY CLUSTERED ([CA_ID]),
         CONSTRAINT [FK_dbo.ClientAudit(CA_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([CA_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
-);GO
+);
+GO

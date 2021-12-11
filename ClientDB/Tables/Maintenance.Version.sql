@@ -10,4 +10,5 @@ CREATE TABLE [Maintenance].[Version]
         [DATE]      SmallDateTime      NOT NULL,
         [INSTALL]   DateTime           NOT NULL,
         CONSTRAINT [PK_Maintenance.Version] PRIMARY KEY CLUSTERED ([VERSION])
-);GO
+);
+GO

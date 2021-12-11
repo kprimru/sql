@@ -12,4 +12,5 @@ CREATE TABLE [Report].[Reports:Filters]
         [ParamName]   VarChar(128)      NOT NULL,
         [Params]      xml                   NULL,
         CONSTRAINT [PK_Report.Reports:Filters] PRIMARY KEY CLUSTERED ([Report_Id],[Row:Index])
-);GO
+);
+GO

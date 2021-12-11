@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[Journal]
         [NAME]   VarChar(50)           NOT NULL,
         [DEF]    Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.Journal] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [Din].[NetType:Synonyms]
         [NT_NAME]   VarChar(100)      NOT NULL,
         [NT_NOTE]   VarChar(100)      NOT NULL,
         CONSTRAINT [PK_Din.NetType:Synonyms] PRIMARY KEY CLUSTERED ([Net_Id],[NT_NAME],[NT_NOTE])
-);GO
+);
+GO

@@ -12,4 +12,5 @@ CREATE TABLE [Subhost].[Test]
         [QST_SUCCESS]     SmallInt              NOT NULL,
         [INSTANT_CHECK]   Bit                   NOT NULL,
         CONSTRAINT [PK_Subhost.Test] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

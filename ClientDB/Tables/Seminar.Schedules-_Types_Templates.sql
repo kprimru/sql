@@ -11,4 +11,5 @@ CREATE TABLE [Seminar].[Schedules->Types:Templates]
         [Date]          SmallDateTime      NOT NULL,
         [Data]          VarChar(Max)       NOT NULL,
         CONSTRAINT [PK_Seminar.Schedules->Types:Templates] PRIMARY KEY CLUSTERED ([Type_Id],[Template_Id],[Date])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Common].[Is Equal(SmallInt)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Is Equal(SmallInt)] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 ALTER FUNCTION [Common].[Is Equal(SmallInt)]
 (
 	@V1	SmallInt,

@@ -13,4 +13,5 @@ CREATE TABLE [Tender].[Claim]
         [PARAMS]             NVarChar(Max)             NULL,
         [PROVISION_RETURN]   NVarChar(512)             NULL,
         CONSTRAINT [PK_Tender.Claim] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

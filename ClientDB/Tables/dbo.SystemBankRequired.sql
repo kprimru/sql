@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[SystemBankRequired]
         CONSTRAINT [FK_dbo.SystemBankRequired(ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
         CONSTRAINT [FK_dbo.SystemBankRequired(ID)_dbo.SystemBankRequired(ID)] FOREIGN KEY  ([ID]) REFERENCES [dbo].[SystemBankRequired] ([ID]),
         CONSTRAINT [FK_dbo.SystemBankRequired(ID_NOT_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_NOT_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID])
-);GO
+);
+GO

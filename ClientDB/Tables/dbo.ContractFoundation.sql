@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[ContractFoundation]
         [NAME]   NVarChar(256)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_dbo.ContractFoundation] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

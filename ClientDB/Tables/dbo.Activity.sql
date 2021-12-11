@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[Activity]
         [AC_CODE]    VarChar(30)           NOT NULL,
         [AC_SHORT]   VarChar(100)              NULL,
         CONSTRAINT [PK_dbo.Activity] PRIMARY KEY CLUSTERED ([AC_ID])
-);GO
+);
+GO

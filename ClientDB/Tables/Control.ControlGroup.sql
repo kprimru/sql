@@ -10,4 +10,5 @@ CREATE TABLE [Control].[ControlGroup]
         [NAME]    NVarChar(256)         NOT NULL,
         [PSEDO]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Control.ControlGroup] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

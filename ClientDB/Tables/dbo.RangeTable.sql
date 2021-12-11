@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[RangeTable]
         [RangeID]      Int     Identity(1,1)   NOT NULL,
         [RangeValue]   float                   NOT NULL,
         CONSTRAINT [PK_dbo.RangeTable] PRIMARY KEY CLUSTERED ([RangeID])
-);GO
+);
+GO

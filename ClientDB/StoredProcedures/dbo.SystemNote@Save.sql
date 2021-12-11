@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[SystemNote@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SystemNote@Save]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[SystemNote@Save]
     @System_Id      SmallInt,
     @DistrType_Id   SmallInt,

@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[TenderName]
         [TN_NAME]    VarChar(500)          NOT NULL,
         [TN_SHORT]   VarChar(100)          NOT NULL,
         CONSTRAINT [PK_Purchase.TenderName] PRIMARY KEY CLUSTERED ([TN_ID])
-);GO
+);
+GO

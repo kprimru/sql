@@ -15,4 +15,5 @@ CREATE TABLE [Poll].[Question]
         [ORD]        SmallInt              NOT NULL,
         CONSTRAINT [PK_Poll.Question] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Poll.Question(ID_BLANK)_Poll.Blank(ID)] FOREIGN KEY  ([ID_BLANK]) REFERENCES [Poll].[Blank] ([ID])
-);GO
+);
+GO

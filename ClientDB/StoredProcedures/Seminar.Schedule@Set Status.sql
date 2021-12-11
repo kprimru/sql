@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Seminar].[Schedule@Set Status]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Schedule@Set Status]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Seminar].[Schedule@Set Status]
     @Id         UniqueIdentifier,
     @Status_Id  Char(1)

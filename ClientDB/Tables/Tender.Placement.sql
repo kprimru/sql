@@ -51,4 +51,5 @@ CREATE TABLE [Tender].[Placement]
         [INVOICE_DATE]       DateTime                  NULL,
         [COLOR_IGN]          Bit                       NULL,
         CONSTRAINT [PK_Tender.Placement] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[DutyTable]
         [DutyLogin]    VarChar(50)                   NOT NULL,
         [DutyActive]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.DutyTable] PRIMARY KEY CLUSTERED ([DutyID])
-);GO
+);
+GO

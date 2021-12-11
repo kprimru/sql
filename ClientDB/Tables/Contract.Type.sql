@@ -15,4 +15,5 @@ CREATE TABLE [Contract].[Type]
         [Type_Id]      Int                       NULL,
         [PayType_Id]   Int                       NULL,
         CONSTRAINT [PK_Contract.Type] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

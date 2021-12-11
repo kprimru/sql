@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[LetterTable]
         [LetterName]        VarChar(100)                   NOT NULL,
         [LetterData]        varbinary                      NOT NULL,
         CONSTRAINT [PK_dbo.LetterTable] PRIMARY KEY CLUSTERED ([LetterID])
-);GO
+);
+GO

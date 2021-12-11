@@ -11,4 +11,5 @@ CREATE TABLE [Task].[TaskStatus]
         [PSEDO]     NVarChar(64)          NOT NULL,
         [INT_VAL]   TinyInt               NOT NULL,
         CONSTRAINT [PK_Task.TaskStatus] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

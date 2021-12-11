@@ -11,4 +11,5 @@ CREATE TABLE [Report].[ExecutionLog]
         [USR]         NVarChar(256)                      NOT NULL,
         [DATE]        DateTime                           NOT NULL,
         CONSTRAINT [PK_Report.ExecutionLog] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

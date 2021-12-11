@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[VisitPayTable]
         [VisitPayBegin]   SmallDateTime                       NULL,
         [VisitPayEnd]     SmallDateTime                       NULL,
         CONSTRAINT [PK_dbo.VisitPayTable] PRIMARY KEY CLUSTERED ([VisitPayID])
-);GO
+);
+GO

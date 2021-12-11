@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[DistrPriceWeightGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[DistrPriceWeightGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
 ALTER FUNCTION [dbo].[DistrPriceWeightGet]
 (
 	@HOST	INT,

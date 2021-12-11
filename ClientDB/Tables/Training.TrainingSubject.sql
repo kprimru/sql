@@ -9,4 +9,5 @@ CREATE TABLE [Training].[TrainingSubject]
         [TS_ID]     UniqueIdentifier      NOT NULL,
         [TS_NAME]   VarChar(150)          NOT NULL,
         CONSTRAINT [PK_Training.TrainingSubject] PRIMARY KEY CLUSTERED ([TS_ID])
-);GO
+);
+GO

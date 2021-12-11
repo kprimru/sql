@@ -10,4 +10,5 @@ CREATE TABLE [Contract].[CoveringLetterDetail]
         [ID_LETTER]   UniqueIdentifier      NOT NULL,
         [ID_FORM]     UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Contract.CoveringLetterDetail] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

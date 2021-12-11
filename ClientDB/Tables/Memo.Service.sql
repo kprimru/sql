@@ -9,4 +9,5 @@ CREATE TABLE [Memo].[Service]
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
         CONSTRAINT [PK_Memo.Service] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

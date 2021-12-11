@@ -17,4 +17,5 @@ CREATE TABLE [dbo].[Locks]
         [LC_LOGIN_TIME]   DateTime              NOT NULL,
         [LC_NT_USER]      NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.Locks] PRIMARY KEY CLUSTERED ([LC_ID])
-);GO
+);
+GO

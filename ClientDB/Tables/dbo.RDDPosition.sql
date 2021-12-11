@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[RDDPosition]
         [NAME]    NVarChar(256)         NOT NULL,
         [PSEDO]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_dbo.RDDPosition] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

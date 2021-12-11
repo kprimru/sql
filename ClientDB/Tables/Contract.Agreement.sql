@@ -15,4 +15,5 @@ CREATE TABLE [Contract].[Agreement]
         CONSTRAINT [PK_Contract.Agreement] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Contract.Agreement(ID_CONTRACT)_Contract.Contract(ID)] FOREIGN KEY  ([ID_CONTRACT]) REFERENCES [Contract].[Contract] ([ID]),
         CONSTRAINT [FK_Contract.Agreement(ID_STATUS)_Contract.Status(ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [Contract].[Status] ([ID])
-);GO
+);
+GO

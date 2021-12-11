@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Maintenance].[GlobalRicLogin]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalRicLogin] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 ALTER FUNCTION [Maintenance].[GlobalRicLogin]
 ()
 RETURNS VARCHAR(500)

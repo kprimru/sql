@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[CallDirection]
         [NAME]   NVarChar(256)         NOT NULL,
         [DEF]    Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.CallDirection] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

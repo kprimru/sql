@@ -15,4 +15,5 @@ CREATE TABLE [Report].[Reports]
         [REP_PROC]       NVarChar(256)             NULL,
         [REP_TEMPLATE]   NVarChar(256)             NULL,
         CONSTRAINT [PK_Report.Reports] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[ClientVisitCount]
         [VISIT_CNT4]   SmallInt                      NOT NULL,
         [VISIT_CNT5]   SmallInt                      NOT NULL,
         CONSTRAINT [PK_dbo.ClientVisitCount] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

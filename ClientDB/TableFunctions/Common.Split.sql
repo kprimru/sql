@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Common].[Split]', 'TF') IS NULL EXEC('CREATE FUNCTION [Common].[Split] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
 ALTER FUNCTION [Common].[Split]
 (
     @String     VarChar(Max),

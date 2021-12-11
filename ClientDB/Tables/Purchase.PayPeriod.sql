@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[PayPeriod]
         [PP_NAME]    VarChar(500)          NOT NULL,
         [PP_SHORT]   VarChar(100)          NOT NULL,
         CONSTRAINT [PK_Purchase.PayPeriod] PRIMARY KEY CLUSTERED ([PP_ID])
-);GO
+);
+GO

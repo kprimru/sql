@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[DistrStatus]
         [DS_IMAGE]   varbinary             NOT NULL,
         [DS_INDEX]   TinyInt               NOT NULL,
         CONSTRAINT [PK_dbo.DistrStatus] PRIMARY KEY CLUSTERED ([DS_ID])
-);GO
+);
+GO

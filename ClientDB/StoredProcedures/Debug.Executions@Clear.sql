@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Debug].[Executions@Clear]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Executions@Clear]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Debug].[Executions@Clear]
     @Mode       VarChar(100) = 'AUTO'
     -- AUTO

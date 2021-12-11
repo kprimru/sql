@@ -19,4 +19,5 @@ CREATE TABLE [IP].[Lists]
         [UNSET_REASON]   NVarChar(256)             NULL,
         [LAST_UPDATE]    DateTime              NOT NULL,
         CONSTRAINT [PK_IP.Lists] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -59,4 +59,5 @@ CREATE TABLE [dbo].[ClientTable:Log]
         CONSTRAINT [FK_dbo.ClientTable:Log(RangeID)_dbo.RangeTable(RangeID)] FOREIGN KEY  ([RangeID]) REFERENCES [dbo].[RangeTable] ([RangeID]),
         CONSTRAINT [FK_dbo.ClientTable:Log(ServiceTypeID)_dbo.ServiceTypeTable(ServiceTypeID)] FOREIGN KEY  ([ServiceTypeID]) REFERENCES [dbo].[ServiceTypeTable] ([ServiceTypeID]),
         CONSTRAINT [FK_dbo.ClientTable:Log(StatusID)_dbo.ServiceStatusTable(ServiceStatusID)] FOREIGN KEY  ([StatusID]) REFERENCES [dbo].[ServiceStatusTable] ([ServiceStatusID])
-);GO
+);
+GO

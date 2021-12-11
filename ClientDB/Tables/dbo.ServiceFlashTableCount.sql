@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[ServiceFlashTableCount]
 (
         [ID_FLASH]    VarChar(1023)      NOT NULL,
         [LAST_DATE]   SmallDateTime          NULL,
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[ServiceFlashTableCount] TO public;
 GRANT INSERT ON [dbo].[ServiceFlashTableCount] TO public;
 GRANT SELECT ON [dbo].[ServiceFlashTableCount] TO public;

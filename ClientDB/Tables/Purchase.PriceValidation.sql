@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[PriceValidation]
         [PV_NAME]    VarChar(4000)         NOT NULL,
         [PV_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.PriceValidation] PRIMARY KEY CLUSTERED ([PV_ID])
-);GO
+);
+GO

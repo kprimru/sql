@@ -10,4 +10,5 @@ CREATE TABLE [Din].[SystemType:Synonyms]
         [SST_NAME]   VarChar(100)      NOT NULL,
         [SST_NOTE]   VarChar(100)      NOT NULL,
         CONSTRAINT [PK_Din.SystemType:Synonyms] PRIMARY KEY CLUSTERED ([Type_Id],[SST_NAME],[SST_NOTE])
-);GO
+);
+GO

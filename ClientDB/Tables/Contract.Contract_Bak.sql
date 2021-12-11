@@ -26,4 +26,5 @@ CREATE TABLE [Contract].[Contract_Bak]
         [DateFrom]      SmallDateTime             NULL,
         [DateTo]        SmallDateTime             NULL,
         [SignDate]      SmallDateTime             NULL,
-);GO
+);
+GO

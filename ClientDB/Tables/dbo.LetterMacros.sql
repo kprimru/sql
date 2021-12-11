@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[LetterMacros]
         [CAPTION]   NVarChar(512)         NOT NULL,
         [FLD]       NVarChar(512)         NOT NULL,
         CONSTRAINT [PK_dbo.LetterMacros] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

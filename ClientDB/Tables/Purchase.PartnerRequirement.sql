@@ -10,4 +10,5 @@ CREATE TABLE [Purchase].[PartnerRequirement]
         [PR_NAME]    VarChar(4000)         NOT NULL,
         [PR_SHORT]   VarChar(200)          NOT NULL,
         CONSTRAINT [PK_Purchase.PartnerRequirement] PRIMARY KEY CLUSTERED ([PR_ID])
-);GO
+);
+GO

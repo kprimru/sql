@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[CallTypeTable]
         [CallTypeName]    VarChar(50)                   NOT NULL,
         [CallTypeShort]   VarChar(50)                       NULL,
         CONSTRAINT [PK_dbo.CallTypeTable] PRIMARY KEY CLUSTERED ([CallTypeID])
-);GO
+);
+GO

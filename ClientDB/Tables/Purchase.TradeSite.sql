@@ -11,4 +11,5 @@ CREATE TABLE [Purchase].[TradeSite]
         [TS_URL]     VarChar(250)              NULL,
         [TS_SHORT]   VarChar(200)              NULL,
         CONSTRAINT [PK_Purchase.TradeSite] PRIMARY KEY CLUSTERED ([TS_ID])
-);GO
+);
+GO
