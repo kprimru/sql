@@ -8,7 +8,7 @@ GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
+Дата создания:
 Описание:
 */
 
@@ -18,7 +18,8 @@ ALTER PROCEDURE [dbo].[ACT_DISTR_EDIT]
 	@price MONEY,
 	@taxprice MONEY,
 	@totalprice MONEY,
-	@Expire SmalLDateTime
+	@Expire SmalLDateTime,
+	@IsOnline bit
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -48,7 +49,8 @@ BEGIN
 		SET AD_PRICE = @price,
 			AD_TAX_PRICE = @taxprice,
 			AD_TOTAL_PRICE = @totalprice,
-			AD_EXPIRE = @expire
+			AD_EXPIRE = @expire,
+			IsOnline = @IsOnline
 		WHERE AD_ID = @adid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

@@ -24,7 +24,7 @@ BEGIN
 
 		SELECT
 			DIS_ID, DIS_STR, AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
-			PR_ID, PR_DATE
+			PR_ID, PR_DATE, AD_EXPIRE, IsOnline
 		FROM dbo.ActDistrView
 		WHERE AD_ID = @adid
 
@@ -38,7 +38,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[ACT_DISTR_GET] TO rl_act_w;
 GO
