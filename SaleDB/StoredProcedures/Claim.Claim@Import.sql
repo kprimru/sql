@@ -27,6 +27,9 @@ BEGIN
         @Params         Xml;
 
     DECLARE
+        @RowIndex           Int,
+        @Company_Id         UniqueIdentifier,
+        @Personal_Id        UniqueIdentifier,
         @Id                 Int,
         @Type_Id            TinyInt,
         @StatusCode_New     VarChar(100),
@@ -34,10 +37,11 @@ BEGIN
 
     DECLARE @Companies Table
     (
+        [Row:Index] Int Identity(1,1),
         [Id]        UniqueIdentifier,
         [Name]      VarChar(500),
         [Number]    VarChar(100),
-        PRIMARY KEY CLUSTERED ([Id])
+        PRIMARY KEY CLUSTERED ([Row:Index])
     );
 
     EXEC [Debug].[Execution@Start]
@@ -99,9 +103,47 @@ BEGIN
             EXEC [Claim].[Claim@Seek?Company]
                 @Id = @Id;
 
-            INSERT INTO [Claim].[Claims:Companies]([Claim_Id], [Company_Id])
-            SELECT @Id, [Id]
-            FROM @Companies;
+            SET @RowIndex = 0;
+
+            WHILE (1 = 1) BEGIN
+                SELECT TOP (1)
+                    @RowIndex   = [Row:Index],
+                    @Company_Id = [Id]
+                FROM @Companies
+                WHERE [Row:Index] > @RowIndex
+                ORDER BY
+                    [Row:Index];
+
+                IF @@RowCount < 1
+                    BREAK;
+
+                EXEC [Client].[COMPANY_PERSONAL_INSERT]
+                    @COMPANY    = @Company_Id,
+                    @OFFICE     = NULL,
+                    @SURNAME    = '',
+                    @Name       = @FIO,
+                    @PATRON     = '',
+                    @POSITION   = NULL,
+                    @NOTE       = @Special,
+                    @EMAIL      = @Email,
+                    @Mailing    = NULL,
+                    @ID         = @Personal_Id OUTPUT;
+
+                EXEC [Client].[COMPANY_PERSONAL_PHONE_INSERT]
+                    @PERSONAL   = @Personal_Id,
+                    @TYPE       = NULL,
+                    @PHONE      = @Phone,
+                    @PHONE_S    = @Phone,
+                    @NOTE       = NULL;
+
+                UPDATE [Client].[Company] SET
+                    ID_SENDER   = 'F7B1B2FF-9E21-EB11-891B-0007E92AAFC5',
+                    SENDER_NOTE = @Number
+                WHERE ID = @Company_Id;
+
+                INSERT INTO [Claim].[Claims:Companies]([Claim_Id], [Company_Id])
+                SELECT @Id, @Company_Id;
+            END;
         END;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
