@@ -92,7 +92,8 @@ BEGIN
 		FROM [Claim].[Claims] AS C
 		INNER JOIN [Claim].[Claims:Actions] AS CA ON C.[Id] = CA.[Claim_Id]
 		INNER JOIN [Personal].[OfficePersonal] AS P ON CA.[Personal_Id] = P.[Id]
-		WHERE C.[Company_Id] = @ID
+		INNER JOIN [Claim].[Claims:Companies] AS CC ON CC.[Claim_Id] = C.[ID]
+		WHERE CC.[Company_Id] = @ID
 
 		ORDER BY DATE DESC
 
