@@ -11,6 +11,7 @@ ALTER PROCEDURE [dbo].[CLIENT_TYPE_INSERT]
 	@DAY	INT,
 	@DAILY	INT,
 	@PAPPER	SMALLINT,
+	@SortIndex  SmallInt,
 	@ID	INT = NULL OUTPUT
 AS
 BEGIN
@@ -28,8 +29,8 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ClientTypeTable(ClientTypeName, ClientTypeDailyDay, ClientTypeDay, ClientTypePapper)
-			VALUES(@NAME, @DAILY, @DAY, @PAPPER)
+		INSERT INTO dbo.ClientTypeTable(ClientTypeName, ClientTypeDailyDay, ClientTypeDay, ClientTypePapper, SortIndex)
+			VALUES(@NAME, @DAILY, @DAY, @PAPPER, @SortIndex)
 
 		SELECT @ID = SCOPE_IDENTITY()
 

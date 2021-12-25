@@ -35,25 +35,25 @@ BEGIN
             FROM dbo.ClientTable
             WHERE [STATUS] = 1;
         ELSE
-		    INSERT INTO @Clients
-		    SELECT DISTINCT Item
-		    FROM dbo.GET_TABLE_FROM_LIST(@Client_IDs, ',');
+            INSERT INTO @Clients
+            SELECT DISTINCT Item
+            FROM dbo.GET_TABLE_FROM_LIST(@Client_IDs, ',');
 
-		UPDATE C SET
-		    [ClientTypeId] = TT.[ClientTypeId]
-		FROM dbo.ClientTable	C
-		INNER JOIN @Clients		U	ON C.ClientId = U.Id
-		OUTER APPLY
-		(
-			SELECT MIN(T.[ClientTypeName])  AS CATEGORY
-		    FROM dbo.ClientDistrView        AS D WITH(NOEXPAND)
-		    INNER JOIN dbo.ClientTypeRules  AS R ON R.[System_Id] = D.[SystemID]
-		                                        AND R.[DistrType_Id] = D.[DistrTypeID]
-		    INNER JOIN dbo.ClientTypeTable  AS T ON T.[ClientTypeID] = R.[ClientType_Id]
-		    WHERE   C.ClientID = D.ID_CLIENT
-		        AND D.DS_REG = 0
-		) T
-		INNER JOIN dbo.ClientTypeTable  AS TT ON TT.[ClientTypeName] = T.[CATEGORY];
+        UPDATE C SET
+            [ClientTypeId] = T.[ClientTypeId]
+        FROM dbo.ClientTable    C
+        INNER JOIN @Clients     U   ON C.ClientId = U.Id
+        OUTER APPLY
+        (
+            SELECT TOP (1) T.[ClientTypeID]
+            FROM dbo.ClientDistrView        AS D WITH(NOEXPAND)
+            INNER JOIN dbo.ClientTypeRules  AS R ON R.[System_Id] = D.[SystemID]
+                                                AND R.[DistrType_Id] = D.[DistrTypeID]
+            INNER JOIN dbo.ClientTypeTable  AS T ON T.[ClientTypeID] = R.[ClientType_Id]
+            WHERE   C.ClientID = D.ID_CLIENT
+                AND D.DS_REG = 0
+            ORDER BY T.[SortIndex]
+        ) T;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

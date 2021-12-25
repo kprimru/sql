@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ClientTypeName, ClientTypeDay, ClientTypeDailyDay, ClientTypePapper
+		SELECT ClientTypeName, ClientTypeDay, ClientTypeDailyDay, ClientTypePapper, SortIndex
 		FROM dbo.ClientTypeTable
 		WHERE ClientTypeID = @ID
 

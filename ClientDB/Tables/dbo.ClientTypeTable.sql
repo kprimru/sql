@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[ClientTypeTable]
         [ClientTypeDailyDay]   TinyInt                    NOT NULL,
         [ClientTypeDay]        TinyInt                    NOT NULL,
         [ClientTypePapper]     SmallInt                   NOT NULL,
+        [SortIndex]            SmallInt                   NOT NULL,
         CONSTRAINT [PK_dbo.ClientTypeTable] PRIMARY KEY CLUSTERED ([ClientTypeID])
 );
 GO

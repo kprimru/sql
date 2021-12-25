@@ -11,7 +11,8 @@ ALTER PROCEDURE [dbo].[CLIENT_TYPE_UPDATE]
 	@NAME	VARCHAR(100),
 	@DAY	INT,
 	@DAILY	INT,
-	@PAPPER	SMALLINT
+	@PAPPER	SMALLINT,
+	@SortIndex  SmallInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -32,7 +33,8 @@ BEGIN
 		SET ClientTypeName = @NAME,
 			ClientTypeDailyDay = @DAILY,
 			ClientTypeDay = @DAY,
-			ClientTypePapper = @PAPPER
+			ClientTypePapper = @PAPPER,
+			SortIndex = @SortIndex
 		WHERE ClientTypeID = @ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

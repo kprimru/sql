@@ -30,6 +30,6 @@ BEGIN
 			FOR XML PATH('')
 		)), 1, 1, ''));
 
-	EXEC dbo.CLIENT_TYPE_RECALCULATE @IDs;
+	EXEC dbo.ClientTypeRules@RECALCULATE @IDs;
 END
 GO

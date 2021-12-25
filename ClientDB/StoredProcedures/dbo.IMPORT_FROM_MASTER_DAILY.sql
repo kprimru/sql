@@ -49,8 +49,30 @@ BEGIN
 		FROM dbo.Hosts H
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS D ON H.[HostReg] = D.[HostReg]
 		WHERE H.HostShort != D.HostShort
-			OR H.HostOrder != D.HostOrder
+			OR H.HostOrder != D.HostOrder;
 
+		-- Обновляем справочник категорий
+		INSERT INTO [dbo].[ClientTypeTable]([ClientTypeName], [ClientTypeDailyDay], [ClientTypeDay], [ClientTypePapper], [SortIndex])
+		SELECT D.[ClientTypeName], D.[ClientTypeDailyDay], D.[ClientTypeDay], D.[ClientTypePapper], D.[SortIndex]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeTable] AS D
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [dbo].[ClientTypeTable] H
+				WHERE D.[ClientTypeName] = H.[ClientTypeName]
+			);
+
+		UPDATE H
+		SET [ClientTypeDailyDay]    = D.[ClientTypeDailyDay],
+		    [ClientTypeDay]         = D.[ClientTypeDay],
+		    [ClientTypePapper]      = D.[ClientTypePapper],
+			[SortIndex]             = D.[SortIndex]
+		FROM [dbo].[ClientTypeTable] H
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeTable] AS D ON H.[ClientTypeName] = D.[ClientTypeName]
+		WHERE H.[ClientTypeDailyDay] != D.[ClientTypeDailyDay]
+			OR H.[ClientTypeDay] != D.[ClientTypeDay]
+			OR H.[ClientTypePapper] != D.[ClientTypePapper]
+			OR H.[SortIndex] != D.[SortIndex];
 
 		-- Обновляем справочник систем
 		INSERT INTO dbo.SystemTable(
@@ -173,7 +195,7 @@ BEGIN
 		*/
 
 
-		-- обновляем справочник систем
+		-- обновляем справочник типов систем
 
 		UPDATE S
 		SET SST_NAME = D.SST_NAME,
@@ -282,6 +304,36 @@ BEGIN
 				FROM dbo.DistrStatus S
 				WHERE S.DS_REG = D.DS_REG
 			);
+
+		-- Обновляем справочник правил категорий
+		INSERT INTO [dbo].[ClientTypeRules]([System_Id], [DistrType_Id], [ClientType_Id])
+		SELECT HS.[SystemID], HD.[DistrTypeID], HC.[ClientTypeID]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeRules] AS D
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS DS ON DS.[SystemID] = D.[System_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable] AS DD ON DD.[DistrTypeID] = D.[DistrType_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeTable] AS DC ON DC.[ClientTypeID] = D.[ClientType_Id]
+		INNER JOIN [dbo].[ClientTypeTable] AS HC ON HC.[ClientTypeName] = DC.[ClientTypeName]
+		INNER JOIN [dbo].[SystemTable] AS HS ON HS.[SystemBaseName] = DS.[SystemBaseName]
+		INNER JOIN [dbo].[DistrTypeTable] AS HD ON HD.[DistrTypeCode] = DD.[DistrTypeCode]
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [dbo].[ClientTypeRules] AS H
+		        WHERE D.[System_Id] = HS.[SystemID]
+		            AND D.[DistrType_Id] = HD.[DistrTypeID]
+			);
+
+		UPDATE H
+		SET [ClientType_Id]    = HC.[ClientTypeID]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeRules] AS D
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS DS ON DS.[SystemID] = D.[System_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable] AS DD ON DD.[DistrTypeID] = D.[DistrType_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeTable] AS DC ON DC.[ClientTypeID] = D.[ClientType_Id]
+		INNER JOIN [dbo].[ClientTypeTable] AS HC ON HC.[ClientTypeName] = DC.[ClientTypeName]
+		INNER JOIN [dbo].[SystemTable] AS HS ON HS.[SystemBaseName] = DS.[SystemBaseName]
+		INNER JOIN [dbo].[DistrTypeTable] AS HD ON HD.[DistrTypeCode] = DD.[DistrTypeCode]
+		INNER JOIN [dbo].[ClientTypeRules] AS H ON D.[System_Id] = HS.[SystemID] AND D.[DistrType_Id] = HD.[DistrTypeID]
+		WHERE H.[ClientType_Id] != HC.[ClientTypeID];
 
 		-- обновляем справочник типов соответствия USR
 

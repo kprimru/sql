@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ClientTypeID, ClientTypeName, ClientTypeDay, ClientTypeDailyDay, ClientTypePapper
+		SELECT ClientTypeID, ClientTypeName, ClientTypeDay, ClientTypeDailyDay, ClientTypePapper, SortIndex
 		FROM dbo.ClientTypeTable
 		WHERE @FILTER IS NULL
 			OR ClientTypeName LIKE @FILTER
