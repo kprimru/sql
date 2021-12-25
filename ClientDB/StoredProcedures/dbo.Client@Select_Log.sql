@@ -198,8 +198,6 @@ BEGIN
                             [Personals]
                             );
 
-        SELECT * FROM @Details ORDER BY [UpdateDate] DESC;
-
         WITH CTE AS
         (
             SELECT
@@ -284,7 +282,41 @@ BEGIN
             FROM @Details AS D
             INNER JOIN CTE ON D.[Row:Index] = CTE.[Row:Index] + 1
         )
-        SELECT *
+        SELECT
+            [Row:Index],
+            [ClientFullName],
+            [ClientOfficial],
+            [ClientINN],
+            [ServiceName],
+            [ClientActivity],
+            [ClientDayBegin],
+            [ClientDayEnd],
+            [DayName],
+            [ServiceStart],
+            [ServiceTime],
+            [PayTypeNmae],
+            [ClientMainBook],
+            [ClientNewspaper],
+            [ServiceStatusName],
+            [ClientNote],
+            [ServiceTypeName],
+            [RangeValue],
+            [OriClient],
+            [ClientEmail],
+            [ClientPlace],
+            [PurchaseTypeName],
+            [DinnerBegin],
+            [DinnerEnd],
+            [ClientVisitCount],
+            [IsLarge],
+            [IsDebtor],
+            [ClientTypeName],
+            [ClientKindName],
+            [Names],
+            [Addresses],
+            [Personals],
+            [UpdateDate],
+            [UPD_USER]
         FROM CTE
         WHERE [Index] = 1
         ORDER BY [UpdateDate] DESC
