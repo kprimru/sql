@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 		SELECT
 			a.ID, c.Comment/*ISNULL(e.ClientFullName, c.Comment)*/ AS CLIENT, ISNULL(e.ManagerName, c.SubhostName) AS MANAGER,
 			DATE, FIO, EMAIL, PHONE, QUEST,
-			(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = 'ВопросЭксперту') AS DIRECTION
+			(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = 'Р’РѕРїСЂРѕСЃР­РєСЃРїРµСЂС‚Сѓ') AS DIRECTION
 		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber

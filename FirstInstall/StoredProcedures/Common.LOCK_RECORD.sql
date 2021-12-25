@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -74,7 +74,7 @@ BEGIN
 					Common.TableFromList(@docid, ',')
 				WHERE a.session_id = @@spid
 
-			-- запись свободна для открытия и открывается. данные сохраняются в табл DOC_EDITING_STATUS
+			-- Р·Р°РїРёСЃСЊ СЃРІРѕР±РѕРґРЅР° РґР»СЏ РѕС‚РєСЂС‹С‚РёСЏ Рё РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ. РґР°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ С‚Р°Р±Р» DOC_EDITING_STATUS
 		SET @result = 0
 	END
 END

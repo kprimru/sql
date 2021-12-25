@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,15 +25,15 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ClientFullName AS [Клиент],
-			DistrStr AS [Дистрибутив],
-			DistrTypeName AS [Сеть],
-			UF_DATE AS [Дата USR],
-			ResVersionShort AS [Версия тех. модуля],
-			ISNULL(OS_NAME, '') + ISNULL(' (' + OS_CAPACITY + ')', '') AS [Операционная система],
-			USRFileKindShortName AS [Способ получения USR],
-			ServiceName AS [СИ],
-			ManagerName AS [Руководитель]
+			ClientFullName AS [РљР»РёРµРЅС‚],
+			DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			DistrTypeName AS [РЎРµС‚СЊ],
+			UF_DATE AS [Р”Р°С‚Р° USR],
+			ResVersionShort AS [Р’РµСЂСЃРёСЏ С‚РµС…. РјРѕРґСѓР»СЏ],
+			ISNULL(OS_NAME, '') + ISNULL(' (' + OS_CAPACITY + ')', '') AS [РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР°],
+			USRFileKindShortName AS [РЎРїРѕСЃРѕР± РїРѕР»СѓС‡РµРЅРёСЏ USR],
+			ServiceName AS [РЎР],
+			ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ]
 		FROM
 			dbo.ClientDistrView cdv WITH(NOEXPAND)
 			--INNER JOIN USR.USRActiveView uav ON cdv.ID_CLIENT = uav.UD_ID_CLIENT

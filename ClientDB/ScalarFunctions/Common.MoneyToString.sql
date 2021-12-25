@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,17 +31,17 @@ BEGIN
 	ELSE
 		SET @cattr = @cpart
 
-	RETURN Common.NumToStr(@rpart, 1) + ' рубл' +
+	RETURN Common.NumToStr(@rpart, 1) + ' СЂСѓР±Р»' +
            CASE
-				WHEN @rattr = 1 THEN 'ь'
-				WHEN @rattr IN (2, 3, 4) THEN 'я'
-				ELSE 'ей'
+				WHEN @rattr = 1 THEN 'СЊ'
+				WHEN @rattr IN (2, 3, 4) THEN 'СЏ'
+				ELSE 'РµР№'
 			END + ' ' +
-			RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2) + ' копе' +
+			RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2) + ' РєРѕРїРµ' +
 			CASE
-				WHEN @cattr = 1 THEN 'йка'
-				WHEN @cattr IN (2, 3, 4) THEN 'йки'
-				ELSE 'ек'
+				WHEN @cattr = 1 THEN 'Р№РєР°'
+				WHEN @cattr IN (2, 3, 4) THEN 'Р№РєРё'
+				ELSE 'РµРє'
 			END
 END
 GO

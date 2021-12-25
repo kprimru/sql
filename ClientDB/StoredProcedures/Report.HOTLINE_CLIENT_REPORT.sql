@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -207,7 +207,7 @@ BEGIN
             @DebugContext   = @DebugContext,
             @Name           = 'UPDATE #result';
 
-		SET @SQL = 'SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент], DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть], HotlineEnable AS [Кнопка включена], HotlineDate AS [Дата подключения],'
+		SET @SQL = 'SELECT ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚], DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], NT_SHORT AS [РЎРµС‚СЊ], HotlineEnable AS [РљРЅРѕРїРєР° РІРєР»СЋС‡РµРЅР°], HotlineDate AS [Р”Р°С‚Р° РїРѕРґРєР»СЋС‡РµРЅРёСЏ],'
 		SELECT @SQL = @SQL + '[' + CONVERT(VARCHAR(4), DATEPART(YEAR, MON)) + '_' + REPLICATE('0', 2 - LEN(CONVERT(VARCHAR(2), DATEPART(MONTH, MON)))) + CONVERT(VARCHAR(2), DATEPART(MONTH, MON)) + '],'
 		FROM
 			(

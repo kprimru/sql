@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -9,9 +9,9 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	1.04.2009
-Описание:		строка таблицы счета-фактуры
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	1.04.2009
+РћРїРёСЃР°РЅРёРµ:		СЃС‚СЂРѕРєР° С‚Р°Р±Р»РёС†С‹ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_EDIT]
@@ -44,21 +44,21 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение строки с/ф',
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РР·РјРµРЅРµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				CASE
-					WHEN ISNULL(@INR_GOOD, '') <> ISNULL(INR_GOOD, '') THEN 'Текст услуги: с "' + ISNULL(INR_GOOD, '') + '" на "' + ISNULL(@INR_GOOD, '') + '" '
+					WHEN ISNULL(@INR_GOOD, '') <> ISNULL(INR_GOOD, '') THEN 'РўРµРєСЃС‚ СѓСЃР»СѓРіРё: СЃ "' + ISNULL(INR_GOOD, '') + '" РЅР° "' + ISNULL(@INR_GOOD, '') + '" '
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(@INR_NAME, '') <> ISNULL(INR_NAME, '') THEN 'Услуга: с "' + ISNULL(INR_NAME, '') + '" на "' + ISNULL(@INR_NAME, '') + '" '
+					WHEN ISNULL(@INR_NAME, '') <> ISNULL(INR_NAME, '') THEN 'РЈСЃР»СѓРіР°: СЃ "' + ISNULL(INR_NAME, '') + '" РЅР° "' + ISNULL(@INR_NAME, '') + '" '
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(@inrcount, 1) <> ISNULL(INR_COUNT, 1) THEN 'Кол-во: с "' + CONVERT(VARCHAR(20), ISNULL(INR_COUNT, 1)) + '" на "' + CONVERT(VARCHAR(20), ISNULL(@inrcount, 1)) + '" '
+					WHEN ISNULL(@inrcount, 1) <> ISNULL(INR_COUNT, 1) THEN 'РљРѕР»-РІРѕ: СЃ "' + CONVERT(VARCHAR(20), ISNULL(INR_COUNT, 1)) + '" РЅР° "' + CONVERT(VARCHAR(20), ISNULL(@inrcount, 1)) + '" '
 					ELSE ''
 				END +
 				CASE
-					WHEN @INR_SALL <> INR_SALL THEN 'Сумма: с "' + dbo.MoneyFormat(INR_SALL) + '" на "' + dbo.MoneyFormat(@INR_SALL) + '"'
+					WHEN @INR_SALL <> INR_SALL THEN 'РЎСѓРјРјР°: СЃ "' + dbo.MoneyFormat(INR_SALL) + '" РЅР° "' + dbo.MoneyFormat(@INR_SALL) + '"'
 					ELSE ''
 				END
 			FROM

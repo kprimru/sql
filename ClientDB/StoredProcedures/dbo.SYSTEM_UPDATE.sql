@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -71,7 +71,7 @@ BEGIN
 
 			SET @BN = LEFT(@BN, LEN(@BN) - 1)
 
-			SET @BN = 'ИБ указаны как обязательные и как необязательные' + @BN
+			SET @BN = 'РР‘ СѓРєР°Р·Р°РЅС‹ РєР°Рє РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ Рё РєР°Рє РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рµ' + @BN
 
 			RAISERROR (@BN, 16, 1)
 

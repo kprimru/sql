@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 			a.ClientID, ClientFullName, b.DATE AS StudyDate,
 			TeacherName, ServiceName, b.NOTE AS StudyNote,
 			(SURNAME + ' ' + d.NAME + ' ' + PATRON) AS Student,
-			POSITION AS StudentPositionName, CASE ClientMainBook WHEN 0 THEN 'ÕÂÚ' ELSE 'ƒ‡' END AS CL_MAINBOOK,
+			POSITION AS StudentPositionName, CASE ClientMainBook WHEN 0 THEN '–ù–µ—Ç' ELSE '–î–∞' END AS CL_MAINBOOK,
 			b.TEACHED, t.NAME AS TP_NAME
 		INTO #result
 		FROM

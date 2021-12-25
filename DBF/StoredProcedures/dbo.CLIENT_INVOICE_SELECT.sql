@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  24.03.2009
-Описание:		все счета-фактуры клиента
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  24.03.2009
+РћРїРёСЃР°РЅРёРµ:		РІСЃРµ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹ РєР»РёРµРЅС‚Р°
 */
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_SELECT]
 	@clientid INT
@@ -43,7 +43,7 @@ BEGIN
 				WHERE INS_ID = ID_INVOICE
 			) AS SALE_SUM,
 			CONVERT(VARCHAR(500), (
-				SELECT 'Аванс: ' + CONVERT(VARCHAR(20), ID_AVANS) + ' , Реализ: ' + CONVERT(VARCHAR(20), ID_INVOICE) + '; Сумма: ' + dbo.MoneyFormat(S_ALL) + ' ||  '
+				SELECT 'РђРІР°РЅСЃ: ' + CONVERT(VARCHAR(20), ID_AVANS) + ' , Р РµР°Р»РёР·: ' + CONVERT(VARCHAR(20), ID_INVOICE) + '; РЎСѓРјРјР°: ' + dbo.MoneyFormat(S_ALL) + ' ||  '
 				FROM
 					(
 						SELECT DISTINCT ID_INVOICE, ID_AVANS, SUM(S_ALL) AS S_ALL

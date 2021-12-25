@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ï»¿USE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 
 		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Ñìåíà ÑÈ', @TXT, @CLIENT, @actid
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Ð¡Ð¼ÐµÐ½Ð° Ð¡Ð˜', @TXT, @CLIENT, @actid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -1,4 +1,4 @@
-USE [SaleDB]
+ï»¿USE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 		WHERE P.RPR_ID_HOST = R.HostId
 			AND P.RPR_DISTR = R.DistrNumber
 			AND P.RPR_COMP = R.CompNumber
-			AND RPR_OPER LIKE 'Èçìåíåí email%'
+			AND RPR_OPER LIKE 'Ð˜Ð·Ð¼ÐµÐ½ÐµÐ½ email%'
 		ORDER BY RPR_DATE DESC
 	) AS P
 	OUTER APPLY
@@ -77,8 +77,8 @@ BEGIN
 		ORDER BY M.[UpdDate] DESC
 	) AS M
 	LEFT JOIN Personal.OfficePersonal AS OP ON OP.ID = M.Manager_Id
-	WHERE	R.SST_SHORT = 'ÎÄÄ'
-		AND NT_SHORT = 'ÎÂÏ' --?
+	WHERE	R.SST_SHORT = 'ÐžÐ”Ð”'
+		AND NT_SHORT = 'ÐžÐ’ÐŸ' --?
 		AND (CAST(DistrNumber AS NVARCHAR) LIKE '%'+CAST(@DISTR AS NVARCHAR)+'%' OR @DISTR IS NULL)
 		AND (SystemShortName LIKE '%'+@SYS+'%' OR @SYS IS NULL)
 		AND (DS_INDEX = @ACTIVE OR @ACTIVE IS NULL)

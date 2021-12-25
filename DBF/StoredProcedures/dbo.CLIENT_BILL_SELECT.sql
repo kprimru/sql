@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[CLIENT_BILL_SELECT]
 	@clientid INT
@@ -72,7 +72,7 @@ BEGIN
 			BL_PRICE - ISNULL(I.IN_PRICE, 0)AS BL_UNPAY,
 			ORG_PSEDO
 		FROM @bill							    B
-		-- ToDo это должны быть лукапы :(
+		-- ToDo СЌС‚Рѕ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ Р»СѓРєР°РїС‹ :(
 		INNER MERGE JOIN dbo.OrganizationTable	O ON	B.ORG_ID = O.ORG_ID
 		INNER MERGE JOIN dbo.PeriodTable		P ON	P.PR_ID = B.PR_ID
 		INNER MERGE JOIN dbo.SaleObjectTable	S ON	S.SO_ID = B.SO_ID

@@ -1,4 +1,4 @@
-USE [IPLogs]
+﻿USE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO

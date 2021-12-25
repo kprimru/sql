@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -51,8 +51,8 @@ BEGIN
 
 
 		SELECT DISTINCT
-			Comment AS [Клиент],
-			a.Complect AS [Номер комплекта],
+			Comment AS [РљР»РёРµРЅС‚],
+			a.Complect AS [РќРѕРјРµСЂ РєРѕРјРїР»РµРєС‚Р°],
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT
@@ -63,7 +63,7 @@ BEGIN
 					WHERE c.Complect = a.Complect AND c.DS_REG = 0
 					ORDER BY SystemOrder FOR XML PATH('')
 				)
-			), 1, 2, '')) AS [Дистрибутивы]
+			), 1, 2, '')) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІС‹]
 		FROM Reg.RegNodeSearchView A WITH(NOEXPAND)
 		WHERE A.DS_REG = 0
 			--AND DistrType NOT IN ('NCT', 'ADM', 'NEK')

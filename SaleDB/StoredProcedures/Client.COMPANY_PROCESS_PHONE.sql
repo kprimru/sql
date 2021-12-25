@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -53,7 +53,7 @@ BEGIN
 		EXEC Client.COMPANY_PROCESS_PHONE_RETURN @RETURN, @RETURN
 
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'Изменение телефонного агента - Выдача'
+			SELECT a.ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’С‹РґР°С‡Р°'
 			FROM
 				Client.Company a
 				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID

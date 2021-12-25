@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,11 +30,11 @@ BEGIN
 			ID_SYSTEM, ID_OLD_SYSTEM, DISTR, ID_NET, ID_OLD_NET,
 			CASE
 				WHEN d.SystemID IS NULL OR d.SystemID = b.SystemID THEN b.SystemShortName
-				ELSE 'Ò ' + d.SystemShortName + ' Ì‡ ' + b.SystemShortName
+				ELSE '—Å ' + d.SystemShortName + ' –Ω–∞ ' + b.SystemShortName
 			END AS SYS_STR,
 			CASE
 				WHEN e.DistrTypeID IS NULL OR e.DistrTypeID = c.DistrTypeID THEN c.DistrTypeName
-				ELSE 'Ò ' + e.DistrTypeName + ' Ì‡ ' + c.DistrTypeName
+				ELSE '—Å ' + e.DistrTypeName + ' –Ω–∞ ' + c.DistrTypeName
 			END AS NET_STR,
 			DELIVERY_BASE, DELIVERY,
 			EXCHANGE_BASE, EXCHANGE,

@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -45,7 +45,7 @@ BEGIN
         FROM dbo.GET_TABLE_FROM_LIST(@actidlist, ',');
 
         INSERT INTO [dbo].[FinancingProtocol]([ID_CLIENT], [ID_DOCUMENT], [TP], [OPER], [TXT])
-        SELECT ACT_ID_CLIENT, a.ACT_ID, 'ACT', 'œÂ˜‡Ú¸ ‡ÍÚ‡', ''
+        SELECT ACT_ID_CLIENT, a.ACT_ID, 'ACT', '–ü–µ—á–∞—Ç—å –∞–∫—Ç–∞', ''
         FROM #act               AS a
         INNER JOIN [dbo].[ActTable] AS b ON a.[ACT_ID] = b.[ACT_ID]
 
@@ -284,7 +284,7 @@ BEGIN
 					AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 					TX_PERCENT, TX_NAME,
 					SO_ID,
-					--CASE WHEN A.ACT_ID_CLIENT = 5031 THEN '”ÒÎÛ„Ë ÔÓÔÓÎÌÂÌËˇ ˝ÍÁÂÏÔÎˇÓ‚ —ËÒÚÂÏ  ÓÌÒÛÎ¸Ú‡ÌÚœÎ˛Ò,ÛÒÚ‡ÌÓ‚ÎÂÌÌ˚ı ‚ ÔÓ‰‡Á‰ÂÎÂÌËˇı «‡Í‡Á˜ËÍ‡ Ó·˙ÂÏÓÏ ËÌÙÓÏ‡ˆËË,ÍÓÚÓ˚È ÔÓÒÚÛÔËÎ »ÒÔÓÎÌËÚÂÎ˛ ÓÚ –‡Á‡·ÓÚ˜ËÍ‡ —ËÒÚÂÏ  ÓÌÒÛÎ¸Ú‡ÌÚœÎ˛Ò Ò ˇÌ‚‡ˇ ÔÓ Ë˛Î¸ 2020„.‚ÍÎ˛˜ËÚÂÎ¸ÌÓ'
+					--CASE WHEN A.ACT_ID_CLIENT = 5031 THEN '–£—Å–ª—É–≥–∏ –ø–æ–ø–æ–ª–Ω–µ–Ω–∏—è —ç–∫–∑–µ–º–ø–ª—è—Ä–æ–≤ –°–∏—Å—Ç–µ–º –ö–æ–Ω—Å—É–ª—å—Ç–∞–Ω—Ç–ü–ª—é—Å,—É—Å—Ç–∞–Ω–æ–≤–ª–µ–Ω–Ω—ã—Ö –≤ –ø–æ–¥—Ä–∞–∑–¥–µ–ª–µ–Ω–∏—è—Ö –ó–∞–∫–∞–∑—á–∏–∫–∞ –æ–±—ä–µ–º–æ–º –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏–∏,–∫–æ—Ç–æ—Ä—ã–π –ø–æ—Å—Ç—É–ø–∏–ª –ò—Å–ø–æ–ª–Ω–∏—Ç–µ–ª—é –æ—Ç –†–∞–∑—Ä–∞–±–æ—Ç—á–∏–∫–∞ –°–∏—Å—Ç–µ–º –ö–æ–Ω—Å—É–ª—å—Ç–∞–Ω—Ç–ü–ª—é—Å —Å —è–Ω–≤–∞—Ä—è –ø–æ –∏—é–ª—å 2020–≥.–≤–∫–ª—é—á–∏—Ç–µ–ª—å–Ω–æ'
 					--ELSE GD_NAME END,
 					GD_NAME, --SO_BILL_STR,
 					UN_NAME, --SO_INV_UNIT,
@@ -303,7 +303,7 @@ BEGIN
 							dbo.TOTable ON TO_ID = TD_ID_TO
 						WHERE TD_ID_DISTR = AD_ID_DISTR
 					),
-					CASE WHEN z.IsOnline = 1 AND A.ACT_DATE > '20210801' THEN ' (‚ Ú.˜. ÒÔÂˆË‡Î¸ÌÓÈ ÍÓÔËË ÒËÒÚÂÏ˚)' ELSE '' END AS SYS_ADD,
+					CASE WHEN z.IsOnline = 1 AND A.ACT_DATE > '20210801' THEN ' (–≤ —Ç.—á. —Å–ø–µ—Ü–∏–∞–ª—å–Ω–æ–π –∫–æ–ø–∏–∏ —Å–∏—Å—Ç–µ–º—ã)' ELSE '' END AS SYS_ADD,
 					z.AD_EXPIRE
 				FROM dbo.ActTable               AS A
 				INNER JOIN #act                 AS Y    ON Y.ACT_ID     = A.ACT_ID
@@ -349,7 +349,7 @@ BEGIN
 			SELECT
 				AFD_ID_AFM, ACT_ID,
 				--PR_ID, PR_DATE, PR_MONTH, PR_END_DATE,
-				NULL AS DIS_ID, CONVERT(VARCHAR(20), COUNT(*)) + ' ¯Ú' AS DIS_NUM, SYS_NAME, SYS_ORDER,
+				NULL AS DIS_ID, CONVERT(VARCHAR(20), COUNT(*)) + ' —à—Ç' AS DIS_NUM, SYS_NAME, SYS_ORDER,
 				SUM(AD_PRICE) AS AD_PRICE, SUM(AD_TAX_PRICE) AS AD_TAX_PRICE,
 				SUM(AD_TOTAL_PRICE) AS AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME, SO_ID,

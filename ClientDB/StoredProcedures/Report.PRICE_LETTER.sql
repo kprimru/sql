@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ServiceName AS [СИ],
+			ServiceName AS [РЎР],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -33,7 +33,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('лок', 'Флэш')
+					AND DistrTypeName IN ('Р»РѕРє', 'Р¤Р»СЌС€')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -43,7 +43,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|Лок-Флэш],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|Р›РѕРє-Р¤Р»СЌС€],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -51,7 +51,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('1/С')
+					AND DistrTypeName IN ('1/РЎ')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -61,7 +61,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|1/с],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|1/СЃ],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -69,7 +69,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('м/с')
+					AND DistrTypeName IN ('Рј/СЃ')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -79,7 +79,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|м/с],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|Рј/СЃ],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -87,7 +87,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('СЕТЬ')
+					AND DistrTypeName IN ('РЎР•РўР¬')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -97,7 +97,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|Сеть],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РЎРµС‚СЊ],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -105,7 +105,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('ОВП')
+					AND DistrTypeName IN ('РћР’Рџ')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -115,7 +115,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|ОВП],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РћР’Рџ],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -123,7 +123,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('ОВПИ')
+					AND DistrTypeName IN ('РћР’РџР')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -133,7 +133,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|ОВПИ],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РћР’РџР],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -141,7 +141,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('ОВК')
+					AND DistrTypeName IN ('РћР’Рљ')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -151,7 +151,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|ОВК],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РћР’Рљ],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -159,7 +159,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('ОВМ1')
+					AND DistrTypeName IN ('РћР’Рњ1')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -169,7 +169,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|ОВМ1],
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РћР’Рњ1],
 			(
 				SELECT COUNT(DISTINCT ClientID)
 				FROM dbo.ClientDistrView b WITH(NOEXPAND)
@@ -177,7 +177,7 @@ BEGIN
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON c.ServiceStatusId = s.ServiceStatusId
 				WHERE a.ServiceID = c.ServiceID
 					AND b.DS_REG = 0
-					AND DistrTypeName IN ('ОВМ2')
+					AND DistrTypeName IN ('РћР’Рњ2')
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -187,7 +187,7 @@ BEGIN
 								AND b.COMP = z.DIS_COMP_NUM
 								AND DF_FIXED_PRICE <> 0
 						)
-			) AS [Количество клиентов без фиксированной стоимости|ОВМ2]
+			) AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚РѕРёРјРѕСЃС‚Рё|РћР’Рњ2]
 		FROM dbo.ServiceTable a
 		WHERE EXISTS
 			(

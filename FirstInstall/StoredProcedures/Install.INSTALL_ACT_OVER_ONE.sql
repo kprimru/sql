@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INSTALL_ACT', NULL, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Удаление', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'РЈРґР°Р»РµРЅРёРµ', @MASTERID, @OLD, @NEW
 
 END
 GO

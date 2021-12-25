@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -59,7 +59,7 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[SaleDB].[System].[Systems]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[SaleDB].[System].[Systems]')
 
         INSERT INTO [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host](SHORT, REG, ORD)
         SELECT HostShort, HostReg, HostOrder
@@ -73,7 +73,7 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[Host]')
 
         INSERT INTO [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System](SHORT, REG, ID_HOST, ORD)
         SELECT S.SystemShortName, S.SystemBaseName, DC.ID, S.SYstemOrder
@@ -89,7 +89,7 @@ BEGIN
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[DocumentClaim].[Distr].[System]')
 
         IF NOT EXISTS (SELECT TOP (1) * FROM [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SystemActive] WHERE SYS_REG = @Reg) BEGIN
             EXEC [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SYSTEM_INSERT]
@@ -99,7 +99,7 @@ BEGIN
                 @SYS_REG        = @Reg,
                 @SYS_ORDER      = @Ord;
 
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SystemDetail]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[FirstInstall].[Distr].[SystemDetail]')
         END;
 
         IF NOT EXISTS (SELECT TOP (1) * FROM [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SystemActive] WHERE SYS_REG = @Reg) BEGIN
@@ -110,7 +110,7 @@ BEGIN
                 @SYS_REG        = @Reg,
                 @SYS_ORDER      = @Ord;
 
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SystemDetail]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[FirstInstallNah].[Distr].[SystemDetail]')
         END;
 
         INSERT INTO [PC275-SQL\DELTA].[DBF].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
@@ -125,7 +125,7 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF].[dbo].[HostTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\DELTA].[DBF].[dbo].[HostTable]')
 
         INSERT INTO [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
@@ -139,7 +139,7 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\DELTA].[DBF_NAH].[dbo].[HostTable]')
 
         INSERT INTO [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
         SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
@@ -155,7 +155,7 @@ BEGIN
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\DELTA].[DBF].[dbo].[SystemTable]')
 
         INSERT INTO [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
         SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
@@ -171,7 +171,7 @@ BEGIN
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\DELTA].[DBF_NAH].[dbo].[SystemTable]')
 
         INSERT INTO [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
         SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
@@ -185,7 +185,7 @@ BEGIN
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[BuhDB].[dbo].[SystemTable]')
 
         INSERT INTO [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)
         SELECT S.SystemFullName, '', 1, '', 0, 1, 1, 1, '', SystemBaseName, 0, 0
@@ -199,7 +199,7 @@ BEGIN
                 );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable]')
+            PRINT ('Р”РѕР±Р°РІР»РµРЅРѕ РІ [PC275-SQL\GAMMA].[BuhNahDB].[dbo].[SystemTable]')
 
         IF @@TRANCOUNT > 0
             COMMIT TRAN;

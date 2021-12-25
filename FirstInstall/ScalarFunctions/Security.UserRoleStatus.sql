@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,7 +50,7 @@ BEGIN
 				) AS USERROLES ON ROLE_NAME = RL_ROLE
 		)
 	BEGIN
-		--пользователь не включен ни в какую из ролей
+		--РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РІРєР»СЋС‡РµРЅ РЅРё РІ РєР°РєСѓСЋ РёР· СЂРѕР»РµР№
 		SET @RESULT = 1
 	END
 	ELSE IF NOT EXISTS
@@ -64,7 +64,7 @@ BEGIN
 			FROM @SYSROLE
 		)
 	BEGIN
-		--включен во все подроли
+		--РІРєР»СЋС‡РµРЅ РІРѕ РІСЃРµ РїРѕРґСЂРѕР»Рё
 		SET @RESULT = 2
 	END
 	ELSE IF EXISTS
@@ -73,7 +73,7 @@ BEGIN
 			FROM @SYSROLE
 		)
 	BEGIN
-		--включен в часть ролей
+		--РІРєР»СЋС‡РµРЅ РІ С‡Р°СЃС‚СЊ СЂРѕР»РµР№
 		SET @RESULT = 3
 	END
 

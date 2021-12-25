@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,15 +26,15 @@ BEGIN
 
 		DECLARE @LAST_DATE	DATETIME
 		SELECT
-			t.CLIENT AS [Наименование заказчика],
-			SHORT AS [Базис/К-Прим],
-			p.CLAIM_PRIVISION AS [Сумма обеспечения заявки],
-			p.GK_DATE AS [Дата заключения контракта],
-			dbo.GetLastWedFri(p.GK_DATE) AS [Срок возврата],
-			TS_SHORT AS [Эл. пл.],
-			GK_SUM AS [НМЦК],
-			NOTICE_NUM AS [Номер извещения],
-			DATE AS [Дата извещения]
+			t.CLIENT AS [РќР°РёРјРµРЅРѕРІР°РЅРёРµ Р·Р°РєР°Р·С‡РёРєР°],
+			SHORT AS [Р‘Р°Р·РёСЃ/Рљ-РџСЂРёРј],
+			p.CLAIM_PRIVISION AS [РЎСѓРјРјР° РѕР±РµСЃРїРµС‡РµРЅРёСЏ Р·Р°СЏРІРєРё],
+			p.GK_DATE AS [Р”Р°С‚Р° Р·Р°РєР»СЋС‡РµРЅРёСЏ РєРѕРЅС‚СЂР°РєС‚Р°],
+			dbo.GetLastWedFri(p.GK_DATE) AS [РЎСЂРѕРє РІРѕР·РІСЂР°С‚Р°],
+			TS_SHORT AS [Р­Р». РїР».],
+			GK_SUM AS [РќРњР¦Рљ],
+			NOTICE_NUM AS [РќРѕРјРµСЂ РёР·РІРµС‰РµРЅРёСЏ],
+			DATE AS [Р”Р°С‚Р° РёР·РІРµС‰РµРЅРёСЏ]
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER
@@ -52,7 +52,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			'Итого :', NULL, SUM(p.CLAIM_PRIVISION), NULL, NULL, NULL, NULL, NULL, NULL
+			'РС‚РѕРіРѕ :', NULL, SUM(p.CLAIM_PRIVISION), NULL, NULL, NULL, NULL, NULL, NULL
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER

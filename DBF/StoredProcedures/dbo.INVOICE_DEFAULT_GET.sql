@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_DEFAULT_GET]
 	@clientid INT
@@ -42,7 +42,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -76,7 +76,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT

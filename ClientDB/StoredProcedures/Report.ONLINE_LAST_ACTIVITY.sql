@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,22 +25,22 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль/подхост],
-			ServiceName AS [Си], ISNULL(ClientFullName, Comment) AS [Клиент], b.DistrStr AS [Дистрибутив],
-			b.RegisterDate AS [Дата регистрации], SST_SHORT AS [Тип системы], NT_SHORT AS [Сеть],
-			LAST_ACTIVITY AS [Последняя неделя активности],
-			e.LOGIN_CNT AS [Кол-во входов на последней неделе],
-			e.SESSION_TIME AS [Время сессий на последней неделе],
+			ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ/РїРѕРґС…РѕСЃС‚],
+			ServiceName AS [РЎРё], ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], b.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			b.RegisterDate AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹], NT_SHORT AS [РЎРµС‚СЊ],
+			LAST_ACTIVITY AS [РџРѕСЃР»РµРґРЅСЏСЏ РЅРµРґРµР»СЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё],
+			e.LOGIN_CNT AS [РљРѕР»-РІРѕ РІС…РѕРґРѕРІ РЅР° РїРѕСЃР»РµРґРЅРµР№ РЅРµРґРµР»Рµ],
+			e.SESSION_TIME AS [Р’СЂРµРјСЏ СЃРµСЃСЃРёР№ РЅР° РїРѕСЃР»РµРґРЅРµР№ РЅРµРґРµР»Рµ],
 			DATEDIFF(WEEK,
 						CASE
 							WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
 							ELSE LAST_ACTIVITY
-						END, GETDATE()) AS [Кол-во недель без активность],
+						END, GETDATE()) AS [РљРѕР»-РІРѕ РЅРµРґРµР»СЊ Р±РµР· Р°РєС‚РёРІРЅРѕСЃС‚СЊ],
 			DATEDIFF(MONTH,
 						CASE
 							WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
 							ELSE LAST_ACTIVITY
-						END, GETDATE()) AS [Кол-во месяцев без активности]
+						END, GETDATE()) AS [РљРѕР»-РІРѕ РјРµСЃСЏС†РµРІ Р±РµР· Р°РєС‚РёРІРЅРѕСЃС‚Рё]
 		FROM
 			(
 				SELECT ID_HOST, DISTR, COMP, MAX(FINISH) AS LAST_ACTIVITY
@@ -80,7 +80,7 @@ BEGIN
 					AND a.LAST_ACTIVITY = y.FINISH
 					AND y.TYPE = 1
 			) AS e
-		WHERE b.DS_REG = 0 AND SST_SHORT NOT IN ('ОДД', 'ДСП') AND NT_SHORT IN ('ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф', 'ОВМ-Ф (0;1)', 'ОВМ-Ф (1;0)', 'ОВМ-Ф (1;2)')
+		WHERE b.DS_REG = 0 AND SST_SHORT NOT IN ('РћР”Р”', 'Р”РЎРџ') AND NT_SHORT IN ('РћР’Рџ', 'РћР’РџР', 'РћР’Рљ', 'РћР’Рњ1', 'РћР’Рњ2', 'РћР’Рљ-Р¤', 'РћР’Рњ-Р¤ (0;1)', 'РћР’Рњ-Р¤ (1;0)', 'РћР’Рњ-Р¤ (1;2)')
 		ORDER BY CASE SubhostName WHEN '' THEN 1 ELSE 2 END, SubhostName, ManagerName, ServiceName, ClientFullName, b.DistrStr
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

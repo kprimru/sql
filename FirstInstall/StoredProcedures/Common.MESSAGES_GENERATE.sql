@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,9 +28,9 @@ BEGIN
 
 	SET @RL = Security.RoleID('rl_notify_contract')
 
-	-- есть оплата, но не указан договор
+	-- РµСЃС‚СЊ РѕРїР»Р°С‚Р°, РЅРѕ РЅРµ СѓРєР°Р·Р°РЅ РґРѕРіРѕРІРѕСЂ
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан договор (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РґРѕРіРѕРІРѕСЂ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -41,7 +41,7 @@ BEGIN
 	SET @RL = Security.RoleID('rl_notify_distr')
 
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан дистрибутив (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РґРёСЃС‚СЂРёР±СѓС‚РёРІ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -53,7 +53,7 @@ BEGIN
 	SET @RL = Security.RoleID('rl_notify_claim')
 
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не сформирована заявка (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅР° Р·Р°СЏРІРєР° (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -67,7 +67,7 @@ BEGIN
 	SET @RL = Security.RoleID('rl_notify_claim_receive')
 
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не отмечено получение заявки (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ РѕС‚РјРµС‡РµРЅРѕ РїРѕР»СѓС‡РµРЅРёРµ Р·Р°СЏРІРєРё (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -79,7 +79,7 @@ BEGIN
 	SET @RL = Security.RoleID('rl_notify_personal')
 
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не произведена установка (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ РїСЂРѕРёР·РІРµРґРµРЅР° СѓСЃС‚Р°РЅРѕРІРєР° (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -92,7 +92,7 @@ BEGIN
 	SET @RL = Security.RoleID('rl_notify_act_return')
 
 	INSERT INTO #TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан полный комплект документов (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РїРѕР»РЅС‹Р№ РєРѕРјРїР»РµРєС‚ РґРѕРєСѓРјРµРЅС‚РѕРІ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -179,9 +179,9 @@ BEGIN
 			MSG_SEND TINYINT DEFAULT 0)
 
 
-	-- есть оплата, но не указан договор
+	-- РµСЃС‚СЊ РѕРїР»Р°С‚Р°, РЅРѕ РЅРµ СѓРєР°Р·Р°РЅ РґРѕРіРѕРІРѕСЂ
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан договор (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РґРѕРіРѕРІРѕСЂ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -190,7 +190,7 @@ BEGIN
 			AND ID_FULL_PAY = 1
 
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан дистрибутив (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РґРёСЃС‚СЂРёР±СѓС‚РёРІ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -201,7 +201,7 @@ BEGIN
 
 
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не сформирована заявка (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅР° Р·Р°СЏРІРєР° (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -212,7 +212,7 @@ BEGIN
 			AND CLM_ID IS NULL
 
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не отмечено получение заявки (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ РѕС‚РјРµС‡РµРЅРѕ РїРѕР»СѓС‡РµРЅРёРµ Р·Р°СЏРІРєРё (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -222,7 +222,7 @@ BEGIN
 			AND IND_CLAIM IS NULL
 
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не произведена установка (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ РїСЂРѕРёР·РІРµРґРµРЅР° СѓСЃС‚Р°РЅРѕРІРєР° (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView
@@ -233,7 +233,7 @@ BEGIN
 			AND PER_ID IS NULL
 
 	INSERT INTO @TEMP(MSG_USER, MSG_TEXT, MSG_NOTIFY, MSG_DATA, MSG_ROW)
-		SELECT RM_ID_USER, 'Не указан полный комплект документов (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
+		SELECT RM_ID_USER, 'РќРµ СѓРєР°Р·Р°РЅ РїРѕР»РЅС‹Р№ РєРѕРјРїР»РµРєС‚ РґРѕРєСѓРјРµРЅС‚РѕРІ (' + CL_NAME + '  ' + SYS_SHORT + ')', 1, 'INSTALL', IND_ID
 		FROM
 			Security.RoleMessages CROSS JOIN
 			Install.InstallFullView

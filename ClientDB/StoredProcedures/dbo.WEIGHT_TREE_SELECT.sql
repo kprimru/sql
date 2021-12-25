@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -154,13 +154,13 @@ BEGIN
 			PRIMARY KEY CLUSTERED ([Id])
 		);
 
-		-- заполняем системы
+		-- Р·Р°РїРѕР»РЅСЏРµРј СЃРёСЃС‚РµРјС‹
 		INSERT INTO @Result([Data])
 		SELECT DISTINCT
 			[Systems]
 		FROM @Data;
 
-		-- заполнем типы систем
+		-- Р·Р°РїРѕР»РЅРµРј С‚РёРїС‹ СЃРёСЃС‚РµРј
 		INSERT INTO @Result([Parent_Id], [Data])
 		SELECT R.[Id], [Types]
 		FROM
@@ -170,7 +170,7 @@ BEGIN
 		) D
 		INNER JOIN @Result R ON R.[Data] = D.[Systems] AND R.[Parent_Id] IS NULL;
 
-		-- заполняем сетевитость и вес для нее
+		-- Р·Р°РїРѕР»РЅСЏРµРј СЃРµС‚РµРІРёС‚РѕСЃС‚СЊ Рё РІРµСЃ РґР»СЏ РЅРµРµ
 		INSERT INTO @Result([Parent_Id], [Data], [Weight])
 		SELECT
 			(
@@ -186,7 +186,7 @@ BEGIN
 			), D.[Nets], D.[Weight]
 		FROM @Data D
 
-	-----------------------ФИЛЬТР-----------------------------------------------------
+	-----------------------Р¤РР›Р¬РўР -----------------------------------------------------
 
 		IF @SYS IS NOT NULL
 		BEGIN
@@ -281,7 +281,7 @@ BEGIN
 				WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
 			)
 		END
-	----------------------КОНЕЦ ФИЛЬТРА---------------------------------------------
+	----------------------РљРћРќР•Р¦ Р¤РР›Р¬РўР Рђ---------------------------------------------
 
 		SELECT *
 		FROM @Result

@@ -1,12 +1,12 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY_ALL]
 	@invdate SMALLDATETIME,
@@ -75,7 +75,7 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0
 			BEGIN
-				EXEC dbo.INVOICE_CREATE_BY_PRPAY @clid, @invdate, 0, @invoiceid OUTPUT, 0	--ноль - это не печатать
+				EXEC dbo.INVOICE_CREATE_BY_PRPAY @clid, @invdate, 0, @invoiceid OUTPUT, 0	--РЅРѕР»СЊ - СЌС‚Рѕ РЅРµ РїРµС‡Р°С‚Р°С‚СЊ
 
 				IF @invoiceid IS NOT NULL
 					SET @invoicestr = @invoicestr + CONVERT(VARCHAR, @invoiceid) + ','

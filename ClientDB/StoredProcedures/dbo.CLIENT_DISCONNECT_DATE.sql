@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 					INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON RPR_ID_HOST = HostID
 																AND RPR_DISTR = DISTR
 																AND RPR_COMP = COMP
-				WHERE  ID_CLIENT = @CLIENT AND RPR_OPER IN ('Отключение', 'Сопровождение отключено')
+				WHERE  ID_CLIENT = @CLIENT AND RPR_OPER IN ('РћС‚РєР»СЋС‡РµРЅРёРµ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 
 				UNION ALL
 
@@ -50,7 +50,7 @@ BEGIN
 																AND a.DISTR = b.DISTR
 																AND a.COMP = b.COMP
 				WHERE ID_CLIENT = @CLIENT
-					AND COMMENT = 'Отключение'
+					AND COMMENT = 'РћС‚РєР»СЋС‡РµРЅРёРµ'
 			) AS o_O
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

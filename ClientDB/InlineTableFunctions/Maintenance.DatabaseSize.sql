@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,7 +33,7 @@ RETURN
 				(
 					CASE
 						WHEN (a1.used + ISNULL(a4.used,0)) > a1.data THEN  dbo.FileByteSizeToStr(((a1.used + ISNULL(a4.used,0)) - a1.data) * 8 * 1024)
-						ELSE '0 á'
+						ELSE '0 Ð±'
 					END
 				)  AS index_str,
 				(
@@ -45,7 +45,7 @@ RETURN
 				(
 					CASE
 						WHEN (a1.reserved + ISNULL(a4.reserved,0)) > a1.used THEN dbo.FileByteSizeToStr(((a1.reserved + ISNULL(a4.reserved,0)) - a1.used) * 8 * 1024)
-						ELSE '0 á'
+						ELSE '0 Ð±'
 					END
 				) AS unused_str
 			FROM

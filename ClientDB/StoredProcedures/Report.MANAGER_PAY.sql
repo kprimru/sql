@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -119,9 +119,9 @@ BEGIN
 		DEALLOCATE MANAGER
 
 		SELECT
-			MANAGER AS [Руководитель],
-			CL_COUNT AS [Кол-во клиентов], PAY_BILL AS [Оплачивают|По счету], PAY_INVOICE AS [Оплачивают|По счет-фактуре], PAY_COUNT AS [Оплачивают|Всего],
-			PAY_TOTAL_BILL AS [Оплатили|По счету], PAY_TOTAL_INVOICE AS [Оплатили|По счет-фактуре], PAY_TOTAL AS [Оплатили|Всего], PAY_PERCENT AS [Процент]
+			MANAGER AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ],
+			CL_COUNT AS [РљРѕР»-РІРѕ РєР»РёРµРЅС‚РѕРІ], PAY_BILL AS [РћРїР»Р°С‡РёРІР°СЋС‚|РџРѕ СЃС‡РµС‚Сѓ], PAY_INVOICE AS [РћРїР»Р°С‡РёРІР°СЋС‚|РџРѕ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ], PAY_COUNT AS [РћРїР»Р°С‡РёРІР°СЋС‚|Р’СЃРµРіРѕ],
+			PAY_TOTAL_BILL AS [РћРїР»Р°С‚РёР»Рё|РџРѕ СЃС‡РµС‚Сѓ], PAY_TOTAL_INVOICE AS [РћРїР»Р°С‚РёР»Рё|РџРѕ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ], PAY_TOTAL AS [РћРїР»Р°С‚РёР»Рё|Р’СЃРµРіРѕ], PAY_PERCENT AS [РџСЂРѕС†РµРЅС‚]
 		FROM #man
 		ORDER BY MANAGER
 

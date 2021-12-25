@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,7 +21,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		-- 4 варианта: обслуживание и подхост
+		-- 4 РІР°СЂРёР°РЅС‚Р°: РѕР±СЃР»СѓР¶РёРІР°РЅРёРµ Рё РїРѕРґС…РѕСЃС‚
 		DECLARE @service SMALLINT
 		DECLARE @subhost SMALLINT
 

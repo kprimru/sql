@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 			SELECT ID_CLIENT, TP, SENDER, DATE, NOTE, RECEIVE_USER, HARD_READ
 			FROM
 				(
-					SELECT NULL AS ID_CLIENT, 1 As TP, '¿‚ÚÓÏ‡Ú' AS SENDER, GETDATE() AS DATE, a.NOTE, RECEIVER AS RECEIVE_USER, 1 AS HARD_READ
+					SELECT NULL AS ID_CLIENT, 1 As TP, '–ê–≤—Ç–æ–º–∞—Ç' AS SENDER, GETDATE() AS DATE, a.NOTE, RECEIVER AS RECEIVE_USER, 1 AS HARD_READ
 					FROM
 						Task.Tasks a
 						INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
@@ -41,7 +41,7 @@ BEGIN
 
 					UNION ALL
 
-					SELECT ClientID, 1, '¿‚ÚÓÏ‡Ú', GETDATE(), a.NOTE, ManagerLogin, 1
+					SELECT ClientID, 1, '–ê–≤—Ç–æ–º–∞—Ç', GETDATE(), a.NOTE, ManagerLogin, 1
 					FROM
 						Task.Tasks a
 						INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
@@ -53,7 +53,7 @@ BEGIN
 
 					UNION ALL
 
-					SELECT ClientID, 1, '¿‚ÚÓÏ‡Ú', GETDATE(), a.NOTE, ServiceLogin, 1
+					SELECT ClientID, 1, '–ê–≤—Ç–æ–º–∞—Ç', GETDATE(), a.NOTE, ServiceLogin, 1
 					FROM
 						Task.Tasks a
 						INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID

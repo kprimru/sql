@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,16 +30,16 @@ BEGIN
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber AND SystemRic = 20
 			INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON b.HostID = c.HostID AND a.DISTR = c.DistrNumber AND a.COMP = c.CompNumber
 		WHERE RIC_PERSONAL <> ''
-			AND CHAT LIKE '%] РИЦ (%'
+			AND CHAT LIKE '%] Р РР¦ (%'
 			AND
 			(
-				c.SubhostName = 'Н1' AND RIC_PERSONAL NOT LIKE '%Находка%'
+				c.SubhostName = 'Рќ1' AND RIC_PERSONAL NOT LIKE '%РќР°С…РѕРґРєР°%'
 				OR
-				c.SubhostName = 'У1' AND RIC_PERSONAL NOT LIKE '%Уссурийск%'
+				c.SubhostName = 'РЈ1' AND RIC_PERSONAL NOT LIKE '%РЈСЃСЃСѓСЂРёР№СЃРє%'
 				OR
-				--c.SubhostName = 'Л1' AND RIC_PERSONAL NOT LIKE '%Славянка%'
+				--c.SubhostName = 'Р›1' AND RIC_PERSONAL NOT LIKE '%РЎР»Р°РІСЏРЅРєР°%'
 				--OR
-				c.SubhostName = 'М' AND RIC_PERSONAL NOT LIKE '%Артем%'
+				c.SubhostName = 'Рњ' AND RIC_PERSONAL NOT LIKE '%РђСЂС‚РµРј%'
 			)
 		ORDER BY FIRST_DATE DESC
 

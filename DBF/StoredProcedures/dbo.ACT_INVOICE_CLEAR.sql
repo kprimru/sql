@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Отвязка от счета-фактуры', 'Был номер ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
+			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'РћС‚РІСЏР·РєР° РѕС‚ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹', 'Р‘С‹Р» РЅРѕРјРµСЂ ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
 			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.InvoiceSaleTable b ON a.ACT_ID_INVOICE = b.INS_ID

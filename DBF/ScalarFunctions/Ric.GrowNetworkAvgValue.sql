@@ -1,11 +1,11 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-	Показатель среднесетевого роста
+	РџРѕРєР°Р·Р°С‚РµР»СЊ СЃСЂРµРґРЅРµСЃРµС‚РµРІРѕРіРѕ СЂРѕСЃС‚Р°
 */
 ALTER FUNCTION [Ric].[GrowNetworkAvgValue]
 (

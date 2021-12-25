@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ISNULL(ManagerName, SubhostName) AS 'Руководитель',
-			CASE WHEN ManagerName IS NULL THEN NULL ELSE ServiceName END AS 'СИ',
-			a.DistrStr AS 'Дистрибутив', NT_SHORT AS 'Сеть', ClientName AS 'Клиент', SST_SHORT AS 'Тип',
+			ISNULL(ManagerName, SubhostName) AS 'Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ',
+			CASE WHEN ManagerName IS NULL THEN NULL ELSE ServiceName END AS 'РЎР',
+			a.DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', NT_SHORT AS 'РЎРµС‚СЊ', ClientName AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї',
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT b.DistrStr + ','
@@ -36,11 +36,11 @@ BEGIN
 						AND b.DS_REG = 0
 						AND b.SystemShortName <> a.SystemShortName
 					ORDER BY SystemOrder FOR XML PATH('')
-			)), 1, 1, '')) AS [Дополнительные системы]
+			)), 1, 1, '')) AS [Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРёСЃС‚РµРјС‹]
 		FROM dbo.RegNodeComplectClientView a
-		WHERE a.SystemShortName NOT IN ('БО', 'БОс', 'БОВП', 'СвРег')
+		WHERE a.SystemShortName NOT IN ('Р‘Рћ', 'Р‘РћСЃ', 'Р‘РћР’Рџ', 'РЎРІР РµРі')
 			AND a.DS_REG = 0
-			AND SST_SHORT IN ('СПЕЦ', 'ЛСВ')
+			AND SST_SHORT IN ('РЎРџР•Р¦', 'Р›РЎР’')
 			AND NOT EXISTS
 				(
 					SELECT *

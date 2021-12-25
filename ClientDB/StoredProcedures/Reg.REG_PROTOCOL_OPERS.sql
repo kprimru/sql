@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,32 +26,32 @@ BEGIN
 		SELECT DISTINCT RPR_OPER
 		FROM dbo.RegProtocol
 		WHERE RPR_OPER NOT LIKE '"%'
-			AND RPR_OPER NOT LIKE 'Добавлен в комплект%'
-			AND RPR_OPER NOT LIKE 'Изменен email%'
-			AND RPR_OPER NOT LIKE 'Изменен атрибут%'
-			AND RPR_OPER NOT LIKE 'Изменен обслуживающий субъект%'
-			AND RPR_OPER NOT LIKE 'Изменен комментарий%'
-			AND RPR_OPER NOT LIKE 'Изменен доп. параметр%'
-			AND RPR_OPER NOT LIKE 'Изменен номер телефона%'
-			AND RPR_OPER NOT LIKE 'Изменен техн. тип%'
-			AND RPR_OPER NOT LIKE 'Изменена дата%'
-			AND RPR_OPER NOT LIKE 'Изменен УП%'
-			AND RPR_OPER NOT LIKE 'Изменена серия%'
-			AND RPR_OPER NOT LIKE 'Изменена сетевитость%'
-			AND RPR_OPER NOT LIKE 'Назначен комментарий%'
-			AND RPR_OPER NOT LIKE 'Отвязан Yubikey%'
-			AND RPR_OPER NOT LIKE 'Назначен Yubikey%'
-			AND RPR_OPER NOT LIKE 'Привязан Yubikey%'
-			AND RPR_OPER NOT LIKE 'Первая регистрация системы%'
-			AND RPR_OPER NOT LIKE 'Изменена дата%'
-			AND RPR_OPER NOT LIKE 'Увеличилось количество оставшихся привязок%'
-			AND RPR_OPER NOT LIKE 'Изменен состав ИБ%'
-			AND RPR_OPER NOT LIKE 'Дистрибутив переведен из%'
-			AND RPR_OPER NOT LIKE 'Система%'
+			AND RPR_OPER NOT LIKE 'Р”РѕР±Р°РІР»РµРЅ РІ РєРѕРјРїР»РµРєС‚%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ email%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ Р°С‚СЂРёР±СѓС‚%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёР№ СЃСѓР±СЉРµРєС‚%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ РєРѕРјРјРµРЅС‚Р°СЂРёР№%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ РґРѕРї. РїР°СЂР°РјРµС‚СЂ%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ С‚РµС…РЅ. С‚РёРї%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅР° РґР°С‚Р°%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ РЈРџ%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅР° СЃРµСЂРёСЏ%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅР° СЃРµС‚РµРІРёС‚РѕСЃС‚СЊ%'
+			AND RPR_OPER NOT LIKE 'РќР°Р·РЅР°С‡РµРЅ РєРѕРјРјРµРЅС‚Р°СЂРёР№%'
+			AND RPR_OPER NOT LIKE 'РћС‚РІСЏР·Р°РЅ Yubikey%'
+			AND RPR_OPER NOT LIKE 'РќР°Р·РЅР°С‡РµРЅ Yubikey%'
+			AND RPR_OPER NOT LIKE 'РџСЂРёРІСЏР·Р°РЅ Yubikey%'
+			AND RPR_OPER NOT LIKE 'РџРµСЂРІР°СЏ СЂРµРіРёСЃС‚СЂР°С†РёСЏ СЃРёСЃС‚РµРјС‹%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅР° РґР°С‚Р°%'
+			AND RPR_OPER NOT LIKE 'РЈРІРµР»РёС‡РёР»РѕСЃСЊ РєРѕР»РёС‡РµСЃС‚РІРѕ РѕСЃС‚Р°РІС€РёС…СЃСЏ РїСЂРёРІСЏР·РѕРє%'
+			AND RPR_OPER NOT LIKE 'РР·РјРµРЅРµРЅ СЃРѕСЃС‚Р°РІ РР‘%'
+			AND RPR_OPER NOT LIKE 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РїРµСЂРµРІРµРґРµРЅ РёР·%'
+			AND RPR_OPER NOT LIKE 'РЎРёСЃС‚РµРјР°%'
 
 		UNION
 
-		SELECT 'Изменен email'
+		SELECT 'РР·РјРµРЅРµРЅ email'
 
 		ORDER BY RPR_OPER
 

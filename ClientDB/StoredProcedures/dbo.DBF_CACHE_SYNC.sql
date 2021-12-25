@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,7 +21,7 @@ BEGIN
 		BEGIN TRY
 			EXEC dbo.DBF_CACHE_SYNC_INTERNAL;
 
-			-- ждем минуту до следующего запуска
+			-- Р¶РґРµРј РјРёРЅСѓС‚Сѓ РґРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ Р·Р°РїСѓСЃРєР°
 			WAITFOR DELAY '00:01';
 		END TRY
 		BEGIN CATCH
@@ -29,7 +29,7 @@ BEGIN
 				@Number	=	ERROR_NUMBER(),
 				@Msg	=	ERROR_MESSAGE()
 
-			SET @Message = 'Произошла ошибка: "' + @Msg + '". Номер ошибки: ' + Cast(@Number AS NVarChar(Max));
+			SET @Message = 'РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: "' + @Msg + '". РќРѕРјРµСЂ РѕС€РёР±РєРё: ' + Cast(@Number AS NVarChar(Max));
 
 			EXEC [Maintenance].[MAIL_SEND] @Message;
 

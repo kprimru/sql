@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,7 +11,7 @@ ALTER FUNCTION [dbo].[ComplectGetBanks]
 	@COMPLECT		NVARCHAR(50),
 	@SYS_NET_XML	XML	= NULL
 )
-RETURNS @t TABLE							--рюакхжю дкъ хдеюкэмнцн янярюбю
+RETURNS @t TABLE							--п╒п░п▒п⌡п≤п╕п░ п■п⌡п╞ п≤п■п∙п░п⌡п╛п²п·п⌠п· п║п·п║п╒п░п▓п░
 	(
 		InfoBankID			INT,
 		InfoBankName		NVARCHAR(50),
@@ -21,7 +21,7 @@ RETURNS @t TABLE							--рюакхжю дкъ хдеюкэмнцн янярюбю
 	)
 AS
 BEGIN
-	DECLARE @sys	TABLE					--рюакхжю я дюммшлх я яхярелюлх йнлокейрю
+	DECLARE @sys	TABLE					--п╒п░п▒п⌡п≤п╕п░ п║ п■п░п²п²п╚п°п≤ п║ п║п≤п║п╒п∙п°п░п°п≤ п п·п°п÷п⌡п∙п п╒п░
 	(
 		SystemID		INT,
 		SystemBaseName	NVARCHAR(50),
@@ -63,7 +63,7 @@ BEGIN
 		INNER JOIN dbo.SystemTable ON Sys_Id = SystemId
 		INNER JOIN dbo.DistrTypeTable ON DistrTypeId = Net_Id;
 
-	-----------------------------------------бшвхякъел уняр, дхярп х йнло нямнбмни яхярелш щрнцн йнлокейрю------------------------
+	-----------------------------------------п▓п╚п╖п≤п║п⌡п╞п∙п° п╔п·п║п╒, п■п≤п║п╒п═ п≤ п п·п°п÷ п·п║п²п·п▓п²п·п≥ п║п≤п║п╒п∙п°п╚ п╜п╒п·п⌠п· п п·п°п÷п⌡п∙п п╒п░------------------------
 	SELECT TOP(1)
 		@DISTR = Cast(MainDistrNumber AS Int),
 		@HOST = MainHostID,
@@ -72,7 +72,7 @@ BEGIN
 	WHERE Complect = @COMPLECT;
 	------------------------------------------------------------------------------------------------------------------------------
 
-	---------------------------------------------бшрюяйхбюел аюмйх, йнрнпше яеивюя еярэ б яхяреле------------------------------------
+	---------------------------------------------п▓п╚п╒п░п║п п≤п▓п░п∙п° п▒п░п²п п≤, п п·п╒п·п═п╚п∙ п║п∙п≥п╖п░п║ п∙п║п╒п╛ п▓ п║п≤п║п╒п∙п°п∙------------------------------------
 	IF @SYS_NET_XML IS NULL
 		INSERT INTO @rl_bnks
 		SELECT UI_ID_BASE
@@ -108,13 +108,13 @@ BEGIN
 								(
 									SELECT InfoBankID
 									FROM dbo.InfoBankTable
-									WHERE InfoBankName IN ('QSOV', 'DOF')                           --ме опнбепърэ мю мюкхвхе менаъгюрекэмшу аюмйнб йпнле DOF х QSOV
+									WHERE InfoBankName IN ('QSOV', 'DOF')                           --п²п∙ п÷п═п·п▓п∙п═п╞п╒п╛ п²п░ п²п░п⌡п≤п╖п≤п∙ п²п∙п·п▒п╞п≈п░п╒п∙п⌡п╛п²п╚п╔ п▒п░п²п п·п▓ п п═п·п°п∙ DOF п≤ QSOV
 								)
 			)
 	GROUP BY InfoBankID, InfoBankName, InfoBankShortName
 
 
-	--сдюкъел хг яохяйю яхярел ре, йнрнпше днкфмш ашрэ рнкэйн опх йюйнл-рн сякнбхх
+	--пёп■п░п⌡п╞п∙п° п≤п≈ п║п÷п≤п║п п░ п║п≤п║п╒п∙п° п╒п∙, п п·п╒п·п═п╚п∙ п■п·п⌡п√п²п╚ п▒п╚п╒п╛ п╒п·п⌡п╛п п· п÷п═п≤ п п░п п·п°-п╒п· пёп║п⌡п·п▓п≤п≤
 	---------------------------------------------QSOV--------------------------------------------------------
 
 	IF	EXISTS
@@ -122,8 +122,8 @@ BEGIN
 				SELECT *
 				FROM @sys
 				WHERE	SystemBaseName IN ('LAW', 'BUD', 'BUDU', 'JUR', 'JURP')
-					OR	SystemBaseName IN ('SKJO', 'SKJP', 'SKJB', 'SBOO', 'SBOB') AND DistrTypeName IN ('КНЙ', 'ТКЩЬ')
-					OR	SystemBaseName IN ('SKJP', 'SBOO') AND DistrTypeName = 'нбл-т(1;2)'
+					OR	SystemBaseName IN ('SKJO', 'SKJP', 'SKJB', 'SBOO', 'SBOB') AND DistrTypeName IN ('п╩п╬п╨', 'я└п╩я█я┬')
+					OR	SystemBaseName IN ('SKJP', 'SBOO') AND DistrTypeName = 'п·п▓п°-п╓(1;2)'
 
 			)
 		AND EXISTS
@@ -153,7 +153,7 @@ BEGIN
 		WHERE InfoBankName = 'DOF';
 	---------------------------------------------------------------------------------------------------------
 
-	------------------------------------с ЯХЯРЕЛ яой ЛНФЕР АШРЭ ДБЮ ПЮГМШУ ЯНЯРЮБЮ Б ГЮБХЯХЛНЯРХ НР ЯНДЕПФЮМХЪ Б ЯЕАЕ RZB ХКХ ROS-----------------------------------------------------------------
+	------------------------------------пё я│п╦я│я┌п╣п╪ п║п÷п  п╪п╬п╤п╣я┌ п╠я▀я┌я▄ п╢п╡п╟ я─п╟п╥п╫я▀я┘ я│п╬я│я┌п╟п╡п╟ п╡ п╥п╟п╡п╦я│п╦п╪п╬я│я┌п╦ п╬я┌ я│п╬п╢п╣я─п╤п╟п╫п╦я▐ п╡ я│п╣п╠п╣ RZB п╦п╩п╦ ROS-----------------------------------------------------------------
 	IF EXISTS
 		(
 			SELECT *
@@ -198,7 +198,7 @@ BEGIN
 	END
 	---------------------------------------------------------------------------------------------------------------
 
-	------сДЮКЪЕЛ ОНДВХМЕММШЕ ха----
+	------пёп╢п╟п╩я▐п╣п╪ п©п╬п╢я┤п╦п╫п╣п╫п╫я▀п╣ п≤п▒----
 	DELETE T FROM @t T WHERE T.InfoBankName = 'DOCS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ROS', 'RZB', 'RZR', 'LAW'));
 	DELETE T FROM @t T WHERE T.InfoBankName = 'ROS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZB', 'RZR', 'LAW'));
 	DELETE T FROM @t T WHERE T.InfoBankName = 'RZB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZR', 'LAW'));

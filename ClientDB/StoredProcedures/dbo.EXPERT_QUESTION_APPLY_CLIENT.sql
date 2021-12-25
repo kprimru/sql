@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,7 +30,7 @@ BEGIN
 
 		SELECT @Duty_Id = DutyID
 		FROM dbo.DutyTable
-		WHERE DutyLogin = 'Àâòîìàò';
+		WHERE DutyLogin = 'ÐÐ²Ñ‚Ð¾Ð¼Ð°Ñ‚';
 
 		IF @Duty_Id IS NULL
 			SELECT TOP 1 @Duty_Id = DutyID
@@ -40,7 +40,7 @@ BEGIN
 			(
 				SELECT TOP 1 ID
 				FROM dbo.CallDirection
-				WHERE NAME = 'ÂîïðîñÝêñïåðòó'
+				WHERE NAME = 'Ð’Ð¾Ð¿Ñ€Ð¾ÑÐ­ÐºÑÐ¿ÐµÑ€Ñ‚Ñƒ'
 			);
 
 		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone,
@@ -69,8 +69,8 @@ BEGIN
 				AND b.CompNumber = a.COMP
 		) AS S
 		WHERE a.IMPORT IS NULL --AND a.ID = @ID
-            --ToDo Ë1 - âûíåñòè â ñâîéñòâî dbo.Subhost
-			AND (C.ID_CLIENT IS NOT NULL OR C.ID_CLIENT IS NULL AND s.SubhostName = 'Ë1')
+            --ToDo Ð›1 - Ð²Ñ‹Ð½ÐµÑÑ‚Ð¸ Ð² ÑÐ²Ð¾Ð¹ÑÑ‚Ð²Ð¾ dbo.Subhost
+			AND (C.ID_CLIENT IS NOT NULL OR C.ID_CLIENT IS NULL AND s.SubhostName = 'Ð›1')
 			AND DATE >= '20170801'
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

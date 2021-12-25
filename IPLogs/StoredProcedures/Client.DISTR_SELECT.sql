@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,9 +34,9 @@ BEGIN
 				    ELSE '/' + CONVERT(VARCHAR(20), a.COMP)
 			    END AS DistrNumber,
 			    SystemTypeName, DistrTypeName, a.DS_NAME AS ServiceStatusName, DS_INDEX AS ServiceStatusIndex,
-			    ISNULL(a.DS_NAME, 'Неизвестно')  AS RN_STATUS,
+			    ISNULL(a.DS_NAME, 'РќРµРёР·РІРµСЃС‚РЅРѕ')  AS RN_STATUS,
 			    CASE ISNULL(TT_REG, -1)
-				    WHEN -1 THEN 'Неизвестно'
+				    WHEN -1 THEN 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 				    WHEN 0 THEN SN_NAME +
 					    CASE SNC_NET_COUNT
 						    WHEN 0 THEN ''
@@ -71,9 +71,9 @@ BEGIN
 				    ELSE '/' + CONVERT(VARCHAR(20), DIS_COMP_NUM)
 			    END AS DistrNumber,
 			    NULL SystemTypeName, NULL DistrTypeName, NULL ServiceStatusName, NULL ServiceStatusIndex,
-			    ISNULL(DS_NAME, 'Неизвестно') AS RN_STATUS,
+			    ISNULL(DS_NAME, 'РќРµРёР·РІРµСЃС‚РЅРѕ') AS RN_STATUS,
 			    CASE ISNULL(TT_REG, -1)
-				    WHEN -1 THEN 'Неизвестно'
+				    WHEN -1 THEN 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 				    WHEN 0 THEN SN_NAME +
 					    CASE SNC_NET_COUNT
 						    WHEN 0 THEN ''
@@ -105,9 +105,9 @@ BEGIN
 				    ELSE '/' + CONVERT(VARCHAR(20), CompNumber)
 			    END AS DistrNumber,
 			    NULL SystemTypeName, NULL DistrTypeName, NULL ServiceStatusName, NULL ServiceStatusIndex,
-			    ISNULL(DS_NAME, 'Неизвестно') AS RN_STATUS,
+			    ISNULL(DS_NAME, 'РќРµРёР·РІРµСЃС‚РЅРѕ') AS RN_STATUS,
 			    CASE ISNULL(TT_REG, -1)
-				    WHEN -1 THEN 'Неизвестно'
+				    WHEN -1 THEN 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 				    WHEN 0 THEN SN_NAME +
 					    CASE SNC_NET_COUNT
 						    WHEN 0 THEN ''

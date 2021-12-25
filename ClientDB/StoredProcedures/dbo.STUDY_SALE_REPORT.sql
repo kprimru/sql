@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -55,13 +55,13 @@ BEGIN
 
 							DistrStr + '(' + CONVERT(VARCHAR(20), dbo.DateOf(RPR_DATE), 104) +'): ' +
 								CASE y.RPR_OPER
-									WHEN 'НОВАЯ' THEN 'Допродажа: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
-									WHEN 'Включение' THEN 'Восстановление: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
-									WHEN 'Изм. парам.' THEN 'Замена: ' +
+									WHEN 'РќРћР’РђРЇ' THEN 'Р”РѕРїСЂРѕРґР°Р¶Р°: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
+									WHEN 'Р’РєР»СЋС‡РµРЅРёРµ' THEN 'Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ: ' + ISNULL(NEW.SystemShortName, '') + ' (' + ISNULL(NEW.NT_SHORT, '') + ')'
+									WHEN 'РР·Рј. РїР°СЂР°Рј.' THEN 'Р—Р°РјРµРЅР°: ' +
 										CASE
-											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN 'с ' + OLD.SystemShortName + ' ' + OLD.NT_SHORT + ' на ' + NEW.SystemShortName + ' ' + NEW.NT_SHORT
-											WHEN OLD.SystemShortName = NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN OLD.SystemShortName + ' с '+ OLD.NT_SHORT + ' на ' + NEW.NT_SHORT
-											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT = NEW.NT_SHORT THEN OLD.NT_SHORT + ' c ' + OLD.SystemShortName + ' на ' + NEW.SystemShortName
+											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN 'СЃ ' + OLD.SystemShortName + ' ' + OLD.NT_SHORT + ' РЅР° ' + NEW.SystemShortName + ' ' + NEW.NT_SHORT
+											WHEN OLD.SystemShortName = NEW.SystemShortName AND OLD.NT_SHORT <> NEW.NT_SHORT THEN OLD.SystemShortName + ' СЃ '+ OLD.NT_SHORT + ' РЅР° ' + NEW.NT_SHORT
+											WHEN OLD.SystemShortName <> NEW.SystemShortName AND OLD.NT_SHORT = NEW.NT_SHORT THEN OLD.NT_SHORT + ' c ' + OLD.SystemShortName + ' РЅР° ' + NEW.SystemShortName
 											ELSE ''
 										END
  									ELSE ''
@@ -87,7 +87,7 @@ BEGIN
 									WHERE t.ID_HOST = z.HostID AND t.DISTR = z.DISTR AND t.COMP = z.COMP AND dbo.DateOf(q.DATE) >= dbo.DateOf(RPR_DATE)
 									ORDER BY DATE
 								) AS NEW
-						WHERE z.ID_CLIENT = ClientID AND y.RPR_OPER IN ('НОВАЯ', 'Включение', 'Изм. парам.')
+						WHERE z.ID_CLIENT = ClientID AND y.RPR_OPER IN ('РќРћР’РђРЇ', 'Р’РєР»СЋС‡РµРЅРёРµ', 'РР·Рј. РїР°СЂР°Рј.')
 							AND RPR_DATE > a.DATE AND RPR_DATE < DATEADD(MONTH, @MON_CNT, a.DATE)
 						ORDER BY RPR_DATE, SystemOrder DESC FOR XML PATH('')
 					)
@@ -110,7 +110,7 @@ BEGIN
 				FROM
 					dbo.ClientDistrView z
 					INNER JOIN dbo.RegProtocol y ON z.HostID = y.RPR_ID_HOST AND z.DISTR = y.RPR_DISTR AND z.COMP = y.RPR_COMP
-				WHERE z.ID_CLIENT = ClientID AND y.RPR_OPER IN ('НОВАЯ', 'Включение', 'Изм. парам.') AND RPR_DATE > a.DATE AND RPR_DATE < DATEADD(MONTH, @MON_CNT, a.DATE)
+				WHERE z.ID_CLIENT = ClientID AND y.RPR_OPER IN ('РќРћР’РђРЇ', 'Р’РєР»СЋС‡РµРЅРёРµ', 'РР·Рј. РїР°СЂР°Рј.') AND RPR_DATE > a.DATE AND RPR_DATE < DATEADD(MONTH, @MON_CNT, a.DATE)
 			)
 		ORDER BY DATE DESC
 

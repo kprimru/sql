@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -75,10 +75,10 @@ BEGIN
 		WHERE ID_BLANK = @BLANK
 		ORDER BY ORD
 		/*
-		0 - однозначный выбор
-		1 - многозначный выбор
-		2 - свободное поле для ввода
-		3 - число из диапазона
+		0 - РѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ РІС‹Р±РѕСЂ
+		1 - РјРЅРѕРіРѕР·РЅР°С‡РЅС‹Р№ РІС‹Р±РѕСЂ
+		2 - СЃРІРѕР±РѕРґРЅРѕРµ РїРѕР»Рµ РґР»СЏ РІРІРѕРґР°
+		3 - С‡РёСЃР»Рѕ РёР· РґРёР°РїР°Р·РѕРЅР°
 		*/
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

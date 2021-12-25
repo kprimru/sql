@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,7 +11,7 @@ WITH SCHEMABINDING
 AS
 	SELECT ID_HOST, DISTR, COMP, DATE, COUNT_BIG(*) AS CNT
 	FROM Reg.ProtocolText a
-	WHERE COMMENT LIKE '%Отключение%'
+	WHERE COMMENT LIKE '%РћС‚РєР»СЋС‡РµРЅРёРµ%'
 	GROUP BY ID_HOST, DISTR, COMP, DATE
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegProtocolTextDisconnectView(DISTR,ID_HOST,COMP,DATE)] ON [Reg].[RegProtocolTextDisconnectView] ([DISTR] ASC, [ID_HOST] ASC, [COMP] ASC, [DATE] ASC);

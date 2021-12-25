@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -48,7 +48,7 @@ BEGIN
 		ORDER BY SystemOrder, DISTR, COMP --FOR XML PATH('')
 
 		IF @ZVE <> ''
-			SET @ZVE = 'Не подключены к ЗВЭ: ' + REVERSE(STUFF(REVERSE(@ZVE), 1, 2, ''))
+			SET @ZVE = 'РќРµ РїРѕРґРєР»СЋС‡РµРЅС‹ Рє Р—Р’Р­: ' + REVERSE(STUFF(REVERSE(@ZVE), 1, 2, ''))
 
 		SELECT @ZVE AS ZVE
 

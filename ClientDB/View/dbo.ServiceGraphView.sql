@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -13,7 +13,7 @@ AS
 		a.ClientID, ClientServiceID, ClientFullname,
 		ServiceStart, ServiceTime, DayOrder, ClientFullname AS ClientShortName,
 		CASE
-			WHEN ServiceTime < 10 THEN 'Íåâåðíàÿ ïðîäîëæèòåëüíîñòü ðàáîòû (íå ìîæåò áûòü ìåíüøå 10 ìèíóò)'
+			WHEN ServiceTime < 10 THEN 'ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð¿Ñ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ (Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ Ð¼ÐµÐ½ÑŒÑˆÐµ 10 Ð¼Ð¸Ð½ÑƒÑ‚)'
 			WHEN ORD > 1 AND
 				DATEDIFF(MINUTE,
 					(
@@ -32,7 +32,7 @@ AS
 							) b
 						WHERE b.ORD = a.ORD - 1 AND a.DayOrder = b.DayOrder
 					), a.ServiceStart) < 0
-				THEN 'Ïåðåñå÷åíèå'
+				THEN 'ÐŸÐµÑ€ÐµÑÐµÑ‡ÐµÐ½Ð¸Ðµ'
 			ELSE NULL
 		END AS GR_ERROR
 	FROM

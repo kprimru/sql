@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,10 +21,10 @@ BEGIN
     SELECT ERROR_NUMBER(), ERROR_PROCEDURE(), ERROR_MESSAGE();
 
     SET @ErrorMessage =
-        'Ошибка в процедуре "'+ IsNull(ERROR_PROCEDURE(), '') + '". ' +
+        'РћС€РёР±РєР° РІ РїСЂРѕС†РµРґСѓСЂРµ "'+ IsNull(ERROR_PROCEDURE(), '') + '". ' +
                                 IsNull(ERROR_MESSAGE(), '') + ' (' +
-                                IsNull('№ ошибки: ' + Cast(ERROR_NUMBER() AS NVarChar(10)), '') +
-                                IsNull(' строка ' + Cast(ERROR_LINE() AS NVarChar(10)), '') + ')';
+                                IsNull('в„– РѕС€РёР±РєРё: ' + Cast(ERROR_NUMBER() AS NVarChar(10)), '') +
+                                IsNull(' СЃС‚СЂРѕРєР° ' + Cast(ERROR_LINE() AS NVarChar(10)), '') + ')';
 
     RaisError(@ErrorMessage, @ErrorSeverity, @ErrorState)
 END

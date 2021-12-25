@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ServiceName AS [СИ],
-			ClientFullName AS [Клиент], DistrStr AS [Дистрибутив],
-			ContractPayName AS [Условие оплаты],--ContractPayDay AS [], ContractPayMonth AS [],
-			COP_NAME AS [Условие оплаты в DBF]--, COP_MONTH AS [], COP_DAY AS []
+			ServiceName AS [РЎР],
+			ClientFullName AS [РљР»РёРµРЅС‚], DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			ContractPayName AS [РЈСЃР»РѕРІРёРµ РѕРїР»Р°С‚С‹],--ContractPayDay AS [], ContractPayMonth AS [],
+			COP_NAME AS [РЈСЃР»РѕРІРёРµ РѕРїР»Р°С‚С‹ РІ DBF]--, COP_MONTH AS [], COP_DAY AS []
 		FROM
 			(
 				SELECT

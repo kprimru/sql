@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,9 +35,9 @@ BEGIN
 		IF IS_MEMBER('rl_client_event_limit') = 1
 		BEGIN
 			IF @DATE < DATEADD(DAY, -7, dbo.DateOf(GETDATE()))
-				SET @TXT = 'Нельзя ввести дату посещения раньше, чем 7 дней с настоящего момента'
+				SET @TXT = 'РќРµР»СЊР·СЏ РІРІРµСЃС‚Рё РґР°С‚Сѓ РїРѕСЃРµС‰РµРЅРёСЏ СЂР°РЅСЊС€Рµ, С‡РµРј 7 РґРЅРµР№ СЃ РЅР°СЃС‚РѕСЏС‰РµРіРѕ РјРѕРјРµРЅС‚Р°'
 			IF @DATE > dbo.DateOf(GETDATE())
-				SET @TXT = 'Нельзя ввести дату посещения позже текущей'
+				SET @TXT = 'РќРµР»СЊР·СЏ РІРІРµСЃС‚Рё РґР°С‚Сѓ РїРѕСЃРµС‰РµРЅРёСЏ РїРѕР·Р¶Рµ С‚РµРєСѓС‰РµР№'
 
 			IF @TXT <> ''
 			BEGIN

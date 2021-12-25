@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -68,7 +68,7 @@ BEGIN
 				AND (f.ServiceID = @SERVICE OR @SERVICE IS NULL)
 			ORDER BY ManagerName, ServiceName, ClientFullName, MON, d.SystemOrder, c.DISTR, c.COMP
 
-		SELECT a.CLIENT, a.MANAGER, a.SERVICE, DIS_STR, MON, CASE WHEN b.DIS_NUM IS NULL THEN 'Не расчитан' ELSE 'Расчитан' END AS STAT, ClientID
+		SELECT a.CLIENT, a.MANAGER, a.SERVICE, DIS_STR, MON, CASE WHEN b.DIS_NUM IS NULL THEN 'РќРµ СЂР°СЃС‡РёС‚Р°РЅ' ELSE 'Р Р°СЃС‡РёС‚Р°РЅ' END AS STAT, ClientID
 		FROM
 			#distr a
 			LEFT OUTER JOIN dbo.DBFActView b ON a.SYS_REG = b.SYS_REG_NAME AND a.DISTR = b.DIS_NUM AND a.COMP = b.DIS_COMP_NUM AND a.MON = b.PR_DATE

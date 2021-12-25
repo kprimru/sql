@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -67,13 +67,13 @@ BEGIN
 									REPLACE(
 									REPLACE(ISNULL(CA_HOME, '') + ISNULL(CA_OFFICE, ''),
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)
@@ -106,7 +106,7 @@ BEGIN
 			    SELECT TOP (1)
 			        [DBF_ADDRESS]   = IsNull(DCA.CT_NAME + ',' + DCA.ST_NAME + CASE ISNULL(DCA.CA_HOME, '') WHEN '' THEN '' ELSE ',' + DCA.CA_HOME END, CA_STR),
 			        [DBF_CITY]      = CT_NAME,
-			        [DBF_STREET]    = Replace(Replace(ST_NAME, 'мкр. Врангель, ', ''), 'Врангель, ', ''),
+			        [DBF_STREET]    = Replace(Replace(ST_NAME, 'РјРєСЂ. Р’СЂР°РЅРіРµР»СЊ, ', ''), 'Р’СЂР°РЅРіРµР»СЊ, ', ''),
 			        [DBF_INDEX]     = DCA.CA_INDEX,
 			        [DBF_HOME]      = REPLACE(
 									REPLACE(
@@ -120,13 +120,13 @@ BEGIN
 									REPLACE(
 										CA_HOME,
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)
@@ -140,21 +140,21 @@ BEGIN
 		WHERE C.STATUS = 1 AND C.StatusId = 2
 
 		SELECT
-		    [Клиент|В ДК] = ClientFullName,
-			[Клиент|В DBF] = CL_FULL_NAME,
-			[ФИО Рук-ля|Ошибка] = Cast(CASE WHEN IsNull(CP_FIO, '') != IsNull(DBF_FIO, '') THEN 1 ELSE 0 END AS Bit),
-			[ФИО Рук-ля|В ДК] = CP_FIO,
-			[ФИО Рук-ля|В DBF] = DBF_FIO,
-			[Должность рук-ля|В ДК] = CP_POS,
-			[Должность рук-ля|В DBF] = POS_NAME,
-			[Должность рук-ля|Ошибка] = Cast(CASE WHEN IsNull(CP_POS, '') != IsNull(POS_NAME, '') THEN 1 ELSE 0 END AS Bit),
-			[Адрес|В ДК] = CA_ADDRESS,
-			[Адрес|В DBF] = DBF_ADDRESS,
-			[Адрес|Ошибка] = Cast(CASE WHEN (DBF_CITY = CA_CITY AND DBF_STREET = CA_STREET AND DBF_HOME = CA_HOME) OR CA_ADDRESS = DBF_ADDRESS  THEN 0 ELSE 1 END AS Bit),
-			[Индекс|В ДК] = CA_INDEX,
-			[Индекс|В DBF] = DBF_INDEX,
-			[Индекс|Ошибка] = Cast(CASE WHEN IsNull(CA_INDEX, '') != IsNull(DBF_INDEX, '') THEN 1 ELSE 0 END AS Bit),
-			[Осн.дистрибутив] = DistrStr
+		    [РљР»РёРµРЅС‚|Р’ Р”Рљ] = ClientFullName,
+			[РљР»РёРµРЅС‚|Р’ DBF] = CL_FULL_NAME,
+			[Р¤РРћ Р СѓРє-Р»СЏ|РћС€РёР±РєР°] = Cast(CASE WHEN IsNull(CP_FIO, '') != IsNull(DBF_FIO, '') THEN 1 ELSE 0 END AS Bit),
+			[Р¤РРћ Р СѓРє-Р»СЏ|Р’ Р”Рљ] = CP_FIO,
+			[Р¤РРћ Р СѓРє-Р»СЏ|Р’ DBF] = DBF_FIO,
+			[Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРє-Р»СЏ|Р’ Р”Рљ] = CP_POS,
+			[Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРє-Р»СЏ|Р’ DBF] = POS_NAME,
+			[Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРє-Р»СЏ|РћС€РёР±РєР°] = Cast(CASE WHEN IsNull(CP_POS, '') != IsNull(POS_NAME, '') THEN 1 ELSE 0 END AS Bit),
+			[РђРґСЂРµСЃ|Р’ Р”Рљ] = CA_ADDRESS,
+			[РђРґСЂРµСЃ|Р’ DBF] = DBF_ADDRESS,
+			[РђРґСЂРµСЃ|РћС€РёР±РєР°] = Cast(CASE WHEN (DBF_CITY = CA_CITY AND DBF_STREET = CA_STREET AND DBF_HOME = CA_HOME) OR CA_ADDRESS = DBF_ADDRESS  THEN 0 ELSE 1 END AS Bit),
+			[РРЅРґРµРєСЃ|Р’ Р”Рљ] = CA_INDEX,
+			[РРЅРґРµРєСЃ|Р’ DBF] = DBF_INDEX,
+			[РРЅРґРµРєСЃ|РћС€РёР±РєР°] = Cast(CASE WHEN IsNull(CA_INDEX, '') != IsNull(DBF_INDEX, '') THEN 1 ELSE 0 END AS Bit),
+			[РћСЃРЅ.РґРёСЃС‚СЂРёР±СѓС‚РёРІ] = DistrStr
 		FROM @Result
 		ORDER BY CLientFullName
 

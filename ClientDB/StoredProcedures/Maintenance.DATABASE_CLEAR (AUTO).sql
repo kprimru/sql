@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,27 +27,27 @@ BEGIN
 
 		SET @ToDay = dbo.DateOf(GetDate());
 
-		-- файлы СТТ
+		-- С„Р°Р№Р»С‹ РЎРўРў
 		DELETE
 		FROM dbo.ClientStat
 		WHERE DATE < DateAdd(MONTH, -7, @ToDay);
 
-		-- файлы СТТ от подхостов
+		-- С„Р°Р№Р»С‹ РЎРўРў РѕС‚ РїРѕРґС…РѕСЃС‚РѕРІ
 		DELETE
 		FROM Subhost.SttFiles
 		WHERE DATE < DateAdd(MONTH, -7, @ToDay);
 
-		-- пригласительные на семинар
+		-- РїСЂРёРіР»Р°СЃРёС‚РµР»СЊРЅС‹Рµ РЅР° СЃРµРјРёРЅР°СЂ
 		DELETE
 		FROM Seminar.Invite
 		WHERE DATE < DateAdd(MONTH, -7, @ToDay);
 
-		-- журнал выполнения заданий
+		-- Р¶СѓСЂРЅР°Р» РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РґР°РЅРёР№
 		DELETE
 		FROM Maintenance.Jobs
 		WHERE START < DateAdd(MONTH, -1, @ToDay);
 
-		-- донесушки
+		-- РґРѕРЅРµСЃСѓС€РєРё
 		DELETE
 		FROM dbo.ServiceReportClient
 		WHERE SRC_ID_SR IN
@@ -70,7 +70,7 @@ BEGIN
 		FROM dbo.ServiceReport
 		WHERE SR_DATE < DateAdd(Month, -7, @ToDay)
 
-		--сводка по участкам СИ
+		--СЃРІРѕРґРєР° РїРѕ СѓС‡Р°СЃС‚РєР°Рј РЎР
 		DELETE
 		FROM dbo.ServiceStateDetail
 		WHERE ID_STATE IN

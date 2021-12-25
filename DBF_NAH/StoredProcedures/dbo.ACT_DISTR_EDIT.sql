@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,13 +7,13 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DISTR_EDIT]
-	-- Список параметров процедуры
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕС†РµРґСѓСЂС‹
 	@adid INT,
 	@price MONEY,
 	@taxprice MONEY,
@@ -37,7 +37,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Изменение суммы', CONVERT(VARCHAR(20), PR_DATE, 104) + ' ' + DIS_STR + ' - с ' + dbo.MoneyFormat(AD_TOTAL_PRICE) + ' на ' + dbo.MoneyFormat(@totalprice)
+			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'РР·РјРµРЅРµРЅРёРµ СЃСѓРјРјС‹', CONVERT(VARCHAR(20), PR_DATE, 104) + ' ' + DIS_STR + ' - СЃ ' + dbo.MoneyFormat(AD_TOTAL_PRICE) + ' РЅР° ' + dbo.MoneyFormat(@totalprice)
 			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.ActDistrTable b ON a.ACT_ID = b.AD_ID_ACT

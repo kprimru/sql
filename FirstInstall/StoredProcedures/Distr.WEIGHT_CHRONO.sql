@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -68,7 +68,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'WEIGHT', @WG_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'WEIGHT', 'Хронологическое изменение', @WG_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'WEIGHT', 'РҐСЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРµ РёР·РјРµРЅРµРЅРёРµ', @WG_ID_MASTER, @OLD, @NEW
 
 END
 

@@ -1,4 +1,4 @@
-USE [BuhDB]
+ï»¿USE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
             [RecieveAdress]     = C.[RecieveAdress],
             [CustomerCalc]      = C.[CustomerCalc],
             [CustomerPurchaser] = C.[CustomerPurchaser],
-            [CustomerAddress]   = CT.CityPrefix + ' ' + CT.CityName + ', ' + S.StreetPrefix + ' ' + S.StreetName + ', ' + C.CustomerHome + ', òåë. ' + C.CustomerPhone,
+            [CustomerAddress]   = CT.CityPrefix + ' ' + CT.CityName + ', ' + S.StreetPrefix + ' ' + S.StreetName + ', ' + C.CustomerHome + ', Ñ‚ÐµÐ». ' + C.CustomerPhone,
             [CustomerBank]      = B.BankName + '   ' + CB.CityPrefix + ' ' + CB.CityName
         FROM dbo.CustomerTable AS C
         LEFT JOIN dbo.StreetTable AS S ON S.StreetID = C.StreetID

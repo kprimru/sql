@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ BEGIN
 		AND ID_RESTORE = 0
 		AND ID_EXCHANGE = 0
 		AND ID_REPAY = 0
-		AND DT_NAME NOT IN ('Спец. выпуск', 'Льготный Спец.выпуск')
+		AND DT_NAME NOT IN ('РЎРїРµС†. РІС‹РїСѓСЃРє', 'Р›СЊРіРѕС‚РЅС‹Р№ РЎРїРµС†.РІС‹РїСѓСЃРє')
 	ORDER BY IN_DATE DESC, CL_NAME
 END
 GO

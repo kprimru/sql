@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,7 +50,7 @@ BEGIN
 			    FILE_PATH	NVARCHAR(512),
 			    FILE_SIZE	BIGINT,
 			    /*
-				    тип файла - 3-х видов:
+				    С‚РёРї С„Р°Р№Р»Р° - 3-С… РІРёРґРѕРІ:
 					    CLIENT
 					    SERVER
 					    LOG

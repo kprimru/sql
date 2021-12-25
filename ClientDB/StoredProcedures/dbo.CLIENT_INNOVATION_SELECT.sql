@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
 			c.DATE, c.SURNAME + ' ' + c.NAME + ' ' + c.PATRON + ' (' + c.POSITION + ')' AS FIO, c.NOTE,
 			c.SURNAME AS PER_SURNAME, c.NAME AS PER_NAME, c.PATRON AS PER_PATRON,
 			d.DATE AS AUDIT_DATE, d.AUDITOR, d.SURNAME + ' ' + d.NAME + ' ' + d.PATRON AS AUDIT_FIO, d.NOTE AS AUDIT_NOTE,
-			d.RESULT, CASE d.RESULT WHEN 1 THEN 'Подтверждено' WHEN 2 THEN 'Не подтверждено' ELSE '' END AS RESULT_STR
+			d.RESULT, CASE d.RESULT WHEN 1 THEN 'РџРѕРґС‚РІРµСЂР¶РґРµРЅРѕ' WHEN 2 THEN 'РќРµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРѕ' ELSE '' END AS RESULT_STR
 		FROM
 			dbo.ClientInnovation a
 			INNER JOIN dbo.Innovation b ON a.ID_INNOVATION = b.ID

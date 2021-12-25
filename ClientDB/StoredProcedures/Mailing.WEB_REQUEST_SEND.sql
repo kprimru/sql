@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ BEGIN
 			INSERT INTO Mailing.Requests(HostID, Distr, Comp, OriginalEmail)
 			SELECT @HOST, @DISTR, @COMP, @EMAIL;
 
-			SET @MSG = 'Запрос на подписку успешно отправлен. Спасибо за обращение!';
+			SET @MSG = 'Р—Р°РїСЂРѕСЃ РЅР° РїРѕРґРїРёСЃРєСѓ СѓСЃРїРµС€РЅРѕ РѕС‚РїСЂР°РІР»РµРЅ. РЎРїР°СЃРёР±Рѕ Р·Р° РѕР±СЂР°С‰РµРЅРёРµ!';
 		END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

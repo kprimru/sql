@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[CONSIGNMENT_PRINT]
 	@soid SMALLINT,
@@ -93,7 +93,7 @@ BEGIN
 			CSG_CONSIGN_NAME, CSG_CONSIGN_ADDRESS, CSG_CONSIGN_OKPO, CSG_CLIENT_NAME, CSG_CLIENT_ADDRESS,
 			CSG_FOUND,
 			ORG_ID, ORG_SHORT_NAME, 
-			(ORG_INDEX + ', ' + a.CT_PREFIX + a.CT_NAME + ', ' + a.ST_PREFIX + a.ST_NAME + ',' + ORG_HOME + ' тел. ' + ORG_PHONE) AS ORG_ADDRESS,
+			(ORG_INDEX + ', ' + a.CT_PREFIX + a.CT_NAME + ', ' + a.ST_PREFIX + a.ST_NAME + ',' + ORG_HOME + ' С‚РµР». ' + ORG_PHONE) AS ORG_ADDRESS,
 			--ORG_S_INDEX, b.ST_PREFIX AS ST_S_PREFIX, b.ST_NAME AS ST_S_NAME,
 			--b.CT_PREFIX AS CT_S_PREFIX, b.CT_NAME AS CT_S_NAME, ORG_S_HOME,
 			ORG_ACCOUNT, BA_NAME AS ORG_BANK, ORG_BIK, ORG_LORO, ORG_OKPO,
@@ -112,11 +112,11 @@ BEGIN
 			dbo.AddressView b ON b.ST_ID = ORG_S_ID_STREET LEFT OUTER JOIN
 			dbo.BankTable ON BA_ID = ORG_ID_BANK LEFT OUTER JOIN
 			dbo.CityTable c ON c.CT_ID = BA_ID_CITY	LEFT OUTER JOIN
-			-- 16.06.2009, для типа адреса
+			-- 16.06.2009, РґР»СЏ С‚РёРїР° Р°РґСЂРµСЃР°
 			dbo.ClientAddressView Z ON ClientAddressTable.CA_ID=Z.CA_ID	LEFT OUTER JOIN
 			dbo.FinancingAddressTypeTable Y ON Z.CA_ID_TYPE = Y.FAT_ID_ADDR_TYPE 
 		WHERE 
-			-- 3.06.09 Денисов А.С. строчка ниже - на случай, если в договор не занесены дистрибутивы или нет адреса грузополучателя
+			-- 3.06.09 Р”РµРЅРёСЃРѕРІ Рђ.РЎ. СЃС‚СЂРѕС‡РєР° РЅРёР¶Рµ - РЅР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё РІ РґРѕРіРѕРІРѕСЂ РЅРµ Р·Р°РЅРµСЃРµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РёР»Рё РЅРµС‚ Р°РґСЂРµСЃР° РіСЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЏ
 			 --16.06.2009
 				--ISNULL(Z.CA_ID_TYPE, 3) = 3
 				FAT_DOC='CONS'
@@ -185,7 +185,7 @@ BEGIN
 			SYS_ID_SO = @soid
 			AND DOC_PSEDO = 'CONS'
 			AND DD_PRINT = 1
-			-- 3.06.09 Денисов А.С. строчка ниже - на случай, если в договор не занесены дистрибутивы или нет адреса грузополучателя
+			-- 3.06.09 Р”РµРЅРёСЃРѕРІ Рђ.РЎ. СЃС‚СЂРѕС‡РєР° РЅРёР¶Рµ - РЅР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё РІ РґРѕРіРѕРІРѕСЂ РЅРµ Р·Р°РЅРµСЃРµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РёР»Рё РЅРµС‚ Р°РґСЂРµСЃР° РіСЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЏ
 			--AND --16.06.2009
 				--ISNULL(Z.CA_ID_TYPE, 3) = 3
 				--FAT_DOC='bill-pay'

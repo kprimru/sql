@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,10 +11,10 @@ AS
 	SELECT
 		ID, ClientID, ClientServiceID, ClientFullName,
 		CASE
-			WHEN ServiceStart IS NULL THEN 'Не указано время начала работы'
-			WHEN ServiceTime IS NULL THEN 'Не указана продолжительность работы'
-			WHEN ServiceTime < 10 THEN 'Неверная продолжительность работы (не может быть меньше 10 минут)'
-			WHEN DATEPART(HOUR, ServiceStart) = 0 THEN 'Неверное время начала работы'
+			WHEN ServiceStart IS NULL THEN 'РќРµ СѓРєР°Р·Р°РЅРѕ РІСЂРµРјСЏ РЅР°С‡Р°Р»Р° СЂР°Р±РѕС‚С‹'
+			WHEN ServiceTime IS NULL THEN 'РќРµ СѓРєР°Р·Р°РЅР° РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ СЂР°Р±РѕС‚С‹'
+			WHEN ServiceTime < 10 THEN 'РќРµРІРµСЂРЅР°СЏ РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ СЂР°Р±РѕС‚С‹ (РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ 10 РјРёРЅСѓС‚)'
+			WHEN DATEPART(HOUR, ServiceStart) = 0 THEN 'РќРµРІРµСЂРЅРѕРµ РІСЂРµРјСЏ РЅР°С‡Р°Р»Р° СЂР°Р±РѕС‚С‹'
 			WHEN ID > 1 AND
 				DATEDIFF(MINUTE,
 					(
@@ -32,7 +32,7 @@ AS
 							) b
 						WHERE b.ID = a.ID - 1 AND a.DayOrder = b.DayOrder
 					), ServiceStart) < 0
-				THEN 'Пересечение с предыдущим клиентом'
+				THEN 'РџРµСЂРµСЃРµС‡РµРЅРёРµ СЃ РїСЂРµРґС‹РґСѓС‰РёРј РєР»РёРµРЅС‚РѕРј'
 			ELSE NULL
 		END AS GR_ERROR
 	FROM

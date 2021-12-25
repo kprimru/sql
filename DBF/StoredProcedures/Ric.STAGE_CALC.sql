@@ -1,4 +1,4 @@
-USE [DBF]
+﻿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO

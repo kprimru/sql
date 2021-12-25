@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'TECH_TYPE', @TT_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'TECH_TYPE', 'Редактирование', @TT_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'TECH_TYPE', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @TT_ID_MASTER, @OLD, @NEW
 
 END
 

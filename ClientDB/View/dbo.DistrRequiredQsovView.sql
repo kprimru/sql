@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,14 +24,14 @@ AS
 					(
 							b.SystemBaseName IN ('SKJO', 'SKJP', 'SKJB', 'SBOO', 'SBOB')
 						AND
-							-- локальная или флэш-версия
+							-- Р»РѕРєР°Р»СЊРЅР°СЏ РёР»Рё С„Р»СЌС€-РІРµСЂСЃРёСЏ
 							(a.NetCount = 0 AND a.TechnolType = 0 OR a.NetCount = 0 AND a.TechnolType = 1)
 					)
 				OR
 					(
 							b.SystemBaseName IN ('SKJP', 'SBOO')
 						AND
-							-- ОВМ-Ф (1;2), если надо все ОВМ-Ф, то оставить только a.TechnolType = 11
+							-- РћР’Рњ-Р¤ (1;2), РµСЃР»Рё РЅР°РґРѕ РІСЃРµ РћР’Рњ-Р¤, С‚Рѕ РѕСЃС‚Р°РІРёС‚СЊ С‚РѕР»СЊРєРѕ a.TechnolType = 11
 							(a.NetCount = 1 AND a.TechnolType = 11 AND a.ODON = 1 AND a.ODOFF = 2)
 					)
 			)

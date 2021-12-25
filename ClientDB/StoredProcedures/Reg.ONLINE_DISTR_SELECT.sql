@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -105,7 +105,7 @@ BEGIN
 			INNER JOIN Din.NetType f ON f.NT_ID = a.ID_NET
 			LEFT OUTER JOIN Reg.OnlinePassword d ON d.ID_SYSTEM = a.ID_SYSTEM AND d.DISTR = a.DISTR AND d.COMP = a.COMP AND d.STATUS = 1
 			LEFT OUTER JOIN Reg.RegNodeSearchView e WITH(NOEXPAND) ON e.SystemID = a.ID_SYSTEM AND e.DistrNumber = a.DISTR AND e.CompNumber = a.COMP
-		WHERE (@NAME IS NULL OR e.Comment LIKE @NAME) AND c.SST_SHORT = 'ÄÑÏ'
+		WHERE (@NAME IS NULL OR e.Comment LIKE @NAME) AND c.SST_SHORT = 'Ð”Ð¡ÐŸ'
 		ORDER BY TP, b.SystemOrder, a.DISTR, a.COMP
 
 		IF OBJECT_ID('tempdb..#res') IS NOT NULL

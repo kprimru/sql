@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,7 +50,7 @@ BEGIN
 
 		SET @RES = ''
 
-		SELECT @RES = @RES + SYS_SHORT_NAME + ': Ò ' + dbo.MoneyFormat(PS_PRICE) + ' Ì‡ ' + dbo.MoneyFormat(PRICE) + '	'--CHAR(10)
+		SELECT @RES = @RES + SYS_SHORT_NAME + ': —Å ' + dbo.MoneyFormat(PS_PRICE) + ' –Ω–∞ ' + dbo.MoneyFormat(PRICE) + '	'--CHAR(10)
 		FROM
 			(
 				SELECT SYS_ORDER, SYS_SHORT_NAME, PS_PRICE, PRICE

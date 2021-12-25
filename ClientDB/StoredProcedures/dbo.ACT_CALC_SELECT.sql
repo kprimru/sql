@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -263,9 +263,9 @@ BEGIN
 			b.ID AS TREE_ID, a.ID AS TREE_PARENT,
 			ClientID, DisStr /*ClientFullname + ' - ' + PayType + ' (' + ContractPay + ')'*/ AS ClientFullName, DisStr, /*BILL, INCOME, */MON_DATE,
 			CASE
-				WHEN BILL IS NULL THEN 'Õ≈“ —◊≈“¿ (' + CONVERT(VARCHAR(20), MON_DATE, 104) + ')'
+				WHEN BILL IS NULL THEN '–ù–ï–¢ –°–ß–ï–¢–ê (' + CONVERT(VARCHAR(20), MON_DATE, 104) + ')'
 				WHEN BILL = INCOME THEN ''
-				ELSE 'ÕÂ ÓÔÎ‡˜ÂÌÓ ' + CONVERT(NVARCHAR(64), ROUND(100 * (BILL - ISNULL(INCOME, 0)) / BILL, 2)) + '% ÒÛÏÏ˚'
+				ELSE '–ù–µ –æ–ø–ª–∞—á–µ–Ω–æ ' + CONVERT(NVARCHAR(64), ROUND(100 * (BILL - ISNULL(INCOME, 0)) / BILL, 2)) + '% —Å—É–º–º—ã'
 			END AS PAY_COMMENT,
 			CONVERT(BIT, CASE WHEN BILL = INCOME THEN 1 ELSE 0 END) AS CHECKED,
 			CONVERT(BIT, CASE WHEN BILL = INCOME THEN 1 ELSE 0 END) AS CHECKED_DEFAULT,

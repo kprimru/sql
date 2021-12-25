@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 'Подписан на "Видео.Консультант" с ' + CONVERT(NVARCHAR(64), START, 104) AS TXT
+		SELECT 'РџРѕРґРїРёСЃР°РЅ РЅР° "Р’РёРґРµРѕ.РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚" СЃ ' + CONVERT(NVARCHAR(64), START, 104) AS TXT
 		FROM dbo.ClientDelivery
 		WHERE ID_CLIENT = @ID
 			AND ID_DELIVERY = '25EEB199-A6DA-E511-9D3C-0007E92AAFC5'

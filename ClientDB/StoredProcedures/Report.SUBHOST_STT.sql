@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			SH_NAME AS [Подхост], DATE AS [Дата загрузки], USR AS [Пользователь],
-			dbo.FileByteSizeToStr(DATALENGTH(BIN)) AS [Размер],
-			PROCESS AS [Дата обработки]
+			SH_NAME AS [РџРѕРґС…РѕСЃС‚], DATE AS [Р”Р°С‚Р° Р·Р°РіСЂСѓР·РєРё], USR AS [РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ],
+			dbo.FileByteSizeToStr(DATALENGTH(BIN)) AS [Р Р°Р·РјРµСЂ],
+			PROCESS AS [Р”Р°С‚Р° РѕР±СЂР°Р±РѕС‚РєРё]
 		FROM
 			Subhost.STTFiles a
 			INNER JOIN dbo.Subhost b ON SH_ID = ID_SUBHOST

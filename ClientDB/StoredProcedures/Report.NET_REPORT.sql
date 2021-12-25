@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 		FROM Reg.RegNodeSearchView WITH(NOEXPAND)
 		WHERE HostID = @HST_ID
 			AND DS_REG = 0
-			AND SST_SHORT NOT IN ('ÎÄÄ', 'ÄÑÏ', 'ÀÄÌ', 'ÄÈÓ')
+			AND SST_SHORT NOT IN ('ÐžÐ”Ð”', 'Ð”Ð¡ÐŸ', 'ÐÐ”Ðœ', 'Ð”Ð˜Ð£')
 
 		IF OBJECT_ID('tempdb..#net') IS NOT NULL
 			DROP TABLE #net
@@ -59,13 +59,13 @@ BEGIN
 					WHERE HostID = @HST_ID
 						AND DS_REG = 0
 						AND z.NT_ID = a.NT_ID
-						AND SST_SHORT NOT IN ('ÎÄÄ', 'ÄÑÏ', 'ÀÄÌ', 'ÄÈÓ')
+						AND SST_SHORT NOT IN ('ÐžÐ”Ð”', 'Ð”Ð¡ÐŸ', 'ÐÐ”Ðœ', 'Ð”Ð˜Ð£')
 				),
 				NT_TECH, NT_NET
 			FROM Din.NetType a
 
 
-		SELECT NT_SHORT AS [Íàçâàíèå], CNT AS [Êîë-âî], PRC AS [% îò îáùåãî]
+		SELECT NT_SHORT AS [ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ], CNT AS [ÐšÐ¾Ð»-Ð²Ð¾], PRC AS [% Ð¾Ñ‚ Ð¾Ð±Ñ‰ÐµÐ³Ð¾]
 		FROM
 			(
 				SELECT 1 AS TP, NT_SHORT, NT_TECH, NT_NET, CNT, ROUND(CONVERT(FLOAT, CNT) / @TOTAL * 100, 2) AS PRC
@@ -73,7 +73,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT 2 AS TP, 'Âñåãî îíëàéí-âåðñèé', NULL, NULL, (SELECT SUM(CNT) FROM #net WHERE NT_TECH > 2), ROUND(CONVERT(FLOAT, (SELECT SUM(CNT) FROM #net WHERE NT_TECH > 2)) / @TOTAL * 100, 2)
+				SELECT 2 AS TP, 'Ð’ÑÐµÐ³Ð¾ Ð¾Ð½Ð»Ð°Ð¹Ð½-Ð²ÐµÑ€ÑÐ¸Ð¹', NULL, NULL, (SELECT SUM(CNT) FROM #net WHERE NT_TECH > 2), ROUND(CONVERT(FLOAT, (SELECT SUM(CNT) FROM #net WHERE NT_TECH > 2)) / @TOTAL * 100, 2)
 			) AS o_O
 		ORDER BY TP, NT_TECH, NT_NET
 

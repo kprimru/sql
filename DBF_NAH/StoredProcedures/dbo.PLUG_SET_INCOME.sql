@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[PLUG_SET_INCOME]
@@ -39,7 +39,7 @@ BEGIN
 		WHERE IN_ID = @incomeid
 
 		/*
-		возвраты
+		РІРѕР·РІСЂР°С‚С‹
 		*/
 
 		INSERT INTO dbo.BookPurchase(ID_ORG, ID_AVANS, ID_INVOICE, CODE, NUM, DATE, NAME, INN, KPP, IN_NUM, IN_DATE, PURCHASE_DATE)

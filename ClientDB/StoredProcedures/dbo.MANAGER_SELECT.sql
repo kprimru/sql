@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
 
 		SELECT
 			ManagerID, ManagerName, ManagerLogin, ManagerCount,
-			CONVERT(BIT, CASE WHEN ManagerCount <> 0 AND ManagerName <> '»Ò‡Â‚‡' THEN 1 ELSE 0 END) AS ManagerCheck,
+			CONVERT(BIT, CASE WHEN ManagerCount <> 0 AND ManagerName <> '–ò—Å–∞–µ–≤–∞' THEN 1 ELSE 0 END) AS ManagerCheck,
 			CASE WHEN  ManagerCount = 0 THEN 1 ELSE 0 END AS ManagerEnable, ManagerLocal
 		FROM dbo.ManagerTable AS M
 		OUTER APPLY

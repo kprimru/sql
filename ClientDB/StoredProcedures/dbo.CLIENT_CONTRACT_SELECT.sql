@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 		SELECT
 			ContractID, ContractDate,
 			ContractNumber, ContractYear,
-			ContractNumber + ISNULL(' от ' + CONVERT(VARCHAR(20), ContractDate, 104), '') AS ContractNumberStr,
+			ContractNumber + ISNULL(' РѕС‚ ' + CONVERT(VARCHAR(20), ContractDate, 104), '') AS ContractNumberStr,
 			ContractTypeName,
 			ContractBegin, ContractEnd,
 			ContractConditions,
@@ -41,13 +41,13 @@ BEGIN
 						WHERE ID_CONTRACT = ContractID
 							AND STATUS = 1
 					) THEN
-					'Изменяющих документов: ' + CONVERT(NVARCHAR(16), (
+					'РР·РјРµРЅСЏСЋС‰РёС… РґРѕРєСѓРјРµРЅС‚РѕРІ: ' + CONVERT(NVARCHAR(16), (
 						SELECT COUNT(*)
 						FROM dbo.ContractDocument
 						WHERE ID_CONTRACT = ContractID
 							AND STATUS = 1
 					))
-				ELSE 'Нет изменяющих документов'
+				ELSE 'РќРµС‚ РёР·РјРµРЅСЏСЋС‰РёС… РґРѕРєСѓРјРµРЅС‚РѕРІ'
 			END AS DOCUMENT_LIST
 		FROM
 			dbo.ContractTable a

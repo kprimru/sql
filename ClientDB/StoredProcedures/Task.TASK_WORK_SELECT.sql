@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DATE AS [Дата], AUTHOR AS [Написал], NOTE AS [Описание]
+		SELECT DATE AS [Р”Р°С‚Р°], AUTHOR AS [РќР°РїРёСЃР°Р»], NOTE AS [РћРїРёСЃР°РЅРёРµ]
 		FROM Task.TaskWork
 		WHERE ID_TASK = @ID
 		ORDER BY DATE DESC

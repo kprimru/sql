@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,8 +33,8 @@ BEGIN
 
 		IF @REG_PATH IS NULL AND @BCP_PATH IS NULL
 		BEGIN
-			DECLARE @REG_NODE NVARCHAR(500) /* путь к consreg */
-			DECLARE @SAVE NVARCHAR(500) /* путь для сохраненного файла */
+			DECLARE @REG_NODE NVARCHAR(500) /* РїСѓС‚СЊ Рє consreg */
+			DECLARE @SAVE NVARCHAR(500) /* РїСѓС‚СЊ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРЅРѕРіРѕ С„Р°Р№Р»Р° */
 
 			SET @SAVE = 'E:\SQLScript\ImportReg\reg' + REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(VARCHAR(50), GETDATE(), 121), '-', ''), ':', ''), ' ', ''), '.', '') + '.csv'
 

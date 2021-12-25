@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 ALTER FUNCTION [dbo].[GET_DISTR_STR]
 (
-    --27.01.09 добавлен параметр система.
+    --27.01.09 РґРѕР±Р°РІР»РµРЅ РїР°СЂР°РјРµС‚СЂ СЃРёСЃС‚РµРјР°.
     @sys varchar(20),
 	@distr int,
     @comp int

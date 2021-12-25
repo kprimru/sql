@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,16 +25,16 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			[Рук-ль/Подхост]		= IsNull(C.ManagerName, R.SubhostName),
-			[СИ]					= C.ServiceName,
-			[Клиент]				= IsNull(C.ClientFullName, R.Comment),
-			[Дистрибутив]			= R.DistrStr,
-			[Сетевитость]			= R.NT_SHORT,
-			[Тип системы]			= R.SST_SHORT,
-			[Начало ОВ]				= OA.FIRST_WEEK,
-			[Всего недель ОВ]		= OA.TOTAL_WEEK,
-			[Активных недель ОВ]	= OA.ACTIVITY_WEEK,
-			[% активности]			= Round(Convert(Float, OA.ACTIVITY_WEEK)/OA.TOTAL_WEEK * 100, 2)
+			[Р СѓРє-Р»СЊ/РџРѕРґС…РѕСЃС‚]		= IsNull(C.ManagerName, R.SubhostName),
+			[РЎР]					= C.ServiceName,
+			[РљР»РёРµРЅС‚]				= IsNull(C.ClientFullName, R.Comment),
+			[Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]			= R.DistrStr,
+			[РЎРµС‚РµРІРёС‚РѕСЃС‚СЊ]			= R.NT_SHORT,
+			[РўРёРї СЃРёСЃС‚РµРјС‹]			= R.SST_SHORT,
+			[РќР°С‡Р°Р»Рѕ РћР’]				= OA.FIRST_WEEK,
+			[Р’СЃРµРіРѕ РЅРµРґРµР»СЊ РћР’]		= OA.TOTAL_WEEK,
+			[РђРєС‚РёРІРЅС‹С… РЅРµРґРµР»СЊ РћР’]	= OA.ACTIVITY_WEEK,
+			[% Р°РєС‚РёРІРЅРѕСЃС‚Рё]			= Round(Convert(Float, OA.ACTIVITY_WEEK)/OA.TOTAL_WEEK * 100, 2)
 		FROM
 		(
 			SELECT ID_HOST, DISTR, COMP, FIRST_WEEK, W.WEEK_CNT AS TOTAL_WEEK, A.WEEK_CNT AS ACTIVITY_WEEK
@@ -66,7 +66,7 @@ BEGIN
 		INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON OA.ID_HOST = R.HostID AND OA.DISTr = R.DIstrNumber AND OA.COMP = R.CompNumber
 		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON OA.ID_HOST = D.HostId AND OA.DISTr = D.DISTR AND OA.COMP = D.COMP
 		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON D.ID_CLIENT = C.ClientID
-		WHERE R.SST_SHORT NOT IN ('ОДД', 'ДСП')
+		WHERE R.SST_SHORT NOT IN ('РћР”Р”', 'Р”РЎРџ')
 			AND NT_TECH NOT IN (0, 1)
 			AND r.DS_REG = 0
 		ORDER BY R.SubhostName, C.ManagerName, C.ServiceName, C.ClientFullName, R.Comment, R.SystemOrder, R.DistrNumber, R.CompNumber

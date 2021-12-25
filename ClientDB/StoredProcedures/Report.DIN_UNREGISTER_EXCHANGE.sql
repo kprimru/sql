@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ISNULL(ClientFullName, Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], c.DistrStr AS [Текущий дистрибутив], c.NT_SHORT AS [Текущая сетевитость],
+			ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], c.DistrStr AS [РўРµРєСѓС‰РёР№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ], c.NT_SHORT AS [РўРµРєСѓС‰Р°СЏ СЃРµС‚РµРІРёС‚РѕСЃС‚СЊ],
 			CASE
 				WHEN b.SystemShortName <> c.SystemShortName THEN
 					CASE
@@ -34,9 +34,9 @@ BEGIN
 					END
 				ELSE
 					b.NT_SHORT
-			END AS [Дистрибутив-замена],
+			END AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ-Р·Р°РјРµРЅР°],
 			--b.SystemShortName, b.NT_SHORT,
-			b.DF_CREATE AS [Дата поступления дистрибутива]
+			b.DF_CREATE AS [Р”Р°С‚Р° РїРѕСЃС‚СѓРїР»РµРЅРёСЏ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°]
 		FROM
 			(
 				SELECT HostID, DF_DISTR, DF_COMP, MAX(DF_CREATE) AS DF_CREATE

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,26 +25,26 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			CL_PSEDO AS [Псевдоним], CL_FULL_NAME AS [Клиент],
+			CL_PSEDO AS [РџСЃРµРІРґРѕРЅРёРј], CL_FULL_NAME AS [РљР»РёРµРЅС‚],
 			(
 				SELECT
 					dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' +
 					CASE RN_TECH_TYPE
 						WHEN 0 THEN
 							CASE RN_NET_COUNT
-								WHEN 0 THEN 'лок'
-								WHEN 1 THEN '1/с'
-								WHEN 5 THEN 'м/с'
-								ELSE 'сеть'
+								WHEN 0 THEN 'Р»РѕРє'
+								WHEN 1 THEN '1/СЃ'
+								WHEN 5 THEN 'Рј/СЃ'
+								ELSE 'СЃРµС‚СЊ'
 							END
-						WHEN 1 THEN 'флэш'
-						WHEN 7 THEN 'ОВК'
-						WHEN 3 THEN 'ОВП'
-						WHEN 6 THEN 'ОВПИ'
-						WHEN 9 THEN 'ОВМ'
-						WHEN 10 THEN 'ОВК-Ф'
-						WHEN 11 THEN 'ОВМ-Ф'
-						ELSE 'Неизвестно'
+						WHEN 1 THEN 'С„Р»СЌС€'
+						WHEN 7 THEN 'РћР’Рљ'
+						WHEN 3 THEN 'РћР’Рџ'
+						WHEN 6 THEN 'РћР’РџР'
+						WHEN 9 THEN 'РћР’Рњ'
+						WHEN 10 THEN 'РћР’Рљ-Р¤'
+						WHEN 11 THEN 'РћР’Рњ-Р¤'
+						ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 					END
 					 + '), '
 				FROM
@@ -52,12 +52,12 @@ BEGIN
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 				ORDER BY RN_TECH_TYPE, SYS_ORDER, DIS_NUM FOR XML PATH('')
-			) AS [Дистрибутивы],
+			) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІС‹],
 			(
 				SELECT COUR_NAME
 				FROM [PC275-SQL\DELTA].DBF.dbo.ClientCourVIew t
 				WHERE t.CL_ID = z.CL_ID
-			) AS [СИ]
+			) AS [РЎР]
 		FROM [PC275-SQL\DELTA].DBF.dbo.ClientTable z
 		WHERE EXISTS
 			(

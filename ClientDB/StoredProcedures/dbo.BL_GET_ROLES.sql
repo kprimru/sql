@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SET @db_role = 0; --Неизвестная роль
+		SET @db_role = 0; --РќРµРёР·РІРµСЃС‚РЅР°СЏ СЂРѕР»СЊ
 		SET @User = ORIGINAL_LOGIN()
 		if (IS_MEMBER('db_owner')=1) SET @db_role = 1023; else
 		BEGIN

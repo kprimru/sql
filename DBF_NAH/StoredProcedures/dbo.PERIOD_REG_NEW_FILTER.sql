@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ BEGIN
 	BEGIN TRY
 
 		-----------
-		--ПЕРИОДЫ--
+		--РџР•Р РРћР”Р«--
 		-----------
 		IF OBJECT_ID('tempdb..#periods') IS NOT NULL
 			DROP TABLE #periods
@@ -60,7 +60,7 @@ BEGIN
 		END
 
 		-----------
-		--СИСТЕМЫ--
+		--РЎРРЎРўР•РњР«--
 		-----------
 		IF OBJECT_ID('tempdb..#systems') IS NOT NULL
 			DROP TABLE #systems
@@ -73,7 +73,7 @@ BEGIN
 		END
 
 		------------
-		--ПОДХОСТЫ--
+		--РџРћР”РҐРћРЎРўР«--
 		------------
 		IF OBJECT_ID('tempdb..#subhosts') IS NOT NULL
 			DROP TABLE #subhosts
@@ -86,7 +86,7 @@ BEGIN
 		END
 
 		---------------
-		--ТИПЫ СИСТЕМ--
+		--РўРРџР« РЎРРЎРўР•Рњ--
 		---------------
 		IF OBJECT_ID('tempdb..#systemtypes') IS NOT NULL
 			DROP TABLE #systemtypes
@@ -154,7 +154,7 @@ BEGIN
 				RNN_PSEDO_CLIENT LIKE ISNULL(@rnnpsedo,		RNN_PSEDO_CLIENT)	and
 				RNN_COMMENT		LIKE ISNULL(@rnncomment,	RNN_COMMENT)
 		*/
-		-- 24.11.09. Денисов А.С. поменял все в хлам, ибо не работало
+		-- 24.11.09. Р”РµРЅРёСЃРѕРІ Рђ.РЎ. РїРѕРјРµРЅСЏР» РІСЃРµ РІ С…Р»Р°Рј, РёР±Рѕ РЅРµ СЂР°Р±РѕС‚Р°Р»Рѕ
 		(RNN_DISTR_NUM = @rnndistrnum OR @rnndistrnum IS NULL) AND
 		--(RNN_ID_PERIOD = @rnnidperiod OR @rnnperiod IS NULL) AND
 		--(RNN_ID_SYSTEM = @rnnidsystem OR @rnnidsystem IS NULL) AND

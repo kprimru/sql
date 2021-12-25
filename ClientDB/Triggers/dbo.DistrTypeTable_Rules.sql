@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -13,7 +13,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	INSERT INTO [dbo].[ClientTypeRules]([System_Id], [DistrType_Id], [ClientType_Id])
-	-- ToDo заменить 3 на какое-то дефолтное значение
+	-- ToDo Р·Р°РјРµРЅРёС‚СЊ 3 РЅР° РєР°РєРѕРµ-С‚Рѕ РґРµС„РѕР»С‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
 	SELECT S.[SystemID], D.[DistrTypeID], 3
     FROM dbo.SystemTable AS S
     CROSS JOIN dbo.DistrTypeTable AS D

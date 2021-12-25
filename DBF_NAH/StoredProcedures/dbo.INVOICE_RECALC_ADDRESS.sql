@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_RECALC_ADDRESS]
 	@invid INT
@@ -40,7 +40,7 @@ BEGIN
 		WHERE INS_ID = @invid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Обновление адресов', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РћР±РЅРѕРІР»РµРЅРёРµ Р°РґСЂРµСЃРѕРІ', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
 			FROM
 				dbo.InvoiceSaleTable
 				--INNER JOIN #inv ON INS_ID = INV_ID
@@ -48,7 +48,7 @@ BEGIN
 
 		IF @instype = 1
 		BEGIN
-			-- на первичку
+			-- РЅР° РїРµСЂРІРёС‡РєСѓ
 			UPDATE dbo.InvoiceSaleTable
 			SET INS_CLIENT_NAME =
 					(
@@ -66,7 +66,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -113,7 +113,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -170,7 +170,7 @@ BEGIN
 		END
 		ELSE IF @instype = 2
 		BEGIN
-			-- на аванс
+			-- РЅР° Р°РІР°РЅСЃ
 			UPDATE dbo.InvoiceSaleTable
 			SET INS_CLIENT_NAME =
 					(
@@ -188,7 +188,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -235,7 +235,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -292,7 +292,7 @@ BEGIN
 		END
 		ELSE IF @instype = 3
 		BEGIN
-			-- на акт
+			-- РЅР° Р°РєС‚
 			UPDATE dbo.InvoiceSaleTable
 			SET INS_CLIENT_NAME =
 					(
@@ -310,7 +310,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -357,7 +357,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -415,7 +415,7 @@ BEGIN
 		END
 		ELSE IF @instype = 4
 		BEGIN
-			-- на накладную
+			-- РЅР° РЅР°РєР»Р°РґРЅСѓСЋ
 			UPDATE dbo.InvoiceSaleTable
 			SET INS_CLIENT_NAME =
 					(
@@ -433,7 +433,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -480,7 +480,7 @@ BEGIN
 										WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 										ELSE
 											(
-				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+				/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 											FROM
 												dbo.ClientTable INNER JOIN
 												dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT

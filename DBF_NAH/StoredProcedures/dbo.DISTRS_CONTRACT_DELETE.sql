@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,10 +6,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			%authorname%
-Дата создания:	03.02.2009
-Описание:		Исключить дистрибутив
-				из договора
+РђРІС‚РѕСЂ:			%authorname%
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	03.02.2009
+РћРїРёСЃР°РЅРёРµ:		РСЃРєР»СЋС‡РёС‚СЊ РґРёСЃС‚СЂРёР±СѓС‚РёРІ
+				РёР· РґРѕРіРѕРІРѕСЂР°
 */
 
 ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]

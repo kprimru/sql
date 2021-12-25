@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ CREATE TABLE [Income].[IncomeDetail]
         [ID_PREPAY]         Bit                       NULL,
         [ID_SUP_CONTRACT]   SmallDateTime             NULL,
         [ID_SUP_DATE]       SmallDateTime             NULL,
-        [ID_COMMENT]         AS (isnull(reverse(stuff(reverse((case [ID_ACTION] when (1) then 'Акция,' else '' end+case [ID_EXCHANGE] when (1) then 'Замена,' else '' end)+case [ID_RESTORE] when (1) then 'Восст.,' else '' end),(1),(1),'')),'')) PERSISTED,
+        [ID_COMMENT]         AS (isnull(reverse(stuff(reverse((case [ID_ACTION] when (1) then 'РђРєС†РёСЏ,' else '' end+case [ID_EXCHANGE] when (1) then 'Р—Р°РјРµРЅР°,' else '' end)+case [ID_RESTORE] when (1) then 'Р’РѕСЃСЃС‚.,' else '' end),(1),(1),'')),'')) PERSISTED,
         [ID_REPAY]          Bit                   NOT NULL,
         [ID_LOCK]           Bit                   NOT NULL,
         [ID_NOTE]           VarChar(250)              NULL,

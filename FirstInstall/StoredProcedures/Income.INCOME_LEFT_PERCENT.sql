@@ -1,4 +1,4 @@
-USE [FirstInstall]
+ÔªøUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -13,8 +13,8 @@ BEGIN
 		ID_ID, IN_DATE, CL_NAME, VD_NAME, SYS_SHORT, SYS_ORDER, DT_NAME, NT_NAME, TT_NAME, ID_COUNT, ID_MON_CNT, ID_COMMENT,
 		ID_MAX_PERCENT, ID_PERCENT, ID_PERSONAL, IP_PERCENT, IP_ID,
 		CASE
-			WHEN ID_PERCENT > ID_MAX_PERCENT THEN '¬ÌËÏ‡ÌËÂ! œÓˆÂÌÚ ÔÓ‰‡ÊË ·ÓÎ¸¯Â Ï‡ÍÒËÏ‡Î¸ÌÓÈ ÒÚ‡‚ÍË!'
-			ELSE 'œÓˆÂÌÚ ÔÓ‰‡ÊË ÏÂÌ¸¯Â Ï‡ÍÒËÏ‡Î¸ÌÓÈ ÒÚ‡‚ÍË'
+			WHEN ID_PERCENT > ID_MAX_PERCENT THEN '–í–Ω–∏–º–∞–Ω–∏–µ! –ü—Ä–æ—Ü–µ–Ω—Ç –ø—Ä–æ–¥–∞–∂–∏ –±–æ–ª—å—à–µ –º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–π —Å—Ç–∞–≤–∫–∏!'
+			ELSE '–ü—Ä–æ—Ü–µ–Ω—Ç –ø—Ä–æ–¥–∞–∂–∏ –º–µ–Ω—å—à–µ –º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–π —Å—Ç–∞–≤–∫–∏'
 		END AS ID_PER_COMMENT
 
 	FROM

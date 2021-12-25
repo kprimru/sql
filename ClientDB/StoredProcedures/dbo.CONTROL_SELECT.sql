@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,11 +27,11 @@ BEGIN
 		SELECT
 			CC_ID, CC_TEXT, CC_DATE, CC_AUTHOR, CC_READ_DATE, CC_READER, CC_REMOVE_DATE, CC_REMOVER,
 			CASE CC_TYPE
-				WHEN 1 THEN 'Аудит'
-				WHEN 2 THEN 'Руководитель группы'
-				WHEN 3 THEN 'Дежурная служба'
-				WHEN 4 THEN 'Начальник отдела'
-				WHEN 5 THEN 'Юрист'
+				WHEN 1 THEN 'РђСѓРґРёС‚'
+				WHEN 2 THEN 'Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ РіСЂСѓРїРїС‹'
+				WHEN 3 THEN 'Р”РµР¶СѓСЂРЅР°СЏ СЃР»СѓР¶Р±Р°'
+				WHEN 4 THEN 'РќР°С‡Р°Р»СЊРЅРёРє РѕС‚РґРµР»Р°'
+				WHEN 5 THEN 'Р®СЂРёСЃС‚'
 				ELSE ''
 			END AS CC_TYPE_STR
 		FROM dbo.ClientControl

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -101,7 +101,7 @@ BEGIN
 		IF @INET IS NULL
 			SET @INET = 0
 
-		-- всегда смотрим по факту
+		-- РІСЃРµРіРґР° СЃРјРѕС‚СЂРёРј РїРѕ С„Р°РєС‚Сѓ
 		SET @INET = 0
 
 		INSERT INTO @WEEK
@@ -163,7 +163,7 @@ BEGIN
 		INSERT INTO @system(ClientID, SystemID, InfoBankID, DistrNumber, CompNumber)
 		SELECT CL_ID, D.SystemID, InfoBankID, DISTR, COMP
 		FROM @client												AS C
-		-- мы понимаем, что тут будет чуть больше чем 1 запись. И они будут отсортированы по CL_ID
+		-- РјС‹ РїРѕРЅРёРјР°РµРј, С‡С‚Рѕ С‚СѓС‚ Р±СѓРґРµС‚ С‡СѓС‚СЊ Р±РѕР»СЊС€Рµ С‡РµРј 1 Р·Р°РїРёСЃСЊ. Р РѕРЅРё Р±СѓРґСѓС‚ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ CL_ID
 		INNER MERGE JOIN dbo.ClientDistrView						AS D WITH(NOEXPAND) ON C.CL_ID = D.ID_CLIENT
 		CROSS APPLY dbo.SystemBankGet(D.SystemID, D.DistrTypeID)	AS S
 		WHERE D.DS_REG = 0
@@ -266,7 +266,7 @@ BEGIN
 				(
 					SELECT DISTINCT SystemID, UI_DISTR, UI_COMP
 					FROM @system			AS S
-					-- тут лучше HASH, потому что не придется предварительно сотрировать
+					-- С‚СѓС‚ Р»СѓС‡С€Рµ HASH, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РЅРµ РїСЂРёРґРµС‚СЃСЏ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ СЃРѕС‚СЂРёСЂРѕРІР°С‚СЊ
 					INNER JOIN @month	AS M ON UD_ID_CLIENT = S.ClientID
 												AND UI_ID_BASE = S.InfoBankID
 												AND UI_DISTR = DistrNumber
@@ -278,8 +278,8 @@ BEGIN
 			) AS I;
 		END
 
-		-- ToDo избавить от лукапов
-		-- ToDo избавиться от лишних подзапросов с помощью OUTER APPLY
+		-- ToDo РёР·Р±Р°РІРёС‚СЊ РѕС‚ Р»СѓРєР°РїРѕРІ
+		-- ToDo РёР·Р±Р°РІРёС‚СЊСЃСЏ РѕС‚ Р»РёС€РЅРёС… РїРѕРґР·Р°РїСЂРѕСЃРѕРІ СЃ РїРѕРјРѕС‰СЊСЋ OUTER APPLY
 		SELECT
 			ClientID, ServiceFullName, ManagerFullName, ClientFullName, DISTR, NET, PayTypeName, RangeValue, Category, ServicePositionName, ContractTypeName,
 			/*
@@ -289,19 +289,19 @@ BEGIN
 			END
 			*
 			CASE
-				WHEN ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') AND ClientBaseCount > 3 THEN 1.2
-				WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
-				WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.2
+				WHEN ContractTypeName IN ('СЃРїРµС†РѕРІС‹Р№', 'СЃРїРµС†РѕРІС‹Р№ РљР“РЎ', 'СЃРїРµС†РѕРІС‹Р№ Р Р”Р”', 'РёРЅС„РѕСЂРјРѕР±РјРµРЅ') AND ClientBaseCount > 3 THEN 1.2
+				WHEN Category = 'A' AND /*ServicePositionName <> 'СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AND */ContractTypeName IN ('РєРѕРјРјРµСЂС‡РµСЃРєРёР№', 'РєРѕРјРјРµСЂС‡РµСЃРєРёР№ Р’РРџ', 'РїР°РєРµС‚РЅРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ') THEN 1.4
+				WHEN Category = 'B' AND /*ServicePositionName <> 'СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AND */ContractTypeName IN ('РєРѕРјРјРµСЂС‡РµСЃРєРёР№', 'РєРѕРјРјРµСЂС‡РµСЃРєРёР№ Р’РРџ', 'РїР°РєРµС‚РЅРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ') THEN 1.2
 				ELSE 1
 			END AS COEF,
 			*/
 			CASE
-				WHEN Category IN ('A', 'B') AND ContractTypeName IN ('спецовый', 'спецовый КГС', 'спецовый РДД', 'информобмен') THEN 1.2
-				WHEN Category = 'A' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.5
-				WHEN Category = 'B' AND /*ServicePositionName <> 'сервис-инженер' AND */ContractTypeName IN ('коммерческий', 'коммерческий ВИП', 'пакетное соглашение') THEN 1.4
+				WHEN Category IN ('A', 'B') AND ContractTypeName IN ('СЃРїРµС†РѕРІС‹Р№', 'СЃРїРµС†РѕРІС‹Р№ РљР“РЎ', 'СЃРїРµС†РѕРІС‹Р№ Р Р”Р”', 'РёРЅС„РѕСЂРјРѕР±РјРµРЅ') THEN 1.2
+				WHEN Category = 'A' AND /*ServicePositionName <> 'СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AND */ContractTypeName IN ('РєРѕРјРјРµСЂС‡РµСЃРєРёР№', 'РєРѕРјРјРµСЂС‡РµСЃРєРёР№ Р’РРџ', 'РїР°РєРµС‚РЅРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ') THEN 1.5
+				WHEN Category = 'B' AND /*ServicePositionName <> 'СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AND */ContractTypeName IN ('РєРѕРјРјРµСЂС‡РµСЃРєРёР№', 'РєРѕРјРјРµСЂС‡РµСЃРєРёР№ Р’РРџ', 'РїР°РєРµС‚РЅРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ') THEN 1.4
 				ELSE 1
 			END AS COEF,
-			-- количество визитов (когда было обновлено систем > 0
+			-- РєРѕР»РёС‡РµСЃС‚РІРѕ РІРёР·РёС‚РѕРІ (РєРѕРіРґР° Р±С‹Р»Рѕ РѕР±РЅРѕРІР»РµРЅРѕ СЃРёСЃС‚РµРј > 0
 			--IsOnline, @WEEK_CNT, VISIT_CNT4, VISIT_CNT5,
 			CASE
 				WHEN IsOnline = 1 AND Category = 'C' THEN
@@ -333,7 +333,7 @@ BEGIN
 						ELSE 1
 					END
 			END AS VISIT_CNT,
-			-- максимальное количество визитов (ограничить для категории C)
+			-- РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РІРёР·РёС‚РѕРІ (РѕРіСЂР°РЅРёС‡РёС‚СЊ РґР»СЏ РєР°С‚РµРіРѕСЂРёРё C)
 			IsNull(CASE
 				WHEN Category = 'C' THEN
 					CASE

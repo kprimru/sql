@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -100,7 +100,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INCOME_DETAIL', @ID_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INCOME_DETAIL', 'Ввод оплаты', @ID_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INCOME_DETAIL', 'Р’РІРѕРґ РѕРїР»Р°С‚С‹', @ID_ID, @OLD, @NEW
 
 
 	IF ISNULL(@ID_REPAY, 0) = 0 AND ISNULL(@ID_INSTALL, 1) = 1

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 
 		SELECT
 			(
-				SELECT 'Нельзя отключить дистрибутив ' + DistrStr + CHAR(10) + CHAR(13) AS ERR_TXT
+				SELECT 'РќРµР»СЊР·СЏ РѕС‚РєР»СЋС‡РёС‚СЊ РґРёСЃС‚СЂРёР±СѓС‚РёРІ ' + DistrStr + CHAR(10) + CHAR(13) AS ERR_TXT
 				FROM
 					(
 						SELECT

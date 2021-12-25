@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -185,13 +185,13 @@ BEGIN
 			FROM #service
 
 		SELECT
-			@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' èç ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
+			@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' Ð¸Ð· ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
 			@TOTAL_PER = CONVERT(VARCHAR(20), CONVERT(DECIMAL(6, 2), ROUND(100 * CONVERT(DECIMAL(8, 4), SUM(NormalCount)) / SUM(TotalCount), 2)))
 		FROM #rate
 
 		SELECT
 			ServiceID, ManagerName, ServiceName,
-			CONVERT(VARCHAR(20), NormalCount) + ' èç ' + CONVERT(VARCHAR(20), TotalCount) AS ServiceCount,
+			CONVERT(VARCHAR(20), NormalCount) + ' Ð¸Ð· ' + CONVERT(VARCHAR(20), TotalCount) AS ServiceCount,
 			ROUND(100 * CONVERT(DECIMAL(8, 4), NormalCount) / TotalCount, 2) AS ServiceRate
 		FROM
 			#rate

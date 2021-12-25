@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[REPORT_DEBT_SELECT]
 	@date SMALLDATETIME
@@ -35,7 +35,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
 
-		--сформировать последнее сальдо по всем за эту дату?
+		--СЃС„РѕСЂРјРёСЂРѕРІР°С‚СЊ РїРѕСЃР»РµРґРЅРµРµ СЃР°Р»СЊРґРѕ РїРѕ РІСЃРµРј Р·Р° СЌС‚Сѓ РґР°С‚Сѓ?
 		CREATE TABLE #temp
 			(
 				SL_ID_CLIENT INT,

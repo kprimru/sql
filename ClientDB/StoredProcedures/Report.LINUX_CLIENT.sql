@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ClientFullName AS [Клиент], UF_NAME AS [Файл USR], UF_NOWIN_NAME AS [Название ОС], UF_NOWIN_EXTEND AS [Расширенное название ОС], UF_NOWIN_UNNAME AS [Полное название ОС], UF_DATE AS [Дата файла USR]
+		SELECT ClientFullName AS [РљР»РёРµРЅС‚], UF_NAME AS [Р¤Р°Р№Р» USR], UF_NOWIN_NAME AS [РќР°Р·РІР°РЅРёРµ РћРЎ], UF_NOWIN_EXTEND AS [Р Р°СЃС€РёСЂРµРЅРЅРѕРµ РЅР°Р·РІР°РЅРёРµ РћРЎ], UF_NOWIN_UNNAME AS [РџРѕР»РЅРѕРµ РЅР°Р·РІР°РЅРёРµ РћРЎ], UF_DATE AS [Р”Р°С‚Р° С„Р°Р№Р»Р° USR]
 		FROM
 			(
 				SELECT b.ClientFullName, UF_NAME, T.UF_NOWIN_NAME, T.UF_NOWIN_EXTEND, T.UF_NOWIN_UNNAME, MAX(a.UF_DATE) AS UF_DATE

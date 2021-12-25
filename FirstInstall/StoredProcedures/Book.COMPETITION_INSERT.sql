@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -60,7 +60,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'COMPETITION', @MASTERID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'COMPETITION', 'Новая запись', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'COMPETITION', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @MASTERID, @OLD, @NEW
 
 END
 

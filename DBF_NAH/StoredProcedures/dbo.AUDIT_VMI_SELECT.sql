@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[AUDIT_VMI_SELECT]
@@ -39,7 +39,7 @@ BEGIN
 			)
 
 		INSERT INTO #temp
-			SELECT TO_ID, 'Установлены только дополнительные системы'
+			SELECT TO_ID, 'РЈСЃС‚Р°РЅРѕРІР»РµРЅС‹ С‚РѕР»СЊРєРѕ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРёСЃС‚РµРјС‹'
 			FROM 
 				dbo.TOTable
 			WHERE EXISTS
@@ -71,7 +71,7 @@ BEGIN
 
 
 		INSERT INTO #temp
-			SELECT TO_ID, 'Дистрибутив передан другому клиенту'
+			SELECT TO_ID, 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РїРµСЂРµРґР°РЅ РґСЂСѓРіРѕРјСѓ РєР»РёРµРЅС‚Сѓ'
 			FROM dbo.TOTable
 			WHERE NOT EXISTS
 				(

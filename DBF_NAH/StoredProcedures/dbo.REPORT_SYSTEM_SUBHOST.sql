@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -162,7 +162,7 @@ BEGIN
 
 		DECLARE @sql VARCHAR(MAX)
 
-		SET @sql = 'SELECT SHPVT.PR_DATE AS [ƒ‡Ú‡], '
+		SET @sql = 'SELECT SHPVT.PR_DATE AS [–î–∞—Ç–∞], '
 
 		SELECT @sql = @sql + 'SHPVT.[' + CONVERT(VARCHAR, SH_ID) + '] AS ''' + SH_SHORT_NAME + ''','
 		FROM
@@ -190,7 +190,7 @@ BEGIN
 						#dbf_systemnet g ON g.TSN_ID = f.SNC_ID_SN INNER JOIN
 						#dbf_status	h ON h.STAT_ID = b.REG_ID_STATUS
 					WHERE REG_ID_PERIOD = SSPVT.REG_ID_PERIOD
-				) AS [»ÚÓ„Ó],'
+				) AS [–ò—Ç–æ–≥–æ],'
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 

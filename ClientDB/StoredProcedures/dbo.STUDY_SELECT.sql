@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -78,7 +78,7 @@ BEGIN
             [TEACHED]       = [TEACHED],
             [STUDY_TYPE]    = b.[NAME],
             [RIVAL]         = [RIVAL],
-            [AGREEMENT]     = CASE AGREEMENT WHEN 1 THEN 'ƒ‡' ELSE 'ÕÂÚ' END,
+            [AGREEMENT]     = CASE AGREEMENT WHEN 1 THEN '–î–∞' ELSE '–ù–µ—Ç' END,
             [UPD_DATE]      = I.[UPD_DATE]
         FROM @Study                 AS I
         INNER JOIN dbo.ClientStudy  AS A ON I.[ID] = A.[ID]

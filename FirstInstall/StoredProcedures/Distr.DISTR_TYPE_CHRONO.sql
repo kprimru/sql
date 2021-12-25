@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -63,7 +63,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'DISTR_TYPE', @DT_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'DISTR_TYPE', 'Хронологическое изменение', @DT_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'DISTR_TYPE', 'РҐСЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРµ РёР·РјРµРЅРµРЅРёРµ', @DT_ID_MASTER, @OLD, @NEW
 
 END
 

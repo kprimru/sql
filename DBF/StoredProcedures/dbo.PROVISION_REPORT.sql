@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,8 +27,8 @@ BEGIN
 
 		CREATE TABLE #result
 			(
-				[Организация]	NVARCHAR(128),
-				[Клиент]		NVARCHAR(128)
+				[РћСЂРіР°РЅРёР·Р°С†РёСЏ]	NVARCHAR(128),
+				[РљР»РёРµРЅС‚]		NVARCHAR(128)
 			)
 
 		DECLARE @SQL NVARCHAR(MAX)
@@ -46,12 +46,12 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			--SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] NVARCHAR(512)'
+			--SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Р’С‹РїР»Р°С‡РµРЅРѕ РєР»РёРµРЅС‚Сѓ] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Р”Р°С‚С‹ РІС‹РїР»Р°С‚] NVARCHAR(512)'
 			--EXEC (@SQL)
 
 			SET @SQL = 'ALTER TABLE #result ADD '
 
-			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - дата выплаты] SMALLDATETIME,'
+			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - РІС‹РїР»Р°С‡РµРЅРѕ РєР»РёРµРЅС‚Сѓ] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - РґР°С‚Р° РІС‹РїР»Р°С‚С‹] SMALLDATETIME,'
 			FROM
 				(
 					SELECT DISTINCT RN_2
@@ -66,7 +66,7 @@ BEGIN
 
 			SET @SQL = 'ALTER TABLE #result ADD '
 
-			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - сумма] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - дата] SMALLDATETIME,'
+			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - СЃСѓРјРјР°] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - РґР°С‚Р°] SMALLDATETIME,'
 			FROM
 				(
 					SELECT DISTINCT RN_1
@@ -78,7 +78,7 @@ BEGIN
 
 			EXEC (@SQL)
 
-			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] MONEY'
+			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|РћСЃС‚Р°С‚РѕРє] MONEY'
 			EXEC (@SQL)
 
 			FETCH NEXT FROM Y INTO @Y
@@ -87,7 +87,7 @@ BEGIN
 		CLOSE Y
 		DEALLOCATE Y
 
-		INSERT INTO #result([Организация], [Клиент])
+		INSERT INTO #result([РћСЂРіР°РЅРёР·Р°С†РёСЏ], [РљР»РёРµРЅС‚])
 			SELECT DISTINCT ORG_PSEDO, CL_PSEDO
 			FROM dbo.ProvisionView
 
@@ -106,22 +106,22 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			SELECT @SQL = @SQL +
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - выплачено клиенту] =
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - РІС‹РїР»Р°С‡РµРЅРѕ РєР»РёРµРЅС‚Сѓ] =
 					(
 						SELECT PRICE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE < 0
 							AND z.RN_2 = ' + CONVERT(NVARCHAR(16), RN_2) + '
 					),
-				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - дата выплаты] =
+				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_2) + ' - РґР°С‚Р° РІС‹РїР»Р°С‚С‹] =
 					(
 						SELECT DATE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE < 0
 							AND z.RN_2 = ' + CONVERT(NVARCHAR(16), RN_2) + '
@@ -135,22 +135,22 @@ BEGIN
 
 
 			SELECT @SQL = @SQL +
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - сумма] =
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - СЃСѓРјРјР°] =
 					(
 						SELECT PRICE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN_1 = ' + CONVERT(NVARCHAR(16), RN_1) + '
 					),
-				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - дата] =
+				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN_1) + ' - РґР°С‚Р°] =
 					(
 						SELECT DATE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN_1 = ' + CONVERT(NVARCHAR(16), RN_1) + '
@@ -162,12 +162,12 @@ BEGIN
 					WHERE YEAR_NUM = @Y
 				) AS o_O
 
-			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] =
+			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|РћСЃС‚Р°С‚РѕРє] =
 					(
 						SELECT SUM(PRICE)
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM <= ' + CONVERT(NVARCHAR(16), @Y) + '
 					),'
 
@@ -184,9 +184,9 @@ BEGIN
 		PRINT @SQL
 		EXEC (@SQL)
 
-		SELECT ROW_NUMBER() OVER(PARTITION BY [Организация] ORDER BY [Организация], [Клиент]) AS [№], *
+		SELECT ROW_NUMBER() OVER(PARTITION BY [РћСЂРіР°РЅРёР·Р°С†РёСЏ] ORDER BY [РћСЂРіР°РЅРёР·Р°С†РёСЏ], [РљР»РёРµРЅС‚]) AS [в„–], *
 		FROM #result
-		ORDER BY [Организация], [Клиент]
+		ORDER BY [РћСЂРіР°РЅРёР·Р°С†РёСЏ], [РљР»РёРµРЅС‚]
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
@@ -199,8 +199,8 @@ BEGIN
 
 		CREATE TABLE #result
 			(
-				[Организация]	NVARCHAR(128),
-				[Клиент]		NVARCHAR(128)
+				[РћСЂРіР°РЅРёР·Р°С†РёСЏ]	NVARCHAR(128),
+				[РљР»РёРµРЅС‚]		NVARCHAR(128)
 			)
 
 		DECLARE @SQL NVARCHAR(MAX)
@@ -218,13 +218,13 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] NVARCHAR(512)'
+			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Р’С‹РїР»Р°С‡РµРЅРѕ РєР»РёРµРЅС‚Сѓ] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|Р”Р°С‚С‹ РІС‹РїР»Р°С‚] NVARCHAR(512)'
 			EXEC (@SQL)
 
 
 			SET @SQL = 'ALTER TABLE #result ADD '
 
-			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - сумма] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - дата] SMALLDATETIME,'
+			SELECT @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - СЃСѓРјРјР°] MONEY, [' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - РґР°С‚Р°] SMALLDATETIME,'
 			FROM
 				(
 					SELECT DISTINCT RN
@@ -236,7 +236,7 @@ BEGIN
 
 			EXEC (@SQL)
 
-			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] MONEY'
+			SET @SQL = 'ALTER TABLE #result ADD [' + CONVERT(NVARCHAR(16), @Y) + '|РћСЃС‚Р°С‚РѕРє] MONEY'
 			EXEC (@SQL)
 
 			FETCH NEXT FROM Y INTO @Y
@@ -245,7 +245,7 @@ BEGIN
 		CLOSE Y
 		DEALLOCATE Y
 
-		INSERT INTO #result([Организация], [Клиент])
+		INSERT INTO #result([РћСЂРіР°РЅРёР·Р°С†РёСЏ], [РљР»РёРµРЅС‚])
 			SELECT DISTINCT ORG_PSEDO, CL_PSEDO
 			FROM dbo.ProvisionView
 
@@ -263,16 +263,16 @@ BEGIN
 
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
-			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Выплачено клиенту]  =
+			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Р’С‹РїР»Р°С‡РµРЅРѕ РєР»РёРµРЅС‚Сѓ]  =
 					(
 						SELECT SUM(-PRICE)
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE < 0
 					),
-					[' + CONVERT(NVARCHAR(16), @Y) + '|Даты выплат] =
+					[' + CONVERT(NVARCHAR(16), @Y) + '|Р”Р°С‚С‹ РІС‹РїР»Р°С‚] =
 					REVERSE(STUFF(REVERSE(
 						(
 						SELECT CONVERT(NVARCHAR(32), DATE, 104) + '',''
@@ -281,8 +281,8 @@ BEGIN
 								SELECT DISTINCT DATE
 								FROM
 									dbo.ProvisionView z
-								WHERE z.ORG_PSEDO = a.[Организация]
-									AND z.CL_PSEDO = a.[Клиент]
+								WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+									AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 									AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 									AND z.PRICE < 0
 							) AS o_O
@@ -291,22 +291,22 @@ BEGIN
 
 
 			SELECT @SQL = @SQL +
-				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - сумма] =
+				'[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - СЃСѓРјРјР°] =
 					(
 						SELECT PRICE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN = ' + CONVERT(NVARCHAR(16), RN) + '
 					),
-				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - дата] =
+				[' + CONVERT(NVARCHAR(16), @Y) + '|' + CONVERT(NVARCHAR(16), RN) + ' - РґР°С‚Р°] =
 					(
 						SELECT DATE
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM = ' + CONVERT(NVARCHAR(16), @Y) + '
 							AND z.PRICE > 0
 							AND z.RN = ' + CONVERT(NVARCHAR(16), RN) + '
@@ -318,12 +318,12 @@ BEGIN
 					WHERE YEAR_NUM = @Y
 				) AS o_O
 
-			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|Остаток] =
+			SET @SQL = @SQL + '[' + CONVERT(NVARCHAR(16), @Y) + '|РћСЃС‚Р°С‚РѕРє] =
 					(
 						SELECT SUM(PRICE)
 						FROM dbo.ProvisionView z
-						WHERE z.ORG_PSEDO = a.[Организация]
-							AND z.CL_PSEDO = a.[Клиент]
+						WHERE z.ORG_PSEDO = a.[РћСЂРіР°РЅРёР·Р°С†РёСЏ]
+							AND z.CL_PSEDO = a.[РљР»РёРµРЅС‚]
 							AND z.YEAR_NUM <= ' + CONVERT(NVARCHAR(16), @Y) + '
 					),'
 
@@ -342,7 +342,7 @@ BEGIN
 
 		SELECT *
 		FROM #result
-		ORDER BY [Организация], [Клиент]
+		ORDER BY [РћСЂРіР°РЅРёР·Р°С†РёСЏ], [РљР»РёРµРЅС‚]
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result

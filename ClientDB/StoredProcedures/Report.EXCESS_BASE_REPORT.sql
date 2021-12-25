@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,15 +25,15 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-            [РГ]            = IsNull(ManagerName, SubhostName),
-            [СИ]            = ServiceName,
-            [Клиент]        = IsNull(ClientFullName, Comment),
-            [Дистрибутив]   = dbo.DistrString(S.SystemShortName, U.UD_DISTR, U.UD_COMP),
-            [Проблема]      = ERROR_NAME
+            [Р Р“]            = IsNull(ManagerName, SubhostName),
+            [РЎР]            = ServiceName,
+            [РљР»РёРµРЅС‚]        = IsNull(ClientFullName, Comment),
+            [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]   = dbo.DistrString(S.SystemShortName, U.UD_DISTR, U.UD_COMP),
+            [РџСЂРѕР±Р»РµРјР°]      = ERROR_NAME
         FROM USR.USRActiveView AS U
         CROSS JOIN
         (
-            SELECT U.UF_ID, 'Одновременно установлены ИБ РЗ и РЗ(р)' AS ERROR_NAME
+            SELECT U.UF_ID, 'РћРґРЅРѕРІСЂРµРјРµРЅРЅРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹ РР‘ Р Р— Рё Р Р—(СЂ)' AS ERROR_NAME
             FROM USR.USRActiveView AS U
             INNER JOIN USR.USRIB AS UI ON U.UF_ID = UI.UI_ID_USR
             INNER JOIN dbo.InfoBankTable AS I ON I.InfoBankID = UI.UI_ID_BASE

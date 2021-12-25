@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT @MANAGER = 'Ãðàôèê ÑÈ ' + ServiceName + ' (' + ManagerName + ')'
+		SELECT @MANAGER = 'Ð“Ñ€Ð°Ñ„Ð¸Ðº Ð¡Ð˜ ' + ServiceName + ' (' + ManagerName + ')'
 		FROM
 			dbo.ServiceTable a
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID

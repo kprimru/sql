@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ SET NOCOUNT ON
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		-- не смог сходу переписать...
+		-- РЅРµ СЃРјРѕРі СЃС…РѕРґСѓ РїРµСЂРµРїРёСЃР°С‚СЊ...
 			SELECT
 				R.*, S.*
 			FROM [dbo].[RegNodeTable] R

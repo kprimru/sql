@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,11 +23,11 @@ BEGIN
 
 	BEGIN TRY
 		IF LTRIM(RTRIM(@LOGIN)) = N''
-			SELECT 'Не введен логин' AS ERROR
+			SELECT 'РќРµ РІРІРµРґРµРЅ Р»РѕРіРёРЅ' AS ERROR
 		ELSE IF EXISTS(SELECT * FROM sys.server_principals WHERE name = @LOGIN)
-			SELECT 'Логин "' + @LOGIN + '" уже присутствует на сервере. Выберите другое имя' AS ERROR
+			SELECT 'Р›РѕРіРёРЅ "' + @LOGIN + '" СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РЅР° СЃРµСЂРІРµСЂРµ. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ' AS ERROR
 		ELSE IF EXISTS(SELECT * FROM sys.database_principals WHERE name = @LOGIN)
-			SELECT 'Пользователь "' + @LOGIN + '" уже присутствует в базе данных. Выберите другое имя' AS ERROR
+			SELECT 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @LOGIN + '" СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ' AS ERROR
 		ELSE
 			SELECT '' AS ERROR
 

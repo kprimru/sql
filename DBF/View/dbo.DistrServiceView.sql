@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -10,10 +10,10 @@ SELECT
 	DIS_ID, DIS_NUM, DIS_COMP_NUM, DIS_STR,
 	SYS_ORDER, SYS_REG_NAME, RN_SERVICE,
 	CASE RN_SERVICE
-		WHEN 0 THEN 'Включен'
-		WHEN 1 THEN 'Отключен'
-		WHEN 2 THEN 'Недействующий'
-		ELSE 'Отсутсвует на РЦ'
+		WHEN 0 THEN 'Р’РєР»СЋС‡РµРЅ'
+		WHEN 1 THEN 'РћС‚РєР»СЋС‡РµРЅ'
+		WHEN 2 THEN 'РќРµРґРµР№СЃС‚РІСѓСЋС‰РёР№'
+		ELSE 'РћС‚СЃСѓС‚СЃРІСѓРµС‚ РЅР° Р Р¦'
 	END AS DIS_SERVICE
 FROM
 	dbo.DistrView WITH(NOEXPAND) LEFT OUTER JOIN

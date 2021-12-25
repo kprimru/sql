@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,25 +24,25 @@ BEGIN
 
 	BEGIN TRY
 
-		-- ÓÚ‰ÂÎ¸ÌÓ ‰Îˇ —Î‡‚ˇÌÍË
+		-- –æ—Ç–¥–µ–ª—å–Ω–æ –¥–ª—è –°–ª–∞–≤—è–Ω–∫–∏
 		IF @CLIENT = 3103
 			SELECT
 				a.ID,
 				dbo.DistrString(b.SystemShortName, a.DISTR, a.COMP) AS COMPLECT,
 				a.FIRST_DATE, a.START, a.FINISH, a.PROFILE, a.FIO, a.EMAIL, a.PHONE, a.CHAT, a.LGN, a.RIC_PERSONAL, a.LINKS,
-				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = '◊¿“') AS DIRECTION
+				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = '–ß–ê–¢') AS DIRECTION
 			FROM
 				dbo.HotlineChat a
 				INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
 				INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND a.DISTR = c.DistrNumber AND a.COMP = c.CompNumber
-			WHERE c.SubhostName = 'À1'
+			WHERE c.SubhostName = '–õ1'
 			ORDER BY FIRST_DATE DESC
 		ELSE
 			SELECT
 				a.ID,
 				dbo.DistrString(b.SystemShortName, a.DISTR, a.COMP) AS COMPLECT,
 				a.FIRST_DATE, a.START, a.FINISH, a.PROFILE, a.FIO, a.EMAIL, a.PHONE, a.CHAT, a.LGN, a.RIC_PERSONAL, a.LINKS,
-				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = '◊¿“') AS DIRECTION
+				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = '–ß–ê–¢') AS DIRECTION
 			FROM
 				dbo.HotlineChat a
 				INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber

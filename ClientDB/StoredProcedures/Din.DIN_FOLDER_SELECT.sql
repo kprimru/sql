@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 		SELECT DISTINCT
 			CASE DF_RIC
 				WHEN 20 THEN ''
-				ELSE 'ÐÈÖ ' + CONVERT(VARCHAR(20), DF_RIC) + '\'
+				ELSE 'Ð Ð˜Ð¦ ' + CONVERT(VARCHAR(20), DF_RIC) + '\'
 			END + NT_NAME +
 			CASE NT_NOTE
 				WHEN '' THEN ''

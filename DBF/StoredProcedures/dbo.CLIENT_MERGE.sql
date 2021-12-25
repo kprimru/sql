@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_MERGE]
@@ -30,7 +30,7 @@ BEGIN
 
 	BEGIN TRY
 
-		-- перенести точку обслуживания к другому клиент
+		-- РїРµСЂРµРЅРµСЃС‚Рё С‚РѕС‡РєСѓ РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ Рє РґСЂСѓРіРѕРјСѓ РєР»РёРµРЅС‚
 
 		IF EXISTS
 			(
@@ -108,7 +108,7 @@ BEGIN
 		SET TO_ID_CLIENT = @newclient
 		WHERE TO_ID_CLIENT = @oldclient
 
-		-- перенести дистрибутивы из ТО к клиенту
+		-- РїРµСЂРµРЅРµСЃС‚Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РёР· РўРћ Рє РєР»РёРµРЅС‚Сѓ
 		UPDATE dbo.ClientDistrTable
 		SET CD_ID_CLIENT = @newclient
 		WHERE CD_ID_CLIENT = @oldclient

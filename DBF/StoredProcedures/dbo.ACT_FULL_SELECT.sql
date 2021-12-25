@@ -1,12 +1,12 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[ACT_FULL_SELECT]
 	@periodid SMALLINT,
@@ -37,8 +37,8 @@ BEGIN
 			SET @curdate = GETDATE()
 		END
 
-		--	изменения от 22.06.2009:
-		-- мастер
+		--	РёР·РјРµРЅРµРЅРёСЏ РѕС‚ 22.06.2009:
+		-- РјР°СЃС‚РµСЂ
 		IF OBJECT_ID('tempdb..#master') IS NOT NULL
 			DROP TABLE #master
 
@@ -88,7 +88,7 @@ BEGIN
 			dbo.BankTable			H	ON	ISNULL(J.ORGC_ID_BANK, G.ORG_ID_BANK)	= H.BA_ID
 
 
-		-- деталь
+		-- РґРµС‚Р°Р»СЊ
 		IF OBJECT_ID('tempdb..#detail') IS NOT NULL
 			DROP TABLE #detail
 

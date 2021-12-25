@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,7 +34,7 @@ BEGIN
 					AND b.StatisticDate <= @DATE
 				ORDER BY StatisticDate DESC
 			) as DOCS
-        -- ToDo õàðäêîä
+        -- ToDo Ñ…Ð°Ñ€Ð´ÐºÐ¾Ð´
 		FROM dbo.SystemBankGet(@SYSTEM_ID, 2) a
 		ORDER BY a.InfoBankOrder
 

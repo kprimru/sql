@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,18 +39,18 @@ BEGIN
 			DIS_STR,
 
 			CASE
-				WHEN SYS_OLD_NAME IS NULL AND SYS_NEW_NAME IS NULL AND SN_OLD_NAME IS NULL AND SN_NEW_NAME IS NULL THEN 'Новая система'
+				WHEN SYS_OLD_NAME IS NULL AND SYS_NEW_NAME IS NULL AND SN_OLD_NAME IS NULL AND SN_NEW_NAME IS NULL THEN 'РќРѕРІР°СЏ СЃРёСЃС‚РµРјР°'
 				/*
 				WHEN ISNULL(TT_OLD_ID, 0) < ISNULL(TT_NEW_ID, 0) THEN 
-					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(ISNULL(SN_OLD_NAME, SN_NAME) + ' ', '') +
-					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(TT_NEW_NAME, '')
+					ISNULL('c ' + SYS_OLD_NAME + ' ', 'СЃ ') + ISNULL(ISNULL(SN_OLD_NAME, SN_NAME) + ' ', '') +
+					ISNULL('РЅР° ' + SYS_NEW_NAME + ' ', 'РЅР° ') + ISNULL(TT_NEW_NAME, '')
 				WHEN ISNULL(TT_OLD_ID, 0) > ISNULL(TT_NEW_ID, 0) THEN 
-					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(TT_OLD_NAME, '') + ' ' +
-					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(ISNULL(SN_NEW_NAME, SN_NAME), '')
+					ISNULL('c ' + SYS_OLD_NAME + ' ', 'СЃ ') + ISNULL(TT_OLD_NAME, '') + ' ' +
+					ISNULL('РЅР° ' + SYS_NEW_NAME + ' ', 'РЅР° ') + ISNULL(ISNULL(SN_NEW_NAME, SN_NAME), '')
 				*/
 				ELSE
-					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(SN_OLD_NAME + ' ', '') +
-					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(SN_NEW_NAME, '')
+					ISNULL('c ' + SYS_OLD_NAME + ' ', 'СЃ ') + ISNULL(SN_OLD_NAME + ' ', '') +
+					ISNULL('РЅР° ' + SYS_NEW_NAME + ' ', 'РЅР° ') + ISNULL(SN_NEW_NAME, '')
 			END AS OPER,
 			CONVERT(MONEY, CASE
 				WHEN (
@@ -267,8 +267,8 @@ BEGIN
 					END, Subhost.MinPrice(@SH_ID))
 				ELSE
 				/*
-					Замента системы.
-					Берем разницу в прейскурантах
+					Р—Р°РјРµРЅС‚Р° СЃРёСЃС‚РµРјС‹.
+					Р‘РµСЂРµРј СЂР°Р·РЅРёС†Сѓ РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°С…
 				*/
 					dbo.MoneyMax(
 					(

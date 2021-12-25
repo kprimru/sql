@@ -1,4 +1,4 @@
-USE [BuhDB]
+﻿USE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO

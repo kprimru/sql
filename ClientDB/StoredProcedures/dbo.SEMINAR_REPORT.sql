@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
 
 		SELECT @ID_PLACE = LessonPlaceID
 		FROM dbo.LessonPlaceTable
-		WHERE LessonPlaceName = 'ÑÒ'
+		WHERE LessonPlaceName = 'Ð¡Ð¢'
 
 		IF @BEGIN IS NULL
 			SELECT @BEGIN = MIN(DATE)

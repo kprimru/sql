@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,14 +25,14 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			CL_PSEDO AS [Псевдоним], TO_NAME AS [Название ТО], CL_SHORT_NAME AS [Короткое название клиента],
+			CL_PSEDO AS [РџСЃРµРІРґРѕРЅРёРј], TO_NAME AS [РќР°Р·РІР°РЅРёРµ РўРћ], CL_SHORT_NAME AS [РљРѕСЂРѕС‚РєРѕРµ РЅР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р°],
 			(
 				SELECT TOP 1 DIS_STR
 				FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView
 				WHERE CD_ID_CLIENT = CL_ID
 					AND DSS_REPORT = 1
 				ORDER BY SYS_ORDER
-			) AS [Основной дистрибутив]
+			) AS [РћСЃРЅРѕРІРЅРѕР№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ]
 		FROM
 			[PC275-SQL\DELTA].DBF.dbo.TOTable
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID

@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[BILL_ALL_CREATE]
@@ -34,11 +34,11 @@ BEGIN
 
 		DECLARE @TXT VARCHAR(MAX)
 
-		SELECT @TXT = 'Период: ' + CONVERT(VARCHAR(MAX), PR_DATE, 104)
+		SELECT @TXT = 'РџРµСЂРёРѕРґ: ' + CONVERT(VARCHAR(MAX), PR_DATE, 104)
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @periodid
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Начало прямого формирования счетов', @TXT, NULL, NULL
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'РќР°С‡Р°Р»Рѕ РїСЂСЏРјРѕРіРѕ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃС‡РµС‚РѕРІ', @TXT, NULL, NULL
 
 		DECLARE CL CURSOR LOCAL FOR
 			SELECT CL_ID
@@ -72,7 +72,7 @@ BEGIN
 		CLOSE CL
 		DEALLOCATE CL
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Начало обратного формирования счетов', @TXT, NULL, NULL
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'РќР°С‡Р°Р»Рѕ РѕР±СЂР°С‚РЅРѕРіРѕ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃС‡РµС‚РѕРІ', @TXT, NULL, NULL
 
 		DECLARE CL_REVERSE CURSOR LOCAL FOR
 			SELECT CL_ID
@@ -104,7 +104,7 @@ BEGIN
 		CLOSE CL_REVERSE
 		DEALLOCATE CL_REVERSE
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Окончание формирования счетов', @TXT, NULL, NULL
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'РћРєРѕРЅС‡Р°РЅРёРµ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃС‡РµС‚РѕРІ', @TXT, NULL, NULL
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

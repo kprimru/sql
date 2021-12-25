@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			DATE AS [Дата], LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS [Время], b.NAME AS [Статус],
-			SHORT AS [Заголовок], NOTE AS [Описание], EXPIRE AS [Выполнить до],
-			EXEC_DATE AS [Дата выполнения], EXEC_NOTE AS [Описание к выполнению],
-			UPD_DATE AS [Дата редакции], UPD_USER AS [Кто редактировал]
+			DATE AS [Р”Р°С‚Р°], LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS [Р’СЂРµРјСЏ], b.NAME AS [РЎС‚Р°С‚СѓСЃ],
+			SHORT AS [Р—Р°РіРѕР»РѕРІРѕРє], NOTE AS [РћРїРёСЃР°РЅРёРµ], EXPIRE AS [Р’С‹РїРѕР»РЅРёС‚СЊ РґРѕ],
+			EXEC_DATE AS [Р”Р°С‚Р° РІС‹РїРѕР»РЅРµРЅРёСЏ], EXEC_NOTE AS [РћРїРёСЃР°РЅРёРµ Рє РІС‹РїРѕР»РЅРµРЅРёСЋ],
+			UPD_DATE AS [Р”Р°С‚Р° СЂРµРґР°РєС†РёРё], UPD_USER AS [РљС‚Рѕ СЂРµРґР°РєС‚РёСЂРѕРІР°Р»]
 		FROM
 			Task.Tasks a
 			INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,8 +11,8 @@ ALTER PROCEDURE [dbo].[STAT_IB_SEARCH]
 	@END	SMALLDATETIME,
 	@MODE	TINYINT
 	/*
-	+1 - системы - даты
-	+2 - системы - иб - даты
+	+1 - СЃРёСЃС‚РµРјС‹ - РґР°С‚С‹
+	+2 - СЃРёСЃС‚РµРјС‹ - РёР± - РґР°С‚С‹
 	*/
 AS
 BEGIN

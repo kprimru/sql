@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -106,7 +106,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT b.ID, a.ID, b.NUM, CONVERT(NVARCHAR(32), b.NUM), 'Дополнительное соглашение', d.IND, REG_DATE, b.NOTE, '', RETURN_DATE, NULL, b.UPD_USER, d.NAME AS ST_NAME, NULL, NULL
+		SELECT b.ID, a.ID, b.NUM, CONVERT(NVARCHAR(32), b.NUM), 'Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ СЃРѕРіР»Р°С€РµРЅРёРµ', d.IND, REG_DATE, b.NOTE, '', RETURN_DATE, NULL, b.UPD_USER, d.NAME AS ST_NAME, NULL, NULL
 		FROM @contract a
 		INNER JOIN Contract.Additional b ON a.ID = b.ID_CONTRACT
 		INNER JOIN Contract.Status d ON b.ID_STATUS = d.ID

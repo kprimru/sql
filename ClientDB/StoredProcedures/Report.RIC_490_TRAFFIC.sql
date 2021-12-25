@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			NAME AS [Месяц], TOTAL_SIZE AS [Объем], CNT AS [Кол-во пополнений],
-			CONVERT(NVARCHAR(8), AVG_TIME / 3600) + ':' + CONVERT(NVARCHAR(8), (AVG_TIME - (AVG_TIME / 3600) * 3600) / 60) AS [Среднее время]
+			NAME AS [РњРµСЃСЏС†], TOTAL_SIZE AS [РћР±СЉРµРј], CNT AS [РљРѕР»-РІРѕ РїРѕРїРѕР»РЅРµРЅРёР№],
+			CONVERT(NVARCHAR(8), AVG_TIME / 3600) + ':' + CONVERT(NVARCHAR(8), (AVG_TIME - (AVG_TIME / 3600) * 3600) / 60) AS [РЎСЂРµРґРЅРµРµ РІСЂРµРјСЏ]
 		FROM
 			(
 				SELECT
@@ -47,7 +47,7 @@ BEGIN
 								WHERE x.Comment LIKE '%490%' AND TYPE = 2 AND dbo.MonthOf(z.CSD_DATE) = dbo.MonthOf(a.CSD_DATE)
 							) AS o_O
 						ORDER BY CSD_DATE FOR XML PATH('')
-					) AS [Даты пополнения]
+					) AS [Р”Р°С‚С‹ РїРѕРїРѕР»РЅРµРЅРёСЏ]
 					*/
 				FROM
 					IP.ClientStatDetailView a

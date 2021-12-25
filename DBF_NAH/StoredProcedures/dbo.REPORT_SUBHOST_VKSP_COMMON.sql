@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -73,13 +73,13 @@ BEGIN
 						WHEN 0 THEN ''
 						WHEN 1 THEN
 							CASE REG_PROBLEM
-								WHEN 1 THEN ' Пробл.'
+								WHEN 1 THEN ' РџСЂРѕР±Р».'
 								ELSE ''
 							END
 						WHEN 2 THEN
 							CASE REG_PROBLEM
-								WHEN 1 THEN ' ДЗ2/ДЗ3'
-								ELSE ' ДД2'
+								WHEN 1 THEN ' Р”Р—2/Р”Р—3'
+								ELSE ' Р”Р”2'
 							END
 					END AS SYS_SHORT_NAME, SYS_ORDER,
 				SN_NAME, SN_ORDER, REG_ID_HOST, SW_WEIGHT * SNCC_WEIGHT AS WEIGHT_ONE, CNT
@@ -156,7 +156,7 @@ BEGIN
 			)
 
 		INSERT INTO @SUBHOST(SH_ID, SH_SHORT, SH_ORDER)
-			SELECT DISTINCT SH_ID, SH_SHORT_NAME, /*CASE SH_LST_NAME WHEN '' THEN 'Базис' ELSE SH_LST_NAME END, */SH_ORDER
+			SELECT DISTINCT SH_ID, SH_SHORT_NAME, /*CASE SH_LST_NAME WHEN '' THEN 'Р‘Р°Р·РёСЃ' ELSE SH_LST_NAME END, */SH_ORDER
 			FROM
 				#reg
 				INNER JOIN dbo.SubhostTable ON SH_ID = REG_ID_HOST
@@ -165,7 +165,7 @@ BEGIN
 
 		SET @SQL = 'ALTER TABLE #res ADD '
 
-		SELECT @SQL = @SQL + '[' + SH_SHORT + '|Количество] INT, [' + SH_SHORT + '|Вес] DECIMAL(8, 4),'
+		SELECT @SQL = @SQL + '[' + SH_SHORT + '|РљРѕР»РёС‡РµСЃС‚РІРѕ] INT, [' + SH_SHORT + '|Р’РµСЃ] DECIMAL(8, 4),'
 		FROM @SUBHOST
 		ORDER BY SH_ORDER
 
@@ -179,7 +179,7 @@ BEGIN
 
 		SET @SQL = 'UPDATE #res SET '
 
-		SELECT @SQL = @SQL + '[' + SH_SHORT + '|Количество] = (SELECT CNT FROM #reg WHERE SYS_SHORT_NAME = SYS AND SN = SN_NAME AND SST = SST_NAME AND REG_ID_HOST = ' + CONVERT(VARCHAR(20), SH_ID) + '),'
+		SELECT @SQL = @SQL + '[' + SH_SHORT + '|РљРѕР»РёС‡РµСЃС‚РІРѕ] = (SELECT CNT FROM #reg WHERE SYS_SHORT_NAME = SYS AND SN = SN_NAME AND SST = SST_NAME AND REG_ID_HOST = ' + CONVERT(VARCHAR(20), SH_ID) + '),'
 		FROM @SUBHOST
 		ORDER BY SH_ORDER
 
@@ -189,7 +189,7 @@ BEGIN
 
 		SET @SQL = 'UPDATE #res SET '
 
-		SELECT @SQL = @SQL + '[' + SH_SHORT + '|Вес] = WEIGHT_ONE * [' + SH_SHORT + '|Количество],'
+		SELECT @SQL = @SQL + '[' + SH_SHORT + '|Р’РµСЃ] = WEIGHT_ONE * [' + SH_SHORT + '|РљРѕР»РёС‡РµСЃС‚РІРѕ],'
 		FROM @SUBHOST
 		ORDER BY SH_ORDER
 
@@ -198,7 +198,7 @@ BEGIN
 		EXEC (@SQL)
 
 		SET @SQL = 'SELECT SYS, SN, SST, WEIGHT_ONE, '
-		SELECT @SQL = @SQL + '[' + SH_SHORT + '|Количество], [' + SH_SHORT + '|Вес],'
+		SELECT @SQL = @SQL + '[' + SH_SHORT + '|РљРѕР»РёС‡РµСЃС‚РІРѕ], [' + SH_SHORT + '|Р’РµСЃ],'
 		FROM @SUBHOST
 		ORDER BY SH_ORDER
 

@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,7 +30,7 @@ BEGIN
 				SELECT GR_NAME + ': ' + ISNULL(CONVERT(VARCHAR(20), NUMBER), '') + CASE WHEN ISNULL(SHORT, '') = '' THEN '' ELSE '(' + SHORT + ')' END + CHAR(10)
 				FROM
 					(
-						SELECT 'Компания' AS GR_NAME, b.NUMBER, b.SHORT
+						SELECT 'РљРѕРјРїР°РЅРёСЏ' AS GR_NAME, b.NUMBER, b.SHORT
 						FROM
 							Client.CompanyPhone a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
@@ -39,7 +39,7 @@ BEGIN
 
 						UNION
 
-						SELECT 'Сотрудник', b.NUMBER, b.SHORT
+						SELECT 'РЎРѕС‚СЂСѓРґРЅРёРє', b.NUMBER, b.SHORT
 						FROM
 							Client.CompanyPersonal a
 							INNER JOIN Client.CompanyPersonalPhone c ON a.ID = c.ID_PERSONAL
@@ -57,7 +57,7 @@ BEGIN
 				SELECT GR_NAME + ': ' + ISNULL(CONVERT(VARCHAR(20), NUMBER), '') + CASE WHEN ISNULL(SHORT, '') = '' THEN '' ELSE '(' + SHORT + ')' END + CHAR(10)
 				FROM
 					(
-						SELECT 'Компания' AS GR_NAME, b.NUMBER, b.SHORT
+						SELECT 'РљРѕРјРїР°РЅРёСЏ' AS GR_NAME, b.NUMBER, b.SHORT
 						FROM
 							Client.CompanyPhone a
 							INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
@@ -67,7 +67,7 @@ BEGIN
 
 						UNION
 
-						SELECT 'Сотрудник', b.NUMBER, b.SHORT
+						SELECT 'РЎРѕС‚СЂСѓРґРЅРёРє', b.NUMBER, b.SHORT
 						FROM
 							Client.CompanyPersonal a
 							INNER JOIN Client.CompanyPersonalPhone c ON a.ID = c.ID_PERSONAL

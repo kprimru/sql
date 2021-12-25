@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[BOOK_DEFAULT_SELECT]
@@ -48,7 +48,7 @@ BEGIN
 					WHERE GS_NAME = 'BOOK_FINISH'
 				), 104) AS BOOK_END
 		FROM dbo.OrganizationTable
-		--WHERE ORG_PSEDO = 'Базис'
+		--WHERE ORG_PSEDO = 'Р‘Р°Р·РёСЃ'
 		ORDER BY ORG_ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

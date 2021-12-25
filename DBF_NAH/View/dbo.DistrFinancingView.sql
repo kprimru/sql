@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,7 +21,7 @@ AS
 			WHERE DIS_NUM = REG_DISTR_NUM
 				AND DIS_COMP_NUM = REG_COMP_NUM
 				AND d.SYS_ID_HOST = b.SYS_ID_HOST
-		) WHEN 0 THEN 'Нет' WHEN 1 THEN 'Нет' ELSE 'Да' END AS DF_EXCHANGE
+		) WHEN 0 THEN 'РќРµС‚' WHEN 1 THEN 'РќРµС‚' ELSE 'Р”Р°' END AS DF_EXCHANGE
 	FROM
 		dbo.ClientDistrView a
 		LEFT OUTER JOIN dbo.SystemTable b ON a.SYS_ID = b.SYS_ID

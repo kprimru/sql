@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -18,7 +18,7 @@ BEGIN
 
         DECLARE @Distr Table
 		(
-		    -- HostID - из ALPHA!
+		    -- HostID - РёР· ALPHA!
 			HostID	SmallInt	    NOT NULL,
 			HostReg	VarChar(100)    NOT NULL,
 			Distr	Int			    NOT NULL,
@@ -28,11 +28,11 @@ BEGIN
 
         SELECT @DUTY = DutyID
 		FROM dbo.DutyTable
-		WHERE DutyName = 'Автомат'
+		WHERE DutyName = 'РђРІС‚РѕРјР°С‚'
 
 		IF @DUTY IS NULL
 		BEGIN
-			RAISERROR('Отсутствует встроенный сотрудник ДС! Импорт невозможен', 16, 1)
+			RAISERROR('РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІСЃС‚СЂРѕРµРЅРЅС‹Р№ СЃРѕС‚СЂСѓРґРЅРёРє Р”РЎ! РРјРїРѕСЂС‚ РЅРµРІРѕР·РјРѕР¶РµРЅ', 16, 1)
 			RETURN
 		END
 
@@ -45,7 +45,7 @@ BEGIN
         EXEC (@Query)
 
 
-        -- обновляем список дистрибутивов подключенных к ЗВЭ
+        -- РѕР±РЅРѕРІР»СЏРµРј СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… Рє Р—Р’Р­
 		TRUNCATE TABLE dbo.ExpertDistr;
 
 		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE)
@@ -56,7 +56,7 @@ BEGIN
 		INNER JOIN dbo.Hosts H ON H.HostReg = AH.HostReg
 		WHERE A.UNSET_DATE IS NULL;
 
-		-- обновляем списко дистрибутивов подключенных к чату
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїРёСЃРєРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… Рє С‡Р°С‚Сѓ
 
 		TRUNCATE TABLE dbo.HotlineDistr;
 
@@ -68,7 +68,7 @@ BEGIN
 		INNER JOIN dbo.Hosts H ON H.HostReg = AH.HostReg
 		WHERE A.UNSET_DATE IS NULL;
 
-		-- Обновляем черный список ИП
+		-- РћР±РЅРѕРІР»СЏРµРј С‡РµСЂРЅС‹Р№ СЃРїРёСЃРѕРє РРџ
 
 		TRUNCATE TABLE dbo.BLACK_LIST_REG;
 
@@ -80,7 +80,7 @@ BEGIN
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].dbo.BLACK_LIST_REG AS B ON B.ID_SYS = S.SystemID AND B.DISTR = D.Distr AND B.COMP = D.Comp
 		WHERE B.P_DELETE = 0;
 
-		-- Обновляем протокол РЦ
+		-- РћР±РЅРѕРІР»СЏРµРј РїСЂРѕС‚РѕРєРѕР» Р Р¦
 
 		INSERT INTO dbo.RegProtocol(RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER)
 		SELECT RPR_DATE, H.HostID, RPR_DISTR, RPR_COMP, RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER
@@ -100,7 +100,7 @@ BEGIN
 					AND R.RPR_TYPE = P.RPR_TYPE
 			);
 
-			-- Обновляем РЦ
+			-- РћР±РЅРѕРІР»СЏРµРј Р Р¦
 
 		DELETE FROM dbo.RegNodeTable;
 
@@ -188,7 +188,7 @@ BEGIN
 			(
 				SELECT TOP 1 ID
 				FROM dbo.CallDirection
-				WHERE NAME = 'ВопросЭксперту'
+				WHERE NAME = 'Р’РѕРїСЂРѕСЃР­РєСЃРїРµСЂС‚Сѓ'
 			)
 		FROM @TBL z
 		INNER JOIN dbo.ClientDutyQuestion a ON a.ID = z.ID

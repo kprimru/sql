@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
 		WHERE ID = @MONTH
 
 		SELECT
-			rnsv.DistrStr AS [Дистрибутив], SST_SHORT AS [Тип системы], NT_SHORT AS [Тип сети], Comment AS [Клиент], MIN(rpcv.DATE) AS [Дата регистрации],
+			rnsv.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹], NT_SHORT AS [РўРёРї СЃРµС‚Рё], Comment AS [РљР»РёРµРЅС‚], MIN(rpcv.DATE) AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё],
 			CONVERT(DECIMAL(8, 2),
 				CASE
 					WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
@@ -45,23 +45,23 @@ BEGIN
 					WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN
 						DF_DISCOUNT
 					ELSE 0
-				END) AS [Размер скидки],
+				END) AS [Р Р°Р·РјРµСЂ СЃРєРёРґРєРё],
 			DATEADD(MONTH,
 					CASE SST_SHORT
-						WHEN 'С.А' THEN 18
+						WHEN 'РЎ.Рђ' THEN 18
 						ELSE 24
-					END, DATE) AS [Скидка действует до],
+					END, DATE) AS [РЎРєРёРґРєР° РґРµР№СЃС‚РІСѓРµС‚ РґРѕ],
 			DATEDIFF(DAY, GETDATE(),
 				DATEADD(MONTH,
 					CASE SST_SHORT
-						WHEN 'С.А' THEN 18
+						WHEN 'РЎ.Рђ' THEN 18
 						ELSE 24
-					END, DATE)) AS [Осталось дней],
+					END, DATE)) AS [РћСЃС‚Р°Р»РѕСЃСЊ РґРЅРµР№],
 			CASE SST_SHORT
-				WHEN ('С.К2') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
-				WHEN ('С.И') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
+				WHEN ('РЎ.Рљ2') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
+				WHEN ('РЎ.Р') THEN /*CONVERT(NVARCHAR, */DATEADD(MONTH, 18, DATE)--)
 				ELSE NULL
-			END AS [Скидка РИЦ]
+			END AS [РЎРєРёРґРєР° Р РР¦]
 		FROM
 			(
 				SELECT
@@ -81,11 +81,11 @@ BEGIN
 			INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP
 			INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP
 		WHERE
-			SST_SHORT IN ('С.А', 'С.К2', 'С.К1', 'С.И') AND
+			SST_SHORT IN ('РЎ.Рђ', 'РЎ.Рљ2', 'РЎ.Рљ1', 'РЎ.Р') AND
 			DS_REG=0
 
 		GROUP BY rnsv.DistrStr, SST_SHORT, NT_SHORT, Comment, rnsv.SystemOrder, DF_DISCOUNT, DF_FIXED_PRICE, PRICE, COEF, RND, DF_ID_PRICE, DEPO_PRICE, DATE
-		ORDER BY [Осталось дней], Comment/*, SystemOrder, DistrStr, EXIST*/
+		ORDER BY [РћСЃС‚Р°Р»РѕСЃСЊ РґРЅРµР№], Comment/*, SystemOrder, DistrStr, EXIST*/
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

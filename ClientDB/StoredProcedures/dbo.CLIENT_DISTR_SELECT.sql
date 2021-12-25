@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,17 +56,17 @@ BEGIN
 			TP, ID, SystemOrder, ds.DistrStr, SystemTypeID, SystemTypeName, DistrTypeName, DistrTypeID, SystemID,
 			ds.DS_NAME, DS_REG, DS_INDEX, D_STR,
 			SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE,
-			CASE WHEN DF_ID_PRICE = 6 THEN 'Прейскурант ДЕПО ' ELSE '' END +
+			CASE WHEN DF_ID_PRICE = 6 THEN 'РџСЂРµР№СЃРєСѓСЂР°РЅС‚ Р”Р•РџРћ ' ELSE '' END +
 			CASE
-				WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN 'Фикс.сумма: ' + CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), DF_FIXED_PRICE))
-				WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN 'Скидка: ' + CONVERT(VARCHAR(20), CONVERT(INT, DF_DISCOUNT)) + ' %'
+				WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN 'Р¤РёРєСЃ.СЃСѓРјРјР°: ' + CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), DF_FIXED_PRICE))
+				WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN 'РЎРєРёРґРєР°: ' + CONVERT(VARCHAR(20), CONVERT(INT, DF_DISCOUNT)) + ' %'
 				ELSE ''
 			END AS DBF_STR,
 			CASE
 				WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN
-					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DF_FIXED_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% от прейскуранта'
+					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DF_FIXED_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% РѕС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°'
 				WHEN DF_ID_PRICE = 6 THEN
-					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DEPO_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% от прейскуранта'
+					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DEPO_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% РѕС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°'
 				ELSE ''
 			END AS PRICE_STR,
 			CASE
@@ -128,17 +128,17 @@ BEGIN
 								ORDER BY DATE DESC
 							) AS SystemEnd,
 							CASE
-								WHEN (@SH_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @SH_NAME) <> @SH_NAME) THEN 'Дистрибутив установлен у другого подхоста'
+								WHEN (@SH_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @SH_NAME) <> @SH_NAME) THEN 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅ Сѓ РґСЂСѓРіРѕРіРѕ РїРѕРґС…РѕСЃС‚Р°'
 								WHEN a.SystemReg = 0 THEN ''
 								WHEN b.ID IS NULL  THEN
 									CASE
-										WHEN c.ID IS NULL THEN 'Система не найдена в РЦ'
-										ELSE 'Система заменена (' + c.SystemShortName + ')'
+										WHEN c.ID IS NULL THEN 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р Р¦'
+										ELSE 'РЎРёСЃС‚РµРјР° Р·Р°РјРµРЅРµРЅР° (' + c.SystemShortName + ')'
 									END
-								WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
-								WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
-								-- Внимание! Расчет на то, что при неоднозначности SST_ID_MASTER IS NULL
-								-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
+								WHEN a.DistrTypeID <> b.DistrTypeID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ С‚РёРї СЃРµС‚Рё. Р’ Р Р¦ - ' + b.DistrTypeName
+								WHEN a.DS_ID <> b.DS_ID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЃС‚Р°С‚СѓСЃ СЃРёСЃС‚РµРјС‹. Р’ Р Р¦ - ' + b.DS_NAME
+								-- Р’РЅРёРјР°РЅРёРµ! Р Р°СЃС‡РµС‚ РЅР° С‚Рѕ, С‡С‚Рѕ РїСЂРё РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё SST_ID_MASTER IS NULL
+								-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ С‚РёРї СЃРёСЃС‚РµРјС‹. Р’ Р Р¦ - ' + b.SST_SHORT
 								WHEN
 									ISNULL((
 										SELECT ID_CLIENT
@@ -152,7 +152,7 @@ BEGIN
 											AND y.DistrNumber = a.DISTR
 											AND y.CompNumber = a.COMP
 											AND y.SubhostName = ''
-									), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
+									), a.ID_CLIENT) <> a.ID_CLIENT THEN 'РЎРёСЃС‚РµРјР° Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅР° РІ РєРѕРјРїР»РµРєС‚Рµ РєР»РёРµРЅС‚Р° ' + (
 										SELECT ClientFullName + ' (' + y.Complect + ')'
 										FROM
 											dbo.ClientDistrView z WITH(NOEXPAND)
@@ -195,8 +195,8 @@ BEGIN
 							c.DS_REG, c.DS_INDEX,
 							c.RegisterDate,
 							NULL,
-							/* пишем тут тип ошибки*/
-							'Дистрибутив установлен в комплекте с системами клиента',
+							/* РїРёС€РµРј С‚СѓС‚ С‚РёРї РѕС€РёР±РєРё*/
+							'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅ РІ РєРѕРјРїР»РµРєС‚Рµ СЃ СЃРёСЃС‚РµРјР°РјРё РєР»РёРµРЅС‚Р°',
 							2 AS ERROR_TYPE,
 							1 AS STATUS,
 							d.TransferLeft,

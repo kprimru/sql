@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -57,7 +57,7 @@ BEGIN
 		FROM
 			(
 				SELECT
-					NUM, DATE, ISNULL(CL_1C, '!!!Õ≈“  À»≈Õ“¿!!!') AS CL_1C,
+					NUM, DATE, ISNULL(CL_1C, '!!!–ù–ï–¢ –ö–õ–ò–ï–ù–¢–ê!!!') AS CL_1C,
 					(
 						SELECT SUM(ROUND(S_NDS, 2))
 						FROM dbo.BookPurchaseDetail b

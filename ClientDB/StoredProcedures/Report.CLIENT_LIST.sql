@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			b.ManagerName AS [Рук-ль], b.ServiceName AS [СИ], b.ClientFullName AS [Клиент],
-			T.Name AS [Тип ограничения], R.[Comment] AS [Описание]
+			b.ManagerName AS [Р СѓРє-Р»СЊ], b.ServiceName AS [РЎР], b.ClientFullName AS [РљР»РёРµРЅС‚],
+			T.Name AS [РўРёРї РѕРіСЂР°РЅРёС‡РµРЅРёСЏ], R.[Comment] AS [РћРїРёСЃР°РЅРёРµ]
 		FROM dbo.ClientView b WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 		INNER JOIN [dbo].[Clients:Restrictions] AS r ON r.Client_Id = b.ClientID

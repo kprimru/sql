@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -304,7 +304,7 @@ BEGIN
 				FOR XML RAW('ITEM'), ROOT('SYSTEM_BANK')
 			);
 
-		-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable
+		-- TOdo РёСЃРїСЂР°РІРёС‚СЊ РїРѕСЃР»Рµ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё СЃРїСЂР°РІРѕС‡РЅРёРєР° dbo.DistrTypeTable
 		SET @SystemBankNew =
 			(
 				SELECT
@@ -416,7 +416,7 @@ BEGIN
 				FOR XML RAW('ITEM'), ROOT('DISTR_TYPE')
 			);
 
-		-- TOdo исправить после синхронизации справочника dbo.DistrTypeTable
+		-- TOdo РёСЃРїСЂР°РІРёС‚СЊ РїРѕСЃР»Рµ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё СЃРїСЂР°РІРѕС‡РЅРёРєР° dbo.DistrTypeTable
 		INSERT INTO @DistrTypeCoef
 		SELECT ID_NET, START, COEF, RND
 		FROM

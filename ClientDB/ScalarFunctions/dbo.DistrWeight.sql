@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,9 +31,9 @@ BEGIN
 
 	SELECT @RES =
 			CASE
-				WHEN @TYPE IN ('С/В', 'С/В информ.обмен', 'ЛСВ', 'ЛСВ информац.обмен', 'Серия Л', 'ОДД', 'ЛСВ РДД') THEN NULL
-				WHEN @TYPE IN ('ДД3') AND @SYS_REG LIKE 'SPK-%' THEN WEIGHT2
-				WHEN @TYPE = 'ДЗ2' THEN a.WEIGHT2
+				WHEN @TYPE IN ('РЎ/Р’', 'РЎ/Р’ РёРЅС„РѕСЂРј.РѕР±РјРµРЅ', 'Р›РЎР’', 'Р›РЎР’ РёРЅС„РѕСЂРјР°С†.РѕР±РјРµРЅ', 'РЎРµСЂРёСЏ Р›', 'РћР”Р”', 'Р›РЎР’ Р Р”Р”') THEN NULL
+				WHEN @TYPE IN ('Р”Р”3') AND @SYS_REG LIKE 'SPK-%' THEN WEIGHT2
+				WHEN @TYPE = 'Р”Р—2' THEN a.WEIGHT2
 				ELSE a.WEIGHT
 			END * b.WEIGHT
 	FROM

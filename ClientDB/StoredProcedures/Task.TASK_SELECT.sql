@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -71,7 +71,7 @@ BEGIN
 						WHEN DATEPART(HOUR, TIME) < 8 THEN NULL
 						ELSE DATEPART(HOUR, TIME)
 					END AS HOUR_INT,
-					ISNULL('äî ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
+					ISNULL('Ð´Ð¾ ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
 					ISNULL(ClientFullName + CHAR(10), '') +
 					CASE
 						WHEN @SHORT = 1 THEN SHORT
@@ -87,7 +87,7 @@ BEGIN
 					AND DATE BETWEEN @BEGIN AND @END
 					AND
 						(
-							-- ëè÷íûå
+							-- Ð»Ð¸Ñ‡Ð½Ñ‹Ðµ
 							@PERSONAL = 1
 							AND
 								(
@@ -124,7 +124,7 @@ BEGIN
 						WHEN DATEPART(HOUR, DATE) < 8 THEN NULL
 						ELSE DATEPART(HOUR, DATE)
 					END AS HOUR_INT, 
-					'Êîíòàêò' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') +
+					'ÐšÐ¾Ð½Ñ‚Ð°ÐºÑ‚' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') +
 					a.NOTE  + CHAR(10) + a.UPD_USER,
 
 					NULL, 2

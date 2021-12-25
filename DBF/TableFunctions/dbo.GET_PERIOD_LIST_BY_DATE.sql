@@ -1,4 +1,4 @@
-USE [DBF]
+ï»¿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -16,7 +16,7 @@ BEGIN
 		WHERE PR_DATE <= DATEADD(MONTH, -1, @date) AND @date <= DATEADD(MONTH, 1, PR_END_DATE)
 
 
-	-- Âîçâðàùåíèå ðåçóëüòàòà ðàáîòû ôóíêöèè
+	-- Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰ÐµÐ½Ð¸Ðµ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð° Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
 	RETURN
 END
 

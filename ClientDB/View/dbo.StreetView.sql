@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -119,7 +119,7 @@ AS
 
 
 
-		'Российская Федерация, ' +
+		'Р РѕСЃСЃРёР№СЃРєР°СЏ Р¤РµРґРµСЂР°С†РёСЏ, ' +
 
 
 		CASE RG_PREFIX

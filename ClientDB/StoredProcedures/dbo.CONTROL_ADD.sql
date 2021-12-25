@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 			AND IS_MEMBER('rl_client_control_quality_set') = 0
 			AND IS_MEMBER('rl_client_control_lawyer_set') = 0
 		BEGIN
-			RAISERROR ('Вам запрещено ставить клиента на контроль', 16, 1)
+			RAISERROR ('Р’Р°Рј Р·Р°РїСЂРµС‰РµРЅРѕ СЃС‚Р°РІРёС‚СЊ РєР»РёРµРЅС‚Р° РЅР° РєРѕРЅС‚СЂРѕР»СЊ', 16, 1)
 
 			RETURN
 		END

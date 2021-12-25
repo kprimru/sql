@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,14 +25,14 @@ BEGIN
 
 		SELECT DistrTypeID, DistrTypeName, DistrTypeName AS DistrTypeShortName
 		FROM dbo.DistrTypeTable
-		WHERE DistrTypeName IN ('ÎÓÍ', 'ÒÂÚ¸', 'Œ¬ -‘','Œ¬Ã-‘(1;2)')
+		WHERE DistrTypeName IN ('–ª–æ–∫', '—Å–µ—Ç—å', '–û–í–ö-–§','–û–í–ú-–§(1;2)')
 		ORDER BY DistrTypeOrder
 
 		--SELECT NT_SHORT, NT_ID, [NT_VMI_SHORT]
 		--FROM din.NetType
 		--WHERE
 		--     [NT_TECH] IN (0,1,10,11)
-		--	  AND (NT_SHORT IN ('ÎÓÍ', 'Œ¬ -‘','Œ¬Ã-‘ (1;2)'))
+		--	  AND (NT_SHORT IN ('–ª–æ–∫', '–û–í–ö-–§','–û–í–ú-–§ (1;2)'))
 		--  ORDER BY NT_SHORT
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

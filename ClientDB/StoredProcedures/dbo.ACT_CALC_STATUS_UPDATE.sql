@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,10 +35,10 @@ BEGIN
 		)
 
 		INSERT INTO @TBL (ID, OLD_STATUS)
-		SELECT ID, ISNULL(CALC_STATUS, 'Не расчитан')
+		SELECT ID, ISNULL(CALC_STATUS, 'РќРµ СЂР°СЃС‡РёС‚Р°РЅ')
 		FROM dbo.ActCalc a
 		WHERE STATUS = 1
-			AND (CALC_STATUS <> 'Расчитан полностью' OR CALC_STATUS IS NULL)
+			AND (CALC_STATUS <> 'Р Р°СЃС‡РёС‚Р°РЅ РїРѕР»РЅРѕСЃС‚СЊСЋ' OR CALC_STATUS IS NULL)
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
@@ -53,7 +53,7 @@ BEGIN
             @DebugContext   = @DebugContext,
             @Name           = 'INSERT INTO @act';
 
-		--ToDo переписать это убожество
+		--ToDo РїРµСЂРµРїРёСЃР°С‚СЊ СЌС‚Рѕ СѓР±РѕР¶РµСЃС‚РІРѕ
 		UPDATE z
 		SET NEW_STATUS =
 			CASE
@@ -66,7 +66,7 @@ BEGIN
 							INNER JOIN dbo.SystemTable q ON p.HostID = q.HostID
 							INNER JOIN @act c ON q.SystemBaseName = c.SYS_REG_NAME AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM AND MON = PR_DATE
 						WHERE a.ID = b.ID_MASTER
-					) THEN 'Не расчитан'
+					) THEN 'РќРµ СЂР°СЃС‡РёС‚Р°РЅ'
 				WHEN NOT EXISTS
 					(
 						SELECT *
@@ -84,7 +84,7 @@ BEGIN
 										AND MON = PR_DATE
 										AND b.SYS_REG = p.SystemBaseName
 								)
-					) THEN 'Расчитан полностью'
+					) THEN 'Р Р°СЃС‡РёС‚Р°РЅ РїРѕР»РЅРѕСЃС‚СЊСЋ'
 				WHEN EXISTS
 					(
 						SELECT *
@@ -134,8 +134,8 @@ BEGIN
 										AND b.SYS_REG = p.SystemBaseName
 								)
 					)
-					THEN 'Расчитан частично'
-				ELSE 'ХЗ'
+					THEN 'Р Р°СЃС‡РёС‚Р°РЅ С‡Р°СЃС‚РёС‡РЅРѕ'
+				ELSE 'РҐР—'
 			END
 		FROM
 			dbo.ActCalc a
@@ -147,8 +147,8 @@ BEGIN
             @Name           = 'UPDATE @TBL SET NEW_STATUS';
 
 		UPDATE @TBL
-		SET NEW_STATUS = 'Расчитан частично'
-		WHERE NEW_STATUS = 'ХЗ'
+		SET NEW_STATUS = 'Р Р°СЃС‡РёС‚Р°РЅ С‡Р°СЃС‚РёС‡РЅРѕ'
+		WHERE NEW_STATUS = 'РҐР—'
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
@@ -168,7 +168,7 @@ BEGIN
 		--EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss',  @MSG, 0
 
 		INSERT INTO dbo.ClientMessage(TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
-			SELECT 1, GETDATE(), 'Изменен статус расчета "' + USR + ' (' + SERVICE + ') с ' + OLD_STATUS + ' на ' + NEW_STATUS, USR, 0
+			SELECT 1, GETDATE(), 'РР·РјРµРЅРµРЅ СЃС‚Р°С‚СѓСЃ СЂР°СЃС‡РµС‚Р° "' + USR + ' (' + SERVICE + ') СЃ ' + OLD_STATUS + ' РЅР° ' + NEW_STATUS, USR, 0
 			FROM
 				dbo.ActCalc a
 				INNER JOIN @TBL z ON a.ID = z.ID

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 
 		DECLARE @SQL NVARCHAR(MAX)
 
-		DECLARE @SAVE NVARCHAR(500) /* путь для сохраненного файла*/
+		DECLARE @SAVE NVARCHAR(500) /* РїСѓС‚СЊ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРЅРѕРіРѕ С„Р°Р№Р»Р°*/
 
 		DECLARE @PROCESS_DATE	DATETIME
 
@@ -49,7 +49,7 @@ BEGIN
 
             EXEC [Debug].[Execution@Point]
                 @DebugContext   = @DebugContext,
-                @Name           = 'Загрузили файл от КЦ';
+                @Name           = 'Р—Р°РіСЂСѓР·РёР»Рё С„Р°Р№Р» РѕС‚ РљР¦';
 
 			IF (@RESULT <> 0)
 				RETURN
@@ -133,7 +133,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			RAISERROR('Невнятный файл какой-то подсунули мне, подонки!', 16, 1)
+			RAISERROR('РќРµРІРЅСЏС‚РЅС‹Р№ С„Р°Р№Р» РєР°РєРѕР№-С‚Рѕ РїРѕРґСЃСѓРЅСѓР»Рё РјРЅРµ, РїРѕРґРѕРЅРєРё!', 16, 1)
 			RETURN
 		END
 
@@ -392,7 +392,7 @@ BEGIN
 		SELECT @ERROR = TP + ': ' + MSG + CHAR(10)
 		FROM
 			(
-				SELECT DISTINCT 'Неизвестная система' AS TP, SYS_NAME AS MSG
+				SELECT DISTINCT 'РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРёСЃС‚РµРјР°' AS TP, SYS_NAME AS MSG
 				FROM #reg
 				WHERE NOT EXISTS
 						(
@@ -403,7 +403,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT DISTINCT 'Не указан хост системы', SystemShortName
+				SELECT DISTINCT 'РќРµ СѓРєР°Р·Р°РЅ С…РѕСЃС‚ СЃРёСЃС‚РµРјС‹', SystemShortName
 				FROM
 					dbo.SystemTable
 					INNER JOIN #reg ON SYS_NAME = SystemBaseName
@@ -411,7 +411,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT DISTINCT 'Неизвестный тип системы', DIS_TYPE
+				SELECT DISTINCT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹', DIS_TYPE
 				FROM #reg
 				WHERE NOT EXISTS
 						(
@@ -422,7 +422,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT DISTINCT 'Неизвестная сетевитость', 'Сеть ' + CONVERT(VARCHAR(20), NET) + ' Тех ' + CONVERT(VARCHAR(20), TECH_TYPE) + ' ОДОН ' + CONVERT(VARCHAR(20), ODOn) + ' ОДОфф ' + CONVERT(VARCHAR(20), ODOff)
+				SELECT DISTINCT 'РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРµС‚РµРІРёС‚РѕСЃС‚СЊ', 'РЎРµС‚СЊ ' + CONVERT(VARCHAR(20), NET) + ' РўРµС… ' + CONVERT(VARCHAR(20), TECH_TYPE) + ' РћР”РћРќ ' + CONVERT(VARCHAR(20), ODOn) + ' РћР”РћС„С„ ' + CONVERT(VARCHAR(20), ODOff)
 				FROM #reg
 				WHERE NOT EXISTS
 					(
@@ -434,7 +434,7 @@ BEGIN
 
 				UNION ALL
 
-				SELECT DISTINCT 'Неизвестный статус', CONVERT(VARCHAR(20), SERVICE)
+				SELECT DISTINCT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃС‚Р°С‚СѓСЃ', CONVERT(VARCHAR(20), SERVICE)
 				FROM #reg
 				WHERE NOT EXISTS
 					(
@@ -460,7 +460,7 @@ BEGIN
 			RETURN
 		END
 
-		/* заполняем новыми дистрибутивами основную таблицу*/
+		/* Р·Р°РїРѕР»РЅСЏРµРј РЅРѕРІС‹РјРё РґРёСЃС‚СЂРёР±СѓС‚РёРІР°РјРё РѕСЃРЅРѕРІРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ*/
 		INSERT INTO Reg.RegDistr(ID_HOST, DISTR, COMP, STATUS, CREATE_DATE)
 			SELECT HostID, DISTR, COMP, 1, @PROCESS_DATE
 			FROM
@@ -479,8 +479,8 @@ BEGIN
             @DebugContext   = @DebugContext,
             @Name           = 'INSERT INTO Reg.RegDistr';
 
-		/* если есть кому сменить статус в основной таблице - меняем
-		 вернуть в активный список*/
+		/* РµСЃР»Рё РµСЃС‚СЊ РєРѕРјСѓ СЃРјРµРЅРёС‚СЊ СЃС‚Р°С‚СѓСЃ РІ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†Рµ - РјРµРЅСЏРµРј
+		 РІРµСЂРЅСѓС‚СЊ РІ Р°РєС‚РёРІРЅС‹Р№ СЃРїРёСЃРѕРє*/
 		UPDATE a
 		SET STATUS = 1
 		FROM Reg.RegDistr a
@@ -500,7 +500,7 @@ BEGIN
             @DebugContext   = @DebugContext,
             @Name           = 'UPDATE Reg.RegDistr SET STATUS = 1';
 
-		/* или удалить из списка*/
+		/* РёР»Рё СѓРґР°Р»РёС‚СЊ РёР· СЃРїРёСЃРєР°*/
 		UPDATE a
 		SET STATUS = 2
 		FROM Reg.RegDistr a
@@ -520,7 +520,7 @@ BEGIN
             @DebugContext   = @DebugContext,
             @Name           = 'UPDATE Reg.RegDistr SET STATUS = 2';
 
-		/* добавляем записи в таблицу истории, делая все предыдущие записи этого дистрибутива неактивными*/
+		/* РґРѕР±Р°РІР»СЏРµРј Р·Р°РїРёСЃРё РІ С‚Р°Р±Р»РёС†Сѓ РёСЃС‚РѕСЂРёРё, РґРµР»Р°СЏ РІСЃРµ РїСЂРµРґС‹РґСѓС‰РёРµ Р·Р°РїРёСЃРё СЌС‚РѕРіРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° РЅРµР°РєС‚РёРІРЅС‹РјРё*/
 		INSERT INTO Reg.RegHistory(
 						ID_DISTR, DATE, ID_SYSTEM, ID_NET, ID_TYPE, SUBHOST, TRAN_COUNT, TRAN_LEFT,
 						ID_STATUS, REG_DATE, FIRST_REG, COMPLECT, COMMENT, OFFLINE
@@ -567,13 +567,13 @@ BEGIN
             @Name           = 'INSERT INTO Reg.RegHistory';
 
 		/*
-			Закинуть данные в активную таблицу
+			Р—Р°РєРёРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ РІ Р°РєС‚РёРІРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ
 		*/
 
 		IF @UPDATE = 1
 		BEGIN
 			INSERT INTO Task.Tasks(DATE, TIME, RECEIVER, ID_CLIENT, ID_STATUS, SHORT, NOTE, EXPIRE)
-				SELECT dbo.DateOf(GETDATE()), NULL, NULL, ID_CLIENT, (SELECT ID FROM Task.TaskStatus WHERE PSEDO = N'ACTIVE'), 'Скидка', 'Изменился состав комплекта, проверьте правильность финансовых условий', NULL
+				SELECT dbo.DateOf(GETDATE()), NULL, NULL, ID_CLIENT, (SELECT ID FROM Task.TaskStatus WHERE PSEDO = N'ACTIVE'), 'РЎРєРёРґРєР°', 'РР·РјРµРЅРёР»СЃСЏ СЃРѕСЃС‚Р°РІ РєРѕРјРїР»РµРєС‚Р°, РїСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ С„РёРЅР°РЅСЃРѕРІС‹С… СѓСЃР»РѕРІРёР№', NULL
 				FROM
 					(
 						SELECT DISTINCT ID_CLIENT
@@ -630,7 +630,7 @@ BEGIN
 					ORDER BY COMMENT, DISTR_STR FOR XML PATH('')
 				)
 
-			SELECT @EMSG = 'Был включен/зарегистрирован дистрибутив, внесенный в черный список ИнтернетПополнения: ' + CHAR(10) + @EMSG
+			SELECT @EMSG = 'Р‘С‹Р» РІРєР»СЋС‡РµРЅ/Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ РґРёСЃС‚СЂРёР±СѓС‚РёРІ, РІРЅРµСЃРµРЅРЅС‹Р№ РІ С‡РµСЂРЅС‹Р№ СЃРїРёСЃРѕРє РРЅС‚РµСЂРЅРµС‚РџРѕРїРѕР»РЅРµРЅРёСЏ: ' + CHAR(10) + @EMSG
 
 			EXEC [Debug].[Execution@Point]
                 @DebugContext   = @DebugContext,
@@ -638,7 +638,7 @@ BEGIN
 
 			IF @EMSG IS NOT NULL
 			BEGIN
-				EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'Денисов', @EMSG, 0
+				EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'Р”РµРЅРёСЃРѕРІ', @EMSG, 0
 				EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss', @EMSG, 0
 			END
 
@@ -671,11 +671,11 @@ BEGIN
 						ORDER BY COMMENT, DISTR_STR FOR XML PATH('')
 					)
 
-				SELECT @MSG = 'Зарегистрированы ОДД: ' + CHAR(10) + @MSG
+				SELECT @MSG = 'Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹ РћР”Р”: ' + CHAR(10) + @MSG
 
 				EXEC [Debug].[Execution@Point]
                 @DebugContext   = @DebugContext,
-                @Name           = 'SELECT @MSG = (ОДД)';
+                @Name           = 'SELECT @MSG = (РћР”Р”)';
 
 				IF @MSG IS NOT NULL
 					EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss', @MSG, 0
@@ -693,7 +693,7 @@ BEGIN
 																		AND a.COMP = b.CompNumber
 						INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
 						INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
-					WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
+					WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'Рљ+'
 				)
 			BEGIN
 				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
@@ -711,7 +711,7 @@ BEGIN
 																					AND a.COMP = b.CompNumber
 									INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
 									INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
-								WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
+								WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'Рљ+'
 							)
 
 					OPEN CL
@@ -723,14 +723,14 @@ BEGIN
 					WHILE @@FETCH_STATUS = 0
 					BEGIN
 						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Восстановление', 0, 'Автомат'
+							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ', 0, 'РђРІС‚РѕРјР°С‚'
 							WHERE NOT EXISTS
 								(
 									SELECT *
 									FROM dbo.ClientStudyClaim a
 									WHERE ID_CLIENT = @CLIENT
 										AND ID_MASTER IS NULL
-										AND UPD_USER = 'Автомат'
+										AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 								)
 
 						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
@@ -746,7 +746,7 @@ BEGIN
 
 		    EXEC [Debug].[Execution@Point]
                 @DebugContext   = @DebugContext,
-                @Name           = 'Автоматическое создание заявок на восстановление';
+                @Name           = 'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ СЃРѕР·РґР°РЅРёРµ Р·Р°СЏРІРѕРє РЅР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ';
 
 			DELETE
 			FROM dbo.RegNodeTable
@@ -880,14 +880,14 @@ BEGIN
 					WHILE @@FETCH_STATUS = 0
 					BEGIN
 						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Замена дистрибутива', 0, 'Автомат'
+							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Р—Р°РјРµРЅР° РґРёСЃС‚СЂРёР±СѓС‚РёРІР°', 0, 'РђРІС‚РѕРјР°С‚'
 							WHERE NOT EXISTS
 								(
 									SELECT *
 									FROM dbo.ClientStudyClaim a
 									WHERE ID_CLIENT = @CLIENT
 										AND ID_MASTER IS NULL
-										AND UPD_USER = 'Автомат'
+										AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 								)
 
 						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
@@ -901,7 +901,7 @@ BEGIN
 
 				EXEC [Debug].[Execution@Point]
                     @DebugContext   = @DebugContext,
-                    @Name           = 'Автоматическое создание заявок на замену';
+                    @Name           = 'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ СЃРѕР·РґР°РЅРёРµ Р·Р°СЏРІРѕРє РЅР° Р·Р°РјРµРЅСѓ';
 
 				UPDATE a
 				SET a.ID_SYSTEM	= ISNULL(b.ID_SYSTEM, a.ID_SYSTEM),

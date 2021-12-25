@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,8 +37,8 @@ BEGIN
 					AND b.STATUS = 1
 					AND b.UNSET_DATE IS NULL
 			)
-			--AND SST_SHORT NOT IN ('дхс', 'юдл', 'дяо', 'кяб', 'ндд')
-			AND NT_SHORT NOT IN ('нбо', 'нбох', 'нбл1', 'нбл2', 'нбй')
+			--AND SST_SHORT NOT IN ('п■п≤пё', 'п░п■п°', 'п■п║п÷', 'п⌡п║п▓', 'п·п■п■')
+			AND NT_SHORT NOT IN ('п·п▓п÷', 'п·п▓п÷п≤', 'п·п▓п°1', 'п·п▓п°2', 'п·п▓п ')
 			AND SubhostName = @SUBHOST
 		ORDER BY ClientName
 

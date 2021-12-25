@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -61,171 +61,171 @@ BEGIN
         SET @MainContent =
         (
             SELECT
-                [ИдФайл]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ВерсФорм]  = '5.01',
-                [ВерсПрог]  = '11.0',
+                [РРґР¤Р°Р№Р»]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [Р’РµСЂСЃР¤РѕСЂРј]  = '5.01',
+                [Р’РµСЂСЃРџСЂРѕРі]  = '11.0',
                 (
                     SELECT
-                        [ИдОтпр]    = O.[EIS_CODE],
-                        [ИдПол]     = F.[EIS_CODE],
+                        [РРґРћС‚РїСЂ]    = O.[EIS_CODE],
+                        [РРґРџРѕР»]     = F.[EIS_CODE],
                         (
                             SELECT
-                                [ИННЮЛ]     = '7710568760',
-                                [НаимОрг]   = 'Федеральное казначейство',
-                                [ИдЭДО]     = '2ZK'
-                            FOR XML RAW ('СвОЭДОтпр'), TYPE
+                                [РРќРќР®Р›]     = '7710568760',
+                                [РќР°РёРјРћСЂРі]   = 'Р¤РµРґРµСЂР°Р»СЊРЅРѕРµ РєР°Р·РЅР°С‡РµР№СЃС‚РІРѕ',
+                                [РРґР­Р”Рћ]     = '2ZK'
+                            FOR XML RAW ('РЎРІРћР­Р”РћС‚РїСЂ'), TYPE
                         )
-                    FOR XML RAW('СвУчДокОбор'), TYPE
+                    FOR XML RAW('РЎРІРЈС‡Р”РѕРєРћР±РѕСЂ'), TYPE
                 ),
                 (
                     SELECT
-                        [КНД]               = '1115131',
-                        [Функция]           = 'СЧФДОП',
-                        [ДатаИнфПр]         = Convert(VarChar(20), GetDate(), 104),
-                        [ВремИнфПр]         = Replace(Convert(VarChar(20), GetDate(), 108), ':', '.'),
-                        [ПоФактХЖ]          = 'Документ об отгрузке товаров (выполнении работ), передаче имущественных прав (документ об оказании услуг)',
-                        [НаимДокОпр]        = 'Документ об отгрузке товаров (выполнении работ), передаче имущественных прав (документ об оказании услуг)',
-                        [НаимЭконСубСост]   = O.ORG_FULL_NAME,
-                        [СоглСтрДопИнф]     = '0000.0000.0000',
+                        [РљРќР”]               = '1115131',
+                        [Р¤СѓРЅРєС†РёСЏ]           = 'РЎР§Р¤Р”РћРџ',
+                        [Р”Р°С‚Р°РРЅС„РџСЂ]         = Convert(VarChar(20), GetDate(), 104),
+                        [Р’СЂРµРјРРЅС„РџСЂ]         = Replace(Convert(VarChar(20), GetDate(), 108), ':', '.'),
+                        [РџРѕР¤Р°РєС‚РҐР–]          = 'Р”РѕРєСѓРјРµРЅС‚ РѕР± РѕС‚РіСЂСѓР·РєРµ С‚РѕРІР°СЂРѕРІ (РІС‹РїРѕР»РЅРµРЅРёРё СЂР°Р±РѕС‚), РїРµСЂРµРґР°С‡Рµ РёРјСѓС‰РµСЃС‚РІРµРЅРЅС‹С… РїСЂР°РІ (РґРѕРєСѓРјРµРЅС‚ РѕР± РѕРєР°Р·Р°РЅРёРё СѓСЃР»СѓРі)',
+                        [РќР°РёРјР”РѕРєРћРїСЂ]        = 'Р”РѕРєСѓРјРµРЅС‚ РѕР± РѕС‚РіСЂСѓР·РєРµ С‚РѕРІР°СЂРѕРІ (РІС‹РїРѕР»РЅРµРЅРёРё СЂР°Р±РѕС‚), РїРµСЂРµРґР°С‡Рµ РёРјСѓС‰РµСЃС‚РІРµРЅРЅС‹С… РїСЂР°РІ (РґРѕРєСѓРјРµРЅС‚ РѕР± РѕРєР°Р·Р°РЅРёРё СѓСЃР»СѓРі)',
+                        [РќР°РёРјР­РєРѕРЅРЎСѓР±РЎРѕСЃС‚]   = O.ORG_FULL_NAME,
+                        [РЎРѕРіР»РЎС‚СЂР”РѕРїРРЅС„]     = '0000.0000.0000',
                         (
                             SELECT
-                                [НомерСчФ]  = I.INS_NUM,
-                                --[ДатаСчФ]   = Convert(VarChar(20), I.INS_DATE, 104),
-                                [ДатаСчФ]   = Convert(VarChar(20), GetDate(), 104),
-                                [КодОКВ]    = 643,
+                                [РќРѕРјРµСЂРЎС‡Р¤]  = I.INS_NUM,
+                                --[Р”Р°С‚Р°РЎС‡Р¤]   = Convert(VarChar(20), I.INS_DATE, 104),
+                                [Р”Р°С‚Р°РЎС‡Р¤]   = Convert(VarChar(20), GetDate(), 104),
+                                [РљРѕРґРћРљР’]    = 643,
                                 (
                                     SELECT
-                                        [КраткНазв] = O.ORG_SHORT_NAME,
+                                        [РљСЂР°С‚РєРќР°Р·РІ] = O.ORG_SHORT_NAME,
                                         (
                                             SELECT
-                                                [НаимОрг]   = O.ORG_FULL_NAME,
-                                                [ИННЮЛ]     = O.ORG_INN,
-                                                [КПП]       = O.ORG_KPP
-                                            FOR XML RAW('СвЮЛУч'), TYPE, ROOT('ИдСв')
+                                                [РќР°РёРјРћСЂРі]   = O.ORG_FULL_NAME,
+                                                [РРќРќР®Р›]     = O.ORG_INN,
+                                                [РљРџРџ]       = O.ORG_KPP
+                                            FOR XML RAW('РЎРІР®Р›РЈС‡'), TYPE, ROOT('РРґРЎРІ')
                                         ),
                                         (
                                             SELECT
-                                                [Индекс]    = O.ORG_INDEX,
-                                                [КодРегион] = C.CT_REGION,
-                                                [Город]     = C.CT_NAME,
-                                                [Улица]     = S.ST_NAME,
-                                                [Дом]       = ORG_HOME
+                                                [РРЅРґРµРєСЃ]    = O.ORG_INDEX,
+                                                [РљРѕРґР РµРіРёРѕРЅ] = C.CT_REGION,
+                                                [Р“РѕСЂРѕРґ]     = C.CT_NAME,
+                                                [РЈР»РёС†Р°]     = S.ST_NAME,
+                                                [Р”РѕРј]       = ORG_HOME
                                             FROM dbo.StreetTable AS S
                                             INNER JOIN dbo.CityTable AS C ON S.ST_ID_CITY = C.CT_ID
                                             WHERE S.ST_ID = O.ORG_ID_STREET
-                                            FOR XML RAW('АдрРФ'), TYPE, ROOT('Адрес')
+                                            FOR XML RAW('РђРґСЂР Р¤'), TYPE, ROOT('РђРґСЂРµСЃ')
                                         ),
                                         (
                                             SELECT
-                                                [Тлф]       = O.ORG_PHONE,
-                                                [ЭлПочта]   = O.ORG_EMAIL
-                                            FOR XML RAW('Контакт'), TYPE
+                                                [РўР»С„]       = O.ORG_PHONE,
+                                                [Р­Р»РџРѕС‡С‚Р°]   = O.ORG_EMAIL
+                                            FOR XML RAW('РљРѕРЅС‚Р°РєС‚'), TYPE
                                         ),
                                         (
                                             SELECT
-                                                [НомерСчета] = O.ORG_ACCOUNT,
+                                                [РќРѕРјРµСЂРЎС‡РµС‚Р°] = O.ORG_ACCOUNT,
                                                 (
                                                     SELECT
-                                                        [НаимБанк]  = BA.BA_NAME,
-                                                        [БИК]       = O.ORG_BIK,
-                                                        [КорСчет]   = O.ORG_LORO
+                                                        [РќР°РёРјР‘Р°РЅРє]  = BA.BA_NAME,
+                                                        [Р‘РРљ]       = O.ORG_BIK,
+                                                        [РљРѕСЂРЎС‡РµС‚]   = O.ORG_LORO
                                                     FROM dbo.BankTable AS BA
                                                     WHERE BA_ID = ORG_ID_BANK
-                                                    FOR XML RAW('СвБанк'), TYPE
+                                                    FOR XML RAW('РЎРІР‘Р°РЅРє'), TYPE
                                                 )
-                                            FOR XML RAW('БанкРекв'), TYPE
+                                            FOR XML RAW('Р‘Р°РЅРєР РµРєРІ'), TYPE
                                         )
-                                    FOR XML RAW ('СвПрод'), TYPE
+                                    FOR XML RAW ('РЎРІРџСЂРѕРґ'), TYPE
                                 ),
                                 (
                                     SELECT
-                                        [ОКПО]          = CL.CL_OKPO,
-                                        [КраткНазв]     = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
-                                        [ИнфДляУчаст]   = @IdentGUId,
+                                        [РћРљРџРћ]          = CL.CL_OKPO,
+                                        [РљСЂР°С‚РєРќР°Р·РІ]     = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
+                                        [РРЅС„Р”Р»СЏРЈС‡Р°СЃС‚]   = @IdentGUId,
                                         (
                                             SELECT
-                                                [НаимОрг]   = F.EIS_DATA.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),--CL.CL_FULL_NAME,
-                                                [ИННЮЛ]     = CL.CL_INN,
-                                                [КПП]       = CL.CL_KPP
-                                            FOR XML RAW('СвЮЛУч'), TYPE, ROOT('ИдСв')
+                                                [РќР°РёРјРћСЂРі]   = F.EIS_DATA.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),--CL.CL_FULL_NAME,
+                                                [РРќРќР®Р›]     = CL.CL_INN,
+                                                [РљРџРџ]       = CL.CL_KPP
+                                            FOR XML RAW('РЎРІР®Р›РЈС‡'), TYPE, ROOT('РРґРЎРІ')
                                         ),
                                         (
                                             SELECT
-                                                [Индекс]    = CA.CA_INDEX,
-                                                [КодРегион] = CA.CT_REGION,
-                                                [Район]     = CA.AR_NAME,
-                                                [Город]     = CA.CT_NAME,
-                                                [Улица]     = CA.ST_NAME,
-                                                [Дом]       = CA_HOME
+                                                [РРЅРґРµРєСЃ]    = CA.CA_INDEX,
+                                                [РљРѕРґР РµРіРёРѕРЅ] = CA.CT_REGION,
+                                                [Р Р°Р№РѕРЅ]     = CA.AR_NAME,
+                                                [Р“РѕСЂРѕРґ]     = CA.CT_NAME,
+                                                [РЈР»РёС†Р°]     = CA.ST_NAME,
+                                                [Р”РѕРј]       = CA_HOME
                                             FROM dbo.ClientAddressView AS CA
                                             WHERE CA.CA_ID_CLIENT = CL.CL_ID
                                                 AND CA.CA_ID_TYPE = 1
-                                            FOR XML RAW('АдрРФ'), TYPE, ROOT('Адрес')
+                                            FOR XML RAW('РђРґСЂР Р¤'), TYPE, ROOT('РђРґСЂРµСЃ')
                                         ),
                                         (
                                             SELECT
-                                                [Тлф]       = NullIf(CL.CL_PHONE, ''),
-                                                [ЭлПочта]   = NullIf(CL.CL_EMAIL, '')
-                                            FOR XML RAW('Контакт'), TYPE
+                                                [РўР»С„]       = NullIf(CL.CL_PHONE, ''),
+                                                [Р­Р»РџРѕС‡С‚Р°]   = NullIf(CL.CL_EMAIL, '')
+                                            FOR XML RAW('РљРѕРЅС‚Р°РєС‚'), TYPE
                                         ),
                                         (
                                             SELECT
                                                 [Id] = NULL
-                                            FOR XML RAW('СвБанк'), TYPE, ROOT('БанкРекв')
+                                            FOR XML RAW('РЎРІР‘Р°РЅРє'), TYPE, ROOT('Р‘Р°РЅРєР РµРєРІ')
                                         )
                                     FROM dbo.ClientTable AS CL
                                     WHERE CL.CL_ID = I.INS_ID_CLIENT
-                                    FOR XML RAW ('СвПокуп'), TYPE
+                                    FOR XML RAW ('РЎРІРџРѕРєСѓРї'), TYPE
                                 ),
                                 (
                                     SELECT
-                                        [НаимОКВ] = 'Российский рубль',
+                                        [РќР°РёРјРћРљР’] = 'Р РѕСЃСЃРёР№СЃРєРёР№ СЂСѓР±Р»СЊ',
                                         (
                                             SELECT TOP (1)
-                                                [ДатаГосКонт]   = Convert(VarChar(20), CO_DATE, 104),
-                                                [НомерГосКонт]  = CO_NUM
+                                                [Р”Р°С‚Р°Р“РѕСЃРљРѕРЅС‚]   = Convert(VarChar(20), CO_DATE, 104),
+                                                [РќРѕРјРµСЂР“РѕСЃРљРѕРЅС‚]  = CO_NUM
                                             FROM dbo.ContractTable AS CO
                                             INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
                                             INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
                                             WHERE CO_ID_CLIENT = A.ACT_ID_CLIENT
                                                 AND CO_ACTIVE = 1
-                                            FOR XML RAW('ИнфПродГосЗакКазн'), TYPE
+                                            FOR XML RAW('РРЅС„РџСЂРѕРґР“РѕСЃР—Р°РєРљР°Р·РЅ'), TYPE
                                         )
-                                    FOR XML RAW('ДопСвФХЖ1'), TYPE
+                                    FOR XML RAW('Р”РѕРїРЎРІР¤РҐР–1'), TYPE
                                 )
-                            FOR XML RAW('СвСчФакт'), TYPE
+                            FOR XML RAW('РЎРІРЎС‡Р¤Р°РєС‚'), TYPE
                         ),
                         (
                             SELECT
                                 (
                                     SELECT
-                                        [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
-                                        --[НаимТов]       = ED.[ProductName],
-                                        [НаимТов]       = R.INR_GOOD + ' ' + R.INR_NAME,
-                                        [ОКЕИ_Тов]      = ED.[ProductOKEICode],
-                                        [КолТов]        = 1,
-                                        -- ToDo хардкод 20%
-                                        [ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
-                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(R.INR_SUM * IsNull(R.INR_COUNT, 1), '.'),
-                                        [НалСт]         = '20%',
-                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
+                                        [РќРѕРјРЎС‚СЂ]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+                                        --[РќР°РёРјРўРѕРІ]       = ED.[ProductName],
+                                        [РќР°РёРјРўРѕРІ]       = R.INR_GOOD + ' ' + R.INR_NAME,
+                                        [РћРљР•Р_РўРѕРІ]      = ED.[ProductOKEICode],
+                                        [РљРѕР»РўРѕРІ]        = 1,
+                                        -- ToDo С…Р°СЂРґРєРѕРґ 20%
+                                        [Р¦РµРЅР°РўРѕРІ]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
+                                        [РЎС‚РўРѕРІР‘РµР·РќР”РЎ]   = dbo.MoneyFormatCustom(R.INR_SUM * IsNull(R.INR_COUNT, 1), '.'),
+                                        [РќР°Р»РЎС‚]         = '20%',
+                                        [РЎС‚РўРѕРІРЈС‡РќР°Р»]    = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
                                         (
                                             SELECT
-                                                [БезАкциз] = 'без акциза'
-                                            FOR XML PATH('Акциз'), TYPE
+                                                [Р‘РµР·РђРєС†РёР·] = 'Р±РµР· Р°РєС†РёР·Р°'
+                                            FOR XML PATH('РђРєС†РёР·'), TYPE
                                         ),
                                         (
                                             SELECT
-                                                [СумНал] = dbo.MoneyFormatCustom(R.INR_SNDS, '.')
-                                            FOR XML PATH('СумНал'), TYPE
+                                                [РЎСѓРјРќР°Р»] = dbo.MoneyFormatCustom(R.INR_SNDS, '.')
+                                            FOR XML PATH('РЎСѓРјРќР°Р»'), TYPE
                                         ),
                                         (
                                             SELECT
-                                                [ПрТовРаб]      = 3,
-                                                [НаимЕдИзм]     = ED.[ProductOKEIFullName],
-                                                [КрНаимСтрПр]   = 'Российская Федерация',
-                                                [КодТов]        = ED.[ProductOKPD2Code]
-                                            FOR XML RAW('ДопСведТов'), TYPE
+                                                [РџСЂРўРѕРІР Р°Р±]      = 3,
+                                                [РќР°РёРјР•РґРР·Рј]     = ED.[ProductOKEIFullName],
+                                                [РљСЂРќР°РёРјРЎС‚СЂРџСЂ]   = 'Р РѕСЃСЃРёР№СЃРєР°СЏ Р¤РµРґРµСЂР°С†РёСЏ',
+                                                [РљРѕРґРўРѕРІ]        = ED.[ProductOKPD2Code]
+                                            FOR XML RAW('Р”РѕРїРЎРІРµРґРўРѕРІ'), TYPE
                                         )
                                     FROM dbo.InvoiceRowTable AS R
                                     INNER JOIN dbo.DistrView AS D WITH(NOEXPAND) ON R.INR_ID_DISTR = D.DIS_ID
@@ -237,86 +237,86 @@ BEGIN
                                             [Price] = [Common].[Trim#Right](Convert(VarChar(100), Cast(Cast(R.INR_SALL AS Decimal(20, 12)) / (1 + 20.0/100) AS Decimal(20, 11))), '0')
                                     ) AS P
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
-                                    ORDER BY D.SYS_ORDER, D.DIS_NUM FOR XML RAW('СведТов'), TYPE
+                                    ORDER BY D.SYS_ORDER, D.DIS_NUM FOR XML RAW('РЎРІРµРґРўРѕРІ'), TYPE
                                 ),
                                 (
                                     SELECT
-                                        [СтТовБезНДСВсего]  = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
-                                        [СтТовУчНалВсего]   = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                        [РЎС‚РўРѕРІР‘РµР·РќР”РЎР’СЃРµРіРѕ]  = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        [РЎС‚РўРѕРІРЈС‡РќР°Р»Р’СЃРµРіРѕ]   = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                         (
                                             SELECT
-                                                [СумНал] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
-                                            FOR XML PATH('СумНалВсего'), TYPE
+                                                [РЎСѓРјРќР°Р»] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
+                                            FOR XML PATH('РЎСѓРјРќР°Р»Р’СЃРµРіРѕ'), TYPE
                                         )
                                     FROM dbo.InvoiceRowTable AS R
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
-                                    FOR XML RAW('ВсегоОпл'), TYPE
+                                    FOR XML RAW('Р’СЃРµРіРѕРћРїР»'), TYPE
                                 )
-                            FOR XML RAW('ТаблСчФакт'), TYPE
+                            FOR XML RAW('РўР°Р±Р»РЎС‡Р¤Р°РєС‚'), TYPE
                         ),
                         (
                             SELECT
                                 (
                                     SELECT
-                                        [СодОпер]   = 'Услуги оказаны в полном объеме',
-                                        --ToDo оказание информационных услуг?
-                                        [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
-                                        [ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
-                                        --[ДатаПер]   = Convert(VarChar(20), GetDate(), 104),
-                                        [ДатаНач]   = Convert(VarChar(20), PR_DATE, 104),
-                                        [ДатаОкон]  = Convert(VarChar(20), PR_END_DATE, 104),
+                                        [РЎРѕРґРћРїРµСЂ]   = 'РЈСЃР»СѓРіРё РѕРєР°Р·Р°РЅС‹ РІ РїРѕР»РЅРѕРј РѕР±СЉРµРјРµ',
+                                        --ToDo РѕРєР°Р·Р°РЅРёРµ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СѓСЃР»СѓРі?
+                                        [Р’РёРґРћРїРµСЂ]   = 'РћРєР°Р·Р°РЅРёРµ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СѓСЃР»СѓРі Р·Р° ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' Рі.',
+                                        [Р”Р°С‚Р°РџРµСЂ]   = Convert(VarChar(20), ACT_DATE, 104),
+                                        --[Р”Р°С‚Р°РџРµСЂ]   = Convert(VarChar(20), GetDate(), 104),
+                                        [Р”Р°С‚Р°РќР°С‡]   = Convert(VarChar(20), PR_DATE, 104),
+                                        [Р”Р°С‚Р°РћРєРѕРЅ]  = Convert(VarChar(20), PR_END_DATE, 104),
                                         /*(
                                             SELECT
-                                                [НаимОсн]   = 'Без документа-основания'
-                                            FOR XML RAW('ОснПер'), TYPE
+                                                [РќР°РёРјРћСЃРЅ]   = 'Р‘РµР· РґРѕРєСѓРјРµРЅС‚Р°-РѕСЃРЅРѕРІР°РЅРёСЏ'
+                                            FOR XML RAW('РћСЃРЅРџРµСЂ'), TYPE
                                         ),*/
-                                        --<ОснПер НаимОсн="Контракт" НомОсн="01-2021" ДатаОсн="31.05.2021" ДопСвОсн="Реестровый номер в реестре контрактов: 1253603519021000006"/>
+                                        --<РћСЃРЅРџРµСЂ РќР°РёРјРћСЃРЅ="РљРѕРЅС‚СЂР°РєС‚" РќРѕРјРћСЃРЅ="01-2021" Р”Р°С‚Р°РћСЃРЅ="31.05.2021" Р”РѕРїРЎРІРћСЃРЅ="Р РµРµСЃС‚СЂРѕРІС‹Р№ РЅРѕРјРµСЂ РІ СЂРµРµСЃС‚СЂРµ РєРѕРЅС‚СЂР°РєС‚РѕРІ: 1253603519021000006"/>
                                         (
                                             SELECT TOP (1)
-                                                [НаимОсн]   = CK.CK_NAME,
-                                                [НомОсн]    = CO.CO_NUM,
-                                                [ДатаОсн]   = Convert(VarChar(20), CO.CO_DATE, 104),
-                                                [ДопСвОсн]  = 'Реестровый номер в реестре контрактов: ' + ED.[RegNum]
+                                                [РќР°РёРјРћСЃРЅ]   = CK.CK_NAME,
+                                                [РќРѕРјРћСЃРЅ]    = CO.CO_NUM,
+                                                [Р”Р°С‚Р°РћСЃРЅ]   = Convert(VarChar(20), CO.CO_DATE, 104),
+                                                [Р”РѕРїРЎРІРћСЃРЅ]  = 'Р РµРµСЃС‚СЂРѕРІС‹Р№ РЅРѕРјРµСЂ РІ СЂРµРµСЃС‚СЂРµ РєРѕРЅС‚СЂР°РєС‚РѕРІ: ' + ED.[RegNum]
                                             FROM dbo.ContractTable AS CO
                                             INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
                                             INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
                                             INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
                                             WHERE CO_ID_CLIENT = A.ACT_ID_CLIENT
                                                 AND CO_ACTIVE = 1
-                                            FOR XML RAW('ОснПер'), TYPE
+                                            FOR XML RAW('РћСЃРЅРџРµСЂ'), TYPE
                                         ),
                                         (
                                             SELECT
                                                 [NULL]      = NULL
-                                            FOR XML RAW('ТранГруз'), TYPE
+                                            FOR XML RAW('РўСЂР°РЅР“СЂСѓР·'), TYPE
                                         )
-                                    FOR XML RAW('СвПер'), TYPE
+                                    FOR XML RAW('РЎРІРџРµСЂ'), TYPE
                                 )
-                            FOR XML RAW('СвПродПер'), TYPE
+                            FOR XML RAW('РЎРІРџСЂРѕРґРџРµСЂ'), TYPE
                         ),
                         (
                             SELECT
-                                [ОблПолн]   = 5,
-                                [Статус]    = 1,
-                                [ОснПолн]   = 'Должностные обязанности',
+                                [РћР±Р»РџРѕР»РЅ]   = 5,
+                                [РЎС‚Р°С‚СѓСЃ]    = 1,
+                                [РћСЃРЅРџРѕР»РЅ]   = 'Р”РѕР»Р¶РЅРѕСЃС‚РЅС‹Рµ РѕР±СЏР·Р°РЅРЅРѕСЃС‚Рё',
                                 (
                                     SELECT
-                                        [ИННЮЛ]     = O.ORG_INN,
-                                        [НаимОрг]   = O.ORG_FULL_NAME,
-                                        [Должн]     = O.ORG_DIR_POS,
-                                        [ИныеСвед]  = 1,
+                                        [РРќРќР®Р›]     = O.ORG_INN,
+                                        [РќР°РёРјРћСЂРі]   = O.ORG_FULL_NAME,
+                                        [Р”РѕР»Р¶РЅ]     = O.ORG_DIR_POS,
+                                        [РРЅС‹РµРЎРІРµРґ]  = 1,
                                         (
                                             SELECT
-                                                [Фамилия] = ORG_DIR_FAM,
-                                                [Имя] = ORG_DIR_NAME,
-                                                [Отчество] = ORG_DIR_OTCH
-                                            FOR XML RAW('ФИО'), TYPE
+                                                [Р¤Р°РјРёР»РёСЏ] = ORG_DIR_FAM,
+                                                [РРјСЏ] = ORG_DIR_NAME,
+                                                [РћС‚С‡РµСЃС‚РІРѕ] = ORG_DIR_OTCH
+                                            FOR XML RAW('Р¤РРћ'), TYPE
                                         )
-                                    FOR XML RAW('ЮЛ'), TYPE
+                                    FOR XML RAW('Р®Р›'), TYPE
                                 )
-                            FOR XML RAW('Подписант'), TYPE
+                            FOR XML RAW('РџРѕРґРїРёСЃР°РЅС‚'), TYPE
                         )
-                    FOR XML RAW('Документ'), TYPE
+                    FOR XML RAW('Р”РѕРєСѓРјРµРЅС‚'), TYPE
                 )
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
@@ -325,31 +325,31 @@ BEGIN
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
             OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
             WHERE ACT_ID = @Act_Id
-            FOR XML RAW('Файл'), TYPE
+            FOR XML RAW('Р¤Р°Р№Р»'), TYPE
         );
 
         SET @ApplyContent =
         (
             SELECT
-                [ИдПрилож]  = 'PRIL_ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ИдФайл]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ВерсФорм]  = '1.00',
-                [РукОрг]    = '1',
+                [РРґРџСЂРёР»РѕР¶]  = 'PRIL_ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [РРґР¤Р°Р№Р»]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [Р’РµСЂСЃР¤РѕСЂРј]  = '1.00',
+                [Р СѓРєРћСЂРі]    = '1',
                 (
                     SELECT
-                        [РеестрНомКонт] = F.EIS_REG_NUM,
-                        [ИдВерсКонт]    = F.EIS_CONTRACT,
-                        [ИдЭтапКонт]    = IsNull(F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)'), F.EIS_DATA.value('(/export/contract/finances/extrabudgetFunds/stages/guid)[1]', 'VarChar(100)'))
-                    FOR XML RAW('СведКонт'), TYPE
+                        [Р РµРµСЃС‚СЂРќРѕРјРљРѕРЅС‚] = F.EIS_REG_NUM,
+                        [РРґР’РµСЂСЃРљРѕРЅС‚]    = F.EIS_CONTRACT,
+                        [РРґР­С‚Р°РїРљРѕРЅС‚]    = IsNull(F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)'), F.EIS_DATA.value('(/export/contract/finances/extrabudgetFunds/stages/guid)[1]', 'VarChar(100)'))
+                    FOR XML RAW('РЎРІРµРґРљРѕРЅС‚'), TYPE
                 ),
                 (
                     SELECT
                         (
                             SELECT
-                                [ФирмНаимОрг] = O.[ORG_SHORT_NAME]
-                            FOR XML RAW('ЮЛ'), TYPE
+                                [Р¤РёСЂРјРќР°РёРјРћСЂРі] = O.[ORG_SHORT_NAME]
+                            FOR XML RAW('Р®Р›'), TYPE
                         )
-                    FOR XML RAW('СведПоставщик'), TYPE
+                    FOR XML RAW('РЎРІРµРґРџРѕСЃС‚Р°РІС‰РёРє'), TYPE
                 ),
                 (
                     SELECT
@@ -359,123 +359,123 @@ BEGIN
                                     SELECT
                                         (
                                             SELECT
-                                                [ИдТРУ]         = ED.[Product_GUId],
-                                                [КодТов]        = ED.[ProductOKPD2Code],
-                                                [НаимТов]       = ED.[ProductName],
-                                                --[НаимТов]       = Max(INR_GOOD),
-                                                [КодЕдИзм]      = ED.[ProductOKEICode],
-                                                [НаимЕдИзм]     = ED.[ProductOKEIFullName],
-                                                [ЦенаЕдИзм]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
-                                                [КолТов]        = 1,
-                                                [ПрТовРаб]      = 3,
-                                                [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
-                                                [НалСт]         = '20%',
-                                                [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                                [РРґРўР РЈ]         = ED.[Product_GUId],
+                                                [РљРѕРґРўРѕРІ]        = ED.[ProductOKPD2Code],
+                                                [РќР°РёРјРўРѕРІ]       = ED.[ProductName],
+                                                --[РќР°РёРјРўРѕРІ]       = Max(INR_GOOD),
+                                                [РљРѕРґР•РґРР·Рј]      = ED.[ProductOKEICode],
+                                                [РќР°РёРјР•РґРР·Рј]     = ED.[ProductOKEIFullName],
+                                                [Р¦РµРЅР°Р•РґРР·Рј]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                                [РљРѕР»РўРѕРІ]        = 1,
+                                                [РџСЂРўРѕРІР Р°Р±]      = 3,
+                                                [РЎС‚РўРѕРІР‘РµР·РќР”РЎ]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                                [РќР°Р»РЎС‚]         = '20%',
+                                                [РЎС‚РўРѕРІРЈС‡РќР°Р»]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                                 (
                                                     SELECT
                                                         (
                                                             SELECT
-                                                                [СумНал] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
+                                                                [РЎСѓРјРќР°Р»] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
                                                             FOR XML PATH(''), TYPE
                                                         )
-                                                    FOR XML RAW('СумНал'), TYPE
+                                                    FOR XML RAW('РЎСѓРјРќР°Р»'), TYPE
                                                 ),
                                                 (
                                                     SELECT
                                                         (
                                                             SELECT
-                                                                [БезАкциз] = 'без акциза'
+                                                                [Р‘РµР·РђРєС†РёР·] = 'Р±РµР· Р°РєС†РёР·Р°'
                                                             FOR XML PATH(''), TYPE
                                                         )
-                                                    FOR XML RAW('Акциз'), TYPE
+                                                    FOR XML RAW('РђРєС†РёР·'), TYPE
                                                 )/*,
                                                 (
                                                     SELECT
-                                                        [Код]   = '643',
-                                                        [Наим]  = 'Российская Федерация'
-                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                        [РљРѕРґ]   = '643',
+                                                        [РќР°РёРј]  = 'Р РѕСЃСЃРёР№СЃРєР°СЏ Р¤РµРґРµСЂР°С†РёСЏ'
+                                                    FOR XML RAW('РЎС‚СЂР°РЅР°РџСЂРѕРёСЃС…'), TYPE
                                                 )*/
                                             FROM dbo.InvoiceRowTable AS R
                                             WHERE R.INR_ID_INVOICE = I.INS_ID
-                                            FOR XML RAW('СведРод'), TYPE
+                                            FOR XML RAW('РЎРІРµРґР РѕРґ'), TYPE
                                         ),
                                         (
                                             SELECT
-                                                [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
-                                                --[ИдТРУ]     = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
-                                                [ИдТРУ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
-                                                [ПрУлучшХаракт] = 1
+                                                [РќРѕРјРЎС‚СЂ]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+                                                --[РРґРўР РЈ]     = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
+                                                [РРґРўР РЈ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                                                [Р¦РµРЅР°РЎРќР”РЎ]      = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
+                                                [РџСЂРЈР»СѓС‡С€РҐР°СЂР°РєС‚] = 1
                                                 /*,
                                                 (
                                                     SELECT
-                                                        [Код]   = '643',
-                                                        [Наим]  = 'Российская Федерация'
-                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                        [РљРѕРґ]   = '643',
+                                                        [РќР°РёРј]  = 'Р РѕСЃСЃРёР№СЃРєР°СЏ Р¤РµРґРµСЂР°С†РёСЏ'
+                                                    FOR XML RAW('РЎС‚СЂР°РЅР°РџСЂРѕРёСЃС…'), TYPE
                                                 )
                                                 */
                                             FROM dbo.InvoiceRowTable AS R
                                             INNER JOIN dbo.DistrView AS D WITH(NOEXPAND) ON R.INR_ID_DISTR = D.DIS_ID
                                             WHERE R.INR_ID_INVOICE = I.INS_ID
-                                            FOR XML RAW('СведДетал'), TYPE
+                                            FOR XML RAW('РЎРІРµРґР”РµС‚Р°Р»'), TYPE
                                         )
-                                    FOR XML RAW('ДеталТРУ'), TYPE
+                                    FOR XML RAW('Р”РµС‚Р°Р»РўР РЈ'), TYPE
                                 )
-                            FOR XML RAW('СведТРУ'), TYPE
+                            FOR XML RAW('РЎРІРµРґРўР РЈ'), TYPE
                         )
-                    FOR XML RAW('СведТов'), TYPE
+                    FOR XML RAW('РЎРІРµРґРўРѕРІ'), TYPE
                 ),
                 (
                     SELECT
                         (
                             SELECT
-                                [Место]             = IsNull(ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
-                                [ИнфДляУчаст]       = @IdentGUId,
-                                [ИдМестаПоставки]   = @IdentGUId,
+                                [РњРµСЃС‚Рѕ]             = IsNull(ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
+                                [РРЅС„Р”Р»СЏРЈС‡Р°СЃС‚]       = @IdentGUId,
+                                [РРґРњРµСЃС‚Р°РџРѕСЃС‚Р°РІРєРё]   = @IdentGUId,
                                 (
                                     SELECT
                                         (
                                             SELECT
-                                                [Код]   = '25000001000',
-                                                [Наим]  = CT_NAME,
-                                                [Адрес] = 'Российская Федерация, ' + RG_NAME + ', ' + CT_NAME + ' ' + CT_PREFIX
-                                            FOR XML RAW('КЛАДР'), TYPE
+                                                [РљРѕРґ]   = '25000001000',
+                                                [РќР°РёРј]  = CT_NAME,
+                                                [РђРґСЂРµСЃ] = 'Р РѕСЃСЃРёР№СЃРєР°СЏ Р¤РµРґРµСЂР°С†РёСЏ, ' + RG_NAME + ', ' + CT_NAME + ' ' + CT_PREFIX
+                                            FOR XML RAW('РљР›РђР”Р '), TYPE
                                         )
-                                    FOR XML RAW('ПоКЛАДР'), TYPE
+                                    FOR XML RAW('РџРѕРљР›РђР”Р '), TYPE
                                 )
                                 /*
                                 (
                                     SELECT
-                                        [Код]   = '05701000001',
-                                        [Наим]  = 'Владивосток г',
-                                        [Адрес] = '690002, КРАЙ ПРИМОРСКИЙ 25, Г ВЛАДИВОСТОК, ПР-КТ ОСТРЯКОВА, ДОМ 8'
-                                    FOR XML RAW('ПоОКТМО'), TYPE
+                                        [РљРѕРґ]   = '05701000001',
+                                        [РќР°РёРј]  = 'Р’Р»Р°РґРёРІРѕСЃС‚РѕРє Рі',
+                                        [РђРґСЂРµСЃ] = '690002, РљР РђР™ РџР РРњРћР РЎРљРР™ 25, Р“ Р’Р›РђР”РР’РћРЎРўРћРљ, РџР -РљРў РћРЎРўР РЇРљРћР’Рђ, Р”РћРњ 8'
+                                    FOR XML RAW('РџРѕРћРљРўРњРћ'), TYPE
                                 )
                                 */
                             FROM dbo.ClientAddressView AS CA
                             WHERE CA.CA_ID_CLIENT = A.ACT_ID_CLIENT
                                 AND CA.CA_ID_TYPE = 1
-                            FOR XML RAW('СведМестоПоставки'), TYPE
+                            FOR XML RAW('РЎРІРµРґРњРµСЃС‚РѕРџРѕСЃС‚Р°РІРєРё'), TYPE
 
                         )
-                    FOR XML RAW('СведМестаПоставки'), TYPE
+                    FOR XML RAW('РЎРІРµРґРњРµСЃС‚Р°РџРѕСЃС‚Р°РІРєРё'), TYPE
                 )/*,
                 (
                     SELECT
-                        [КонтентИд]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                        [ИмяФайл]           = 'Акт оказания информац услуг от ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
-                        [РасширенФайл]      = 'pdf',
-                        [Содержимое файла]  = @ActBase64,
-                        --[ДатаПрикреплен]    = '2021-07-01T03:35:50.000+03:00'
-                        --[Ссылк]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
+                        [РљРѕРЅС‚РµРЅС‚РРґ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                        [РРјСЏР¤Р°Р№Р»]           = 'РђРєС‚ РѕРєР°Р·Р°РЅРёСЏ РёРЅС„РѕСЂРјР°С† СѓСЃР»СѓРі РѕС‚ ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
+                        [Р Р°СЃС€РёСЂРµРЅР¤Р°Р№Р»]      = 'pdf',
+                        [РЎРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р°]  = @ActBase64,
+                        --[Р”Р°С‚Р°РџСЂРёРєСЂРµРїР»РµРЅ]    = '2021-07-01T03:35:50.000+03:00'
+                        --[РЎСЃС‹Р»Рє]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
                         (
                             SELECT
-                                [Код]   = '1',
-                                [Наим]  = 'Документ о приемке'
-                            FOR XML RAW('ВидДок'), TYPE
+                                [РљРѕРґ]   = '1',
+                                [РќР°РёРј]  = 'Р”РѕРєСѓРјРµРЅС‚ Рѕ РїСЂРёРµРјРєРµ'
+                            FOR XML RAW('Р’РёРґР”РѕРє'), TYPE
                         )
                     WHERE @ActData IS NOT NULL
-                    FOR XML RAW('Вложен'), TYPE
+                    FOR XML RAW('Р’Р»РѕР¶РµРЅ'), TYPE
                 )*/
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
@@ -484,23 +484,23 @@ BEGIN
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
             OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
             WHERE ACT_ID = @Act_Id
-            FOR XML RAW('ФайлУПДПрод'), TYPE
+            FOR XML RAW('Р¤Р°Р№Р»РЈРџР”РџСЂРѕРґ'), TYPE
         );
 
         /*
         SET @ApplyContent =
         (
             SELECT
-                [ИдПрилож]  = 'PRIL_ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ИдФайл]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ВерсФорм]  = '1.00',
-                [РукОрг]    = '1',
+                [РРґРџСЂРёР»РѕР¶]  = 'PRIL_ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [РРґР¤Р°Р№Р»]    = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [Р’РµСЂСЃР¤РѕСЂРј]  = '1.00',
+                [Р СѓРєРћСЂРі]    = '1',
                 (
                     SELECT
-                        [РеестрНомКонт] = F.EIS_REG_NUM,
-                        [ИдВерсКонт]    = F.EIS_CONTRACT,
-                        [ИдЭтапКонт]    = F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)')
-                    FOR XML RAW('СведКонт'), TYPE
+                        [Р РµРµСЃС‚СЂРќРѕРјРљРѕРЅС‚] = F.EIS_REG_NUM,
+                        [РРґР’РµСЂСЃРљРѕРЅС‚]    = F.EIS_CONTRACT,
+                        [РРґР­С‚Р°РїРљРѕРЅС‚]    = F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)')
+                    FOR XML RAW('РЎРІРµРґРљРѕРЅС‚'), TYPE
                 ),
                 (
                     SELECT
@@ -508,28 +508,28 @@ BEGIN
                             SELECT
                                 (
                                     SELECT
-                                        [ИдТРУ]         = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
-                                        [ТехИдТРУ]      = F.EIS_DATA.value('(/export/contract/products/product/sid)[1]', 'VarChar(100)'),
-                                        [НаимТовИсх]    = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(100)'),
+                                        [РРґРўР РЈ]         = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
+                                        [РўРµС…РРґРўР РЈ]      = F.EIS_DATA.value('(/export/contract/products/product/sid)[1]', 'VarChar(100)'),
+                                        [РќР°РёРјРўРѕРІРСЃС…]    = F.EIS_DATA.value('(/export/contract/products/product/name)[1]', 'VarChar(100)'),
                                         (
                                             SELECT
-                                                [НомСтр]            = '1',
-                                                [ЦенаИзКонтСНДС]    = dbo.MoneyFormatCustom(Sum(R.[INR_SALL]), '.'),
+                                                [РќРѕРјРЎС‚СЂ]            = '1',
+                                                [Р¦РµРЅР°РР·РљРѕРЅС‚РЎРќР”РЎ]    = dbo.MoneyFormatCustom(Sum(R.[INR_SALL]), '.'),
                                                 (
                                                     SELECT
-                                                        [Код]   = '643',
-                                                        [Наим]  = 'РОССИЯ'
-                                                    FOR XML RAW('СтранаПроисх'), TYPE
+                                                        [РљРѕРґ]   = '643',
+                                                        [РќР°РёРј]  = 'Р РћРЎРЎРРЇ'
+                                                    FOR XML RAW('РЎС‚СЂР°РЅР°РџСЂРѕРёСЃС…'), TYPE
                                                 )
-                                            FOR XML RAW('НеЛПСвед'), TYPE
+                                            FOR XML RAW('РќРµР›РџРЎРІРµРґ'), TYPE
                                         )
                                     FROM dbo.InvoiceRowTable      AS R
                                     WHERE I.INS_ID = INR_ID_INVOICE
-                                    FOR XML RAW('НедеталТРУ'), TYPE
+                                    FOR XML RAW('РќРµРґРµС‚Р°Р»РўР РЈ'), TYPE
                                 )
-                            FOR XML RAW('СведТРУ'), TYPE
+                            FOR XML RAW('РЎРІРµРґРўР РЈ'), TYPE
                         )
-                    FOR XML RAW('СведТов'), TYPE
+                    FOR XML RAW('РЎРІРµРґРўРѕРІ'), TYPE
                 )
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
@@ -537,7 +537,7 @@ BEGIN
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
             WHERE ACT_ID = @Act_Id
-            FOR XML RAW('ФайлУПДПрод'), TYPE
+            FOR XML RAW('Р¤Р°Р№Р»РЈРџР”РџСЂРѕРґ'), TYPE
         );
         */
 
@@ -548,74 +548,74 @@ BEGIN
         SET @Data =
         (
             SELECT
-                [ИдТрПакет]     = Cast(NewId() AS VarChar(100)),
-                [ИдФайл]        = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
-                [ВерсФорм]      = '1.01',
-                [ТипПрилож]     = 'УПДПрод',
-                [ИдОтпр]        = O.[EIS_CODE],
-                [ИдПол]         = F.[EIS_CODE],
-                [ДатаВрФормир]  = GetDate(),
+                [РРґРўСЂРџР°РєРµС‚]     = Cast(NewId() AS VarChar(100)),
+                [РРґР¤Р°Р№Р»]        = 'ON_NSCHFDOPPR_' + F.[EIS_CODE] + '_' + O.[EIS_CODE] + '_' + Convert(VarChar(20), GetDate(), 112) + '_' + @File_Id,
+                [Р’РµСЂСЃР¤РѕСЂРј]      = '1.01',
+                [РўРёРїРџСЂРёР»РѕР¶]     = 'РЈРџР”РџСЂРѕРґ',
+                [РРґРћС‚РїСЂ]        = O.[EIS_CODE],
+                [РРґРџРѕР»]         = F.[EIS_CODE],
+                [Р”Р°С‚Р°Р’СЂР¤РѕСЂРјРёСЂ]  = GetDate(),
                 (
                     SELECT
-                        [Контент] = @MainBase64
-                    FOR XML PATH('Документ'), TYPE
+                        [РљРѕРЅС‚РµРЅС‚] = @MainBase64
+                    FOR XML PATH('Р”РѕРєСѓРјРµРЅС‚'), TYPE
                 ),
                 (
                     SELECT
-                        [Контент] = @ApplyBase64
-                    FOR XML PATH('Прилож'), TYPE
+                        [РљРѕРЅС‚РµРЅС‚] = @ApplyBase64
+                    FOR XML PATH('РџСЂРёР»РѕР¶'), TYPE
                 ),
                 (
                     SELECT
-                        [КонтентИд]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                        [ИмяФайл]           = 'Акт оказания информац услуг от ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
-                        --[РасширенФайл]      = 'pdf',
-                        --[Содержимое файла]  = @ActBase64,
-                        --[ДатаПрикреплен]    = '2021-07-01T03:35:50.000+03:00'
-                        --[Ссылк]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
+                        [РљРѕРЅС‚РµРЅС‚РРґ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
+                        [РРјСЏР¤Р°Р№Р»]           = 'РђРєС‚ РѕРєР°Р·Р°РЅРёСЏ РёРЅС„РѕСЂРјР°С† СѓСЃР»СѓРі РѕС‚ ' + Convert(VarChar(20), @ActDate, 104) + '.pdf',
+                        --[Р Р°СЃС€РёСЂРµРЅР¤Р°Р№Р»]      = 'pdf',
+                        --[РЎРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р°]  = @ActBase64,
+                        --[Р”Р°С‚Р°РџСЂРёРєСЂРµРїР»РµРЅ]    = '2021-07-01T03:35:50.000+03:00'
+                        --[РЎСЃС‹Р»Рє]             = 'https://eruz.zakupki.gov.ru/lkp/filestore/public/1.0/download/FS_EACTS/file.html?uid=C605FDD5E94B43D4E0530A558D0A685F'
                         /*(
                             SELECT
-                                [Код]   = '1',
-                                [Наим]  = 'Документ о приемке'
-                            FOR XML RAW('ВидДок'), TYPE
+                                [РљРѕРґ]   = '1',
+                                [РќР°РёРј]  = 'Р”РѕРєСѓРјРµРЅС‚ Рѕ РїСЂРёРµРјРєРµ'
+                            FOR XML RAW('Р’РёРґР”РѕРє'), TYPE
                         )*/
                         (
                             SELECT
                                 @ActBase64
-                            FOR XML PATH('Контент'), TYPE
+                            FOR XML PATH('РљРѕРЅС‚РµРЅС‚'), TYPE
                         )
                     WHERE @ActData IS NOT NULL
-                    FOR XML RAW('Вложен'), TYPE
+                    FOR XML RAW('Р’Р»РѕР¶РµРЅ'), TYPE
                 )
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
             WHERE ACT_ID = @Act_Id
-            FOR XML RAW('ФайлПакет'), TYPE
+            FOR XML RAW('Р¤Р°Р№Р»РџР°РєРµС‚'), TYPE
         );
 
         SELECT
             [Folder]        = RTrim(Ltrim(C.CL_PSEDO)),
-            [FileName]      = IsNull(F.[FileName], Cast(NewId() AS VarChar(50))), -- ToDo костыль
+            [FileName]      = IsNull(F.[FileName], Cast(NewId() AS VarChar(50))), -- ToDo РєРѕСЃС‚С‹Р»СЊ
             [Data]          = F.[Data]
         FROM dbo.ActTable           AS A
         INNER JOIN dbo.ClientTable  AS C ON A.ACT_ID_CLIENT = C.CL_ID
         CROSS APPLY
         (
             SELECT
-                [FileName]  = 'УПД_' + Replace(C.CL_PSEDO, ' ', '_') + '_' + Convert(VarChar(50), ACT_DATE, 112) + '_' + @File_Id + '.xml',
+                [FileName]  = 'РЈРџР”_' + Replace(C.CL_PSEDO, ' ', '_') + '_' + Convert(VarChar(50), ACT_DATE, 112) + '_' + @File_Id + '.xml',
                 [Data]      = Cast(@Data AS VarChar(Max))
             ---
             UNION ALL
             ---
             SELECT
-                [FileName]  = @MainContent.value('(/Файл/@ИдФайл)[1]', 'VarChar(256)') + '.xml',
+                [FileName]  = @MainContent.value('(/Р¤Р°Р№Р»/@РРґР¤Р°Р№Р»)[1]', 'VarChar(256)') + '.xml',
                 [Data]      = Cast(@MainContent AS VarChar(Max))
             ---
             UNION ALL
             ---
             SELECT
-                [FileName]  = @ApplyContent.value('(/ФайлУПДПрод/@ИдПрилож)[1]', 'VarChar(256)') + '.xml',
+                [FileName]  = @ApplyContent.value('(/Р¤Р°Р№Р»РЈРџР”РџСЂРѕРґ/@РРґРџСЂРёР»РѕР¶)[1]', 'VarChar(256)') + '.xml',
                 [Data]      = Cast(@ApplyContent AS VarChar(Max))
         )AS F
         WHERE A.ACT_ID = @Act_Id;

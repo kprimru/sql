@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,10 +46,10 @@ BEGIN
 		BEGIN TRAN;
 
 		IF NOT EXISTS(SELECT * FROM [Contract].[Contract] WHERE [ID] = @Contract_Id AND [DateTo] IS NULL)
-			RaisError('Ошибка! Договор закрыт!', 16, 1);
+			RaisError('РћС€РёР±РєР°! Р”РѕРіРѕРІРѕСЂ Р·Р°РєСЂС‹С‚!', 16, 1);
 
 		IF EXISTS(SELECT * FROM [Contract].[ClientContractsDetails] WHERE [Contract_Id] = @Contract_Id AND [DATE] >= @Date)
-			RaisError('Ошибка! Невозможно менять условия договора в прошлом!', 16, 1)
+			RaisError('РћС€РёР±РєР°! РќРµРІРѕР·РјРѕР¶РЅРѕ РјРµРЅСЏС‚СЊ СѓСЃР»РѕРІРёСЏ РґРѕРіРѕРІРѕСЂР° РІ РїСЂРѕС€Р»РѕРј!', 16, 1)
 
 		SELECT TOP (1)
 			@OldExpireDate		= [ExpireDate],

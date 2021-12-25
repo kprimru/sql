@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 					SELECT *
 					FROM Price.CommercialOfferOther z
 					WHERE z.ID_OFFER = a.ID
-				) THEN ', флэш-носитель'
+				) THEN ', С„Р»СЌС€-РЅРѕСЃРёС‚РµР»СЊ'
 			ELSE ''
 		END AS SYS_STR,
 		CONVERT(VARCHAR(20), CREATE_DATE, 104) + ' ' + CREATE_USER AS CREATE_DATA

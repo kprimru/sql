@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,23 +27,23 @@ BEGIN
 		Primary Key Clustered (Number)
 	);
 
-	INSERT INTO @Monthes VALUES (1, 'Январь');
-	INSERT INTO @Monthes VALUES (2, 'Февраль');
-	INSERT INTO @Monthes VALUES (3, 'Март');
-	INSERT INTO @Monthes VALUES (4, 'Апрель');
-	INSERT INTO @Monthes VALUES (5, 'Май');
-	INSERT INTO @Monthes VALUES (6, 'Июнь');
-	INSERT INTO @Monthes VALUES (7, 'Июль');
-	INSERT INTO @Monthes VALUES (8, 'Август');
-	INSERT INTO @Monthes VALUES (9, 'Сентябрь');
-	INSERT INTO @Monthes VALUES (10, 'Октябрь');
-	INSERT INTO @Monthes VALUES (11, 'Ноябрь');
-	INSERT INTO @Monthes VALUES (12, 'Декабрь');
+	INSERT INTO @Monthes VALUES (1, 'РЇРЅРІР°СЂСЊ');
+	INSERT INTO @Monthes VALUES (2, 'Р¤РµРІСЂР°Р»СЊ');
+	INSERT INTO @Monthes VALUES (3, 'РњР°СЂС‚');
+	INSERT INTO @Monthes VALUES (4, 'РђРїСЂРµР»СЊ');
+	INSERT INTO @Monthes VALUES (5, 'РњР°Р№');
+	INSERT INTO @Monthes VALUES (6, 'РСЋРЅСЊ');
+	INSERT INTO @Monthes VALUES (7, 'РСЋР»СЊ');
+	INSERT INTO @Monthes VALUES (8, 'РђРІРіСѓСЃС‚');
+	INSERT INTO @Monthes VALUES (9, 'РЎРµРЅС‚СЏР±СЂСЊ');
+	INSERT INTO @Monthes VALUES (10, 'РћРєС‚СЏР±СЂСЊ');
+	INSERT INTO @Monthes VALUES (11, 'РќРѕСЏР±СЂСЊ');
+	INSERT INTO @Monthes VALUES (12, 'Р”РµРєР°Р±СЂСЊ');
 
 	SET @Today = Common.DateOf(GetDate())
 
 	/*
-	вот тут указываем за какой год сгенерить периоды
+	РІРѕС‚ С‚СѓС‚ СѓРєР°Р·С‹РІР°РµРј Р·Р° РєР°РєРѕР№ РіРѕРґ СЃРіРµРЅРµСЂРёС‚СЊ РїРµСЂРёРѕРґС‹
 	*/
 	SET @Year = @InYEAR;
 
@@ -82,7 +82,7 @@ BEGIN
 		END;
 
 		SELECT
-			@Name = 'I полугодие ' + Cast(@Year AS VarChar(20)),
+			@Name = 'I РїРѕР»СѓРіРѕРґРёРµ ' + Cast(@Year AS VarChar(20)),
 			@Start = DateAdd(Month, 0, @CurDate),
 			@Finish = DateAdd(Day, -1, DateAdd(Month, 6, @CurDate));
 
@@ -94,7 +94,7 @@ BEGIN
 					@HLF_DATE		= @Today;
 
 		SELECT
-			@Name = 'II полугодие ' + Cast(@Year AS VarChar(20)),
+			@Name = 'II РїРѕР»СѓРіРѕРґРёРµ ' + Cast(@Year AS VarChar(20)),
 			@Start = DateAdd(Month, 6, @CurDate),
 			@Finish = DateAdd(Day, -1, DateAdd(Month, 12, @CurDate));
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,8 +40,8 @@ BEGIN
 			CP_PHONE, CP_EMAIL,
 			NULL AS CP_MAP, CP_FAX,/*,
 			CASE
-				WHEN CP_MAP IS NOT NULL THEN 'Есть'
-				ELSE 'Нет'
+				WHEN CP_MAP IS NOT NULL THEN 'Р•СЃС‚СЊ'
+				ELSE 'РќРµС‚'
 			END AS CP_MAP_EXISTS*/
 			'' AS CP_MAP_EXISTS
 		FROM

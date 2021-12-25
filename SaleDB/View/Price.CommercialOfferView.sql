@@ -1,4 +1,4 @@
-USE [SaleDB]
+ÔªøUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -17,27 +17,27 @@ AS
 		END AS SYS_ORDER,
 		CASE
 			WHEN f.ID IS NOT NULL THEN f.SHORT
-			ELSE 'Ò ' + g.SHORT + ' Ì‡ ' + h.SHORT
+			ELSE '—Å ' + g.SHORT + ' –Ω–∞ ' + h.SHORT
 		END AS SYS_STR,
 		CASE
 			WHEN f.ID IS NOT NULL THEN f.NAME
-			ELSE /*'Ò ' + g.SystemFullName + ' Ì‡ ' + */h.NAME
+			ELSE /*'—Å ' + g.SystemFullName + ' –Ω–∞ ' + */h.NAME
 		END AS SYS_FULL_STR,
 		a.ID_NET, a.ID_OLD_NET, a.ID_NEW_NET,
 		CASE
 			WHEN i.ID IS NOT NULL THEN i.NAME
-			ELSE /*'Ò ' + j.DistrTypeFull + ' Ì‡ ' + */k.NAME
+			ELSE /*'—Å ' + j.DistrTypeFull + ' –Ω–∞ ' + */k.NAME
 		END AS NET_STR,
 		CASE
 			WHEN i.ID IS NOT NULL THEN i.SHORT
-			ELSE 'Ò ' + j.SHORT + ' Ì‡ ' + k.SHORT
+			ELSE '—Å ' + j.SHORT + ' –Ω–∞ ' + k.SHORT
 		END AS NET_STR_SHORT,
 		CASE
 			WHEN f.ID IS NOT NULL AND i.ID IS NOT NULL THEN ''
-			WHEN f.ID IS NOT NULL AND i.ID IS NULL THEN 'Ò ' + j.NAME + ' Ì‡ ' + k.NAME
-			WHEN f.ID IS NULL AND i.ID IS NOT NULL THEN 'Ò ' + g.NAME + ' Ì‡ ' + h.NAME
-			WHEN f.ID IS NULL AND i.ID IS NULL THEN 'Ò ' + g.NAME + ' ' + j.NAME + ' Ì‡ ' + h.NAME + ' ' + k.NAME
-			ELSE '!!!Œÿ»¡ ¿!!!'
+			WHEN f.ID IS NOT NULL AND i.ID IS NULL THEN '—Å ' + j.NAME + ' –Ω–∞ ' + k.NAME
+			WHEN f.ID IS NULL AND i.ID IS NOT NULL THEN '—Å ' + g.NAME + ' –Ω–∞ ' + h.NAME
+			WHEN f.ID IS NULL AND i.ID IS NULL THEN '—Å ' + g.NAME + ' ' + j.NAME + ' –Ω–∞ ' + h.NAME + ' ' + k.NAME
+			ELSE '!!!–û–®–ò–ë–ö–ê!!!'
 		END AS FULL_STR,
 		a.DELIVERY_DISCOUNT, a.SUPPORT_DISCOUNT, a.FURTHER_DISCOUNT,
 		a.DELIVERY_INFLATION, a.SUPPORT_INFLATION, a.FURTHER_INFLATION,
@@ -47,7 +47,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.DELIVERY_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.DELIVERY_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.DELIVERY_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS DEL_DISCOUNT_STR,
@@ -55,7 +55,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.SUPPORT_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.SUPPORT_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.SUPPORT_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS SUP_DISCOUNT_STR,
@@ -63,7 +63,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.FURTHER_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.FURTHER_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.FURTHER_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS FUR_DISCOUNT_STR,

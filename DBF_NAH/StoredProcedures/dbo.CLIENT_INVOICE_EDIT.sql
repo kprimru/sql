@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_EDIT]
@@ -48,14 +48,14 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение даты с/ф', 'с ' + CONVERT(VARCHAR(20), INS_DATE, 104) + ' на ' + CONVERT(VARCHAR(20), @INS_DATE, 104)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РР·РјРµРЅРµРЅРёРµ РґР°С‚С‹ СЃ/С„', 'СЃ ' + CONVERT(VARCHAR(20), INS_DATE, 104) + ' РЅР° ' + CONVERT(VARCHAR(20), @INS_DATE, 104)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @Invid
 				AND INS_DATE <> @INS_DATE
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Изменение № с/ф', 'с ' + CONVERT(VARCHAR(20), INS_NUM) + ' на ' + CONVERT(VARCHAR(20), @INS_NUM)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РР·РјРµРЅРµРЅРёРµ в„– СЃ/С„', 'СЃ ' + CONVERT(VARCHAR(20), INS_NUM) + ' РЅР° ' + CONVERT(VARCHAR(20), @INS_NUM)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @Invid

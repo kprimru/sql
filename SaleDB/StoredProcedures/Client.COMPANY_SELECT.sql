@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -393,7 +393,7 @@ BEGIN
 				INSERT INTO #company(ID)
 					SELECT Company_Id
 					FROM Client.CompanyDepo
-					--ToDo убрать хардкод
+					--ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
 					WHERE STATUS = 1 AND Status_Id IN (1, 2, 3)
 			ELSE IF @DEPO_NUM IS NOT NULL
 				INSERT INTO #company(ID)
@@ -784,7 +784,7 @@ BEGIN
 						SELECT Company_Id
 						FROM Client.CompanyDepo D
 						WHERE STATUS = 1
-							-- ToDo убрать хардкод
+							-- ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
 							AND Status_Id IN (1, 2, 3)
 					)
 
@@ -795,7 +795,7 @@ BEGIN
 						SELECT Company_Id
 						FROM Client.CompanyDepo D
 						WHERE STATUS = 1
-							-- ToDo убрать хардкод
+							-- ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
 							AND Status_Id IN (1, 2, 3)
 							AND D.Number IN
 								(
@@ -935,7 +935,7 @@ BEGIN
 				FROM Client.CompanyDepo DP
 				WHERE DP.Company_Id = a.ID
 					AND DP.Status = 1
-					-- ToDo убрать хардкод
+					-- ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
 					AND DP.Status_Id IN (3)
 				ORDER BY DP.DateFrom DESC
 			) AS DP

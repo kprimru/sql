@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,9 +30,9 @@ BEGIN
 				(
 					SELECT
 						ISNULL(SURNAME, '') + ' ' + ISNULL(e.NAME, '') + ' ' + ISNULL(PATRON, '') + ' ' +
-						'(Дожность: ' + ISNULL(POSITION, 'Нет') + 
-						'; телефон: ' + ISNULL(e.PHONE, '') +
-						'; кол-во обученых: ' + ISNULL(CONVERT(VARCHAR(20), GR_COUNT), '1') + ')' + CHAR(10)
+						'(Р”РѕР¶РЅРѕСЃС‚СЊ: ' + ISNULL(POSITION, 'РќРµС‚') + 
+						'; С‚РµР»РµС„РѕРЅ: ' + ISNULL(e.PHONE, '') +
+						'; РєРѕР»-РІРѕ РѕР±СѓС‡РµРЅС‹С…: ' + ISNULL(CONVERT(VARCHAR(20), GR_COUNT), '1') + ')' + CHAR(10)
 					FROM
 						dbo.ClientStudyClaimPeople e
 					WHERE e.ID_CLAIM = a.ID

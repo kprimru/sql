@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 
 		SELECT
 			'\\bim\common\2gis\!net\grym.exe' AS PROCESS_NAME,
-			'"' + CT_2GIS_MAP + '" ' + '"!find:map_building" "' + CT_2GIS_CITY + '" "' + REPLACE(ST_NAME, 'ïð-êò', '') + '" "' + REPLACE(REPLACE(CA_HOME, 'ä. ', ''), 'ä.', '') + '" "!select:show" "!select:only" "!show:selection"' AS PROCESS_PARAMS,
+			'"' + CT_2GIS_MAP + '" ' + '"!find:map_building" "' + CT_2GIS_CITY + '" "' + REPLACE(ST_NAME, 'Ð¿Ñ€-ÐºÑ‚', '') + '" "' + REPLACE(REPLACE(CA_HOME, 'Ð´. ', ''), 'Ð´.', '') + '" "!select:show" "!select:only" "!show:selection"' AS PROCESS_PARAMS,
 			CT_2GIS_MAP, CT_2GIS_CITY, ST_NAME, CA_HOME
 		FROM
 			dbo.ClientAddress a

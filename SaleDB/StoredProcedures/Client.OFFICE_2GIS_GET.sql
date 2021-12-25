@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -22,7 +22,7 @@ BEGIN
 
 	SELECT
 		'\\bim\common\2gis\!net\grym.exe' AS PROCESS_NAME,
-		'"Владивосток" ' + '"!find:map_building" "' + REPLACE(c.NAME, 'пр-кт', '') + '" "' + REPLACE(REPLACE(HOME, 'д. ', ''), 'д.', '') + '" "!select:show" "!select:only" "!show:selection"' AS PROCESS_PARAMS
+		'"Р’Р»Р°РґРёРІРѕСЃС‚РѕРє" ' + '"!find:map_building" "' + REPLACE(c.NAME, 'РїСЂ-РєС‚', '') + '" "' + REPLACE(REPLACE(HOME, 'Рґ. ', ''), 'Рґ.', '') + '" "!select:show" "!select:only" "!show:selection"' AS PROCESS_PARAMS
 	FROM
 		Client.Office a
 		INNER JOIN Client.OfficeAddress b ON a.ID = b.ID_OFFICE

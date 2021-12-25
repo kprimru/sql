@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
 						INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 						WHERE a.ServiceID = b.ServiceID
 					)
-				AND ServiceName NOT LIKE 'самостоятельно%'
+				AND ServiceName NOT LIKE 'СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅРѕ%'
 				AND ManagerID NOT IN (22, 5, 23)
 
 		OPEN SRVC

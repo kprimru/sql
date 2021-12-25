@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,10 +30,10 @@ BEGIN
         SET @LastDate = DateAdd(MONTH, -3, GETDATE())
 
         SELECT
-            [Клиент]        = C.[ClientFullName],
-            [Дата заявки]   = SC.[DATE],
-            [Дата звонка]   = W.[DATE],
-            [Преподаватель] = W.TEACHER
+            [РљР»РёРµРЅС‚]        = C.[ClientFullName],
+            [Р”Р°С‚Р° Р·Р°СЏРІРєРё]   = SC.[DATE],
+            [Р”Р°С‚Р° Р·РІРѕРЅРєР°]   = W.[DATE],
+            [РџСЂРµРїРѕРґР°РІР°С‚РµР»СЊ] = W.TEACHER
         FROM dbo.ClientStudyClaim AS SC
         INNER JOIN dbo.ClientStudyClaimWork AS W ON SC.[ID] = W.ID_CLAIM
         INNER JOIN dbo.ClientView AS C WITH(NOEXPAND) ON C.ClientID = SC.ID_CLIENT

@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -107,18 +107,18 @@ BEGIN
 		FROM @RESULT A
 
 		SELECT
-			[Номер строки]							= ROW_NUMBER() OVER(ORDER BY PR_DATE),
-			[Дата]									= PR_DATE,
-			[Кол-во весовых систем] 				= SYS_COUNT,
-			[Вес]									= WEIGHT,
-			[Прирост веса]							= WEIGHT_DELTA,
-			[Весовая поправка]						= WEIGHT_CORRECTION,
-			[Период П4|Вес на начало]				= WEIGHT_START,
-			[Период П4|Вес на конец]				= WEIGHT_FINISH,
-			[Период П4|Прирост веса за месяц]		= WEIGHT_MONTH_DELTA,
-			[Период П4|Прирост веса за период]		= WEIGHT_PERIOD_DELTA,
-			[Период П4|Весовая поправка]			= WEIGHT_CORRECTION_SUM,
-			[Период П4|Прирост веса за период %]	= WEIGHT_PERCENT
+			[РќРѕРјРµСЂ СЃС‚СЂРѕРєРё]							= ROW_NUMBER() OVER(ORDER BY PR_DATE),
+			[Р”Р°С‚Р°]									= PR_DATE,
+			[РљРѕР»-РІРѕ РІРµСЃРѕРІС‹С… СЃРёСЃС‚РµРј] 				= SYS_COUNT,
+			[Р’РµСЃ]									= WEIGHT,
+			[РџСЂРёСЂРѕСЃС‚ РІРµСЃР°]							= WEIGHT_DELTA,
+			[Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°]						= WEIGHT_CORRECTION,
+			[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ]				= WEIGHT_START,
+			[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†]				= WEIGHT_FINISH,
+			[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РјРµСЃСЏС†]		= WEIGHT_MONTH_DELTA,
+			[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ]		= WEIGHT_PERIOD_DELTA,
+			[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°]			= WEIGHT_CORRECTION_SUM,
+			[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ %]	= WEIGHT_PERCENT
 		FROM @RESULT A
 		ORDER BY PR_DATE
 

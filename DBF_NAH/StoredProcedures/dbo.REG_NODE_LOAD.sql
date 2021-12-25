@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,12 +24,12 @@ BEGIN
 
 	BEGIN TRY
 
-		--Шаг 1. Выгрузить из РЦ данные с ключом /outcsv
+		--РЁР°Рі 1. Р’С‹РіСЂСѓР·РёС‚СЊ РёР· Р Р¦ РґР°РЅРЅС‹Рµ СЃ РєР»СЋС‡РѕРј /outcsv
 		DECLARE @bcppath VARCHAR(MAX)
 
 		SET @bcppath = dbo.GET_SETTING('BCP_PATH')
 
-		--Шаг 2. Закинуть данные во временную таблицу
+		--РЁР°Рі 2. Р—Р°РєРёРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
@@ -76,7 +76,7 @@ BEGIN
 			)'
 		--SELECT 1 AS ER_MSG, @sql
 		EXEC sp_executesql @sql
-		--Шаг 3. Из временной таблицы разобрать данные и создать готовую таблицу со всеми потрохами.
+		--РЁР°Рі 3. РР· РІСЂРµРјРµРЅРЅРѕР№ С‚Р°Р±Р»РёС†С‹ СЂР°Р·РѕР±СЂР°С‚СЊ РґР°РЅРЅС‹Рµ Рё СЃРѕР·РґР°С‚СЊ РіРѕС‚РѕРІСѓСЋ С‚Р°Р±Р»РёС†Сѓ СЃРѕ РІСЃРµРјРё РїРѕС‚СЂРѕС…Р°РјРё.
 
 		UPDATE #temp
 		SET REG_COMMENT = REPLACE(LEFT(RIGHT(REG_COMMENT, LEN(REG_COMMENT) - 1), LEN(REG_COMMENT) - 2), '""', '"')
@@ -94,7 +94,7 @@ BEGIN
 		SET REG_ODOFF = 0
 		WHERE REG_ODOFF IS NULL
 
-		--DELETE FROM #temp WHERE REG_COMMENT NOT LIKE '(Н1)%' AND REG_COMMENT NOT LIKE '(А)%'
+		--DELETE FROM #temp WHERE REG_COMMENT NOT LIKE '(Рќ1)%' AND REG_COMMENT NOT LIKE '(Рђ)%'
 
 		TRUNCATE TABLE dbo.RegNodeFullTable
 
@@ -111,7 +111,7 @@ BEGIN
 		)
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестная система "' + REG_SYSTEM + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРёСЃС‚РµРјР° "' + REG_SYSTEM + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT REG_SYSTEM, REG_DISTR
 				FROM #temp
@@ -124,7 +124,7 @@ BEGIN
 			ORDER BY REG_SYSTEM
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестный тип системы "' + REG_SYSTEM_TYPE + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹ "' + REG_SYSTEM_TYPE + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT REG_SYSTEM_TYPE, REG_SYSTEM, REG_DISTR
 				FROM #temp
@@ -137,7 +137,7 @@ BEGIN
 			ORDER BY REG_SYSTEM_TYPE
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестный подхост "' + REG_COMMENT + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїРѕРґС…РѕСЃС‚ "' + REG_COMMENT + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT dbo.GET_HOST_BY_COMMENT2(REG_COMMENT, REG_DISTR, REG_SYSTEM) AS REG_COMMENT, REG_SYSTEM, REG_DISTR
 				FROM #temp
@@ -150,7 +150,7 @@ BEGIN
 				) AS dt
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестное количество сетевых станций "' + CONVERT(VARCHAR,REG_NET) + '/' + CONVERT(VARCHAR,REG_TECH_TYPE) + '" ОДОН=' + ISNULL(REG_ODON, '') + '  ОДОФ=' + ISNULL(REG_ODOFF, '') + '. ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'РќРµРёР·РІРµСЃС‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРµС‚РµРІС‹С… СЃС‚Р°РЅС†РёР№ "' + CONVERT(VARCHAR,REG_NET) + '/' + CONVERT(VARCHAR,REG_TECH_TYPE) + '" РћР”РћРќ=' + ISNULL(REG_ODON, '') + '  РћР”РћР¤=' + ISNULL(REG_ODOFF, '') + '. ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT REG_NET, REG_TECH_TYPE, REG_SYSTEM, REG_DISTR, REG_ODON, REG_ODOFF
 				FROM #temp
@@ -166,7 +166,7 @@ BEGIN
 			ORDER BY REG_NET
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестный статус обслуживания "' + CONVERT(VARCHAR,REG_STATUS) + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃС‚Р°С‚СѓСЃ РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ "' + CONVERT(VARCHAR,REG_STATUS) + '". ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT REG_STATUS, REG_SYSTEM, REG_DISTR
 				FROM #temp
@@ -179,7 +179,7 @@ BEGIN
 			ORDER BY REG_STATUS
 
 		INSERT INTO #tmp
-			SELECT 'Неверный признак подхоста. '  + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 2
+			SELECT 'РќРµРІРµСЂРЅС‹Р№ РїСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р°. '  + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 2
 			FROM
 				(
 					SELECT DISTINCT
@@ -196,8 +196,8 @@ BEGIN
 		IF (SELECT COUNT(*) FROM #tmp WHERE ER_TYPE = 1) > 0
 			SELECT
 				CASE ER_TYPE
-					WHEN 1 THEN 'Ошибка'
-					WHEN 2 THEN 'Предупреждение'
+					WHEN 1 THEN 'РћС€РёР±РєР°'
+					WHEN 2 THEN 'РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ'
 				END + '. ' + ER_MSG AS ER_MSG
 			FROM #tmp
 		ELSE
@@ -274,8 +274,8 @@ BEGIN
 			IF (SELECT COUNT(*) FROM #tmp WHERE ER_TYPE = 2) > 0
 				SELECT
 					CASE ER_TYPE
-						WHEN 1 THEN 'Ошибка'
-						WHEN 2 THEN 'Предупреждение'
+						WHEN 1 THEN 'РћС€РёР±РєР°'
+						WHEN 2 THEN 'РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ'
 					END + '. ' + ER_MSG AS ER_MSG
 				FROM #tmp
 			ELSE

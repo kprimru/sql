@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 		SELECT
 			CONVERT(BIT,
 				CASE
-					WHEN (OPER LIKE '%ЗАМЕНА%' OR OPER LIKE '%Отключение%' OR OPER LIKE 'Изм. парам.' OR OPER LIKE 'Сопровождение отключено') AND ServiceID = @SERVICE THEN 1
+					WHEN (OPER LIKE '%Р—РђРњР•РќРђ%' OR OPER LIKE '%РћС‚РєР»СЋС‡РµРЅРёРµ%' OR OPER LIKE 'РР·Рј. РїР°СЂР°Рј.' OR OPER LIKE 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ') AND ServiceID = @SERVICE THEN 1
 					ELSE 0
 				END
 			) AS CHECKED,
@@ -56,7 +56,7 @@ BEGIN
 									SELECT DISTINCT RPR_OPER
 									FROM dbo.RegProtocol z
 									WHERE RPR_DATE_S BETWEEN @START AND @FINISH
-										AND RPR_OPER IN ('Включение', 'НОВАЯ', 'ЗАМЕНА', 'Отключение', 'Изм. парам.', 'Сопровождение подключено', 'Сопровождение отключено')
+										AND RPR_OPER IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'Р—РђРњР•РќРђ', 'РћС‚РєР»СЋС‡РµРЅРёРµ', 'РР·Рј. РїР°СЂР°Рј.', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 										AND z.RPR_ID_HOST = a.RPR_ID_HOST
 										AND z.RPR_DISTR = a.RPR_DISTR
 										AND z.RPR_COMP = a.RPR_COMP
@@ -77,7 +77,7 @@ BEGIN
 								SELECT MAX(RPR_DATE_S)
 								FROM dbo.RegProtocol z
 								WHERE RPR_DATE_S BETWEEN @START AND @FINISH
-									AND RPR_OPER IN ('Включение', 'НОВАЯ', 'ЗАМЕНА', 'Отключение', 'Изм. парам.', 'Сопровождение подключено', 'Сопровождение отключено')
+									AND RPR_OPER IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'Р—РђРњР•РќРђ', 'РћС‚РєР»СЋС‡РµРЅРёРµ', 'РР·Рј. РїР°СЂР°Рј.', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 									AND z.RPR_ID_HOST = a.RPR_ID_HOST
 									AND z.RPR_DISTR = a.RPR_DISTR
 									AND z.RPR_COMP = a.RPR_COMP
@@ -86,7 +86,7 @@ BEGIN
 							dbo.RegProtocol a
 						WHERE RPR_DATE_S BETWEEN @START AND @FINISH
 							AND (RPR_DISTR = @DISTR OR @DISTR IS NULL)
-							AND RPR_OPER IN ('Включение', 'НОВАЯ', 'ЗАМЕНА', 'Отключение', 'Изм. парам.', 'Сопровождение подключено', 'Сопровождение отключено')
+							AND RPR_OPER IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'Р—РђРњР•РќРђ', 'РћС‚РєР»СЋС‡РµРЅРёРµ', 'РР·Рј. РїР°СЂР°Рј.', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 					) AS a
 					INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON a.RPR_ID_HOST = c.HostID AND a.RPR_DISTR = c.DistrNumber AND a.RPR_COMP = c.CompNumber
 					CROSS APPLY
@@ -96,12 +96,12 @@ BEGIN
 								CASE
 									WHEN y.SystemShortName <> x.SystemShortName THEN
 										CASE
-											WHEN w.DistrTypeName <> r.DistrTypeName THEN 'с ' + y.SystemShortName + ' ' + w.DistrTypeName + ' на ' + x.SystemShortName + ' ' + r.DistrTypeName
-											ELSE 'с ' + y.SystemShortName + ' на ' + x.SystemShortName
+											WHEN w.DistrTypeName <> r.DistrTypeName THEN 'СЃ ' + y.SystemShortName + ' ' + w.DistrTypeName + ' РЅР° ' + x.SystemShortName + ' ' + r.DistrTypeName
+											ELSE 'СЃ ' + y.SystemShortName + ' РЅР° ' + x.SystemShortName
 										END
 									ELSE
 										CASE
-											WHEN w.DistrTypeName <> r.DistrTypeName THEN 'с ' + w.DistrTypeName + ' на ' + r.DistrTypeName
+											WHEN w.DistrTypeName <> r.DistrTypeName THEN 'СЃ ' + w.DistrTypeName + ' РЅР° ' + r.DistrTypeName
 											ELSE ''
 										END
 								END AS DISTR_CHANGE

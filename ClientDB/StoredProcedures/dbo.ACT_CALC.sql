@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 
 		INSERT INTO dbo.ActCalc(SERVICE, CALC_STATUS)
 			OUTPUT inserted.ID INTO @TBL
-			VALUES(@SERVICE, 'Не расчитан')
+			VALUES(@SERVICE, 'РќРµ СЂР°СЃС‡РёС‚Р°РЅ')
 
 		SELECT @ID = ID FROM @TBL
 
@@ -60,7 +60,7 @@ BEGIN
 
 			DECLARE @MSG NVARCHAR(MAX)
 
-			SET @MSG = 'Рассчитанные акты нуждаются в подтверждении (' + @SERVICE + ')'
+			SET @MSG = 'Р Р°СЃСЃС‡РёС‚Р°РЅРЅС‹Рµ Р°РєС‚С‹ РЅСѓР¶РґР°СЋС‚СЃСЏ РІ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРё (' + @SERVICE + ')'
 
 			EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss',  @MSG, 0
 		END

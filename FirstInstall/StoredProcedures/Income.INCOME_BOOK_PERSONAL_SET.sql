@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,7 +34,7 @@ BEGIN
 
 		EXEC Common.PROTOCOL_VALUE_GET 'INCOME_BOOK', @ID, @NEW OUTPUT
 
-		EXEC Common.PROTOCOL_INSERT 'INCOME_BOOK', 'Указание сотрудника ГК', @ID, @OLD, @NEW
+		EXEC Common.PROTOCOL_INSERT 'INCOME_BOOK', 'РЈРєР°Р·Р°РЅРёРµ СЃРѕС‚СЂСѓРґРЅРёРєР° Р“Рљ', @ID, @OLD, @NEW
 
 		FETCH NEXT FROM ID INTO @ID
 	END

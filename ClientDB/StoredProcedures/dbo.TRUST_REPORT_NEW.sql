@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,7 +41,7 @@ BEGIN
 			   WHERE g.CC_ID_CLIENT = b.ClientID
 					AND dbo.DateOf(g.CC_DATE) BETWEEN @BEGIN AND @END
 			 ) AS CC_FIRST, ClientFullName, CC_DATE,
-			 CC_USER, CASE CT_TRUST WHEN 1 THEN 'Достоверен' ELSE 'Не достоверен' END AS CT_TRUST
+			 CC_USER, CASE CT_TRUST WHEN 1 THEN 'Р”РѕСЃС‚РѕРІРµСЂРµРЅ' ELSE 'РќРµ РґРѕСЃС‚РѕРІРµСЂРµРЅ' END AS CT_TRUST
 
 			INTO #trust
 

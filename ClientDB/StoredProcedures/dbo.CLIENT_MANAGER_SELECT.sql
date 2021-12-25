@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 		FROM
 			Task.Tasks a
 			INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
-		WHERE SENDER <> '¿‚ÚÓÏ‡Ú'
+		WHERE SENDER <> '–ê–≤—Ç–æ–º–∞—Ç'
 			AND STATUS = 1
 			--AND ID_CLIENT IS NOT NULL
 			AND ID_CLIENT = @CLIENT

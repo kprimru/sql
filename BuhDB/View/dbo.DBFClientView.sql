@@ -1,4 +1,4 @@
-USE [BuhDB]
+п»їUSE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ AS
         SELECT A.ADDR_STRING
         FROM [PC275-SQL\DELTA].[DBF].[dbo].[ClientFinancingAddressView] AS A
         WHERE A.CL_ID = C.CL_ID
-            AND A.FAT_NOTE = 'Адрес плательщика в счете'
+            AND A.FAT_NOTE = 'РђРґСЂРµСЃ РїР»Р°С‚РµР»СЊС‰РёРєР° РІ СЃС‡РµС‚Рµ'
             AND A.CA_ID_TYPE = 1
     ) AS UA
     OUTER APPLY
@@ -32,7 +32,7 @@ AS
         SELECT A.ADDR_STRING
         FROM [PC275-SQL\DELTA].[DBF].[dbo].[ClientFinancingAddressView] AS A
         WHERE A.CL_ID = C.CL_ID
-            AND A.FAT_NOTE = 'Адрес грузополучателя в счет-фактуре на накладную'
+            AND A.FAT_NOTE = 'РђРґСЂРµСЃ РіСЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЏ РІ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ РЅР° РЅР°РєР»Р°РґРЅСѓСЋ'
             AND A.CA_ID_TYPE = 2
     ) AS A;
 GO

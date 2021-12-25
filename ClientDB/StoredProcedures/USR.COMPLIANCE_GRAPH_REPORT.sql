@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 		DECLARE @TBEGIN SMALLDATETIME
 		DECLARE @TEND SMALLDATETIME
 
-		/* ðàçáèâàåì äèàïàçîí äàò íà íåäåëè*/
+		/* Ñ€Ð°Ð·Ð±Ð¸Ð²Ð°ÐµÐ¼ Ð´Ð¸Ð°Ð¿Ð°Ð·Ð¾Ð½ Ð´Ð°Ñ‚ Ð½Ð° Ð½ÐµÐ´ÐµÐ»Ð¸*/
 		IF @BEGIN > @END
 			INSERT INTO @WEEK(WBEGIN, WEND) VALUES(@BEGIN, @END)
 		ELSE

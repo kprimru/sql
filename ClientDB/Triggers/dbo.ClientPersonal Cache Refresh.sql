@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 	SET @RowCount = (SELECT COUNT(*) FROM inserted);
 
 	IF @RowCount = 1 BEGIN
-		-- если меняем одну запись - пробуем перестроить по ней кэш
+		-- РµСЃР»Рё РјРµРЅСЏРµРј РѕРґРЅСѓ Р·Р°РїРёСЃСЊ - РїСЂРѕР±СѓРµРј РїРµСЂРµСЃС‚СЂРѕРёС‚СЊ РїРѕ РЅРµР№ РєСЌС€
 		SELECT TOP (1)
 			@Surname	= CP_SURNAME,
 			@Name		= CP_NAME,
@@ -37,7 +37,7 @@ BEGIN
 		EXEC [Cache].[PATRON_CACHE_REFRESH]		@Patron = @Patron;
 		EXEC [Cache].[POSITION_CACHE_REFRESH]	@Position = @Position;
 	END ELSE BEGIN
-		-- если больше 1 строки обновляется - то перестраиваем весь кэш
+		-- РµСЃР»Рё Р±РѕР»СЊС€Рµ 1 СЃС‚СЂРѕРєРё РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ - С‚Рѕ РїРµСЂРµСЃС‚СЂР°РёРІР°РµРј РІРµСЃСЊ РєСЌС€
 		EXEC [Cache].[NAME_CACHE_REFRESH]
 		EXEC [Cache].[SURNAME_CACHE_REFRESH]
 		EXEC [Cache].[PATRON_CACHE_REFRESH]

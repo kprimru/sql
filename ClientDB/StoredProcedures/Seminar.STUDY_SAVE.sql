@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		/* создать обучение у клиента */
+		/* СЃРѕР·РґР°С‚СЊ РѕР±СѓС‡РµРЅРёРµ Сѓ РєР»РёРµРЅС‚Р° */
 		DECLARE @STUDY_ID	UNIQUEIDENTIFIER
 
 		SELECT @STUDY_ID = ID

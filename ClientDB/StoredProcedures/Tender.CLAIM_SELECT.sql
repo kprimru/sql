@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,13 +27,13 @@ BEGIN
 		SELECT
 			ID, TP,
 			CASE TP
-				WHEN 1 THEN 'Обеспечение заявки'
-				WHEN 2 THEN 'Обеспечение контракта'
-				WHEN 3 THEN 'Оплата за участие'
-				WHEN 4 THEN 'Оплата за тариф'
-				WHEN 5 THEN 'Оплата за ЭЦП'
-				WHEN 6 THEN 'Оплата за ЭДО'
-				ELSE 'Неведома зверушка'
+				WHEN 1 THEN 'РћР±РµСЃРїРµС‡РµРЅРёРµ Р·Р°СЏРІРєРё'
+				WHEN 2 THEN 'РћР±РµСЃРїРµС‡РµРЅРёРµ РєРѕРЅС‚СЂР°РєС‚Р°'
+				WHEN 3 THEN 'РћРїР»Р°С‚Р° Р·Р° СѓС‡Р°СЃС‚РёРµ'
+				WHEN 4 THEN 'РћРїР»Р°С‚Р° Р·Р° С‚Р°СЂРёС„'
+				WHEN 5 THEN 'РћРїР»Р°С‚Р° Р·Р° Р­Р¦Рџ'
+				WHEN 6 THEN 'РћРїР»Р°С‚Р° Р·Р° Р­Р”Рћ'
+				ELSE 'РќРµРІРµРґРѕРјР° Р·РІРµСЂСѓС€РєР°'
 			END AS TP_STR,
 			CLAIM_DATE
 		FROM Tender.Claim

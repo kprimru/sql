@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -100,7 +100,7 @@ BEGIN
 		SELECT @ERROR = TP + ': ' + MSG + CHAR(10)
 		FROM
 			(
-				SELECT DISTINCT 'Неизвестный хост' AS TP, PTL_HOST AS MSG
+				SELECT DISTINCT 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С…РѕСЃС‚' AS TP, PTL_HOST AS MSG
 				FROM #ptl
 				WHERE NOT EXISTS
 						(

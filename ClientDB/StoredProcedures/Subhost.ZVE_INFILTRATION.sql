@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,15 +41,15 @@ BEGIN
 					) AS CNT
 				FROM
 					(
-						SELECT 'Владивосток' AS SH_CAPTION, '' AS SH_NAME
+						SELECT 'Р’Р»Р°РґРёРІРѕСЃС‚РѕРє' AS SH_CAPTION, '' AS SH_NAME
 						UNION ALL
-						SELECT 'Славянка' AS CAPTION, 'Л1' AS SubhostName
+						SELECT 'РЎР»Р°РІСЏРЅРєР°' AS CAPTION, 'Р›1' AS SubhostName
 						UNION ALL
-						SELECT 'Находка' AS CAPTION, 'Н1' AS SubhostName
+						SELECT 'РќР°С…РѕРґРєР°' AS CAPTION, 'Рќ1' AS SubhostName
 						UNION ALL
-						SELECT 'Уссурийск' AS CAPTION, 'У1' AS SubhostName
+						SELECT 'РЈСЃСЃСѓСЂРёР№СЃРє' AS CAPTION, 'РЈ1' AS SubhostName
 						UNION ALL
-						SELECT 'Артем' AS CAPTION, 'М' AS SubhostName
+						SELECT 'РђСЂС‚РµРј' AS CAPTION, 'Рњ' AS SubhostName
 					) AS SH
 					CROSS APPLY
 					(

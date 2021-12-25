@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,12 +7,12 @@ GO
 
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 21.11.2008
-Описание:	  Выбрать все системы, которые
-               не присутствуют в прейскуранте
-               указанного типа на указанный
-               период
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 21.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’С‹Р±СЂР°С‚СЊ РІСЃРµ СЃРёСЃС‚РµРјС‹, РєРѕС‚РѕСЂС‹Рµ
+               РЅРµ РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‚ РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Рµ
+               СѓРєР°Р·Р°РЅРЅРѕРіРѕ С‚РёРїР° РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№
+               РїРµСЂРёРѕРґ
 */
 
 ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_LIST_GET]
@@ -35,7 +35,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT 'Система' AS IS_SYS, SYS_ID, SYS_SHORT_NAME, HST_NAME
+		SELECT 'РЎРёСЃС‚РµРјР°' AS IS_SYS, SYS_ID, SYS_SHORT_NAME, HST_NAME
 		FROM dbo.SystemTable a LEFT OUTER JOIN
 			 dbo.HostTable d ON a.SYS_ID_HOST = d.HST_ID
 		WHERE SYS_ID NOT IN
@@ -51,14 +51,14 @@ BEGIN
 
 		UNION
 
-		SELECT 'Система' AS IS_SYS, SYS_ID, SYS_SHORT_NAME, HST_NAME
+		SELECT 'РЎРёСЃС‚РµРјР°' AS IS_SYS, SYS_ID, SYS_SHORT_NAME, HST_NAME
 		FROM dbo.SystemTable a LEFT OUTER JOIN
 			 dbo.HostTable d ON a.SYS_ID_HOST = d.HST_ID
 		WHERE SYS_ID = @sysid
 
 		UNION
 
-		SELECT 'Доп.услуга' AS IS_SYS, PGD_ID, PGD_NAME, '-'
+		SELECT 'Р”РѕРї.СѓСЃР»СѓРіР°' AS IS_SYS, PGD_ID, PGD_NAME, '-'
 		FROM dbo.PriceGoodTable
 		WHERE NOT EXISTS
 			(

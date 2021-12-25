@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,13 +25,13 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			[Название]          = C.ClientFullName,
-			[СИ]                = C.ServiceName,
-			[Рук-ль]            = C.ManagerName,
-			[Сеть]              = D.DistrTypeName,
-			[Тип]               = D.SystemTypeName,
-			[Дистрибутив]       = D.DistrStr,
-			[Дата регистрации]  = CC.ConnectDate
+			[РќР°Р·РІР°РЅРёРµ]          = C.ClientFullName,
+			[РЎР]                = C.ServiceName,
+			[Р СѓРє-Р»СЊ]            = C.ManagerName,
+			[РЎРµС‚СЊ]              = D.DistrTypeName,
+			[РўРёРї]               = D.SystemTypeName,
+			[Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]       = D.DistrStr,
+			[Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё]  = CC.ConnectDate
 		FROM dbo.ClientView C WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON C.ServiceStatusId = s.ServiceStatusId
 		OUTER APPLY

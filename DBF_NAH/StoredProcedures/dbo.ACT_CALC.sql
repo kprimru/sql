@@ -1,16 +1,16 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[ACT_CALC]
-	-- Список параметров процедуры
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕС†РµРґСѓСЂС‹
 	@clientid INT,
 	@periodid SMALLINT,
 	@distrid INT,
@@ -98,7 +98,7 @@ BEGIN
 			(
 			    SELECT TOP (1)
 			        [IsOnline] = 1
-			        -- todo опечатка!!!
+			        -- todo РѕРїРµС‡Р°С‚РєР°!!!
 			    FROM [dbo].[NetTypes@Get?Online]() AS SN
 			    WHERE SN.SNC_ID_SN = F.SN_ID
 			) AS O
@@ -113,7 +113,7 @@ BEGIN
 
 		EXEC dbo.ACT_PROTOCOL_DETAIL @ID, @TXT OUTPUT
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Расчитана строка акта', @TXT, @clientid, @actid
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Р Р°СЃС‡РёС‚Р°РЅР° СЃС‚СЂРѕРєР° Р°РєС‚Р°', @TXT, @clientid, @actid
 
 		EXEC [dbo].[Act@Recalc?Params] @Act_Id = @actid;
 

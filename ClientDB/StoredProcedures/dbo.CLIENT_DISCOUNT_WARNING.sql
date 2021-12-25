@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,14 +34,14 @@ BEGIN
 								SELECT
 									DistrStr, SST_SHORT, NT_SHORT, Comment, SystemOrder, MIN(b.DATE) AS DATE,
 									CASE SST_SHORT
-										WHEN '—.¿' THEN 18
+										WHEN '–°.–ê' THEN 18
 										ELSE 24
 									END AS ADD_MONTH
 								FROM
 									Reg.RegNodeSearchView a WITH(NOEXPAND)
 									INNER JOIN Reg.RegProtocolConnectView b WITH(NOEXPAND) ON a.HostID = b.RPR_ID_HOST AND a.DistrNumber = b.RPR_DISTR AND a.CompNumber = b.RPR_COMP
 								WHERE /*DS_REG = 0
-									AND */SST_SHORT IN ('—.¿', '—. 2', '—. 1')
+									AND */SST_SHORT IN ('–°.–ê', '–°.–ö2', '–°.–ö1')
 								GROUP BY DistrStr, SST_SHORT, NT_SHORT, Comment, SystemOrder
 							) AS o_O
 					) AS o_O

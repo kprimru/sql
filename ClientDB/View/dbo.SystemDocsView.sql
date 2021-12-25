@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -10,7 +10,7 @@ ALTER VIEW [dbo].[SystemDocsView]
 AS
 	SELECT a.SystemID, a.SystemBaseName, SUM(Docs) AS Docs
 	FROM dbo.SystemTable a
-	--ToDo злостный хардкод
+	--ToDo Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕРґ
 	CROSS APPLY dbo.SystemBankGet(a.SystemId, 2) b
 	CROSS APPLY
 	(

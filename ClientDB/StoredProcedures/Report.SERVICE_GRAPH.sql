@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ManagerName AS [Руководитель], ServiceName AS [СИ], CL_CNT AS [Кол-во клиентов], AVG_TIME AS [Среднее время у клиента],
-			dbo.TimeMinToStr(TOTAL_TIME) AS [Общее время в неделю]
+			ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], ServiceName AS [РЎР], CL_CNT AS [РљРѕР»-РІРѕ РєР»РёРµРЅС‚РѕРІ], AVG_TIME AS [РЎСЂРµРґРЅРµРµ РІСЂРµРјСЏ Сѓ РєР»РёРµРЅС‚Р°],
+			dbo.TimeMinToStr(TOTAL_TIME) AS [РћР±С‰РµРµ РІСЂРµРјСЏ РІ РЅРµРґРµР»СЋ]
 		FROM
 			(
 				SELECT ManagerName, ServiceName, COUNT(*) AS CL_CNT, AVG(ServiceTime) AS AVG_TIME, SUM(ServiceTime) AS TOTAL_TIME

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT EMAIL AS [Электронный адрес], ClientFullName AS [Клиент], ManagerName AS [Руководитель], ServiceName AS [СИ]
+		SELECT EMAIL AS [Р­Р»РµРєС‚СЂРѕРЅРЅС‹Р№ Р°РґСЂРµСЃ], ClientFullName AS [РљР»РёРµРЅС‚], ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], ServiceName AS [РЎР]
 		FROM
 			(
 				SELECT EMAIL,

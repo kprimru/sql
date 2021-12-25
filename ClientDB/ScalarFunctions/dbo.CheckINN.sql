@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 	SET @StrNum = @inn
 	SET @L =  LEN (@inn)
 
-	/* Проверка длины ИНН*/
+	/* РџСЂРѕРІРµСЂРєР° РґР»РёРЅС‹ РРќРќ*/
 
 	IF @inn = '' OR @inn = '-'
 	BEGIN
@@ -38,7 +38,7 @@ BEGIN
 		RETURN @R
 	END
 
-	/* ИНН 10 знаков */
+	/* РРќРќ 10 Р·РЅР°РєРѕРІ */
 	if @L = 10
 	BEGIN
 		SET @I = 1
@@ -79,7 +79,7 @@ BEGIN
 		END
 	END
 
-	/* ИНН 12 знаков */
+	/* РРќРќ 12 Р·РЅР°РєРѕРІ */
 	if @L = 12
 	BEGIN
 		SET @I = 1

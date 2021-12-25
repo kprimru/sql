@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,11 +26,11 @@ BEGIN
 		SELECT
 			[ID]			= R.[ID],
 			[FromAddress]	= 'no-reply@kprim.ru',
-			[FromName]		= 'ООО Базис',
+			[FromName]		= 'РћРћРћ Р‘Р°Р·РёСЃ',
 			[Psedo]			= SH_NAME,
 			[Email]			= SH_EMAIL,
-			[Subj]			= 'Клиент подписался на рассылку',
-			[Body]			= 'Клиент "' + RN.Comment + '" (' + RN.DistrStr + ') подал заявку на подписку на рассылку на адрес "' + IsNull(R.[OriginalEMail], '') + '"'
+			[Subj]			= 'РљР»РёРµРЅС‚ РїРѕРґРїРёСЃР°Р»СЃСЏ РЅР° СЂР°СЃСЃС‹Р»РєСѓ',
+			[Body]			= 'РљР»РёРµРЅС‚ "' + RN.Comment + '" (' + RN.DistrStr + ') РїРѕРґР°Р» Р·Р°СЏРІРєСѓ РЅР° РїРѕРґРїРёСЃРєСѓ РЅР° СЂР°СЃСЃС‹Р»РєСѓ РЅР° Р°РґСЂРµСЃ "' + IsNull(R.[OriginalEMail], '') + '"'
 		FROM Mailing.Requests R
 		INNER JOIN Reg.RegNodeSearchView RN WITH(NOEXPAND) ON RN.HostId = R.HostID AND RN.DistrNumber = R.Distr AND RN.CompNumber = R.Comp
 		INNER JOIN dbo.Subhost S ON RN.SubhostName = S.SH_REG

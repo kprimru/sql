@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,9 +50,9 @@ BEGIN
 			SELECT
 				UD_ID, UF_ID, dbo.DistrString(SystemShortName, UD_DISTR, UD_COMP), UD_ACTIVE, UF_DATE, USRFileKindShortName, UF_UPTIME, UF_ACTIVE,
 				CASE UF_PATH
-					WHEN 1 THEN '–Œ¡Œ“'
-					WHEN 2 THEN '»œ'
-					WHEN 3 THEN ' ŒÕ“–ŒÀ‹'
+					WHEN 1 THEN '–†–û–ë–û–¢'
+					WHEN 2 THEN '–ò–ü'
+					WHEN 3 THEN '–ö–û–ù–¢–†–û–õ–¨'
 					ELSE ''
 				END AS UF_PATH,
 				UF_CREATE
@@ -89,9 +89,9 @@ BEGIN
 				a.UD_ID, b.UF_ID, dbo.DistrString(SystemShortName, UD_DISTR, UD_COMP), a.UD_ACTIVE,
 				c.UF_ID, b.UF_DATE, d.USRFileKindShortName, b.UF_UPTIME, b.UF_ACTIVE,
 				CASE b.UF_PATH
-					WHEN 1 THEN '–Œ¡Œ“'
-					WHEN 2 THEN '»œ'
-					WHEN 3 THEN ' ŒÕ“–ŒÀ‹'
+					WHEN 1 THEN '–†–û–ë–û–¢'
+					WHEN 2 THEN '–ò–ü'
+					WHEN 3 THEN '–ö–û–ù–¢–†–û–õ–¨'
 					ELSE ''
 				END AS UF_PATH,
 				b.UF_CREATE

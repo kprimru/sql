@@ -1,4 +1,4 @@
-USE [FirstInstall]
+ÔªøUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
 				DF_ID, b.DT_ID_MASTER, DT_SHORT, DF_DISTR, DF_COMP, SystemOrder,
 				CASE
 					WHEN c.SYS_ID_MASTER = d.SYS_ID_MASTER THEN c.SYS_SHORT
-					ELSE 'Ò ' + c.SYS_SHORT + ' Ì‡ ' + d.SYS_SHORT
+					ELSE '—Å ' + c.SYS_SHORT + ' –Ω–∞ ' + d.SYS_SHORT
 				END AS SYS_STR,
 				CASE
 					WHEN c.SYS_ID_MASTER = d.SYS_ID_MASTER THEN c.SYS_ID_MASTER
@@ -39,7 +39,7 @@ BEGIN
 				END AS NEW_SYS,
 				CASE
 					WHEN e.ID = f.ID THEN e.SHORT
-					ELSE 'Ò ' + e.SHORT + ' Ì‡ ' + f.SHORT
+					ELSE '—Å ' + e.SHORT + ' –Ω–∞ ' + f.SHORT
 				END AS NET_STR,
 				CASE
 					WHEN e.ID = f.ID THEN e.ID

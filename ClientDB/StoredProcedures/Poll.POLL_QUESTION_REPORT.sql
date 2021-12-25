@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -118,7 +118,7 @@ BEGIN
 		SELECT
 			CONVERT(BIT, 0) AS CHECKED,
 			1 AS TP,
-			'Количество анкет', '',
+			'РљРѕР»РёС‡РµСЃС‚РІРѕ Р°РЅРєРµС‚', '',
 			COUNT(*), 0, 1, NULL, NULL, NULL
 		FROM Poll.ClientPoll
 		WHERE ID_BLANK = @BLANK
@@ -130,7 +130,7 @@ BEGIN
 		SELECT
 			CONVERT(BIT, 0) AS CHECKED,
 			1 AS TP,
-			'Клиентов опрошено', '',
+			'РљР»РёРµРЅС‚РѕРІ РѕРїСЂРѕС€РµРЅРѕ', '',
 			COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
 		FROM Poll.ClientPoll
 		WHERE ID_BLANK = @BLANK
@@ -142,7 +142,7 @@ BEGIN
 		SELECT
 			CONVERT(BIT, 0) AS CHECKED,
 			2 AS TP,
-			'Даты анкет с ' + CONVERT(VARCHAR(20), MIN(DATE), 104) + ' по ' + CONVERT(VARCHAR(20), MAX(DATE), 104), '',
+			'Р”Р°С‚С‹ Р°РЅРєРµС‚ СЃ ' + CONVERT(VARCHAR(20), MIN(DATE), 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), MAX(DATE), 104), '',
 			COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
 		FROM Poll.ClientPoll
 		WHERE ID_BLANK = @BLANK

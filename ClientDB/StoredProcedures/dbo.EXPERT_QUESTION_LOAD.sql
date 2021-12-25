@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -114,7 +114,7 @@ BEGIN
 
 		SELECT @Duty_Id = DutyID
 		FROM dbo.DutyTable
-		WHERE DutyLogin = 'Автомат';
+		WHERE DutyLogin = 'РђРІС‚РѕРјР°С‚';
 
 		IF @Duty_Id IS NULL
 			SELECT TOP 1 @Duty_Id = DutyID
@@ -124,7 +124,7 @@ BEGIN
 			(
 				SELECT TOP 1 ID
 				FROM dbo.CallDirection
-				WHERE NAME = 'ВопросЭксперту'
+				WHERE NAME = 'Р’РѕРїСЂРѕСЃР­РєСЃРїРµСЂС‚Сѓ'
 			);
 
 		SET @Client_Id =
@@ -144,9 +144,9 @@ BEGIN
 				WHERE b.DistrNumber = @DistrNumber
 					AND b.CompNumber = @CompNumber
 					AND b.HostId = @Host_Id
-			) = 'Л1'
-			-- ToDo - убрать злостный хардкод (Л1) - вынести в свойство dbo.Subhost
-			SET @Client_Id = (SELECT SH_ID_CLIENT FROM dbo.Subhost WHERE SH_REG = 'Л1');
+			) = 'Р›1'
+			-- ToDo - СѓР±СЂР°С‚СЊ Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕРґ (Р›1) - РІС‹РЅРµСЃС‚Рё РІ СЃРІРѕР№СЃС‚РІРѕ dbo.Subhost
+			SET @Client_Id = (SELECT SH_ID_CLIENT FROM dbo.Subhost WHERE SH_REG = 'Р›1');
 
 		IF @Client_Id IS NOT NULL BEGIN
 			INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone, DutyID, ClientDutyQuest, EMAIL,

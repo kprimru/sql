@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ GO
 
 
 /*
-Автор:		  Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[DISTR_FINANCING_PROCESS]
@@ -51,7 +51,7 @@ BEGIN
 
 		IF @clientfinancingid IS NULL
 			BEGIN
-				--настройки не заданы. Создаем новые по параметрам
+				--РЅР°СЃС‚СЂРѕР№РєРё РЅРµ Р·Р°РґР°РЅС‹. РЎРѕР·РґР°РµРј РЅРѕРІС‹Рµ РїРѕ РїР°СЂР°РјРµС‚СЂР°Рј
 				INSERT INTO dbo.DistrFinancingTable(
 						DF_ID_DISTR, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE, DF_ID_PRICE, DF_DISCOUNT, DF_COEF,
 						DF_FIXED_PRICE, DF_ID_PERIOD, DF_MON_COUNT, DF_DEBT, DF_ID_PAY, DF_END, DF_BEGIN, DF_NAME, DF_EXPIRE
@@ -64,7 +64,7 @@ BEGIN
 			END
 		ELSE
 			BEGIN
-				--настройки есть, редактируем их
+				--РЅР°СЃС‚СЂРѕР№РєРё РµСЃС‚СЊ, СЂРµРґР°РєС‚РёСЂСѓРµРј РёС…
 				UPDATE dbo.DistrFinancingTable
 				SET DF_ID_NET = @netid,
 					DF_ID_TECH_TYPE = @techtypeid,

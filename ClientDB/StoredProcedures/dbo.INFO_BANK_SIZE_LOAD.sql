@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,7 +41,7 @@ BEGIN
 		SET @xml = CAST(@DATA AS XML)
 
 		EXEC sp_xml_preparedocument @hdoc OUTPUT, @xml
-		-- ToDo поменять формат xml
+		-- ToDo РїРѕРјРµРЅСЏС‚СЊ С„РѕСЂРјР°С‚ xml
 		INSERT INTO #ib(IB_NAME, FPATH, FNAME, FSIZE)
 			SELECT
 				c.value('local-name(./..)', 'VARCHAR(50)'),

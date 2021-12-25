@@ -1,15 +1,15 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			коллектив авторов
-Дата креации:	19.02.2009
-Описуха:			Сбрасывает регузел (RegNodeFullTable)
-				в историю регузла (PeriodRegtable) и
-				в новые системы (PeriodRegNewTable)
+РђРІС‚РѕСЂ:			РєРѕР»Р»РµРєС‚РёРІ Р°РІС‚РѕСЂРѕРІ
+Р”Р°С‚Р° РєСЂРµР°С†РёРё:	19.02.2009
+РћРїРёСЃСѓС…Р°:			РЎР±СЂР°СЃС‹РІР°РµС‚ СЂРµРіСѓР·РµР» (RegNodeFullTable)
+				РІ РёСЃС‚РѕСЂРёСЋ СЂРµРіСѓР·Р»Р° (PeriodRegtable) Рё
+				РІ РЅРѕРІС‹Рµ СЃРёСЃС‚РµРјС‹ (PeriodRegNewTable)
 */
 ALTER PROCEDURE [dbo].[REG_NODE_MOVE]
 	@periodid SMALLINT

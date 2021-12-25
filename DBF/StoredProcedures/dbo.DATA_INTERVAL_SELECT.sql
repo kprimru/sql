@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -127,7 +127,7 @@ BEGIN
 			DEPAND, RCOEF,
 			CASE
 				WHEN a.PR_NAME = b.PR_NAME THEN a.PR_NAME
-				ELSE 'Ò ' + a.PR_NAME + ' ÔÓ ' + b.PR_NAME
+				ELSE '—Å ' + a.PR_NAME + ' –ø–æ ' + b.PR_NAME
 			END AS RINTERVAL
 		FROM
 			#res

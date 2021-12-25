@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,9 +29,9 @@ BEGIN
 			,
 				(
 					SELECT TOP 1
-						CO_NUM + ' от ' + CONVERT(VARCHAR(20), CO_DATE, 104) +
-						' с ' + CONVERT(VARCHAR(20), CO_BEG_DATE, 104) + ISNULL(' по ' + CONVERT(VARCHAR(20), CO_END_DATE, 104), '') +
-						'. Тип оплаты: ' + ISNULL(COP_NAME, '')
+						CO_NUM + ' РѕС‚ ' + CONVERT(VARCHAR(20), CO_DATE, 104) +
+						' СЃ ' + CONVERT(VARCHAR(20), CO_BEG_DATE, 104) + ISNULL(' РїРѕ ' + CONVERT(VARCHAR(20), CO_END_DATE, 104), '') +
+						'. РўРёРї РѕРїР»Р°С‚С‹: ' + ISNULL(COP_NAME, '')
 					FROM
 						dbo.ContractTable LEFT OUTER JOIN
 						dbo.ContractPayTable ON COP_ID = CO_ID_PAY

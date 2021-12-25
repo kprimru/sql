@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[SystemBankGet(Internal)]', 'IF') IS NULL EXEC('CREATE FUNCT
 GO
 ALTER FUNCTION [dbo].[SystemBankGet(Internal)]
 (
-	-- Id системы
+	-- Id СЃРёСЃС‚РµРјС‹
 	@System		Int
 )
 RETURNS TABLE

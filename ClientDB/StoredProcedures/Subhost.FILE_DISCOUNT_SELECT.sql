@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,9 +26,9 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @SUBHOST <> 'Н1'
+		IF @SUBHOST <> 'Рќ1'
 		BEGIN
-			RAISERROR ('Вашему подхосту недоступен данный отчет', 16, 1)
+			RAISERROR ('Р’Р°С€РµРјСѓ РїРѕРґС…РѕСЃС‚Сѓ РЅРµРґРѕСЃС‚СѓРїРµРЅ РґР°РЅРЅС‹Р№ РѕС‚С‡РµС‚', 16, 1)
 			RETURN
 		END
 
@@ -54,9 +54,9 @@ BEGIN
 			EXEC [PC275-SQL\DELTA].DBF_NAH.dbo.DISTR_FINANCING_REPORT
 
 		SELECT
-			CL_PSEDO AS 'Клиент', DIS_STR AS 'Дистрибутив', SST_CAPTION AS 'Тип системы',
-			SN_NAME AS 'Тип сети', DISCOUNT AS 'Скидка', DF_FIXED AS 'Фикс.сумма',
-			REAL_DISC AS 'Реальная скидка'
+			CL_PSEDO AS 'РљР»РёРµРЅС‚', DIS_STR AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', SST_CAPTION AS 'РўРёРї СЃРёСЃС‚РµРјС‹',
+			SN_NAME AS 'РўРёРї СЃРµС‚Рё', DISCOUNT AS 'РЎРєРёРґРєР°', DF_FIXED AS 'Р¤РёРєСЃ.СЃСѓРјРјР°',
+			REAL_DISC AS 'Р РµР°Р»СЊРЅР°СЏ СЃРєРёРґРєР°'
 		FROM #r
 		ORDER BY CL_PSEDO, SYS_ORDER, DIS_NUM, DIS_COMP
 

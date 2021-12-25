@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -91,11 +91,11 @@ BEGIN
 		) U
 		WHERE	R.Service = 0
 			AND	(U.UF_DATE >= @DATE OR @DATE IS NULL)
-		-- сильно разное количество строк в зависимости от @CLIENT/@MANAGER/@SERVICE
+		-- СЃРёР»СЊРЅРѕ СЂР°Р·РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ @CLIENT/@MANAGER/@SERVICE
 		OPTION(RECOMPILE);
 
 
-		-- ToDO убрать задвоение!!!
+		-- ToDO СѓР±СЂР°С‚СЊ Р·Р°РґРІРѕРµРЅРёРµ!!!
 		UPDATE C
 		SET InfoBanks		= I.InfoBankName,
 			InfoBanksCodes	= IC.InfoBanksCodes

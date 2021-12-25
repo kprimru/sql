@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,7 +11,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Отсутствует руководитель клиента' AS CL_ERROR
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ РєР»РёРµРЅС‚Р°' AS CL_ERROR
 	FROM 
 		dbo.ClientTable
 	WHERE NOT EXISTS
@@ -30,7 +30,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Отсутствует юридический адрес' AS CL_ERROR
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЋСЂРёРґРёС‡РµСЃРєРёР№ Р°РґСЂРµСЃ' AS CL_ERROR
 	FROM 
 		dbo.ClientTable
 	WHERE NOT EXISTS
@@ -47,7 +47,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Отсутствует текущий договор' AS CL_ERROR
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ С‚РµРєСѓС‰РёР№ РґРѕРіРѕРІРѕСЂ' AS CL_ERROR
 	FROM dbo.ClientTable a
 	WHERE EXISTS
 		(
@@ -68,7 +68,7 @@ AS
 		NULL AS CL_ID, NULL AS CL_PSEDO, NULL AS CL_FULL_NAME, NULL AS CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Дистрибутив не распределен клиенту' AS CL_ERROR
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СЂР°СЃРїСЂРµРґРµР»РµРЅ РєР»РёРµРЅС‚Сѓ' AS CL_ERROR
 	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE NOT EXISTS
 		(
@@ -84,7 +84,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Дистрибутив не распределен в ТО' AS CL_ERROR
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СЂР°СЃРїСЂРµРґРµР»РµРЅ РІ РўРћ' AS CL_ERROR
 	FROM
 		dbo.DistrView a WITH(NOEXPAND) INNER JOIN
 		dbo.ClientDistrTable ON DIS_ID = CD_ID_DISTR INNER JOIN
@@ -109,7 +109,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID, TO_NUM,
 		DIS_ID, DIS_STR,
-		'Дистрибутив клиента разнесен в ТО не принадлежащую данному клиенту' AS CL_ERROR
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РєР»РёРµРЅС‚Р° СЂР°Р·РЅРµСЃРµРЅ РІ РўРћ РЅРµ РїСЂРёРЅР°РґР»РµР¶Р°С‰СѓСЋ РґР°РЅРЅРѕРјСѓ РєР»РёРµРЅС‚Сѓ' AS CL_ERROR
 	FROM
 		dbo.DistrView WITH(NOEXPAND) INNER JOIN
 		dbo.TODistrTable ON TD_ID_DISTR = DIS_ID INNER JOIN
@@ -124,7 +124,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Дистрибутив не указан ни в одном действующем договоре' AS CL_ERROR
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СѓРєР°Р·Р°РЅ РЅРё РІ РѕРґРЅРѕРј РґРµР№СЃС‚РІСѓСЋС‰РµРј РґРѕРіРѕРІРѕСЂРµ' AS CL_ERROR
 	FROM
 		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
 		dbo.ClientDistrTable b ON CD_ID_DISTR = DIS_ID LEFT OUTER JOIN
@@ -146,7 +146,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Дистрибутив указан более чем в одном действующем договоре' AS CL_ERROR
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ Р±РѕР»РµРµ С‡РµРј РІ РѕРґРЅРѕРј РґРµР№СЃС‚РІСѓСЋС‰РµРј РґРѕРіРѕРІРѕСЂРµ' AS CL_ERROR
 	FROM
 		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
 		dbo.ClientDistrTable b ON CD_ID_DISTR = DIS_ID LEFT OUTER JOIN
@@ -169,7 +169,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Признак подхоста на рег.узле и в базе не совпадают' AS CL_ERROR
+		'РџСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р° РЅР° СЂРµРі.СѓР·Р»Рµ Рё РІ Р±Р°Р·Рµ РЅРµ СЃРѕРІРїР°РґР°СЋС‚' AS CL_ERROR
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -186,7 +186,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Названия подхостов на рег.узле и в базе не совпадают' AS CL_ERROR
+		'РќР°Р·РІР°РЅРёСЏ РїРѕРґС…РѕСЃС‚РѕРІ РЅР° СЂРµРі.СѓР·Р»Рµ Рё РІ Р±Р°Р·Рµ РЅРµ СЃРѕРІРїР°РґР°СЋС‚' AS CL_ERROR
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -203,7 +203,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Неверное название подхоста на регузле' AS CL_ERROR
+		'РќРµРІРµСЂРЅРѕРµ РЅР°Р·РІР°РЅРёРµ РїРѕРґС…РѕСЃС‚Р° РЅР° СЂРµРіСѓР·Р»Рµ' AS CL_ERROR
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -225,7 +225,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		DIS_ID, DIS_STR,
-		'Неверный признак подхоста на рег.узле' AS CL_ERROR
+		'РќРµРІРµСЂРЅС‹Р№ РїСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р° РЅР° СЂРµРі.СѓР·Р»Рµ' AS CL_ERROR
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -248,7 +248,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID, TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Отсутствует руководитель в ТО' AS CL_ERROR
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ РІ РўРћ' AS CL_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID
@@ -269,7 +269,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, 	CL_NUM,
 		TO_ID, TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Отсутствует главный бухгалтер в ТО' AS CL_ERROR
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РіР»Р°РІРЅС‹Р№ Р±СѓС…РіР°Р»С‚РµСЂ РІ РўРћ' AS CL_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID
@@ -290,7 +290,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID, TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Неверный телефон "' + TP_SURNAME + '" "' + b.TP_PHONE + '"' AS CL_ERROR
+		'РќРµРІРµСЂРЅС‹Р№ С‚РµР»РµС„РѕРЅ "' + TP_SURNAME + '" "' + b.TP_PHONE + '"' AS CL_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID INNER JOIN
@@ -332,7 +332,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID, TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Не введен фактический адрес ТО' AS CL_ERROR
+		'РќРµ РІРІРµРґРµРЅ С„Р°РєС‚РёС‡РµСЃРєРёР№ Р°РґСЂРµСЃ РўРћ' AS CL_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
@@ -349,7 +349,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID, TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Недопустимый символ в названии ТО' AS CL_ERROR
+		'РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ СЃРёРјРІРѕР» РІ РЅР°Р·РІР°РЅРёРё РўРћ' AS CL_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
@@ -364,7 +364,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Неоднозначен сервис-инженер клиента. Укажите одну основную ТО' AS CL_ERROR
+		'РќРµРѕРґРЅРѕР·РЅР°С‡РµРЅ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ РєР»РёРµРЅС‚Р°. РЈРєР°Р¶РёС‚Рµ РѕРґРЅСѓ РѕСЃРЅРѕРІРЅСѓСЋ РўРћ' AS CL_ERROR
 	FROM dbo.ClientTable
 	WHERE
 		(
@@ -390,7 +390,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID AS TO_ID, TO_NUM AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Нет обслуживаемых дистрибутивов, но указан сервис-инженер' AS CL_ERROR
+		'РќРµС‚ РѕР±СЃР»СѓР¶РёРІР°РµРјС‹С… РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ, РЅРѕ СѓРєР°Р·Р°РЅ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AS CL_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
 		dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
@@ -414,7 +414,7 @@ AS
 		)
 		AND COUR_NAME <> '------------------'
 		AND SH_SUBHOST = 0
-		AND CL_PSEDO NOT LIKE '%(Н)'
+		AND CL_PSEDO NOT LIKE '%(Рќ)'
 		AND TO_PARENT IS NULL
 
 	UNION ALL
@@ -423,7 +423,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		TO_ID AS TO_ID, TO_NUM AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Есть обслуживаемые дистрибутивы, но не указан сервис-инженер' AS CL_ERROR
+		'Р•СЃС‚СЊ РѕР±СЃР»СѓР¶РёРІР°РµРјС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹, РЅРѕ РЅРµ СѓРєР°Р·Р°РЅ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AS CL_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
 		dbo.TOTable ON TO_ID_CLIENT = CL_ID INNER JOIN
@@ -446,7 +446,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Неверная длина ИНН' AS CL_ERROR
+		'РќРµРІРµСЂРЅР°СЏ РґР»РёРЅР° РРќРќ' AS CL_ERROR
 	FROM dbo.ClientTable
 	WHERE LEN(CL_INN) NOT IN (10, 12)
 		AND EXISTS
@@ -463,7 +463,7 @@ AS
 		CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
 		NULL AS TO_ID, NULL AS TO_NUM,
 		NULL AS DIS_ID, NULL AS DIS_STR,
-		'Неверная длина КПП (' + ISNULL(CL_KPP, '') + ')' AS CL_ERROR
+		'РќРµРІРµСЂРЅР°СЏ РґР»РёРЅР° РљРџРџ (' + ISNULL(CL_KPP, '') + ')' AS CL_ERROR
 	FROM dbo.ClientTable
 	WHERE LEN(CL_INN) = 10 AND LEN(CL_KPP) <> 9
 		AND EXISTS
@@ -480,7 +480,7 @@ AS
         CL_ID, CL_PSEDO, CL_FULL_NAME, CL_NUM,
         TO_ID, TO_NUM,
         NULL AS DIS_ID, NULL AS DIS_STR,
-        'Не совпадает руководитель клиента и основной ТО' AS CL_ERROR
+        'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ РєР»РёРµРЅС‚Р° Рё РѕСЃРЅРѕРІРЅРѕР№ РўРћ' AS CL_ERROR
 	FROM dbo.TOTable                    AS T
 	INNER JOIN dbo.ClientTable          AS CL ON T.TO_ID_CLIENT = CL.CL_ID
 	INNER JOIN dbo.TOPersonalTable      AS TP ON TP.TP_ID_TO = T.TO_ID

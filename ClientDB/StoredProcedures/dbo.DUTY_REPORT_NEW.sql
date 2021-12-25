@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,10 +40,10 @@ BEGIN
 			 DutyName, dbo.DateOf(ClientDutyDateTime) AS DutyDate,
 			ClientDutyDocs,
 			CASE
-				WHEN ClientDutyComplete = 1 THEN 'Запрос отработан'
-				WHEN ClientDutyComplete = 0 AND ClientDutyUncomplete = 0 AND ClientDutyNPO = 1 THEN 'Отправлен запрос в НПО'
-				WHEN ClientDutyComplete = 0 AND ClientDutyUncomplete = 1 THEN 'Запрос отработан, нет возможности выполнить'
-				ELSE 'Неизвестен статус запроса'
+				WHEN ClientDutyComplete = 1 THEN 'Р—Р°РїСЂРѕСЃ РѕС‚СЂР°Р±РѕС‚Р°РЅ'
+				WHEN ClientDutyComplete = 0 AND ClientDutyUncomplete = 0 AND ClientDutyNPO = 1 THEN 'РћС‚РїСЂР°РІР»РµРЅ Р·Р°РїСЂРѕСЃ РІ РќРџРћ'
+				WHEN ClientDutyComplete = 0 AND ClientDutyUncomplete = 1 THEN 'Р—Р°РїСЂРѕСЃ РѕС‚СЂР°Р±РѕС‚Р°РЅ, РЅРµС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РІС‹РїРѕР»РЅРёС‚СЊ'
+				ELSE 'РќРµРёР·РІРµСЃС‚РµРЅ СЃС‚Р°С‚СѓСЃ Р·Р°РїСЂРѕСЃР°'
 			END AS ClientDutyStatus,
 			dbo.DateOf(ClientDutyAnswer) AS ClientDutyAnswer
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -352,7 +352,7 @@ BEGIN
 
 			--DELETE FROM #package WHERE InfoBankId NOT IN (SELECT InfoBankId FROM @IBs);
 
-			-- докидываем в дерево все остальные иб из файла usr, независимо от справочников
+			-- РґРѕРєРёРґС‹РІР°РµРј РІ РґРµСЂРµРІРѕ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ РёР± РёР· С„Р°Р№Р»Р° usr, РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ СЃРїСЂР°РІРѕС‡РЅРёРєРѕРІ
 			INSERT INTO #package(
 						UP_ID, UP_ID_USR, UP_ID_SYSTEM, UP_DISTR, UP_COMP,
 						UP_RIC, UP_TECH, UP_NET, UP_TYPE, UP_FORMAT,
@@ -397,21 +397,21 @@ BEGIN
 				ELSE '/' + CONVERT(VARCHAR(20), UP_RIC)
 			END + '/' +
 			CASE
-				WHEN UP_TECH = 'FLS' THEN 'Флеш-версия'
-				WHEN UP_TECH = 'OVKF' THEN 'ОВК-Ф'
-				WHEN UP_TECH = 'OVMF' THEN 'ОВМ-Ф'
-				WHEN UP_TECH = 'OVS' THEN 'ОВС'-- + CONVERT(VARCHAR(20), UP_NET)
+				WHEN UP_TECH = 'FLS' THEN 'Р¤Р»РµС€-РІРµСЂСЃРёСЏ'
+				WHEN UP_TECH = 'OVKF' THEN 'РћР’Рљ-Р¤'
+				WHEN UP_TECH = 'OVMF' THEN 'РћР’Рњ-Р¤'
+				WHEN UP_TECH = 'OVS' THEN 'РћР’РЎ'-- + CONVERT(VARCHAR(20), UP_NET)
 				ELSE
 					CASE UP_NET
-						WHEN 0 THEN 'лок'
-						WHEN 1 THEN '1/с'
-						ELSE 'сеть ' + CONVERT(VARCHAR(20), UP_NET)
+						WHEN 0 THEN 'Р»РѕРє'
+						WHEN 1 THEN '1/СЃ'
+						ELSE 'СЃРµС‚СЊ ' + CONVERT(VARCHAR(20), UP_NET)
 					END
 			END + '/' + UP_TYPE + '/' +
 			CASE Service
-				WHEN 0 THEN 'сопровождается'
-				WHEN 1 THEN 'не сопровождается'
-				ELSE 'не найден'
+				WHEN 0 THEN 'СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ'
+				WHEN 1 THEN 'РЅРµ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ'
+				ELSE 'РЅРµ РЅР°Р№РґРµРЅ'
 			END AS IB_NAME,
 			Service,
 			NULL AS UIU_DAY,
@@ -438,7 +438,7 @@ BEGIN
 		UNION
 
 		/*
-			Недостающие в USR системы
+			РќРµРґРѕСЃС‚Р°СЋС‰РёРµ РІ USR СЃРёСЃС‚РµРјС‹
 		*/
 		SELECT
 			@MaxRn + Row_Number() OVER(ORDER BY SystemOrder) AS ID,
@@ -494,8 +494,8 @@ BEGIN
 
 			STAT_DATE,
 			CASE
-				WHEN InfoBankActual = 0 THEN 'Да'
-				WHEN STAT_DATE IS NULL THEN 'Нет'
+				WHEN InfoBankActual = 0 THEN 'Р”Р°'
+				WHEN STAT_DATE IS NULL THEN 'РќРµС‚'
 				WHEN
 					CASE InfoBankActual
 						WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -504,8 +504,8 @@ BEGIN
 								WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY)
 								ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY)
 							END
-					END < UIU_DATE_S THEN 'Нет'
-				ELSE 'Да'
+					END < UIU_DATE_S THEN 'РќРµС‚'
+				ELSE 'Р”Р°'
 			END,
 
 			NULL AS UP_FORMAT,
@@ -520,7 +520,7 @@ BEGIN
 		UNION
 
 		/*
-			Недостающие в USR ИБ
+			РќРµРґРѕСЃС‚Р°СЋС‰РёРµ РІ USR РР‘
 		*/
 		SELECT
 			@MaxRn + 100 + Row_Number() OVER(ORDER BY SystemOrder, InfoBankOrder) AS ID,
@@ -586,8 +586,8 @@ BEGIN
 
 			STAT_DATE,
 			CASE
-				WHEN InfoBankActual = 0 THEN 'Да'
-				WHEN STAT_DATE IS NULL THEN 'Нет'
+				WHEN InfoBankActual = 0 THEN 'Р”Р°'
+				WHEN STAT_DATE IS NULL THEN 'РќРµС‚'
 				WHEN
 					CASE InfoBankActual
 						WHEN 0 THEN DATEADD(DAY, 1, UIU_DATE_S)
@@ -596,8 +596,8 @@ BEGIN
 								WHEN 1 THEN dbo.WorkDaysAdd(STAT_DATE, @DAILY)
 								ELSE dbo.WorkDaysAdd(STAT_DATE, @DAY)
 							END
-					END < UIU_DATE_S THEN 'Нет'
-				ELSE 'Да'
+					END < UIU_DATE_S THEN 'РќРµС‚'
+				ELSE 'Р”Р°'
 			END,
 
 			NULL AS UP_FORMAT,

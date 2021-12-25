@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 		DECLARE @HST_LAW INT
 		SELECT @HST_LAW = HostID FROM dbo.Hosts WHERE HostReg = 'LAW'
 
-		SELECT DistrStr AS [Дистрибутив], SST_SHORT AS [Тип], NT_SHORT AS [Сеть], Comment AS [Клиент], 'Дополнительная система без основной' AS [Примечание]
+		SELECT DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], SST_SHORT AS [РўРёРї], NT_SHORT AS [РЎРµС‚СЊ], Comment AS [РљР»РёРµРЅС‚], 'Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ СЃРёСЃС‚РµРјР° Р±РµР· РѕСЃРЅРѕРІРЅРѕР№' AS [РџСЂРёРјРµС‡Р°РЅРёРµ]
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE HostID <> @HST_LAW
 			AND NT_TECH > 1
@@ -44,7 +44,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT DistrStr, SST_SHORT, NT_SHORT, Comment, 'Не совпадают типы онлайн'
+		SELECT DistrStr, SST_SHORT, NT_SHORT, Comment, 'РќРµ СЃРѕРІРїР°РґР°СЋС‚ С‚РёРїС‹ РѕРЅР»Р°Р№РЅ'
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE NT_TECH > 1
@@ -58,7 +58,7 @@ BEGIN
 						AND z.DS_REG = 0
 						AND z.NT_TECH <> a.NT_TECH
 				)
-		ORDER BY [Клиент]
+		ORDER BY [РљР»РёРµРЅС‚]
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

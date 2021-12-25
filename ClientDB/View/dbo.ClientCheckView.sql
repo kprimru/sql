@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[ClientCheckView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[C
 GO
 ALTER VIEW [dbo].[ClientCheckView]
 AS
-	SELECT ClientID, ClientFullName, 'STATUS' AS TP, 'Неверный статус клиента (указано "пополняется", но нет сопровождаемых на РЦ систем)' AS ER
+	SELECT ClientID, ClientFullName, 'STATUS' AS TP, 'РќРµРІРµСЂРЅС‹Р№ СЃС‚Р°С‚СѓСЃ РєР»РёРµРЅС‚Р° (СѓРєР°Р·Р°РЅРѕ "РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ", РЅРѕ РЅРµС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹С… РЅР° Р Р¦ СЃРёСЃС‚РµРј)' AS ER
 	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable ON ServiceStatusID = StatusID
@@ -27,7 +27,7 @@ AS
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'STATUS', 'Неверный статус клиента (не указано "пополняется", но есть сопровождаемые на РЦ системы)'
+	SELECT ClientID, ClientFullName, 'STATUS', 'РќРµРІРµСЂРЅС‹Р№ СЃС‚Р°С‚СѓСЃ РєР»РёРµРЅС‚Р° (РЅРµ СѓРєР°Р·Р°РЅРѕ "РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ", РЅРѕ РµСЃС‚СЊ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹Рµ РЅР° Р Р¦ СЃРёСЃС‚РµРјС‹)'
 	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable ON ServiceStatusID = StatusID
@@ -46,7 +46,7 @@ AS
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'INN', 'Неверный ИНН'
+	SELECT ClientID, ClientFullName, 'INN', 'РќРµРІРµСЂРЅС‹Р№ РРќРќ'
 	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable b ON a.StatusID = b.ServiceStatusID
@@ -54,13 +54,13 @@ AS
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'SERVICE_TYPE', 'Неверный тип сопровождения (указан "' +
-									ServiceTypeShortName + '", предположительно "' +
+	SELECT ClientID, ClientFullName, 'SERVICE_TYPE', 'РќРµРІРµСЂРЅС‹Р№ С‚РёРї СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ (СѓРєР°Р·Р°РЅ "' +
+									ServiceTypeShortName + '", РїСЂРµРґРїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕ "' +
 									CASE UF_PATH
-										WHEN 0 THEN 'СИ'
-										WHEN 1 THEN 'РОБОТ'
-										WHEN 2 THEN 'ИП'
-										ELSE 'СИ'
+										WHEN 0 THEN 'РЎР'
+										WHEN 1 THEN 'Р РћР‘РћРў'
+										WHEN 2 THEN 'РРџ'
+										ELSE 'РЎР'
 									END + '")'
 	FROM
 		dbo.ClientTable a
@@ -76,16 +76,16 @@ AS
 		AND STATUS = 1
 		AND
 			CASE
-				WHEN ServiceTypeShortName IN ('СИ', 'ДИСК', 'МОДЕМ') THEN 0
-				WHEN ServiceTypeShortName = 'РОБОТ' THEN 1
-				WHEN ServiceTypeShortName = 'ИП' THEN 2
+				WHEN ServiceTypeShortName IN ('РЎР', 'Р”РРЎРљ', 'РњРћР”Р•Рњ') THEN 0
+				WHEN ServiceTypeShortName = 'Р РћР‘РћРў' THEN 1
+				WHEN ServiceTypeShortName = 'РРџ' THEN 2
 				ELSE -1
 			END <> UF_PATH
-		AND ServiceTypeShortName <> 'ОНЛАЙН'
+		AND ServiceTypeShortName <> 'РћРќР›РђР™Рќ'
 
 	UNION ALL
 
-	SELECT a.ClientID, ClientFullName, 'ACTIVITY', 'Не указан вид деятельности'
+	SELECT a.ClientID, ClientFullName, 'ACTIVITY', 'РќРµ СѓРєР°Р·Р°РЅ РІРёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё'
 	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
@@ -93,7 +93,7 @@ AS
 
 	UNION ALL
 
-	SELECT a.ClientID, ClientFullName, 'PAPPER', 'Неверное количество газет. Указано: ' + CONVERT(VARCHAR(20), ClientNewsPaper) + ', должно быть не меньше ' + CONVERT(VARCHAR(20), ClientTypePapper)
+	SELECT a.ClientID, ClientFullName, 'PAPPER', 'РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РіР°Р·РµС‚. РЈРєР°Р·Р°РЅРѕ: ' + CONVERT(VARCHAR(20), ClientNewsPaper) + ', РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ РјРµРЅСЊС€Рµ ' + CONVERT(VARCHAR(20), ClientTypePapper)
 	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
@@ -102,7 +102,7 @@ AS
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'GRAPH', 'Нарушение графика. ' + GR_ERROR
+	SELECT ClientID, ClientFullName, 'GRAPH', 'РќР°СЂСѓС€РµРЅРёРµ РіСЂР°С„РёРєР°. ' + GR_ERROR
 	FROM
 		dbo.ClientGraphView
 	WHERE GR_ERROR IS NOT NULL

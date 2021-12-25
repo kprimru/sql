@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -9,10 +9,10 @@ GO
 ALTER PROCEDURE [Memo].[KGS_MEMO_PRINT]
 	@ID		UNIQUEIDENTIFIER,
 	/*
-	Режим печати:
-	1. Offer	-	Коммерческое предложение
-	2. Letter	-	Информационное письмо
-	3. Memo		-	Служебная записка
+	Р РµР¶РёРј РїРµС‡Р°С‚Рё:
+	1. Offer	-	РљРѕРјРјРµСЂС‡РµСЃРєРѕРµ РїСЂРµРґР»РѕР¶РµРЅРёРµ
+	2. Letter	-	РРЅС„РѕСЂРјР°С†РёРѕРЅРЅРѕРµ РїРёСЃСЊРјРѕ
+	3. Memo		-	РЎР»СѓР¶РµР±РЅР°СЏ Р·Р°РїРёСЃРєР°
 	*/
 	@MODE	TINYINT,
 	@CURVED	TINYINT = 1

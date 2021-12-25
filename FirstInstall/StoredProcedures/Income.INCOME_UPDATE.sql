@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -52,7 +52,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INCOME', @IN_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INCOME', 'Редактирование', @IN_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INCOME', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @IN_ID, @OLD, @NEW
 
 	DECLARE @INS_ID UNIQUEIDENTIFIER
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,10 +47,10 @@ BEGIN
 
 
         SELECT
-            [ ÎËÂÌÚ] = CL_PSEDO,
-            [—œ | ÓÎË˜ÂÒÚ‚Ó] = SPK_CNT,
-            [—œ |–‡ÁÂ¯ÂÌÓ] = SPK_AVAILABLE,
-            [œÂÂ˜ÂÌ¸ —œ ] = REVERSE(STUFF(REVERSE(
+            [–ö–ª–∏–µ–Ω—Ç] = CL_PSEDO,
+            [–°–ü–ö|–ö–æ–ª–∏—á–µ—Å—Ç–≤–æ] = SPK_CNT,
+            [–°–ü–ö|–†–∞–∑—Ä–µ—à–µ–Ω–æ] = SPK_AVAILABLE,
+            [–ü–µ—Ä–µ—á–µ–Ω—å –°–ü–ö] = REVERSE(STUFF(REVERSE(
             (
                 SELECT D.DIS_STR + ', '
                 FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
@@ -61,27 +61,27 @@ BEGIN
                     AND R.RN_DISTR_TYPE NOT IN ('DSP')
                 ORDER BY SYS_ORDER, DIS_NUM, DIS_COMP_NUM FOR XML PATH('')
             )), 1, 2, '')),
-            [œÂÂ˜ÂÌ¸ ÓÒÌÓ‚Ì˚ı ‰ËÒÚË·ÛÚË‚Ó‚] = REVERSE(STUFF(REVERSE(
+            [–ü–µ—Ä–µ—á–µ–Ω—å –æ—Å–Ω–æ–≤–Ω—ã—Ö –¥–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤–æ–≤] = REVERSE(STUFF(REVERSE(
             (
                 SELECT D.DIS_STR + ' (' +
                     CASE RN_TECH_TYPE
 						WHEN 0 THEN
 							CASE RN_NET_COUNT
-								WHEN 0 THEN 'ÎÓÍ'
-								WHEN 1 THEN '1/Ò'
-								WHEN 5 THEN 'Ï/Ò'
-								ELSE 'ÒÂÚ¸'
+								WHEN 0 THEN '–ª–æ–∫'
+								WHEN 1 THEN '1/—Å'
+								WHEN 5 THEN '–º/—Å'
+								ELSE '—Å–µ—Ç—å'
 							END
-						WHEN 1 THEN 'ÙÎ˝¯'
-						WHEN 7 THEN 'Œ¬ '
-						WHEN 3 THEN 'Œ¬œ'
-                        WHEN 4 THEN 'Œ»¬'
-						WHEN 6 THEN 'Œ¬œ»'
-						WHEN 9 THEN 'Œ¬Ã'
-						WHEN 10 THEN 'Œ¬ -‘'
-                        WHEN 11 THEN 'Œ¬Ã-‘'
-                        WHEN 13 THEN 'Œ¬— ' + CAST(RN_ODON AS VarCHar(100))
-						ELSE 'ÕÂËÁ‚ÂÒÚÌÓ'
+						WHEN 1 THEN '—Ñ–ª—ç—à'
+						WHEN 7 THEN '–û–í–ö'
+						WHEN 3 THEN '–û–í–ü'
+                        WHEN 4 THEN '–û–ò–í'
+						WHEN 6 THEN '–û–í–ü–ò'
+						WHEN 9 THEN '–û–í–ú'
+						WHEN 10 THEN '–û–í–ö-–§'
+                        WHEN 11 THEN '–û–í–ú-–§'
+                        WHEN 13 THEN '–û–í–° ' + CAST(RN_ODON AS VarCHar(100))
+						ELSE '–ù–µ–∏–∑–≤–µ—Å—Ç–Ω–æ'
 					END + ')' + ', '
                 FROM [PC275-SQL\DELTA].DBF.dbo.ClientDistrView AS D WITH(NOEXPAND)
                 INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable AS R ON D.SYS_REG_NAME = R.RN_SYS_NAME AND D.DIS_NUM = R.RN_DISTR_NUM AND D.DIS_COMP_NUM = R.RN_COMP_NUM
@@ -92,7 +92,7 @@ BEGIN
                     AND R.RN_REPORT_CODE = 'LAW'
                 ORDER BY SYS_ORDER, DIS_NUM, DIS_COMP_NUM FOR XML PATH('')
             )), 1, 2, '')),
-            [¬ÒÂ Ô‡‚ËÎ¸ÌÓ] = Cast(CASE WHEN SPK_CNT > SPK_AVAILABLE THEN 0 ELSE 1 END AS Bit)
+            [–í—Å–µ –ø—Ä–∞–≤–∏–ª—å–Ω–æ] = Cast(CASE WHEN SPK_CNT > SPK_AVAILABLE THEN 0 ELSE 1 END AS Bit)
         FROM
         (
             SELECT C.CL_ID, C.SPK_CNT, SPK.SPK_AVAILABLE
@@ -104,13 +104,13 @@ BEGIN
                 (
                     SELECT
                         SPK_AVAILABLE = CASE
-                                            -- ÒÂÚ¸ ËÎË Ï/Ò
+                                            -- —Å–µ—Ç—å –∏–ª–∏ –º/—Å
                                             WHEN RN_TECH_TYPE = 0 AND RN_NET_COUNT > 1 THEN 3
-                                            -- Œ¬—
+                                            -- –û–í–°
                                             WHEN RN_TECH_TYPE = 13 THEN 3
-                                            -- Ò/Ó
+                                            -- —Å/–æ
                                             WHEN RN_TECH_TYPE = 0 AND RN_NET_COUNT = 1 THEN 1
-                                            -- Œ¬Ã-‘
+                                            -- –û–í–ú-–§
                                             WHEN RN_TECH_TYPE = 11 THEN 1
                                             ELSE 0
                                         END

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,10 +8,10 @@ IF OBJECT_ID('[Memo].[CLIENT_MEMO_SYSTEMS]', 'P ') IS NULL EXEC('CREATE PROCEDUR
 GO
 ALTER PROCEDURE [Memo].[CLIENT_MEMO_SYSTEMS]
 	@LIST	NVARCHAR(MAX),
-	-- тип списка.
-	-- NULL - все
-	-- 1 - информационка
-	-- 2 - поставка
+	-- С‚РёРї СЃРїРёСЃРєР°.
+	-- NULL - РІСЃРµ
+	-- 1 - РёРЅС„РѕСЂРјР°С†РёРѕРЅРєР°
+	-- 2 - РїРѕСЃС‚Р°РІРєР°
 	@TP		SMALLINT = NULL,
 	@DATE	SMALLDATETIME = NULL
 AS

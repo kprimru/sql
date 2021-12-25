@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[AuditTOView]
 AS
-SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' AS TO_ERROR
+SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ РІ РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID
@@ -23,7 +23,7 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует главный бухгалтер в ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РіР»Р°РІРЅС‹Р№ Р±СѓС…РіР°Р»С‚РµСЂ РІ РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID
@@ -39,7 +39,7 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует ответственный в ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№ РІ РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON TO_ID_CLIENT = CL_ID
@@ -55,7 +55,7 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Не введен фактический адрес ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РќРµ РІРІРµРґРµРЅ С„Р°РєС‚РёС‡РµСЃРєРёР№ Р°РґСЂРµСЃ РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
@@ -68,7 +68,7 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Недопустимый символ в названии ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ СЃРёРјРІРѕР» РІ РЅР°Р·РІР°РЅРёРё РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
@@ -76,7 +76,7 @@ SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Отсутствует руководитель в ТО' 
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'Не совпадает руководитель клиента и основной ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, 'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ РєР»РёРµРЅС‚Р° Рё РѕСЃРЅРѕРІРЅРѕР№ РўРћ' AS TO_ERROR
 	FROM dbo.TOTable                    AS T
 	INNER JOIN dbo.ClientTable          AS CL ON T.TO_ID_CLIENT = CL.CL_ID
 	INNER JOIN dbo.TOPersonalTable      AS TP ON TP.TP_ID_TO = T.TO_ID

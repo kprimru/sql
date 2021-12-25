@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,7 +34,7 @@ BEGIN
 			ROW_NUMBER() OVER(ORDER BY ClientFullName, a.START) AS RN,
 			ClientFullName,
 			CASE
-				WHEN b.ID IS NULL THEN 'Ò ' + CONVERT(VARCHAR(20), a.START, 104) + ' ÔÓ ' + CONVERT(VARCHAR(20), a.FINISH, 104)
+				WHEN b.ID IS NULL THEN '—Å ' + CONVERT(VARCHAR(20), a.START, 104) + ' –ø–æ ' + CONVERT(VARCHAR(20), a.FINISH, 104)
 				ELSE b.NAME
 			END AS PERIOD
 		FROM

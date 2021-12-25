@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:		Денисов Алексей/Богдан Владимир
-Дата:		23-04-2009
-Описание:	счет-фактура на аванс за период
+РђРІС‚РѕСЂ:		Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р°:		23-04-2009
+РћРїРёСЃР°РЅРёРµ:	СЃС‡РµС‚-С„Р°РєС‚СѓСЂР° РЅР° Р°РІР°РЅСЃ Р·Р° РїРµСЂРёРѕРґ
 */
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_PREPAY_CREATE]
 	@clientid INT,
@@ -31,16 +31,16 @@ BEGIN
 
 	BEGIN TRY
 
-		-- проверяем, есть ли уже (неавансовая) счет-фактура клиенту за этот период
+		-- РїСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё СѓР¶Рµ (РЅРµР°РІР°РЅСЃРѕРІР°СЏ) СЃС‡РµС‚-С„Р°РєС‚СѓСЂР° РєР»РёРµРЅС‚Сѓ Р·Р° СЌС‚РѕС‚ РїРµСЂРёРѕРґ
 		IF NOT EXISTS (SELECT * FROM dbo.InvoiceSaleTable INNER JOIN dbo.InvoiceRowTable ON INR_ID_INVOICE=INS_ID
 						WHERE INS_ID_CLIENT=@clientid AND INR_ID_PERIOD=@periodid AND INS_PREPAY=0)
 		BEGIN
-			-- получаем строку документов и айдишников платежей
+			-- РїРѕР»СѓС‡Р°РµРј СЃС‚СЂРѕРєСѓ РґРѕРєСѓРјРµРЅС‚РѕРІ Рё Р°Р№РґРёС€РЅРёРєРѕРІ РїР»Р°С‚РµР¶РµР№
 			DECLARE @docstring varchar(1000)
 			SET @docstring = ''
 			DECLARE @idstring varchar(1000)
 			SET @idstring = ''
-			SELECT	@docstring = @docstring + ('№'+IN_PAY_NUM +' от '+CONVERT(varchar,IN_PAY_DATE,104)) + '; ',
+			SELECT	@docstring = @docstring + ('в„–'+IN_PAY_NUM +' РѕС‚ '+CONVERT(varchar,IN_PAY_DATE,104)) + '; ',
 					@idstring = @idstring + CONVERT(varchar,IN_ID) + ','
 					FROM
 						(
@@ -55,7 +55,7 @@ BEGIN
 			SET @docstring = LEFT(@docstring, LEN(@docstring)-1)
 			SET @idstring = LEFT(@idstring, LEN(@idstring)-1)
 
-			-- каким же номером нумеровать создаваемую с/ф?
+			-- РєР°РєРёРј Р¶Рµ РЅРѕРјРµСЂРѕРј РЅСѓРјРµСЂРѕРІР°С‚СЊ СЃРѕР·РґР°РІР°РµРјСѓСЋ СЃ/С„?
 			DECLARE @num INT
 			SET @num = 0
 			IF EXISTS (SELECT INS_NUM FROM dbo.InvoiceSaleTable WHERE INS_NUM=@begnum)
@@ -67,7 +67,7 @@ BEGIN
 					SET @num = @begnum
 				END
 
-			-- сначала добавляем саму счет-фактуру
+			-- СЃРЅР°С‡Р°Р»Р° РґРѕР±Р°РІР»СЏРµРј СЃР°РјСѓ СЃС‡РµС‚-С„Р°РєС‚СѓСЂСѓ
 
 			INSERT INTO dbo.InvoiceSaleTable(
 				INS_ID_ORG,
@@ -99,14 +99,14 @@ BEGIN
 
 				(SELECT CL_FULL_NAME FROM dbo.ClientTable WHERE CL_ID = @clientid),
 
-				(SELECT CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME
+				(SELECT CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME
 					FROM	dbo.ClientAddressView			A	INNER JOIN
 							dbo.FinancingAddressTypeTable	B	ON	A.CA_ID_TYPE=B.FAT_ID_ADDR_TYPE
 					WHERE CA_ID_CLIENT = @clientid AND FAT_DOC='INV_BUY'),
 
 				(SELECT CL_FULL_NAME FROM dbo.ClientTable WHERE CL_ID = @clientid),
 
-				(SELECT CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME
+				(SELECT CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME
 					FROM	dbo.ClientAddressView			A	INNER JOIN
 							dbo.FinancingAddressTypeTable	B	ON	A.CA_ID_TYPE=B.FAT_ID_ADDR_TYPE
 					WHERE CA_ID_CLIENT = @clientid AND FAT_DOC='INV_CONS'),
@@ -174,14 +174,14 @@ BEGIN
 			SET @newinvid = SCOPE_IDENTITY()
 			SELECT SCOPE_IDENTITY() AS NEW_IDEN
 
-			-- потом добавляем строки таблицы счета-фактуры
+			-- РїРѕС‚РѕРј РґРѕР±Р°РІР»СЏРµРј СЃС‚СЂРѕРєРё С‚Р°Р±Р»РёС†С‹ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹
 			INSERT INTO dbo.InvoiceRowTable (INR_ID_INVOICE,
 										 INR_NAME, INR_SUM, INR_ID_TAX, INR_TNDS, INR_SNDS, INR_SALL,
 										 INR_ID_DISTR, INR_ID_PERIOD)
 			SELECT
 					@newinvid,
 
-					'Предоплата за '+SO_INV_STR+' '+C.SYS_NAME,
+					'РџСЂРµРґРѕРїР»Р°С‚Р° Р·Р° '+SO_INV_STR+' '+C.SYS_NAME,
 
 					CONVERT(money, ROUND(ID_PRICE / (1 + TX_PERCENT / 100), 2)),
 					SO_ID_TAX, TX_PERCENT,
@@ -215,7 +215,7 @@ BEGIN
 									INR_ID_PERIOD=@periodid	AND
 									B.DIS_ID=INR_ID_DISTR
 							)
-			-- теперь обрабатываем id-шники платежей
+			-- С‚РµРїРµСЂСЊ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј id-С€РЅРёРєРё РїР»Р°С‚РµР¶РµР№
 				IF OBJECT_ID('tempdb..#incomes') IS NOT NULL
 					DROP TABLE #incomes
 
@@ -223,7 +223,7 @@ BEGIN
 				INSERT INTO #incomes
 					SELECT * FROM dbo.GET_TABLE_FROM_LIST(@idstring, ',')
 
-				-- заносим в Income сведения о созданной с/ф (в ID_ID_INVOCIE)
+				-- Р·Р°РЅРѕСЃРёРј РІ Income СЃРІРµРґРµРЅРёСЏ Рѕ СЃРѕР·РґР°РЅРЅРѕР№ СЃ/С„ (РІ ID_ID_INVOCIE)
 				UPDATE dbo.IncomeTable SET IN_ID_INVOICE=@newinvid
 				WHERE IN_ID IN (SELECT inc_id FROM #incomes)
 

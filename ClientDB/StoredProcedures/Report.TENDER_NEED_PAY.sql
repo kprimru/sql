@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			t.CLIENT AS [Наименование заказчика],
-			SHORT AS [Базис/К-Прим],
-			p.CLAIM_PRIVISION AS [Сумма обеспечения заявки],
+			t.CLIENT AS [РќР°РёРјРµРЅРѕРІР°РЅРёРµ Р·Р°РєР°Р·С‡РёРєР°],
+			SHORT AS [Р‘Р°Р·РёСЃ/Рљ-РџСЂРёРј],
+			p.CLAIM_PRIVISION AS [РЎСѓРјРјР° РѕР±РµСЃРїРµС‡РµРЅРёСЏ Р·Р°СЏРІРєРё],
 			CASE DATEPART(dw, p.DATE)
 				WHEN 1 THEN p.DATE+2
 				WHEN 2 THEN p.DATE+1
@@ -36,11 +36,11 @@ BEGIN
 				WHEN 5 THEN p.DATE+5
 				WHEN 6 THEN p.DATE+4
 				WHEN 7 THEN p.DATE+3
-			END AS [Срок оплаты],
-			TS_SHORT AS [Эл. пл.],
-			GK_SUM AS [НМЦК],
-			NOTICE_NUM AS [Номер извещения],
-			DATE AS [Дата извещения]
+			END AS [РЎСЂРѕРє РѕРїР»Р°С‚С‹],
+			TS_SHORT AS [Р­Р». РїР».],
+			GK_SUM AS [РќРњР¦Рљ],
+			NOTICE_NUM AS [РќРѕРјРµСЂ РёР·РІРµС‰РµРЅРёСЏ],
+			DATE AS [Р”Р°С‚Р° РёР·РІРµС‰РµРЅРёСЏ]
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER
@@ -56,7 +56,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			'Итого : ', '', SUM(p.CLAIM_PRIVISION), NULL, NULL, NULL, NULL, NULL
+			'РС‚РѕРіРѕ : ', '', SUM(p.CLAIM_PRIVISION), NULL, NULL, NULL, NULL, NULL
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER

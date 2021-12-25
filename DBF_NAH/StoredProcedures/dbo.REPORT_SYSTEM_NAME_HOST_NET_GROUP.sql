@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,7 +47,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_status
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@statuslist, ',')
 		END
@@ -82,7 +82,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_system
 				SELECT a.ITEM, CASE
 						WHEN EXISTS
@@ -112,7 +112,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
@@ -134,7 +134,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
@@ -157,7 +157,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
@@ -183,7 +183,7 @@ BEGIN
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@periodlist, ',')
 		END
 
-	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)
+	  --РЁР°Рі 1. РЎРѕР·РґР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ СЃРѕ РІСЃРµРјРё РїРѕР»СЏРјРё (РЅР°РґРѕ С‡С‚РѕР±С‹ Р±С‹Р»Рё РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РїРѕСЂСЏРґРєСѓ)
 
 		IF OBJECT_ID('tempdb..#stats') IS NOT NULL
 			DROP TABLE #stats
@@ -206,7 +206,7 @@ BEGIN
 			FROM
 				(
 					SELECT
-						REG_ID_PERIOD, TSYS_GROUP, REG_ID_HOST, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END AS SN_GROUP,
+						REG_ID_PERIOD, TSYS_GROUP, REG_ID_HOST, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END AS SN_GROUP,
 						CONVERT(BIT,
 							CASE
 								WHEN TSYS_PROBLEM = 1
@@ -226,7 +226,7 @@ BEGIN
 						INNER JOIN #dbf_status ON STAT_ID = REG_ID_STATUS
 						INNER JOIN #dbf_systemtype ON TST_ID = REG_ID_TYPE
 						INNER JOIN dbo.SystemNetTable ON SN_ID = SNC_ID_SN
-					GROUP BY REG_ID_PERIOD, TSYS_GROUP, REG_ID_HOST, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, REG_COMPLECT, TSYS_PROBLEM, REG_ID_TYPE
+					GROUP BY REG_ID_PERIOD, TSYS_GROUP, REG_ID_HOST, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, REG_COMPLECT, TSYS_PROBLEM, REG_ID_TYPE
 				) AS o_O
 			GROUP BY REG_ID_PERIOD, TSYS_GROUP, REG_ID_HOST, SN_GROUP, PROBLEM
 
@@ -269,23 +269,23 @@ BEGIN
 
 			INSERT INTO #ric
 				SELECT DISTINCT
-					'РИЦ | ' +
+					'Р РР¦ | ' +
 						TSYS_GROUP +
 						CASE TSYS_PROBLEM_TYPE
 							WHEN 0 THEN ''
 							WHEN 2 THEN
 								CASE TSYS_PROBLEM
-									WHEN 0 THEN ' | ДД2'
-									WHEN 2 THEN ' | ДЗ2/ДЗ3'
+									WHEN 0 THEN ' | Р”Р”2'
+									WHEN 2 THEN ' | Р”Р—2/Р”Р—3'
 								END
 							WHEN 1 THEN
 								CASE TSYS_PROBLEM
-									WHEN 1 THEN ' Проблемный'
+									WHEN 1 THEN ' РџСЂРѕР±Р»РµРјРЅС‹Р№'
 									ELSE ''
 								END
 							ELSE ' ???'
 						END +
-						' | ' + CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, 0, TSYS_GROUP, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, TSYS_PROBLEM, MIN(SN_ORDER) AS SN_ORD, MIN(SYS_ORDER) AS SYS_ORDER
+						' | ' + CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, 0, TSYS_GROUP, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, TSYS_PROBLEM, MIN(SN_ORDER) AS SN_ORD, MIN(SYS_ORDER) AS SYS_ORDER
 				FROM
 					dbo.SystemNetTable a
 					INNER JOIN #dbf_systemnet c ON c.TSN_ID = a.SN_ID,
@@ -309,18 +309,18 @@ BEGIN
 						) d ON d.TSYS_ID = b.SYS_ID
 				WHERE
 					CASE 
-						-- Основная линейка уровень Эксперт и Проф - только ОВК, ОВК-Ф и ОВМ
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ Р­РєСЃРїРµСЂС‚ Рё РџСЂРѕС„ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤ Рё РћР’Рњ
 						WHEN SYS_REG_NAME IN ('SKJO')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7, 9, 10) THEN 0
 						WHEN SYS_REG_NAME IN ('SKBO', 'SKUO', 'SBOO')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7, 9, 10, 11) THEN 0
-						-- эконом-линейка только ОВП и ОВМ
+						-- СЌРєРѕРЅРѕРј-Р»РёРЅРµР№РєР° С‚РѕР»СЊРєРѕ РћР’Рџ Рё РћР’Рњ
 						WHEN SYS_REG_NAME IN ('SKUEM', 'SKJEM', 'SKBEM', 'SBOEM')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 9) THEN 0
-						-- премиум-линейка только ОВК и ОВК-Ф
+						-- РїСЂРµРјРёСѓРј-Р»РёРЅРµР№РєР° С‚РѕР»СЊРєРѕ РћР’Рљ Рё РћР’Рљ-Р¤
 						WHEN SYS_REG_NAME IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 10) THEN 0
-						-- Основная линейка уровень Оптимальный - только ОВК, ОВК-Ф, ОВМ и ОВП
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ РћРїС‚РёРјР°Р»СЊРЅС‹Р№ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤, РћР’Рњ Рё РћР’Рџ
 						WHEN SYS_REG_NAME IN (
 										'SKUE',
 										'SKJE',
@@ -334,22 +334,22 @@ BEGIN
 										'SBOP'
 										)
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 9, 10, 11) THEN 0
-						-- Основная линейка уровень Базовый - только ОВК и ОВП
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ Р‘Р°Р·РѕРІС‹Р№ - С‚РѕР»СЊРєРѕ РћР’Рљ Рё РћР’Рџ
 						WHEN SYS_REG_NAME IN ('SKUB', 'SKJB', 'SKBB', 'SBOB')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7) THEN 0
-						-- УМК, ББК, ЮБК - только ОВК, ОВК-Ф
+						-- РЈРњРљ, Р‘Р‘Рљ, Р®Р‘Рљ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤
 						WHEN SYS_REG_NAME IN ('BBKZ', 'UMKZ', 'UBKZ')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 10) THEN 0
-						-- КЮ - только с кол-вом пользователей = 0 (лок, флэш, ОВП, ОВПИ, ОВК, ОВК-Ф)
+						-- РљР® - С‚РѕР»СЊРєРѕ СЃ РєРѕР»-РІРѕРј РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ = 0 (Р»РѕРє, С„Р»СЌС€, РћР’Рџ, РћР’РџР, РћР’Рљ, РћР’Рљ-Р¤)
 						WHEN SYS_REG_NAME IN ('JUR')
 							AND (SELECT TOP 1 SNC_NET_COUNT FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (0) THEN 0
-						-- КРФ - только оффлайн (лок, 1/с, м/с, сеть, флэш)
+						-- РљР Р¤ - С‚РѕР»СЊРєРѕ РѕС„С„Р»Р°Р№РЅ (Р»РѕРє, 1/СЃ, Рј/СЃ, СЃРµС‚СЊ, С„Р»СЌС€)
 						WHEN SYS_REG_NAME IN ('KRF')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (0, 1) THEN 0
 						ELSE 1
 					END = 1
 
-				GROUP BY TSYS_PROBLEM, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, TSYS_GROUP, TSYS_PROBLEM, TSYS_PROBLEM_TYPE
+				GROUP BY TSYS_PROBLEM, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, TSYS_GROUP, TSYS_PROBLEM, TSYS_PROBLEM_TYPE
 				ORDER BY SYS_ORDER, TSYS_PROBLEM, SN_ORD
 		END
 
@@ -361,17 +361,17 @@ BEGIN
 							WHEN 0 THEN ''
 							WHEN 2 THEN
 								CASE TSYS_PROBLEM
-									WHEN 0 THEN ' | ДД2'
-									WHEN 2 THEN ' | ДЗ2/ДЗ3'
+									WHEN 0 THEN ' | Р”Р”2'
+									WHEN 2 THEN ' | Р”Р—2/Р”Р—3'
 								END
 							WHEN 1 THEN
 								CASE TSYS_PROBLEM
-									WHEN 1 THEN ' Проблемный'
+									WHEN 1 THEN ' РџСЂРѕР±Р»РµРјРЅС‹Р№'
 									ELSE ''
 								END
 							ELSE ' ???'
 				END +
-				' | ' + CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, SH_ID, TSYS_GROUP, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, TSYS_PROBLEM, MIN(SN_ORDER) AS SN_ORD, MIN(SYS_ORDER) AS SYS_ORD, SH_ORDER
+				' | ' + CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, SH_ID, TSYS_GROUP, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, TSYS_PROBLEM, MIN(SN_ORDER) AS SN_ORD, MIN(SYS_ORDER) AS SYS_ORD, SH_ORDER
 			FROM
 				dbo.SystemNetTable a
 				INNER JOIN #dbf_systemnet d ON d.TSN_ID = a.SN_ID,
@@ -397,18 +397,18 @@ BEGIN
 				INNER JOIN #dbf_subhost f ON f.TSH_ID = c.SH_ID
 			WHERE
 				CASE 
-						-- Основная линейка уровень Эксперт и Проф - только ОВК, ОВК-Ф и ОВМ
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ Р­РєСЃРїРµСЂС‚ Рё РџСЂРѕС„ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤ Рё РћР’Рњ
 						WHEN SYS_REG_NAME IN ('SKJO')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7, 9, 10) THEN 0
 						WHEN SYS_REG_NAME IN ('SKBO', 'SKUO', 'SBOO')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7, 9, 10, 11) THEN 0
-						-- эконом-линейка только ОВП и ОВМ
+						-- СЌРєРѕРЅРѕРј-Р»РёРЅРµР№РєР° С‚РѕР»СЊРєРѕ РћР’Рџ Рё РћР’Рњ
 						WHEN SYS_REG_NAME IN ('SKUEM', 'SKJEM', 'SKBEM', 'SBOEM')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 9) THEN 0
-						-- премиум-линейка только ОВК и ОВК-Ф
+						-- РїСЂРµРјРёСѓРј-Р»РёРЅРµР№РєР° С‚РѕР»СЊРєРѕ РћР’Рљ Рё РћР’Рљ-Р¤
 						WHEN SYS_REG_NAME IN ('SPK-V', 'SPK-IV', 'SPK-III', 'SPK-II', 'SPK-I')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 10) THEN 0
-						-- Основная линейка уровень Оптимальный - только ОВК, ОВК-Ф, ОВМ и ОВП
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ РћРїС‚РёРјР°Р»СЊРЅС‹Р№ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤, РћР’Рњ Рё РћР’Рџ
 						WHEN SYS_REG_NAME IN (
 										'SKUE',
 										'SKJE',
@@ -422,22 +422,22 @@ BEGIN
 										'SBOP'
 										)
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 9, 10, 11) THEN 0
-						-- Основная линейка уровень Базовый - только ОВК и ОВП
+						-- РћСЃРЅРѕРІРЅР°СЏ Р»РёРЅРµР№РєР° СѓСЂРѕРІРµРЅСЊ Р‘Р°Р·РѕРІС‹Р№ - С‚РѕР»СЊРєРѕ РћР’Рљ Рё РћР’Рџ
 						WHEN SYS_REG_NAME IN ('SKUB', 'SKJB', 'SKBB', 'SBOB')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (3, 7) THEN 0
-						-- УМК, ББК, ЮБК - только ОВК, ОВК-Ф
+						-- РЈРњРљ, Р‘Р‘Рљ, Р®Р‘Рљ - С‚РѕР»СЊРєРѕ РћР’Рљ, РћР’Рљ-Р¤
 						WHEN SYS_REG_NAME IN ('BBKZ', 'UMKZ', 'UBKZ')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (7, 10) THEN 0
-						-- КЮ - только с кол-вом пользователей = 0 (лок, флэш, ОВП, ОВПИ, ОВК, ОВК-Ф)
+						-- РљР® - С‚РѕР»СЊРєРѕ СЃ РєРѕР»-РІРѕРј РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ = 0 (Р»РѕРє, С„Р»СЌС€, РћР’Рџ, РћР’РџР, РћР’Рљ, РћР’Рљ-Р¤)
 						WHEN SYS_REG_NAME IN ('JUR')
 							AND (SELECT TOP 1 SNC_NET_COUNT FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (0) THEN 0
-						-- КРФ - только оффлайн (лок, 1/с, м/с, сеть, флэш)
+						-- РљР Р¤ - С‚РѕР»СЊРєРѕ РѕС„С„Р»Р°Р№РЅ (Р»РѕРє, 1/СЃ, Рј/СЃ, СЃРµС‚СЊ, С„Р»СЌС€)
 						WHEN SYS_REG_NAME IN ('KRF')
 							AND (SELECT TOP 1 SNC_TECH FROM dbo.SystemNetCountTable WHERE SNC_ID_SN = SN_ID) NOT IN (0, 1) THEN 0
 						ELSE 1
 					END = 1
 
-			GROUP BY SH_SHORT_NAME, TSYS_PROBLEM, CASE SN_GROUP WHEN 'ОВМ' THEN '1/с' ELSE SN_GROUP END, SH_ID, TSYS_GROUP, TSYS_PROBLEM, SH_ORDER, TSYS_PROBLEM_TYPE
+			GROUP BY SH_SHORT_NAME, TSYS_PROBLEM, CASE SN_GROUP WHEN 'РћР’Рњ' THEN '1/СЃ' ELSE SN_GROUP END, SH_ID, TSYS_GROUP, TSYS_PROBLEM, SH_ORDER, TSYS_PROBLEM_TYPE
 			ORDER BY SH_ORDER, SYS_ORD, TSYS_PROBLEM, SN_ORD
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
@@ -445,8 +445,8 @@ BEGIN
 
 		CREATE TABLE #result
 			(
-				[Номер строки] INT IDENTITY(1,1),
-				[Дата] SMALLDATETIME
+				[РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] INT IDENTITY(1,1),
+				[Р”Р°С‚Р°] SMALLDATETIME
 			)
 
 		IF @selectric = 1
@@ -483,7 +483,7 @@ BEGIN
 		FROM #keys
 		ORDER BY KEY_ID
 
-		-- производится выборка по всем фильтрам без разбиения по подхостам, типам сети и системам
+		-- РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІС‹Р±РѕСЂРєР° РїРѕ РІСЃРµРј С„РёР»СЊС‚СЂР°Рј Р±РµР· СЂР°Р·Р±РёРµРЅРёСЏ РїРѕ РїРѕРґС…РѕСЃС‚Р°Рј, С‚РёРїР°Рј СЃРµС‚Рё Рё СЃРёСЃС‚РµРјР°Рј
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
@@ -556,22 +556,22 @@ BEGIN
 
 		IF @selecttotal = 1
 			ALTER TABLE #result ADD
-				[Итого по подхостам] INT,
-				[Прирост веса] DECIMAL(10, 4),
-				[Вес] DECIMAL(10, 4),
-				[Весовая поправка] DECIMAL(10, 4),
-				[Период П4|Вес на начало] DECIMAL(10, 4),
-				[Период П4|Вес на конец] DECIMAL(10, 4),
-				[Период П4|Прирост веса за месяц] DECIMAL(10, 4),
-				[Период П4|Прирост веса за период] DECIMAL(10, 4),
-				[Период П4|Весовая поправка] DECIMAL(10, 4),
-				[Период П4|Прирост веса за период %] DECIMAL(10, 4)
+				[РС‚РѕРіРѕ РїРѕ РїРѕРґС…РѕСЃС‚Р°Рј] INT,
+				[РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] DECIMAL(10, 4),
+				[Р’РµСЃ] DECIMAL(10, 4),
+				[Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РјРµСЃСЏС†] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°] DECIMAL(10, 4),
+				[РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ %] DECIMAL(10, 4)
 
 		/*
-			А вот тут надо просуммировать все поля и посчитать веса
+			Рђ РІРѕС‚ С‚СѓС‚ РЅР°РґРѕ РїСЂРѕСЃСѓРјРјРёСЂРѕРІР°С‚СЊ РІСЃРµ РїРѕР»СЏ Рё РїРѕСЃС‡РёС‚Р°С‚СЊ РІРµСЃР°
 		*/
 
-		SET @sql = 'UPDATE #result SET [Итого по подхостам] = '
+		SET @sql = 'UPDATE #result SET [РС‚РѕРіРѕ РїРѕ РїРѕРґС…РѕСЃС‚Р°Рј] = '
 		SELECT @sql = @sql  + '[' + KEY_NAME + ']+'
 		FROM #keys
 
@@ -581,9 +581,9 @@ BEGIN
 
 		IF @selectric = 1
 		BEGIN
-			SET @sql = 'UPDATE #result SET [Прирост веса] = '
+			SET @sql = 'UPDATE #result SET [РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] = '
 
-			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), [' + KEY_NAME + ']) * dbo.GetWeightProblemTmp(''' + CONVERT(VARCHAR(20), KEY_SYS) + ''', ''' + KEY_NET + ''', [Дата], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
+			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), [' + KEY_NAME + ']) * dbo.GetWeightProblemTmp(''' + CONVERT(VARCHAR(20), KEY_SYS) + ''', ''' + KEY_NET + ''', [Р”Р°С‚Р°], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
 			FROM #ric
 
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
@@ -591,32 +591,32 @@ BEGIN
 			EXEC (@sql)
 
 			UPDATE #result
-			SET [Вес] = [Прирост веса]
+			SET [Р’РµСЃ] = [РџСЂРёСЂРѕСЃС‚ РІРµСЃР°]
 
 			DECLARE @i INT
 
-			SELECT @i = MAX([Номер строки])
+			SELECT @i = MAX([РќРѕРјРµСЂ СЃС‚СЂРѕРєРё])
 			FROM #result
 
 			WHILE @i <> 1
 			BEGIN
 				UPDATE #result
-				SET [Прирост веса] = [Прирост веса] - (SELECT [Прирост веса] FROM #result WHERE [Номер строки] = @i - 1)
-				WHERE [Номер строки] = @i
+				SET [РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] = [РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] - (SELECT [РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] FROM #result WHERE [РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] = @i - 1)
+				WHERE [РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] = @i
 
 				SET @i = @i - 1
 			END
 
 
 			/*
-				Вычисляем период П4
+				Р’С‹С‡РёСЃР»СЏРµРј РїРµСЂРёРѕРґ Рџ4
 			*/
 
 			DECLARE @PR_ALG	SMALLINT
 
 			SELECT @PR_ALG = PR_ID
 			FROM dbo.PeriodTable
-			WHERE PR_DATE = (SELECT MAX([Дата]) FROM #result)
+			WHERE PR_DATE = (SELECT MAX([Р”Р°С‚Р°]) FROM #result)
 
 			DECLARE @PR_JUNE SMALLINT
 
@@ -625,12 +625,12 @@ BEGIN
 			WHERE PR_DATE = '20130601'
 
 			UPDATE a
-			SET [Период П4|Вес на начало] =
+			SET [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ] =
 					CASE
 						WHEN b.PR_DATE >= '20130701' THEN Ric.VKSPGet(@PR_ALG, c.PR_ID, c.PR_ID, c.PR_ID)
 						ELSE Ric.VKSPGet(@PR_ALG, c.PR_ID, @PR_JUNE, c.PR_ID)
 					END,
-				[Период П4|Вес на конец] = Ric.VKSPGet(@PR_ALG, b.PR_ID, b.PR_ID, b.PR_ID)
+				[РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†] = Ric.VKSPGet(@PR_ALG, b.PR_ID, b.PR_ID, b.PR_ID)
 				/*
 					CASE
 						WHEN b.PR_DATE >= '20130701' THEN Ric.VKSPGet(@PR_ALG, b.PR_ID, @PR_ALG)
@@ -640,44 +640,44 @@ BEGIN
 					--Ric.VKSPGet(@PR_ALG, b.PR_ID, @PR_ALG)
 			FROM
 				#result a
-				INNER JOIN dbo.PeriodTable b ON [Дата] = b.PR_DATE
-				INNER JOIN dbo.PeriodTable c ON DATEADD(MONTH, -12, [Дата]) = c.PR_DATE
-			WHERE [Номер строки] >= (SELECT MAX([Номер строки]) FROM #result) - 15
+				INNER JOIN dbo.PeriodTable b ON [Р”Р°С‚Р°] = b.PR_DATE
+				INNER JOIN dbo.PeriodTable c ON DATEADD(MONTH, -12, [Р”Р°С‚Р°]) = c.PR_DATE
+			WHERE [РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] >= (SELECT MAX([РќРѕРјРµСЂ СЃС‚СЂРѕРєРё]) FROM #result) - 15
 
 			UPDATE #result
-			SET [Весовая поправка] =
+			SET [Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°] =
 				(
 					SELECT WC_VALUE
 					FROM
 						Ric.WeightCorrectionMonth
 						INNER JOIN dbo.PeriodTable ON PR_ID = WC_ID_PERIOD
-					WHERE PR_DATE = [Дата]
+					WHERE PR_DATE = [Р”Р°С‚Р°]
 				)
 
 			UPDATE #result
-			SET [Период П4|Весовая поправка] =
+			SET [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°] =
 				(
 					SELECT SUM(WC_VALUE)
 					FROM
 						Ric.WeightCorrectionMonth
 						INNER JOIN dbo.PeriodTable ON PR_ID = WC_ID_PERIOD
-					WHERE PR_DATE BETWEEN DATEADD(MONTH, -11, [Дата]) AND [Дата]
+					WHERE PR_DATE BETWEEN DATEADD(MONTH, -11, [Р”Р°С‚Р°]) AND [Р”Р°С‚Р°]
 				)
 
 			UPDATE #result
-			SET [Период П4|Прирост веса за период] = [Период П4|Вес на конец] - [Период П4|Вес на начало]
+			SET [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ] = [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†] - [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ]
 
 			UPDATE #result
-			SET [Период П4|Прирост веса за период %] = 100 * ([Период П4|Прирост веса за период] + ISNULL([Период П4|Весовая поправка], 0)) / [Период П4|Вес на начало]
+			SET [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ %] = 100 * ([РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РїРµСЂРёРѕРґ] + ISNULL([РџРµСЂРёРѕРґ Рџ4|Р’РµСЃРѕРІР°СЏ РїРѕРїСЂР°РІРєР°], 0)) / [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ]
 
-			SELECT @i = MAX([Номер строки])
+			SELECT @i = MAX([РќРѕРјРµСЂ СЃС‚СЂРѕРєРё])
 			FROM #result
 
 			WHILE @i <> 1
 			BEGIN
 				UPDATE #result
-				SET [Период П4|Прирост веса за месяц] = [Период П4|Вес на конец] - (SELECT [Период П4|Вес на конец] FROM #result WHERE [Номер строки] = @i - 1)
-				WHERE [Номер строки] = @i
+				SET [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° Р·Р° РјРµСЃСЏС†] = [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†] - (SELECT [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РєРѕРЅРµС†] FROM #result WHERE [РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] = @i - 1)
+				WHERE [РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] = @i
 
 				SET @i = @i - 1
 			END

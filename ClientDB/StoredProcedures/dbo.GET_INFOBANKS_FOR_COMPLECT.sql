@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 				(
 					SELECT InfoBankID
 					FROM dbo.SystemBankTable
-					--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --ДОФ будем добавлять программно
+					--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --Р”РћР¤ Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ РїСЂРѕРіСЂР°РјРјРЅРѕ
 					WHERE  (SystemID = @SYSID) AND  (Required IN (1, 2) )
 				)
 			AND InfoBankActive = 1

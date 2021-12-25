@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -38,7 +38,7 @@ BEGIN
 
 		INSERT INTO @ManagerExclude
 		SELECT Cast(SetItem AS Int)
-		FROM dbo.NamedSetItemsSelect('dbo.ManagerTable', 'Не учитывать в контроле посещения');
+		FROM dbo.NamedSetItemsSelect('dbo.ManagerTable', 'РќРµ СѓС‡РёС‚С‹РІР°С‚СЊ РІ РєРѕРЅС‚СЂРѕР»Рµ РїРѕСЃРµС‰РµРЅРёСЏ');
 
 		INSERT INTO @ClientKind
 		SELECT Cast(SetItem AS SmallInt)
@@ -46,7 +46,7 @@ BEGIN
 
 		INSERT INTO @ContactType
 		SELECT Cast(SetItem AS UniqueIdentifier)
-		FROM dbo.NamedSetItemsSelect('dbo.ClientContactType', 'Посещение');
+		FROM dbo.NamedSetItemsSelect('dbo.ClientContactType', 'РџРѕСЃРµС‰РµРЅРёРµ');
 
 		INSERT INTO @ClientWrite
 		SELECT WCL_ID

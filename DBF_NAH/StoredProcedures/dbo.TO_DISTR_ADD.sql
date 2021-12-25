@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[TO_DISTR_ADD]
@@ -40,7 +40,7 @@ BEGIN
 
 		IF @disid IS NOT NULL
 			BEGIN
-				--парсить строчку и выбирать нужные значения
+				--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 				INSERT INTO #distr
 					SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@disid, ',')
 			END

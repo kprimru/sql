@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,17 +27,17 @@ BEGIN
 
 	BEGIN TRY
 
-        -- ToDo злостный хардкож
+        -- ToDo Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕР¶
         SET @Delivery_Id = 'BFB6FBE5-886C-E511-B356-0007E92AAFC5'
 
 		SELECT
-            [Клиент]        = ClientFullname,
-            [Статус]        = ServiceStatusName,
+            [РљР»РёРµРЅС‚]        = ClientFullname,
+            [РЎС‚Р°С‚СѓСЃ]        = ServiceStatusName,
             [Email]         = IsNull(D.[EMAIL], E.[EMAIL]),
-            [Проблема]      =   CASE
-                                    WHEN D.[EMAIL] IS NULL THEN 'Есть в рассылке, нет в ДК'
-                                    WHEN E.[EMAIL] IS NULL THEN 'Есть в ДК, нет в рассылке'
-                                    ELSE 'ВНИМАНИЕ! ЭТОГО ТЕКСТА ЗДЕСЬ БЫТЬ НЕ ДОЛЖНО!'
+            [РџСЂРѕР±Р»РµРјР°]      =   CASE
+                                    WHEN D.[EMAIL] IS NULL THEN 'Р•СЃС‚СЊ РІ СЂР°СЃСЃС‹Р»РєРµ, РЅРµС‚ РІ Р”Рљ'
+                                    WHEN E.[EMAIL] IS NULL THEN 'Р•СЃС‚СЊ РІ Р”Рљ, РЅРµС‚ РІ СЂР°СЃСЃС‹Р»РєРµ'
+                                    ELSE 'Р’РќРРњРђРќРР•! Р­РўРћР“Рћ РўР•РљРЎРўРђ Р—Р”Р•РЎР¬ Р‘Р«РўР¬ РќР• Р”РћР›Р–РќРћ!'
                                 END
         FROM
         (

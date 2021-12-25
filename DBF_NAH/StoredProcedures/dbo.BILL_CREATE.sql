@@ -1,12 +1,12 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[BILL_CREATE]
 	@clientid INT,
@@ -39,11 +39,11 @@ BEGIN
 
 
 
-		--запоминаем начальный период
+		--Р·Р°РїРѕРјРёРЅР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Р№ РїРµСЂРёРѕРґ
 		SET @prid = @periodid
 
-		--смотрим, есть ли хотя бы один дистрибутив, по которому можно выписать счет
-		-- (соответствующий статус и соответствующая начальная дата)
+		--СЃРјРѕС‚СЂРёРј, РµСЃС‚СЊ Р»Рё С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ РґРёСЃС‚СЂРёР±СѓС‚РёРІ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РјРѕР¶РЅРѕ РІС‹РїРёСЃР°С‚СЊ СЃС‡РµС‚
+		-- (СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ СЃС‚Р°С‚СѓСЃ Рё СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰Р°СЏ РЅР°С‡Р°Р»СЊРЅР°СЏ РґР°С‚Р°)
 		/*
 		IF NOT EXISTS
 			(
@@ -67,7 +67,7 @@ BEGIN
 			RETURN
 		*/
 
-		--смотрим, на сколько месяцев клиенту нужно выставить счет
+		--СЃРјРѕС‚СЂРёРј, РЅР° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ РєР»РёРµРЅС‚Сѓ РЅСѓР¶РЅРѕ РІС‹СЃС‚Р°РІРёС‚СЊ СЃС‡РµС‚
 		SELECT @moncount = MAX(DF_MON_COUNT)
 		FROM
 			dbo.DistrFinancingTable INNER JOIN
@@ -79,13 +79,13 @@ BEGIN
 		IF @moncount IS NULL
 			SET @moncount = 1
 
-		SELECT @TXT = 'Клиент = "' + CL_PSEDO + '" Месяц = "' + CONVERT(VARCHAR(MAX), PR_DATE, 104) + '" Кол-во месяцев "' + CONVERT(VARCHAR(MAX), @moncount) + '"'
+		SELECT @TXT = 'РљР»РёРµРЅС‚ = "' + CL_PSEDO + '" РњРµСЃСЏС† = "' + CONVERT(VARCHAR(MAX), PR_DATE, 104) + '" РљРѕР»-РІРѕ РјРµСЃСЏС†РµРІ "' + CONVERT(VARCHAR(MAX), @moncount) + '"'
 		FROM dbo.ClientTable, dbo.PeriodTable
 		WHERE CL_ID = @clientid AND PR_ID = @periodid
 
 		SET @TXT = ISNULL(@TXT, '')
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Начало Формирование счета', @TXT, @clientid, NULL
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'РќР°С‡Р°Р»Рѕ Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‡РµС‚Р°', @TXT, @clientid, NULL
 
 		DECLARE @i TINYINT
 
@@ -94,7 +94,7 @@ BEGIN
 		DECLARE @RC INT
 
 		SET @i = 0
-		--по каждому месяцу пытаемся выставить счет
+		--РїРѕ РєР°Р¶РґРѕРјСѓ РјРµСЃСЏС†Сѓ РїС‹С‚Р°РµРјСЃСЏ РІС‹СЃС‚Р°РІРёС‚СЊ СЃС‡РµС‚
 		WHILE @i < @moncount
 			BEGIN
 				SELECT @PR_DATE = PR_DATE
@@ -102,13 +102,13 @@ BEGIN
 				WHERE PR_ID = @prid
 
 				SET @billid = NULL
-				--если за месяц не было счета
+				--РµСЃР»Рё Р·Р° РјРµСЃСЏС† РЅРµ Р±С‹Р»Рѕ СЃС‡РµС‚Р°
 				SELECT @billid = BL_ID
 				FROM dbo.BillTable
 				WHERE BL_ID_CLIENT = @clientid 
 					AND BL_ID_PERIOD = @prid
 
-				--если счета на указанный месяц нету, то выписываем его
+				--РµСЃР»Рё СЃС‡РµС‚Р° РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№ РјРµСЃСЏС† РЅРµС‚Сѓ, С‚Рѕ РІС‹РїРёСЃС‹РІР°РµРј РµРіРѕ
 				IF @billid IS NULL 
 					BEGIN
 						INSERT INTO dbo.BillTable(BL_ID_CLIENT, BL_ID_PERIOD, BL_ID_ORG, BL_ID_PAYER)
@@ -162,7 +162,7 @@ BEGIN
 						WHERE CD_ID_CLIENT = @clientid
 							AND PR_ID = @periodid
 							AND SYS_ID_SO = @soid
-							--проверяем, нужно ли выписывать по этому дистрибутиву счет еще на один месяц
+							--РїСЂРѕРІРµСЂСЏРµРј, РЅСѓР¶РЅРѕ Р»Рё РІС‹РїРёСЃС‹РІР°С‚СЊ РїРѕ СЌС‚РѕРјСѓ РґРёСЃС‚СЂРёР±СѓС‚РёРІСѓ СЃС‡РµС‚ РµС‰Рµ РЅР° РѕРґРёРЅ РјРµСЃСЏС†
 							AND DF_MON_COUNT > @i
 							AND
 								(
@@ -172,7 +172,7 @@ BEGIN
 								) <= @PR_DATE
 							AND NOT EXISTS
 									(
-										--проверяем, что этого дистрибутива нет в счете
+										--РїСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ СЌС‚РѕРіРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° РЅРµС‚ РІ СЃС‡РµС‚Рµ
 										SELECT *
 										FROM dbo.BillDistrTable
 										WHERE BD_ID_BILL = @billid 
@@ -201,13 +201,13 @@ BEGIN
 
 					SELECT @RC = @@ROWCOUNT
 
-					SELECT @TXT = 'Клиент = "' + CL_PSEDO + '" Месяц = "' + CONVERT(VARCHAR(MAX), @PR_DATE, 104) + '" @i = "' + CONVERT(VARCHAR(MAX), @i) + '" сфрмировано счетов = "' + CONVERT(VARCHAR(MAX), @RC) + '"'
+					SELECT @TXT = 'РљР»РёРµРЅС‚ = "' + CL_PSEDO + '" РњРµСЃСЏС† = "' + CONVERT(VARCHAR(MAX), @PR_DATE, 104) + '" @i = "' + CONVERT(VARCHAR(MAX), @i) + '" СЃС„СЂРјРёСЂРѕРІР°РЅРѕ СЃС‡РµС‚РѕРІ = "' + CONVERT(VARCHAR(MAX), @RC) + '"'
 					FROM dbo.ClientTable, dbo.PeriodTable
 					WHERE CL_ID = @clientid AND PR_ID = @periodid
 
 					SET @TXT = ISNULL(@TXT, '')
 
-					EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Формирование счета клиента', @TXT, @clientid, NULL
+					EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‡РµС‚Р° РєР»РёРµРЅС‚Р°', @TXT, @clientid, NULL
 				END
 				ELSE
 				BEGIN
@@ -251,7 +251,7 @@ BEGIN
 						WHERE CD_ID_CLIENT = @clientid
 							AND PR_ID = @periodid
 							AND SYS_ID_SO = @soid
-							--проверяем, нужно ли выписывать по этому дистрибутиву счет еще на один месяц
+							--РїСЂРѕРІРµСЂСЏРµРј, РЅСѓР¶РЅРѕ Р»Рё РІС‹РїРёСЃС‹РІР°С‚СЊ РїРѕ СЌС‚РѕРјСѓ РґРёСЃС‚СЂРёР±СѓС‚РёРІСѓ СЃС‡РµС‚ РµС‰Рµ РЅР° РѕРґРёРЅ РјРµСЃСЏС†
 							AND DF_MON_COUNT > 0
 							AND
 								(
@@ -261,7 +261,7 @@ BEGIN
 								) <= @PR_DATE
 							AND NOT EXISTS
 									(
-										--проверяем, что этого дистрибутива нет в счете
+										--РїСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ СЌС‚РѕРіРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° РЅРµС‚ РІ СЃС‡РµС‚Рµ
 										SELECT *
 										FROM dbo.BillDistrTable
 										WHERE BD_ID_BILL = @billid 
@@ -283,16 +283,16 @@ BEGIN
 
 					SELECT @RC = @@ROWCOUNT
 
-					SELECT @TXT = 'Клиент = "' + CL_PSEDO + '" Месяц = "' + CONVERT(VARCHAR(MAX), @PR_DATE, 104) + '" @i = "' + CONVERT(VARCHAR(MAX), @i) + '" сфрмировано счетов = "' + CONVERT(VARCHAR(MAX), @RC) + '"'
+					SELECT @TXT = 'РљР»РёРµРЅС‚ = "' + CL_PSEDO + '" РњРµСЃСЏС† = "' + CONVERT(VARCHAR(MAX), @PR_DATE, 104) + '" @i = "' + CONVERT(VARCHAR(MAX), @i) + '" СЃС„СЂРјРёСЂРѕРІР°РЅРѕ СЃС‡РµС‚РѕРІ = "' + CONVERT(VARCHAR(MAX), @RC) + '"'
 					FROM dbo.ClientTable, dbo.PeriodTable
 					WHERE CL_ID = @clientid AND PR_ID = @periodid
 
 					SET @TXT = ISNULL(@TXT, '')
 
-					EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Формирование счета клиента', @TXT, @clientid, NULL
+					EXEC dbo.FINANCING_PROTOCOL_ADD 'BILL_ALL', 'Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‡РµС‚Р° РєР»РёРµРЅС‚Р°', @TXT, @clientid, NULL
 				END
 
-				--переходим к следующему месяцу
+				--РїРµСЂРµС…РѕРґРёРј Рє СЃР»РµРґСѓСЋС‰РµРјСѓ РјРµСЃСЏС†Сѓ
 				SET @i = @i + 1
 				SET @prid = dbo.PERIOD_NEXT(@prid)
 			END

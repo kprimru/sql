@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -96,7 +96,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Бухгалтерия и кадры'
+					WHERE NAME = 'Р‘СѓС…РіР°Р»С‚РµСЂРёСЏ Рё РєР°РґСЂС‹'
 				),
 				BUH
 			FROM #profile a
@@ -115,7 +115,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Юрист'
+					WHERE NAME = 'Р®СЂРёСЃС‚'
 				),
 				JUR
 			FROM #profile a
@@ -134,7 +134,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Бухгалтерия и кадры БО'
+					WHERE NAME = 'Р‘СѓС…РіР°Р»С‚РµСЂРёСЏ Рё РєР°РґСЂС‹ Р‘Рћ'
 				),
 				BUD
 			FROM #profile a
@@ -153,7 +153,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Кадры'
+					WHERE NAME = 'РљР°РґСЂС‹'
 				),
 				KADR
 			FROM #profile a
@@ -172,7 +172,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Специалист по закупкам'
+					WHERE NAME = 'РЎРїРµС†РёР°Р»РёСЃС‚ РїРѕ Р·Р°РєСѓРїРєР°Рј'
 				),
 				TENDER
 			FROM #profile a
@@ -191,7 +191,7 @@ BEGIN
 				(
 					SELECT ID
 					FROM dbo.ProfileType
-					WHERE NAME = 'Универсальный'
+					WHERE NAME = 'РЈРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№'
 				),
 				UNIVERSE
 			FROM #profile a

@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,13 +11,13 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CALC]
-	-- Список параметров процедуры
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕС†РµРґСѓСЂС‹
 	@clientid INT,
 	@periodid SMALLINT,
 	@distrid INT,
@@ -132,7 +132,7 @@ BEGIN
 
 				WHERE	CSG_ID = @consid
 
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = @docstring + 'в„– ' + IN_PAY_NUM + ' РѕС‚ ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
 				SELECT

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,11 +33,11 @@ BEGIN
 			CR_ID, CR_ID_MASTER, CR_DATE, RivalTypeName, CR_COMPLETE,
 			CR_CONTROL, CR_CONDITION, CR_CONTROL_DATE, RS_NAME AS ServiceStatusName,
 			CASE CR_COMPLETE
-				WHEN 1 THEN 'Отработана'
-				ELSE 'Не отработана'
+				WHEN 1 THEN 'РћС‚СЂР°Р±РѕС‚Р°РЅР°'
+				ELSE 'РќРµ РѕС‚СЂР°Р±РѕС‚Р°РЅР°'
 			END AS CR_COMPLETE_S,
 			CASE CR_CONTROL
-				WHEN 1 THEN 'На контроле ' + CONVERT(VARCHAR(20), CR_CONTROL_DATE, 104)
+				WHEN 1 THEN 'РќР° РєРѕРЅС‚СЂРѕР»Рµ ' + CONVERT(VARCHAR(20), CR_CONTROL_DATE, 104)
 				ELSE ''
 			END AS CR_CONTROL_S,
 			REVERSE(
@@ -54,7 +54,7 @@ BEGIN
 					), 1, 1, ''
 				)
 			) AS CR_PERSONAL,
-			ISNULL(CR_SURNAME + ' ', '') + ISNULL(CR_NAME + ' ', '') + ISNULL(CR_PATRON + ' ', '') + ISNULL(' тел. ' + CR_PHONE, '') As CR_FIO,
+			ISNULL(CR_SURNAME + ' ', '') + ISNULL(CR_NAME + ' ', '') + ISNULL(CR_PATRON + ' ', '') + ISNULL(' С‚РµР». ' + CR_PHONE, '') As CR_FIO,
 			CR_CREATE_USER + ' ' +
 				CONVERT(VARCHAR(20), CR_CREATE_DATE, 104) + ' ' +
 				CONVERT(VARCHAR(20), CR_CREATE_DATE, 108) AS CR_CREATE,

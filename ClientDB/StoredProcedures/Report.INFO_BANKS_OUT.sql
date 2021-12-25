@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,18 +25,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT
-			C.Comment AS [Название клиента], C.Complect AS [Комплект], rnc.DistrNumber AS [Дистрибутив], cv.ServiceName AS [СИ], cv.ManagerName AS [Руководитель],
+			C.Comment AS [РќР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р°], C.Complect AS [РљРѕРјРїР»РµРєС‚], rnc.DistrNumber AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], cv.ServiceName AS [РЎР], cv.ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ],
 			REVERSE(STUFF(REVERSE((
 				SELECT IB.InfoBankName + ', '
 				FROM dbo.ComplectGetLeftBanks(C.Complect, NULL) IB
 				FOR XML PATH('')
-			)), 1, 2, '')) AS [Отсутствующие банки],
+			)), 1, 2, '')) AS [РћС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ Р±Р°РЅРєРё],
 			REVERSE(STUFF(REVERSE((
 				SELECT IB.InfoBankShortName + ', '
 				FROM dbo.ComplectGetLeftBanks(C.Complect, NULL) IB
 				FOR XML PATH('')
-			)), 1, 2, '')) AS [Отсутствующие банки],
-			usr.UF_DATE AS [Дата файла USR]
+			)), 1, 2, '')) AS [РћС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ Р±Р°РЅРєРё],
+			usr.UF_DATE AS [Р”Р°С‚Р° С„Р°Р№Р»Р° USR]
 		FROM
 			(
 				SELECT DISTINCT Complect, Comment, DistrNumber, CompNumber, HostID
@@ -49,7 +49,7 @@ BEGIN
 		CROSS APPLY dbo.ComplectGetBanks(C.Complect, NULL)
 		LEFT OUTER JOIN USR.USRActiveView usr ON usr.UD_DISTR = rnc.DistrNumber AND usr.UD_COMP = rnc.CompNumber
 
-		WHERE SubhostName = '' AND--AND (cv.ServiceName NOT IN ('УССУРИЙСК', 'АРТЕМ', 'СЛАВЯНКА'))
+		WHERE SubhostName = '' AND--AND (cv.ServiceName NOT IN ('РЈРЎРЎРЈР РР™РЎРљ', 'РђР РўР•Рњ', 'РЎР›РђР’РЇРќРљРђ'))
 				usr.UF_DATE IS NOT NULL AND usr.UF_DATE <> ''
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -54,7 +54,7 @@ BEGIN
 			FROM Client.CompanyDepo D
 			WHERE D.Company_Id = a.ID
 				AND D.Status = 1
-				-- ToDo убрать хардкод
+				-- ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
 				AND D.Status_Id IN (1, 2, 3)
 			ORDER BY D.DateFrom DESC
 		) AS D

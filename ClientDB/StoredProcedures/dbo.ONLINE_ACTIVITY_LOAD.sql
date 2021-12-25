@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -51,7 +51,7 @@ BEGIN
 		IF @ID_WEEK IS NULL
 		BEGIN
 			DECLARE @S NVARCHAR(512)
-			SET @S = 'Не удалось определить номер недели. Год: ' + CONVERT(NVARCHAR(16), @YEAR) + '. Неделя: ' + CONVERT(NVARCHAR(16), @WEEK_NUM)
+			SET @S = 'РќРµ СѓРґР°Р»РѕСЃСЊ РѕРїСЂРµРґРµР»РёС‚СЊ РЅРѕРјРµСЂ РЅРµРґРµР»Рё. Р“РѕРґ: ' + CONVERT(NVARCHAR(16), @YEAR) + '. РќРµРґРµР»СЏ: ' + CONVERT(NVARCHAR(16), @WEEK_NUM)
 			RAISERROR(@S, 16, 1)
 		END
 

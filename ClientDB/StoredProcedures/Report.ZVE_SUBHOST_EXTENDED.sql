@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,28 +25,28 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			SH_CAPTION AS [Подхост], ClientName AS [Клиент], DistrStr AS [Дистрибутив], RPR_DATE_S AS [Дата регистрации], NT_SHORT AS [Сеть], SST_SHORT AS [Тип системы],
+			SH_CAPTION AS [РџРѕРґС…РѕСЃС‚], ClientName AS [РљР»РёРµРЅС‚], DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], RPR_DATE_S AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё], NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹],
 			(
 				SELECT COUNT(*)
 				FROM
 					dbo.ClientDutyQuestion a
 					INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 				WHERE a.DISTR = DistrNumber AND a.COMP = CompNumber AND c.HostID = o_O.HostID
-			) AS [Кол-во вопросов]
+			) AS [РљРѕР»-РІРѕ РІРѕРїСЂРѕСЃРѕРІ]
 		FROM
 			(
 				SELECT SH_CAPTION, SH_NAME, ClientName, DistrStr, HostID, DistrNumber, CompNumber, NT_SHORT, SST_SHORT, SystemOrder, RPR_DATE_S
 				FROM
 					(
-						SELECT 'Владивосток' AS SH_CAPTION, '' AS SH_NAME
+						SELECT 'Р’Р»Р°РґРёРІРѕСЃС‚РѕРє' AS SH_CAPTION, '' AS SH_NAME
 						UNION ALL
-						SELECT 'Славянка' AS CAPTION, 'Л1' AS SubhostName
+						SELECT 'РЎР»Р°РІСЏРЅРєР°' AS CAPTION, 'Р›1' AS SubhostName
 						UNION ALL
-						SELECT 'Находка' AS CAPTION, 'Н1' AS SubhostName
+						SELECT 'РќР°С…РѕРґРєР°' AS CAPTION, 'Рќ1' AS SubhostName
 						UNION ALL
-						SELECT 'Уссурийск' AS CAPTION, 'У1' AS SubhostName
+						SELECT 'РЈСЃСЃСѓСЂРёР№СЃРє' AS CAPTION, 'РЈ1' AS SubhostName
 						UNION ALL
-						SELECT 'Артем' AS CAPTION, 'М' AS SubhostName
+						SELECT 'РђСЂС‚РµРј' AS CAPTION, 'Рњ' AS SubhostName
 					) AS SH
 					CROSS APPLY
 					(

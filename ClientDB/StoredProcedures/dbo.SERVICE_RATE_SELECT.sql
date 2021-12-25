@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -104,7 +104,7 @@ BEGIN
 
 		SELECT
 			ServiceID, ManagerName, ServiceName,
-			CONVERT(VARCHAR(20), SearchClient) + ' èç ' + CONVERT(VARCHAR(20), TotalClient) AS ServiceCount,
+			CONVERT(VARCHAR(20), SearchClient) + ' Ð¸Ð· ' + CONVERT(VARCHAR(20), TotalClient) AS ServiceCount,
 			ROUND(100 * CONVERT(DECIMAL(8, 4), SearchClient) / TotalClient, 2) AS ServiceRate
 		FROM
 			#rate

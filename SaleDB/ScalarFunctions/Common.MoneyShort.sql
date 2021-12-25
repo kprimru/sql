@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,6 +29,6 @@ BEGIN
 	ELSE
 		SET @cattr = @cpart
 
-	RETURN CAST(@rpart AS VARCHAR(20)) + ' руб. ' + RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2) + ' коп.'
+	RETURN CAST(@rpart AS VARCHAR(20)) + ' СЂСѓР±. ' + RIGHT('0' + CAST(@cpart AS VARCHAR(2)), 2) + ' РєРѕРї.'
 END
 GO

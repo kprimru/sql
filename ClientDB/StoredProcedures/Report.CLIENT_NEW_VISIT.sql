@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 				FROM
 					dbo.RegProtocol
 					INNER JOIN dbo.Hosts ON RPR_ID_HOST = HostID
-				WHERE RPR_OPER IN ('Íîâàÿ')
+				WHERE RPR_OPER IN ('ÐÐ¾Ð²Ð°Ñ')
 					AND HostReg = 'LAW'
 		DELETE
 		FROM #distr
@@ -76,8 +76,8 @@ BEGIN
 		ORDER BY DATE DESC, ManagerName, ServiceName, SystemOrder
 
 		SELECT
-			ManagerName AS [Ðóêîâîäèòåëü], ServiceName AS [ÑÈ], ClientFullName AS [Êëèåíò], DistrStr AS [Äèñòðèáóòèâ], DistrTypeName AS [Ñåòü],
-			DATE AS [Äàòà ïîäêëþ÷åíèÿ], WEIGHT AS [Âåñ],
+			ManagerName AS [Ð ÑƒÐºÐ¾Ð²Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÑŒ], ServiceName AS [Ð¡Ð˜], ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚], DistrStr AS [Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²], DistrTypeName AS [Ð¡ÐµÑ‚ÑŒ],
+			DATE AS [Ð”Ð°Ñ‚Ð° Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ], WEIGHT AS [Ð’ÐµÑ],
 			CONVERT(BIT, CASE WHEN NOT EXISTS
 				(
 					SELECT ID
@@ -93,7 +93,7 @@ BEGIN
 					WHERE ID_CLIENT = ClientID
 						AND STATUS = 1
 						AND z.DATE >= a.DATE
-				) THEN 0 ELSE 1 END) AS [Íàëè÷èå çàïèñè î âèçèòå],
+				) THEN 0 ELSE 1 END) AS [ÐÐ°Ð»Ð¸Ñ‡Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¾ Ð²Ð¸Ð·Ð¸Ñ‚Ðµ],
 			REVERSE(STUFF(REVERSE((
 				SELECT CONVERT(NVARCHAR(32), DATE, 104) + CHAR(10) + PERSONAL + CHAR(10) + NOTE + CHAR(10) + CHAR(10) + PROBLEM + CHAR(10)+CHAR(10)+CHAR(10)
 				FROM
@@ -114,7 +114,7 @@ BEGIN
 							AND z.DATE >= a.DATE
 					) AS z
 				ORDER BY z.DATE DESC FOR XML PATH('')
-			)), 1, 3, '')) AS [Çàïèñü î âèçèòå]
+			)), 1, 3, '')) AS [Ð—Ð°Ð¿Ð¸ÑÑŒ Ð¾ Ð²Ð¸Ð·Ð¸Ñ‚Ðµ]
 			/*
 			CONVERT(BIT, CASE WHEN NOT EXISTS
 				(
@@ -123,7 +123,7 @@ BEGIN
 					WHERE ID_CLIENT = ClientID
 						AND STATUS = 1
 						AND z.DATE >= a.DATE
-				) THEN 0 ELSE 1 END) AS [Íàëè÷èå çàïèñè î âèçèòå],
+				) THEN 0 ELSE 1 END) AS [ÐÐ°Ð»Ð¸Ñ‡Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¾ Ð²Ð¸Ð·Ð¸Ñ‚Ðµ],
 			REVERSE(STUFF(REVERSE((
 				SELECT CONVERT(NVARCHAR(32), DATE, 104) + CHAR(10) + SENDER + CHAR(10) + SHORT + CHAR(10) + NOTE + CHAR(10)+CHAR(10)+CHAR(10)
 				FROM Task.Tasks z
@@ -131,7 +131,7 @@ BEGIN
 					AND STATUS = 1
 					AND z.DATE >= a.DATE
 				ORDER BY z.DATE DESC FOR XML PATH('')
-			)), 1, 3, '')) AS [Çàïèñü î âèçèòå]
+			)), 1, 3, '')) AS [Ð—Ð°Ð¿Ð¸ÑÑŒ Ð¾ Ð²Ð¸Ð·Ð¸Ñ‚Ðµ]
 			*/
 		FROM #result a
 		WHERE DATE >= DATEADD(YEAR, -1, GETDATE())

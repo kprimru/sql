@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 
 		IF @DUTY IS NULL
 		BEGIN
-			RAISERROR('Вы не являетесь сотрудником дежурной службы! Импорт невозможен', 16, 1)
+			RAISERROR('Р’С‹ РЅРµ СЏРІР»СЏРµС‚РµСЃСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРј РґРµР¶СѓСЂРЅРѕР№ СЃР»СѓР¶Р±С‹! РРјРїРѕСЂС‚ РЅРµРІРѕР·РјРѕР¶РµРЅ', 16, 1)
 			RETURN
 		END
 
@@ -76,7 +76,7 @@ BEGIN
 				(
 					SELECT TOP 1 ID
 					FROM dbo.CallDirection
-					WHERE NAME = 'ВопросЭксперту'
+					WHERE NAME = 'Р’РѕРїСЂРѕСЃР­РєСЃРїРµСЂС‚Сѓ'
 				)
 			FROM
 				@TBL z

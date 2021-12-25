@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -44,7 +44,7 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		SET @Oper_EMAIL	= 'Изменен email';
+		SET @Oper_EMAIL	= 'РР·РјРµРЅРµРЅ email';
 
 		INSERT INTO @Opers
 		SELECT DISTINCT String

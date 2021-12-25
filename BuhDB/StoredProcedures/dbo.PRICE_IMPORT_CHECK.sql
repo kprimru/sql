@@ -1,4 +1,4 @@
-USE [BuhDB]
+ÔªøUSE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 
 	SET @RES = ''
 
-	SELECT @RES = @RES + SystemName + ': Ò ' + dbo.MoneyFormat(SystemServicePrice) + ' Ì‡ ' + dbo.MoneyFormat(PRICE) + CHAR(10)
+	SELECT @RES = @RES + SystemName + ': —Å ' + dbo.MoneyFormat(SystemServicePrice) + ' –Ω–∞ ' + dbo.MoneyFormat(PRICE) + CHAR(10)
 	FROM
 		(
 			SELECT SystemOrder, SystemGroupOrder, SystemName, SystemServicePrice, PRICE

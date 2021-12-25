@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,9 +35,9 @@ BEGIN
 				END
 			) AS DIS_NUM,
 			CASE RN_SERVICE
-				WHEN 0 THEN 'Сопровождается'
-				WHEN 1 THEN 'Не сопровождается'
-				ELSE 'Неизвестно'
+				WHEN 0 THEN 'РЎРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ'
+				WHEN 1 THEN 'РќРµ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ'
+				ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 			END AS RN_STATUS
 		FROM
 			dbo.ClientTable INNER JOIN

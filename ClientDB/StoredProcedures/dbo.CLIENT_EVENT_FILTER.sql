@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -14,8 +14,8 @@ ALTER PROCEDURE [dbo].[CLIENT_EVENT_FILTER]
 	@MANAGER	INT,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
-	@TEXT		VARCHAR(MAX) = NULL, /* текст для поиска в комментариях */
-	@FLAG		BIT = NULL, /* если 1 - то логическое И, если 0 - то ИЛИ */
+	@TEXT		VARCHAR(MAX) = NULL, /* С‚РµРєСЃС‚ РґР»СЏ РїРѕРёСЃРєР° РІ РєРѕРјРјРµРЅС‚Р°СЂРёСЏС… */
+	@FLAG		BIT = NULL, /* РµСЃР»Рё 1 - С‚Рѕ Р»РѕРіРёС‡РµСЃРєРѕРµ Р, РµСЃР»Рё 0 - С‚Рѕ РР›Р */
 	@CLEAR		BIT	=	 NULL
 AS
 BEGIN

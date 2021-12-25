@@ -1,4 +1,4 @@
-USE [SaleDB]
+ï»¿USE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -44,7 +44,7 @@ BEGIN
 	);
 
 	BEGIN TRY
-		RaisError('Ôóíêöèîíàë çàáëîêèðîâàí.', 16, 2);
+		RaisError('Ð¤ÑƒÐ½ÐºÑ†Ð¸Ð¾Ð½Ð°Ð» Ð·Ð°Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ð½.', 16, 2);
 
 		INSERT INTO @DepoFile
 		SELECT *
@@ -71,7 +71,7 @@ BEGIN
 		OPTION (RECOMPILE);
 
 		IF @ErrorNumbers IS NOT NULL
-			RaisError('Íå íàéäåíû êîìïàíèè ñ íîìåðàìè %s', 16, 2, @ErrorNumbers);
+			RaisError('ÐÐµ Ð½Ð°Ð¹Ð´ÐµÐ½Ñ‹ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ð¸ Ñ Ð½Ð¾Ð¼ÐµÑ€Ð°Ð¼Ð¸ %s', 16, 2, @ErrorNumbers);
 
 		SET @ErrorNumbers =
 		Reverse(Stuff(Reverse(
@@ -88,7 +88,7 @@ BEGIN
 		), 1, 1, ''));
 
 		IF @ErrorNumbers IS NOT NULL
-			RaisError('Íàäåíû äóáëèêàòû íîìåðîâ ÄÅÏÎ: %s', 16, 2, @ErrorNumbers);
+			RaisError('ÐÐ°Ð´ÐµÐ½Ñ‹ Ð´ÑƒÐ±Ð»Ð¸ÐºÐ°Ñ‚Ñ‹ Ð½Ð¾Ð¼ÐµÑ€Ð¾Ð² Ð”Ð•ÐŸÐž: %s', 16, 2, @ErrorNumbers);
 
 		SET @DepoStatus_ACTIVE = (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'ACTIVE');
 

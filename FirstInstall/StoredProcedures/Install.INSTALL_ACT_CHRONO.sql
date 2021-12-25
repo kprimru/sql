@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -65,7 +65,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INSTALL_ACT', @IA_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'Хронологическое изменение', @IA_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INSTALL_ACT', 'РҐСЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРµ РёР·РјРµРЅРµРЅРёРµ', @IA_ID_MASTER, @OLD, @NEW
 END
 GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_CHRONO] TO rl_install_act_u;

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -150,14 +150,14 @@ BEGIN
 										AND UD_ID_CLIENT = CL_ID
 										AND
 											CASE
-												WHEN STAT_DATE IS NULL THEN 'Нет'
+												WHEN STAT_DATE IS NULL THEN 'РќРµС‚'
 												WHEN
 													CASE InfoBankDaily
 														WHEN 1 THEN STAT_DAILY
 														ELSE STAT_DAY
-													END < UIU_DATE_S THEN 'Нет'
-												ELSE 'Да'
-											END = 'Нет'
+													END < UIU_DATE_S THEN 'РќРµС‚'
+												ELSE 'Р”Р°'
+											END = 'РќРµС‚'
 								) AS o_O
 							ORDER BY UIU_DATE_S FOR XML PATH('')
 						)

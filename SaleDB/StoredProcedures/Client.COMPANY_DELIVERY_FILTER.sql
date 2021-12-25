@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 
 	SELECT
 		b.ID, b.NAME, b.NUMBER, a.PERSONAL AS SHORT, a.FIO, a.POS, a.EMAIL, a.DATE, a.PLAN_DATE, a.OFFER,
-		CASE a.STATE WHEN 1 THEN 'Подписан' WHEN 2 THEN 'Снят с подписки' ELSE '???' END AS STATE_STR
+		CASE a.STATE WHEN 1 THEN 'РџРѕРґРїРёСЃР°РЅ' WHEN 2 THEN 'РЎРЅСЏС‚ СЃ РїРѕРґРїРёСЃРєРё' ELSE '???' END AS STATE_STR
 	FROM
 		Client.CompanyDelivery a
 		INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID

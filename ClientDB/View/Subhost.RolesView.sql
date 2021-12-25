@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,39 +8,39 @@ IF OBJECT_ID('[Subhost].[RolesView]', 'V ') IS NULL EXEC('CREATE VIEW [Subhost].
 GO
 ALTER VIEW [Subhost].[RolesView]
 AS
-	SELECT 10 AS ORD, 'rl_user_admin' AS RL_NAME, 'Управление пользователями (создание/удаление/смена пароля)' AS RL_CAPTION
+	SELECT 10 AS ORD, 'rl_user_admin' AS RL_NAME, 'РЈРїСЂР°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё (СЃРѕР·РґР°РЅРёРµ/СѓРґР°Р»РµРЅРёРµ/СЃРјРµРЅР° РїР°СЂРѕР»СЏ)' AS RL_CAPTION
 	UNION ALL
-	SELECT 20 AS ORD, 'rl_letter_base' AS RL_NAME, 'База писем' AS RL_CAPTION
+	SELECT 20 AS ORD, 'rl_letter_base' AS RL_NAME, 'Р‘Р°Р·Р° РїРёСЃРµРј' AS RL_CAPTION
 	UNION ALL
-	SELECT 30 AS ORD, 'rl_ip' AS RL_NAME, 'ИнтернетПополнение клиентов' AS RL_CAPTION
+	SELECT 30 AS ORD, 'rl_ip' AS RL_NAME, 'РРЅС‚РµСЂРЅРµС‚РџРѕРїРѕР»РЅРµРЅРёРµ РєР»РёРµРЅС‚РѕРІ' AS RL_CAPTION
 	UNION ALL
-	SELECT 40 AS ORD, 'rl_zve' AS RL_NAME, 'Просмотр вопросов по кнопке "Задать вопрос"' AS RL_CAPTION
+	SELECT 40 AS ORD, 'rl_zve' AS RL_NAME, 'РџСЂРѕСЃРјРѕС‚СЂ РІРѕРїСЂРѕСЃРѕРІ РїРѕ РєРЅРѕРїРєРµ "Р—Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃ"' AS RL_CAPTION
 	UNION ALL
-	SELECT 50 AS ORD, 'rl_hotline_chat' AS RL_NAME, 'Просмотр чатов с клиентами' AS RL_CAPTION
+	SELECT 50 AS ORD, 'rl_hotline_chat' AS RL_NAME, 'РџСЂРѕСЃРјРѕС‚СЂ С‡Р°С‚РѕРІ СЃ РєР»РёРµРЅС‚Р°РјРё' AS RL_CAPTION
 	UNION ALL
-	SELECT 60 AS ORD, 'rl_download_document' AS RL_NAME, 'Скачанные документы' AS RL_CAPTION
+	SELECT 60 AS ORD, 'rl_download_document' AS RL_NAME, 'РЎРєР°С‡Р°РЅРЅС‹Рµ РґРѕРєСѓРјРµРЅС‚С‹' AS RL_CAPTION
 	UNION ALL
-	SELECT 70 AS ORD, 'rl_test' AS RL_NAME, 'Возможность тестирования' AS RL_CAPTION
+	SELECT 70 AS ORD, 'rl_test' AS RL_NAME, 'Р’РѕР·РјРѕР¶РЅРѕСЃС‚СЊ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ' AS RL_CAPTION
 	UNION ALL
-	SELECT 80 AS ORD, 'rl_test_admin' AS RL_NAME, 'Просмотр результатов тестирования' AS RL_CAPTION
+	SELECT 80 AS ORD, 'rl_test_admin' AS RL_NAME, 'РџСЂРѕСЃРјРѕС‚СЂ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ' AS RL_CAPTION
 	UNION ALL
-	SELECT 90 AS ORD, 'rl_import_data' AS RL_NAME, 'Данные для импорта данных из РИЦ' AS RL_CAPTION
+	SELECT 90 AS ORD, 'rl_import_data' AS RL_NAME, 'Р”Р°РЅРЅС‹Рµ РґР»СЏ РёРјРїРѕСЂС‚Р° РґР°РЅРЅС‹С… РёР· Р РР¦' AS RL_CAPTION
 	UNION ALL
-	SELECT 100 AS ORD, 'rl_import_online' AS RL_NAME, 'Данные по активности онлайн-клиентов' AS RL_CAPTION
+	SELECT 100 AS ORD, 'rl_import_online' AS RL_NAME, 'Р”Р°РЅРЅС‹Рµ РїРѕ Р°РєС‚РёРІРЅРѕСЃС‚Рё РѕРЅР»Р°Р№РЅ-РєР»РёРµРЅС‚РѕРІ' AS RL_CAPTION
 	UNION ALL
-	SELECT 110 AS ORD, 'rl_import_usr' AS RL_NAME, 'Данные по файлам USR' AS RL_CAPTION
+	SELECT 110 AS ORD, 'rl_import_usr' AS RL_NAME, 'Р”Р°РЅРЅС‹Рµ РїРѕ С„Р°Р№Р»Р°Рј USR' AS RL_CAPTION
 	UNION ALL
-	SELECT 120 AS ORD, 'rl_import_dbf' AS RL_NAME, 'Данные для импорта из DBF' AS RL_CAPTION
+	SELECT 120 AS ORD, 'rl_import_dbf' AS RL_NAME, 'Р”Р°РЅРЅС‹Рµ РґР»СЏ РёРјРїРѕСЂС‚Р° РёР· DBF' AS RL_CAPTION
 	UNION ALL
-	SELECT 130 AS ORD, 'rl_import_discount' AS RL_NAME, 'Отчет по реальной скидке' AS RL_CAPTION
+	SELECT 130 AS ORD, 'rl_import_discount' AS RL_NAME, 'РћС‚С‡РµС‚ РїРѕ СЂРµР°Р»СЊРЅРѕР№ СЃРєРёРґРєРµ' AS RL_CAPTION
 	UNION ALL
-	SELECT 140 AS ORD, 'rl_zve_infiltration' AS RL_NAME, 'Отчет по внедрению ЗВЭ' AS RL_CAPTION
+	SELECT 140 AS ORD, 'rl_zve_infiltration' AS RL_NAME, 'РћС‚С‡РµС‚ РїРѕ РІРЅРµРґСЂРµРЅРёСЋ Р—Р’Р­' AS RL_CAPTION
 	UNION ALL
-	SELECT 150 AS ORD, 'rl_stt' AS RL_NAME, 'Просмотр данных по СТТ' AS RL_CAPTION
+	SELECT 150 AS ORD, 'rl_stt' AS RL_NAME, 'РџСЂРѕСЃРјРѕС‚СЂ РґР°РЅРЅС‹С… РїРѕ РЎРўРў' AS RL_CAPTION
 	UNION ALL
-	SELECT 160 AS ORD, 'rl_stt_load' AS RL_NAME, 'Загрузка файлов STT' AS RL_CAPTION
+	SELECT 160 AS ORD, 'rl_stt_load' AS RL_NAME, 'Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»РѕРІ STT' AS RL_CAPTION
 	/*
 	UNION ALL
-	SELECT 1 AS ORD, 'rl_knowlenge' AS RL_NAME, 'База знаний' AS RL_CAPTION
+	SELECT 1 AS ORD, 'rl_knowlenge' AS RL_NAME, 'Р‘Р°Р·Р° Р·РЅР°РЅРёР№' AS RL_CAPTION
 	*/
 GO

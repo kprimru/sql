@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,9 +26,9 @@ BEGIN
 		SELECT
 			a.ID, b.SHORT, b.NAME, DATE, NOTE,
 			CASE TRUST
-				WHEN 0 THEN 'Не достоверен'
-				WHEN 1 THEN 'Достоверен'
-				ELSE 'Неизвестно'
+				WHEN 0 THEN 'РќРµ РґРѕСЃС‚РѕРІРµСЂРµРЅ'
+				WHEN 1 THEN 'Р”РѕСЃС‚РѕРІРµСЂРµРЅ'
+				ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 			END AS TRUST,
 			a.STATUS,
 			(

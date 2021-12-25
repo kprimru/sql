@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -162,9 +162,9 @@ BEGIN
 			SELECT
 				ServiceID, ClientID, ClientFullName, PayType, ContractPay, PayDate,
 				CASE
-					WHEN BILL IS NULL THEN 'НЕТ СЧЕТА'
-					WHEN BILL = INCOME THEN 'Да'
-					ELSE 'Нет'
+					WHEN BILL IS NULL THEN 'РќР•Рў РЎР§Р•РўРђ'
+					WHEN BILL = INCOME THEN 'Р”Р°'
+					ELSE 'РќРµС‚'
 				END AS PAY,
 				ROUND(100 * (BILL - ISNULL(INCOME, 0)) / BILL, 2) AS PRC,
 				LAST_PAY, PAY_DATES,
@@ -200,7 +200,7 @@ BEGIN
 					) AS o_O ON CL_ID = ClientID
 			ORDER BY ClientFullName
 
-		--тут итоги собрать в текст
+		--С‚СѓС‚ РёС‚РѕРіРё СЃРѕР±СЂР°С‚СЊ РІ С‚РµРєСЃС‚
 
 		SELECT
 			ServiceName + ' (' + ManagerName + ')' AS ServiceStr,
@@ -224,40 +224,40 @@ BEGIN
 						SELECT COUNT(*)
 						FROM #client z
 						WHERE a.ServiceID = z.ServiceID
-							AND PayType IN ('по счету')
+							AND PayType IN ('РїРѕ СЃС‡РµС‚Сѓ')
 					) AS PAY_BILL,
 					(
 						SELECT COUNT(*)
 						FROM #client z
 						WHERE a.ServiceID = z.ServiceID
-							AND PayType IN ('по счет-фактуре')
+							AND PayType IN ('РїРѕ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ')
 					) AS PAY_INVOICE,
 					(
 						SELECT COUNT(*)
 						FROM #client z
 						WHERE a.ServiceID = z.ServiceID
-							AND PayType NOT IN ('не оплачивает', 'бесплатно РДД')
+							AND PayType NOT IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”')
 					) AS PAY_COUNT,
 					(
 						SELECT COUNT(*)
 						FROM #result z
 						WHERE a.ServiceID = z.ServiceID
-							AND PAY = 'Да'
-							AND PayType IN ('по счету')
+							AND PAY = 'Р”Р°'
+							AND PayType IN ('РїРѕ СЃС‡РµС‚Сѓ')
 					) AS PAY_TOTAL_BILL,
 					(
 						SELECT COUNT(*)
 						FROM #result z
 						WHERE a.ServiceID = z.ServiceID
-							AND PAY = 'Да'
-							AND PayType IN ('по счет-фактуре')
+							AND PAY = 'Р”Р°'
+							AND PayType IN ('РїРѕ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ')
 					) AS PAY_TOTAL_INVOICE,
 					(
 						SELECT COUNT(*)
 						FROM #result z
 						WHERE a.ServiceID = z.ServiceID
-							AND PAY = 'Да'
-							AND PayType NOT IN ('не оплачивает', 'бесплатно РДД')
+							AND PAY = 'Р”Р°'
+							AND PayType NOT IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”')
 					) AS PAY_TOTAL
 				FROM
 					(

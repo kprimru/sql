@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,9 +11,9 @@ AS
 		ORG_ID, ORG_SHORT_NAME, ORG_PSEDO, ORG_FULL_NAME,
 		ORG_INDEX, a.ST_PREFIX, a.ST_NAME, a.CT_PREFIX, a.CT_NAME, ORG_HOME,
 		CASE ORG_ID
-			WHEN 1 THEN '690002, край Приморский, город Владивосток, проспект Острякова, дом 8'
-			--WHEN 7 THEN '600002, край Приморский, город Владивосток, проспект Острякова, дом 8'
-			WHEN 7 THEN '690078, край Приморский, город Владивосток, улица Садовая, дом 27'
+			WHEN 1 THEN '690002, РєСЂР°Р№ РџСЂРёРјРѕСЂСЃРєРёР№, РіРѕСЂРѕРґ Р’Р»Р°РґРёРІРѕСЃС‚РѕРє, РїСЂРѕСЃРїРµРєС‚ РћСЃС‚СЂСЏРєРѕРІР°, РґРѕРј 8'
+			--WHEN 7 THEN '600002, РєСЂР°Р№ РџСЂРёРјРѕСЂСЃРєРёР№, РіРѕСЂРѕРґ Р’Р»Р°РґРёРІРѕСЃС‚РѕРє, РїСЂРѕСЃРїРµРєС‚ РћСЃС‚СЂСЏРєРѕРІР°, РґРѕРј 8'
+			WHEN 7 THEN '690078, РєСЂР°Р№ РџСЂРёРјРѕСЂСЃРєРёР№, РіРѕСЂРѕРґ Р’Р»Р°РґРёРІРѕСЃС‚РѕРє, СѓР»РёС†Р° РЎР°РґРѕРІР°СЏ, РґРѕРј 27'
 			ELSE (ORG_INDEX + ', ' + a.CT_PREFIX + a.CT_NAME + ', ' + a.ST_PREFIX + a.ST_NAME + ',' + ORG_HOME)
 		END AS ORG_ADDRESS,
 		ORG_S_INDEX, b.ST_PREFIX AS ST_S_PREFIX, b.ST_NAME AS ST_S_NAME,

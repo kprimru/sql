@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -103,7 +103,7 @@ BEGIN
                                         FOR XML PATH('')
                                     )
                                 ), 1, 1, '')),
-            [GroupName]     = 'Дополнительные системы'
+            [GroupName]     = 'Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРёСЃС‚РµРјС‹'
 
 		ORDER BY [SortIndex] DESC, [DistrType_Id] DESC;
 

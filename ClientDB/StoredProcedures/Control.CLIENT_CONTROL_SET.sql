@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -51,7 +51,7 @@ BEGIN
 		IF @ID_GROUP IS NOT NULL
 		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
-				SELECT DISTINCT @CLIENT, 1, GETDATE(), 'Клиент был поставлен на контроль с описанием: ' + @NOTE, US_NAME, 0
+				SELECT DISTINCT @CLIENT, 1, GETDATE(), 'РљР»РёРµРЅС‚ Р±С‹Р» РїРѕСЃС‚Р°РІР»РµРЅ РЅР° РєРѕРЅС‚СЂРѕР»СЊ СЃ РѕРїРёСЃР°РЅРёРµРј: ' + @NOTE, US_NAME, 0
 				FROM Security.RoleUserView
 				WHERE
 					(RL_NAME = 'rl_control_law' AND @PSEDO = 'LAW')
@@ -69,7 +69,7 @@ BEGIN
 		ELSE
 		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
-				SELECT @CLIENT, 1, GETDATE(), 'Клиент был поставлен на контроль с описанием: ' + @NOTE, @RECEIVER, 0
+				SELECT @CLIENT, 1, GETDATE(), 'РљР»РёРµРЅС‚ Р±С‹Р» РїРѕСЃС‚Р°РІР»РµРЅ РЅР° РєРѕРЅС‚СЂРѕР»СЊ СЃ РѕРїРёСЃР°РЅРёРµРј: ' + @NOTE, @RECEIVER, 0
 		END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

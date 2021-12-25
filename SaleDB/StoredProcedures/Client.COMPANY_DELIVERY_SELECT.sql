@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -20,7 +20,7 @@ BEGIN
         @Params         = @Params,
         @DebugContext   = @DebugContext OUT
 
-	SELECT ID, FIO, POS, EMAIL, DATE, PLAN_DATE, OFFER, CASE STATE WHEN 1 THEN 'Подписан' WHEN 2 THEN 'Снят с подписки' ELSE '???' END AS STATE_STR, PERSONAL
+	SELECT ID, FIO, POS, EMAIL, DATE, PLAN_DATE, OFFER, CASE STATE WHEN 1 THEN 'РџРѕРґРїРёСЃР°РЅ' WHEN 2 THEN 'РЎРЅСЏС‚ СЃ РїРѕРґРїРёСЃРєРё' ELSE '???' END AS STATE_STR, PERSONAL
 	FROM Client.CompanyDelivery
 	WHERE ID_COMPANY = @ID
 	ORDER BY STATE

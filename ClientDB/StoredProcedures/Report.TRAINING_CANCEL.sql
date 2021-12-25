@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		/*
-		SELECT ClientFullName AS [Клиент], ManagerName AS [Рук-ль], ServiceName AS [СИ], COUNT(DISTINCT SP_ID) AS [Сколько раз], MAX(TSC_DATE) AS [Последний раз]
+		SELECT ClientFullName AS [РљР»РёРµРЅС‚], ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], COUNT(DISTINCT SP_ID) AS [РЎРєРѕР»СЊРєРѕ СЂР°Р·], MAX(TSC_DATE) AS [РџРѕСЃР»РµРґРЅРёР№ СЂР°Р·]
 		FROM
 			Training.TrainingSchedule
 			INNER JOIN Training.SeminarSign ON SP_ID_SEMINAR = TSC_ID
@@ -34,12 +34,12 @@ BEGIN
 		WHERE SSP_CANCEL = 1
 		GROUP BY ClientFullname, ManagerName, ServiceName
 		HAVING COUNT(DISTINCT SP_ID) > 2
-		ORDER BY [Сколько раз] DESC, ManagerName, ServiceName, ClientFullName
+		ORDER BY [РЎРєРѕР»СЊРєРѕ СЂР°Р·] DESC, ManagerName, ServiceName, ClientFullName
 		*/
 
-		--Этот отчет по новой структуре записи на семинар. Есть мнение, что в новую структуру попали не все исторические данные, так что пока менять отчет рано
+		--Р­С‚РѕС‚ РѕС‚С‡РµС‚ РїРѕ РЅРѕРІРѕР№ СЃС‚СЂСѓРєС‚СѓСЂРµ Р·Р°РїРёСЃРё РЅР° СЃРµРјРёРЅР°СЂ. Р•СЃС‚СЊ РјРЅРµРЅРёРµ, С‡С‚Рѕ РІ РЅРѕРІСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ РїРѕРїР°Р»Рё РЅРµ РІСЃРµ РёСЃС‚РѕСЂРёС‡РµСЃРєРёРµ РґР°РЅРЅС‹Рµ, С‚Р°Рє С‡С‚Рѕ РїРѕРєР° РјРµРЅСЏС‚СЊ РѕС‚С‡РµС‚ СЂР°РЅРѕ
 
-		SELECT ClientFullName AS [Клиент], ManagerName AS [Рук-ль], ServiceName AS [СИ], COUNT(DISTINCT ID_SCHEDULE) AS [Сколько раз], MAX(c.DATE) AS [Последний раз]
+		SELECT ClientFullName AS [РљР»РёРµРЅС‚], ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], COUNT(DISTINCT ID_SCHEDULE) AS [РЎРєРѕР»СЊРєРѕ СЂР°Р·], MAX(c.DATE) AS [РџРѕСЃР»РµРґРЅРёР№ СЂР°Р·]
 		FROM
 			Seminar.Personal a
 			INNER JOIN Seminar.Status b ON a.ID_STATUS = b.ID
@@ -48,7 +48,7 @@ BEGIN
 		WHERE b.INDX = 5 AND a.STATUS = 1
 		GROUP BY ClientFullname, ManagerName, ServiceName
 		HAVING COUNT(DISTINCT ID_SCHEDULE) > 2
-		ORDER BY [Сколько раз] DESC, ManagerName, ServiceName, ClientFullName
+		ORDER BY [РЎРєРѕР»СЊРєРѕ СЂР°Р·] DESC, ManagerName, ServiceName, ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

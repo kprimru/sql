@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,10 +34,10 @@ BEGIN
 						(
 							SELECT
 								ISNULL(SURNAME, '') + ' ' + ISNULL(e.NAME, '') + ' ' + ISNULL(PATRON, '') + ' ' +
-								'(Дожность: ' + ISNULL(POSITION, 'Нет') + 
-								'; Сертификат: ' + CASE ISNULL(LTRIM(RTRIM(f.NAME)), '') WHEN '' THEN 'Нет' ELSE f.NAME END +
-								'; № занятия: ' + ISNULL(CONVERT(VARCHAR(20), NUM), 'Нет') +
-								'; кол-во обученых: ' + ISNULL(CONVERT(VARCHAR(20), GR_COUNT), '1') + ')' + CHAR(10)
+								'(Р”РѕР¶РЅРѕСЃС‚СЊ: ' + ISNULL(POSITION, 'РќРµС‚') + 
+								'; РЎРµСЂС‚РёС„РёРєР°С‚: ' + CASE ISNULL(LTRIM(RTRIM(f.NAME)), '') WHEN '' THEN 'РќРµС‚' ELSE f.NAME END +
+								'; в„– Р·Р°РЅСЏС‚РёСЏ: ' + ISNULL(CONVERT(VARCHAR(20), NUM), 'РќРµС‚') +
+								'; РєРѕР»-РІРѕ РѕР±СѓС‡РµРЅС‹С…: ' + ISNULL(CONVERT(VARCHAR(20), GR_COUNT), '1') + ')' + CHAR(10)
 							FROM
 								dbo.ClientStudyPeople e
 								LEFT OUTER JOIN dbo.SertificatType f ON e.ID_SERT_TYPE = f.ID

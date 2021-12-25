@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -53,7 +53,7 @@ BEGIN
 		EXEC Client.COMPANY_PROCESS_RIVAL_RETURN @RETURN, @RETURN
 
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 13, ID_AVAILABILITY, ID_CHARACTER, @SALE, N'Изменение конкурентного менеджера - Выдача'
+			SELECT a.ID, @DATE, 13, ID_AVAILABILITY, ID_CHARACTER, @SALE, N'РР·РјРµРЅРµРЅРёРµ РєРѕРЅРєСѓСЂРµРЅС‚РЅРѕРіРѕ РјРµРЅРµРґР¶РµСЂР° - Р’С‹РґР°С‡Р°'
 			FROM
 				Client.Company a
 				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID

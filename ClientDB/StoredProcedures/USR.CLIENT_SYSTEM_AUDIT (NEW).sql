@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -276,7 +276,7 @@ BEGIN
 			FROM @info_bank a
 			WHERE NOT EXISTS
 					(
-						-- тут добавить комплект?
+						-- С‚СѓС‚ РґРѕР±Р°РІРёС‚СЊ РєРѕРјРїР»РµРєС‚?
 						SELECT *
 						FROM
 							@usr z INNER JOIN

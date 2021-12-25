@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -61,9 +61,9 @@ BEGIN
 							(
 								OS_NAME LIKE '%Server%'
 								OR
-								OS_NAME LIKE '%—Â‚Â%'
+								OS_NAME LIKE '%–°–µ—Ä–≤–µ—Ä%'
 							)
-					) THEN '—≈–¬≈–Õ¿ﬂ Œ—'
+					) THEN '–°–ï–†–í–ï–†–ù–ê–Ø –û–°'
 					ELSE NULL END
 		FROM
 			@CLIENT

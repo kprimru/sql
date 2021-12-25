@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 /*
     EXEC [Claim].[Claims@Select]
-        @FioOrClient = 'Валерия'
+        @FioOrClient = 'Р’Р°Р»РµСЂРёСЏ'
 */
 ALTER PROCEDURE [Claim].[Claims@Select]
     @Personal_Id    UniqueIdentifier    = NULL,

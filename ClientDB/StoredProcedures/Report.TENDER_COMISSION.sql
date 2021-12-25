@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,22 +26,22 @@ BEGIN
 
 		DECLARE @LAST_DATE	DATETIME
 		SELECT
-			t.CLIENT AS [Наименование заказчика],
-			SHORT AS [Базис/К-Прим],
-			p.PART_SUM AS [Сумма , включая комиссию банку (8,00-35,00 руб.)],
+			t.CLIENT AS [РќР°РёРјРµРЅРѕРІР°РЅРёРµ Р·Р°РєР°Р·С‡РёРєР°],
+			SHORT AS [Р‘Р°Р·РёСЃ/Рљ-РџСЂРёРј],
+			p.PART_SUM AS [РЎСѓРјРјР° , РІРєР»СЋС‡Р°СЏ РєРѕРјРёСЃСЃРёСЋ Р±Р°РЅРєСѓ (8,00-35,00 СЂСѓР±.)],
 			CASE DATEPART(dw, p.PROTOCOL)
-				WHEN 1 THEN p.PROTOCOL + 2       --необходимо показать ближайшую среду или пятницу к дате протокола + 3 дня
+				WHEN 1 THEN p.PROTOCOL + 2       --РЅРµРѕР±С…РѕРґРёРјРѕ РїРѕРєР°Р·Р°С‚СЊ Р±Р»РёР¶Р°Р№С€СѓСЋ СЃСЂРµРґСѓ РёР»Рё РїСЏС‚РЅРёС†Сѓ Рє РґР°С‚Рµ РїСЂРѕС‚РѕРєРѕР»Р° + 3 РґРЅСЏ
 				WHEN 2 THEN p.PROTOCOL + 1
 				WHEN 3 THEN p.PROTOCOL
 				WHEN 4 THEN p.PROTOCOL + 1
 				WHEN 5 THEN p.PROTOCOL
 				WHEN 6 THEN p.PROTOCOL + 4
 				WHEN 7 THEN p.PROTOCOL + 3
-			END	AS [Срок оплаты],
-			TS_SHORT AS [Эл. пл.],
-			GK_SUM AS [НМЦК],
-			NOTICE_NUM AS [Номер извещения],
-			DATE AS [Дата извещения]
+			END	AS [РЎСЂРѕРє РѕРїР»Р°С‚С‹],
+			TS_SHORT AS [Р­Р». РїР».],
+			GK_SUM AS [РќРњР¦Рљ],
+			NOTICE_NUM AS [РќРѕРјРµСЂ РёР·РІРµС‰РµРЅРёСЏ],
+			DATE AS [Р”Р°С‚Р° РёР·РІРµС‰РµРЅРёСЏ]
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER
@@ -61,7 +61,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			'Итого : ', NULL, SUM(p.PART_SUM), NULL, NULL, NULL, NULL, NULL
+			'РС‚РѕРіРѕ : ', NULL, SUM(p.PART_SUM), NULL, NULL, NULL, NULL, NULL
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER

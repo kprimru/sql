@@ -1,4 +1,4 @@
-USE [DBF]
+ï»¿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -64,7 +64,7 @@ BEGIN
 						WHERE RPR_DATE >= PR_BREPORT AND RPR_DATE < DATEADD(DAY, 1, PR_EREPORT)
 					) AS PR_ID
 				FROM dbo.RegProtocol
-				WHERE RPR_OPER = 'Âêëþ÷åíèå'
+				WHERE RPR_OPER = 'Ð’ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ'
 			) AS o_O
 		GROUP BY RPR_ID_HOST, RPR_DISTR, RPR_COMP, PR_ID
 

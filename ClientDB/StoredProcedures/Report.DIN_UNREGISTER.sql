@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [Дистрибутив],
-			NT_SHORT AS [Сеть], SST_SHORT AS [Тип], dbo.DateOf(DF_CREATE) AS [Получен],
+			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї], dbo.DateOf(DF_CREATE) AS [РџРѕР»СѓС‡РµРЅ],
 			(
 				SELECT TOP 1 WEIGHT
 				FROM dbo.WeightView W WITH(NOEXPAND)
@@ -34,7 +34,7 @@ BEGIN
 					AND W.NT_ID = b.DF_ID_NET
 					AND W.SST_ID = b.DF_ID_TYPE
 				ORDER BY W.DATE DESC
-			) AS [Вес]
+			) AS [Р’РµСЃ]
 		FROM
 			(
 				SELECT DISTINCT
@@ -65,9 +65,9 @@ BEGIN
 			INNER JOIN Din.SystemType e ON e.SST_ID = b.DF_ID_TYPE
 			INNER JOIN dbo.DistrTypeTable f ON f.DistrTypeID = NT_ID_MASTER
 			INNER JOIN dbo.SystemTypeTable g ON g.SystemTypeID = SST_ID_MASTER
-		WHERE /*NT_SHORT <> 'мобильная' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> 'ДСП'
+		WHERE /*NT_SHORT <> 'РјРѕР±РёР»СЊРЅР°СЏ' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> 'Р”РЎРџ'
 		ORDER BY /*SST_SHORT, */SystemOrder, DF_DISTR, DF_COMP
-		-- без этого криво джойнит
+		-- Р±РµР· СЌС‚РѕРіРѕ РєСЂРёРІРѕ РґР¶РѕР№РЅРёС‚
 		OPTION(FORCE ORDER)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

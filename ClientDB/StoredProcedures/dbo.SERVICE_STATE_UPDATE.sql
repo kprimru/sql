@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -70,7 +70,7 @@ BEGIN
 				INNER JOIN dbo.ClientKind k ON a.ClientKind_Id = k.Id
 			WHERE STATUS = 1 AND ClientServiceID = @SERVICE
 
-		-- 1. Не сообветствующие эталону ИБ
+		-- 1. РќРµ СЃРѕРѕР±РІРµС‚СЃС‚РІСѓСЋС‰РёРµ СЌС‚Р°Р»РѕРЅСѓ РР‘
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, N'COMPLIANCE', ClientID,
@@ -89,7 +89,7 @@ BEGIN
 				INNER JOIN USR.USRActiveView c ON c.UF_ID = b.UF_ID
 			WHERE UF_COMPLIANCE = '#HOST'
 
-		-- 2. Старые технологические модули
+		-- 2. РЎС‚Р°СЂС‹Рµ С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєРёРµ РјРѕРґСѓР»Рё
 
 		IF OBJECT_ID('tempdb..#res_check') IS NOT NULL
 			DROP TABLE #res_check
@@ -114,15 +114,15 @@ BEGIN
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT
 				@STATE, N'RES', ClientID,
-				'Комплект: ' + UD_NAME +
-					CASE ResVersionNum WHEN '' THEN '' ELSE '  ТМ: ' + ResVersionNum END +
+				'РљРѕРјРїР»РµРєС‚: ' + UD_NAME +
+					CASE ResVersionNum WHEN '' THEN '' ELSE '  РўРњ: ' + ResVersionNum END +
 					CASE ConsVersionNum WHEN '' THEN '' ELSE '  Cons.exe: ' + ConsVersionNum END
 			FROM #res_check
 
 		IF OBJECT_ID('tempdb..#res_check') IS NOT NULL
 			DROP TABLE #res_check
 
-		-- 3. Процент сбора СТТ
+		-- 3. РџСЂРѕС†РµРЅС‚ СЃР±РѕСЂР° РЎРўРў
 
 		IF OBJECT_ID('tempdb..#stt_check') IS NOT NULL
 			DROP TABLE #stt_check
@@ -141,14 +141,14 @@ BEGIN
 			EXEC dbo.STT_TOTAL_REPORT @CUR_MONTH_BEGIN, @CUR_MONTH_END, @SERVICE, 1
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
-			SELECT @STATE, 'STT', ClientID, ''--'Кол-во файлов USR: ' + CONVERT(NVARCHAR(16), USR_COUNT)
+			SELECT @STATE, 'STT', ClientID, ''--'РљРѕР»-РІРѕ С„Р°Р№Р»РѕРІ USR: ' + CONVERT(NVARCHAR(16), USR_COUNT)
 			FROM #stt_check a
 			WHERE STT_COUNT = 0-- AND USR_COUNT <> 0
 
 		IF OBJECT_ID('tempdb..#stt_check') IS NOT NULL
 			DROP TABLE #stt_check
 
-		-- 4. Неустановленные ИБ
+		-- 4. РќРµСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Рµ РР‘
 
 		IF OBJECT_ID('tempdb..#ib_check') IS NOT NULL
 			DROP TABLE #ib_check
@@ -190,7 +190,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#ib_check') IS NOT NULL
 			DROP TABLE #ib_check
 
-		-- 5. Должники
+		-- 5. Р”РѕР»Р¶РЅРёРєРё
 
 		IF OBJECT_ID('tempdb..#pay_check') IS NOT NULL
 			DROP TABLE #pay_check
@@ -223,12 +223,12 @@ BEGIN
 			SELECT @STATE, 'PAY', ClientID, CONVERT(NVARCHAR(MAX), PRC)
 
 			FROM #pay_check
-			WHERE PAY <> 'Да'
+			WHERE PAY <> 'Р”Р°'
 
 		IF OBJECT_ID('tempdb..#pay_check') IS NOT NULL
 			DROP TABLE #pay_check
 
-		-- 6. Низкий процент сбора CFG
+		-- 6. РќРёР·РєРёР№ РїСЂРѕС†РµРЅС‚ СЃР±РѕСЂР° CFG
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'CFG', ClientID, ''
@@ -256,7 +256,7 @@ BEGIN
 						AND UF_DATE BETWEEN @CUR_MONTH_BEGIN AND @CUR_MONTH_END
 				) > 0
 
-		-- 7. Нет пополнений за 2 недели
+		-- 7. РќРµС‚ РїРѕРїРѕР»РЅРµРЅРёР№ Р·Р° 2 РЅРµРґРµР»Рё
 
 		IF OBJECT_ID('tempdb..#update_check') IS NOT NULL
 			DROP TABLE #update_check
@@ -283,14 +283,14 @@ BEGIN
 		IF OBJECT_ID('tempdb..#update_check') IS NOT NULL
 			DROP TABLE #update_check
 
-		-- 8. Кривые графики
+		-- 8. РљСЂРёРІС‹Рµ РіСЂР°С„РёРєРё
 
 		INSERT INTO dbo.ServiceStateDetail(ID_STATE, TP, ID_CLIENT, DETAIL)
 			SELECT @STATE, 'GRAPH', ClientID, GR_ERROR
 			FROM dbo.ClientGraphView
 			WHERE ClientServiceID = @SERVICE AND GR_ERROR IS NOT NULL
 
-		-- 9. Не записывали никого на семинары
+		-- 9. РќРµ Р·Р°РїРёСЃС‹РІР°Р»Рё РЅРёРєРѕРіРѕ РЅР° СЃРµРјРёРЅР°СЂС‹
 
 
 

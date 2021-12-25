@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,5 +8,5 @@ IF OBJECT_ID('[dbo].[ActCalcStatus]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[Act
 GO
 ALTER VIEW [dbo].[ActCalcStatus]
 AS
-	SELECT 1 AS ST, 'Заявка создана' AS ST_TEXT
+	SELECT 1 AS ST, 'Р—Р°СЏРІРєР° СЃРѕР·РґР°РЅР°' AS ST_TEXT
 GO

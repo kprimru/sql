@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,9 +7,9 @@ GO
 IF OBJECT_ID('[dbo].[CLIENT_DUTY_FILTER2]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_DUTY_FILTER2]  AS SELECT 1')
 GO
 /*
-Автор:
-Дата создания:
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[CLIENT_DUTY_FILTER2]
 	@START		SMALLDATETIME 	= NULL,
@@ -51,7 +51,7 @@ BEGIN
 			DutyName, CallTypeName, ClientDutyDocs, ClientDutyQuest, ClientDutyComment,
 			ServiceName, ManagerName, ClientDutyGive,
 			ISNULL(ClientDutySurname + ' ' + ClientDutyName + ' ' + ClientDutyPatron, ClientDutyContact) AS ClientDutyContact,
-			ClientDutyPos, CASE ClientDutyNPO WHEN 1 THEN 'Да' ELSE 'Нет' END AS ClientDutyNPO,
+			ClientDutyPos, CASE ClientDutyNPO WHEN 1 THEN 'Р”Р°' ELSE 'РќРµС‚' END AS ClientDutyNPO,
 			ClientDutyComplete, ClientDutyUncomplete,
 			ClientDutyAnswer, g.NAME AS DIR_NAME,
 			REVERSE(STUFF(REVERSE((
@@ -77,9 +77,9 @@ BEGIN
 				WHERE a.ClientDutyID = ClientDutyIBTable.ClientDutyID
 				ORDER BY SystemShortName FOR XML PATH('')
 			)),1,1,'')) AS CheckedIB,
-			CASE j.NOTIFY WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS NOTIFY,
-			CASE i.ANSWER WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS ANSWER,
-			CASE i.SATISF WHEN 0 THEN 'Да' WHEN 1 THEN 'Нет' ELSE 'Не указано' END AS SATISF,
+			CASE j.NOTIFY WHEN 0 THEN 'Р”Р°' WHEN 1 THEN 'РќРµС‚' ELSE 'РќРµ СѓРєР°Р·Р°РЅРѕ' END AS NOTIFY,
+			CASE i.ANSWER WHEN 0 THEN 'Р”Р°' WHEN 1 THEN 'РќРµС‚' ELSE 'РќРµ СѓРєР°Р·Р°РЅРѕ' END AS ANSWER,
+			CASE i.SATISF WHEN 0 THEN 'Р”Р°' WHEN 1 THEN 'РќРµС‚' ELSE 'РќРµ СѓРєР°Р·Р°РЅРѕ' END AS SATISF,
 			ServiceStatusIndex, a.ID_DIRECTION, a.CallTypeID, a.DutyID, a.ID_GRANT_TYPE
 		FROM
 			[dbo].[ClientList@Get?Read]()
@@ -114,7 +114,7 @@ BEGIN
 				)
 			AND (@STATUS IS NULL OR @STATUS = 0 OR @STATUS = 1 AND ClientDutyComplete = 1 OR @STATUS = 2 AND ClientDutyComplete = 0)
 			AND (@NPO IS NULL OR @NPO = 0 OR @NPO = 1 AND ClientDutyNPO = 1 OR @NPO = 2 AND ClientDutyNPO = 0)
-			AND (@ORI IS NULL OR @ORI = 0 OR @ORI = 1 AND ClientDutyGive IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ОРИ') OR @ORI = 2 AND ClientDutyGive NOT IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ОРИ'))
+			AND (@ORI IS NULL OR @ORI = 0 OR @ORI = 1 AND ClientDutyGive IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'РћР Р') OR @ORI = 2 AND ClientDutyGive NOT IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'РћР Р'))
 			AND (
 					@RESULT IS NULL
 					OR @RESULT = 0

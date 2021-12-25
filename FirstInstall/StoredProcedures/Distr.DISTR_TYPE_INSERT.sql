@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -58,7 +58,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'DISTR_TYPE', @MASTERID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'DISTR_TYPE', 'Новая запись', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'DISTR_TYPE', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @MASTERID, @OLD, @NEW
 
 END
 

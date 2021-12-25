@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -18,7 +18,7 @@ AS
 				INNER JOIN Din.NetType y ON z.DistrTypeId = y.NT_ID_MASTER
 				WHERE z.ID_CLIENT = a.ClientID
 					AND DS_REG = 0
-					AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
+					AND SystemTypeName IN ('РЎРµСЂРёСЏ Рђ', 'РєРѕРјРјРµСЂС‡РµСЃРєР°СЏ', 'РЎРµСЂРёСЏ Рљ')
 					AND
 						(
 							z.HostID = 1

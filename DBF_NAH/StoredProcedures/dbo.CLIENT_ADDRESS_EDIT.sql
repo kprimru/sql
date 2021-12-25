@@ -1,12 +1,12 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:		  Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[CLIENT_ADDRESS_EDIT]
 	@addressid INT,

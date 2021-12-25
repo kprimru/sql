@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 			SystemShortName, SystemName, SystemBaseName, SystemNumber,
 			HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName,
 			SystemActive, SystemDemo, SystemComplect, SystemReg, SystemBaseCheck, SystemSalaryWeight,
-            -- устаревшие поля
+            -- СѓСЃС‚Р°СЂРµРІС€РёРµ РїРѕР»СЏ
             NULL AS IB_REQ_ID,
 			NULL AS IB_ID
 		FROM dbo.SystemTable a

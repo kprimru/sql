@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,8 +7,8 @@ GO
 
 
 /*
-Автор:			Денисов Алексей
-Описание:		Выбор всех точек обслуживания указанного клиента
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:		Р’С‹Р±РѕСЂ РІСЃРµС… С‚РѕС‡РµРє РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РєР»РёРµРЅС‚Р°
 */
 
 ALTER PROCEDURE [dbo].[TO_TRY_DELETE]
@@ -38,19 +38,19 @@ BEGIN
 		IF EXISTS(SELECT * FROM dbo.TODistrTable WHERE TD_ID_TO = @toid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как ей занесены дистрибутивы.'
+			SET @txt = @txt + CHAR(13) + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РўРћ, С‚Р°Рє РєР°Рє РµР№ Р·Р°РЅРµСЃРµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹.'
 		  END
 
 		IF EXISTS(SELECT * FROM dbo.TOTable WHERE TO_ID = @toid AND TO_REPORT = 1)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как она включена в отчет.'
+			SET @txt = @txt + CHAR(13) + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РўРћ, С‚Р°Рє РєР°Рє РѕРЅР° РІРєР»СЋС‡РµРЅР° РІ РѕС‚С‡РµС‚.'
 		  END
 
 		IF EXISTS(SELECT * FROM dbo.TOPersonalTable WHERE TP_ID_TO = @toid)
 		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + CHAR(13) + 'Невозможно удалить ТО, так как ей занесены сотрудники.'
+			SET @txt = @txt + CHAR(13) + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РўРћ, С‚Р°Рє РєР°Рє РµР№ Р·Р°РЅРµСЃРµРЅС‹ СЃРѕС‚СЂСѓРґРЅРёРєРё.'
 		  END
 
 		SELECT @res AS RES, @txt AS TXT

@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -9,9 +9,9 @@ GO
 
 
 /*
-Автор:			Денисов Алексей
-Описание:
-Дата:			15-July-2009
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
+Р”Р°С‚Р°:			15-July-2009
 */
 
 ALTER PROCEDURE [dbo].[ADDRESS_TEMPLATE_SELECT]

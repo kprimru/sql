@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
 				SELECT *
 				FROM dbo.ClientStudyClaim a
 				WHERE ID_CLIENT = @ID
-					AND UPD_USER = 'Автомат'
+					AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -44,7 +44,7 @@ BEGIN
 						SELECT TOP 1 ID
 						FROM dbo.ClientStudyClaim a
 						WHERE ID_CLIENT = @ID
-							AND UPD_USER = 'Автомат'
+							AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 							AND NOT EXISTS
 								(
 									SELECT *

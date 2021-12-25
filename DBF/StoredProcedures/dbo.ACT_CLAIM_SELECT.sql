@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,11 +29,11 @@ BEGIN
 					ROW_NUMBER() OVER(ORDER BY DATE) AS ID, DATE, USR, SERVICE,
 					CONVERT(VARCHAR(20), DATE, 104) + ' ' + CONVERT(VARCHAR(20), DATE, 108) AS DT,
 					CONFIRM_USER, CONFIRM_DATE, CONFIRM_NEED, CALC_STATUS,
-					CASE WHEN CONFIRM_NEED = 1 AND CONFIRM_USER IS NULL THEN 'НЕ ПОДТВЕРЖДЕНА!!!' ELSE '' END AS CONFIRM_NOTE
+					CASE WHEN CONFIRM_NEED = 1 AND CONFIRM_USER IS NULL THEN 'РќР• РџРћР”РўР’Р•Р Р–Р”Р•РќРђ!!!' ELSE '' END AS CONFIRM_NOTE
 				FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
 				WHERE STATUS = 1
 			) AS o_O
-		WHERE ISNULL(CALC_STATUS, 'Не расчитана') <> 'Расчитан полностью'
+		WHERE ISNULL(CALC_STATUS, 'РќРµ СЂР°СЃС‡РёС‚Р°РЅР°') <> 'Р Р°СЃС‡РёС‚Р°РЅ РїРѕР»РЅРѕСЃС‚СЊСЋ'
 			AND DATE >= DATEADD(MONTH, -3, GETDATE())
 		ORDER BY DATE DESC
 

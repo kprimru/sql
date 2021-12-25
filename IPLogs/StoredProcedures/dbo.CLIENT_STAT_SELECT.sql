@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -321,7 +321,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @cpl
-			    ), CSD_ID, @srv, 'Информация сервера', '', 3
+			    ), CSD_ID, @srv, 'РРЅС„РѕСЂРјР°С†РёСЏ СЃРµСЂРІРµСЂР°', '', 3
 		    FROM #client
 	    INSERT INTO #stat
 		    (
@@ -332,7 +332,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'ID Сессии',  CSD_SESSION
+			    ), CSD_ID, NULL, 'ID РЎРµСЃСЃРёРё',  CSD_SESSION
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -344,7 +344,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'Время получения архива с файлами запросов (сек)',  dbo.TimeSecToStr(CSD_QST_TIME)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ РїРѕР»СѓС‡РµРЅРёСЏ Р°СЂС…РёРІР° СЃ С„Р°Р№Р»Р°РјРё Р·Р°РїСЂРѕСЃРѕРІ (СЃРµРє)',  dbo.TimeSecToStr(CSD_QST_TIME)
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -356,7 +356,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'Размер архива с файлами запросов',  dbo.FileSizeToStr(CSD_QST_SIZE)
+			    ), CSD_ID, NULL, 'Р Р°Р·РјРµСЂ Р°СЂС…РёРІР° СЃ С„Р°Р№Р»Р°РјРё Р·Р°РїСЂРѕСЃРѕРІ',  dbo.FileSizeToStr(CSD_QST_SIZE)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -368,7 +368,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'Время формирования фалов ответов',  dbo.TimeSecToStr(CSD_ANS_TIME)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ С„Р°Р»РѕРІ РѕС‚РІРµС‚РѕРІ',  dbo.TimeSecToStr(CSD_ANS_TIME)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -380,7 +380,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'Размер архива с файлами ответов',  dbo.FileSizeToStr(CSD_ANS_SIZE)
+			    ), CSD_ID, NULL, 'Р Р°Р·РјРµСЂ Р°СЂС…РёРІР° СЃ С„Р°Р№Р»Р°РјРё РѕС‚РІРµС‚РѕРІ',  dbo.FileSizeToStr(CSD_ANS_SIZE)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -392,7 +392,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @srv
-			    ), CSD_ID, NULL, 'Размер архива с файлами в кэше',  dbo.FileSizeToStr(CSD_CACHE_SIZE)
+			    ), CSD_ID, NULL, 'Р Р°Р·РјРµСЂ Р°СЂС…РёРІР° СЃ С„Р°Р№Р»Р°РјРё РІ РєСЌС€Рµ',  dbo.FileSizeToStr(CSD_CACHE_SIZE)
 		    FROM #client
     
 
@@ -405,7 +405,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @cpl
-			    ), CSD_ID, @clt, 'Информация клиента',  '', 3
+			    ), CSD_ID, @clt, 'РРЅС„РѕСЂРјР°С†РёСЏ РєР»РёРµРЅС‚Р°',  '', 3
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -417,7 +417,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'IP-адрес',  CSD_IP
+			    ), CSD_ID, NULL, 'IP-Р°РґСЂРµСЃ',  CSD_IP
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -429,7 +429,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Время скачивания',  dbo.TimeSecToStr(CSD_DOWNLOAD_TIME)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ СЃРєР°С‡РёРІР°РЅРёСЏ',  dbo.TimeSecToStr(CSD_DOWNLOAD_TIME)
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -441,7 +441,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Скорость скачивания',  dbo.FileSizeToStr(CSD_DOWNLOAD_SPEED * 1024) + '/с'
+			    ), CSD_ID, NULL, 'РЎРєРѕСЂРѕСЃС‚СЊ СЃРєР°С‡РёРІР°РЅРёСЏ',  dbo.FileSizeToStr(CSD_DOWNLOAD_SPEED * 1024) + '/СЃ'
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -453,7 +453,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Время пополнения',  dbo.TimeSecToStr(CSD_UPDATE_TIME)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ РїРѕРїРѕР»РЅРµРЅРёСЏ',  dbo.TimeSecToStr(CSD_UPDATE_TIME)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -465,7 +465,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Время окончания сессии',  CONVERT(VARCHAR(20), CSD_END, 104) + ' ' + CONVERT(VARCHAR(20), CSD_END, 114)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ РѕРєРѕРЅС‡Р°РЅРёСЏ СЃРµСЃСЃРёРё',  CONVERT(VARCHAR(20), CSD_END, 104) + ' ' + CONVERT(VARCHAR(20), CSD_END, 114)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -477,7 +477,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Докачки',  CASE CSD_REDOWNLOAD WHEN 1 THEN 'Да' ELSE 'Нет' END
+			    ), CSD_ID, NULL, 'Р”РѕРєР°С‡РєРё',  CASE CSD_REDOWNLOAD WHEN 1 THEN 'Р”Р°' ELSE 'РќРµС‚' END
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -489,7 +489,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Режим запуска пополнения',  CSD_IP_MODE
+			    ), CSD_ID, NULL, 'Р РµР¶РёРј Р·Р°РїСѓСЃРєР° РїРѕРїРѕР»РЅРµРЅРёСЏ',  CSD_IP_MODE
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -501,7 +501,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Версия тех.модуля',  CSD_RES_VERSION
+			    ), CSD_ID, NULL, 'Р’РµСЂСЃРёСЏ С‚РµС….РјРѕРґСѓР»СЏ',  CSD_RES_VERSION
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -513,7 +513,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Отправка STT',  CASE CSD_STT_SEND WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
+			    ), CSD_ID, NULL, 'РћС‚РїСЂР°РІРєР° STT',  CASE CSD_STT_SEND WHEN 0 THEN 'Р’С‹РєР»' WHEN 1 THEN 'Р’РєР»' ELSE 'РќРµ РѕРїСЂРµРґРµР»РµРЅРѕ' END
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -525,7 +525,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Результат STT',  CASE CSD_STT_RESULT WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
+			    ), CSD_ID, NULL, 'Р РµР·СѓР»СЊС‚Р°С‚ STT',  CASE CSD_STT_RESULT WHEN 0 THEN 'Р’С‹РєР»' WHEN 1 THEN 'Р’РєР»' ELSE 'РќРµ РѕРїСЂРµРґРµР»РµРЅРѕ' END
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -537,7 +537,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Использование /INET_EXT',  CASE CSD_INET_EXT WHEN 0 THEN 'Выкл' WHEN 1 THEN 'Вкл' ELSE 'Не определено' END
+			    ), CSD_ID, NULL, 'РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ /INET_EXT',  CASE CSD_INET_EXT WHEN 0 THEN 'Р’С‹РєР»' WHEN 1 THEN 'Р’РєР»' ELSE 'РќРµ РѕРїСЂРµРґРµР»РµРЅРѕ' END
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -549,7 +549,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Метод определения параметров прокси',  CSD_PROXY_METOD
+			    ), CSD_ID, NULL, 'РњРµС‚РѕРґ РѕРїСЂРµРґРµР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕРєСЃРё',  CSD_PROXY_METOD
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -561,7 +561,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @clt
-			    ), CSD_ID, NULL, 'Настройка прокси в интерфейсе',  CSD_PROXY_INTERFACE
+			    ), CSD_ID, NULL, 'РќР°СЃС‚СЂРѕР№РєР° РїСЂРѕРєСЃРё РІ РёРЅС‚РµСЂС„РµР№СЃРµ',  CSD_PROXY_INTERFACE
 		    FROM #client
     
 	    INSERT INTO #stat
@@ -573,7 +573,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @cpl
-			    ), CSD_ID, @rep, 'Результат',  '',
+			    ), CSD_ID, @rep, 'Р РµР·СѓР»СЊС‚Р°С‚',  '',
 			    CASE
 				    WHEN CSD_CODE_SERVER <> 0 OR (CSD_CODE_CLIENT <> 0 AND CSD_CODE_CLIENT <> 70) OR CSD_LOG_LETTER <> '-' THEN 2
 				    WHEN CSD_CODE_SERVER = 0 AND CSD_CODE_CLIENT = 0 AND CSD_LOG_LETTER = '-' AND CSD_USR = '-' THEN 4
@@ -590,7 +590,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Время передачи отчета',  dbo.TimeSecToStr(CSD_REPORT_TIME)
+			    ), CSD_ID, NULL, 'Р’СЂРµРјСЏ РїРµСЂРµРґР°С‡Рё РѕС‚С‡РµС‚Р°',  dbo.TimeSecToStr(CSD_REPORT_TIME)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -602,7 +602,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Размер файла отчета',  dbo.FileSizeToStr(CSD_REPORT_SIZE)
+			    ), CSD_ID, NULL, 'Р Р°Р·РјРµСЂ С„Р°Р№Р»Р° РѕС‚С‡РµС‚Р°',  dbo.FileSizeToStr(CSD_REPORT_SIZE)
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -614,9 +614,9 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Лог-файл', 'Открыть',
+			    ), CSD_ID, NULL, 'Р›РѕРі-С„Р°Р№Р»', 'РћС‚РєСЂС‹С‚СЊ',
 			    CASE CSD_LOG_FILE
-				    WHEN '-' THEN 'Нет'
+				    WHEN '-' THEN 'РќРµС‚'
 				    ELSE
 					    (
 						    SELECT SRV_PATH
@@ -636,9 +636,9 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Лог файл результата', 'Открыть',
+			    ), CSD_ID, NULL, 'Р›РѕРі С„Р°Р№Р» СЂРµР·СѓР»СЊС‚Р°С‚Р°', 'РћС‚РєСЂС‹С‚СЊ',
 			    CASE CSD_LOG_RESULT
-				    WHEN '-' THEN 'Нет'
+				    WHEN '-' THEN 'РќРµС‚'
 				    ELSE (
 						    SELECT SRV_PATH
 						    FROM dbo.Servers
@@ -656,9 +656,9 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Отчет (письмо)', 'Открыть',
+			    ), CSD_ID, NULL, 'РћС‚С‡РµС‚ (РїРёСЃСЊРјРѕ)', 'РћС‚РєСЂС‹С‚СЊ',
 			    CASE CSD_LOG_LETTER
-				    WHEN '-' THEN 'Нет'
+				    WHEN '-' THEN 'РќРµС‚'
 				    ELSE (
 						    SELECT SRV_PATH
 						    FROM dbo.Servers
@@ -676,7 +676,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Код клиента',
+			    ), CSD_ID, NULL, 'РљРѕРґ РєР»РёРµРЅС‚Р°',
 			    CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +
 			    ISNULL((
 				    SELECT TOP 1 RC_TEXT
@@ -684,7 +684,7 @@ BEGIN
 				    WHERE RC_NUM = CSD_CODE_CLIENT
 					    AND RC_TYPE = 'CLIENT'
 				    ORDER BY RC_ID
-			    ), 'неизвестный код') + ')'
+			    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ') + ')'
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -696,7 +696,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, NULL, 'Код сервера',
+			    ), CSD_ID, NULL, 'РљРѕРґ СЃРµСЂРІРµСЂР°',
 			    CONVERT(VARCHAR(20), CSD_CODE_SERVER) + ' (' +
 			    ISNULL(
 				    (
@@ -705,7 +705,7 @@ BEGIN
 					    WHERE RC_NUM = CSD_CODE_SERVER
 						    AND RC_TYPE = 'SERVER'
 					    ORDER BY RC_ID
-				    ), 'неизвестный код') + ')'
+				    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ') + ')'
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -717,7 +717,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
-			    ), CSD_ID, @usr, 'Файл USR',  CASE CSD_USR WHEN '-' THEN 'Нет' ELSE CSD_USR END,
+			    ), CSD_ID, @usr, 'Р¤Р°Р№Р» USR',  CASE CSD_USR WHEN '-' THEN 'РќРµС‚' ELSE CSD_USR END,
 			    CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 7 END
 		    FROM #client
 
@@ -730,7 +730,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @usr
-			    ), CSD_ID, NULL, 'Файл cons_err.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
+			    ), CSD_ID, NULL, 'Р¤Р°Р№Р» cons_err.txt', CASE CSD_USR WHEN '-' THEN 'РќРµС‚' ELSE 'РћС‚РєСЂС‹С‚СЊ' END,
 			    (
 				    SELECT SRV_REPORT
 				    FROM dbo.Servers
@@ -747,7 +747,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @usr
-			    ), CSD_ID, NULL, 'Файл cons_inet.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
+			    ), CSD_ID, NULL, 'Р¤Р°Р№Р» cons_inet.txt', CASE CSD_USR WHEN '-' THEN 'РќРµС‚' ELSE 'РћС‚РєСЂС‹С‚СЊ' END,
 			    (
 				    SELECT SRV_REPORT
 				    FROM dbo.Servers
@@ -764,7 +764,7 @@ BEGIN
 				    SELECT ID
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @usr
-			    ), CSD_ID, NULL, 'Файл cons_inet_listfiles.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
+			    ), CSD_ID, NULL, 'Р¤Р°Р№Р» cons_inet_listfiles.txt', CASE CSD_USR WHEN '-' THEN 'РќРµС‚' ELSE 'РћС‚РєСЂС‹С‚СЊ' END,
 			    (
 				    SELECT SRV_REPORT
 				    FROM dbo.Servers

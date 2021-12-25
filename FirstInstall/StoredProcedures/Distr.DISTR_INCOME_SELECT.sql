@@ -1,31 +1,31 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [Distr].[DISTR_INCOME_SELECT]
-	-- начальная и окончательная дата фильтра, когда были получены дистрибутивы
+	-- РЅР°С‡Р°Р»СЊРЅР°СЏ Рё РѕРєРѕРЅС‡Р°С‚РµР»СЊРЅР°СЏ РґР°С‚Р° С„РёР»СЊС‚СЂР°, РєРѕРіРґР° Р±С‹Р»Рё РїРѕР»СѓС‡РµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
-	-- 0 - все, 1 - только свободные, 2 - уже выданные
+	-- 0 - РІСЃРµ, 1 - С‚РѕР»СЊРєРѕ СЃРІРѕР±РѕРґРЅС‹Рµ, 2 - СѓР¶Рµ РІС‹РґР°РЅРЅС‹Рµ
 	@STATUS		TINYINT,
-	-- фильтр по дате выдачи
+	-- С„РёР»СЊС‚СЂ РїРѕ РґР°С‚Рµ РІС‹РґР°С‡Рё
 	@DEL_BEGIN	SMALLDATETIME,
 	@DEL_END	SMALLDATETIME,
-	-- по номеру дистр
+	-- РїРѕ РЅРѕРјРµСЂСѓ РґРёСЃС‚СЂ
 	@DISTR		INT,
-	-- по системе
+	-- РїРѕ СЃРёСЃС‚РµРјРµ
 	@SYSTEM		UNIQUEIDENTIFIER,
-	-- сеть
+	-- СЃРµС‚СЊ
 	@NET		UNIQUEIDENTIFIER,
-	-- тип
+	-- С‚РёРї
 	@TYPE		UNIQUEIDENTIFIER,
-	-- 0 - все, 1 - новые, 2 - модули замены
+	-- 0 - РІСЃРµ, 1 - РЅРѕРІС‹Рµ, 2 - РјРѕРґСѓР»Рё Р·Р°РјРµРЅС‹
 	@EXCHANGE	TINYINT,
-	-- подхост
+	-- РїРѕРґС…РѕСЃС‚
 	@SUBHOST	UNIQUEIDENTIFIER,
-	-- примечание (из РЦ?)
+	-- РїСЂРёРјРµС‡Р°РЅРёРµ (РёР· Р Р¦?)
 	@COMMENT	NVARCHAR(150),
 	@RC			INT = NULL OUTPUT
 AS
@@ -39,11 +39,11 @@ BEGIN
 			ELSE 0
 		END) AS EXCHANGE,
 		CASE
-			WHEN ID_SYSTEM IS NULL THEN 'с ' + e.SYS_SHORT + ' на ' + f.SYS_SHORT
+			WHEN ID_SYSTEM IS NULL THEN 'СЃ ' + e.SYS_SHORT + ' РЅР° ' + f.SYS_SHORT
 			ELSE d.SYS_SHORT
 		END AS SYS_STR,
 		CASE
-			WHEN ID_NET IS NULL THEN 'с ' + h.SHORT + ' на ' + k.SHORT
+			WHEN ID_NET IS NULL THEN 'СЃ ' + h.SHORT + ' РЅР° ' + k.SHORT
 			ELSE g.SHORT
 		END AS NET_STR,
 		REPLICATE('0', 5 - LEN(CONVERT(VARCHAR(20), d.SYS_ORDER))) + CONVERT(VARCHAR(20), d.SYS_ORDER) + ' ' +

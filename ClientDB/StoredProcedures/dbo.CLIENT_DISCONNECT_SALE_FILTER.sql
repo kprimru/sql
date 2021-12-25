@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 		SET @END = DATEADD(DAY, 1, @END)
 
 		/*
-		íàéòè äèñòðèáóòèûû, êîòîðûå áûëè îòêëþ÷åíû â äàííûé ïðîìåæóòîê âðåìåíè
+		Ð½Ð°Ð¹Ñ‚Ð¸ Ð´Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ñ‹Ñ‹, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð±Ñ‹Ð»Ð¸ Ð¾Ñ‚ÐºÐ»ÑŽÑ‡ÐµÐ½Ñ‹ Ð² Ð´Ð°Ð½Ð½Ñ‹Ð¹ Ð¿Ñ€Ð¾Ð¼ÐµÐ¶ÑƒÑ‚Ð¾Ðº Ð²Ñ€ÐµÐ¼ÐµÐ½Ð¸
 		*/
 
 		DECLARE @distr Table
@@ -46,7 +46,7 @@ BEGIN
 				INNER JOIN dbo.Hosts ON RPR_ID_HOST = HostID
 			WHERE (RPR_DATE >= @BEGIN OR @BEGIN IS NULL)
 				AND (RPR_DATE < @END OR @END IS NULL)
-				AND RPR_OPER IN ('Îòêëþ÷åíèå', 'Ñîïðîâîæäåíèå îòêëþ÷åíî')
+				AND RPR_OPER IN ('ÐžÑ‚ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ', 'Ð¡Ð¾Ð¿Ñ€Ð¾Ð²Ð¾Ð¶Ð´ÐµÐ½Ð¸Ðµ Ð¾Ñ‚ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¾')
 				AND HostReg = 'LAW';
 
 		DELETE

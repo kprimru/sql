@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -114,8 +114,8 @@ BEGIN
 						LEFT OUTER JOIN #ip c ON c.SYS = d.SystemNumber AND c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
 					WHERE DS_REG = 0
 						AND (b.HostID = @HOST OR b.SystemID = @SYSTEM)
-						AND SST_SHORT NOT IN ('ОДД', /*'ДИУ', */'АДМ', 'ДСП')
-						AND NT_SHORT NOT IN ('онлайн', 'онлайн2', 'онлайн3', 'мобильная', 'ОВМ (ОД 1)', 'ОВМ (ОД 2)', 'ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф')
+						AND SST_SHORT NOT IN ('РћР”Р”', /*'Р”РРЈ', */'РђР”Рњ', 'Р”РЎРџ')
+						AND NT_SHORT NOT IN ('РѕРЅР»Р°Р№РЅ', 'РѕРЅР»Р°Р№РЅ2', 'РѕРЅР»Р°Р№РЅ3', 'РјРѕР±РёР»СЊРЅР°СЏ', 'РћР’Рњ (РћР” 1)', 'РћР’Рњ (РћР” 2)', 'РћР’Рџ', 'РћР’РџР', 'РћР’Рљ', 'РћР’Рњ1', 'РћР’Рњ2', 'РћР’Рљ-Р¤')
 						AND b.Complect LIKE b.SystemBaseName + '%'
 				) AS o_O
 

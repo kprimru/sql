@@ -1,4 +1,4 @@
-USE [SaleDB]
+ÔªøUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -42,10 +42,10 @@ BEGIN
 		INSERT INTO #temp(ID, NAME, PROC_TYPE, ASSIGN_DATE, RETURN_DATE)
 			SELECT b.ID, b.NAME,
 				CASE PROCESS_TYPE
-					WHEN N'MANAGER' THEN N'ÃÂÌÂ‰ÊÂ'
-					WHEN N'SALE' THEN N'“œ'
-					WHEN N'PHONE' THEN N'“¿'
-					WHEN N'RIVAL' THEN ' Ã'
+					WHEN N'MANAGER' THEN N'–ú–µ–Ω–µ–¥–∂–µ—Ä'
+					WHEN N'SALE' THEN N'–¢–ü'
+					WHEN N'PHONE' THEN N'–¢–ê'
+					WHEN N'RIVAL' THEN '–ö–ú'
 					ELSE N'???'
 				END AS PROC_TYPE,
 				ASSIGN_DATE, RETURN_DATE

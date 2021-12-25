@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 		SELECT
 			a.ID, dbo.DateOf(a.DATE) AS DATE, c.SHORT, b.NAME AS SER_NAME,
 			d.NAME AS DOC_NAME, CURRENT_CONTRACT, START, FINISH, PayTypeName AS ContractPayName,
-			'Служебная записка' AS TP_STR, 1 AS TP, '' AS NOTE, SYSTEMS,
+			'РЎР»СѓР¶РµР±РЅР°СЏ Р·Р°РїРёСЃРєР°' AS TP_STR, 1 AS TP, '' AS NOTE, SYSTEMS,
 			a.MONTH_PRICE, a.PERIOD_PRICE
 		FROM
 			Memo.ClientMemo a
@@ -42,7 +42,7 @@ BEGIN
 		SELECT
 			a.ID, dbo.DateOf(a.DATE) AS DATE, NOTE, NULL,
 			NULL, NULL, NULL, NULL, NULL,
-			'Расчет' AS TP_STR, 2 AS TP, NOTE, SYSTEMS, NULL, NULL
+			'Р Р°СЃС‡РµС‚' AS TP_STR, 2 AS TP, NOTE, SYSTEMS, NULL, NULL
 		FROM Memo.ClientCalculation a
 		WHERE a.ID_CLIENT = @CLIENT
 

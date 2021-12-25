@@ -1,4 +1,4 @@
-USE [FirstInstall]
+﻿USE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO

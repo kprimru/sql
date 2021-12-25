@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,10 +27,10 @@ BEGIN
 		SELECT
 			ID, NAME, ORD, ANS_MIN, ANS_MAX, TP,
 			CASE TP
-				WHEN 0 THEN 'однозначный выбор'
-				WHEN 1 THEN 'многозначный выбор'
-				WHEN 2 THEN 'свободное поле для ввода'
-				WHEN 3 THEN 'число из диапазона'
+				WHEN 0 THEN 'РѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ РІС‹Р±РѕСЂ'
+				WHEN 1 THEN 'РјРЅРѕРіРѕР·РЅР°С‡РЅС‹Р№ РІС‹Р±РѕСЂ'
+				WHEN 2 THEN 'СЃРІРѕР±РѕРґРЅРѕРµ РїРѕР»Рµ РґР»СЏ РІРІРѕРґР°'
+				WHEN 3 THEN 'С‡РёСЃР»Рѕ РёР· РґРёР°РїР°Р·РѕРЅР°'
 			END AS TP_STR
 		FROM Poll.Question
 		WHERE ID_BLANK = @ID

@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -71,7 +71,7 @@ BEGIN
 		END AS IP_PERCENT,
 		'' +
 		CASE
-			WHEN ID_FULL_DATE IS NULL THEN '/Нет полной оплаты/'
+			WHEN ID_FULL_DATE IS NULL THEN '/РќРµС‚ РїРѕР»РЅРѕР№ РѕРїР»Р°С‚С‹/'
 			ELSE ''
 		END +
 		CASE
@@ -81,7 +81,7 @@ BEGIN
 					FROM Install.InstallDetail
 					WHERE IND_ID_INCOME = a.ID_ID
 						AND IND_INSTALL_DATE IS NOT NULL
-				) THEN '/Не произведена установка/'
+				) THEN '/РќРµ РїСЂРѕРёР·РІРµРґРµРЅР° СѓСЃС‚Р°РЅРѕРІРєР°/'
 			ELSE ''
 		END +
 		CASE
@@ -91,7 +91,7 @@ BEGIN
 					FROM Install.InstallDetail
 					WHERE IND_ID_INCOME = a.ID_ID
 						AND IND_ACT_RETURN IS NOT NULL
-				) THEN '/Не вернулись акты/'
+				) THEN '/РќРµ РІРµСЂРЅСѓР»РёСЃСЊ Р°РєС‚С‹/'
 			ELSE ''
 		END
 		+
@@ -120,7 +120,7 @@ BEGIN
 						Salary.PersonalSalaryDetail ON PS_ID = PSD_ID_MASTER
 					WHERE PS_ID_PERSONAL = b.PER_ID_MASTER AND PSD_ID_INCOME = a.ID_ID AND PSD_SECOND = 1
 				)
-				THEN '/Не расчитана вторая часть ЗП/'
+				THEN '/РќРµ СЂР°СЃС‡РёС‚Р°РЅР° РІС‚РѕСЂР°СЏ С‡Р°СЃС‚СЊ Р—Рџ/'
 			ELSE ''
 		END
 

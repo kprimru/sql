@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -76,7 +76,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Название' AS FlName,
+						ClientID, 'РќР°Р·РІР°РЅРёРµ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -94,7 +94,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Название' AS FlName,
+						ClientID, 'РќР°Р·РІР°РЅРёРµ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -126,7 +126,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Адрес' AS FlName,
+						ClientID, 'РђРґСЂРµСЃ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -144,7 +144,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Адрес' AS FlName,
+						ClientID, 'РђРґСЂРµСЃ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -177,7 +177,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'ИНН' AS FlName,
+						ClientID, 'РРќРќ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -195,7 +195,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'ИНН' AS FlName,
+						ClientID, 'РРќРќ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -227,7 +227,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Директор' AS FlName,
+						ClientID, 'Р”РёСЂРµРєС‚РѕСЂ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -245,7 +245,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Директор' AS FlName,
+						ClientID, 'Р”РёСЂРµРєС‚РѕСЂ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -277,7 +277,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Тел.директора' AS FlName,
+						ClientID, 'РўРµР».РґРёСЂРµРєС‚РѕСЂР°' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -295,7 +295,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Тел.директора' AS FlName,
+						ClientID, 'РўРµР».РґРёСЂРµРєС‚РѕСЂР°' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -327,7 +327,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Гл.бух' AS FlName,
+						ClientID, 'Р“Р».Р±СѓС…' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -345,7 +345,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Гл.бух' AS FlName,
+						ClientID, 'Р“Р».Р±СѓС…' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -377,7 +377,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Тел.гл.бух' AS FlName,
+						ClientID, 'РўРµР».РіР».Р±СѓС…' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -395,7 +395,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Тел.гл.бух' AS FlName,
+						ClientID, 'РўРµР».РіР».Р±СѓС…' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -427,7 +427,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Ответственный' AS FlName,
+						ClientID, 'РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -445,7 +445,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Ответственный' AS FlName,
+						ClientID, 'РћС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -477,7 +477,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Тел.ответств.' AS FlName,
+						ClientID, 'РўРµР».РѕС‚РІРµС‚СЃС‚РІ.' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -495,7 +495,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Тел.ответств.' AS FlName,
+						ClientID, 'РўРµР».РѕС‚РІРµС‚СЃС‚РІ.' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -527,7 +527,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Должность.ответств.' AS FlName,
+						ClientID, 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ.РѕС‚РІРµС‚СЃС‚РІ.' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -545,7 +545,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Должность.ответств.' AS FlName,
+						ClientID, 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ.РѕС‚РІРµС‚СЃС‚РІ.' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -577,7 +577,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Статус' AS FlName,
+						ClientID, 'РЎС‚Р°С‚СѓСЃ' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -595,7 +595,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Статус' AS FlName,
+						ClientID, 'РЎС‚Р°С‚СѓСЃ' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM
@@ -627,7 +627,7 @@ BEGIN
 			IF @DETAIL = 1
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
 					SELECT
-						ClientID, 'Смена СИ' AS FlName,
+						ClientID, 'РЎРјРµРЅР° РЎР' AS FlName,
 						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
 					FROM
 						dbo.ClientChangeTable a CROSS APPLY
@@ -645,7 +645,7 @@ BEGIN
 			ELSE
 				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
 					SELECT
-						ClientID, 'Смена СИ' AS FlName,
+						ClientID, 'РЎРјРµРЅР° РЎР' AS FlName,
 						(
 							SELECT TOP 1 CL_NAME
 							FROM

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,7 +11,7 @@ WITH SCHEMABINDING
 AS
 	SELECT RPR_ID_HOST, RPR_DISTR, RPR_COMP, dbo.DateOf(RPR_DATE) AS DATE, COUNT_BIG(*) AS CNT
 	FROM dbo.RegProtocol a
-	WHERE RPR_OPER IN ('Отключение', 'Сопровождение отключено')
+	WHERE RPR_OPER IN ('РћС‚РєР»СЋС‡РµРЅРёРµ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 	GROUP BY RPR_ID_HOST, RPR_DISTR, RPR_COMP, dbo.DateOf(RPR_DATE)
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegProtocolDisconnectView(RPR_DISTR,RPR_ID_HOST,RPR_COMP,DATE)] ON [Reg].[RegProtocolDisconnectView] ([RPR_DISTR] ASC, [RPR_ID_HOST] ASC, [RPR_COMP] ASC, [DATE] ASC);

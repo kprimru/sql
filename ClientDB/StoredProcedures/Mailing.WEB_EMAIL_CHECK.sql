@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 		IF @EMAIL = ''
 		BEGIN
 			SET @STATUS = 1
-			SET @MSG = 'Не введен e-mail'
+			SET @MSG = 'РќРµ РІРІРµРґРµРЅ e-mail'
 
 			RETURN
 		END
@@ -40,7 +40,7 @@ BEGIN
 		IF CHARINDEX('@', @EMAIL) = 0
 		BEGIN
 			SET @STATUS = 1
-			SET @MSG = 'В адресе отсутствует символ "@"'
+			SET @MSG = 'Р’ Р°РґСЂРµСЃРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЃРёРјРІРѕР» "@"'
 
 			RETURN
 		END
@@ -48,15 +48,15 @@ BEGIN
 		IF CHARINDEX(' ', @EMAIL) <> 0
 		BEGIN
 			SET @STATUS = 1
-			SET @MSG = 'В адресе присутстуют пробелы'
+			SET @MSG = 'Р’ Р°РґСЂРµСЃРµ РїСЂРёСЃСѓС‚СЃС‚СѓСЋС‚ РїСЂРѕР±РµР»С‹'
 
 			RETURN
 		END
 
-		IF @EMAIL LIKE '%[а-я]%' OR @EMAIL LIKE '%[А-Я]%'
+		IF @EMAIL LIKE '%[Р°-СЏ]%' OR @EMAIL LIKE '%[Рђ-РЇ]%'
 		BEGIN
 			SET @STATUS = 1
-			SET @MSG = 'В адресе присутстуют русские буквы'
+			SET @MSG = 'Р’ Р°РґСЂРµСЃРµ РїСЂРёСЃСѓС‚СЃС‚СѓСЋС‚ СЂСѓСЃСЃРєРёРµ Р±СѓРєРІС‹'
 
 			RETURN
 		END

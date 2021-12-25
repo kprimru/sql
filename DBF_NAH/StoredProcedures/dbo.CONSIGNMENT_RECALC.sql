@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_RECALC]
@@ -101,7 +101,7 @@ BEGIN
 						WHERE FAT_DOC = 'INV_CONS_BUY'
 					) AS BUY_ADDRESS,
 					CL_PHONE,
-					('р.с ' + CL_ACCOUNT + ' в ' + BA_NAME + ', БИК ' + BA_BIK + ' корр/с ' + BA_LORO) AS BANK
+					('СЂ.СЃ ' + CL_ACCOUNT + ' РІ ' + BA_NAME + ', Р‘РРљ ' + BA_BIK + ' РєРѕСЂСЂ/СЃ ' + BA_LORO) AS BANK
 				FROM
 					dbo.ClientTable LEFT OUTER JOIN
 					dbo.BankTable ON BA_ID = CL_ID_BANK

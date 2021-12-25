@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,10 +46,10 @@ BEGIN
 
 		UNION ALL
 
-		SELECT NULL, 'Размер БД близится к своему лимиту (' + CONVERT(VARCHAR(20), CONVERT(FLOAT, ROUND((
+		SELECT NULL, 'Р Р°Р·РјРµСЂ Р‘Р” Р±Р»РёР·РёС‚СЃСЏ Рє СЃРІРѕРµРјСѓ Р»РёРјРёС‚Сѓ (' + CONVERT(VARCHAR(20), CONVERT(FLOAT, ROUND((
 			SELECT SUM(data + index_size)/1024.0/1024/1024
 			FROM Maintenance.DatabaseSize()
-		), 2))) + ' Гб из 4 Гб)'
+		), 2))) + ' Р“Р± РёР· 4 Р“Р±)'
 		WHERE @@VERSION LIKE '%Express Edition%' AND (
 			SELECT SUM(data + index_size)/1024.0/1024/1024
 			FROM Maintenance.DatabaseSize()

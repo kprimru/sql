@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -81,16 +81,16 @@ BEGIN
 					WHERE z.ID_CLIENT = a.ClientID
 						AND DS_REG = 0
 						/*
-						AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
+						AND SystemTypeName IN ('РЎРµСЂРёСЏ Рђ', 'РєРѕРјРјРµСЂС‡РµСЃРєР°СЏ', 'РЎРµСЂРёСЏ Рљ')
 						AND
 							(
 								z.HostID = 1
 								AND
-								z.DistrTypeName IN ('сеть', 'м/с')
+								z.DistrTypeName IN ('СЃРµС‚СЊ', 'Рј/СЃ')
 
 								OR
 
-								z.DistrTypeName = '1/с'
+								z.DistrTypeName = '1/СЃ'
 								AND
 								z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 							)
@@ -168,16 +168,16 @@ BEGIN
 								FROM dbo.ClientDistrView z WITH(NOEXPAND)
 								WHERE z.ID_CLIENT = a.ClientID
 									AND DS_REG = 0
-									AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
+									AND SystemTypeName IN ('РЎРµСЂРёСЏ Рђ', 'РєРѕРјРјРµСЂС‡РµСЃРєР°СЏ', 'РЎРµСЂРёСЏ Рљ')
 									AND
 										(
 											z.HostID = 1
 											AND
-											z.DistrTypeName IN ('сеть', 'м/с')
+											z.DistrTypeName IN ('СЃРµС‚СЊ', 'Рј/СЃ')
 
 											OR
 
-											z.DistrTypeName = '1/с'
+											z.DistrTypeName = '1/СЃ'
 											AND
 											z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 										)

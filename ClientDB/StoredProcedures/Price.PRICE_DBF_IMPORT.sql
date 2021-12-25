@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -43,7 +43,7 @@ BEGIN
 		FROM dbo.DBFPriceView
 		WHERE PR_DATE = @DBFDate
 
-		-- удялем данные за целевой месяц, мы ведь сейчас загрузим новые
+		-- СѓРґСЏР»РµРј РґР°РЅРЅС‹Рµ Р·Р° С†РµР»РµРІРѕР№ РјРµСЃСЏС†, РјС‹ РІРµРґСЊ СЃРµР№С‡Р°СЃ Р·Р°РіСЂСѓР·РёРј РЅРѕРІС‹Рµ
 		DELETE
 		FROM Price.SystemPrice
 		WHERE ID_MONTH = @ClientMonth

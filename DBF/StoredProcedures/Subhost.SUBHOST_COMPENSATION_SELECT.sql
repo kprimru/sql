@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,9 +32,9 @@ BEGIN
 		SELECT
 			SCP_ID, SCP_DISTR_STR, SST_CAPTION, a.SN_NAME, SCP_COMMENT,
 			CASE
-				WHEN DS_REG IS NULL THEN 'Система не найдена в РЦ'
-				WHEN DS_REG = 1 THEN 'Система отключена в РЦ'
-				WHEN b.SN_NAME <> a.SN_NAME THEN 'Неверный тип сети. В РЦ - "' + b.SN_NAME + '"'
+				WHEN DS_REG IS NULL THEN 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р Р¦'
+				WHEN DS_REG = 1 THEN 'РЎРёСЃС‚РµРјР° РѕС‚РєР»СЋС‡РµРЅР° РІ Р Р¦'
+				WHEN b.SN_NAME <> a.SN_NAME THEN 'РќРµРІРµСЂРЅС‹Р№ С‚РёРї СЃРµС‚Рё. Р’ Р Р¦ - "' + b.SN_NAME + '"'
 			END AS SCP_ERROR,
 			CONVERT(MONEY, (
 				SELECT PS_PRICE

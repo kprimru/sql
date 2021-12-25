@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,7 +34,7 @@ BEGIN
 		IF @@ROWCOUNT <> 0
 		BEGIN
 			INSERT INTO dbo.ClientMessage(ID_CLIENT, TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
-				SELECT ID_CLIENT, 1, GETDATE(), 'Клиент был снят с контроля', AUTHOR, 0
+				SELECT ID_CLIENT, 1, GETDATE(), 'РљР»РёРµРЅС‚ Р±С‹Р» СЃРЅСЏС‚ СЃ РєРѕРЅС‚СЂРѕР»СЏ', AUTHOR, 0
 				FROM Control.ClientControl
 				WHERE ID = @ID
 		END

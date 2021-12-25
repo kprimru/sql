@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[AUDIT_FINANCING_SELECT]
@@ -37,7 +37,7 @@ BEGIN
 		/*
 		UNION ALL
 
-		SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не сформирован счет по начислению за текущий месяц' AS FIN_ERROR
+		SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'РќРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ СЃС‡РµС‚ РїРѕ РЅР°С‡РёСЃР»РµРЅРёСЋ Р·Р° С‚РµРєСѓС‰РёР№ РјРµСЃСЏС†' AS FIN_ERROR
 		FROM
 			dbo.ClientTable INNER JOIN
 			dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN

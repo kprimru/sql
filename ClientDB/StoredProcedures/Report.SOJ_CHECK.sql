@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,13 +37,13 @@ BEGIN
 		--WHERE UF_DATE >= '20200101';
 
 		SELECT
-			[Рук-ль/Подхост]	= ISNULL(ManagerName, SubhostName),
-			[СИ]				= ServiceName,
-			[Клиент]			= ISNULL(ClientFullName, Comment),
-			[Дистрибутив]		= D.DistrStr,
-			[Сеть]				= NT_SHORT,
-			[Тип]				= SST_SHORT,
-			[Посл.пополнение]	=
+			[Р СѓРє-Р»СЊ/РџРѕРґС…РѕСЃС‚]	= ISNULL(ManagerName, SubhostName),
+			[РЎР]				= ServiceName,
+			[РљР»РёРµРЅС‚]			= ISNULL(ClientFullName, Comment),
+			[Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]		= D.DistrStr,
+			[РЎРµС‚СЊ]				= NT_SHORT,
+			[РўРёРї]				= SST_SHORT,
+			[РџРѕСЃР».РїРѕРїРѕР»РЅРµРЅРёРµ]	=
 				(
 					SELECT TOP (1) U.UF_DATE
 					FROM @LastUSR				U

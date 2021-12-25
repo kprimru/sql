@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT
-			ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент],
-			b.DistrStr AS [Дистрибутив], b.DistrTypeName AS [Сеть],
-			T.UF_EXPCONS AS [Дата-время файла в комплекте клиента],
-			SET_DATE AS [Дата-время подключения клиента в кнопке ЗВЭ],
+			ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚],
+			b.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], b.DistrTypeName AS [РЎРµС‚СЊ],
+			T.UF_EXPCONS AS [Р”Р°С‚Р°-РІСЂРµРјСЏ С„Р°Р№Р»Р° РІ РєРѕРјРїР»РµРєС‚Рµ РєР»РёРµРЅС‚Р°],
+			SET_DATE AS [Р”Р°С‚Р°-РІСЂРµРјСЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ РєР»РёРµРЅС‚Р° РІ РєРЅРѕРїРєРµ Р—Р’Р­],
 			dbo.DateOf(
 				(
 					SELECT MAX(DATE)
@@ -37,7 +37,7 @@ BEGIN
 						INNER JOIN dbo.SystemTable y ON z.SYS = y.SystemNumber
 					WHERE z.DISTR = b.DISTR AND z.COMP = b.COMP AND y.HostID = b.HostID
 				)
-			) AS [Дата последнего вопроса]
+			) AS [Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ РІРѕРїСЂРѕСЃР°]
 		FROM
 			USR.USRComplectNumberView a WITH(NOEXPAND)
 			INNER JOIN USR.USRData c ON a.UD_ID = c.UD_ID

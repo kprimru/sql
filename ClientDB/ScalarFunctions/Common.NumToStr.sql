@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -22,9 +22,9 @@ BEGIN
 	DECLARE @d1 TINYINT
 
 	IF @Num < 0
-		RETURN '*** Ошибка. Отрицательное число'
+		RETURN '*** РћС€РёР±РєР°. РћС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ'
 	ELSE IF @Num=0
-		RETURN 'Ноль'
+		RETURN 'РќРѕР»СЊ'
 
 
 	WHILE @Num > 0
@@ -44,75 +44,75 @@ BEGIN
 
 			SET @nword =
 				CASE @d3
-					WHEN 1 THEN ' сто'
-					WHEN 2 THEN ' двести'
-					WHEN 3 THEN ' триста'
-					WHEN 4 THEN ' четыреста'
-					WHEN 5 THEN ' пятьсот'
-					WHEN 6 THEN ' шестьсот'
-					WHEN 7 THEN ' семьсот'
-					WHEN 8 THEN ' восемьсот'
-					WHEN 9 THEN ' девятьсот'
+					WHEN 1 THEN ' СЃС‚Рѕ'
+					WHEN 2 THEN ' РґРІРµСЃС‚Рё'
+					WHEN 3 THEN ' С‚СЂРёСЃС‚Р°'
+					WHEN 4 THEN ' С‡РµС‚С‹СЂРµСЃС‚Р°'
+					WHEN 5 THEN ' РїСЏС‚СЊСЃРѕС‚'
+					WHEN 6 THEN ' С€РµСЃС‚СЊСЃРѕС‚'
+					WHEN 7 THEN ' СЃРµРјСЊСЃРѕС‚'
+					WHEN 8 THEN ' РІРѕСЃРµРјСЊСЃРѕС‚'
+					WHEN 9 THEN ' РґРµРІСЏС‚СЊСЃРѕС‚'
 					ELSE ''
 				END +
 				CASE @d2
-					WHEN 2 THEN ' двадцать'
-					WHEN 3 THEN ' тридцать'
-					WHEN 4 THEN ' сорок'
-					WHEN 5 THEN ' пятьдесят'
-					WHEN 6 THEN ' шестьдесят'
-					WHEN 7 THEN ' семьдесят'
-					WHEN 8 THEN ' восемьдесят'
-					WHEN 9 THEN ' девяносто'
+					WHEN 2 THEN ' РґРІР°РґС†Р°С‚СЊ'
+					WHEN 3 THEN ' С‚СЂРёРґС†Р°С‚СЊ'
+					WHEN 4 THEN ' СЃРѕСЂРѕРє'
+					WHEN 5 THEN ' РїСЏС‚СЊРґРµСЃСЏС‚'
+					WHEN 6 THEN ' С€РµСЃС‚СЊРґРµСЃСЏС‚'
+					WHEN 7 THEN ' СЃРµРјСЊРґРµСЃСЏС‚'
+					WHEN 8 THEN ' РІРѕСЃРµРјСЊРґРµСЃСЏС‚'
+					WHEN 9 THEN ' РґРµРІСЏРЅРѕСЃС‚Рѕ'
 					ELSE ''
 				END +
 				CASE @d1
 					WHEN 1 THEN
 						(
 							case
-								WHEN @th = 2 OR (@th = 1 AND @IS_MALE_GENDER = 0) THEN ' одна'
-								ELSE ' один'
+								WHEN @th = 2 OR (@th = 1 AND @IS_MALE_GENDER = 0) THEN ' РѕРґРЅР°'
+								ELSE ' РѕРґРёРЅ'
 							END)
 					WHEN 2 THEN
 						(
 							CASE
-								WHEN @th = 2 OR (@th = 1 AND @IS_MALE_GENDER = 0) THEN ' две'
-								ELSE ' два'
+								WHEN @th = 2 OR (@th = 1 AND @IS_MALE_GENDER = 0) THEN ' РґРІРµ'
+								ELSE ' РґРІР°'
 							END
 						)
-					WHEN 3 THEN ' три'
-					WHEN 4 THEN ' четыре'
-					WHEN 5 THEN ' пять'
-					WHEN 6 THEN ' шесть'
-					WHEN 7 THEN ' семь'
-					WHEN 8 THEN ' восемь'
-					WHEN 9 THEN ' девять'
-					WHEN 10 THEN ' десять'
-					WHEN 11 THEN ' одиннадцать'
-					WHEN 12 THEN ' двенадцать'
-					WHEN 13 THEN ' тринадцать'
-					WHEN 14 THEN ' четырнадцать'
-					WHEN 15 THEN ' пятнадцать'
-					WHEN 16 THEN ' шестнадцать'
-					WHEN 17 THEN ' семнадцать'
-					WHEN 18 THEN ' восемнадцать'
-					WHEN 19 THEN ' девятнадцать'
+					WHEN 3 THEN ' С‚СЂРё'
+					WHEN 4 THEN ' С‡РµС‚С‹СЂРµ'
+					WHEN 5 THEN ' РїСЏС‚СЊ'
+					WHEN 6 THEN ' С€РµСЃС‚СЊ'
+					WHEN 7 THEN ' СЃРµРјСЊ'
+					WHEN 8 THEN ' РІРѕСЃРµРјСЊ'
+					WHEN 9 THEN ' РґРµРІСЏС‚СЊ'
+					WHEN 10 THEN ' РґРµСЃСЏС‚СЊ'
+					WHEN 11 THEN ' РѕРґРёРЅРЅР°РґС†Р°С‚СЊ'
+					WHEN 12 THEN ' РґРІРµРЅР°РґС†Р°С‚СЊ'
+					WHEN 13 THEN ' С‚СЂРёРЅР°РґС†Р°С‚СЊ'
+					WHEN 14 THEN ' С‡РµС‚С‹СЂРЅР°РґС†Р°С‚СЊ'
+					WHEN 15 THEN ' РїСЏС‚РЅР°РґС†Р°С‚СЊ'
+					WHEN 16 THEN ' С€РµСЃС‚РЅР°РґС†Р°С‚СЊ'
+					WHEN 17 THEN ' СЃРµРјРЅР°РґС†Р°С‚СЊ'
+					WHEN 18 THEN ' РІРѕСЃРµРјРЅР°РґС†Р°С‚СЊ'
+					WHEN 19 THEN ' РґРµРІСЏС‚РЅР°РґС†Р°С‚СЊ'
 					ELSE ''
 				END +
 				CASE @th
-					WHEN 2 THEN ' тысяч' +
+					WHEN 2 THEN ' С‚С‹СЃСЏС‡' +
 							(
 								CASE
-									WHEN @d1 = 1 THEN 'а'
-									WHEN @d1 IN (2, 3, 4) THEN 'и'
+									WHEN @d1 = 1 THEN 'Р°'
+									WHEN @d1 IN (2, 3, 4) THEN 'Рё'
 									ELSE ''
 								END
 							)
-					WHEN 3 THEN ' миллион'
-					WHEN 4 THEN ' миллиард'
-					WHEN 5 THEN ' триллион'
-					WHEN 6 THEN ' квадрилион'
-					WHEN 7 THEN ' квинтилион'
+					WHEN 3 THEN ' РјРёР»Р»РёРѕРЅ'
+					WHEN 4 THEN ' РјРёР»Р»РёР°СЂРґ'
+					WHEN 5 THEN ' С‚СЂРёР»Р»РёРѕРЅ'
+					WHEN 6 THEN ' РєРІР°РґСЂРёР»РёРѕРЅ'
+					WHEN 7 THEN ' РєРІРёРЅС‚РёР»РёРѕРЅ'
 					ELSE ''
 				END +
 				CASE
@@ -120,8 +120,8 @@ BEGIN
 						(
 							CASE
 								WHEN @d1 = 1 THEN ''
-								WHEN @d1 IN (2, 3, 4) THEN 'а'
-								ELSE 'ов'
+								WHEN @d1 IN (2, 3, 4) THEN 'Р°'
+								ELSE 'РѕРІ'
 							END
 						)
 					ELSE ''

@@ -1,4 +1,4 @@
-USE [FirstInstall]
+ÔªøUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -15,11 +15,11 @@ BEGIN
 
 	SELECT @DEP_ID = DP_ID_MASTER
 	FROM Personal.DepartmentActive
-	WHERE DP_NAME = 'Œ»—'
+	WHERE DP_NAME = '–û–ò–°'
 
 	SELECT @TYPE_ID = PT_ID_MASTER
 	FROM Personal.PersonalTypeActive
-	WHERE PT_NAME = '—»'
+	WHERE PT_NAME = '–°–ò'
 
 	DECLARE A CURSOR LOCAL FOR
 		SELECT ServiceName

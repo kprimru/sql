@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -59,7 +59,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INCOME', @IN_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INCOME', 'Новая запись', @IN_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INCOME', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @IN_ID, @OLD, @NEW
 END
 GO
 GRANT EXECUTE ON [Income].[INCOME_INSERT] TO rl_income_w;

@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,10 +7,10 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	1-04-2009
-Описание:		удалить несколько записей
-				из таблицы счета-фактуры
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	1-04-2009
+РћРїРёСЃР°РЅРёРµ:		СѓРґР°Р»РёС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ Р·Р°РїРёСЃРµР№
+				РёР· С‚Р°Р±Р»РёС†С‹ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_DELETE]
@@ -44,7 +44,7 @@ BEGIN
 
 		IF @rowlist IS NOT NULL
 			BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_invrow
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@rowlist, ',')
 			END
@@ -56,7 +56,7 @@ BEGIN
 			INNER JOIN #dbf_invrow ON ROW_ID = INR_ID
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление строки с/ф',
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЈРґР°Р»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') +
 				CASE ISNULL(INR_COUNT, 1)
 					WHEN 1 THEN ''

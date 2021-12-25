@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -49,7 +49,7 @@ BEGIN
 				REG_CHECKED BIT DEFAULT 0
 			)
 
-		--1. Новые системы
+		--1. РќРѕРІС‹Рµ СЃРёСЃС‚РµРјС‹
 		INSERT INTO #rn
 				(
 					REG_ID_HST, REG_ID_SYSTEM, REG_DISTR_NUM, REG_COMP_NUM,
@@ -59,7 +59,7 @@ BEGIN
 				)
 			SELECT
 				SYS_ID_HOST, SYS_ID, REG_DISTR_NUM, REG_COMP_NUM,
-				SN_ID, SH_ID, 'Новая система', REG_COMMENT,
+				SN_ID, SH_ID, 'РќРѕРІР°СЏ СЃРёСЃС‚РµРјР°', REG_COMMENT,
 				REG_ID_TYPE, NULL, NULL, NULL, NULL
 			FROM
 				dbo.PeriodRegTable a INNER JOIN
@@ -101,10 +101,10 @@ BEGIN
 				e.SYS_ID_HOST, e.SYS_ID, d.REG_DISTR_NUM, d.REG_COMP_NUM,
 				k.SN_ID, SH_ID,
 				CASE
-					WHEN (b.SYS_ID = e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'с ' + k.SN_NAME + ' на ' + h.SN_NAME
-					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID = k.SN_ID) THEN 'с ' + b.SYS_SHORT_NAME + ' на ' + e.SYS_SHORT_NAME
-					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'с ' + b.SYS_SHORT_NAME + ' ' + k.SN_NAME + ' на ' + e.SYS_SHORT_NAME + ' ' + h.SN_NAME
-					ELSE 'Ошибка!!!'
+					WHEN (b.SYS_ID = e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'СЃ ' + k.SN_NAME + ' РЅР° ' + h.SN_NAME
+					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID = k.SN_ID) THEN 'СЃ ' + b.SYS_SHORT_NAME + ' РЅР° ' + e.SYS_SHORT_NAME
+					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'СЃ ' + b.SYS_SHORT_NAME + ' ' + k.SN_NAME + ' РЅР° ' + e.SYS_SHORT_NAME + ' ' + h.SN_NAME
+					ELSE 'РћС€РёР±РєР°!!!'
 				END, d.REG_COMMENT,
 				d.REG_ID_TYPE,
 				CASE
@@ -148,10 +148,10 @@ BEGIN
 				e.SYS_ID_HOST, e.SYS_ID, d.REG_DISTR_NUM, d.REG_COMP_NUM,
 				k.SN_ID, SH_ID,
 				CASE
-					WHEN (b.SYS_ID = e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'с ' + k.SN_NAME + ' на ' + h.SN_NAME
-					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID = k.SN_ID) THEN 'с ' + b.SYS_SHORT_NAME + ' на ' + e.SYS_SHORT_NAME
-					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'с ' + b.SYS_SHORT_NAME + ' ' + k.SN_NAME + ' на ' + e.SYS_SHORT_NAME + ' ' + h.SN_NAME
-					ELSE 'Ошибка!!!'
+					WHEN (b.SYS_ID = e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'СЃ ' + k.SN_NAME + ' РЅР° ' + h.SN_NAME
+					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID = k.SN_ID) THEN 'СЃ ' + b.SYS_SHORT_NAME + ' РЅР° ' + e.SYS_SHORT_NAME
+					WHEN (b.SYS_ID <> e.SYS_ID) AND (h.SN_ID <> k.SN_ID) THEN 'СЃ ' + b.SYS_SHORT_NAME + ' ' + k.SN_NAME + ' РЅР° ' + e.SYS_SHORT_NAME + ' ' + h.SN_NAME
+					ELSE 'РћС€РёР±РєР°!!!'
 				END, d.REG_COMMENT,
 				d.REG_ID_TYPE,
 				CASE

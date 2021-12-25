@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[AuditFinancingView]
 AS
-	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не указаны фин.установки' AS FIN_ERROR
+	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'РќРµ СѓРєР°Р·Р°РЅС‹ С„РёРЅ.СѓСЃС‚Р°РЅРѕРІРєРё' AS FIN_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN
@@ -25,7 +25,7 @@ AS
 	SELECT
 		CL_ID, CL_PSEDO, DIS_ID, DIS_STR,
 		(
-			'Неверный тип сети: указан "' + SN_NAME + '", в РЦ - "' + REG_SN_NAME + '"'
+			'РќРµРІРµСЂРЅС‹Р№ С‚РёРї СЃРµС‚Рё: СѓРєР°Р·Р°РЅ "' + SN_NAME + '", РІ Р Р¦ - "' + REG_SN_NAME + '"'
 		) AS FIN_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
@@ -50,7 +50,7 @@ AS
 	SELECT
 		CL_ID, CL_PSEDO, DIS_ID, DIS_STR,
 		(
-			'Неверный тип системы: указан "' + ISNULL(SST_CAPTION, '') + '", в РЦ - "' + REG_SST_CAPTION + '"'
+			'РќРµРІРµСЂРЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹: СѓРєР°Р·Р°РЅ "' + ISNULL(SST_CAPTION, '') + '", РІ Р Р¦ - "' + REG_SST_CAPTION + '"'
 		) AS FIN_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
@@ -72,7 +72,7 @@ AS
 	UNION ALL
 
 	SELECT
-		CL_ID, CL_PSEDO, NULL AS DIS_ID, NULL AS DIS_STR, 'Есть неразнесенные платежи' AS FIN_ERROR
+		CL_ID, CL_PSEDO, NULL AS DIS_ID, NULL AS DIS_STR, 'Р•СЃС‚СЊ РЅРµСЂР°Р·РЅРµСЃРµРЅРЅС‹Рµ РїР»Р°С‚РµР¶Рё' AS FIN_ERROR
 	FROM
 		dbo.ClientTable
 	WHERE EXISTS
@@ -85,7 +85,7 @@ AS
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не указан тип оплаты по договору' AS FIN_ERROR
+	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'РќРµ СѓРєР°Р·Р°РЅ С‚РёРї РѕРїР»Р°С‚С‹ РїРѕ РґРѕРіРѕРІРѕСЂСѓ' AS FIN_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN
@@ -96,7 +96,7 @@ AS
 
 	UNION ALL
 
-	SELECT NULL, NULL, NULL, NULL, 'Отсутствует прейскурант по системе "' + SYS_SHORT_NAME + '" за "' + Convert(VarChar(20), PR_DATE, 104) + '"'
+	SELECT NULL, NULL, NULL, NULL, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚ РїРѕ СЃРёСЃС‚РµРјРµ "' + SYS_SHORT_NAME + '" Р·Р° "' + Convert(VarChar(20), PR_DATE, 104) + '"'
 	FROM dbo.SystemTable S
 	CROSS JOIN dbo.PeriodTable
 	WHERE PR_DATE >= DATEADD(MONTH, -1, GETDATE())
@@ -127,7 +127,7 @@ AS
 	/*
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'Не сформирован счет по начислению за текущий месяц' AS FIN_ERROR
+	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, 'РќРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ СЃС‡РµС‚ РїРѕ РЅР°С‡РёСЃР»РµРЅРёСЋ Р·Р° С‚РµРєСѓС‰РёР№ РјРµСЃСЏС†' AS FIN_ERROR
 	FROM
 		dbo.ClientTable INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_CLIENT = CL_ID INNER JOIN
@@ -148,7 +148,7 @@ AS
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, Cast(PR_NAME + ' Дубликат счета (' +
+	SELECT CL_ID, CL_PSEDO, DIS_ID, DIS_STR, Cast(PR_NAME + ' Р”СѓР±Р»РёРєР°С‚ СЃС‡РµС‚Р° (' +
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT CL_PSEDO + ', '

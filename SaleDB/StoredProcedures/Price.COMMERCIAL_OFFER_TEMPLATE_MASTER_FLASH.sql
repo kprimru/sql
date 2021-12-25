@@ -1,4 +1,4 @@
-USE [SaleDB]
+ÔªøUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -102,8 +102,8 @@ BEGIN
 		@DIR_SHORT_ROD + ' ' + LEFT(@NAME, 1) + '.' + LEFT(@PATRON, 1) + '.' AS DIRECTOR_SHORT,
 		CASE
 			WHEN @NAME <> '' OR @PATRON <> '' THEN
-				CASE @SEX WHEN 1 THEN '”‚‡Ê‡ÂÏ˚È '
-				ELSE '”‚‡Ê‡ÂÏ‡ˇ '
+				CASE @SEX WHEN 1 THEN '–£–≤–∞–∂–∞–µ–º—ã–π '
+				ELSE '–£–≤–∞–∂–∞–µ–º–∞—è '
 			END + @NAME + ' ' + @PATRON
 			ELSE ''
 		END AS DIRECTOR_IO, a.FULL_NAME AS CLIENT,
@@ -118,12 +118,12 @@ BEGIN
 		@MON_CNT AS MON_CNT,
 		CASE @MON_CNT
 			WHEN 1 THEN CONVERT(VARCHAR(20), @MON_CNT)
-			ELSE CONVERT(VARCHAR(20), @MON_CNT) + '-ı'
+			ELSE CONVERT(VARCHAR(20), @MON_CNT) + '-—Ö'
 		END AS MON_CNT_STR,
 		@MON_STR AS MON_STR,
 		CASE ISNULL(DISCOUNT, 0)
 			WHEN 0 THEN N''
-			ELSE N'—ÍË‰Í‡ ' + CONVERT(NVARCHAR(32), CONVERT(INT, DISCOUNT)) + ' %'
+			ELSE N'–°–∫–∏–¥–∫–∞ ' + CONVERT(NVARCHAR(32), CONVERT(INT, DISCOUNT)) + ' %'
 		END AS DISCOUNT_STR,
 		@MON_STR_ROD AS MON_STR_ROD,
 		Common.MoneyFormat((

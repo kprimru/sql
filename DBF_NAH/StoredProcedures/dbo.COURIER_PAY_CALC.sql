@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,24 +36,24 @@ BEGIN
 				CL_PSEDO VARCHAR(150),
 				CLT_ID SMALLINT,
 				CLT_NAME VARCHAR(100),
-				-- кол-во систем
+				-- РєРѕР»-РІРѕ СЃРёСЃС‚РµРј
 				SYS_COUNT SMALLINT,
-				-- общая сумма клиента
+				-- РѕР±С‰Р°СЏ СЃСѓРјРјР° РєР»РёРµРЅС‚Р°
 				CL_SUM MONEY,
-				-- кол-во ТО
+				-- РєРѕР»-РІРѕ РўРћ
 				TO_COUNT SMALLINT,
-				-- ст-ть одной ТО, или общая стоимость
+				-- СЃС‚-С‚СЊ РѕРґРЅРѕР№ РўРћ, РёР»Рё РѕР±С‰Р°СЏ СЃС‚РѕРёРјРѕСЃС‚СЊ
 				PRICE MONEY,
-				--итоговая стоимость (которую можно поднять до минималки)
+				--РёС‚РѕРіРѕРІР°СЏ СЃС‚РѕРёРјРѕСЃС‚СЊ (РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ РїРѕРґРЅСЏС‚СЊ РґРѕ РјРёРЅРёРјР°Р»РєРё)
 				TOTAL_PRICE MONEY,
-				-- минимальная сумма
+				-- РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР°
 				COUR_MIN MONEY,
 				COUR_MAX MONEY,
-				-- процент
+				-- РїСЂРѕС†РµРЅС‚
 				COUR_PERCENT DECIMAL(8, 4),
-				-- КОб
+				-- РљРћР±
 				COEF DECIMAL(8, 4),
-				-- оплатил ли или нет
+				-- РѕРїР»Р°С‚РёР» Р»Рё РёР»Рё РЅРµС‚
 				CL_PAY SMALLINT,
 				CL_ACT SMALLINT,
 				KGS SMALLINT,
@@ -78,7 +78,7 @@ BEGIN
 				dbo.RegNodeTable ON RN_SYS_NAME = SYS_REG_NAME
 							AND DIS_NUM = RN_DISTR_NUM
 							AND DIS_COMP_NUM = RN_COMP_NUM
-			WHERE (DSS_REPORT = 1 OR RN_SERVICE = 0) AND CL_PSEDO LIKE '%приморавто%'
+			WHERE (DSS_REPORT = 1 OR RN_SERVICE = 0) AND CL_PSEDO LIKE '%РїСЂРёРјРѕСЂР°РІС‚Рѕ%'
 			GROUP BY COUR_NAME, TO_ID, CL_ID, CL_PSEDO, CT_NAME, CLT_ID, CLT_NAME
 
 		DECLARE TP CURSOR LOCAL FOR
@@ -469,12 +469,12 @@ BEGIN
 		DEALLOCATE TP
 
 		UPDATE t
-		SET KGS = 100 * (SELECT COUNT(*) FROM #salary b WHERE b.COUR_NAME = t.COUR_NAME AND CLT_NAME LIKE '%КГС%') / (SELECT COUNT(*) FROM #salary a WHERE a.COUR_NAME = t.COUR_NAME)
+		SET KGS = 100 * (SELECT COUNT(*) FROM #salary b WHERE b.COUR_NAME = t.COUR_NAME AND CLT_NAME LIKE '%РљР“РЎ%') / (SELECT COUNT(*) FROM #salary a WHERE a.COUR_NAME = t.COUR_NAME)
 		FROM #salary t
 
 		UPDATE #salary
 		SET COUR_MIN = NULL
-		WHERE KGS < 70 AND CLT_NAME = 'КГС корп.'
+		WHERE KGS < 70 AND CLT_NAME = 'РљР“РЎ РєРѕСЂРї.'
 
 		SELECT *
 		FROM #salary

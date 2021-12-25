@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 
 		SELECT
 			QUERY_DATE, SUPPORT_START, SUPPORT_FINISH, '' AS TPL,
-			'В ' + d.CLIENT AS CLIENT_HEADER, d.CLIENT AS CLIENT_FULL_NAME,
+			'Р’ ' + d.CLIENT AS CLIENT_HEADER, d.CLIENT AS CLIENT_FULL_NAME,
 			b.FULL_NAME AS VENDOR_SHORT, b.DIRECTOR AS VENDOR_DIRECTOR, b.OFFICIAL AS VENDOR_FULL, c.NAME AS NDS_DATA,
 			REVERSE(STUFF(REVERSE((
 				SELECT y.NAME + ', '
@@ -58,22 +58,22 @@ BEGIN
 				ORDER BY y.NAME FOR XML PATH('')
 			)), 1, 2, '')) AS SYSTEM_TYPES,
 			CASE
-				WHEN DELIVERY = 1 THEN 'допоставку экземпляров систем'
+				WHEN DELIVERY = 1 THEN 'РґРѕРїРѕСЃС‚Р°РІРєСѓ СЌРєР·РµРјРїР»СЏСЂРѕРІ СЃРёСЃС‚РµРј'
 				ELSE ''
 			END +
 			CASE
-				WHEN ACTUAL = 1 AND DELIVERY = 1 THEN ', актуализацию экземпляров систем'
-				WHEN ACTUAL = 1 AND DELIVERY = 0 THEN 'актуализацию экземпляров систем'
+				WHEN ACTUAL = 1 AND DELIVERY = 1 THEN ', Р°РєС‚СѓР°Р»РёР·Р°С†РёСЋ СЌРєР·РµРјРїР»СЏСЂРѕРІ СЃРёСЃС‚РµРј'
+				WHEN ACTUAL = 1 AND DELIVERY = 0 THEN 'Р°РєС‚СѓР°Р»РёР·Р°С†РёСЋ СЌРєР·РµРјРїР»СЏСЂРѕРІ СЃРёСЃС‚РµРј'
 				ELSE ''
 			END + 
 			CASE
-				WHEN EXCHANGE = 1 AND (DELIVERY = 1 OR ACTUAL = 1) THEN ', замену экземпляров систем'
-				WHEN EXCHANGE = 1 AND DELIVERY = 0 AND ACTUAL = 0 THEN 'замену экземпляров систем'
+				WHEN EXCHANGE = 1 AND (DELIVERY = 1 OR ACTUAL = 1) THEN ', Р·Р°РјРµРЅСѓ СЌРєР·РµРјРїР»СЏСЂРѕРІ СЃРёСЃС‚РµРј'
+				WHEN EXCHANGE = 1 AND DELIVERY = 0 AND ACTUAL = 0 THEN 'Р·Р°РјРµРЅСѓ СЌРєР·РµРјРїР»СЏСЂРѕРІ СЃРёСЃС‚РµРј'
 				ELSE ''
 			END + 
 			CASE
-				WHEN SUPPORT = 1 AND (ACTUAL = 1 OR EXCHANGE = 1 OR DELIVERY = 1) THEN ' и оказания информационных услуг'
-				WHEN SUPPORT = 1 AND ACTUAL = 0 AND EXCHANGE = 0 AND DELIVERY = 0 THEN 'оказания информационных услуг'
+				WHEN SUPPORT = 1 AND (ACTUAL = 1 OR EXCHANGE = 1 OR DELIVERY = 1) THEN ' Рё РѕРєР°Р·Р°РЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СѓСЃР»СѓРі'
+				WHEN SUPPORT = 1 AND ACTUAL = 0 AND EXCHANGE = 0 AND DELIVERY = 0 THEN 'РѕРєР°Р·Р°РЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… СѓСЃР»СѓРі'
 				ELSE ''
 			END AS DATA,
 			(

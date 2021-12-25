@@ -1,4 +1,4 @@
-USE [BuhDB]
+ï»¿USE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -103,29 +103,29 @@ BEGIN
 				WHEN @TYPE <> '1' THEN ''
 				ELSE
 					CASE @PSEDO 
-						WHEN 'ONLINE' THEN ' ÎÂÏ'
-						WHEN 'ONLINE2' THEN ' ÎÂÏÈ'
-						WHEN 'ONLINE2_CLIENT' THEN ' ÎÂÏÈ'
-						WHEN 'ONLINE3' THEN ' ÎÂÊ'
-						WHEN 'ONLINE3_CLIENT' THEN ' ÎÂÊ'
-						WHEN 'MOBILE' THEN ' Ìîáèëüíàÿ âåðñèÿ'
-						WHEN 'ONLINE_EXP' THEN ' ÎÂÏ'
-						WHEN 'ONLINE_EXP_CLIENT' THEN ' ÎÂÏ'
-						WHEN 'OVM_1' THEN ' ÎÂÌ (ÎÄ 1)'
-						WHEN 'OVM_1_CL' THEN ' ÎÂÌ (ÎÄ 1)'
-						WHEN 'OVM_2' THEN ' ÎÂÌ (ÎÄ 2)'
-						WHEN 'OVM_2_CL' THEN ' ÎÂÌ (ÎÄ 2)'
-						WHEN 'DEPO_ONLINE' THEN ' ÎÂÏ'
-						WHEN 'DEPO_ONLINE2' THEN ' ÎÂÏÈ'
-						WHEN 'DEPO_ONLINE2_CLIENT' THEN ' ÎÂÏÈ'
-						WHEN 'DEPO_ONLINE3' THEN ' ÎÂÊ'
-						WHEN 'DEPO_ONLINE3_CLIENT' THEN ' ÎÂÊ'
-						WHEN 'DEPO_ONLINE_EXP' THEN ' ÎÂÏ'
-						WHEN 'DEPO_ONLINE_EXP_CLIENT' THEN ' ÎÂÏ'
-						WHEN 'DEPO_OVM_1' THEN ' ÎÂÌ (ÎÄ 1)'
-						WHEN 'DEPO_OVM_1_CL' THEN ' ÎÂÌ (ÎÄ 1)'
-						WHEN 'DEPO_OVM_2' THEN ' ÎÂÌ (ÎÄ 2)'
-						WHEN 'DEPO_OVM_2_CL' THEN ' ÎÂÌ (ÎÄ 2)'
+						WHEN 'ONLINE' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'ONLINE2' THEN ' ÐžÐ’ÐŸÐ˜'
+						WHEN 'ONLINE2_CLIENT' THEN ' ÐžÐ’ÐŸÐ˜'
+						WHEN 'ONLINE3' THEN ' ÐžÐ’Ðš'
+						WHEN 'ONLINE3_CLIENT' THEN ' ÐžÐ’Ðš'
+						WHEN 'MOBILE' THEN ' ÐœÐ¾Ð±Ð¸Ð»ÑŒÐ½Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ'
+						WHEN 'ONLINE_EXP' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'ONLINE_EXP_CLIENT' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'OVM_1' THEN ' ÐžÐ’Ðœ (ÐžÐ” 1)'
+						WHEN 'OVM_1_CL' THEN ' ÐžÐ’Ðœ (ÐžÐ” 1)'
+						WHEN 'OVM_2' THEN ' ÐžÐ’Ðœ (ÐžÐ” 2)'
+						WHEN 'OVM_2_CL' THEN ' ÐžÐ’Ðœ (ÐžÐ” 2)'
+						WHEN 'DEPO_ONLINE' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'DEPO_ONLINE2' THEN ' ÐžÐ’ÐŸÐ˜'
+						WHEN 'DEPO_ONLINE2_CLIENT' THEN ' ÐžÐ’ÐŸÐ˜'
+						WHEN 'DEPO_ONLINE3' THEN ' ÐžÐ’Ðš'
+						WHEN 'DEPO_ONLINE3_CLIENT' THEN ' ÐžÐ’Ðš'
+						WHEN 'DEPO_ONLINE_EXP' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'DEPO_ONLINE_EXP_CLIENT' THEN ' ÐžÐ’ÐŸ'
+						WHEN 'DEPO_OVM_1' THEN ' ÐžÐ’Ðœ (ÐžÐ” 1)'
+						WHEN 'DEPO_OVM_1_CL' THEN ' ÐžÐ’Ðœ (ÐžÐ” 1)'
+						WHEN 'DEPO_OVM_2' THEN ' ÐžÐ’Ðœ (ÐžÐ” 2)'
+						WHEN 'DEPO_OVM_2_CL' THEN ' ÐžÐ’Ðœ (ÐžÐ” 2)'
 						ELSE ''
 					END
 				END */AS SystemName,
@@ -197,7 +197,7 @@ BEGIN
 						CASE
 							WHEN @PSEDO LIKE 'DEPO[_]%' THEN
 								CASE
-									WHEN SystemName = 'ÊîíñóëüòàíòÞðèñò' AND GETDATE() >= '20170601' AND GETDATE() < '20170701' THEN
+									WHEN SystemName = 'ÐšÐ¾Ð½ÑÑƒÐ»ÑŒÑ‚Ð°Ð½Ñ‚Ð®Ñ€Ð¸ÑÑ‚' AND GETDATE() >= '20170601' AND GETDATE() < '20170701' THEN
 										ROUND(4300 * @DCOEF, @DROUND)
 									WHEN SystemReg IN ('SKBO', 'SKUO', 'SBOO', 'SKJP') AND @TYPE = '5' THEN
 										ROUND(ROUND(CEILING(CEILING(SystemServicePrice * @DEPO)/10.0) * 10, -1) * 1.3 +

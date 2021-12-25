@@ -1,12 +1,12 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:		  Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[PRICE_ADD]
 	@pricename VARCHAR(50),

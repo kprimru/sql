@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_RECALC_BY_ACT]
 	@actid INT
@@ -61,7 +61,7 @@ BEGIN
 				WHERE	ACT_ID = @actid AND
 						ACT_ID_INVOICE IS NULL
 
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = @docstring + 'в„– ' + IN_PAY_NUM + ' РѕС‚ ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
 				SELECT
@@ -107,7 +107,7 @@ BEGIN
 									WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 									ELSE
 										(
-			/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+			/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 										FROM
 											dbo.ClientTable INNER JOIN
 											dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -156,7 +156,7 @@ BEGIN
 									WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 									ELSE
 										(
-			/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+			/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 										FROM
 											dbo.ClientTable INNER JOIN
 											dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -217,14 +217,14 @@ BEGIN
 
 		/*
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, @invid, 'INVOICE', 'Обновление строк с/ф по акту', INS_DATA
+			SELECT INS_ID_CLIENT, @invid, 'INVOICE', 'РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚СЂРѕРє СЃ/С„ РїРѕ Р°РєС‚Сѓ', INS_DATA
 			FROM dbo.InvoiceProtocolView
 			WHERE INS_ID = @invid
 		*/
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Обновление строк с/ф по акту',
+				INS_ID_CLIENT, INS_ID, 'INVOICE', 'РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚СЂРѕРє СЃ/С„ РїРѕ Р°РєС‚Сѓ',
 				CONVERT(VARCHAR(20), PR_DATE, 104) +
 					':' + DIS_STR + ' - ' + dbo.MoneyFormat(INR_SALL)
 			FROM

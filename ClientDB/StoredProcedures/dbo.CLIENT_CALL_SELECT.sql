@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,13 +32,13 @@ BEGIN
 				ELSE 1
 			END) AS CT_TRUST_MARKER,
 			CASE CT_TRUST
-				WHEN 1 THEN 'Достоверен'
+				WHEN 1 THEN 'Р”РѕСЃС‚РѕРІРµСЂРµРЅ'
 				WHEN 0 THEN
 					CASE
-						WHEN CT_MAKE IS NULL THEN 'Не достоверен'
-						ELSE 'Не достоверен (исправлено)'
+						WHEN CT_MAKE IS NULL THEN 'РќРµ РґРѕСЃС‚РѕРІРµСЂРµРЅ'
+						ELSE 'РќРµ РґРѕСЃС‚РѕРІРµСЂРµРЅ (РёСЃРїСЂР°РІР»РµРЅРѕ)'
 					END
-				ELSE 'Не опрашивался'
+				ELSE 'РќРµ РѕРїСЂР°С€РёРІР°Р»СЃСЏ'
 			END AS CT_TRUST,
 			STT_NAME, STT_RESULT, CS_NOTE,
 			CT_MAKE_USER + ' ' + CONVERT(VARCHAR(20), CT_MAKE, 104) + ' ' + CONVERT(VARCHAR(20), CT_MAKE, 108) AS CT_MAKE_DATA,

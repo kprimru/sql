@@ -1,4 +1,4 @@
-USE [SaleDB]
+ÔªøUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -49,11 +49,11 @@ BEGIN
 
 		IF (SELECT Count(*) FROM @TStatuses) = 1 BEGIN
 			IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_NEW)
-				SET @FileName = '—ÔËÒÓÍ NEW –»÷ 020 Á‡ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = '–°–ø–∏—Å–æ–∫ NEW –†–ò–¶ 020 –∑–∞ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TAG)
-				SET @FileName = '—ÔËÒÓÍ TAG –»÷ 020 Á‡ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = '–°–ø–∏—Å–æ–∫ TAG –†–ò–¶ 020 –∑–∞ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TERMINATION)
-				SET @FileName = '—ÔËÒÓÍ OUT –»÷ 020 Á‡ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = '–°–ø–∏—Å–æ–∫ OUT –†–ò–¶ 020 –∑–∞ ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE
 				SET @FileName = ''
 		END

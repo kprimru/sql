@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,9 +35,9 @@ BEGIN
 			CD_ID,
 			b.ClientID, b.ClientFullName, CD_DATE,
 			CASE CD_TYPE
-				WHEN 1 THEN 'Откл.'
-				WHEN 2 THEN 'Подкл.'
-				ELSE 'Неизв.'
+				WHEN 1 THEN 'РћС‚РєР».'
+				WHEN 2 THEN 'РџРѕРґРєР».'
+				ELSE 'РќРµРёР·РІ.'
 			END AS CD_TYPE_STR,
 			DR_ID, DR_NAME, CD_NOTE,
 			CASE CD_TYPE WHEN 1 THEN
@@ -52,7 +52,7 @@ BEGIN
 									INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON RPR_ID_HOST = HostID
 																				AND RPR_DISTR = DISTR
 																				AND RPR_COMP = COMP
-								WHERE  ID_CLIENT = b.ClientID AND RPR_OPER IN ('Отключение', 'Сопровождение отключено')
+								WHERE  ID_CLIENT = b.ClientID AND RPR_OPER IN ('РћС‚РєР»СЋС‡РµРЅРёРµ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ')
 
 								UNION ALL
 
@@ -63,7 +63,7 @@ BEGIN
 																				AND x.DISTR = z.DISTR
 																				AND x.COMP = z.COMP
 								WHERE ID_CLIENT = b.ClientID
-									AND COMMENT = 'Отключение'
+									AND COMMENT = 'РћС‚РєР»СЋС‡РµРЅРёРµ'
 							) AS o_O
 					)
 				)

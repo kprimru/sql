@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -19,7 +19,7 @@ BEGIN
 	SELECT	@VKSP_START = Ric.VKSPGet(dbo.PERIOD_DELTA(@PR_ID, -12), @PR_ID),
 			@VKSP_END	= Ric.VKSPGet(@PR_ID, @PR_ID)
 
-	SELECT	@RES = 100 * (@VKSP_END - @VKSP_START - 0/*?????? что тут ??????*/) / @VKSP_START
+	SELECT	@RES = 100 * (@VKSP_END - @VKSP_START - 0/*?????? С‡С‚Рѕ С‚СѓС‚ ??????*/) / @VKSP_START
 
 	RETURN @RES
 END

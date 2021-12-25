@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[REPORT_SYSTEM_SUBHOST_LIST]
 	@statuslist VARCHAR(MAX),
@@ -50,7 +50,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_status
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@statuslist, ',')
 		END
@@ -73,7 +73,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_system
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemlist, ',')
 		END
@@ -96,7 +96,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
@@ -118,7 +118,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
@@ -141,12 +141,12 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
 
-	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)
+	  --РЁР°Рі 1. РЎРѕР·РґР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ СЃРѕ РІСЃРµРјРё РїРѕР»СЏРјРё (РЅР°РґРѕ С‡С‚РѕР±С‹ Р±С‹Р»Рё РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РїРѕСЂСЏРґРєСѓ)
 		DECLARE @sql VARCHAR(MAX)
 
 		IF OBJECT_ID('tempdb..#keys') IS NOT NULL
@@ -214,13 +214,13 @@ BEGIN
 			SET SH_ID = @shid
 
 			INSERT INTO #final(IS_GROUP, SYS_NAME)
-				SELECT 1, @shname + '    месяц     ' + PR_NAME
+				SELECT 1, @shname + '    РјРµСЃСЏС†     ' + PR_NAME
 				FROM dbo.PeriodTable
 				WHERE PR_ID = @period
 
 			SET @sql = '
 			INSERT INTO #final
-			SELECT 0, KPVT.SYS_NAME AS [Система],'
+			SELECT 0, KPVT.SYS_NAME AS [РЎРёСЃС‚РµРјР°],'
 
 
 			SELECT @sql = @sql + ' KPVT.[' + CONVERT(VARCHAR, KEY_ID)  + '],'

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + DATENAME(WEEKDAY, DATE_S) + ')' AS [День],
+			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + DATENAME(WEEKDAY, DATE_S) + ')' AS [Р”РµРЅСЊ],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -34,7 +34,7 @@ BEGIN
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
 					AND b.SubhostName = ''
-			) AS [Базис],
+			) AS [Р‘Р°Р·РёСЃ],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -42,8 +42,8 @@ BEGIN
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-					AND b.SubhostName = 'Н1'
-			) AS [Подхост|Находка],
+					AND b.SubhostName = 'Рќ1'
+			) AS [РџРѕРґС…РѕСЃС‚|РќР°С…РѕРґРєР°],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -51,8 +51,8 @@ BEGIN
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-					AND b.SubhostName = 'У1'
-			) AS [Подхост|Уссурийск],
+					AND b.SubhostName = 'РЈ1'
+			) AS [РџРѕРґС…РѕСЃС‚|РЈСЃСЃСѓСЂРёР№СЃРє],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -60,8 +60,8 @@ BEGIN
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-					AND b.SubhostName = 'М'
-			) AS [Подхост|Артем],
+					AND b.SubhostName = 'Рњ'
+			) AS [РџРѕРґС…РѕСЃС‚|РђСЂС‚РµРј],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -69,8 +69,8 @@ BEGIN
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-					AND b.SubhostName = 'Л1'
-			) AS [Подхост|Славянка],
+					AND b.SubhostName = 'Р›1'
+			) AS [РџРѕРґС…РѕСЃС‚|РЎР»Р°РІСЏРЅРєР°],
 			(
 				SELECT COUNT(*)
 				FROM
@@ -78,7 +78,7 @@ BEGIN
 					--INNER JOIN dbo.SystemTable c ON a.SYS = c.SystemNumber
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.HostID = b.HostID AND a.COMP = b.CompNumber
 				WHERE a.DATE_S = z.DATE_S
-			) AS [Всего]
+			) AS [Р’СЃРµРіРѕ]
 		FROM
 			(
 				SELECT DISTINCT DATE_S

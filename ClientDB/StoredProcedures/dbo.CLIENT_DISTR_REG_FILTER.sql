@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 		INTO #oper
 		FROM
 			dbo.RegProtocol
-		WHERE RPR_OPER IN ('ÕŒ¬¿ﬂ', '»ÁÏ. Ô‡‡Ï.', '¬ÍÎ˛˜ÂÌËÂ')
+		WHERE RPR_OPER IN ('–ù–û–í–ê–Ø', '–ò–∑–º. –ø–∞—Ä–∞–º.', '–í–∫–ª—é—á–µ–Ω–∏–µ')
 			AND RPR_DATE >= DATEADD(MONTH, -2, GETDATE())
 
 
@@ -44,7 +44,7 @@ BEGIN
 					#oper a
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON RPR_ID_HOST = HostID AND RPR_DISTR = DISTR AND RPR_COMP = COMP
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON ClientID = ID_CLIENT
-				WHERE RPR_OPER = '¬ÍÎ˛˜ÂÌËÂ'
+				WHERE RPR_OPER = '–í–∫–ª—é—á–µ–Ω–∏–µ'
 
 				UNION ALL
 
@@ -55,7 +55,7 @@ BEGIN
 					INNER JOIN Reg.RegNodeSearchView y WITH(NOEXPAND) ON z.Complect = y.Complect
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON b.HostID = y.HostID AND b.DISTR = y.DistrNumber AND b.COMP = y.CompNumber
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON ClientID = ID_CLIENT
-				WHERE RPR_OPER = 'ÕŒ¬¿ﬂ'
+				WHERE RPR_OPER = '–ù–û–í–ê–Ø'
 
 				UNION ALL
 
@@ -69,7 +69,7 @@ BEGIN
 						WHERE y.ID_HOST = a.RPR_ID_HOST AND y.DISTR = a.RPR_DISTR AND y.COMP = a.RPR_COMP
 							AND DATEADD(MINUTE, 1, z.DATE) < a.RPR_DATE
 						ORDER BY z.DATE DESC
-					), '')	+ ' Ì‡ ' +
+					), '')	+ ' –Ω–∞ ' +
 					ISNULL((
 						SELECT TOP 1 z.SystemShortName + ' ' + z.NT_SHORT
 						FROM
@@ -83,7 +83,7 @@ BEGIN
 					#oper a
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON RPR_ID_HOST = HostID AND RPR_DISTR = DISTR AND RPR_COMP = COMP
 					INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON ClientID = ID_CLIENT
-				WHERE RPR_OPER = '»ÁÏ. Ô‡‡Ï.'
+				WHERE RPR_OPER = '–ò–∑–º. –ø–∞—Ä–∞–º.'
 			) AS o_O
 		WHERE ManagerID = @MANAGER OR @MANAGER IS NULL
 		ORDER BY DATE DESC, ManagerName, ServiceName, ClientFullName

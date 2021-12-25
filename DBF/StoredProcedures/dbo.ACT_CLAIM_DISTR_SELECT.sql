@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -74,8 +74,8 @@ BEGIN
 		SELECT
 			CL_PSEDO, DIS_STR, CD_ID_DISTR, CD_ID_CLIENT, PR_DATE, PR_ID,
 			BD_ID, BD_PRICE, BD_TAX_PRICE, BD_TOTAL_PRICE, BD_UNPAY, CO_ID, CO_NUM, CO_END_DATE, DF_END,
-			ACT_ERROR, CASE WHEN ISNULL(ACT_ERROR, '') <> 'Акт уже расчитан' THEN 1 ELSE 0 END AS CAC_CALC,
-			CASE WHEN ISNULL(ACT_ERROR, '') <> 'Акт уже расчитан' THEN 1 ELSE 0 END AS CAN_CALC,
+			ACT_ERROR, CASE WHEN ISNULL(ACT_ERROR, '') <> 'РђРєС‚ СѓР¶Рµ СЂР°СЃС‡РёС‚Р°РЅ' THEN 1 ELSE 0 END AS CAC_CALC,
+			CASE WHEN ISNULL(ACT_ERROR, '') <> 'РђРєС‚ СѓР¶Рµ СЂР°СЃС‡РёС‚Р°РЅ' THEN 1 ELSE 0 END AS CAN_CALC,
 			DIS_NUM, SYS_REG_NAME, DIS_COMP_NUM
 		FROM
 			(
@@ -93,14 +93,14 @@ BEGIN
 										AND a.DIS_NUM = z.DIS_NUM
 										AND a.DIS_COMP_NUM = z.DIS_COMP_NUM
 										AND a.PR_DATE = z.PR_DATE
-								) THEN 'Акт уже расчитан'
+								) THEN 'РђРєС‚ СѓР¶Рµ СЂР°СЃС‡РёС‚Р°РЅ'
 						WHEN
 							NOT EXISTS
 								(
 									SELECT *
 									FROM dbo.DistrDocumentView
 									WHERE DIS_ID = CD_ID_DISTR AND DOC_PSEDO = 'ACT' AND DD_PRINT = 1
-								) THEN 'В фин.установках запрет на формирование актов'
+								) THEN 'Р’ С„РёРЅ.СѓСЃС‚Р°РЅРѕРІРєР°С… Р·Р°РїСЂРµС‚ РЅР° С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ Р°РєС‚РѕРІ'
 						WHEN
 							(
 								SELECT RN_SERVICE
@@ -108,9 +108,9 @@ BEGIN
 								WHERE RN_DISTR_NUM = DIS_NUM
 									AND RN_COMP_NUM = DIS_COMP_NUM
 									AND RN_SYS_NAME = SYS_REG_NAME
-							) <> 0 THEN 'Дистрибутив отключен от сопровождения'
-						WHEN ISNULL(DF_END, dbo.DateOf(DATEADD(DAY, 1, GETDATE()))) < dbo.DateOf(GETDATE()) THEN 'Просрочены фин.установки'
-						WHEN CONFIRM = 0 THEN 'Не подтверждена заявка'
+							) <> 0 THEN 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РѕС‚РєР»СЋС‡РµРЅ РѕС‚ СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ'
+						WHEN ISNULL(DF_END, dbo.DateOf(DATEADD(DAY, 1, GETDATE()))) < dbo.DateOf(GETDATE()) THEN 'РџСЂРѕСЃСЂРѕС‡РµРЅС‹ С„РёРЅ.СѓСЃС‚Р°РЅРѕРІРєРё'
+						WHEN CONFIRM = 0 THEN 'РќРµ РїРѕРґС‚РІРµСЂР¶РґРµРЅР° Р·Р°СЏРІРєР°'
 						ELSE ''
 					END AS ACT_ERROR
 				FROM

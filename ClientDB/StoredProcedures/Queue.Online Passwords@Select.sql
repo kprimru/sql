@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
             FROM dbo.ClientDistrView a WITH(NOEXPAND)
             WHERE ID = @ID;
 
-        -- ToDo - хардкод
+        -- ToDo - С…Р°СЂРґРєРѕРґ
         IF @Host_Id = 1
             SET @Login = Cast(@Distr AS VarChar(20)) + CASE WHEN @Comp = 1 THEN '' ELSE '_' + Cast(@Comp AS VarChar(20)) END;
 

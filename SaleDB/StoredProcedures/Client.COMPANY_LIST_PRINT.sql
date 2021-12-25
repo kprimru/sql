@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,7 +47,7 @@ BEGIN
 				(
 					SELECT
 						FIO + ISNULL('/' + x.NAME, '') + CASE WHEN ISNULL(NOTE, '') <> '' THEN ' (' + NOTE + ')' ELSE '' END +
-						'  телефон: ' +
+						'  С‚РµР»РµС„РѕРЅ: ' +
 						ISNULL(REVERSE(STUFF(REVERSE(
 							(
 								SELECT LTRIM(RTRIM(y.PHONE)) + ', '

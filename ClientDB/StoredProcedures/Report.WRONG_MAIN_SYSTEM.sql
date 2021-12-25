@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -33,12 +33,12 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName = 'RBAS020'
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT NOT IN ('ОВМ-Ф (1;2)', 'ОВМ-Ф (0;1)')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
+			AND NT_SHORT NOT IN ('РћР’Рњ-Р¤ (1;2)', 'РћР’Рњ-Р¤ (0;1)')
 			AND a.Complect IS NOT NULL
 			AND NOT EXISTS
 				(
@@ -68,7 +68,7 @@ BEGIN
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName = 'EXP'
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND a.Complect IS NOT NULL
 			AND NOT EXISTS
 				(
@@ -82,7 +82,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -90,12 +90,12 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('KDG', 'RBAS020')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT NOT IN ('ОВМ-Ф (1;2)', 'ОВМ-Ф (0;1)')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
+			AND NT_SHORT NOT IN ('РћР’Рњ-Р¤ (1;2)', 'РћР’Рњ-Р¤ (0;1)')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -114,7 +114,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -122,12 +122,12 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('RLAW020')
-			AND NT_SHORT NOT IN ('ОВМ-Ф (1;2)', 'ОВМ-Ф (0;1)')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND NT_SHORT NOT IN ('РћР’Рњ-Р¤ (1;2)', 'РћР’Рњ-Р¤ (0;1)')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -143,12 +143,12 @@ BEGIN
 				)
 
 
-	------------------------ВОТ ТУТ МОЙ КОД, ЕСЛИ ЧТО КОММЕНТИТЬ------------------------------------------------------------
+	------------------------Р’РћРў РўРЈРў РњРћР™ РљРћР”, Р•РЎР›Р Р§РўРћ РљРћРњРњР•РќРўРРўР¬------------------------------------------------------------
 
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -156,14 +156,14 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('PAS', 'FIN')
-			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255',
-								'сеть 150', 'сеть 100', 'сеть 5',
-								'сеть 250', 'сеть 200')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND NT_SHORT IN (	'СЃРµС‚СЊ 50', '1/СЃ', 'СЃРµС‚СЊ 255',
+								'СЃРµС‚СЊ 150', 'СЃРµС‚СЊ 100', 'СЃРµС‚СЊ 5',
+								'СЃРµС‚СЊ 250', 'СЃРµС‚СЊ 200')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -177,7 +177,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -185,14 +185,14 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND (SystemBaseName = 'PAS')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT IN (	'сеть 50', '1/с', 'сеть 255',
-								'сеть 150', 'сеть 100', 'сеть 5',
-								'сеть 250', 'сеть 200')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
+			AND NT_SHORT IN (	'СЃРµС‚СЊ 50', '1/СЃ', 'СЃРµС‚СЊ 255',
+								'СЃРµС‚СЊ 150', 'СЃРµС‚СЊ 100', 'СЃРµС‚СЊ 5',
+								'СЃРµС‚СЊ 250', 'СЃРµС‚СЊ 200')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -205,7 +205,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -213,14 +213,14 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND (SystemBaseName = 'PAS')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT IN ('лок', 'флеш', 'ОВК',
-							'ОВК-Ф', 'ОВМ-Ф (1;2)',
-							'ОВМ-Ф (0;1)', 'ОВМ-Ф (1;0)')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
+			AND NT_SHORT IN ('Р»РѕРє', 'С„Р»РµС€', 'РћР’Рљ',
+							'РћР’Рљ-Р¤', 'РћР’Рњ-Р¤ (1;2)',
+							'РћР’Рњ-Р¤ (0;1)', 'РћР’Рњ-Р¤ (1;0)')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -233,7 +233,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -241,12 +241,12 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND (SystemBaseName = 'FIN')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
-			AND NT_SHORT IN ('ОВМ-Ф (1;2)', 'ОВМ-Ф (0;1)', 'ОВМ-Ф (1;0)')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
+			AND NT_SHORT IN ('РћР’Рњ-Р¤ (1;2)', 'РћР’Рњ-Р¤ (0;1)', 'РћР’Рњ-Р¤ (1;0)')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -259,7 +259,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -267,12 +267,12 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('RLAW020')
-			AND NT_SHORT IN ('ОВК-Ф', 'ОВК', 'лок', 'флеш')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND NT_SHORT IN ('РћР’Рљ-Р¤', 'РћР’Рљ', 'Р»РѕРє', 'С„Р»РµС€')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(
@@ -288,7 +288,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DistrStr AS 'Дистрибутив', Comment AS 'Клиент', SST_SHORT AS 'Тип', NT_SHORT AS 'Сеть',
+			DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', Comment AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї', NT_SHORT AS 'РЎРµС‚СЊ',
 			(
 				SELECT TOP 1 b.DistrStr
 				FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
@@ -296,11 +296,11 @@ BEGIN
 					AND b.DS_REG = 0
 					AND b.DistrStr <> a.DistrStr
 				ORDER BY b.SystemOrder
-			) AS 'Основная система'
+			) AS 'РћСЃРЅРѕРІРЅР°СЏ СЃРёСЃС‚РµРјР°'
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 		WHERE DS_REG = 0
 			AND SystemBaseName IN ('RBAS020')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND a.Complect IS NOT NULL
 			AND EXISTS
 				(

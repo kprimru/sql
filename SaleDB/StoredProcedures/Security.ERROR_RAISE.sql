@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -19,7 +19,7 @@ BEGIN
 
 	DECLARE @TXT NVARCHAR(3000)
 
-	SET @TXT = 'Ошибка в процедуре "' + ISNULL(@PROC, '') + '". Текст ошибки: "' + ISNULL(@MSG, '') + '"'
+	SET @TXT = 'РћС€РёР±РєР° РІ РїСЂРѕС†РµРґСѓСЂРµ "' + ISNULL(@PROC, '') + '". РўРµРєСЃС‚ РѕС€РёР±РєРё: "' + ISNULL(@MSG, '') + '"'
 
 	RAISERROR(@TXT, @SEV, @STATE)
 END

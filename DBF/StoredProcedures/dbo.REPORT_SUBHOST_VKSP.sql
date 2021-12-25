@@ -1,4 +1,4 @@
-USE [DBF]
+ï»¿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -45,13 +45,13 @@ BEGIN
 					WHEN 0 THEN ''
 					WHEN 1 THEN
 						CASE REG_PROBLEM
-							WHEN 1 THEN ' Ïðîáë.'
+							WHEN 1 THEN ' ÐŸÑ€Ð¾Ð±Ð».'
 							ELSE ''
 						END
 					WHEN 2 THEN
 						CASE REG_PROBLEM
-							WHEN 1 THEN ' ÄÇ2'
-							ELSE ' ÄÄ2'
+							WHEN 1 THEN ' Ð”Ð—2'
+							ELSE ' Ð”Ð”2'
 						END
 				END AS SYS_SHORT_NAME,
 			SN_NAME, SW_WEIGHT * SNCC_WEIGHT AS WEIGHT_ONE, CNT, SW_WEIGHT * SNCC_WEIGHT * CNT AS WEIGHT_SUM

@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,10 +29,10 @@ BEGIN
 		WHERE ACT_ID = @ACT
 
 		SELECT @TXT =
-			'Акт от ' + CONVERT(VARCHAR(20), ACT_DATE, 104) +
+			'РђРєС‚ РѕС‚ ' + CONVERT(VARCHAR(20), ACT_DATE, 104) +
 			CASE
 				WHEN ACT_ID_INVOICE IS NULL THEN ''
-				ELSE ', сч/ф №' +
+				ELSE ', СЃС‡/С„ в„–' +
 					(
 						SELECT CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
 						FROM dbo.InvoiceSaleTable
@@ -41,12 +41,12 @@ BEGIN
 			END +
 			CASE
 				WHEN ACT_SIGN IS NULL THEN ''
-				ELSE ', подписан ' + CONVERT(VARCHAR(20), ACT_SIGN, 104)
+				ELSE ', РїРѕРґРїРёСЃР°РЅ ' + CONVERT(VARCHAR(20), ACT_SIGN, 104)
 			END +
 			CASE ACT_PRINT
-				WHEN 1 THEN ', Напечатан'
+				WHEN 1 THEN ', РќР°РїРµС‡Р°С‚Р°РЅ'
 				ELSE ''
-			END + ', сумма: ' +
+			END + ', СЃСѓРјРјР°: ' +
 			(
 				SELECT dbo.MoneyFormat(SUM(AD_TOTAL_PRICE))
 				FROM dbo.ActDistrTable

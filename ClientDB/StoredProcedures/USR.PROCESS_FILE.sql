@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -170,7 +170,7 @@ BEGIN
 		);
 
 		IF @FileName NOT LIKE 'CONS#%[_]%.usr' BEGIN
-			SET @res = 'Некорректное имя файла  (' + ISNULL(@FileName, '') + ')';
+			SET @res = 'РќРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РёРјСЏ С„Р°Р№Р»Р°  (' + ISNULL(@FileName, '') + ')';
 			SET @resstatus = 3;
 
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -194,7 +194,7 @@ BEGIN
 			c.value('(@format)[1]',			'Int')			AS Format
 		FROM @xml.nodes('/user_info[1]/package[1]/*') AS a(c);
 
-		-- пытаемся определить основную систему по названию файла
+		-- РїС‹С‚Р°РµРјСЃСЏ РѕРїСЂРµРґРµР»РёС‚СЊ РѕСЃРЅРѕРІРЅСѓСЋ СЃРёСЃС‚РµРјСѓ РїРѕ РЅР°Р·РІР°РЅРёСЋ С„Р°Р№Р»Р°
 		SELECT TOP 1
 			@systemnumber	= RIGHT(PackageName, LEN(PackageName) - CHARINDEX('_', PackageName)),
 			@systemname		= LEFT(PackageName, CHARINDEX('_', PackageName) - 1),
@@ -291,7 +291,7 @@ BEGIN
 				OR
 				@Complect_Client = @Client_Id
 			BEGIN
-				SET @res = 'Файл уже есть в базе. Пропущен. (' + ISNULL(CONVERT(VARCHAR(20), @Client_Id), 'NULL') + ')';
+				SET @res = 'Р¤Р°Р№Р» СѓР¶Рµ РµСЃС‚СЊ РІ Р±Р°Р·Рµ. РџСЂРѕРїСѓС‰РµРЅ. (' + ISNULL(CONVERT(VARCHAR(20), @Client_Id), 'NULL') + ')';
 				SET @resstatus = 1;
 			END
 			ELSE
@@ -301,7 +301,7 @@ BEGIN
 				SET UD_ID_CLIENT = @Client_Id
 				WHERE UD_ID = @Complect_Id;
 
-				SET @res = 'Файл уже есть в базе. Изменен клиент.  (' + ISNULL(CONVERT(VARCHAR(20), @Client_Id), 'NULL') + ')';
+				SET @res = 'Р¤Р°Р№Р» СѓР¶Рµ РµСЃС‚СЊ РІ Р±Р°Р·Рµ. РР·РјРµРЅРµРЅ РєР»РёРµРЅС‚.  (' + ISNULL(CONVERT(VARCHAR(20), @Client_Id), 'NULL') + ')';
 				SET @resstatus = 1;
 			END;
 
@@ -332,7 +332,7 @@ BEGIN
 					AND UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 			)
 		BEGIN
-			SET @res = 'Комплект не нуждается в контроле';
+			SET @res = 'РљРѕРјРїР»РµРєС‚ РЅРµ РЅСѓР¶РґР°РµС‚СЃСЏ РІ РєРѕРЅС‚СЂРѕР»Рµ';
 			SET @resstatus = 1;
 
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -343,9 +343,9 @@ BEGIN
 		IF @Complect_Client <> @Client_Id OR @Complect_Active = 0
 		BEGIN
 			IF @Complect_Client <> @Client_Id
-				SET @res = @res + 'Изменен клиент'
+				SET @res = @res + 'РР·РјРµРЅРµРЅ РєР»РёРµРЅС‚'
 			IF @Complect_Active = 0
-				SET @res = @res + 'Изменен признак активности'
+				SET @res = @res + 'РР·РјРµРЅРµРЅ РїСЂРёР·РЅР°Рє Р°РєС‚РёРІРЅРѕСЃС‚Рё'
 
 			UPDATE USR.USRData
 			SET UD_ID_CLIENT	= @Client_Id,
@@ -510,7 +510,7 @@ BEGIN
 
 		IF (SELECT FormatVersion FROM @Usr) = '1'
 		BEGIN
-			SET @res = @res + 'Ошибка. Старый формат файла. Обработка прервана.';
+			SET @res = @res + 'РћС€РёР±РєР°. РЎС‚Р°СЂС‹Р№ С„РѕСЂРјР°С‚ С„Р°Р№Р»Р°. РћР±СЂР°Р±РѕС‚РєР° РїСЂРµСЂРІР°РЅР°.';
 			SET @resstatus = 3;
 
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -521,7 +521,7 @@ BEGIN
 		IF (@ROBOT = 3)
 			AND ((SELECT USRFileKind FROM @usr) <> 'K')
 		BEGIN
-			SET @res = 'USR-файл сформирован не по ключу';
+			SET @res = 'USR-С„Р°Р№Р» СЃС„РѕСЂРјРёСЂРѕРІР°РЅ РЅРµ РїРѕ РєР»СЋС‡Сѓ';
 			SET @resstatus = 1;
 
 			EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -625,7 +625,7 @@ BEGIN
 				ORDER BY a.SystemOrder;
 			END;
 
-			SET @res = @res + 'Предупреждение. Не найден клиент (' + ISNULL(@ClientName, '') + ')';
+			SET @res = @res + 'РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ. РќРµ РЅР°Р№РґРµРЅ РєР»РёРµРЅС‚ (' + ISNULL(@ClientName, '') + ')';
 			SET @resstatus = 2;
 		END;
 
@@ -695,7 +695,7 @@ BEGIN
 
 		IF NOT EXISTS(SELECT * FROM @Update)
 		BEGIN
-			SET @res = @res + 'Предупреждение. Отсутствует информация о пополнении. ';
+			SET @res = @res + 'РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ. РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РїРѕРїРѕР»РЅРµРЅРёРё. ';
 			SET @resstatus = 2;
 		END
 
@@ -712,7 +712,7 @@ BEGIN
 					)
 			)
 		BEGIN
-			SET @res = @res + ' Неизвестная система: ';
+			SET @res = @res + ' РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРёСЃС‚РµРјР°: ';
 
 			SELECT @res = @res + PackageName + ' '
 			FROM @package
@@ -744,7 +744,7 @@ BEGIN
 					)
 			)
 		BEGIN
-			SET @res = @res + ' Неизвестный информационный банк: ';
+			SET @res = @res + ' РќРµРёР·РІРµСЃС‚РЅС‹Р№ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹Р№ Р±Р°РЅРє: ';
 
 			SELECT @res = @res + DirectoryName + ' '
 			FROM @ib

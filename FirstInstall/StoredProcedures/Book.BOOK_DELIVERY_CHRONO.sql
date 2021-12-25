@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -64,7 +64,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'BOOK_DELIVERY', @BD_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'BOOK_DELIVERY', 'Хронологическое изменение', @BD_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'BOOK_DELIVERY', 'РҐСЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРµ РёР·РјРµРЅРµРЅРёРµ', @BD_ID_MASTER, @OLD, @NEW
 
 END
 

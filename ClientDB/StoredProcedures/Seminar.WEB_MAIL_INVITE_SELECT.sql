@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,9 +32,9 @@ BEGIN
         SELECT
 			P.[ID], P.[PSEDO],
 			P.[EMAIL],
-			'Çàïèñü íà ' + T.[Name] AS SUBJ,
+			'Ð—Ð°Ð¿Ð¸ÑÑŒ Ð½Ð° ' + T.[Name] AS SUBJ,
 			'no-reply@kprim.ru' AS FROM_ADDRESS,
-			'ÎÎÎ Áàçèñ' AS FROM_NAME,
+			'ÐžÐžÐž Ð‘Ð°Ð·Ð¸Ñ' AS FROM_NAME,
 			[Seminar].[Template@Get](P.[ID], 'INVITE') AS MAIL_BODY
 		FROM [Seminar].[Personal]               AS P
 		INNER JOIN [Seminar].[Schedule]         AS S ON S.[ID] = P.[ID_SCHEDULE]
@@ -44,14 +44,14 @@ BEGIN
 		    AND P.[EMAIL] IS NOT NULL
 			AND P.[ID_STATUS] = @Status_Id
 			AND P.[STATUS] = 1
-			AND T.[Code] = 'SEMINAR' -- ToDo äîëæíî íàñòðàèâàòüñÿ
+			AND T.[Code] = 'SEMINAR' -- ToDo Ð´Ð¾Ð»Ð¶Ð½Ð¾ Ð½Ð°ÑÑ‚Ñ€Ð°Ð¸Ð²Ð°Ñ‚ÑŒÑÑ
 			AND
 				(
 					P.ID = @ID
 					OR
 					@ID IS NULL
 					AND GETDATE() > S.[INVITE_DATE]
-					-- ÷òîáû íå îòïðàâëÿòü óâåäîìëåíèÿ ïî óæå ïðîøåäøèì ñåìèíàðàì
+					-- Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð½Ðµ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÑÑ‚ÑŒ ÑƒÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ Ð¿Ð¾ ÑƒÐ¶Ðµ Ð¿Ñ€Ð¾ÑˆÐµÐ´ÑˆÐ¸Ð¼ ÑÐµÐ¼Ð¸Ð½Ð°Ñ€Ð°Ð¼
 					AND S.[DATE] > GETDATE()
 					AND P.[CONFIRM_STATUS] = 1
 					AND NOT EXISTS

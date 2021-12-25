@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -60,7 +60,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'PERSONAL_TYPE', @PT_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'PERSONAL_TYPE', 'Хронологическое изменение', @PT_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'PERSONAL_TYPE', 'РҐСЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРµ РёР·РјРµРЅРµРЅРёРµ', @PT_ID_MASTER, @OLD, @NEW
 
 END
 

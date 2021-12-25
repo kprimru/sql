@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -45,13 +45,13 @@ BEGIN
 					AND y.RESULT = 1
 			) AS RIGHT_CNT,
 			CASE
-				WHEN FINISH IS NULL THEN 'Досдать'
+				WHEN FINISH IS NULL THEN 'Р”РѕСЃРґР°С‚СЊ'
 				ELSE
 					CASE ISNULL((SELECT RESULT FROM Subhost.CheckTest z WHERE z.ID_TEST = a.ID), 200)
-						WHEN 200 THEN 'Не проверен'
-						WHEN 0 THEN 'Не сдан'
-						WHEN 1 THEN 'Сдан'
-						ELSE 'Неизвестно'
+						WHEN 200 THEN 'РќРµ РїСЂРѕРІРµСЂРµРЅ'
+						WHEN 0 THEN 'РќРµ СЃРґР°РЅ'
+						WHEN 1 THEN 'РЎРґР°РЅ'
+						ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 					END
 			END AS RES,
 			(

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 			[dbo].[ClientList@Get?Write]()
 			INNER JOIN dbo.ClaimTable ON CLM_ID_CLIENT = WCL_ID
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = CLM_ID_CLIENT
-		WHERE (NOT CLM_STATUS IN  ('Отработана', 'Отклонена ответственным', 'Отменена', 'Отклонена', 'Выполнено успешно'))
+		WHERE (NOT CLM_STATUS IN  ('РћС‚СЂР°Р±РѕС‚Р°РЅР°', 'РћС‚РєР»РѕРЅРµРЅР° РѕС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Рј', 'РћС‚РјРµРЅРµРЅР°', 'РћС‚РєР»РѕРЅРµРЅР°', 'Р’С‹РїРѕР»РЅРµРЅРѕ СѓСЃРїРµС€РЅРѕ'))
 			AND (IS_MEMBER('rl_tech_warning') = 1 OR IS_SRVROLEMEMBER('sysadmin') = 1)
 		ORDER BY CLM_DATE DESC
 

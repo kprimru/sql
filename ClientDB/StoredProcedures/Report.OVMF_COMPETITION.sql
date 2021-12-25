@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,18 +25,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			[¹ â ãðóïïå] = Row_Number() OVER(PARTITION BY IsNull(C.ServiceName, R.SubhostName) ORDER BY IsNull(C.ClientFullName, R.Comment)),
-			[Êëèåíò] = IsNull(C.ClientFullName, R.Comment),
-			[ÑÈ/Ïîäõîñò] = IsNull(C.ServiceName, R.SubhostName),
-			[Äèñòðèáóòèâ] = R.DistrStr,
-			[Äàòà ðåãèñòðàöèè] = P.RPR_DATE
+			[â„– Ð² Ð³Ñ€ÑƒÐ¿Ð¿Ðµ] = Row_Number() OVER(PARTITION BY IsNull(C.ServiceName, R.SubhostName) ORDER BY IsNull(C.ClientFullName, R.Comment)),
+			[ÐšÐ»Ð¸ÐµÐ½Ñ‚] = IsNull(C.ClientFullName, R.Comment),
+			[Ð¡Ð˜/ÐŸÐ¾Ð´Ñ…Ð¾ÑÑ‚] = IsNull(C.ServiceName, R.SubhostName),
+			[Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²] = R.DistrStr,
+			[Ð”Ð°Ñ‚Ð° Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð°Ñ†Ð¸Ð¸] = P.RPR_DATE
 		FROM
 		(
 			SELECT DISTINCT RPR_ID_HOST, RPR_DISTR, RPR_COMP, MAX(RPR_DATE_S) AS RPR_DATE
 			FROM dbo.RegProtocol
 			WHERE RPR_DATE >= '20180701'
 				AND RPR_DATE < '20181001'
-				AND RPR_TEXT = 'Òåõ. òèï. Ñòàðîå çíà÷åíèå:0. Íîâîå:11'
+				AND RPR_TEXT = 'Ð¢ÐµÑ…. Ñ‚Ð¸Ð¿. Ð¡Ñ‚Ð°Ñ€Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ:0. ÐÐ¾Ð²Ð¾Ðµ:11'
 				--AND RPR_DISTR = 32957
 				AND RPR_ID_HOST = 1
 			GROUP BY RPR_ID_HOST, RPR_DISTR, RPR_COMP

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 		SELECT @ID = ID FROM @TBL
 
 		INSERT INTO dbo.Street(ST_ID_CITY, ST_NAME, ST_PREFIX, ST_SUFFIX)
-			VALUES(@ID, 'Без улицы', '', '')
+			VALUES(@ID, 'Р‘РµР· СѓР»РёС†С‹', '', '')
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

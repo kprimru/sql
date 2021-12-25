@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,18 +25,18 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			NAME AS [Неделя], CNT_RIC AS [Кол-во вопросов],
+			NAME AS [РќРµРґРµР»СЏ], CNT_RIC AS [РљРѕР»-РІРѕ РІРѕРїСЂРѕСЃРѕРІ],
 			CASE
 				WHEN CNT_RIC_PREV = 0 THEN 0
 				ELSE
 					ROUND(100 * ((CONVERT(DECIMAL(12, 2), CNT_RIC) - CNT_RIC_PREV) / CNT_RIC_PREV), 2)
-			END AS [Прирост (%)],
-			CNT AS [Всего по РИЦ|Кол-во вопросов],
+			END AS [РџСЂРёСЂРѕСЃС‚ (%)],
+			CNT AS [Р’СЃРµРіРѕ РїРѕ Р РР¦|РљРѕР»-РІРѕ РІРѕРїСЂРѕСЃРѕРІ],
 			CASE
 				WHEN CNT_PREV = 0 THEN 0
 				ELSE
 					ROUND(100 * ((CONVERT(DECIMAL(12, 2), CNT) - CNT_PREV) / CNT_PREV), 2)
-			END AS [Всего по РИЦ|Прирост (%)]
+			END AS [Р’СЃРµРіРѕ РїРѕ Р РР¦|РџСЂРёСЂРѕСЃС‚ (%)]
 		FROM
 			(
 				SELECT

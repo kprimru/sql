@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -86,7 +86,7 @@ BEGIN
 				DAY_NUM	SMALLDATETIME,
 				START_TIME	SMALLDATETIME,
 				END_TIME	SMALLDATETIME,
-				REST_TIME	INT /*время перерывов больше 3 часов в минутах			*/
+				REST_TIME	INT /*РІСЂРµРјСЏ РїРµСЂРµСЂС‹РІРѕРІ Р±РѕР»СЊС€Рµ 3 С‡Р°СЃРѕРІ РІ РјРёРЅСѓС‚Р°С…			*/
 			)
 
 		IF OBJECT_ID('tempdb..#update') IS NOT NULL
@@ -159,7 +159,7 @@ BEGIN
 			a.WEEK_ID, CalendarWork,
 			DayName + ', ' + CONVERT(VARCHAR(20), DAY_NUM, 104) AS DAY_NAME,
 			CASE
-				WHEN START_TIME IS NULL OR END_TIME IS NULL THEN 'Нет'
+				WHEN START_TIME IS NULL OR END_TIME IS NULL THEN 'РќРµС‚'
 				ELSE
 					LEFT(CONVERT(VARCHAR(20), START_TIME, 108), 5) + ' - ' +
 					LEFT(CONVERT(VARCHAR(20), END_TIME, 108), 5)

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -20,7 +20,7 @@ BEGIN
 
 	INSERT INTO @Tmp
 	SELECT SetItem
-	FROM dbo.NamedSetItemsSelect('Din.NetType', 'ŒÙÙÎ‡ÈÌ')
+	FROM dbo.NamedSetItemsSelect('Din.NetType', '–û—Ñ—Ñ–ª–∞–π–Ω')
 
 	INSERT INTO @Result
 	SELECT Cast(NT_ID AS SmallInt)

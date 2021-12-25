@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,13 +25,13 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT
-			b.ClientFullName AS [Клиент], b.ServiceStatusName AS [Статус], a.ClientEMail AS [Email],
+			b.ClientFullName AS [РљР»РёРµРЅС‚], b.ServiceStatusName AS [РЎС‚Р°С‚СѓСЃ], a.ClientEMail AS [Email],
 			(
 				SELECT TOP 1 DisconnectDate
 				FROM dbo.ClientDisconnectView z WITH(NOEXPAND)
 				WHERE z.ClientID = b.ClientID
 				ORDER BY DisconnectDate DESC
-			) AS [Дата отключения]
+			) AS [Р”Р°С‚Р° РѕС‚РєР»СЋС‡РµРЅРёСЏ]
 		FROM
 			dbo.ClientEMailView a
 			INNER JOIN dbo.ClientView b ON a.ClientID = b.ClientID

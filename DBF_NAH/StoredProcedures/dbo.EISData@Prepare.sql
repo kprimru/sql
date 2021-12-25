@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -89,7 +89,7 @@ BEGIN
             ORDER BY E.[Date] DESC
         ) AS E;
 
-        -- ToDo почему-то постоянно возвращается 404
+        -- ToDo РїРѕС‡РµРјСѓ-С‚Рѕ РїРѕСЃС‚РѕСЏРЅРЅРѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ 404
         /*
         SET @RowIndex = 0;
 

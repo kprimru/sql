@@ -1,11 +1,11 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-	Коэффициент насыщенности
+	РљРѕСЌС„С„РёС†РёРµРЅС‚ РЅР°СЃС‹С‰РµРЅРЅРѕСЃС‚Рё
 */
 ALTER FUNCTION [Ric].[DepthCoefValue]
 (

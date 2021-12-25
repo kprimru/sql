@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -85,7 +85,7 @@ BEGIN
 			SELECT UD_NAME, PARAM_NAME, CONVERT(VARCHAR(20), DATE_S, 104), CASE WHEN DATEDIFF(DAY, DATE_S, @NOW) > 14 THEN 1 ELSE 0 END
 			FROM
 				(
-					SELECT UD_NAME, 'Последнее пополнение' AS PARAM_NAME, UIU_DATE_S AS DATE_S
+					SELECT UD_NAME, 'РџРѕСЃР»РµРґРЅРµРµ РїРѕРїРѕР»РЅРµРЅРёРµ' AS PARAM_NAME, UIU_DATE_S AS DATE_S
 					FROM
 						#complect a
 						CROSS APPLY
@@ -101,28 +101,28 @@ BEGIN
 			ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-			SELECT UD_NAME, 'Версия тех.модуля', ResVersionShort, CASE IsLatest WHEN 1 THEN 0 ELSE 1 END
+			SELECT UD_NAME, 'Р’РµСЂСЃРёСЏ С‚РµС….РјРѕРґСѓР»СЏ', ResVersionShort, CASE IsLatest WHEN 1 THEN 0 ELSE 1 END
 			FROM
 				#complect
 				LEFT OUTER JOIN dbo.ResVersionTable ON ResVersionID = UF_RES
 			ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-			SELECT UD_NAME, 'Версия cons.exe', ConsExeVersionName, CASE ConsExeVersionActive WHEN 1 THEN 0 ELSE 1 END
+			SELECT UD_NAME, 'Р’РµСЂСЃРёСЏ cons.exe', ConsExeVersionName, CASE ConsExeVersionActive WHEN 1 THEN 0 ELSE 1 END
 			FROM
 				#complect
 				LEFT OUTER JOIN dbo.ConsExeVersionTable ON ConsExeVersionID = UF_CONS
 			ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-			SELECT UD_NAME, 'Дата файла consult.tor', CONVERT(VARCHAR(20), UF_CONSULT_TOR, 104), 0
+			SELECT UD_NAME, 'Р”Р°С‚Р° С„Р°Р№Р»Р° consult.tor', CONVERT(VARCHAR(20), UF_CONSULT_TOR, 104), 0
 			FROM
 				#complect a
 				LEFT OUTER JOIN USR.USRFileTech b ON a.UF_ID = b.UF_ID
 			ORDER BY UD_NAME
 
         INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-		SELECT UD_NAME, 'ОС на станции администратора', OS_NAME, 0
+		SELECT UD_NAME, 'РћРЎ РЅР° СЃС‚Р°РЅС†РёРё Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°', OS_NAME, 0
 		FROM #complect AS C
 		OUTER APPLY
 		(
@@ -138,7 +138,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Не совпадает статистика',
+				UD_NAME, 'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЃС‚Р°С‚РёСЃС‚РёРєР°',
 				LEFT(REVERSE(STUFF(REVERSE(
 					(
 						SELECT InfoBankShortName + ', '
@@ -161,7 +161,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				'', 'Неустановлены системы',
+				'', 'РќРµСѓСЃС‚Р°РЅРѕРІР»РµРЅС‹ СЃРёСЃС‚РµРјС‹',
 				LEFT(REVERSE(STUFF(REVERSE(
 					(
 						SELECT DistrStr + ', '
@@ -211,7 +211,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				NULL, 'Отсутствуют ИБ',
+				NULL, 'РћС‚СЃСѓС‚СЃС‚РІСѓСЋС‚ РР‘',
 				LEFT(
 					REVERSE(STUFF(REVERSE(
 						(
@@ -228,7 +228,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Последнее обращение к серверу ИП',
+				UD_NAME, 'РџРѕСЃР»РµРґРЅРµРµ РѕР±СЂР°С‰РµРЅРёРµ Рє СЃРµСЂРІРµСЂСѓ РРџ',
 				(
 					SELECT TOP 1 CONVERT(VARCHAR(20), DATE, 104) + ' ' + CONVERT(VARCHAR(20), DATE, 108)
 					FROM
@@ -251,12 +251,12 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Последняя сессия на ИП',
+				UD_NAME, 'РџРѕСЃР»РµРґРЅСЏСЏ СЃРµСЃСЃРёСЏ РЅР° РРџ',
 				(
 					SELECT TOP 1
-						'Дата: ' + CONVERT(VARCHAR(20), CSD_START, 104) + ' ' + CONVERT(VARCHAR(20), CSD_START, 108) + ', ' +
-						'Код возврата: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +CONVERT(VARCHAR(20), CSD_CODE_CLIENT_NOTE) + '), ' +
-						'Файл USR: ' + CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Есть' END
+						'Р”Р°С‚Р°: ' + CONVERT(VARCHAR(20), CSD_START, 104) + ' ' + CONVERT(VARCHAR(20), CSD_START, 108) + ', ' +
+						'РљРѕРґ РІРѕР·РІСЂР°С‚Р°: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +CONVERT(VARCHAR(20), CSD_CODE_CLIENT_NOTE) + '), ' +
+						'Р¤Р°Р№Р» USR: ' + CASE CSD_USR WHEN '-' THEN 'РќРµС‚' ELSE 'Р•СЃС‚СЊ' END
 					FROM
 						IP.ClientStatDetailCache b
 						INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
@@ -289,7 +289,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Последняя отправка STT через ИП',
+				UD_NAME, 'РџРѕСЃР»РµРґРЅСЏСЏ РѕС‚РїСЂР°РІРєР° STT С‡РµСЂРµР· РРџ',
 				(
 					SELECT TOP 1 CONVERT(VARCHAR(20), ISNULL(CSD_END, CSD_START), 104) + ' ' + CONVERT(VARCHAR(20), ISNULL(CSD_END, CSD_START), 108)
 					FROM
@@ -304,7 +304,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				'', 'Заблокированы на ИП',
+				'', 'Р—Р°Р±Р»РѕРєРёСЂРѕРІР°РЅС‹ РЅР° РРџ',
 				REVERSE(STUFF(REVERSE(
 					(
 						SELECT DistrStr + ', '
@@ -331,7 +331,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT, TECH, HOST, DISTR, COMP)
 			SELECT
-				UD_NAME, 'Последний файл cons_err',
+				UD_NAME, 'РџРѕСЃР»РµРґРЅРёР№ С„Р°Р№Р» cons_err',
 				(
 					SELECT TOP 1 CONVERT(VARCHAR(20), DATE, 104) + ' ' + CONVERT(VARCHAR(20), DATE, 108)
 					FROM
@@ -357,7 +357,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Максимальное ОД за 2 месяца по USR',
+				UD_NAME, 'РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РћР” Р·Р° 2 РјРµСЃСЏС†Р° РїРѕ USR',
 				(
 					SELECT MAX(T.UF_OD)
 					FROM USR.USRFile b
@@ -371,7 +371,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Максимальное количество уникальных пользователей за 2 месяца по USR',
+				UD_NAME, 'РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СѓРЅРёРєР°Р»СЊРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Р·Р° 2 РјРµСЃСЏС†Р° РїРѕ USR',
 				(
 					SELECT MAX(T.UF_UD)
 					FROM USR.USRFile b
@@ -385,7 +385,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Максимальное количество уникальных пользователей за 2 месяца по STT',
+				UD_NAME, 'РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СѓРЅРёРєР°Р»СЊРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Р·Р° 2 РјРµСЃСЏС†Р° РїРѕ STT',
 				(
 					SELECT COUNT(DISTINCT OTHER)
 					FROM
@@ -404,7 +404,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Недостаточно места на системном диске', UF_BOOT_NAME + ' (' + dbo.FileSizeToStr(UF_BOOT_FREE) + ')', 1
+				UD_NAME, 'РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РјРµСЃС‚Р° РЅР° СЃРёСЃС‚РµРјРЅРѕРј РґРёСЃРєРµ', UF_BOOT_NAME + ' (' + dbo.FileSizeToStr(UF_BOOT_FREE) + ')', 1
 			FROM
 				#complect a
 				INNER JOIN USR.USRFileTech b ON a.UF_ID = b.UF_ID
@@ -413,7 +413,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				UD_NAME, 'Недостаточно места на диске с К+', dbo.FileSizeToStr(UF_CONS_FREE) + ', Комплект - ' +
+				UD_NAME, 'РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РјРµСЃС‚Р° РЅР° РґРёСЃРєРµ СЃ Рљ+', dbo.FileSizeToStr(UF_CONS_FREE) + ', РљРѕРјРїР»РµРєС‚ - ' +
 				UF_COMPLECT_SIZE, 1
 			FROM
 				(
@@ -430,7 +430,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				C.UD_NAME, 'Дистрибутивы в списке "Задать вопрос эксперту"',
+				C.UD_NAME, 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІС‹ РІ СЃРїРёСЃРєРµ "Р—Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃ СЌРєСЃРїРµСЂС‚Сѓ"',
 				(
 					SELECT TOP (1) Convert(VarChar(20), a.SET_DATE, 104)
 					FROM
@@ -461,7 +461,7 @@ BEGIN
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
-				C.UD_NAME, 'Подключен сервис "Онлайн-диалог"',
+				C.UD_NAME, 'РџРѕРґРєР»СЋС‡РµРЅ СЃРµСЂРІРёСЃ "РћРЅР»Р°Р№РЅ-РґРёР°Р»РѕРі"',
 				(
 					SELECT TOP (1) Convert(VarChar(20), a.SET_DATE, 104)
 					FROM

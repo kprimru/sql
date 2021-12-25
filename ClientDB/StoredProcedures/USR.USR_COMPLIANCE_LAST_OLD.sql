@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -142,7 +142,7 @@ BEGIN
 									AND z.UI_ID_USR = a.UF_ID
 			INNER JOIN USR.USRUpdates y ON y.UIU_ID_IB = z.UI_ID;
 
-		--ToDo сделать через OUTER APPLY
+		--ToDo СЃРґРµР»Р°С‚СЊ С‡РµСЂРµР· OUTER APPLY
 		UPDATE a
 		SET PREV_UPDATE =
 			(
@@ -166,7 +166,7 @@ BEGIN
 			)
 		FROM #ib a;
 
-		--ToDo сделать через OUTER APPLY
+		--ToDo СЃРґРµР»Р°С‚СЊ С‡РµСЂРµР· OUTER APPLY
 		UPDATE a
 		SET FIRST_DATE =
 			(

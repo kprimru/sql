@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 
         IF @Date > GetDate()
         BEGIN
-			RAISERROR ('Нельзя вносить записи в будущем!!!', 16, 1)
+			RAISERROR ('РќРµР»СЊР·СЏ РІРЅРѕСЃРёС‚СЊ Р·Р°РїРёСЃРё РІ Р±СѓРґСѓС‰РµРј!!!', 16, 1)
 
 			RETURN
 		END
@@ -45,7 +45,7 @@ BEGIN
 		BEGIN
 			IF @DATE < DATEADD(WEEK, -1, GETDATE())
 			BEGIN
-				RAISERROR ('Нельзя вносить записи задним числом!!!', 16, 1)
+				RAISERROR ('РќРµР»СЊР·СЏ РІРЅРѕСЃРёС‚СЊ Р·Р°РїРёСЃРё Р·Р°РґРЅРёРј С‡РёСЃР»РѕРј!!!', 16, 1)
 
 				RETURN
 			END
@@ -75,7 +75,7 @@ BEGIN
 			BEGIN
 				IF (DATEPART(YEAR, @DATE) <> DATEPART(YEAR, @OLD_DATE)) OR (DATEPART(WEEK, @DATE) <> DATEPART(WEEK, @OLD_DATE))
 				BEGIN
-					RAISERROR ('Дату можно редактировать только в пределах недели!!!', 16, 1)
+					RAISERROR ('Р”Р°С‚Сѓ РјРѕР¶РЅРѕ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РІ РїСЂРµРґРµР»Р°С… РЅРµРґРµР»Рё!!!', 16, 1)
 
 					RETURN
 				END

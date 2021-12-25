@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -48,7 +48,7 @@ BEGIN
 		SET @DISTR = LEFT(@TMP, CHARINDEX('_', @TMP) - 1)
 		SET @TMP = RIGHT(@TMP, LEN(@TMP) - LEN(@DISTR) - 1)
 
-		/* проверяем, есть ли № comp */
+		/* РїСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё в„– comp */
 		IF CHARINDEX('_', @TMP) <= 3 AND CHARINDEX('_', @TMP) <> 0
 		BEGIN
 			SET @COMP = LEFT(@TMP, CHARINDEX('_', @TMP) - 1)

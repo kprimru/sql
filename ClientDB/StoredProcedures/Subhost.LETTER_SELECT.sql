@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,10 +33,10 @@ BEGIN
 
 		SET @RECEIVER =
 				CASE @SH
-					WHEN 'Õ1' THEN 'f0ec56ff-5ae4-e211-bb69-000c2933b2fd'
-					WHEN '”1' THEN 'f1ec56ff-5ae4-e211-bb69-000c2933b2fd'
-					WHEN 'À1' THEN 'a92b3b06-5be4-e211-bb69-000c2933b2fd'
-					WHEN 'Ã' THEN 'f2ec56ff-5ae4-e211-bb69-000c2933b2fd'
+					WHEN '–ù1' THEN 'f0ec56ff-5ae4-e211-bb69-000c2933b2fd'
+					WHEN '–£1' THEN 'f1ec56ff-5ae4-e211-bb69-000c2933b2fd'
+					WHEN '–õ1' THEN 'a92b3b06-5be4-e211-bb69-000c2933b2fd'
+					WHEN '–ú' THEN 'f2ec56ff-5ae4-e211-bb69-000c2933b2fd'
 				END
 
 		EXEC [PC275-SQL\GAMMA].Letters.dbo.LETTER_SEARCH '8ebc1b48-59e4-e211-bb69-000c2933b2fd', @START, @FINISH, @NUM, @TEXT, @RC OUTPUT, @RECEIVER

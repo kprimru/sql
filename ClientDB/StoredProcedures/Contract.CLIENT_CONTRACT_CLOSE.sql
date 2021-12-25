@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 			AND [DateTo] IS NULL;
 
 		IF @@RowCount != 1
-			RaisError('Внутренняя ошибка! Договор уже закрыт', 16, 1);
+			RaisError('Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°! Р”РѕРіРѕРІРѕСЂ СѓР¶Рµ Р·Р°РєСЂС‹С‚', 16, 1);
 
 		IF @DocumentExists = 1
 			INSERT INTO [Contract].[ClientContractsDocuments]([Contract_Id], [RowIndex], [Type_Id], [Date], [Note])

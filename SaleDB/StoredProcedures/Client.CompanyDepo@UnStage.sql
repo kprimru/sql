@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -38,7 +38,7 @@ BEGIN
 				WHERE Company_Id = @Company_Id
 					AND Status_Id = @Status_STAGE
 			)
-			RaisError('Компания не задепонирована на следующий этап!', 16, 1);
+			RaisError('РљРѕРјРїР°РЅРёСЏ РЅРµ Р·Р°РґРµРїРѕРЅРёСЂРѕРІР°РЅР° РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЌС‚Р°Рї!', 16, 1);
 
 		DELETE
 		FROM Client.CompanyDepo

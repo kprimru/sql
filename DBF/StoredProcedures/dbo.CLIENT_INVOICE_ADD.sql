@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	2-04-2009
-Описание:		добавить счет-фактуру (только полевые данные, без таблицы)
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	2-04-2009
+РћРїРёСЃР°РЅРёРµ:		РґРѕР±Р°РІРёС‚СЊ СЃС‡РµС‚-С„Р°РєС‚СѓСЂСѓ (С‚РѕР»СЊРєРѕ РїРѕР»РµРІС‹Рµ РґР°РЅРЅС‹Рµ, Р±РµР· С‚Р°Р±Р»РёС†С‹)
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ADD]
@@ -101,7 +101,7 @@ BEGIN
 		SELECT @ID AS NEW_IDEN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @ID

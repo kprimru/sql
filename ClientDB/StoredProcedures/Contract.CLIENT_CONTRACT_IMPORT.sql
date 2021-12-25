@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 
 		IF EXISTS(SELECT * FROM [Contract].[ClientContracts] WHERE [Client_Id] = @Client_Id AND [Contract_Id] = @Contract_Id)
 		BEGIN
-			RaisError('Ошибка! Выбранный договор уже присутствует у клиента', 16, 1);
+			RaisError('РћС€РёР±РєР°! Р’С‹Р±СЂР°РЅРЅС‹Р№ РґРѕРіРѕРІРѕСЂ СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ Сѓ РєР»РёРµРЅС‚Р°', 16, 1);
 
 			RETURN;
 		END;
@@ -46,7 +46,7 @@ BEGIN
 
 		IF NOT EXISTS(SELECT * FROM [Contract].[ClientContractsDetails] WHERE [Contract_Id] = @Contract_Id)
 		BEGIN
-			-- договора еще нет, это первое добавление - заполняем детализацию договора
+			-- РґРѕРіРѕРІРѕСЂР° РµС‰Рµ РЅРµС‚, СЌС‚Рѕ РїРµСЂРІРѕРµ РґРѕР±Р°РІР»РµРЅРёРµ - Р·Р°РїРѕР»РЅСЏРµРј РґРµС‚Р°Р»РёР·Р°С†РёСЋ РґРѕРіРѕРІРѕСЂР°
 			UPDATE [Contract].[Contract]
 			SET [DateFrom]	= @DateFrom,
 				[SignDate]	= @SignDate

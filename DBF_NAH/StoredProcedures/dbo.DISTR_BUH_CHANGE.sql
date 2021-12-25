@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 
 		DECLARE @NEW_DISTR TABLE (ID INT)
 
-		-- вставка новых дистрибутивов в справочник
+		-- РІСЃС‚Р°РІРєР° РЅРѕРІС‹С… РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РІ СЃРїСЂР°РІРѕС‡РЅРёРє
 		INSERT INTO dbo.DistrTable(DIS_ID_SYSTEM, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE)
 			OUTPUT inserted.DIS_ID INTO @NEW_DISTR
 			SELECT SYS_ID, RN_DISTR_NUM, RN_COMP_NUM, 1
@@ -46,7 +46,7 @@ BEGIN
 						AND DIS_COMP_NUM = RN_COMP_NUM
 				) AND RN_DISTR_TYPE <> 'NEK'
 
-		-- распределить все эти дистрибутивы по клиентам
+		-- СЂР°СЃРїСЂРµРґРµР»РёС‚СЊ РІСЃРµ СЌС‚Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РїРѕ РєР»РёРµРЅС‚Р°Рј
 		INSERT INTO dbo.ClientDistrTable(CD_ID_CLIENT, CD_ID_DISTR, CD_ID_SERVICE)
 			SELECT CD_ID_CLIENT, a.ID, (SELECT TOP 1 DSS_ID FROM dbo.DistrServiceStatusTable WHERE DSS_REPORT = 1)
 			FROM
@@ -63,7 +63,7 @@ BEGIN
 				INNER JOIN dbo.ClientDistrTable g ON g.CD_ID_DISTR = f.DIS_ID
 			WHERE f.DIS_ACTIVE = 1
 
-		-- распределить все эти дистрибутивы по точкам
+		-- СЂР°СЃРїСЂРµРґРµР»РёС‚СЊ РІСЃРµ СЌС‚Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РїРѕ С‚РѕС‡РєР°Рј
 		INSERT INTO dbo.TODistrTable(TD_ID_TO, TD_ID_DISTR)
 			SELECT TD_ID_TO, a.ID
 			FROM
@@ -87,7 +87,7 @@ BEGIN
 					)
 
 
-		-- прицепить эти дистрибутивы в действующие договора, к которым цеплялись старые
+		-- РїСЂРёС†РµРїРёС‚СЊ СЌС‚Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РІ РґРµР№СЃС‚РІСѓСЋС‰РёРµ РґРѕРіРѕРІРѕСЂР°, Рє РєРѕС‚РѕСЂС‹Рј С†РµРїР»СЏР»РёСЃСЊ СЃС‚Р°СЂС‹Рµ
 		INSERT INTO dbo.ContractDistrTable(COD_ID_CONTRACT, COD_ID_DISTR)
 			SELECT CO_ID, ID
 			FROM
@@ -116,9 +116,9 @@ BEGIN
 				) AS o_O
 			WHERE CO_ID IS NOT NULL
 
-		-- сменить статус старых дистрибутивов
+		-- СЃРјРµРЅРёС‚СЊ СЃС‚Р°С‚СѓСЃ СЃС‚Р°СЂС‹С… РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ
 		UPDATE dbo.ClientDistrTable
-		SET CD_ID_SERVICE = (SELECT DSS_ID FROM dbo.DistrServiceStatusTable WHERE DSS_NAME = 'недействующий')
+		SET CD_ID_SERVICE = (SELECT DSS_ID FROM dbo.DistrServiceStatusTable WHERE DSS_NAME = 'РЅРµРґРµР№СЃС‚РІСѓСЋС‰РёР№')
 		WHERE CD_ID_DISTR IN
 			(
 				SELECT a.DIS_ID

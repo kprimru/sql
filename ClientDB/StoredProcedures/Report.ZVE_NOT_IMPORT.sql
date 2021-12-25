@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Дистрибутив], DATE AS [Дата], FIO AS [ФИО], EMAIL, PHONE AS [Телефон], QUEST AS [Вопрос]
+		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], DATE AS [Р”Р°С‚Р°], FIO AS [Р¤РРћ], EMAIL, PHONE AS [РўРµР»РµС„РѕРЅ], QUEST AS [Р’РѕРїСЂРѕСЃ]
 		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
@@ -50,7 +50,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Дистрибутив], DATE AS [Дата], FIO AS [ФИО], EMAIL, PHONE AS [Телефон], QUEST AS [Вопрос]
+		SELECT dbo.DistrString(SystemShortName, DISTR, COMP) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], DATE AS [Р”Р°С‚Р°], FIO AS [Р¤РРћ], EMAIL, PHONE AS [РўРµР»РµС„РѕРЅ], QUEST AS [Р’РѕРїСЂРѕСЃ]
 		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
@@ -63,7 +63,7 @@ BEGIN
 					Reg.RegNodeSearchView z WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable y ON z.SystemID = y.SystemID
 				WHERE z.DistrNumber = a.DISTR AND z.CompNumber = a.COMP AND y.SystemNumber = a.SYS
-					AND z.SubhostName = 'Л1'
+					AND z.SubhostName = 'Р›1'
 			)
 			AND
 			NOT EXISTS

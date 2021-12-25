@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 				WHERE b.ID = @ID
 			) <> 4
 		BEGIN
-			RAISERROR('Статус договора не позволяет его удалить', 16, 1)
+			RAISERROR('РЎС‚Р°С‚СѓСЃ РґРѕРіРѕРІРѕСЂР° РЅРµ РїРѕР·РІРѕР»СЏРµС‚ РµРіРѕ СѓРґР°Р»РёС‚СЊ', 16, 1)
 			RETURN
 		END
 
@@ -44,7 +44,7 @@ BEGIN
 					AND SignDate IS NOT NULL
 			)
 		BEGIN
-			RAISERROR('У договора есть действующие спецификации', 16, 1)
+			RAISERROR('РЈ РґРѕРіРѕРІРѕСЂР° РµСЃС‚СЊ РґРµР№СЃС‚РІСѓСЋС‰РёРµ СЃРїРµС†РёС„РёРєР°С†РёРё', 16, 1)
 			RETURN
 		END;
 
@@ -56,7 +56,7 @@ BEGIN
 					AND SignDate IS NOT NULL
 			)
 		BEGIN
-			RAISERROR('У договора есть действующие допсоглашения', 16, 1)
+			RAISERROR('РЈ РґРѕРіРѕРІРѕСЂР° РµСЃС‚СЊ РґРµР№СЃС‚РІСѓСЋС‰РёРµ РґРѕРїСЃРѕРіР»Р°С€РµРЅРёСЏ', 16, 1)
 			RETURN
 		END;
 

@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -20,9 +20,9 @@ AS
 		Distr.TechTypeDetail ON TT_REG = RN_TECH INNER JOIN
 		Distr.NetTypeDetail ON NT_SHORT =
 									CASE RN_NET_COUNT
-										WHEN 0 THEN 'лок'
-										WHEN 1 THEN '1/с'
-										ELSE 'сеть'
+										WHEN 0 THEN 'Р»РѕРє'
+										WHEN 1 THEN '1/СЃ'
+										ELSE 'СЃРµС‚СЊ'
 									END
 	WHERE HST_REF IN (1, 3)
 		AND SYS_REF IN (1, 3)

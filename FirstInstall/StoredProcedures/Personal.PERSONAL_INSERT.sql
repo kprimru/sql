@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -57,7 +57,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'PERSONAL', @MASTERID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'PERSONAL', 'Новая запись', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'PERSONAL', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @MASTERID, @OLD, @NEW
 
 END
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -115,7 +115,7 @@ BEGIN
 		) O
 		WHERE ClientServiceID  = @SERVICE
 			AND STATUS = 1
-			-- 02.06.2020 ñêàçàëè âûâîäèòü âñåõ
+			-- 02.06.2020 ÑÐºÐ°Ð·Ð°Ð»Ð¸ Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ñ‚ÑŒ Ð²ÑÐµÑ…
 			--AND O.[IsOnline] = 0;
 
 		INSERT INTO @Clientdistr
@@ -128,7 +128,7 @@ BEGIN
 		INNER JOIN dbo.CLientDistrView d WITH(NOEXPAND) ON d.ID_CLIENT = c.CL_ID
 		CROSS APPLY
 		(
-		    -- ÷òîáû õîòü ê êàêîìó-òî êîìïëåêòó ïðèâÿçàòü
+		    -- Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ñ…Ð¾Ñ‚ÑŒ Ðº ÐºÐ°ÐºÐ¾Ð¼Ñƒ-Ñ‚Ð¾ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ñƒ Ð¿Ñ€Ð¸Ð²ÑÐ·Ð°Ñ‚ÑŒ
 		    SELECT TOP (1) CC.Complect
 		    FROM @Client AS CC
 		    WHERE CC.CL_ID = C.CL_ID
@@ -206,7 +206,7 @@ BEGIN
 			PRIMARY KEY CLUSTERED(ClientId, Complect)
 		);
 
-		/* ôîðìèðóåì êîñòÿê äëÿ èòîãîâîé òàáëèöû.*/
+		/* Ñ„Ð¾Ñ€Ð¼Ð¸Ñ€ÑƒÐµÐ¼ ÐºÐ¾ÑÑ‚ÑÐº Ð´Ð»Ñ Ð¸Ñ‚Ð¾Ð³Ð¾Ð²Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹.*/
 		INSERT INTO @res(
 				ID, ClientID, Complect, ComplectStr, ClientFullName, SystemList, ClientTypeName, TypeDailyDays, TypeDays, ServiceType,
 				DayOrder, ServiceDay, DayTime, ResVersion, ConsExe, ConsExeActual, ResActual, ClientEvent, DistrTypeBaseCheck, LastStt, LastUpdate)
@@ -226,9 +226,9 @@ BEGIN
 				ClientTypeName, ClientTypeDailyDay,
 				ClientTypeDay, ServiceTypeShortName, DayOrder,
 				ISNULL(c.DayShort, '') + ' ' + ISNULL(LEFT(CONVERT(VARCHAR(20), ServiceStart, 108), 5), ''), ServiceStart,
-				/* âïèñûâàåì ÷åðåç çàïÿòóþ âñå òåõíîëîãè÷åñêèå ìîäóëè, âåðñèè cons.exe äëÿ
-				 àêòèâíûõ êîìïëåêòîâ, â êîòîðûõ îñíîâíàÿ ñèñòåìà ñîïðîâîæäàåòñÿ.
-				 à òàêæå âû÷èñëÿåì, åñëè åñòü óñòàðåâøèå ìîäóëè èëè cons.exe - âûâîäèì ïðèçíàê
+				/* Ð²Ð¿Ð¸ÑÑ‹Ð²Ð°ÐµÐ¼ Ñ‡ÐµÑ€ÐµÐ· Ð·Ð°Ð¿ÑÑ‚ÑƒÑŽ Ð²ÑÐµ Ñ‚ÐµÑ…Ð½Ð¾Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð¼Ð¾Ð´ÑƒÐ»Ð¸, Ð²ÐµÑ€ÑÐ¸Ð¸ cons.exe Ð´Ð»Ñ
+				 Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ñ… ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ð¾Ð², Ð² ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ñ… Ð¾ÑÐ½Ð¾Ð²Ð½Ð°Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÑÐ¾Ð¿Ñ€Ð¾Ð²Ð¾Ð¶Ð´Ð°ÐµÑ‚ÑÑ.
+				 Ð° Ñ‚Ð°ÐºÐ¶Ðµ Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÑÐµÐ¼, ÐµÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑƒÑÑ‚Ð°Ñ€ÐµÐ²ÑˆÐ¸Ðµ Ð¼Ð¾Ð´ÑƒÐ»Ð¸ Ð¸Ð»Ð¸ cons.exe - Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ Ð¿Ñ€Ð¸Ð·Ð½Ð°Ðº
 				*/
 				rv.ResVersionShort, rv.ConsExeVersionName, ConsExeVersionActive, IsLatest,
 				REVERSE(STUFF(REVERSE((
@@ -241,7 +241,7 @@ BEGIN
 					WHERE z.ClientID = a.ClientID
 						AND EventDate >= @BEGIN AND EventDate <= @END
 						AND EventActive = 1
-						AND EventTypeName NOT IN ('ÊÃÑ 223', 'ÊÃÑ 94')
+						AND EventTypeName NOT IN ('ÐšÐ“Ð¡ 223', 'ÐšÐ“Ð¡ 94')
 					ORDER BY EventDate FOR XML PATH('')
 				)), 1, 2, '')),
 				/*
@@ -273,9 +273,9 @@ BEGIN
 							INNER JOIN dbo.SystemTable x ON x.SystemID = y.SystemID AND x.SystemNumber = z.SYS
 						WHERE y.ClientId = a.ClientID
 							AND y.Complect = t.COmplect
-					)), 104) + ' (È)'),
+					)), 104) + ' (Ð˜)'),
 					(
-						--ToDo - ýòî ìåäëåííî ðàáîòàåò
+						--ToDo - ÑÑ‚Ð¾ Ð¼ÐµÐ´Ð»ÐµÐ½Ð½Ð¾ Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚
 						SELECT TOP (1) u.UIU_DATE
 						FROM @clientdistr z
 						INNER JOIN USR.USRIBDateView u WITH(NOEXPAND) ON UD_ID_CLIENT = t.CL_ID AND u.UI_DISTR = z.DISTR AND u.UI_COMP = z.COMP
@@ -325,8 +325,8 @@ BEGIN
 			PRIMARY KEY CLUSTERED(UD_ID_CLIENT, Id)
 		);
 
-		-- òóò íåñêîëüêî êîñòûëüíî ïîðåäåëÿåì ê êàêîìó êîìïëåêòó ïðèíàäëåæèò ïîïîëíåíèå. Âïîëíå ìîæåò áûòü êîëëèçèÿ, åñëè ó êëèåíòà
-		-- â ðàçíûõ êîìïëåêòàõ áóäåò íå÷òî ñ îäíèì íîìåðîì äèñòðèáóòèâà
+		-- Ñ‚ÑƒÑ‚ Ð½ÐµÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÐºÐ¾ÑÑ‚Ñ‹Ð»ÑŒÐ½Ð¾ Ð¿Ð¾Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ðº ÐºÐ°ÐºÐ¾Ð¼Ñƒ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ñƒ Ð¿Ñ€Ð¸Ð½Ð°Ð´Ð»ÐµÐ¶Ð¸Ñ‚ Ð¿Ð¾Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ. Ð’Ð¿Ð¾Ð»Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚ Ð±Ñ‹Ñ‚ÑŒ ÐºÐ¾Ð»Ð»Ð¸Ð·Ð¸Ñ, ÐµÑÐ»Ð¸ Ñƒ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
+		-- Ð² Ñ€Ð°Ð·Ð½Ñ‹Ñ… ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ð°Ñ… Ð±ÑƒÐ´ÐµÑ‚ Ð½ÐµÑ‡Ñ‚Ð¾ Ñ Ð¾Ð´Ð½Ð¸Ð¼ Ð½Ð¾Ð¼ÐµÑ€Ð¾Ð¼ Ð´Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²Ð°
 		INSERT INTO @usrdata(UD_ID_CLIENT, Complect, UF_PATH, UI_DISTR, UI_COMP, UIU_DATE, UIU_DATE_S, UIU_DOCS, InfoBankID)
 		SELECT DISTINCT UD_ID_CLIENT, c.Complect, UF_PATH, UI_DISTR, UI_COMP, UIU_DATE, UIU_DATE_S, UIU_DOCS, UI_ID_BASE
 		FROM @client c
@@ -362,7 +362,7 @@ BEGIN
 			DayShort
 		FROM
 			@client c
-			-- âîò ýòî åùå áîëüøèé êîñòûëü. Íàäî ïåðåðàáàòûâàòü ñòðóêòóðó õðàíåíèÿ äàííûõ, ÷òîáû ðàçáèðàòüñÿ, ÷òî åñòü êîìïëåêò
+			-- Ð²Ð¾Ñ‚ ÑÑ‚Ð¾ ÐµÑ‰Ðµ Ð±Ð¾Ð»ÑŒÑˆÐ¸Ð¹ ÐºÐ¾ÑÑ‚Ñ‹Ð»ÑŒ. ÐÐ°Ð´Ð¾ Ð¿ÐµÑ€ÐµÑ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°Ñ‚ÑŒ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€Ñƒ Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ñ Ð´Ð°Ð½Ð½Ñ‹Ñ…, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ñ€Ð°Ð·Ð±Ð¸Ñ€Ð°Ñ‚ÑŒÑÑ, Ñ‡Ñ‚Ð¾ ÐµÑÑ‚ÑŒ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚
 			INNER JOIN USR.USRData d ON UD_ID_CLIENT = CL_ID AND Complect LIKE '%' + Cast(UD_DISTR AS VarCHar(100)) + '%'
 			INNER JOIN USR.USRFile f ON UF_ID_COMPLECT = UD_ID
 			INNER JOIN dbo.DayTable t ON DayOrder = DATEPART(WEEKDAY, UF_DATE)
@@ -388,7 +388,7 @@ BEGIN
 			Primary Key Clustered(ClientId, Complect, WeekID)
 		);
 
-		-- ToDo. Ïîêà ÷òî â ñïèñêå íåñîîòâåòñòâóþùèõ ýòàëîíó áóäóò ìíîæèòüñÿ ïî âñåì êîìïëåêòàì êëèåíòà
+		-- ToDo. ÐŸÐ¾ÐºÐ° Ñ‡Ñ‚Ð¾ Ð² ÑÐ¿Ð¸ÑÐºÐµ Ð½ÐµÑÐ¾Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÑƒÑŽÑ‰Ð¸Ñ… ÑÑ‚Ð°Ð»Ð¾Ð½Ñƒ Ð±ÑƒÐ´ÑƒÑ‚ Ð¼Ð½Ð¾Ð¶Ð¸Ñ‚ÑŒÑÑ Ð¿Ð¾ Ð²ÑÐµÐ¼ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ð°Ð¼ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°
 		INSERT INTO @compl(ClientID, Complect, WeekID, Comp)
 		SELECT CL_ID, Complect, Week_ID,
 			REVERSE(STUFF(REVERSE(
@@ -633,7 +633,7 @@ BEGIN
 			UpdateSkipError, REPLACE(UpdateSkip, '&#x0A;', CHAR(10)) AS UpdateSkip,
 			UpdateLostError,  REPLACE(UpdateLost, '&#x0A;', CHAR(10)) AS UpdateLost,
 			CASE
-				WHEN UpdateSkipError = 1 THEN 'Íàðóøåíà'
+				WHEN UpdateSkipError = 1 THEN 'ÐÐ°Ñ€ÑƒÑˆÐµÐ½Ð°'
 				ELSE NULL
 			END AS UpdatePeriod,
 			UF_PATH,
@@ -701,7 +701,7 @@ BEGIN
 							        ) THEN '' +
 								        (
 									        SELECT
-										        ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
+										        ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
 									        FROM
 										        @WEEK
 										        INNER JOIN @compl z ON Week_ID = WeekID
@@ -709,7 +709,7 @@ BEGIN
 										        AND z.Complect = a.Complect
 									        ORDER BY Week_ID FOR XML PATH('')
 								        )
-						        ELSE 'Ñîâïàäàåò'
+						        ELSE 'Ð¡Ð¾Ð²Ð¿Ð°Ð´Ð°ÐµÑ‚'
 						    END
 					END AS Compliance,
 					CASE DistrTypeBaseCheck
@@ -737,7 +737,7 @@ BEGIN
 							) THEN '' +
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										@skip z ON Week_ID = WeekID
@@ -771,7 +771,7 @@ BEGIN
 							) THEN '' +
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										@lost z ON Week_ID = WeekID

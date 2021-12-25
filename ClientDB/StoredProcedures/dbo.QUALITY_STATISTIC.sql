@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,12 +41,12 @@ BEGIN
 			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = a.ID_CLIENT
 		WHERE a.DS_REG = 0 AND c.ServiceStatusID = 2
 			AND b.SystemActive = 1 AND b.InfoBankActive = 1 AND b.Required = 1
-			AND ManagerName NOT IN ('Батенева', 'Исаева', 'Семченко')
+			AND ManagerName NOT IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		SELECT @CLIENT_COUNT = COUNT(*)
 		FROM dbo.ClientView WITH(NOEXPAND)
 		WHERE ServiceStatusID = 2
-			AND ManagerName NOT IN ('Батенева', 'Исаева', 'Семченко')
+			AND ManagerName NOT IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		DECLARE @UNINSTALL DECIMAL(8, 4)
 		DECLARE @COMPLIANCE DECIMAL(8, 4)
@@ -78,7 +78,7 @@ BEGIN
 			EXEC USR.CLIENT_SYSTEM_AUDIT NULL, NULL
 
 		DELETE FROM #uninstall
-		WHERE ManagerName IN ('Батенева', 'Исаева', 'Семченко')
+		WHERE ManagerName IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		SELECT @UNINSTALL_COUNT = COUNT(*)
 		FROM #uninstall
@@ -109,7 +109,7 @@ BEGIN
 			EXEC USR.USR_COMPLIANCE_LAST @LAST, NULL, NULL
 
 		DELETE FROM #compliance
-		WHERE ManagerName IN ('Батенева', 'Исаева', 'Семченко')
+		WHERE ManagerName IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		SELECT @COMPLIANCE_COUNT = COUNT(*)
 		FROM #compliance
@@ -141,7 +141,7 @@ BEGIN
 			EXEC USR.RES_VERSION_CHECK NULL, NULL, NULL, NULL, 1, 0, NULL, NULL
 
 		DELETE FROM #res_ver
-		WHERE ManagerName IN ('Батенева', 'Исаева', 'Семченко')
+		WHERE ManagerName IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		SELECT @RES_COUNT = COUNT(DISTINCT ClientID) FROM #res_ver
 		SELECT @RES = CONVERT(DECIMAL(8, 4), @RES_COUNT) * 100 / @CLIENT_COUNT
@@ -155,7 +155,7 @@ BEGIN
 			dbo.ClientCheckView a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
 		WHERE b.ServiceStatusID = 2 AND TP NOT IN ('STATUS', 'SERVICE_TYPE', 'PAPPER', 'GRAPH')
-			AND ManagerName NOT IN ('Батенева', 'Исаева', 'Семченко')
+			AND ManagerName NOT IN ('Р‘Р°С‚РµРЅРµРІР°', 'РСЃР°РµРІР°', 'РЎРµРјС‡РµРЅРєРѕ')
 
 		SELECT @CARD = CONVERT(DECIMAL(8, 4), @CARD_COUNT) * 100 / @CLIENT_COUNT
 

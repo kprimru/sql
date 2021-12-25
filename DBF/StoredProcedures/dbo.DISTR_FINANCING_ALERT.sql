@@ -1,4 +1,4 @@
-USE [DBF]
+ï»¿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,7 +33,7 @@ BEGIN
 		WHERE DSS_REPORT = 1
 			--AND (ISNULL(DF_FIXED_PRICE, 0) <> 0 OR ISNULL(DF_DISCOUNT, 0) <> 0)
 			AND ((DF_END <= @DATE) OR DF_END IS NULL)
-			AND DIS_STR NOT LIKE 'ÃÊ%'
+			AND DIS_STR NOT LIKE 'Ð“Ðš%'
 		ORDER BY COUR_NAME, CL_PSEDO, SYS_ORDER, DIS_STR
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

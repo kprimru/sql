@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -68,7 +68,7 @@ BEGIN
 						AND a.ClientDutyPatron = b.ClientDutyPatron
 					ORDER BY ClientDutyDateTime DESC
 				), 
-				'ДС',
+				'Р”РЎ',
 				(
 					SELECT MAX(ClientDutyDateTime)
 					FROM dbo.ClientDutyTable b
@@ -105,7 +105,7 @@ BEGIN
 					WHERE z.ClientID = @CLIENT AND z.SURNAME = a.SURNAME AND z.NAME = a.NAME AND z.PATRON = a.PATRON
 					ORDER BY UPD_DATE DESC
 				),
-				'Семинар',
+				'РЎРµРјРёРЅР°СЂ',
 				(
 					SELECT MAX(UPD_DATE)
 					FROM Seminar.PersonalView z WITH(NOEXPAND)
@@ -149,7 +149,7 @@ BEGIN
 						AND a.SR_PATRON = b.SR_PATRON
 					ORDER BY TSC_DATE
 				),
-				'Семинар',
+				'РЎРµРјРёРЅР°СЂ',
 				(
 					SELECT MAX(TSC_DATE)
 					FROM
@@ -191,7 +191,7 @@ BEGIN
 					WHERE q.SP_ID_CLIENT = @CLIENT AND p.SSP_SURNAME = a.SSP_SURNAME AND p.SSP_NAME = a.SSP_NAME AND p.SSP_PATRON = a.SSP_PATRON
 					ORDER BY TSC_DATE DESC
 				),
-				'Семинар',
+				'РЎРµРјРёРЅР°СЂ',
 				(
 					SELECT MAX(TSC_DATE)
 					FROM
@@ -231,7 +231,7 @@ BEGIN
 					WHERE p.ID_CLIENT = a.ID_CLIENT AND q.SURNAME = b.SURNAME AND q.NAME = b.NAME AND q.PATRON = b.PATRON AND STATUS = 1
 					ORDER BY DATE DESC
 				),
-				'Заявка на обучение',
+				'Р—Р°СЏРІРєР° РЅР° РѕР±СѓС‡РµРЅРёРµ',
 				(
 					SELECT MAX(DATE)
 					FROM
@@ -262,7 +262,7 @@ BEGIN
 					WHERE p.ID_CLIENT = a.ID_CLIENT AND q.SURNAME = b.SURNAME AND q.NAME = b.NAME AND q.PATRON = b.PATRON AND STATUS = 1
 					ORDER BY DATE DESC
 				),
-				'Обученный',
+				'РћР±СѓС‡РµРЅРЅС‹Р№',
 				(
 					SELECT MAX(DATE)
 					FROM

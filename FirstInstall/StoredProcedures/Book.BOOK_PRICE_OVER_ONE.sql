@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,7 +30,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'BOOK_PRICE', NULL, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'BOOK_PRICE', 'Удаление', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'BOOK_PRICE', 'РЈРґР°Р»РµРЅРёРµ', @MASTERID, @OLD, @NEW
 END
 
 GO

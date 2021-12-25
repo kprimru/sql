@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,11 +29,11 @@ BEGIN
 
 		SELECT @DUTY = DutyID
 		FROM dbo.DutyTable
-		WHERE DutyName = 'Автомат'
+		WHERE DutyName = 'РђРІС‚РѕРјР°С‚'
 
 		IF @DUTY IS NULL
 		BEGIN
-			RAISERROR('Отсутствует встроенный сотрудник ДС! Импорт невозможен', 16, 1)
+			RAISERROR('РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІСЃС‚СЂРѕРµРЅРЅС‹Р№ СЃРѕС‚СЂСѓРґРЅРёРє Р”РЎ! РРјРїРѕСЂС‚ РЅРµРІРѕР·РјРѕР¶РµРЅ', 16, 1)
 			RETURN
 		END
 
@@ -90,7 +90,7 @@ BEGIN
 				(
 					SELECT TOP 1 ID
 					FROM dbo.CallDirection
-					WHERE NAME = 'ВопросЭксперту'
+					WHERE NAME = 'Р’РѕРїСЂРѕСЃР­РєСЃРїРµСЂС‚Сѓ'
 				)
 			FROM
 				@TBL z
@@ -105,7 +105,7 @@ BEGIN
 		SET IMPORT = GETDATE()
 		WHERE ID IN (SELECT ID FROM @TBL)
 
-		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @REFRESH) + ' записей. Загружено в раздел "Дежурная служба" ' + CONVERT(NVARCHAR(32), @ADD) + ' записей'
+		SET @OUT_DATA = 'Р”РѕР±Р°РІР»РµРЅРѕ ' + CONVERT(NVARCHAR(32), @REFRESH) + ' Р·Р°РїРёСЃРµР№. Р—Р°РіСЂСѓР¶РµРЅРѕ РІ СЂР°Р·РґРµР» "Р”РµР¶СѓСЂРЅР°СЏ СЃР»СѓР¶Р±Р°" ' + CONVERT(NVARCHAR(32), @ADD) + ' Р·Р°РїРёСЃРµР№'
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

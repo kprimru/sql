@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,22 +25,22 @@ BEGIN
 				a.SYS_SHORT, DT_NAME, NT_NAME, TT_NAME,
 				ID_COMMENT, ID_COUNT, ID_MON_CNT, IP_PERCENT, NULL AS PS_SALARY, NULL AS PSD_TOTAL, PER_ID_DEP,
 				CASE
-					WHEN ID_FULL_DATE IS NULL THEN 'Нет полной оплаты'
+					WHEN ID_FULL_DATE IS NULL THEN 'РќРµС‚ РїРѕР»РЅРѕР№ РѕРїР»Р°С‚С‹'
 					WHEN NOT EXISTS
 						(
 							SELECT *
 							FROM Install.InstallDetail
 							WHERE IND_ID_INCOME = a.ID_ID
 								AND IND_INSTALL_DATE IS NOT NULL
-						) THEN 'Не произведена установка'
+						) THEN 'РќРµ РїСЂРѕРёР·РІРµРґРµРЅР° СѓСЃС‚Р°РЅРѕРІРєР°'
 					WHEN NOT EXISTS
 						(
 							SELECT *
 							FROM Install.InstallDetail
 							WHERE IND_ID_INCOME = a.ID_ID
 								AND IND_ACT_RETURN IS NOT NULL
-						) THEN 'Не вернулись акты'
-					ELSE 'Неизвестная причина'
+						) THEN 'РќРµ РІРµСЂРЅСѓР»РёСЃСЊ Р°РєС‚С‹'
+					ELSE 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РїСЂРёС‡РёРЅР°'
 				END AS SL_REASON
 			FROM
 				Income.IncomeFullView a INNER JOIN

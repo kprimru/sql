@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REG_NODE_MOVE_CHECK]
@@ -37,7 +37,7 @@ BEGIN
 
 		SELECT @ERR =
 		(
-			SELECT 'Отсутствует вес системы "' + SYS_SHORT_NAME + ' :: ' + SST_CAPTION + ' :: ' + SNC_SHORT + '"' + CHAR(10)
+			SELECT 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІРµСЃ СЃРёСЃС‚РµРјС‹ "' + SYS_SHORT_NAME + ' :: ' + SST_CAPTION + ' :: ' + SNC_SHORT + '"' + CHAR(10)
 			FROM
 			(
 				SELECT DISTINCT RN_ID_SYSTEM, RN_ID_TYPE, RN_ID_NET

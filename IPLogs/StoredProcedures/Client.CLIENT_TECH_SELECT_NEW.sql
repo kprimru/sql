@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -20,10 +20,10 @@ BEGIN
 	DECLARE @complect VARCHAR(50)
 	DECLARE @system VARCHAR(50)
 
-	SET @tech = 'Тех.информация'
-	SET @cons = 'К+ информация'
-	SET @complect = 'Комплект'
-	SET @system = 'Системы'
+	SET @tech = 'РўРµС….РёРЅС„РѕСЂРјР°С†РёСЏ'
+	SET @cons = 'Рљ+ РёРЅС„РѕСЂРјР°С†РёСЏ'
+	SET @complect = 'РљРѕРјРїР»РµРєС‚'
+	SET @system = 'РЎРёСЃС‚РµРјС‹'
 
 	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
 		DROP TABLE #usr
@@ -290,7 +290,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Версия файла USR', UF_FORMAT, CASE UF_FORMAT WHEN 4 THEN 0 WHEN 5 THEN 0 ELSE 0 END
+			), 'Р’РµСЂСЃРёСЏ С„Р°Р№Р»Р° USR', UF_FORMAT, CASE UF_FORMAT WHEN 4 THEN 0 WHEN 5 THEN 0 ELSE 0 END
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA, STAT)
@@ -300,7 +300,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Версия файла cons.exe', ConsExeVersionName, CASE ConsExeVersionActive WHEN 1 THEN 0 ELSE 2 END
+			), 'Р’РµСЂСЃРёСЏ С„Р°Р№Р»Р° cons.exe', ConsExeVersionName, CASE ConsExeVersionActive WHEN 1 THEN 0 ELSE 2 END
 		FROM
 			#usr a	LEFT OUTER JOIN
 			[PC275-SQL\ALPHA].ClientDB.dbo.ConsExeVersionTable ON ConsExeVersionID = UF_ID_CONS
@@ -313,7 +313,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Версия техн.модуля', ResVersionNumber,
+			), 'Р’РµСЂСЃРёСЏ С‚РµС…РЅ.РјРѕРґСѓР»СЏ', ResVersionNumber,
 			 CASE IsLatest
 				WHEN 1 THEN 0 
 				ELSE 2
@@ -329,7 +329,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Процессор', UF_PROC_NAME + ' (' + UF_PROC_FREQ + ' x' + CONVERT(VARCHAR(10), UF_PROC_CORE) + ')', 0
+			), 'РџСЂРѕС†РµСЃСЃРѕСЂ', UF_PROC_NAME + ' (' + UF_PROC_FREQ + ' x' + CONVERT(VARCHAR(10), UF_PROC_CORE) + ')', 0
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA, STAT)
@@ -339,7 +339,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Объем оперативной памяти', UF_RAM, CASE WHEN UF_RAM < 255 THEN 2 ELSE 0 END
+			), 'РћР±СЉРµРј РѕРїРµСЂР°С‚РёРІРЅРѕР№ РїР°РјСЏС‚Рё', UF_RAM, CASE WHEN UF_RAM < 255 THEN 2 ELSE 0 END
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA, STAT)
@@ -349,7 +349,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Загрузочный диск', UF_BOOT_NAME + ' (своб. ' + CONVERT(VARCHAR(20), UF_BOOT_FREE) + ')',
+			), 'Р—Р°РіСЂСѓР·РѕС‡РЅС‹Р№ РґРёСЃРє', UF_BOOT_NAME + ' (СЃРІРѕР±. ' + CONVERT(VARCHAR(20), UF_BOOT_FREE) + ')',
 			CASE WHEN UF_BOOT_FREE < 1000 THEN 2 ELSE 0 END
 		FROM #usr a
 
@@ -360,7 +360,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Свободно на диске с К+', UF_CONS_FREE,
+			), 'РЎРІРѕР±РѕРґРЅРѕ РЅР° РґРёСЃРєРµ СЃ Рљ+', UF_CONS_FREE,
 			CASE WHEN UF_CONS_FREE < 1000 THEN 2 ELSE 0 END
 		FROM #usr a
 
@@ -373,7 +373,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Операционная система', OS_NAME
+			), 'РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР°', OS_NAME
 		FROM #usr a
 
 
@@ -384,7 +384,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Версия пакета офисных программ ', UF_OFFICE
+			), 'Р’РµСЂСЃРёСЏ РїР°РєРµС‚Р° РѕС„РёСЃРЅС‹С… РїСЂРѕРіСЂР°РјРј ', UF_OFFICE
 		FROM #usr a
 
 
@@ -395,7 +395,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Интернет-браузер по-умолчанию', UF_BROWSER
+			), 'РРЅС‚РµСЂРЅРµС‚-Р±СЂР°СѓР·РµСЂ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ', UF_BROWSER
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -405,7 +405,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Почтовый агент', UF_MAIL
+			), 'РџРѕС‡С‚РѕРІС‹Р№ Р°РіРµРЅС‚', UF_MAIL
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -415,7 +415,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @tech
-			), 'Права доступа', UF_RIGHT
+			), 'РџСЂР°РІР° РґРѕСЃС‚СѓРїР°', UF_RIGHT
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -425,7 +425,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Кол-во одновременных доступов', UF_OD
+			), 'РљРѕР»-РІРѕ РѕРґРЅРѕРІСЂРµРјРµРЅРЅС‹С… РґРѕСЃС‚СѓРїРѕРІ', UF_OD
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -435,7 +435,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Кол-во уникальных доступов', UF_UD
+			), 'РљРѕР»-РІРѕ СѓРЅРёРєР°Р»СЊРЅС‹С… РґРѕСЃС‚СѓРїРѕРІ', UF_UD
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -445,7 +445,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Кол-во терминальных доступов', UF_TS
+			), 'РљРѕР»-РІРѕ С‚РµСЂРјРёРЅР°Р»СЊРЅС‹С… РґРѕСЃС‚СѓРїРѕРІ', UF_TS
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -455,7 +455,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Использование в виртуальной среде', UF_VM
+			), 'РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РІ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ СЃСЂРµРґРµ', UF_VM
 		FROM #usr a
 /*
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -465,7 +465,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = a.ClientBaseID
 					AND NAME_DATA = @cons
-			), 'Дата файла Info.cfg', (CONVERT(VARCHAR(20), CONVERT(DATETIME, InfoCfgFileDate, 112), 104) + ' ' + InfoCfgFileTime)
+			), 'Р”Р°С‚Р° С„Р°Р№Р»Р° Info.cfg', (CONVERT(VARCHAR(20), CONVERT(DATETIME, InfoCfgFileDate, 112), 104) + ' ' + InfoCfgFileTime)
 		FROM #usr a
 */
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -475,7 +475,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Дата файла Consult.tor', CONVERT(VARCHAR(20), UF_CONSULT_TOR, 104) + ' ' + CONVERT(VARCHAR(20), UF_CONSULT_TOR, 108)
+			), 'Р”Р°С‚Р° С„Р°Р№Р»Р° Consult.tor', CONVERT(VARCHAR(20), UF_CONSULT_TOR, 104) + ' ' + CONVERT(VARCHAR(20), UF_CONSULT_TOR, 108)
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA)
@@ -485,7 +485,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Дата файла USR',  CONVERT(VARCHAR(20), UF_DATE, 104) + ' ' + CONVERT(VARCHAR(20), UF_DATE, 108)
+			), 'Р”Р°С‚Р° С„Р°Р№Р»Р° USR',  CONVERT(VARCHAR(20), UF_DATE, 104) + ' ' + CONVERT(VARCHAR(20), UF_DATE, 108)
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA, STAT)
@@ -495,7 +495,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), '№ РИЦ', UF_RIC, CASE UF_RIC WHEN '20' THEN 0 ELSE 4 END
+			), 'в„– Р РР¦', UF_RIC, CASE UF_RIC WHEN '20' THEN 0 ELSE 4 END
 		FROM #usr a
 
 	INSERT INTO #tech(MASTER_ID, NAME_DATA, VALUE_DATA, STAT)
@@ -505,7 +505,7 @@ BEGIN
 				FROM #tech
 				WHERE USR_ID = UF_ID
 					AND NAME_DATA = @cons
-			), 'Время пополнения', UF_UPTIME,
+			), 'Р’СЂРµРјСЏ РїРѕРїРѕР»РЅРµРЅРёСЏ', UF_UPTIME,
 			CASE WHEN UF_UPTIME > '00.40.00' THEN 4 ELSE 0 END
 		FROM #usr a
 
@@ -535,14 +535,14 @@ BEGIN
 				ELSE CONVERT(VARCHAR(20), UP_DISTR) + '/' + CONVERT(VARCHAR(20), UP_COMP)
 			END,
 			CASE ISNULL(TT_REG, -1)
-				WHEN -1 THEN 'Неизвестно'
+				WHEN -1 THEN 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 				WHEN 0 THEN SN_NAME +
 					CASE SNC_NET_COUNT
 						WHEN 0 THEN ''
 						WHEN 1 THEN ''
 						ELSE ' ' + CONVERT(VARCHAR(50), SNC_NET_COUNT)
 					END
-				ELSE TT_NAME END + ' / ' + SST_CAPTION + ' / РИЦ : ' + CONVERT(VARCHAR(20), UP_RIC)
+				ELSE TT_NAME END + ' / ' + SST_CAPTION + ' / Р РР¦ : ' + CONVERT(VARCHAR(20), UP_RIC)
 		FROM
 			[PC275-SQL\ALPHA].ClientDB.USR.USRPackage a INNER JOIN
 			#usr b ON UF_ID = UP_ID_USR LEFT OUTER JOIN

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -66,18 +66,18 @@ BEGIN
 					ORDER BY UF_DATE DESC
 				) AS usr
 		WHERE a.DS_REG = 0
-			AND SST_SHORT NOT IN ('ДИУ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'Р”РЎРџ')
 			AND
 				(
 					/*(
-						a.SystemShortName IN ('КЮ', 'КБс', 'КБ:Проф')
-						AND a.NT_SHORT IN ('лок', 'флэш')
+						a.SystemShortName IN ('РљР®', 'РљР‘СЃ', 'РљР‘:РџСЂРѕС„')
+						AND a.NT_SHORT IN ('Р»РѕРє', 'С„Р»СЌС€')
 						AND ResVersionNumber NOT IN ('4016.00.07.217001')
 					) OR*/
 					(
 						(
-							a.SystemShortName NOT IN ('КЮ', 'КБс', 'КБ:Проф')
-							OR a.NT_SHORT NOT IN ('лок', 'флэш')
+							a.SystemShortName NOT IN ('РљР®', 'РљР‘СЃ', 'РљР‘:РџСЂРѕС„')
+							OR a.NT_SHORT NOT IN ('Р»РѕРє', 'С„Р»СЌС€')
 						)
 						AND ResVersionNumber IN ('4016.00.07.217001')
 					)
@@ -85,9 +85,9 @@ BEGIN
 		--ORDER BY SubhostName DESC, ManagerName, ServiceName, ClientFullName, SystemOrder, DistrNumber, CompNumber
 
 		SELECT
-			ManagerName AS [Рук-ль], ServiceName AS [СИ], Client AS [Клиент],
-			DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть],
-			ResVersionNumber AS [Техн.модуль], UF_DATE AS [Дата USR], UF_CREATE AS [USR получен]
+			ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], Client AS [РљР»РёРµРЅС‚],
+			DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], NT_SHORT AS [РЎРµС‚СЊ],
+			ResVersionNumber AS [РўРµС…РЅ.РјРѕРґСѓР»СЊ], UF_DATE AS [Р”Р°С‚Р° USR], UF_CREATE AS [USR РїРѕР»СѓС‡РµРЅ]
 		FROM #tmp
 		ORDER BY SubhostName DESC, ManagerName, ServiceName, Client, SystemOrder, DistrNumber, CompNumber
 

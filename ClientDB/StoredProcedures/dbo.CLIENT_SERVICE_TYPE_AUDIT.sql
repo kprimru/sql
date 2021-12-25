@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -88,7 +88,7 @@ BEGIN
 			(
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается по Роботу' AS Verdict
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РїРѕ Р РѕР±РѕС‚Сѓ' AS Verdict
 				FROM #update
 				WHERE ServiceType IN (1, 2, 6) AND USRRobot <> 0 AND USRIP = 0
 
@@ -96,7 +96,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается по ИП'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РїРѕ РРџ'
 				FROM #update
 				WHERE ServiceType IN (1, 2, 6) AND USRRobot = 0 AND USRIP <> 0
 
@@ -104,7 +104,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается и по Роботу и по ИП'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ Рё РїРѕ Р РѕР±РѕС‚Сѓ Рё РїРѕ РРџ'
 				FROM #update
 				WHERE ServiceType IN (1, 2, 6)AND USRRobot <> 0 AND USRIP <> 0
 
@@ -112,7 +112,7 @@ BEGIN
 
 				SELECT
 						CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается Сервис-инженером'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂРѕРј'
 				FROM #update
 				WHERE ServiceType = 3 AND USRService <> 0 AND USRRobot = 0 AND USRIP = 0
 
@@ -120,7 +120,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается по ИП'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РїРѕ РРџ'
 				FROM #update
 				WHERE ServiceType = 3 AND USRRobot = 0 AND USRIP <> 0
 
@@ -128,7 +128,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается и по Роботу и по ИП'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ Рё РїРѕ Р РѕР±РѕС‚Сѓ Рё РїРѕ РРџ'
 				FROM #update
 				WHERE ServiceType = 3 AND USRRobot <> 0 AND USRIP <> 0
 
@@ -136,7 +136,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается Сервис-инженером'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂРѕРј'
 				FROM #update
 				WHERE ServiceType = 4 AND USRService <> 0 AND USRRobot = 0 AND USRIP = 0
 
@@ -144,7 +144,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается по Роботу'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ РїРѕ Р РѕР±РѕС‚Сѓ'
 				FROM #update
 				WHERE ServiceType = 4 AND USRRobot <> 0 AND USRIP = 0
 
@@ -152,7 +152,7 @@ BEGIN
 
 				SELECT
 					CL_ID, ServiceType, UD_NAME, USRService, USRRobot, USRIP,
-					'Клиент сопровождается и по Роботу и по ИП'
+					'РљР»РёРµРЅС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ Рё РїРѕ Р РѕР±РѕС‚Сѓ Рё РїРѕ РРџ'
 				FROM #update
 				WHERE ServiceType = 4 AND USRRobot <> 0 AND USRIP <> 0
 			) AS o_O

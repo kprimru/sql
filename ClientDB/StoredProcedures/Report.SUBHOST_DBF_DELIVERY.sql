@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,25 +56,25 @@ BEGIN
 				[PC275-SQL\DELTA].DBF.Subhost.RegNodeSubhostTable
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SubhostTable ON RNS_ID_HOST = SH_ID
 				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.PeriodTable ON RNS_ID_PERIOD = PR_ID
-			WHERE SH_LST_NAME IN ('Ì', 'Ó1', 'Ë1', 'Í1')
+			WHERE SH_LST_NAME IN ('Ðœ', 'Ð£1', 'Ð›1', 'Ð1')
 				AND PR_DATE >= DATEADD(YEAR, -1, GETDATE())
 				AND PR_DATE <= GETDATE()
 
 
 				SELECT
-					SH_LST_NAME AS [Ïîäõîñò], PR_DATE AS [Ìåñÿö],
-					RNS_COMMENT AS [Ïðèìå÷àíèå],
+					SH_LST_NAME AS [ÐŸÐ¾Ð´Ñ…Ð¾ÑÑ‚], PR_DATE AS [ÐœÐµÑÑÑ†],
+					RNS_COMMENT AS [ÐŸÑ€Ð¸Ð¼ÐµÑ‡Ð°Ð½Ð¸Ðµ],
 					CASE
 						WHEN REG_ID_OLD_SYS IS NULL AND REG_ID_NEW_SYS IS NULL THEN b.SYS_SHORT_NAME
-						ELSE 'ñ ' + e.SYS_SHORT_NAME + ' íà '  + f.SYS_SHORT_NAME
-					END AS [Ñèñòåìà],
+						ELSE 'Ñ ' + e.SYS_SHORT_NAME + ' Ð½Ð° '  + f.SYS_SHORT_NAME
+					END AS [Ð¡Ð¸ÑÑ‚ÐµÐ¼Ð°],
 					CASE
 						WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME
 						ELSE
-							'ñ ' + ISNULL(g.SN_NAME, '') + ' íà ' + ISNULL(h.SN_NAME, '')
-					END [Ñåòü],
-					dbo.DistrString(NULL, REG_DISTR_NUM, REG_COMP_NUM) AS [Äèñòðèáóòèâ],
-					CASE SST_LST WHEN '' THEN 'ÊÎÌ' ELSE SST_LST END AS [Òèï ñèñòåìû]
+							'Ñ ' + ISNULL(g.SN_NAME, '') + ' Ð½Ð° ' + ISNULL(h.SN_NAME, '')
+					END [Ð¡ÐµÑ‚ÑŒ],
+					dbo.DistrString(NULL, REG_DISTR_NUM, REG_COMP_NUM) AS [Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²],
+					CASE SST_LST WHEN '' THEN 'ÐšÐžÐœ' ELSE SST_LST END AS [Ð¢Ð¸Ð¿ ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹]
 				FROM
 					#regnode a
 					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE

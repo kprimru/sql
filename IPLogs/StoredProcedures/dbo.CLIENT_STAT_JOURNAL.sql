@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,7 +56,7 @@ BEGIN
 				    WHERE RC_NUM = CSD_CODE_CLIENT
 					    AND RC_TYPE = 'CLIENT'
 				    ORDER BY RC_ID
-			    ), 'неизвестный код') + ')' AS CODE_CLIENT,
+			    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ') + ')' AS CODE_CLIENT,
 		    CONVERT(VARCHAR(20), CSD_CODE_SERVER) + ' (' +
 			    ISNULL((
 				    SELECT TOP 1 RC_TEXT
@@ -64,7 +64,7 @@ BEGIN
 				    WHERE RC_NUM = CSD_CODE_SERVER
 					    AND RC_TYPE = 'SERVER'
 				    ORDER BY RC_ID
-			    ), 'неизвестный код') + ')' AS CODE_SERVER,
+			    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ') + ')' AS CODE_SERVER,
 		    CASE
 			    WHEN EXISTS
 				    (

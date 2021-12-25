@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ClientName AS [Клиент], ServiceName AS [Си], ManagerName AS [Рук-ль], DistrStr AS [Дистрибутив], NT_SHORT AS [Сеть], SST_SHORT AS [Тип системы]
+		SELECT ClientName AS [РљР»РёРµРЅС‚], ServiceName AS [РЎРё], ManagerName AS [Р СѓРє-Р»СЊ], DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹]
 		FROM dbo.RegNodeComplectClientView a
 		WHERE a.DS_REG = 0
 			AND NOT EXISTS
@@ -37,8 +37,8 @@ BEGIN
 					AND b.STATUS = 1
 					AND b.UNSET_DATE IS NULL
 			)
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ЛСВ', 'ОДД')
-			AND NT_SHORT NOT IN ('ОВП', 'ОВПИ', 'ОВМ1', 'ОВМ2', 'ОВК')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ', 'Р›РЎР’', 'РћР”Р”')
+			AND NT_SHORT NOT IN ('РћР’Рџ', 'РћР’РџР', 'РћР’Рњ1', 'РћР’Рњ2', 'РћР’Рљ')
 		ORDER BY SubhostName DESC, ManagerName, ServiceName, ClientName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

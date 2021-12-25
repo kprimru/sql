@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -106,7 +106,7 @@ BEGIN
 			WHERE a.ID_COMPANY = @ID
 
 		/*
-				и еще встречи прикрутить...
+				Рё РµС‰Рµ РІСЃС‚СЂРµС‡Рё РїСЂРёРєСЂСѓС‚РёС‚СЊ...
 		*/
 
 		COMMIT TRAN Company

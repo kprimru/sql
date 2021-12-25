@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -51,15 +51,15 @@ BEGIN
 
         INSERT INTO @ExcludedSystemsTypes
         SELECT Cast(SetItem AS SmallInt)
-        FROM dbo.NamedSetItemsSelect('Din.SystemType', 'Не отправлять STT');
+        FROM dbo.NamedSetItemsSelect('Din.SystemType', 'РќРµ РѕС‚РїСЂР°РІР»СЏС‚СЊ STT');
 
         INSERT INTO @ExcludedSystems
         SELECT Cast(SetItem AS SmallInt)
-        FROM dbo.NamedSetItemsSelect('dbo.SystemTable', 'Не отправлять STT');
+        FROM dbo.NamedSetItemsSelect('dbo.SystemTable', 'РќРµ РѕС‚РїСЂР°РІР»СЏС‚СЊ STT');
 
         INSERT INTO @ExcludedNetTypes
         SELECT Cast(SetItem AS SmallInt)
-        FROM dbo.NamedSetItemsSelect('Din.NetType', 'Не отправлять STT');
+        FROM dbo.NamedSetItemsSelect('Din.NetType', 'РќРµ РѕС‚РїСЂР°РІР»СЏС‚СЊ STT');
 
 		IF @SERVICE IS NOT NULL
 		BEGIN
@@ -128,9 +128,9 @@ BEGIN
 					AND a.SST_ID NOT IN (SELECT E.SST_ID FROM @ExcludedSystemsTypes AS E)
 					AND a.SystemID NOT IN (SELECT E.SYS_ID FROM @ExcludedSystems AS E)
 					AND a.NT_ID NOT IN (SELECT E.NT_ID FROM @ExcludedNetTypes AS E)
-					--AND SST_SHORT NOT IN ('ОДД', /*'ДИУ', */'АДМ', 'ДСП')
+					--AND SST_SHORT NOT IN ('РћР”Р”', /*'Р”РРЈ', */'РђР”Рњ', 'Р”РЎРџ')
 					--AND a.SystemBaseName NOT IN ('SKS')
-					--AND NT_SHORT NOT IN ('онлайн', 'онлайн2', 'онлайн3', 'мобильная', 'ОВМ (ОД 1)', 'ОВМ (ОД 2)', 'ОВМ (ОД 10)', 'ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф')
+					--AND NT_SHORT NOT IN ('РѕРЅР»Р°Р№РЅ', 'РѕРЅР»Р°Р№РЅ2', 'РѕРЅР»Р°Р№РЅ3', 'РјРѕР±РёР»СЊРЅР°СЏ', 'РћР’Рњ (РћР” 1)', 'РћР’Рњ (РћР” 2)', 'РћР’Рњ (РћР” 10)', 'РћР’Рџ', 'РћР’РџР', 'РћР’Рљ', 'РћР’Рњ1', 'РћР’Рњ2', 'РћР’Рљ-Р¤')
 			) AS a
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT

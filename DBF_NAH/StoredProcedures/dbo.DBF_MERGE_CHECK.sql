@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 		SET @ERROR = ''
 
 		SELECT
-			@ERROR = @ERROR + 'В основной базе отсутствует клиент "' +
+			@ERROR = @ERROR + 'Р’ РѕСЃРЅРѕРІРЅРѕР№ Р±Р°Р·Рµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєР»РёРµРЅС‚ "' +
 			CL_PSEDO + '" (' + CONVERT(VARCHAR(20), CL_NUM) + ')' + CHAR(10)
 		FROM DBF_NAH.dbo.ClientTable a
 		WHERE NOT EXISTS
@@ -43,7 +43,7 @@ BEGIN
 				WHERE a.CL_NUM = -b.CL_NUM
 			)
 
-		SELECT @ERROR = @ERROR + 'Дубликат псевдонимов в базе Находки "' + a.CL_PSEDO + '"' + CHAR(10)
+		SELECT @ERROR = @ERROR + 'Р”СѓР±Р»РёРєР°С‚ РїСЃРµРІРґРѕРЅРёРјРѕРІ РІ Р±Р°Р·Рµ РќР°С…РѕРґРєРё "' + a.CL_PSEDO + '"' + CHAR(10)
 		FROM
 			DBF_NAH.dbo.ClientTable a
 			INNER JOIN DBF.dbo.ClientTable t ON t.CL_NUM = a.CL_NUM
@@ -89,7 +89,7 @@ BEGIN
 		DECLARE @ER_TBL TABLE (ID INT IDENTITY(1, 1), ERR VARCHAR(200), ERR_NOTE VARCHAR(MAX), CL_ID INT, TO_ID INT)
 
 		INSERT INTO @ER_TBL(ERR, ERR_NOTE)
-			SELECT 'Новый населенный пункт' AS ERR, 'Название: "' + CT_NAME + '", Регион: "' + CONVERT(VARCHAR(20), CT_REGION) + '"' AS ERR_NOTE
+			SELECT 'РќРѕРІС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚' AS ERR, 'РќР°Р·РІР°РЅРёРµ: "' + CT_NAME + '", Р РµРіРёРѕРЅ: "' + CONVERT(VARCHAR(20), CT_REGION) + '"' AS ERR_NOTE
 			FROM DBF_NAH.dbo.CityTable a
 			WHERE NOT EXISTS
 				(
@@ -100,7 +100,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новая улица', 'Название: "' + ISNULL(c.ST_PREFIX + ' ', '') + ST_NAME + ISNULL(' ' + c.ST_SUFFIX, '') + '", Населенный пункт: "' + b.CT_NAME + '"'
+			SELECT 'РќРѕРІР°СЏ СѓР»РёС†Р°', 'РќР°Р·РІР°РЅРёРµ: "' + ISNULL(c.ST_PREFIX + ' ', '') + ST_NAME + ISNULL(' ' + c.ST_SUFFIX, '') + '", РќР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚: "' + b.CT_NAME + '"'
 			FROM
 				DBF_NAH.dbo.StreetTable c INNER JOIN
 				DBF_NAH.dbo.CityTable b ON b.CT_ID = c.ST_ID_CITY
@@ -118,7 +118,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новый подхост', 'Короткое название: "' + ISNULL(SH_SHORT_NAME, '') + '", Название на РЦ: "' + ISNULL(SH_LST_NAME, '') + '"'
+			SELECT 'РќРѕРІС‹Р№ РїРѕРґС…РѕСЃС‚', 'РљРѕСЂРѕС‚РєРѕРµ РЅР°Р·РІР°РЅРёРµ: "' + ISNULL(SH_SHORT_NAME, '') + '", РќР°Р·РІР°РЅРёРµ РЅР° Р Р¦: "' + ISNULL(SH_LST_NAME, '') + '"'
 			FROM DBF_NAH.dbo.SubhostTable a
 			WHERE NOT EXISTS
 				(
@@ -129,58 +129,58 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Изменился клиент', 'Псевдоним: "' + t.CL_PSEDO + '". Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»СЃСЏ РєР»РёРµРЅС‚', 'РџСЃРµРІРґРѕРЅРёРј: "' + t.CL_PSEDO + '". РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN t.CL_PSEDO <> a.CL_PSEDO THEN 'Псевдоним с "' + t.CL_PSEDO + '" на "' + a.CL_PSEDO + '"' + CHAR(10)
+					WHEN t.CL_PSEDO <> a.CL_PSEDO THEN 'РџСЃРµРІРґРѕРЅРёРј СЃ "' + t.CL_PSEDO + '" РЅР° "' + a.CL_PSEDO + '"' + CHAR(10)
 					ELSE ''
 				END	+
 				CASE
-					WHEN t.CL_FULL_NAME <> a.CL_FULL_NAME THEN 'Полное название с "' + t.CL_FULL_NAME + '" на "' + a.CL_FULL_NAME + '"' + CHAR(10)
+					WHEN t.CL_FULL_NAME <> a.CL_FULL_NAME THEN 'РџРѕР»РЅРѕРµ РЅР°Р·РІР°РЅРёРµ СЃ "' + t.CL_FULL_NAME + '" РЅР° "' + a.CL_FULL_NAME + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_SHORT_NAME, '') <> ISNULL(a.CL_SHORT_NAME, '') THEN
-								'Короткое название с "' + ISNULL(t.CL_SHORT_NAME, '') + '" на "' + ISNULL(a.CL_SHORT_NAME, '') + '"' + CHAR(10)
+								'РљРѕСЂРѕС‚РєРѕРµ РЅР°Р·РІР°РЅРёРµ СЃ "' + ISNULL(t.CL_SHORT_NAME, '') + '" РЅР° "' + ISNULL(a.CL_SHORT_NAME, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_FOUNDING, '') <> ISNULL(a.CL_FOUNDING, '') THEN
-								'Основание руководства с "' + ISNULL(t.CL_FOUNDING, '') + '" на "' + ISNULL(a.CL_FOUNDING, '') + '"' + CHAR(10)
+								'РћСЃРЅРѕРІР°РЅРёРµ СЂСѓРєРѕРІРѕРґСЃС‚РІР° СЃ "' + ISNULL(t.CL_FOUNDING, '') + '" РЅР° "' + ISNULL(a.CL_FOUNDING, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_EMAIL, '') <> ISNULL(a.CL_EMAIL, '') THEN
-								'E-Mail с "' + ISNULL(t.CL_EMAIL, '') + '" на "' + ISNULL(a.CL_EMAIL, '') + '"' + CHAR(10)
+								'E-Mail СЃ "' + ISNULL(t.CL_EMAIL, '') + '" РЅР° "' + ISNULL(a.CL_EMAIL, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_INN, '') <> ISNULL(a.CL_INN, '') THEN
-								'ИНН с "' + ISNULL(t.CL_INN, '') + '" на "' + ISNULL(a.CL_INN, '') + '"' + CHAR(10)
+								'РРќРќ СЃ "' + ISNULL(t.CL_INN, '') + '" РЅР° "' + ISNULL(a.CL_INN, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_KPP, '') <> ISNULL(a.CL_KPP, '') THEN
-								'КПП с "' + ISNULL(t.CL_KPP, '') + '" на "' + ISNULL(a.CL_KPP, '') + '"' + CHAR(10)
+								'РљРџРџ СЃ "' + ISNULL(t.CL_KPP, '') + '" РЅР° "' + ISNULL(a.CL_KPP, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_OKPO, '') <> ISNULL(a.CL_OKPO, '') THEN
-								'ОКПО с "' + ISNULL(t.CL_OKPO, '') + '" на "' + ISNULL(a.CL_OKPO, '') + '"' + CHAR(10)
+								'РћРљРџРћ СЃ "' + ISNULL(t.CL_OKPO, '') + '" РЅР° "' + ISNULL(a.CL_OKPO, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_OKONX, '') <> ISNULL(a.CL_OKONX, '') THEN
-								'ОКОНХ с "' + ISNULL(t.CL_OKONX, '') + '" на "' + ISNULL(a.CL_OKONX, '') + '"' + CHAR(10)
+								'РћРљРћРќРҐ СЃ "' + ISNULL(t.CL_OKONX, '') + '" РЅР° "' + ISNULL(a.CL_OKONX, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_ACCOUNT, '') <> ISNULL(a.CL_ACCOUNT, '') THEN
-								'Рассчетный счет с "' + ISNULL(t.CL_ACCOUNT, '') + '" на "' + ISNULL(a.CL_ACCOUNT, '') + '"' + CHAR(10)
+								'Р Р°СЃСЃС‡РµС‚РЅС‹Р№ СЃС‡РµС‚ СЃ "' + ISNULL(t.CL_ACCOUNT, '') + '" РЅР° "' + ISNULL(a.CL_ACCOUNT, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
 					WHEN ISNULL(t.CL_PHONE, '') <> ISNULL(a.CL_PHONE, '') THEN
-								'Телефон с "' + ISNULL(t.CL_PHONE, '') + '" на "' + ISNULL(a.CL_PHONE, '') + '"' + CHAR(10)
+								'РўРµР»РµС„РѕРЅ СЃ "' + ISNULL(t.CL_PHONE, '') + '" РЅР° "' + ISNULL(a.CL_PHONE, '') + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM
@@ -222,7 +222,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новые дистрибутивы', e.SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), DIS_NUM) + CASE DIS_COMP_NUM WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), DIS_COMP_NUM) END
+			SELECT 'РќРѕРІС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹', e.SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), DIS_NUM) + CASE DIS_COMP_NUM WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), DIS_COMP_NUM) END
 			FROM
 				DBF_NAH.dbo.DistrTable a INNER JOIN
 				DBF_NAH.dbo.SystemTable  b ON b.SYS_ID = DIS_ID_SYSTEM INNER JOIN
@@ -241,13 +241,13 @@ BEGIN
 			UNION ALL
 
 			SELECT
-				'Смена активности дистриубтива',
+				'РЎРјРµРЅР° Р°РєС‚РёРІРЅРѕСЃС‚Рё РґРёСЃС‚СЂРёСѓР±С‚РёРІР°',
 				b.SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), t.DIS_NUM) +
 						CASE t.DIS_COMP_NUM
 							WHEN 1 THEN ''
 							ELSE '/' + CONVERT(VARCHAR(20), t.DIS_COMP_NUM)
 						END +
-				' с "' + CONVERT(VARCHAR(20), t.DIS_ACTIVE) + '" на "' + CONVERT(VARCHAR(20), a.DIS_ACTIVE) + '"'
+				' СЃ "' + CONVERT(VARCHAR(20), t.DIS_ACTIVE) + '" РЅР° "' + CONVERT(VARCHAR(20), a.DIS_ACTIVE) + '"'
 			FROM
 				DBF.dbo.DistrTable t INNER JOIN
 				DBF_NAH.dbo.DistrTable a ON
@@ -264,7 +264,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новый статус обслуживания', DSS_NAME
+			SELECT 'РќРѕРІС‹Р№ СЃС‚Р°С‚СѓСЃ РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ', DSS_NAME
 			FROM
 				DBF_NAH.dbo.DistrServiceStatusTable a INNER JOIN
 				DBF_NAH.dbo.DistrStatusTable c ON a.DSS_ID_STATUS = c.DS_ID
@@ -277,12 +277,12 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новые дистрибутивы у клиента', 'Клиент: "' +
+			SELECT 'РќРѕРІС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ Сѓ РєР»РёРµРЅС‚Р°', 'РљР»РёРµРЅС‚: "' +
 					(
 						SELECT TOP 1 CL_PSEDO
 						FROM DBF.dbo.ClientTable f
 						WHERE f.CL_NUM = b.CL_NUM
-					) + '". Дистрибутив: "' +
+					) + '". Р”РёСЃС‚СЂРёР±СѓС‚РёРІ: "' +
 					(
 						SELECT TOP 1 SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), DIS_NUM) + CASE DIS_COMP_NUM WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), DIS_COMP_NUM) END
 						FROM
@@ -312,7 +312,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Переданы дистриубтивы другому клиенту', 'Старый клиент: "' + y.CL_PSEDO + '" Новый клиент: "' + c.CL_PSEDO + '"'
+			SELECT 'РџРµСЂРµРґР°РЅС‹ РґРёСЃС‚СЂРёСѓР±С‚РёРІС‹ РґСЂСѓРіРѕРјСѓ РєР»РёРµРЅС‚Сѓ', 'РЎС‚Р°СЂС‹Р№ РєР»РёРµРЅС‚: "' + y.CL_PSEDO + '" РќРѕРІС‹Р№ РєР»РёРµРЅС‚: "' + c.CL_PSEDO + '"'
 			FROM
 				DBF_NAH.dbo.ClientDistrTable a INNER JOIN
 				DBF_NAH.dbo.ClientTable b ON b.CL_ID = a.CD_ID_CLIENT INNER JOIN
@@ -329,7 +329,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Удаленные дистрибутивы клиента', 'Клиент: "' + CL_PSEDO + '", Дистрибутив: "' + DIS_STR + '"'
+			SELECT 'РЈРґР°Р»РµРЅРЅС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РєР»РёРµРЅС‚Р°', 'РљР»РёРµРЅС‚: "' + CL_PSEDO + '", Р”РёСЃС‚СЂРёР±СѓС‚РёРІ: "' + DIS_STR + '"'
 			FROM
 				DBF.dbo.ClientDistrTable
 				INNER JOIN DBF.dbo.ClientTable ON CD_ID_CLIENT = CL_ID
@@ -343,25 +343,25 @@ BEGIN
 
 			UNION ALL
 			/*
-			SELECT 'Изменился адрес', 'Клиент: "' + f.CL_PSEDO + '", Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»СЃСЏ Р°РґСЂРµСЃ', 'РљР»РёРµРЅС‚: "' + f.CL_PSEDO + '", РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN ISNULL(z.CA_INDEX, '') <> ISNULL(a.CA_INDEX, '') THEN 'Индекс с "' + ISNULL(z.CA_INDEX, '') + '" на "' + ISNULL(a.CA_INDEX, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.CA_INDEX, '') <> ISNULL(a.CA_INDEX, '') THEN 'РРЅРґРµРєСЃ СЃ "' + ISNULL(z.CA_INDEX, '') + '" РЅР° "' + ISNULL(a.CA_INDEX, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN (ISNULL(i.ST_NAME, '') <> ISNULL(c.ST_NAME, '')) OR (ISNULL(i.ST_PREFIX, '') <> ISNULL(c.ST_PREFIX, '')) OR (ISNULL(i.ST_SUFFIX, '') <> ISNULL(c.ST_SUFFIX, '')) THEN 'Улица с "' + ISNULL(i.ST_PREFIX + ' ', '') + ISNULL(i.ST_NAME, '') + ISNULL(' ' + i.ST_SUFFIX, '') + '" на "' + ISNULL(c.ST_PREFIX + ' ', '') + ISNULL(c.ST_NAME, '') + ISNULL(' ' + c.ST_SUFFIX, '') + '"' + CHAR(10)
+					WHEN (ISNULL(i.ST_NAME, '') <> ISNULL(c.ST_NAME, '')) OR (ISNULL(i.ST_PREFIX, '') <> ISNULL(c.ST_PREFIX, '')) OR (ISNULL(i.ST_SUFFIX, '') <> ISNULL(c.ST_SUFFIX, '')) THEN 'РЈР»РёС†Р° СЃ "' + ISNULL(i.ST_PREFIX + ' ', '') + ISNULL(i.ST_NAME, '') + ISNULL(' ' + i.ST_SUFFIX, '') + '" РЅР° "' + ISNULL(c.ST_PREFIX + ' ', '') + ISNULL(c.ST_NAME, '') + ISNULL(' ' + c.ST_SUFFIX, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(z.CA_HOME, '') <> ISNULL(a.CA_HOME, '') THEN 'Дом с "' + ISNULL(z.CA_HOME, '') + '" на "' + ISNULL(a.CA_HOME, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.CA_HOME, '') <> ISNULL(a.CA_HOME, '') THEN 'Р”РѕРј СЃ "' + ISNULL(z.CA_HOME, '') + '" РЅР° "' + ISNULL(a.CA_HOME, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(z.CA_STR, '') <> ISNULL(a.CA_STR, '') THEN 'Строка адреса с "' + ISNULL(z.CA_STR, '') + '" на "' + ISNULL(a.CA_STR, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.CA_STR, '') <> ISNULL(a.CA_STR, '') THEN 'РЎС‚СЂРѕРєР° Р°РґСЂРµСЃР° СЃ "' + ISNULL(z.CA_STR, '') + '" РЅР° "' + ISNULL(a.CA_STR, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(z.CA_FREE, '') <> ISNULL(a.CA_FREE, '') THEN 'Строковый адрес "' + ISNULL(z.CA_FREE, '') + '" на "' + ISNULL(a.CA_FREE, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.CA_FREE, '') <> ISNULL(a.CA_FREE, '') THEN 'РЎС‚СЂРѕРєРѕРІС‹Р№ Р°РґСЂРµСЃ "' + ISNULL(z.CA_FREE, '') + '" РЅР° "' + ISNULL(a.CA_FREE, '') + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM
@@ -387,7 +387,7 @@ BEGIN
 			UNION ALL
 			*/
 
-			SELECT 'Новые должности', POS_NAME
+			SELECT 'РќРѕРІС‹Рµ РґРѕР»Р¶РЅРѕСЃС‚Рё', POS_NAME
 			FROM DBF_NAH.dbo.PositionTable a
 			WHERE NOT EXISTS
 				(
@@ -398,13 +398,13 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новые сотрудники', 'Клиент: "' +
+			SELECT 'РќРѕРІС‹Рµ СЃРѕС‚СЂСѓРґРЅРёРєРё', 'РљР»РёРµРЅС‚: "' +
 					ISNULL((
 						SELECT CL_PSEDO
 						FROM
 							DBF.dbo.ClientTable z
 						WHERE z.CL_NUM = b.CL_NUM
-					), '') + ' - ' + CONVERT(VARCHAR(20), b.CL_NUM) + '", ФИО: "' + ISNULL(PER_FAM + ' ', '') + ISNULL(PER_NAME + ' ', '') + ISNULL(PER_OTCH, '') + '" Должность: "' + ISNULL(c.POS_NAME, '') + '"'
+					), '') + ' - ' + CONVERT(VARCHAR(20), b.CL_NUM) + '", Р¤РРћ: "' + ISNULL(PER_FAM + ' ', '') + ISNULL(PER_NAME + ' ', '') + ISNULL(PER_OTCH, '') + '" Р”РѕР»Р¶РЅРѕСЃС‚СЊ: "' + ISNULL(c.POS_NAME, '') + '"'
 			FROM
 				DBF_NAH.dbo.ClientPersonalTable a INNER JOIN
 				DBF_NAH.dbo.ClientTable b ON b.CL_ID = a.PER_ID_CLIENT INNER JOIN
@@ -422,21 +422,21 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Изменились сотрудники',	'Клиент: "' + e.CL_PSEDO + '" ' + g.RP_NAME + ' Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»РёСЃСЊ СЃРѕС‚СЂСѓРґРЅРёРєРё',	'РљР»РёРµРЅС‚: "' + e.CL_PSEDO + '" ' + g.RP_NAME + ' РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN ISNULL(z.PER_FAM, '') <> ISNULL(a.PER_FAM, '') THEN 'Фамилия с "' + ISNULL(z.PER_FAM, '') + '" на "' + ISNULL(a.PER_FAM, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.PER_FAM, '') <> ISNULL(a.PER_FAM, '') THEN 'Р¤Р°РјРёР»РёСЏ СЃ "' + ISNULL(z.PER_FAM, '') + '" РЅР° "' + ISNULL(a.PER_FAM, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(z.PER_NAME, '') <> ISNULL(a.PER_NAME, '') THEN 'Имя с "' + ISNULL(z.PER_NAME, '') + '" на "' + ISNULL(a.PER_NAME, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.PER_NAME, '') <> ISNULL(a.PER_NAME, '') THEN 'РРјСЏ СЃ "' + ISNULL(z.PER_NAME, '') + '" РЅР° "' + ISNULL(a.PER_NAME, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(z.PER_OTCH, '') <> ISNULL(a.PER_OTCH, '') THEN 'Отчество с "' + ISNULL(z.PER_OTCH, '') + '" на "' + ISNULL(a.PER_OTCH, '') + '"' + CHAR(10)
+					WHEN ISNULL(z.PER_OTCH, '') <> ISNULL(a.PER_OTCH, '') THEN 'РћС‚С‡РµСЃС‚РІРѕ СЃ "' + ISNULL(z.PER_OTCH, '') + '" РЅР° "' + ISNULL(a.PER_OTCH, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(y.POS_NAME, '') <> ISNULL(f.POS_NAME, '') THEN 'Должность с "' + ISNULL(y.POS_NAME, '') + '" на "' + ISNULL(f.POS_NAME, '') + '"' + CHAR(10)
+					WHEN ISNULL(y.POS_NAME, '') <> ISNULL(f.POS_NAME, '') THEN 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЃ "' + ISNULL(y.POS_NAME, '') + '" РЅР° "' + ISNULL(f.POS_NAME, '') + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM
@@ -477,7 +477,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новые СИ', COUR_NAME
+			SELECT 'РќРѕРІС‹Рµ РЎР', COUR_NAME
 			FROM DBF_NAH.dbo.CourierTable a
 			WHERE NOT EXISTS
 				(
@@ -488,7 +488,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT '!!!ВНИМАНИЕ! ИЗМЕНИЛСЯ КЛИЕНТ!!!', 'Номер ТО: "' + CONVERT(VARCHAR(20), t.TO_NUM) + '" с "' + e.CL_PSEDO + '" на "' + b.CL_PSEDO + '"'
+			SELECT '!!!Р’РќРРњРђРќРР•! РР—РњР•РќРР›РЎРЇ РљР›РР•РќРў!!!', 'РќРѕРјРµСЂ РўРћ: "' + CONVERT(VARCHAR(20), t.TO_NUM) + '" СЃ "' + e.CL_PSEDO + '" РЅР° "' + b.CL_PSEDO + '"'
 			FROM
 				DBF.dbo.TOTable t INNER JOIN
 				DBF_NAH.dbo.TOTable a ON t.TO_NUM = a.TO_NUM INNER JOIN
@@ -500,29 +500,29 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Изменились ТО', 'Номер ТО: "' + CONVERT(VARCHAR(20), t.TO_NUM) + '" Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»РёСЃСЊ РўРћ', 'РќРѕРјРµСЂ РўРћ: "' + CONVERT(VARCHAR(20), t.TO_NUM) + '" РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN t.TO_ID_CLIENT <> e.CL_ID THEN 'Клиент: с "' + e.CL_PSEDO + '" на "' + b.CL_PSEDO + '"' + CHAR(10)
+					WHEN t.TO_ID_CLIENT <> e.CL_ID THEN 'РљР»РёРµРЅС‚: СЃ "' + e.CL_PSEDO + '" РЅР° "' + b.CL_PSEDO + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TO_NAME <> a.TO_NAME THEN 'Название: с "' + t.TO_NAME + '" на "' + a.TO_NAME + '"' + CHAR(10)
+					WHEN t.TO_NAME <> a.TO_NAME THEN 'РќР°Р·РІР°РЅРёРµ: СЃ "' + t.TO_NAME + '" РЅР° "' + a.TO_NAME + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TO_REPORT <> a.TO_REPORT THEN 'Признак вкл. в отчет: с "' + CONVERT(VARCHAR(20), t.TO_REPORT) + '" на "' + CONVERT(VARCHAR(20), a.TO_REPORT) + '"' + CHAR(10)
+					WHEN t.TO_REPORT <> a.TO_REPORT THEN 'РџСЂРёР·РЅР°Рє РІРєР». РІ РѕС‚С‡РµС‚: СЃ "' + CONVERT(VARCHAR(20), t.TO_REPORT) + '" РЅР° "' + CONVERT(VARCHAR(20), a.TO_REPORT) + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN ISNULL(t.TO_ID_COUR, 0) <> ISNULL(f.COUR_ID, 0) THEN 'СИ: с "' + ISNULL(z.COUR_NAME, '') + '" на "' + ISNULL(f.COUR_NAME , '')+ '"' + CHAR(10)
+					WHEN ISNULL(t.TO_ID_COUR, 0) <> ISNULL(f.COUR_ID, 0) THEN 'РЎР: СЃ "' + ISNULL(z.COUR_NAME, '') + '" РЅР° "' + ISNULL(f.COUR_NAME , '')+ '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TO_VMI_COMMENT <> a.TO_VMI_COMMENT THEN 'Комментарий ВМИ: с "' + t.TO_VMI_COMMENT + '" на "' + a.TO_VMI_COMMENT + '"' + CHAR(10)
+					WHEN t.TO_VMI_COMMENT <> a.TO_VMI_COMMENT THEN 'РљРѕРјРјРµРЅС‚Р°СЂРёР№ Р’РњР: СЃ "' + t.TO_VMI_COMMENT + '" РЅР° "' + a.TO_VMI_COMMENT + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TO_INN <> a.TO_INN THEN 'ИНН: с "' + t.TO_INN + '" на "' + a.TO_INN + '"' + CHAR(10)
+					WHEN t.TO_INN <> a.TO_INN THEN 'РРќРќ: СЃ "' + t.TO_INN + '" РЅР° "' + a.TO_INN + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM
@@ -544,17 +544,17 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Изменился адрес точки', 'Номер ТО: "' + CONVERT(VARCHAR(20), g.TO_NUM) + '" Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»СЃСЏ Р°РґСЂРµСЃ С‚РѕС‡РєРё', 'РќРѕРјРµСЂ РўРћ: "' + CONVERT(VARCHAR(20), g.TO_NUM) + '" РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN t.TA_INDEX <> a.TA_INDEX THEN 'Индекс с "' + t.TA_INDEX + '" на "' + a.TA_INDEX + '"' + CHAR(10)
+					WHEN t.TA_INDEX <> a.TA_INDEX THEN 'РРЅРґРµРєСЃ СЃ "' + t.TA_INDEX + '" РЅР° "' + a.TA_INDEX + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TA_ID_STREET <> f.ST_ID THEN 'Улица с "' + ISNULL(f.ST_PREFIX + ' ', '') + ISNULL(f.ST_NAME, '') + ISNULL(' ' + f.ST_SUFFIX, '') + '" на "' + ISNULL(z.ST_PREFIX + ' ', '') + z.ST_NAME + ISNULL(' ' + z.ST_SUFFIX, '') + '"' + CHAR(10)
+					WHEN t.TA_ID_STREET <> f.ST_ID THEN 'РЈР»РёС†Р° СЃ "' + ISNULL(f.ST_PREFIX + ' ', '') + ISNULL(f.ST_NAME, '') + ISNULL(' ' + f.ST_SUFFIX, '') + '" РЅР° "' + ISNULL(z.ST_PREFIX + ' ', '') + z.ST_NAME + ISNULL(' ' + z.ST_SUFFIX, '') + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN t.TA_HOME <> a.TA_HOME THEN 'Дом с "' + t.TA_HOME + '" на "' + a.TA_HOME + '"' + CHAR(10)
+					WHEN t.TA_HOME <> a.TA_HOME THEN 'Р”РѕРј СЃ "' + t.TA_HOME + '" РЅР° "' + a.TA_HOME + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM
@@ -575,7 +575,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Новые дистрибутивы в точке', 'Номер ТО: "' + CONVERT(VARCHAR(20), b.TO_NUM) + '" Дистр: "' +
+			SELECT 'РќРѕРІС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РІ С‚РѕС‡РєРµ', 'РќРѕРјРµСЂ РўРћ: "' + CONVERT(VARCHAR(20), b.TO_NUM) + '" Р”РёСЃС‚СЂ: "' +
 					(
 						SELECT TOP 1 SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), DIS_NUM) + CASE DIS_COMP_NUM WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), DIS_COMP_NUM) END
 						FROM
@@ -605,13 +605,13 @@ BEGIN
 			UNION ALL
 
 			SELECT
-				'Дистрибутив перенесен в другую ТО', 'Дистрибутив: ' +
+				'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РїРµСЂРµРЅРµСЃРµРЅ РІ РґСЂСѓРіСѓСЋ РўРћ', 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ: ' +
 				f.SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), g.DIS_NUM) +
 					CASE g.DIS_COMP_NUM
 						WHEN 1 THEN ''
 						ELSE '/' + CONVERT(VARCHAR(20), g.DIS_COMP_NUM)
 					END +
-				' из ' + CONVERT(VARCHAR(20), y.TO_NUM) + ' в ' + CONVERT(VARCHAR(20), c.TO_NUM)
+				' РёР· ' + CONVERT(VARCHAR(20), y.TO_NUM) + ' РІ ' + CONVERT(VARCHAR(20), c.TO_NUM)
 			FROM
 				DBF_NAH.dbo.TODistrTable a INNER JOIN
 				DBF_NAH.dbo.TOTable b ON b.TO_ID = a.TD_ID_TO INNER JOIN
@@ -629,7 +629,7 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Дистрибутив удален из ТО', 'Дистрибутив: "' + DIS_STR + '" ТО: ' + CONVERT(VARCHAR(20), TO_NUM)
+			SELECT 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓРґР°Р»РµРЅ РёР· РўРћ', 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ: "' + DIS_STR + '" РўРћ: ' + CONVERT(VARCHAR(20), TO_NUM)
 			FROM
 				DBF.dbo.TODistrTable
 				INNER JOIN DBF.dbo.TOTable ON TO_ID = TD_ID_TO
@@ -643,25 +643,25 @@ BEGIN
 
 			UNION ALL
 
-			SELECT 'Изменился сотрудник в ТО', 'Номер ТО: "' + CONVERT(VARCHAR(20), e.TO_NUM) + '" Изменились поля: ' + CHAR(10) +
+			SELECT 'РР·РјРµРЅРёР»СЃСЏ СЃРѕС‚СЂСѓРґРЅРёРє РІ РўРћ', 'РќРѕРјРµСЂ РўРћ: "' + CONVERT(VARCHAR(20), e.TO_NUM) + '" РР·РјРµРЅРёР»РёСЃСЊ РїРѕР»СЏ: ' + CHAR(10) +
 				CASE
-					WHEN z.TP_SURNAME <> a.TP_SURNAME THEN 'Фамилия с "' + z.TP_SURNAME + '" на "' + a.TP_SURNAME + '"' + CHAR(10)
+					WHEN z.TP_SURNAME <> a.TP_SURNAME THEN 'Р¤Р°РјРёР»РёСЏ СЃ "' + z.TP_SURNAME + '" РЅР° "' + a.TP_SURNAME + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN z.TP_NAME <> a.TP_NAME THEN 'Фамилия с "' + z.TP_NAME + '" на "' + a.TP_NAME + '"' + CHAR(10)
+					WHEN z.TP_NAME <> a.TP_NAME THEN 'Р¤Р°РјРёР»РёСЏ СЃ "' + z.TP_NAME + '" РЅР° "' + a.TP_NAME + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN z.TP_OTCH <> a.TP_OTCH THEN 'Фамилия с "' + z.TP_OTCH + '" на "' + a.TP_OTCH + '"' + CHAR(10)
+					WHEN z.TP_OTCH <> a.TP_OTCH THEN 'Р¤Р°РјРёР»РёСЏ СЃ "' + z.TP_OTCH + '" РЅР° "' + a.TP_OTCH + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN z.TP_PHONE <> a.TP_PHONE THEN 'Фамилия с "' + z.TP_PHONE + '" на "' + a.TP_PHONE + '"' + CHAR(10)
+					WHEN z.TP_PHONE <> a.TP_PHONE THEN 'Р¤Р°РјРёР»РёСЏ СЃ "' + z.TP_PHONE + '" РЅР° "' + a.TP_PHONE + '"' + CHAR(10)
 					ELSE ''
 				END +
 				CASE
-					WHEN z.TP_ID_POS <> f.POS_ID THEN 'Должность с "' + y.POS_NAME + '" на "' + f.POS_NAME + '"' + CHAR(10)
+					WHEN z.TP_ID_POS <> f.POS_ID THEN 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЃ "' + y.POS_NAME + '" РЅР° "' + f.POS_NAME + '"' + CHAR(10)
 					ELSE ''
 				END
 			FROM

@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'SYSTEM', @SYS_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'SYSTEM', 'Редактирование', @SYS_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'SYSTEM', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @SYS_ID_MASTER, @OLD, @NEW
 
 	--EXEC [Distr].[SYSTEM_WEIGHT]
 END

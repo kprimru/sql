@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,22 +28,22 @@ BEGIN
 
 		UNION ALL
 
-		SELECT ManagerName, 'Руководители сервисной службы'
+		SELECT ManagerName, 'Р СѓРєРѕРІРѕРґРёС‚РµР»Рё СЃРµСЂРІРёСЃРЅРѕР№ СЃР»СѓР¶Р±С‹'
 		FROM dbo.ManagerTable
 
 		UNION ALL
 
-		SELECT ServiceName, 'Сервис-инженеры'
+		SELECT ServiceName, 'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂС‹'
 		FROM dbo.ServiceTable
 
 		UNION ALL
 
-		SELECT TeacherName, 'Преподаватели'
+		SELECT TeacherName, 'РџСЂРµРїРѕРґР°РІР°С‚РµР»Рё'
 		FROM dbo.TeacherTable
 
 		UNION ALL
 
-		SELECT DutyName, 'Дежурная служба'
+		SELECT DutyName, 'Р”РµР¶СѓСЂРЅР°СЏ СЃР»СѓР¶Р±Р°'
 		FROM dbo.DutyTable
 
 		ORDER BY PersonalShortName

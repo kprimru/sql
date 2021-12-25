@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -163,14 +163,14 @@ BEGIN
 												AND UD_ID_CLIENT = CL_ID
 												AND
 												CASE
-													WHEN STAT_DATE IS NULL THEN 'Нет'
+													WHEN STAT_DATE IS NULL THEN 'РќРµС‚'
 													WHEN
 														CASE InfoBankDaily
 															WHEN 1 THEN STAT_DAILY
 															ELSE STAT_DAY
-														END < UIU_DATE_S THEN 'Нет'
-													ELSE 'Да'
-												END = 'Нет'
+														END < UIU_DATE_S THEN 'РќРµС‚'
+													ELSE 'Р”Р°'
+												END = 'РќРµС‚'
 										)
 										THEN 0
 									ELSE 1
@@ -187,8 +187,8 @@ BEGIN
 		FROM #clientlist
 
 		SELECT
-			'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS WEEK_STRING,
-			CONVERT(VARCHAR(20), SUM(WeekCount)) + ' из ' + CONVERT(VARCHAR(20), @TOTAL) AS ServiceCount,
+			'СЃ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), WEND, 104) AS WEEK_STRING,
+			CONVERT(VARCHAR(20), SUM(WeekCount)) + ' РёР· ' + CONVERT(VARCHAR(20), @TOTAL) AS ServiceCount,
 			CASE @TOTAL
 				WHEN 0 THEN 0
 				ELSE ROUND(100 * CONVERT(DECIMAL(8, 4), SUM(WeekCount)) / @TOTAL, 2)

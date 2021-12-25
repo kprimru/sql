@@ -1,4 +1,4 @@
-USE [BuhDB]
+ÔªøUSE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -12,7 +12,7 @@ BEGIN
 
 	SELECT SystemName, SystemSet, SystemPrice, TaxPrice, SystemPrice + TaxPrice AS TotalPrice
 	FROM ActSystemsTable WITH(NOLOCK) 
-	WHERE ActID = @ACT AND (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%ÙÎ˝¯%')
+	WHERE ActID = @ACT AND (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%—Ñ–ª—ç—à%')
 	ORDER BY SystemOrder
 END
 GO

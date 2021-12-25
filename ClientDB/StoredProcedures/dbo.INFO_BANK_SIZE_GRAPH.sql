@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -99,7 +99,7 @@ BEGIN
 									SELECT DISTINCT InfoBankID
 									FROM
 										#system
-										--ToDo убрать злостный хардкод
+										--ToDo СѓР±СЂР°С‚СЊ Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕРґ
 										CROSS APPLY dbo.SystemBankGet(SYS_ID, 2)
 								) AS b
 						) AS t

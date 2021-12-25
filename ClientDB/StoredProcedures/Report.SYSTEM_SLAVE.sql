@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив ЖК], [Сеть] = NT_SHORT, Comment AS [Название клиента в РЦ],
-			Systems AS [Подчиненные системы в комплекте], ManagerName AS [Рук-ль], a.RegisterDate AS [Дата регистрации]
+			dbo.DistrString(z.SystemShortName, DistrNumber, CompNumber) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ Р–Рљ], [РЎРµС‚СЊ] = NT_SHORT, Comment AS [РќР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р° РІ Р Р¦],
+			Systems AS [РџРѕРґС‡РёРЅРµРЅРЅС‹Рµ СЃРёСЃС‚РµРјС‹ РІ РєРѕРјРїР»РµРєС‚Рµ], ManagerName AS [Р СѓРє-Р»СЊ], a.RegisterDate AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё]
 		FROM
 			(
 				SELECT
@@ -298,7 +298,7 @@ BEGIN
 				WHERE DS_REG = 0
 					AND DistrNumber <> 20
 					AND SystemBaseName IN ('SKJP', 'SKUP', 'SBOP')
-					AND NT_SHORT IN ('лок', 'флеш')
+					AND NT_SHORT IN ('Р»РѕРє', 'С„Р»РµС€')
 					AND EXISTS
 						(
 							SELECT *

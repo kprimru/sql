@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -82,7 +82,7 @@ BEGIN
 			SELECT DISTINCT rns.Complect
 			FROM Reg.RegNodeSearchView rns WITH(NOEXPAND)
 			WHERE	DS_REG = 0
-				--AND SubhostName NOT IN ('”1', 'Õ1', 'Ã', 'À1')
+				--AND SubhostName NOT IN ('–£1', '–ù1', '–ú', '–õ1')
 				AND (rns.Complect = @Complect OR @Complect IS NULL)
 		) rns
 		CROSS APPLY dbo.ComplectGetBanks(rns.Complect, NULL) cgl
@@ -92,7 +92,7 @@ BEGIN
 				SELECT *
 				FROM Reg.RegNodeSearchView rns2 WITH(NOEXPAND)
 				WHERE	rns2.Complect = rns.Complect
-					AND SubhostName IN ('”1', 'Õ1', 'Ã', 'À1')
+					AND SubhostName IN ('–£1', '–ù1', '–ú', '–õ1')
 					AND DS_REG = 0
 			)
 		--*/

@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -86,7 +86,7 @@ BEGIN
 
 		/*
 		INSERT INTO #sgr(TITLE, COEF, COEF_OLD, COEF_NEW)
-			SELECT 'Ò ' + a.SN_NAME + ' Ì‡ ' + b.SN_NAME, b.SN_COEF - a.SN_COEF, a.SN_COEF, b.SN_COEF
+			SELECT '—Å ' + a.SN_NAME + ' –Ω–∞ ' + b.SN_NAME, b.SN_COEF - a.SN_COEF, a.SN_COEF, b.SN_COEF
 			FROM
 				dbo.SystemNetTable a INNER JOIN
 				dbo.SystemNetTable b ON a.SN_COEF <> b.SN_COEF
@@ -101,7 +101,7 @@ BEGIN
 							CASE
 								WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME
 								ELSE
-									'Ò ' + ISNULL(g.SN_NAME, '') + ' Ì‡ ' + ISNULL(h.SN_NAME, '')
+									'—Å ' + ISNULL(g.SN_NAME, '') + ' –Ω–∞ ' + ISNULL(h.SN_NAME, '')
 							END AS TITLE,
 							CASE
 								WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN	c.SN_COEF
@@ -223,7 +223,7 @@ BEGIN
 
 		/*
 		INSERT INTO #sgr(TITLE, COEF, COEF_OLD, COEF_NEW)
-			SELECT 'Ò ' + a.SN_NAME + ' Ì‡ ' + b.SN_NAME, b.SN_COEF - a.SN_COEF, a.SN_COEF, b.SN_COEF
+			SELECT '—Å ' + a.SN_NAME + ' –Ω–∞ ' + b.SN_NAME, b.SN_COEF - a.SN_COEF, a.SN_COEF, b.SN_COEF
 			FROM
 				dbo.SystemNetTable a INNER JOIN
 				dbo.SystemNetTable b ON a.SN_COEF <> b.SN_COEF
@@ -239,7 +239,7 @@ BEGIN
 							CASE
 								WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME
 								ELSE
-									'Ò ' + ISNULL(g.SN_NAME, '') + ' Ì‡ ' + ISNULL(h.SN_NAME, '')
+									'—Å ' + ISNULL(g.SN_NAME, '') + ' –Ω–∞ ' + ISNULL(h.SN_NAME, '')
 							END AS TITLE,
 							CASE
 								WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_COEF
@@ -294,19 +294,19 @@ BEGIN
 		SET COEF = 0,
 			COEF_OLD = 1.25,
 			COEF_NEW = 1.25
-		WHERE TITLE = 'Ò 1/Ò Ì‡ Œ¬Ã Œƒ 1'
+		WHERE TITLE = '—Å 1/—Å –Ω–∞ –û–í–ú –û–î 1'
 
 		UPDATE #sgr
 		SET COEF = 0,
 			COEF_OLD = 1,
 			COEF_NEW = 1.25
-		WHERE TITLE = 'Ò ÙÎ˝¯ Ì‡ Œ¬Ã Œƒ 1'
+		WHERE TITLE = '—Å —Ñ–ª—ç—à –Ω–∞ –û–í–ú –û–î 1'
 
 		UPDATE #sgr
 		SET COEF = 0,
 			COEF_OLD = 1,
 			COEF_NEW = 1.25
-		WHERE TITLE = 'Ò ÎÓÍ Ì‡ ŒÌÎ‡ÈÌ2'
+		WHERE TITLE = '—Å –ª–æ–∫ –Ω–∞ –û–Ω–ª–∞–π–Ω2'
 
 		UPDATE #sgr
 		SET COEF = ROUND(COEF, 2),
@@ -319,7 +319,7 @@ BEGIN
 			SET COEF = 0,
 				COEF_OLD = 1,
 				COEF_NEW = 1.5625
-			WHERE TITLE = 'Ò ÎÓÍ Ì‡ Œ¬Ã Œƒ 1'
+			WHERE TITLE = '—Å –ª–æ–∫ –Ω–∞ –û–í–ú –û–î 1'
 		END
 
 		SELECT *

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 	DECLARE @ErrSource		SYSNAME
 	DECLARE @ErrDescript	NVARCHAR(4000)
 
-	SET @ErrSource = 'D:\TEMP\XMLBulkError.xml'	--  файл ошибки (OPENROWSET требует константу)
+	SET @ErrSource = 'D:\TEMP\XMLBulkError.xml'	--  С„Р°Р№Р» РѕС€РёР±РєРё (OPENROWSET С‚СЂРµР±СѓРµС‚ РєРѕРЅСЃС‚Р°РЅС‚Сѓ)
 
 	EXEC @ErrCode = sys.sp_OACreate 'SQLXMLBulkLoad.SQLXMLBulkload' ,@OLEXMLBulk OUT
 
@@ -64,13 +64,13 @@ BEGIN
 			IF (@Exist = 1)
 			BEGIN
 				SELECT @Error = E.Error
-							-- Обход глюка
+							-- РћР±С…РѕРґ РіР»СЋРєР°
 						+	CASE
 								WHEN RIGHT(E.Error, 1) != '>' THEN 'lt>'
 								ELSE ''
 							END
 				FROM
-					OPENROWSET(BULK 'D:\TEMP\XMLBulkError.xml', SINGLE_NCLOB) E(Error) -- Из @ErrSource файла
+					OPENROWSET(BULK 'D:\TEMP\XMLBulkError.xml', SINGLE_NCLOB) E(Error) -- РР· @ErrSource С„Р°Р№Р»Р°
 
 				SELECT	@ErrDescript = ISNULL(@ErrDescript,'') + E.Error.value('Description[1]', 'SysName') + ' '
 				FROM	@Error.nodes('/Result/Error')E(Error)
@@ -94,12 +94,12 @@ BEGIN
 		SELECT
 			@ErrMethod		= 'SQLXMLBulkLoad.SQLXMLBulkload',
 			@ErrSource		= 'sp_OACreate',
-			@ErrDescript	= 'Ошибка создания OLE объекта'
-		-- Вывод ошибок
+			@ErrDescript	= 'РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ OLE РѕР±СЉРµРєС‚Р°'
+		-- Р’С‹РІРѕРґ РѕС€РёР±РѕРє
 
 	IF (@ErrMethod IS NOT NULL)
 	BEGIN
-		RAISERROR('Ошибка при выполнении метода "%s" в "%s": %s',18,1,@ErrMethod,@ErrSource,@ErrDescript)
+		RAISERROR('РћС€РёР±РєР° РїСЂРё РІС‹РїРѕР»РЅРµРЅРёРё РјРµС‚РѕРґР° "%s" РІ "%s": %s',18,1,@ErrMethod,@ErrSource,@ErrDescript)
 		RETURN	@@Error
 	END
 END

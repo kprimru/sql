@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -55,7 +55,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'ФИО руководителя'
+				WHERE TP_NAME = 'Р¤РРћ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ'
 			)
 			SET @DIR_FIO = 1
 		ELSE
@@ -65,7 +65,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'ФИО гл.бух'
+				WHERE TP_NAME = 'Р¤РРћ РіР».Р±СѓС…'
 			)
 			SET @BUH_FIO = 1
 		ELSE
@@ -75,7 +75,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'ФИО ответственного'
+				WHERE TP_NAME = 'Р¤РРћ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ'
 			)
 			SET @RES_FIO = 1
 		ELSE
@@ -85,7 +85,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Должность руководителя'
+				WHERE TP_NAME = 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ'
 			)
 			SET @DIR_POS = 1
 		ELSE
@@ -95,7 +95,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Должность гл.бух'
+				WHERE TP_NAME = 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РіР».Р±СѓС…'
 			)
 			SET @BUH_POS = 1
 		ELSE
@@ -105,7 +105,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Должность ответственного'
+				WHERE TP_NAME = 'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ'
 			)
 			SET @RES_POS = 1
 		ELSE
@@ -115,7 +115,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Телефон руководителя'
+				WHERE TP_NAME = 'РўРµР»РµС„РѕРЅ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ'
 			)
 			SET @DIR_PHONE = 1
 		ELSE
@@ -125,7 +125,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Телефон гл.бух'
+				WHERE TP_NAME = 'РўРµР»РµС„РѕРЅ РіР».Р±СѓС…'
 			)
 			SET @BUH_PHONE = 1
 		ELSE
@@ -135,7 +135,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Телефон ответственного'
+				WHERE TP_NAME = 'РўРµР»РµС„РѕРЅ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ'
 			)
 			SET @RES_PHONE = 1
 		ELSE
@@ -145,7 +145,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Адрес'
+				WHERE TP_NAME = 'РђРґСЂРµСЃ'
 			)
 			SET @ADDRESS = 1
 		ELSE
@@ -155,7 +155,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Название'
+				WHERE TP_NAME = 'РќР°Р·РІР°РЅРёРµ'
 			)
 			SET @NAME = 1
 		ELSE
@@ -165,7 +165,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'Сервис-инженер'
+				WHERE TP_NAME = 'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ'
 			)
 			SET @SRVC = 1
 		ELSE
@@ -175,7 +175,7 @@ BEGIN
 			(
 				SELECT *
 				FROM @TP
-				WHERE TP_NAME = 'ИНН'
+				WHERE TP_NAME = 'РРќРќ'
 			)
 			SET @INN = 1
 		ELSE
@@ -328,15 +328,15 @@ BEGIN
 			FROM #client_dbf
 
 		/*
-			заполнение данных адресов и сотрудников, которые выбраны
+			Р·Р°РїРѕР»РЅРµРЅРёРµ РґР°РЅРЅС‹С… Р°РґСЂРµСЃРѕРІ Рё СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ, РєРѕС‚РѕСЂС‹Рµ РІС‹Р±СЂР°РЅС‹
 		*/
 		IF @DIR_FIO = 1 OR @DIR_POS = 1 OR @DIR_PHONE = 1
 		BEGIN
 			UPDATE a
 			SET DIR_FIO = CP_FIO,
-				DIR_SURNAME = REPLACE(CP_SURNAME, 'ё', 'е'),
-				DIR_NAME = REPLACE(CP_NAME, 'ё', 'е'),
-				DIR_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
+				DIR_SURNAME = REPLACE(CP_SURNAME, 'С‘', 'Рµ'),
+				DIR_NAME = REPLACE(CP_NAME, 'С‘', 'Рµ'),
+				DIR_PATRON = REPLACE(CP_PATRON, 'С‘', 'Рµ'),
 				DIR_POS = CP_POS,
 				DIR_PHONE = CP_PHONE
 				,
@@ -368,9 +368,9 @@ BEGIN
 
 			UPDATE a
 			SET DIR_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
-				DIR_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
-				DIR_NAME = REPLACE(TP_NAME, 'ё', 'е'),
-				DIR_PATRON = REPLACE(TP_OTCH, 'ё', 'е'),
+				DIR_SURNAME = REPLACE(TP_SURNAME, 'С‘', 'Рµ'),
+				DIR_NAME = REPLACE(TP_NAME, 'С‘', 'Рµ'),
+				DIR_PATRON = REPLACE(TP_OTCH, 'С‘', 'Рµ'),
 				DIR_POS = POS_NAME,
 				DIR_PHONE = TP_PHONE,
 				DIR_LAST = TP_LAST
@@ -394,9 +394,9 @@ BEGIN
 		BEGIN
 			UPDATE a
 			SET BUH_FIO = CP_FIO,
-				BUH_SURNAME = REPLACE(CP_SURNAME, 'ё', 'е'),
-				BUH_NAME = REPLACE(CP_NAME, 'ё', 'е'),
-				BUH_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
+				BUH_SURNAME = REPLACE(CP_SURNAME, 'С‘', 'Рµ'),
+				BUH_NAME = REPLACE(CP_NAME, 'С‘', 'Рµ'),
+				BUH_PATRON = REPLACE(CP_PATRON, 'С‘', 'Рµ'),
 				BUH_POS = CP_POS,
 				BUH_PHONE = CP_PHONE
 				,
@@ -429,9 +429,9 @@ BEGIN
 
 			UPDATE a
 			SET BUH_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
-				BUH_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
-				BUH_NAME = REPLACE(TP_NAME, 'ё', 'е'),
-				BUH_PATRON = REPLACE(TP_OTCH, 'ё', 'е'),
+				BUH_SURNAME = REPLACE(TP_SURNAME, 'С‘', 'Рµ'),
+				BUH_NAME = REPLACE(TP_NAME, 'С‘', 'Рµ'),
+				BUH_PATRON = REPLACE(TP_OTCH, 'С‘', 'Рµ'),
 				BUH_POS = POS_NAME,
 				BUH_PHONE = TP_PHONE,
 				BUH_LAST = TP_LAST
@@ -455,9 +455,9 @@ BEGIN
 		BEGIN
 			UPDATE a
 			SET RES_FIO = CP_FIO,
-				RES_SURNAME = REPLACE(CP_SURNAME, 'ё', 'е'),
-				RES_NAME = REPLACE(CP_NAME, 'ё', 'е'),
-				RES_PATRON = REPLACE(CP_PATRON, 'ё', 'е'),
+				RES_SURNAME = REPLACE(CP_SURNAME, 'С‘', 'Рµ'),
+				RES_NAME = REPLACE(CP_NAME, 'С‘', 'Рµ'),
+				RES_PATRON = REPLACE(CP_PATRON, 'С‘', 'Рµ'),
 				RES_POS = CP_POS,
 				RES_PHONE = CP_PHONE
 				,
@@ -489,9 +489,9 @@ BEGIN
 
 			UPDATE a
 			SET RES_FIO = ISNULL(TP_SURNAME + ' ', '') + ISNULL(TP_NAME + ' ', '') + ISNULL(TP_OTCH, ''),
-				RES_SURNAME = REPLACE(TP_SURNAME, 'ё', 'е'),
-				RES_NAME = REPLACE(TP_NAME, 'ё', 'е'),
-				RES_PATRON = REPLACE(TP_OTCH, 'ё', 'е'),
+				RES_SURNAME = REPLACE(TP_SURNAME, 'С‘', 'Рµ'),
+				RES_NAME = REPLACE(TP_NAME, 'С‘', 'Рµ'),
+				RES_PATRON = REPLACE(TP_OTCH, 'С‘', 'Рµ'),
 				RES_POS = POS_NAME,
 				RES_PHONE = TP_PHONE,
 				RES_LAST = TP_LAST
@@ -616,25 +616,25 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.DIR_FIO AS IN_OIS,
-					'ФИО руководителя' AS TP,
+					'Р¤РРћ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ' AS TP,
 					e.DIR_FIO AS IN_DBF,
 					CASE
 						WHEN
 							a.DIR_SURNAME <> e.DIR_SURNAME
 							AND a.DIR_NAME = e.DIR_NAME
 							AND a.DIR_PATRON = e.DIR_PATRON
-							THEN 'Неверная фамилия (возможно, опечатка)'
+							THEN 'РќРµРІРµСЂРЅР°СЏ С„Р°РјРёР»РёСЏ (РІРѕР·РјРѕР¶РЅРѕ, РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.DIR_SURNAME = e.DIR_SURNAME
 							AND a.DIR_NAME <> e.DIR_NAME
 							AND a.DIR_PATRON = e.DIR_PATRON
-							THEN 'Неверное имя (возможно опечатка)'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РёРјСЏ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.DIR_SURNAME = e.DIR_SURNAME
 							AND a.DIR_NAME = e.DIR_PATRON
 							AND a.DIR_PATRON <> e.DIR_PATRON
-							THEN 'Неверное отчество (возможно опечатка)'
-						ELSE 'Совершенно другой сотрудник'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РѕС‚С‡РµСЃС‚РІРѕ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
+						ELSE 'РЎРѕРІРµСЂС€РµРЅРЅРѕ РґСЂСѓРіРѕР№ СЃРѕС‚СЂСѓРґРЅРёРє'
 					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
@@ -656,9 +656,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.DIR_POS AS IN_OIS,
-					'Должность руководителя' AS TP,
+					'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ' AS TP,
 					d.DIR_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.DIR_POS_LAST, d.DIR_LAST
@@ -676,9 +676,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.DIR_PHONE AS IN_OIS,
-					'Телефон руководителя' AS TP,
+					'РўРµР»РµС„РѕРЅ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ' AS TP,
 					d.DIR_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.DIR_PHONE_LAST, d.DIR_LAST
@@ -697,25 +697,25 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.BUH_FIO AS IN_OIS,
-					'ФИО гл.бух' AS TP,
+					'Р¤РРћ РіР».Р±СѓС…' AS TP,
 					e.BUH_FIO AS IN_DBF,
 					CASE
 						WHEN
 							a.BUH_SURNAME <> e.BUH_SURNAME
 							AND a.BUH_NAME = e.BUH_NAME
 							AND a.BUH_PATRON = e.BUH_PATRON
-							THEN 'Неверная фамилия (возможно, опечатка)'
+							THEN 'РќРµРІРµСЂРЅР°СЏ С„Р°РјРёР»РёСЏ (РІРѕР·РјРѕР¶РЅРѕ, РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.BUH_SURNAME = e.BUH_SURNAME
 							AND a.BUH_NAME <> e.BUH_NAME
 							AND a.BUH_PATRON = e.BUH_PATRON
-							THEN 'Неверное имя (возможно опечатка)'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РёРјСЏ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.BUH_SURNAME = e.BUH_SURNAME
 							AND a.BUH_NAME = e.BUH_PATRON
 							AND a.BUH_PATRON <> e.BUH_PATRON
-							THEN 'Неверное отчество (возможно опечатка)'
-						ELSE 'Совершенно другой сотрудник'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РѕС‚С‡РµСЃС‚РІРѕ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
+						ELSE 'РЎРѕРІРµСЂС€РµРЅРЅРѕ РґСЂСѓРіРѕР№ СЃРѕС‚СЂСѓРґРЅРёРє'
 					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
@@ -737,9 +737,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.BUH_POS AS IN_OIS,
-					'Должность гл.бух' AS TP,
+					'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РіР».Р±СѓС…' AS TP,
 					d.BUH_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.BUH_POS_LAST, d.BUH_LAST
@@ -757,9 +757,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.BUH_PHONE AS IN_OIS,
-					'Телефон гл.бух' AS TP,
+					'РўРµР»РµС„РѕРЅ РіР».Р±СѓС…' AS TP,
 					d.BUH_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.BUH_PHONE_LAST, d.BUH_LAST
@@ -778,25 +778,25 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.RES_FIO AS IN_OIS,
-					'ФИО ответственного' AS TP,
+					'Р¤РРћ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ' AS TP,
 					e.RES_FIO AS IN_DBF,
 					CASE
 						WHEN
 							a.RES_SURNAME <> e.RES_SURNAME
 							AND a.RES_NAME = e.RES_NAME
 							AND a.RES_PATRON = e.RES_PATRON
-							THEN 'Неверная фамилия (возможно, опечатка)'
+							THEN 'РќРµРІРµСЂРЅР°СЏ С„Р°РјРёР»РёСЏ (РІРѕР·РјРѕР¶РЅРѕ, РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.RES_SURNAME = e.RES_SURNAME
 							AND a.RES_NAME <> e.RES_NAME
 							AND a.RES_PATRON = e.RES_PATRON
-							THEN 'Неверное имя (возможно опечатка)'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РёРјСЏ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
 						WHEN
 							a.RES_SURNAME = e.RES_SURNAME
 							AND a.RES_NAME = e.RES_PATRON
 							AND a.RES_PATRON <> e.RES_PATRON
-							THEN 'Неверное отчество (возможно опечатка)'
-						ELSE 'Совершенно другой сотрудник'
+							THEN 'РќРµРІРµСЂРЅРѕРµ РѕС‚С‡РµСЃС‚РІРѕ (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
+						ELSE 'РЎРѕРІРµСЂС€РµРЅРЅРѕ РґСЂСѓРіРѕР№ СЃРѕС‚СЂСѓРґРЅРёРє'
 					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
@@ -818,9 +818,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.RES_POS AS IN_OIS,
-					'Должность ответственного' AS TP,
+					'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ' AS TP,
 					d.RES_POS AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.RES_POS_LAST, d.RES_LAST
@@ -838,9 +838,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.RES_PHONE AS IN_OIS,
-					'Телефон ответственного' AS TP,
+					'РўРµР»РµС„РѕРЅ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ' AS TP,
 					d.RES_PHONE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF,
 					a.RES_PHONE_LAST, d.RES_LAST
@@ -858,9 +858,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.SERVICE AS IN_OIS,
-					'Сервис-инженер' AS TP,
+					'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ' AS TP,
 					d.SERVICE AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
 				FROM
@@ -885,9 +885,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.INN AS IN_OIS,
-					'ИНН' AS TP,
+					'РРќРќ' AS TP,
 					d.INN AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
 				FROM
@@ -902,9 +902,9 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					a.ClientFullName AS IN_OIS,
-					'Название' AS TP,
+					'РќР°Р·РІР°РЅРёРµ' AS TP,
 					d.TO_NAME AS IN_DBF,
-					'Неправильно и все тут' AS ERROR,
+					'РќРµРїСЂР°РІРёР»СЊРЅРѕ Рё РІСЃРµ С‚СѓС‚' AS ERROR,
 					DISTR,
 					DISTR_DBF, NULL, NULL
 				FROM
@@ -919,7 +919,7 @@ BEGIN
 				SELECT DISTINCT
 					b.ClientID, b.ClientFullName, b.ManagerName, b.ServiceName,
 					ISNULL(a.CITY_PARENT + ',' + a.PREFIX + ' ', '') + a.CITY + ',' + a.STREET + ISNULL(',' + NULLIF(a.HOME, ''), '') + CASE ISNULL(',' + NULLIF(a.OFFICE, ''), '') WHEN '' THEN '' ELSE ',' + a.OFFICE END AS IN_OIS,
-					'Адрес' AS TP,
+					'РђРґСЂРµСЃ' AS TP,
 					d.CITY + ',' + d.STREET + CASE ISNULL(d.HOME, '') WHEN '' THEN '' ELSE ',' + d.HOME END AS IN_DBF,
 					CASE
 						WHEN a.STREET <> d.STREET
@@ -936,13 +936,13 @@ BEGIN
 									REPLACE(
 									ISNULL(a.HOME, '') + ISNULL(a.OFFICE, ''),
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)
@@ -959,16 +959,16 @@ BEGIN
 									REPLACE(
 										d.HOME,
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
-									) THEN 'Неверная улица (возможно, опечатка)'
+									) THEN 'РќРµРІРµСЂРЅР°СЏ СѓР»РёС†Р° (РІРѕР·РјРѕР¶РЅРѕ, РѕРїРµС‡Р°С‚РєР°)'
 						WHEN a.STREET = d.STREET
 							AND a.CITY = d.CITY
 							AND REPLACE(
@@ -983,13 +983,13 @@ BEGIN
 									REPLACE(
 									ISNULL(a.HOME, '') + ISNULL(a.OFFICE, ''),
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)
@@ -1006,17 +1006,17 @@ BEGIN
 									REPLACE(
 										d.HOME,
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
-									) THEN 'Неверный номер дома/офиса (возможно опечатка)'
-						ELSE 'Совершенно другой адрес'
+									) THEN 'РќРµРІРµСЂРЅС‹Р№ РЅРѕРјРµСЂ РґРѕРјР°/РѕС„РёСЃР° (РІРѕР·РјРѕР¶РЅРѕ РѕРїРµС‡Р°С‚РєР°)'
+						ELSE 'РЎРѕРІРµСЂС€РµРЅРЅРѕ РґСЂСѓРіРѕР№ Р°РґСЂРµСЃ'
 					END AS ERROR,
 					DISTR,
 					DISTR_DBF,
@@ -1027,7 +1027,7 @@ BEGIN
 					INNER JOIN #client_dbf c ON c.ClientID = a.ClientID
 					INNER JOIN #dbf d ON d.TO_ID = c.TO_ID
 				WHERE 	(
-							REPLACE(ISNULL(a.CITY_PARENT + ',', '') + a.CITY + ','+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '') <> REPLACE(d.CITY + ',' +  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(d.STREET, 'ул.', ''), 'п.', ''), 'пгт.', ''), ' ', ''), 'с.', ''), 'нп.', '')
+							REPLACE(ISNULL(a.CITY_PARENT + ',', '') + a.CITY + ','+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(a.STREET, 'СѓР».', ''), 'Рї.', ''), 'РїРіС‚.', ''), ' ', ''), 'СЃ.', ''), 'РЅРї.', '') <> REPLACE(d.CITY + ',' +  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(d.STREET, 'СѓР».', ''), 'Рї.', ''), 'РїРіС‚.', ''), ' ', ''), 'СЃ.', ''), 'РЅРї.', '')
 							/*a.STREET <> d.STREET
 							OR a.CITY <> d.CITY*/
 							OR
@@ -1043,13 +1043,13 @@ BEGIN
 									REPLACE(
 									ISNULL(a.HOME, '') + ISNULL(a.OFFICE, ''),
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)
@@ -1066,13 +1066,13 @@ BEGIN
 									REPLACE(
 										d.HOME,
 										' ', ''),
-										'д.', ''),
-										'этаж', ''),
-										'эт', ''),
-										'к.', ''),
-										'каб', ''),
-										'кв', ''),
-										'оф', ''),
+										'Рґ.', ''),
+										'СЌС‚Р°Р¶', ''),
+										'СЌС‚', ''),
+										'Рє.', ''),
+										'РєР°Р±', ''),
+										'РєРІ', ''),
+										'РѕС„', ''),
 										'.', ''),
 										',', ''
 									)

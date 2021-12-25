@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,27 +25,27 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент],
+			ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚],
 			(
 				SELECT TOP 1 DistrStr + ' (' + DistrTypeName + ')'
 				FROM dbo.ClientDistrView z WITH(NOEXPAND)
 				WHERE z.ID_CLIENT = a.ClientID
 					AND DS_REG = 0
-					AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
+					AND SystemTypeName IN ('РЎРµСЂРёСЏ Рђ', 'РєРѕРјРјРµСЂС‡РµСЃРєР°СЏ', 'РЎРµСЂРёСЏ Рљ')
 					AND
 						(
 							z.HostID = 1
 							AND
-							z.DistrTypeName IN ('сеть', 'м/с')
+							z.DistrTypeName IN ('СЃРµС‚СЊ', 'Рј/СЃ')
 
 							OR
 
-							z.DistrTypeName = '1/с'
+							z.DistrTypeName = '1/СЃ'
 							AND
 							z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 						)
 				ORDER BY SystemOrder
-			) AS [Дистрибутив],
+			) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
 			(
 				SELECT TOP 1 CONVERT(NVARCHAR(64), EventDate, 104) + ' (' + EventCreateUser + ') ' + EventComment
 				FROM dbo.EventTable z
@@ -59,8 +59,8 @@ BEGIN
 						)
 					--AND EventDate >= '20170101'
 				ORDER BY EventDate DESC
-			) AS [Последняя запись истори посещений],
-			'' AS [Тендеры],
+			) AS [РџРѕСЃР»РµРґРЅСЏСЏ Р·Р°РїРёСЃСЊ РёСЃС‚РѕСЂРё РїРѕСЃРµС‰РµРЅРёР№],
+			'' AS [РўРµРЅРґРµСЂС‹],
 			(
 				SELECT
 					CPT_NAME + ' | ' +
@@ -80,35 +80,35 @@ BEGIN
 					LEFT OUTER JOIN dbo.ClientPersonalType ON CPT_ID = CP_ID_TYPE
 				WHERE CP_ID_CLIENT = a.ClientID
 				ORDER BY ISNULL(CPT_REQUIRED, 0) DESC, CPT_ORDER, CP_SURNAME, CP_NAME FOR XML PATH('')
-			) AS [Сотрудники],
+			) AS [РЎРѕС‚СЂСѓРґРЅРёРєРё],
 			(
 				SELECT COUNT(*)
 				FROM dbo.CLientStudy z
 				WHERE STATUS = 1
 					AND z.ID_CLIENT = a.ClientID
 					AND DATEPART(YEAR, z.DATE) IN (DATEPART(YEAR, GETDATE()), DATEPART(YEAR, GETDATE()) - 1)
-			) AS [Кол-во обучений],
+			) AS [РљРѕР»-РІРѕ РѕР±СѓС‡РµРЅРёР№],
 			(
 				SELECT COUNT(*)
 				FROM dbo.ClientDutyTable z
 				WHERE z.ClientID = a.ClientID
 					AND z.STATUS = 1
 					AND z.ClientDutyDateTime >= DATEADD(MONTH, -3, GETDATE())
-			) AS [Кол-во обращений в ДС],
+			) AS [РљРѕР»-РІРѕ РѕР±СЂР°С‰РµРЅРёР№ РІ Р”РЎ],
 			(
 				SELECT TOP 1 CONVERT(NVARCHAR(64), CR_DATE, 104) + ' ' + CR_CONDITION
 				FROM dbo.ClientRival z
 				WHERE CL_ID = a.ClientID
 					AND CR_ACTIVE = 1
 				ORDER BY CR_DATE DESC
-			) AS [Запись о конкурентах],
+			) AS [Р—Р°РїРёСЃСЊ Рѕ РєРѕРЅРєСѓСЂРµРЅС‚Р°С…],
 			(
 				SELECT CONVERT(NVARCHAR(64), DATE, 104) + ' (' + PERSONAL + ') ' + NOTE + CHAR(10)
 				FROM dbo.ClientContact z
 				WHERE z.ID_CLIENT = a.ClientID
 					AND z.STATUS = 1
 				ORDER BY DATE DESC FOR XML PATH('')
-			) AS [Записи РГ]
+			) AS [Р—Р°РїРёСЃРё Р Р“]
 		FROM dbo.ClientView a WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE EXISTS
@@ -117,16 +117,16 @@ BEGIN
 					FROM dbo.ClientDistrView z WITH(NOEXPAND)
 					WHERE z.ID_CLIENT = a.ClientID
 						AND DS_REG = 0
-						AND SystemTypeName IN ('Серия А', 'коммерческая', 'Серия К')
+						AND SystemTypeName IN ('РЎРµСЂРёСЏ Рђ', 'РєРѕРјРјРµСЂС‡РµСЃРєР°СЏ', 'РЎРµСЂРёСЏ Рљ')
 						AND
 							(
 								z.HostID = 1
 								AND
-								z.DistrTypeName IN ('сеть', 'м/с')
+								z.DistrTypeName IN ('СЃРµС‚СЊ', 'Рј/СЃ')
 
 								OR
 
-								z.DistrTypeName = '1/с'
+								z.DistrTypeName = '1/СЃ'
 								AND
 								z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 							)

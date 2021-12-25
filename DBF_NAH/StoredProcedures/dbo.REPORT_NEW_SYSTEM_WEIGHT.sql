@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -64,7 +64,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_system(TSYS_ID, TSYS_PROBLEM, HST_ID)
 				SELECT SYS_ID, CASE
 						WHEN EXISTS
@@ -95,7 +95,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
@@ -117,7 +117,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
@@ -140,7 +140,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
@@ -166,7 +166,7 @@ BEGIN
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@periodlist, ',')
 		END
 
-	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)
+	  --РЁР°Рі 1. РЎРѕР·РґР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ СЃРѕ РІСЃРµРјРё РїРѕР»СЏРјРё (РЅР°РґРѕ С‡С‚РѕР±С‹ Р±С‹Р»Рё РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РїРѕСЂСЏРґРєСѓ)
 
 		IF OBJECT_ID('tempdb..#stats') IS NOT NULL
 			DROP TABLE #stats
@@ -274,17 +274,17 @@ BEGIN
 
 			INSERT INTO #ric
 				SELECT DISTINCT
-						'РИЦ | ' + SYS_SHORT_NAME +
+						'Р РР¦ | ' + SYS_SHORT_NAME +
 						CASE TSYS_PROBLEM_TYPE
 							WHEN 0 THEN ''
 							WHEN 2 THEN
 								CASE TSYS_PROBLEM
-									WHEN 0 THEN ' | ДД2'
-									WHEN 2 THEN ' | ДЗ2/ДЗ3'
+									WHEN 0 THEN ' | Р”Р”2'
+									WHEN 2 THEN ' | Р”Р—2/Р”Р—3'
 								END
 							WHEN 1 THEN
 								CASE TSYS_PROBLEM
-									WHEN 1 THEN ' Проблемный'
+									WHEN 1 THEN ' РџСЂРѕР±Р»РµРјРЅС‹Р№'
 									ELSE ''
 								END
 							ELSE ' ???'
@@ -323,12 +323,12 @@ BEGIN
 							WHEN 0 THEN ''
 							WHEN 2 THEN
 								CASE TSYS_PROBLEM
-									WHEN 0 THEN ' | ДД2'
-									WHEN 2 THEN ' | ДЗ2/ДЗ3'
+									WHEN 0 THEN ' | Р”Р”2'
+									WHEN 2 THEN ' | Р”Р—2/Р”Р—3'
 								END
 							WHEN 1 THEN
 								CASE TSYS_PROBLEM
-									WHEN 1 THEN ' Проблемный'
+									WHEN 1 THEN ' РџСЂРѕР±Р»РµРјРЅС‹Р№'
 									ELSE ''
 								END
 							ELSE ' ???'
@@ -365,8 +365,8 @@ BEGIN
 
 		CREATE TABLE #result
 			(
-				[Номер строки] INT IDENTITY(1,1),
-				[Дата] SMALLDATETIME
+				[РќРѕРјРµСЂ СЃС‚СЂРѕРєРё] INT IDENTITY(1,1),
+				[Р”Р°С‚Р°] SMALLDATETIME
 			)
 
 		IF @selecttotal = 1
@@ -405,7 +405,7 @@ BEGIN
 		FROM #keys
 		ORDER BY KEY_ID
 
-		-- производится выборка по всем фильтрам без разбиения по подхостам, типам сети и системам
+		-- РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІС‹Р±РѕСЂРєР° РїРѕ РІСЃРµРј С„РёР»СЊС‚СЂР°Рј Р±РµР· СЂР°Р·Р±РёРµРЅРёСЏ РїРѕ РїРѕРґС…РѕСЃС‚Р°Рј, С‚РёРїР°Рј СЃРµС‚Рё Рё СЃРёСЃС‚РµРјР°Рј
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
@@ -477,14 +477,14 @@ BEGIN
 
 		IF @selecttotal = 1
 			ALTER TABLE #result ADD
-				[Итого] INT,
-				[Вес] DECIMAL(10, 4)
+				[РС‚РѕРіРѕ] INT,
+				[Р’РµСЃ] DECIMAL(10, 4)
 
 		/*
-			А вот тут надо просуммировать все поля и посчитать веса
+			Рђ РІРѕС‚ С‚СѓС‚ РЅР°РґРѕ РїСЂРѕСЃСѓРјРјРёСЂРѕРІР°С‚СЊ РІСЃРµ РїРѕР»СЏ Рё РїРѕСЃС‡РёС‚Р°С‚СЊ РІРµСЃР°
 		*/
 
-		SET @sql = 'UPDATE #result SET [Итого] = '
+		SET @sql = 'UPDATE #result SET [РС‚РѕРіРѕ] = '
 		SELECT @sql = @sql  + '[' + KEY_NAME + ']+'
 		FROM #keys
 
@@ -494,9 +494,9 @@ BEGIN
 
 		IF @selecttotal = 1
 		BEGIN
-			SET @sql = 'UPDATE #result SET [Вес] = '
+			SET @sql = 'UPDATE #result SET [Р’РµСЃ] = '
 
-			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), [' + KEY_NAME + ']) * dbo.GetWeightProblem(' + CONVERT(VARCHAR(20), KEY_SYS) + ', ''' + KEY_NET + ''', [Дата], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
+			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), [' + KEY_NAME + ']) * dbo.GetWeightProblem(' + CONVERT(VARCHAR(20), KEY_SYS) + ', ''' + KEY_NET + ''', [Р”Р°С‚Р°], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
 			FROM #ric
 
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
@@ -506,20 +506,20 @@ BEGIN
 			PRINT @sql
 
 			/*
-			SET @sql = 'UPDATE a SET [Период П4|Вес на начало] = Ric.VKSPGet(' + CONVERT(VARCHAR(20), @PR_ALG)
+			SET @sql = 'UPDATE a SET [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ] = Ric.VKSPGet(' + CONVERT(VARCHAR(20), @PR_ALG)
 
-			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), b.[' + KEY_NAME + ']) * dbo.GetWeightProblem(' + CONVERT(VARCHAR(20), KEY_SYS) + ', ' + CONVERT(VARCHAR(20), KEY_NET) + ', a.[Дата], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
+			SELECT @sql = @sql + 'CONVERT(DECIMAL(8, 4), b.[' + KEY_NAME + ']) * dbo.GetWeightProblem(' + CONVERT(VARCHAR(20), KEY_SYS) + ', ' + CONVERT(VARCHAR(20), KEY_NET) + ', a.[Р”Р°С‚Р°], ' + CONVERT(VARCHAR(20), KEY_PROBLEM) + ') + '
 			FROM #ric
 
 			SET @sql = LEFT(@sql, LEN(@sql) - 1)
 
-			SET @sql = @sql + 'FROM #result a INNER JOIN #result b ON a.[Дата] = DATEADD(MONTH, 12, b.[Дата])'
+			SET @sql = @sql + 'FROM #result a INNER JOIN #result b ON a.[Р”Р°С‚Р°] = DATEADD(MONTH, 12, b.[Р”Р°С‚Р°])'
 
 			EXEC (@sql)
 
-			UPDATE #result SET [Период П4|Прирост веса] = [Вес] - [Период П4|Вес на начало]
+			UPDATE #result SET [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] = [Р’РµСЃ] - [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ]
 
-			UPDATE #result SET [Период П4|Прирост веса %] = 100 * [Период П4|Прирост веса] / [Период П4|Вес на начало]
+			UPDATE #result SET [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР° %] = 100 * [РџРµСЂРёРѕРґ Рџ4|РџСЂРёСЂРѕСЃС‚ РІРµСЃР°] / [РџРµСЂРёРѕРґ Рџ4|Р’РµСЃ РЅР° РЅР°С‡Р°Р»Рѕ]
 			*/
 		END
 

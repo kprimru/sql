@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 		SET @PATRON = LTRIM(RTRIM(@PATRON))
 		SET @POS = LTRIM(RTRIM(@POS))
 
-		-- если это главбух
+		-- РµСЃР»Рё СЌС‚Рѕ РіР»Р°РІР±СѓС…
 		IF @TYPE = (SELECT CPT_ID FROM dbo.ClientPersonalType WHERE CPT_PSEDO = 'BUH')
 			AND (SELECT Maintenance.GlobalClientAutoClaim()) = 1 BEGIN
 
@@ -64,7 +64,7 @@ BEGIN
 
 
 
-			-- если получилось что-то выбрать
+			-- РµСЃР»Рё РїРѕР»СѓС‡РёР»РѕСЃСЊ С‡С‚Рѕ-С‚Рѕ РІС‹Р±СЂР°С‚СЊ
 			IF @OLD_SURNAME IS NOT NULL BEGIN
 				IF (
 					SELECT SUM(CNT)
@@ -78,14 +78,14 @@ BEGIN
 					) AS B
 					) > 1 BEGIN
 					INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-						SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Смена главного бухгалтера', 0, 'Автомат'
+						SELECT @CLIENT, dbo.Dateof(GETDATE()), 'РЎРјРµРЅР° РіР»Р°РІРЅРѕРіРѕ Р±СѓС…РіР°Р»С‚РµСЂР°', 0, 'РђРІС‚РѕРјР°С‚'
 						WHERE NOT EXISTS
 							(
 								SELECT *
 								FROM dbo.ClientStudyClaim a
 								WHERE ID_CLIENT = @CLIENT
 								    AND STATUS IN (1, 4, 5, 9)
-									AND UPD_USER = 'Автомат'
+									AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 							)
 				END
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -94,7 +94,7 @@ BEGIN
 			IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
 			BEGIN
 				INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-					SELECT @ID, dbo.Dateof(GETDATE()), 'Новый клиент', 0, 'Автомат'
+					SELECT @ID, dbo.Dateof(GETDATE()), 'РќРѕРІС‹Р№ РєР»РёРµРЅС‚', 0, 'РђРІС‚РѕРјР°С‚'
 			END
 
 			EXEC dbo.CLIENT_REINDEX @ID, NULL
@@ -151,7 +151,7 @@ BEGIN
 					WHERE ClientID = @ID AND STATUS = 1
 				)
 			BEGIN
-				/* кто-то уже отключил/подключил систему. Не трогаем статус*/
+				/* РєС‚Рѕ-С‚Рѕ СѓР¶Рµ РѕС‚РєР»СЋС‡РёР»/РїРѕРґРєР»СЋС‡РёР» СЃРёСЃС‚РµРјСѓ. РќРµ С‚СЂРѕРіР°РµРј СЃС‚Р°С‚СѓСЃ*/
 				SET @STATUS = NULL
 			END
 

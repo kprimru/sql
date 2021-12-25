@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -45,7 +45,7 @@ BEGIN
 				(
 					SELECT STUFF(CAST(('
 						+
-						CASE																--для того чтобы дробные числа отображались с запятой, а не с точкой
+						CASE																--РґР»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ РґСЂРѕР±РЅС‹Рµ С‡РёСЃР»Р° РѕС‚РѕР±СЂР°Р¶Р°Р»РёСЃСЊ СЃ Р·Р°РїСЏС‚РѕР№, Р° РЅРµ СЃ С‚РѕС‡РєРѕР№
 						WHEN @VALUE_TYPE='float' OR @VALUE_TYPE='real'
 						THEN
 							'SELECT '', ''+REPLACE(CAST(('+ ValueColumn +') AS VARCHAR(MAX)),''.'', '','')'

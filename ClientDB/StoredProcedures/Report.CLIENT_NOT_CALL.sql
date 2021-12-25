@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент]
+		SELECT ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚]
 		FROM dbo.ClientView a WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 		WHERE NOT EXISTS

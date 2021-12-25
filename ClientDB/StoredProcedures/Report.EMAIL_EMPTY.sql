@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.ClientFullName AS [Название клиента],
-			b.ServiceName AS [СИ],
-			b.ManagerName AS [Руководитель]
+			a.ClientFullName AS [РќР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р°],
+			b.ServiceName AS [РЎР],
+			b.ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ]
 		FROM
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId

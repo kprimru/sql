@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,11 +36,11 @@ BEGIN
 		WHERE FL_NAME = 'LP_NAME_' + CONVERT(VARCHAR(10), @LP_ID)
 
 		UPDATE dbo.FieldTable
-		SET FL_CAPTION = @LP_NAME + ' цена'
+		SET FL_CAPTION = @LP_NAME + ' С†РµРЅР°'
 		WHERE FL_NAME = 'SLP_PRICE_' + CONVERT(VARCHAR(10), @LP_ID)
 
 		UPDATE dbo.FieldTable
-		SET FL_CAPTION = @LP_NAME + ' сумма'
+		SET FL_CAPTION = @LP_NAME + ' СЃСѓРјРјР°'
 		WHERE FL_NAME = 'SLP_SUM_' + CONVERT(VARCHAR(10), @LP_ID)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

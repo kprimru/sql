@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -15,7 +15,7 @@ BEGIN
 	INSERT INTO RegNodeTable
 		SELECT *
 		FROM DBF.dbo.RegNodeTable
-		WHERE (RN_COMMENT LIKE '(¿)%' OR RN_COMMENT LIKE '(Õ1)%')
+		WHERE (RN_COMMENT LIKE '(–ê)%' OR RN_COMMENT LIKE '(–ù1)%')
 
 	UPDATE dbo.ClientDistrTable
 	SET CD_REG_DATE = RN_REG_DATE

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,53 +11,53 @@ AS
 	SELECT
 		src.ID_DISTR, dst.ID, dst.DATE,
 		CASE
-			WHEN src.SystemShortName <> dst.SystemShortName THEN 'Система. '
+			WHEN src.SystemShortName <> dst.SystemShortName THEN 'РЎРёСЃС‚РµРјР°. '
 			ELSE ''
 		END +
 		CASE
-			WHEN src.NT_SHORT <> dst.NT_SHORT THEN 'Сетевитость. '
+			WHEN src.NT_SHORT <> dst.NT_SHORT THEN 'РЎРµС‚РµРІРёС‚РѕСЃС‚СЊ. '
 			ELSE ''
 		END +
 		CASE
-			WHEN src.SST_SHORT <> dst.SST_SHORT THEN 'Тип системы. '
+			WHEN src.SST_SHORT <> dst.SST_SHORT THEN 'РўРёРї СЃРёСЃС‚РµРјС‹. '
 			ELSE ''
 		END +
 		CASE
-			WHEN src.SUBHOST <> dst.SUBHOST THEN 'Признак подхоста. '
+			WHEN src.SUBHOST <> dst.SUBHOST THEN 'РџСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р°. '
 			ELSE ''
 		END +
 		CASE
-			WHEN src.TRAN_COUNT <> dst.TRAN_COUNT THEN 'Перенос. '
+			WHEN src.TRAN_COUNT <> dst.TRAN_COUNT THEN 'РџРµСЂРµРЅРѕСЃ. '
 			ELSE ''
 		END +
 		CASE
-			WHEN src.TRAN_LEFT <> dst.TRAN_LEFT THEN 'Осталось счетчиков. '
+			WHEN src.TRAN_LEFT <> dst.TRAN_LEFT THEN 'РћСЃС‚Р°Р»РѕСЃСЊ СЃС‡РµС‚С‡РёРєРѕРІ. '
 			ELSE ''
 		END +
 		CASE
 			WHEN src.DS_NAME <> dst.DS_NAME THEN
 				CASE dst.DS_REG
-					WHEN 0 THEN 'Включение. '
-					WHEN 1 THEN 'Отключение. '
-					WHEN 2 THEN 'Удаление. '
-					ELSE 'Статус: с ' + src.DS_NAME + ' на ' + dst.DS_NAME
+					WHEN 0 THEN 'Р’РєР»СЋС‡РµРЅРёРµ. '
+					WHEN 1 THEN 'РћС‚РєР»СЋС‡РµРЅРёРµ. '
+					WHEN 2 THEN 'РЈРґР°Р»РµРЅРёРµ. '
+					ELSE 'РЎС‚Р°С‚СѓСЃ: СЃ ' + src.DS_NAME + ' РЅР° ' + dst.DS_NAME
 				END
 			ELSE ''
 		END +
 		CASE
-			WHEN ISNULL(src.REG_DATE, GETDATE()) <> ISNULL(dst.REG_DATE, GETDATE()) THEN 'Регистрация. '
+			WHEN ISNULL(src.REG_DATE, GETDATE()) <> ISNULL(dst.REG_DATE, GETDATE()) THEN 'Р РµРіРёСЃС‚СЂР°С†РёСЏ. '
 			ELSE ''
 		END +
 		CASE
-			WHEN ISNULL(src.FIRST_REG, GETDATE()) <> ISNULL(dst.FIRST_REG, GETDATE()) THEN 'Дата первой регистрации. '
+			WHEN ISNULL(src.FIRST_REG, GETDATE()) <> ISNULL(dst.FIRST_REG, GETDATE()) THEN 'Р”Р°С‚Р° РїРµСЂРІРѕР№ СЂРµРіРёСЃС‚СЂР°С†РёРё. '
 			ELSE ''
 		END +
 		CASE
-			WHEN ISNULL(src.COMPLECT, '') <> ISNULL(dst.COMPLECT, '') THEN 'Смена комплекта. '
+			WHEN ISNULL(src.COMPLECT, '') <> ISNULL(dst.COMPLECT, '') THEN 'РЎРјРµРЅР° РєРѕРјРїР»РµРєС‚Р°. '
 			ELSE ''
 		END +
 		CASE
-			WHEN ISNULL(src.COMMENT, '') <> ISNULL(dst.COMMENT, '') THEN 'Смена примечания. '
+			WHEN ISNULL(src.COMMENT, '') <> ISNULL(dst.COMMENT, '') THEN 'РЎРјРµРЅР° РїСЂРёРјРµС‡Р°РЅРёСЏ. '
 			ELSE ''
 		END	AS CHANGES
 	FROM Reg.RegHistoryView AS SRC WITH(NOEXPAND)

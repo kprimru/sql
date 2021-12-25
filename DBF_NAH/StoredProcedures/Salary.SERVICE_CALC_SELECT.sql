@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -65,8 +65,8 @@ BEGIN
 			TO_ID, CL_ID, TO_NAME, CL_PSEDO,
 			h.CT_ID, h.CT_NAME, CL_ID_TYPE,
 			CASE
-				WHEN h.CT_NAME = (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN '¡√'
-				WHEN h.CT_NAME <> (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN '”“'
+				WHEN h.CT_NAME = (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN '–ë–ì'
+				WHEN h.CT_NAME <> (SELECT CT_NAME FROM dbo.CityTable INNER JOIN dbo.CourierTable ON COUR_ID_CITY = CT_ID WHERE COUR_ID = @COURIER) THEN '–£–¢'
 				ELSE '-'
 			END AS CL_TERR, a.TO_RANGE, ServiceTypeShortName, TO_SALARY
 		FROM dbo.TOTable a
@@ -91,7 +91,7 @@ BEGIN
 		WHERE TO_ID_COUR = @COURIER;
 
         UPDATE @client SET
-            TO_SERVICE_COEF = CASE TO_SERVICE WHEN '»œ' THEN 1 WHEN 'ŒÕÀ¿…Õ' THEN 1 ELSE 1.4 END;
+            TO_SERVICE_COEF = CASE TO_SERVICE WHEN '–ò–ü' THEN 1 WHEN '–û–ù–õ–ê–ô–ù' THEN 1 ELSE 1.4 END;
 
         UPDATE @client SET
             TO_RANGE = TO_RANGE - 0.5
@@ -99,7 +99,7 @@ BEGIN
             (
                 SELECT CT_NAME
                 FROM @client
-                WHERE CL_TERR = '”“'
+                WHERE CL_TERR = '–£–¢'
                 GROUP BY CT_NAME
                 HAVING COUNT(*) >= 7
             );
@@ -112,14 +112,14 @@ BEGIN
 					@client b
 					INNER JOIN dbo.ClientTypeTable c ON b.CLT_ID = c.CLT_ID
 				WHERE /*b.CT_ID = a.CT_ID
-					AND */CLT_NAME LIKE '% √—%'
+					AND */CLT_NAME LIKE '%–ö–ì–°%'
 			) AS DECIMAL(8, 4)) /
 			NULLIF((
 				SELECT COUNT(*)
 				FROM
 					@client b
 				--WHERE b.CT_ID = a.CT_ID
-					--AND CLT_NAME LIKE '% √—%'
+					--AND CLT_NAME LIKE '%–ö–ì–°%'
 			), 0)
 		FROM @client a
 
@@ -159,9 +159,9 @@ BEGIN
 	    GROUP BY C.CL_ID, C.TO_ID, AD.AD_ID_PERIOD;
 
 		/*
-		ÎË·Ó ‚ÒÂ ÔÂËÓ‰˚ ‡ÍÚ‡ Á‡ ˝ÚÓÚ ÏÂÒˇˆ
-		ÎË·Ó ÚÂÍÛ˘ËÈ Ò˜ÂÚ
-		˜ÚÓ ÂÒÚ¸ - ÚÛ ÒÛÏÏÛ Ë ÔÂËÓ‰˚ ÎÂÔËÚ¸
+		–ª–∏–±–æ –≤—Å–µ –ø–µ—Ä–∏–æ–¥—ã –∞–∫—Ç–∞ –∑–∞ —ç—Ç–æ—Ç –º–µ—Å—è—Ü
+		–ª–∏–±–æ —Ç–µ–∫—É—â–∏–π —Å—á–µ—Ç
+		—á—Ç–æ –µ—Å—Ç—å - —Ç—É —Å—É–º–º—É –∏ –ø–µ—Ä–∏–æ–¥—ã –ª–µ–ø–∏—Ç—å
 		*/
 
 		SELECT
@@ -197,8 +197,8 @@ BEGIN
 					/*
 					ROUND(
 					ROUND(CASE
-						WHEN CLT_NAME = ' √— ÍÓÔ.' /*AND CL_TERR = '¡√' AND KGS >= 70 */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
-						WHEN CLT_NAME = ' √— ÍÓÔ.' /*AND CL_TERR = '”“' */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
+						WHEN CLT_NAME = '–ö–ì–° –∫–æ—Ä–ø.' /*AND CL_TERR = '–ë–ì' AND KGS >= 70 */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
+						WHEN CLT_NAME = '–ö–ì–° –∫–æ—Ä–ø.' /*AND CL_TERR = '–£–¢' */AND ISNULL(TO_CALC, 0) < CPS_MIN THEN CPS_MIN * KOB
 						ELSE TO_CALC * KOB
 					END, 0) * IsNull(TO_RANGE, 1) * TO_SERVICE_COEF, 0) AS TO_RESULT
 					*/
@@ -269,7 +269,7 @@ BEGIN
 											CLT_ID, CLT_NAME, KGS, CL_TERR, TO_RANGE, TO_SERVICE, TO_SERVICE_COEF,
 											TO_COUNT, SYS_COUNT, TO_SALARY,
 											CASE
-												-- ToDo Ó˜ÂÌ¸ „ˇÁÌ˚È ı‡‰ÍÓ‰ - Ó·˘‡ˇ ÒÚÓËÏÓÒÚ¸ Ó‰ÌÓÈ “Œ ÔÓ ÃËÓ‚˚Ï ÒÛ‰¸ˇÏ
+												-- ToDo –æ—á–µ–Ω—å –≥—Ä—è–∑–Ω—ã–π —Ö–∞—Ä–¥–∫–æ–¥ - –æ–±—â–∞—è —Å—Ç–æ–∏–º–æ—Å—Ç—å –æ–¥–Ω–æ–π –¢–û –ø–æ –ú–∏—Ä–æ–≤—ã–º —Å—É–¥—å—è–º
 												WHEN (CL_ID = 10321 /*OR CL_ID = 10050*/ OR CL_ID = 10366) THEN 125973.5
 												ELSE CLIENT_TOTAL_PRICE
 											END AS CLIENT_TOTAL_PRICE,
@@ -292,7 +292,7 @@ BEGIN
 											END AS TO_PRICE,*/
 											CASE
 											    WHEN TO_SALARY IS NOT NULL THEN TO_SALARY
-												-- ToDo Ó˜ÂÌ¸ „ˇÁÌ˚È ı‡‰ÍÓ‰ - Ó·˘‡ˇ ÒÚÓËÏÓÒÚ¸ Ó‰ÌÓÈ “Œ ÔÓ ÃËÓ‚˚Ï ÒÛ‰¸ˇÏ
+												-- ToDo –æ—á–µ–Ω—å –≥—Ä—è–∑–Ω—ã–π —Ö–∞—Ä–¥–∫–æ–¥ - –æ–±—â–∞—è —Å—Ç–æ–∏–º–æ—Å—Ç—å –æ–¥–Ω–æ–π –¢–û –ø–æ –ú–∏—Ä–æ–≤—ã–º —Å—É–¥—å—è–º
 												WHEN (CL_ID = 10321 /*OR CL_ID = 10050 */OR CL_ID = 10366) THEN 1085.98
 												WHEN TO_COUNT IS NULL OR TO_COUNT = 0 THEN CLIENT_TOTAL_PRICE
 												ELSE CLIENT_TOTAL_PRICE / TO_COUNT
@@ -306,7 +306,7 @@ BEGIN
 											(
 
 											/*
-												Ó·˘‡ˇ ÒÛÏÏ‡ ÔÓ “Œ * %
+												–æ–±—â–∞—è —Å—É–º–º–∞ –ø–æ –¢–û * %
 											*/
 											SELECT
 												TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME,
@@ -402,7 +402,7 @@ BEGIN
 											GROUP BY TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME, c.PR_ID, CLT_NAME, CPS_PERCENT, CPS_PAY, CPS_COEF, CPS_MIN, CPS_MAX, CPS_INET, KGS, a.CLT_ID, CL_TERR, CPS_ACT, TO_RANGE, TO_SERVICE, TO_SERVICE_COEF, TO_SALARY
 
 											/*
-												ÙËÍÒËÓ‚‡ÌÌ‡ˇ ÒÛÏÏ‡ Á‡ ÍÎËÂÌÚ‡
+												—Ñ–∏–∫—Å–∏—Ä–æ–≤–∞–Ω–Ω–∞—è —Å—É–º–º–∞ –∑–∞ –∫–ª–∏–µ–Ω—Ç–∞
 											*/
 
 											UNION ALL
@@ -433,7 +433,7 @@ BEGIN
 											UNION ALL
 
 											/*
-												Ó·˘‡ˇ ÒÛÏÏ‡ ÔÓ ÍÎËÂÌÚÛ / ÍÓÎ-‚Ó “Œ
+												–æ–±—â–∞—è —Å—É–º–º–∞ –ø–æ –∫–ª–∏–µ–Ω—Ç—É / –∫–æ–ª-–≤–æ –¢–û
 											*/
 											SELECT
 												TO_ID, CL_ID, TO_NAME, CL_PSEDO, CT_ID, CT_NAME,
@@ -569,7 +569,7 @@ BEGIN
 													) AS c
 											WHERE CPS_SOURCE IN (3, 5)
 												/*
-												ÔÓ‚ÂˇÂÏ, ˜ÚÓ Á‡ ˝ÚÓÚ ÏÂÒˇˆ ÍÎËÂÌÚ Â˘Â ÌÂ ‡Ò˜ËÚ˚‚‡ÎÒˇ. »Ì‡˜Â - ·ÂÂÏ ‰‡ÌÌ˚Â Ò ‡Ò˜ËÚ‡ÌÌÓ„Ó ÍÎËÂÌÚ‡ (ÒÛÏÏ‡, ÍÓÎ-‚Ó “Œ Ë Ú.‰.)
+												–ø—Ä–æ–≤–µ—Ä—è–µ–º, —á—Ç–æ –∑–∞ —ç—Ç–æ—Ç –º–µ—Å—è—Ü –∫–ª–∏–µ–Ω—Ç –µ—â–µ –Ω–µ —Ä–∞—Å—á–∏—Ç—ã–≤–∞–ª—Å—è. –ò–Ω–∞—á–µ - –±–µ—Ä–µ–º –¥–∞–Ω–Ω—ã–µ —Å —Ä–∞—Å—á–∏—Ç–∞–Ω–Ω–æ–≥–æ –∫–ª–∏–µ–Ω—Ç–∞ (—Å—É–º–º–∞, –∫–æ–ª-–≤–æ –¢–û –∏ —Ç.–¥.)
 												*/
 												AND NOT EXISTS
 													(
@@ -583,7 +583,7 @@ BEGIN
 											UNION ALL
 
 											/*
-												Ó·˘‡ˇ ÒÛÏÏ‡ ÔÓ ÍÎËÂÌÚÛ / ÍÓÎ-‚Ó “Œ
+												–æ–±—â–∞—è —Å—É–º–º–∞ –ø–æ –∫–ª–∏–µ–Ω—Ç—É / –∫–æ–ª-–≤–æ –¢–û
 											*/
 											SELECT
 												a.TO_ID, CL_ID, a.TO_NAME, a.CL_PSEDO, CT_ID, a.CT_NAME,
@@ -658,17 +658,17 @@ BEGIN
 											AND z.ID_PERIOD = t.PR_ID
 									) AND
 									CASE
-										WHEN CT_NAME = 'ŒÎ¸„‡' AND PR_DATE < '20141001' THEN 0
-										WHEN CL_PSEDO = '“‡ÌÒÏËÌ‚Ó‰' AND PR_DATE = '20140601' THEN 0
-										WHEN CL_PSEDO = '¬ÓÒÚÓÍ »Ì‚ÂÒÚ —Ú‡Î¸' AND PR_DATE <= '20141001' THEN 0
-										WHEN CL_PSEDO = '¬ÓÒÚÓÍ-—Â‚ËÒ' AND PR_DATE = '20140601' THEN 0
-										WHEN CL_PSEDO = ' ËÒÚ‡ÎÎ 1' AND PR_DATE = '20140601' THEN 0
-										WHEN CL_PSEDO = '¿ÔÚÂÍ‡ π5' AND PR_DATE = '20140601' THEN 0
-										WHEN CL_PSEDO = '’ÎÂ·ÓÍÓÏ·ËÌ‡Ú ¿Ò.' AND PR_DATE = '20140601' THEN 0
-										WHEN CL_PSEDO = 'œËÏÚÂÔÎÓ˝ÌÂ„Ó' AND PR_DATE < '20170101' THEN 0
-										WHEN CL_PSEDO = 'ƒÂÔ-Ú ÒÎÛÊ·˚ Á‡Ì-ÚË' AND PR_DATE < '20151201' THEN 0
-										WHEN CT_NAME = '¡ÓÎ¸¯ÓÈ Í‡ÏÂÌ¸' AND PR_DATE <= '20160901' THEN 0
-										WHEN CL_PSEDO = '—ÎÂ‰ÒÚ‚.ÛÔ. ÔË ÔÓÍÛ‡ÚÛÂ' AND PR_DATE = '20160801' THEN 0
+										WHEN CT_NAME = '–û–ª—å–≥–∞' AND PR_DATE < '20141001' THEN 0
+										WHEN CL_PSEDO = '–¢—Ä–∞–Ω—Å–º–∏–Ω–≤–æ–¥' AND PR_DATE = '20140601' THEN 0
+										WHEN CL_PSEDO = '–í–æ—Å—Ç–æ–∫ –ò–Ω–≤–µ—Å—Ç –°—Ç–∞–ª—å' AND PR_DATE <= '20141001' THEN 0
+										WHEN CL_PSEDO = '–í–æ—Å—Ç–æ–∫-–°–µ—Ä–≤–∏—Å' AND PR_DATE = '20140601' THEN 0
+										WHEN CL_PSEDO = '–ö—Ä–∏—Å—Ç–∞–ª–ª 1' AND PR_DATE = '20140601' THEN 0
+										WHEN CL_PSEDO = '–ê–ø—Ç–µ–∫–∞ ‚Ññ5' AND PR_DATE = '20140601' THEN 0
+										WHEN CL_PSEDO = '–•–ª–µ–±–æ–∫–æ–º–±–∏–Ω–∞—Ç –ê—Ä—Å.' AND PR_DATE = '20140601' THEN 0
+										WHEN CL_PSEDO = '–ü—Ä–∏–º—Ç–µ–ø–ª–æ—ç–Ω–µ—Ä–≥–æ' AND PR_DATE < '20170101' THEN 0
+										WHEN CL_PSEDO = '–î–µ–ø-—Ç —Å–ª—É–∂–±—ã –∑–∞–Ω-—Ç–∏' AND PR_DATE < '20151201' THEN 0
+										WHEN CT_NAME = '–ë–æ–ª—å—à–æ–π –∫–∞–º–µ–Ω—å' AND PR_DATE <= '20160901' THEN 0
+										WHEN CL_PSEDO = '–°–ª–µ–¥—Å—Ç–≤.—É–ø—Ä. –ø—Ä–∏ –ø—Ä–æ–∫—É—Ä–∞—Ç—É—Ä–µ' AND PR_DATE = '20160801' THEN 0
 										WHEN PR_DATE <= DATEADD(MONTH, -8, @PR_BEGIN) THEN 0
 										ELSE 1
 									END = 1

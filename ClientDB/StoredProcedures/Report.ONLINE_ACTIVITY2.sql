@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,10 +28,10 @@ BEGIN
 		DECLARE @SQL NVARCHAR(MAX)
 
 		SET @SQL = 'SELECT
-			ISNULL(ServiceName, SubhostName) AS [Си/подхост], ISNULL(ClientFullName, Comment) AS [Клиент], a.DistrStr AS [Дистрибутив],
-			LGN AS [Логин],
-			CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Дата регистрации],
-			SST_SHORT AS [Тип системы], NT_SHORT AS [Сеть],'
+			ISNULL(ServiceName, SubhostName) AS [РЎРё/РїРѕРґС…РѕСЃС‚], ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			LGN AS [Р›РѕРіРёРЅ],
+			CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё],
+			SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹], NT_SHORT AS [РЎРµС‚СЊ],'
 
 		SELECT @SQL = @SQL + N'
 			CASE
@@ -45,7 +45,7 @@ BEGIN
 						AND z.COMP = a.CompNumber
 				) WHEN 1 THEN ''+''
 				ELSE ''''
-			END AS [' + CONVERT(NVARCHAR(128), NAME) + '|Активность],
+			END AS [' + CONVERT(NVARCHAR(128), NAME) + '|РђРєС‚РёРІРЅРѕСЃС‚СЊ],
 			(
 				SELECT SUM(LOGIN_CNT)
 				FROM dbo.OnlineActivity z
@@ -53,7 +53,7 @@ BEGIN
 					AND z.ID_HOST = a.HostID
 					AND z.DISTR = a.DistrNumber
 					AND z.COMP = a.CompNumber
-			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|Кол-во входов],
+			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|РљРѕР»-РІРѕ РІС…РѕРґРѕРІ],
 			(
 				SELECT dbo.TimeMinToStr(SUM(SESSION_TIME))
 				FROM dbo.OnlineActivity z
@@ -61,7 +61,7 @@ BEGIN
 					AND z.ID_HOST = a.HostID
 					AND z.DISTR = a.DistrNumber
 					AND z.COMP = a.CompNumber
-			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|Время сессий],'
+			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|Р’СЂРµРјСЏ СЃРµСЃСЃРёР№],'
 		FROM Common.Period
 		WHERE TYPE = 1
 			AND START >= DATEADD(MONTH, -3, GETDATE())
@@ -83,7 +83,7 @@ BEGIN
 							AND DATEADD(MONTH, 3, START) >= GETDATE()
 							AND ACTIVITY = 1
 					) AS o_O
-			) AS [Кол-во недель с активностью]
+			) AS [РљРѕР»-РІРѕ РЅРµРґРµР»СЊ СЃ Р°РєС‚РёРІРЅРѕСЃС‚СЊСЋ]
 		FROM 
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			CROSS APPLY
@@ -99,7 +99,7 @@ BEGIN
 				) AS t
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
 			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
-		WHERE SST_SHORT NOT IN (''ОДД'', ''ДСП'') AND NT_SHORT IN (''ОВП'', ''ОВПИ'', ''ОВК'', ''ОВМ1'', ''ОВМ2'', ''ОВК-Ф'', ''ОВМ-Ф (0;1)'', ''ОВМ-Ф (1;0)'', ''ОВМ-Ф (1;2)'')
+		WHERE SST_SHORT NOT IN (''РћР”Р”'', ''Р”РЎРџ'') AND NT_SHORT IN (''РћР’Рџ'', ''РћР’РџР'', ''РћР’Рљ'', ''РћР’Рњ1'', ''РћР’Рњ2'', ''РћР’Рљ-Р¤'', ''РћР’Рњ-Р¤ (0;1)'', ''РћР’Рњ-Р¤ (1;0)'', ''РћР’Рњ-Р¤ (1;2)'')
 		ORDER BY CASE SubhostName WHEN '''' THEN 1 ELSE 2 END, SubhostName, ServiceName, ClientFullName, a.DistrStr'
 
 		--PRINT (@SQL)

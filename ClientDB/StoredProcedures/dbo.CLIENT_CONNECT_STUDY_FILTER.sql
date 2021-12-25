@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -44,7 +44,7 @@ BEGIN
 							dbo.ClientStudy z
 							INNER JOIN dbo.LessonPlaceTable ON ID_PLACE = LessonPlaceID
 						WHERE z.STATUS = 1 AND z.ID_CLIENT = a.ClientID AND Teached = 1
-							AND LessonPlaceName NOT IN ('ÑÒ', 'Ñåìèíàð')
+							AND LessonPlaceName NOT IN ('Ð¡Ð¢', 'Ð¡ÐµÐ¼Ð¸Ð½Ð°Ñ€')
 					) AS LAST_STUDY,
 					(
 						SELECT MAX(DATE)

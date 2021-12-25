@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 		SELECT a.ID, a.DATE, a.NOTIFY_USER, a.END_DATE, a.NOTE,
 			CASE STATUS
-				WHEN 1 THEN 'На контроле'
-				WHEN 2 THEN 'Редакция'
-				WHEN 3 THEN 'Удалена'
-				WHEN 4 THEN 'Снято с контроля'
+				WHEN 1 THEN 'РќР° РєРѕРЅС‚СЂРѕР»Рµ'
+				WHEN 2 THEN 'Р РµРґР°РєС†РёСЏ'
+				WHEN 3 THEN 'РЈРґР°Р»РµРЅР°'
+				WHEN 4 THEN 'РЎРЅСЏС‚Рѕ СЃ РєРѕРЅС‚СЂРѕР»СЏ'
 				ELSE '???'
 			END AS STATUS_STR,
 			STATUS,

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,24 +25,24 @@ BEGIN
 	BEGIN TRY
 
 		SELECT DISTINCT
-			Comment AS [Название],
-			Complect AS [Комплект],
-			DistrNumber AS [Дистрибутив],
-			rns.DistrTypeName AS [Сеть],
-			cv.ManagerName AS [Руководитель],
-			cv.ServiceName AS [СИ],
-			rns.SST_SHORT AS [Тип дистрибутива],
-			rns.SystemBaseName AS [Система],
+			Comment AS [РќР°Р·РІР°РЅРёРµ],
+			Complect AS [РљРѕРјРїР»РµРєС‚],
+			DistrNumber AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			rns.DistrTypeName AS [РЎРµС‚СЊ],
+			cv.ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ],
+			cv.ServiceName AS [РЎР],
+			rns.SST_SHORT AS [РўРёРї РґРёСЃС‚СЂРёР±СѓС‚РёРІР°],
+			rns.SystemBaseName AS [РЎРёСЃС‚РµРјР°],
 			CASE
-				WHEN SST_SHORT IN ('ДД2', 'С.И') AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
+				WHEN SST_SHORT IN ('Р”Р”2', 'РЎ.Р') AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
 				THEN -0.25
-				WHEN SST_SHORT = 'ДЗ2' AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
+				WHEN SST_SHORT = 'Р”Р—2' AND rns.SystemBaseName IN ('BBKZ', 'UBKZ')
 				THEN -0.45
-				WHEN SST_SHORT IN ('ДД2', 'С.И') AND rns.SystemBaseName IN ('UMKZ')
+				WHEN SST_SHORT IN ('Р”Р”2', 'РЎ.Р') AND rns.SystemBaseName IN ('UMKZ')
 				THEN -0.3
-				WHEN SST_SHORT IN ('ДЗ2') AND rns.SystemBaseName IN ('UMKZ')
+				WHEN SST_SHORT IN ('Р”Р—2') AND rns.SystemBaseName IN ('UMKZ')
 				THEN -0.6
-			END AS [Изменение веса]
+			END AS [РР·РјРµРЅРµРЅРёРµ РІРµСЃР°]
 
 		FROM
 			Reg.RegNodeSearchView rns WITH(NOEXPAND)

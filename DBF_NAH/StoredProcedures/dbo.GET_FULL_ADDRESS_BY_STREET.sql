@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,9 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  По коду улицы получить полную строку адреса
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  РџРѕ РєРѕРґСѓ СѓР»РёС†С‹ РїРѕР»СѓС‡РёС‚СЊ РїРѕР»РЅСѓСЋ СЃС‚СЂРѕРєСѓ Р°РґСЂРµСЃР°
 */
 
 ALTER PROCEDURE [dbo].[GET_FULL_ADDRESS_BY_STREET]
@@ -56,22 +56,22 @@ BEGIN
 		SET @ResultStr = ''
 
 
-		IF @RgName IS NOT NULL AND @RgName <> '(нет)'
+		IF @RgName IS NOT NULL AND @RgName <> '(РЅРµС‚)'
 		  SET @ResultStr = @ResultStr + @RgName + ', '
 
-		IF @ArName IS NOT NULL AND @ArName <> '(нет)'
+		IF @ArName IS NOT NULL AND @ArName <> '(РЅРµС‚)'
 		  SET @ResultStr = @ResultStr + @ArName + ', '
 
 		IF @CtPrefix IS NOT NULL
 		  SET @ResultStr = @ResultStr + @CtPrefix
 
-		IF @CtName IS NOT NULL AND @CtName <> '(нет)'
+		IF @CtName IS NOT NULL AND @CtName <> '(РЅРµС‚)'
 		  SET @ResultStr = @ResultStr + @CtName + ', '
 
 		IF @StPrefix IS NOT NULL
 		  SET @ResultStr = @ResultStr + @StPrefix
 
-		IF @StName IS NOT NULL AND @StName <> '(нет)'
+		IF @StName IS NOT NULL AND @StName <> '(РЅРµС‚)'
 		SET @ResultStr = @ResultStr + @StName
 
 

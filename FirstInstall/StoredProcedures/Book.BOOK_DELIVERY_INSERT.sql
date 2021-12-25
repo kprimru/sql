@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,7 +56,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'BOOK_DELIVERY', @MASTERID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'BOOK_DELIVERY', 'Новая запись', @MASTERID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'BOOK_DELIVERY', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @MASTERID, @OLD, @NEW
 
 END
 

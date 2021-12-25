@@ -1,11 +1,11 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-	Получение кризисного коэффициента
+	РџРѕР»СѓС‡РµРЅРёРµ РєСЂРёР·РёСЃРЅРѕРіРѕ РєРѕСЌС„С„РёС†РёРµРЅС‚Р°
 */
 ALTER FUNCTION [Ric].[CrisisCoefValue]
 (

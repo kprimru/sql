@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -43,13 +43,13 @@ BEGIN
 					AND (CC_AUTHOR = ORIGINAL_LOGIN() OR IS_SRVROLEMEMBER('sysadmin') = 1 OR IS_MEMBER('DBChief') = 1)
 
 			IF @@ROWCOUNT = 0
-				RAISERROR('Запрещено снимать с контроля чужие записи', 15, 1)
+				RAISERROR('Р—Р°РїСЂРµС‰РµРЅРѕ СЃРЅРёРјР°С‚СЊ СЃ РєРѕРЅС‚СЂРѕР»СЏ С‡СѓР¶РёРµ Р·Р°РїРёСЃРё', 15, 1)
 		END
 		ELSE
 		BEGIN
 			IF ((SELECT TOP 1 CC_TYPE FROM dbo.ClientControl WHERE CC_ID_CLIENT = @CLIENT AND CC_REMOVE_DATE IS NULL) = 5)
 				AND ((IS_MEMBER('rl_client_control_lawyer_set') <> 1 AND IS_MEMBER('db_owner') <> 1))
-				RAISERROR('Запрещено снимать с контроля записи Юристов', 15, 1)
+				RAISERROR('Р—Р°РїСЂРµС‰РµРЅРѕ СЃРЅРёРјР°С‚СЊ СЃ РєРѕРЅС‚СЂРѕР»СЏ Р·Р°РїРёСЃРё Р®СЂРёСЃС‚РѕРІ', 15, 1)
 			ELSE
 			BEGIN
 				IF @ID IS NULL

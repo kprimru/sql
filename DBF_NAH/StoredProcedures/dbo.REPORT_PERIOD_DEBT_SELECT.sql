@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 			(
 				SELECT
 					CL_ID, CL_PSEDO, DIS_STR, SYS_ORDER, BD_TOTAL_PRICE,
-					-- сумма оплаты за этот период
+					-- СЃСѓРјРјР° РѕРїР»Р°С‚С‹ Р·Р° СЌС‚РѕС‚ РїРµСЂРёРѕРґ
 					ISNULL((
 						SELECT SUM(ID_PRICE)
 						FROM

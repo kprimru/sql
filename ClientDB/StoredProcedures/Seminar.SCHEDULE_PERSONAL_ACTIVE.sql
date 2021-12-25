@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,13 +37,13 @@ BEGIN
 				WHERE ID = @SCHEDULE
 			)
 		BEGIN
-			RAISERROR ('Уже записано максимальное количество участников. Можно записать только в резерв.', 16, 1)
+			RAISERROR ('РЈР¶Рµ Р·Р°РїРёСЃР°РЅРѕ РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СѓС‡Р°СЃС‚РЅРёРєРѕРІ. РњРѕР¶РЅРѕ Р·Р°РїРёСЃР°С‚СЊ С‚РѕР»СЊРєРѕ РІ СЂРµР·РµСЂРІ.', 16, 1)
 			RETURN
 		END
 
 		IF (SELECT INDX FROM Seminar.PersonalView WITH(NOEXPAND) WHERE ID = @ID) = 1
 		BEGIN
-			RAISERROR ('Сотрудник и так находится в активном списке', 16, 1)
+			RAISERROR ('РЎРѕС‚СЂСѓРґРЅРёРє Рё С‚Р°Рє РЅР°С…РѕРґРёС‚СЃСЏ РІ Р°РєС‚РёРІРЅРѕРј СЃРїРёСЃРєРµ', 16, 1)
 			RETURN
 		END
 

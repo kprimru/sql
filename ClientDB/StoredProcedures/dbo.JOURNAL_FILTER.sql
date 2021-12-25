@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -44,9 +44,9 @@ BEGIN
 		CREATE TABLE #client
 			(
 				ClientID				INT PRIMARY KEY,
-				[СИ]					NVARCHAR(128),
-				[Название организации]	NVARCHAR(512),
-				[Главная книга]			SMALLINT
+				[РЎР]					NVARCHAR(128),
+				[РќР°Р·РІР°РЅРёРµ РѕСЂРіР°РЅРёР·Р°С†РёРё]	NVARCHAR(512),
+				[Р“Р»Р°РІРЅР°СЏ РєРЅРёРіР°]			SMALLINT
 			)
 
 		DECLARE @SQL NVARCHAR(MAX)
@@ -60,7 +60,7 @@ BEGIN
 
 		EXEC (@SQL)
 
-		INSERT INTO #client(ClientID, [Название организации], [СИ])
+		INSERT INTO #client(ClientID, [РќР°Р·РІР°РЅРёРµ РѕСЂРіР°РЅРёР·Р°С†РёРё], [РЎР])
 			SELECT DISTINCT ClientID, ClientFullName, ServiceName
 			FROM
 				dbo.ClientJournal
@@ -73,7 +73,7 @@ BEGIN
 					)
 
 		UPDATE #client
-		SET [Главная книга] =
+		SET [Р“Р»Р°РІРЅР°СЏ РєРЅРёРіР°] =
 				(
 					SELECT COUNT(DISTINCT ID_JOURNAL)
 					FROM dbo.ClientJournal
@@ -104,7 +104,7 @@ BEGIN
 
 		SELECT *
 		FROM #client
-		ORDER BY [СИ], [Название организации]
+		ORDER BY [РЎР], [РќР°Р·РІР°РЅРёРµ РѕСЂРіР°РЅРёР·Р°С†РёРё]
 
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client

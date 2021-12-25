@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INSTALL', @INS_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'Редактирование', @INS_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @INS_ID, @OLD, @NEW
 END
 GO
 GRANT EXECUTE ON [Install].[INSTALL_UPDATE] TO rl_install_u;

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 			AND dbo.DateOf(a.DATE) <= dbo.DateOf(DATEADD(DAY, NOTIFY_DAY, GETDATE()))
 			AND
 				(
-					-- ëè÷íûå
+					-- Ð»Ð¸Ñ‡Ð½Ñ‹Ðµ
 					(
 						RECEIVER = @USER
 						OR

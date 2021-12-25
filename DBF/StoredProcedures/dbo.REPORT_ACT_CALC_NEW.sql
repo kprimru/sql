@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_ACT_CALC_NEW]
@@ -100,7 +100,7 @@ BEGIN
 						AND BL_ID_PERIOD = AD_ID_PERIOD
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
-				-- неоплаченная сумма счета
+				-- РЅРµРѕРїР»Р°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° СЃС‡РµС‚Р°
 				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)
@@ -187,7 +187,7 @@ BEGIN
 						AND BL_ID_PERIOD = AD_ID_PERIOD
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
-				-- неоплаченная сумма счета
+				-- РЅРµРѕРїР»Р°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° СЃС‡РµС‚Р°
 				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)

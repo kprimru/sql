@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -136,7 +136,7 @@ BEGIN
 				AND UI.UI_ID_BASE = CUI.UI_ID_BASE
 				AND	UI.UI_DISTR = CUI.UI_DISTR
 				AND UI.UI_COMP = CUI.UI_COMP
-            -- ToDo - тут завязаны на ID
+            -- ToDo - С‚СѓС‚ Р·Р°РІСЏР·Р°РЅС‹ РЅР° ID
 			ORDER BY UI_ID_COMP DESC
         ) AS CUI
         OPTION(RECOMPILE);

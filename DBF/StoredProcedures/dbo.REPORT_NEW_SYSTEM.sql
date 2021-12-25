@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 
 	BEGIN TRY
 
-		--Шаг 0. Разобрать строку и выделить из нее все идентификаторы. По строке на таблицу.
+		--РЁР°Рі 0. Р Р°Р·РѕР±СЂР°С‚СЊ СЃС‚СЂРѕРєСѓ Рё РІС‹РґРµР»РёС‚СЊ РёР· РЅРµРµ РІСЃРµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹. РџРѕ СЃС‚СЂРѕРєРµ РЅР° С‚Р°Р±Р»РёС†Сѓ.
 
 		IF OBJECT_ID('tempdb..#dbf_system') IS NOT NULL
 			DROP TABLE #dbf_system
@@ -144,7 +144,7 @@ BEGIN
 
 		DECLARE @sql VARCHAR(MAX)
 
-		SET @sql = 'SELECT A.PR_DATE AS [Дата],'
+		SET @sql = 'SELECT A.PR_DATE AS [Р”Р°С‚Р°],'
 
 		SELECT @sql = @sql + 'SHPVT.[' + CONVERT(VARCHAR, SH_ID) + '] AS ''' + SH_SHORT_NAME + ''','
 		FROM
@@ -178,7 +178,7 @@ BEGIN
 									AND NEW_NUM = RNN_DISTR_NUM
 									AND NEW_COMP = RNN_COMP_NUM
 							)
-				) AS [Итого],'
+				) AS [РС‚РѕРіРѕ],'
 
 		SET @sql = LEFT(@sql, LEN(@sql) - 1)
 

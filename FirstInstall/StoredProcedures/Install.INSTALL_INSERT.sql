@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'INSTALL', @INS_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'Новая запись', @INS_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'INSTALL', 'РќРѕРІР°СЏ Р·Р°РїРёСЃСЊ', @INS_ID, @OLD, @NEW
 
 END
 GO

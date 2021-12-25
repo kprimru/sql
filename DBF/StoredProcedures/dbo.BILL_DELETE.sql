@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,9 +8,9 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[BILL_DELETE]
@@ -43,7 +43,7 @@ BEGIN
 					WHERE BD_ID_BILL = @billid
 						AND SYS_ID_SO = @soid
 				)
-		-- Текст процедуры ниже
+		-- РўРµРєСЃС‚ РїСЂРѕС†РµРґСѓСЂС‹ РЅРёР¶Рµ
 		DELETE
 		FROM dbo.BillDistrTable
 		WHERE BD_ID_BILL = @billid

@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,7 +41,7 @@ BEGIN
 
         EXEC sp_OADestroy @res
 
-        -- ToDO а может быть несколько строк?
+        -- ToDO Р° РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ СЃС‚СЂРѕРє?
         SET @Response = (SELECT TOP (1) ResponseText FROM @responseText);
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

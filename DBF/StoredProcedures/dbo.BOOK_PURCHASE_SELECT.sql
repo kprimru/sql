@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,9 +47,9 @@ BEGIN
 						WHERE z.ID_PURCHASE = a.ID
 					) AS S_ALL,
 					CASE
-						WHEN ISNULL(INN, '') = '' THEN 'Не заполнено поле ИНН'
-						WHEN LEN(ISNULL(INN, '')) NOT IN (10, 12) THEN 'Неверная длина поля ИНН'
-						WHEN LEN(ISNULL(INN, '')) = 10 AND LEN(ISNULL(KPP, '')) <> 9 THEN 'Неверная длина поля КПП'
+						WHEN ISNULL(INN, '') = '' THEN 'РќРµ Р·Р°РїРѕР»РЅРµРЅРѕ РїРѕР»Рµ РРќРќ'
+						WHEN LEN(ISNULL(INN, '')) NOT IN (10, 12) THEN 'РќРµРІРµСЂРЅР°СЏ РґР»РёРЅР° РїРѕР»СЏ РРќРќ'
+						WHEN LEN(ISNULL(INN, '')) = 10 AND LEN(ISNULL(KPP, '')) <> 9 THEN 'РќРµРІРµСЂРЅР°СЏ РґР»РёРЅР° РїРѕР»СЏ РљРџРџ'
 						ELSE ''
 					END AS ERR
 				FROM

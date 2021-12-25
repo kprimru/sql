@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,13 +27,13 @@ BEGIN
 		SELECT
 			ClientFullName AS CLIENT, CURRENT_CONTRACT AS CONTRACT, DISTR, d.NAME AS DOC_TYPE, b.NAME AS SERVICE,
 			c.SHORT AS VENDOR,
-			ISNULL('Ò ' + CONVERT(VARCHAR(20), START, 104), '') + ISNULL(' ÔÓ ' + CONVERT(VARCHAR(20), FINISH, 104), '') AS DATE,
-			Common.MoneyShort(MONTH_PRICE) + ' (‚ Ú.˜. Õƒ—)' AS [MONTH],
-			Common.MoneyShort(PERIOD_PRICE) + ' (‚ Ú.˜. Õƒ—)' AS PERIOD,
-			Common.MoneyShort(PERIOD_FULL_PRICE) + ' (‚ Ú.˜. Õƒ—)' AS PERIOD_FULL,
-			'Ò ' + CONVERT(VARCHAR(20), PERIOD_START, 104) + ' ÔÓ ' + CONVERT(VARCHAR(20), PERIOD_END, 104) AS PERIOD_STR,
+			ISNULL('—Å ' + CONVERT(VARCHAR(20), START, 104), '') + ISNULL(' –ø–æ ' + CONVERT(VARCHAR(20), FINISH, 104), '') AS DATE,
+			Common.MoneyShort(MONTH_PRICE) + ' (–≤ —Ç.—á. –ù–î–°)' AS [MONTH],
+			Common.MoneyShort(PERIOD_PRICE) + ' (–≤ —Ç.—á. –ù–î–°)' AS PERIOD,
+			Common.MoneyShort(PERIOD_FULL_PRICE) + ' (–≤ —Ç.—á. –ù–î–°)' AS PERIOD_FULL,
+			'—Å ' + CONVERT(VARCHAR(20), PERIOD_START, 104) + ' –ø–æ ' + CONVERT(VARCHAR(20), PERIOD_END, 104) AS PERIOD_STR,
 			e.PayTypeName AS CONTRACT_PAY, g.ContractPayName AS CONTRACT_PAY_NAME,
-			FRAMEWORK, DOCUMENTS, CASE LETTER_CANCEL WHEN 1 THEN 'ƒ‡' ELSE 'ÕÂÚ' END AS LETTER_CANCEL, SYSTEMS,
+			FRAMEWORK, DOCUMENTS, CASE LETTER_CANCEL WHEN 1 THEN '–î–∞' ELSE '–ù–µ—Ç' END AS LETTER_CANCEL, SYSTEMS,
 			ISNULL(
 				(
 					SELECT CONVERT(VARCHAR(20), ORD) + '. ' + CONDITION + CHAR(10)
@@ -52,7 +52,7 @@ BEGIN
 				), '') AS SPECIFICATIONS,
 			ISNULL(
 				(
-					SELECT 'π ' + Cast(CS.NUM AS VarChar(100)) + CHAR(10)
+					SELECT '‚Ññ ' + Cast(CS.NUM AS VarChar(100)) + CHAR(10)
 					FROM Memo.ClientMemoAdditionals z
 					INNER JOIN Contract.Additional AS CS ON Z.Additional_Id = CS.ID
 					WHERE z.Memo_Id = a.ID

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -18,7 +18,7 @@ AS
 					FROM dbo.RegProtocol
 					WHERE RPR_DISTR = DISTR AND RPR_COMP = COMP AND RPR_ID_HOST = HostID
 						AND RPR_DATE = DATE
-						AND RPR_OPER IN ('Включение', 'НОВАЯ', 'Изм. парам.', 'Сопровождение подключено')
+						AND RPR_OPER IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'РР·Рј. РїР°СЂР°Рј.', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ')
 					ORDER BY RPR_DATE DESC
 
 					UNION ALL
@@ -27,7 +27,7 @@ AS
 					FROM Reg.ProtocolText z
 					WHERE z.DISTR = a.DISTR AND z.COMP = a.COMP AND ID_HOST = HostID
 						AND z.DATE = a.DATE
-						AND (COMMENT LIKE '%Включение%' OR COMMENT LIKE '%НОВАЯ%' OR COMMENT LIKE '%Изм. парам.%')
+						AND (COMMENT LIKE '%Р’РєР»СЋС‡РµРЅРёРµ%' OR COMMENT LIKE '%РќРћР’РђРЇ%' OR COMMENT LIKE '%РР·Рј. РїР°СЂР°Рј.%')
 					ORDER BY DATE DESC
 				) AS o_O
 			ORDER BY TP
@@ -44,7 +44,7 @@ AS
 								SELECT TOP 1 0 AS TP, RPR_DATE
 								FROM dbo.RegProtocol
 								WHERE RPR_DISTR = DISTR AND RPR_COMP = COMP AND RPR_ID_HOST = HostID
-									AND RPR_OPER IN ('Включение', 'НОВАЯ', 'Изм. парам.', 'Сопровождение подключено')
+									AND RPR_OPER IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'РР·Рј. РїР°СЂР°Рј.', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РїРѕРґРєР»СЋС‡РµРЅРѕ')
 								ORDER BY RPR_DATE DESC
 
 								UNION ALL
@@ -52,7 +52,7 @@ AS
 								SELECT TOP 1 1 AS TP, DATE
 								FROM Reg.ProtocolText z
 								WHERE z.DISTR = b.DISTR AND z.COMP = b.COMP AND ID_HOST = HostID
-									AND COMMENT IN ('Включение', 'НОВАЯ', 'Изм. парам.')
+									AND COMMENT IN ('Р’РєР»СЋС‡РµРЅРёРµ', 'РќРћР’РђРЇ', 'РР·Рј. РїР°СЂР°Рј.')
 								ORDER BY DATE DESC
 
 							) AS o_O

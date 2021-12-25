@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ClientFullName AS 'Клиент', b.Name AS 'Тип клиента',
+			ClientFullName AS 'РљР»РёРµРЅС‚', b.Name AS 'РўРёРї РєР»РёРµРЅС‚Р°',
 			CASE
 				WHEN EXISTS
 					(
@@ -34,7 +34,7 @@ BEGIN
 							dbo.ClientDistrView z
 							INNER JOIN dbo.DBFDistrFinancingView y ON z.SystemBaseName = y.SYS_REG_NAME AND z.DISTR = y.DIS_NUM AND z.COMP = y.DIS_COMP_NUM
 						WHERE z.ID_CLIENT = ClientID AND z.DS_REG = 0 AND DF_FIXED_PRICE <> 0
-					) THEN 'Фикс.сумма'
+					) THEN 'Р¤РёРєСЃ.СЃСѓРјРјР°'
 				WHEN EXISTS
 					(
 						SELECT *
@@ -42,9 +42,9 @@ BEGIN
 							dbo.ClientDistrView z
 							INNER JOIN dbo.DBFDistrFinancingView y ON z.SystemBaseName = y.SYS_REG_NAME AND z.DISTR = y.DIS_NUM AND z.COMP = y.DIS_COMP_NUM
 						WHERE z.ID_CLIENT = ClientID AND z.DS_REG = 0 AND DF_DISCOUNT <> 0
-					) THEN 'Скидка'
-				ELSE 'Прейскурант'
-			END AS 'Условия'
+					) THEN 'РЎРєРёРґРєР°'
+				ELSE 'РџСЂРµР№СЃРєСѓСЂР°РЅС‚'
+			END AS 'РЈСЃР»РѕРІРёСЏ'
 		FROM
 			dbo.ClientTable a
 			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId

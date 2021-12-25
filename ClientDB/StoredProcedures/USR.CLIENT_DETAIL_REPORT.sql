@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -80,7 +80,7 @@ BEGIN
 		WHERE ClientID = @CL_ID
 
 		IF @ST IS NOT NULL
-			SET @SYSTEMS = '(сопр - ' + @ST + ') ' + @SYSTEMS
+			SET @SYSTEMS = '(СЃРѕРїСЂ - ' + @ST + ') ' + @SYSTEMS
 
 		SET @SYSTEMS = @SYSTEMS + ISNULL('(' + CONVERT(NVARCHAR(32), (SELECT MIN(ConnectDate) FROM dbo.ClientConnectView WITH(NOEXPAND) WHERE ClientID = @CL_ID), 104) + ')', '')
 

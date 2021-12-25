@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -14,7 +14,7 @@ BEGIN
 	SET @BODY = N''
 
 	SELECT @BODY = @BODY +
-		'Нет отметки о возврате акта "' + CL_NAME + '", установил "' + PER_NAME + '" ' +
+		'РќРµС‚ РѕС‚РјРµС‚РєРё Рѕ РІРѕР·РІСЂР°С‚Рµ Р°РєС‚Р° "' + CL_NAME + '", СѓСЃС‚Р°РЅРѕРІРёР» "' + PER_NAME + '" ' +
 		CONVERT(VARCHAR(20), IND_INSTALL_DATE, 104) + CHAR(13)
 	FROM
 		(
@@ -32,7 +32,7 @@ BEGIN
 	EXEC msdb.dbo.sp_send_dbmail @profile_name = 'SQLMail',
 				@recipients = N'moroz@bazis;denisov@bazis;gvv@bazis',
 				@body = @BODY,
-				@subject='Отчет по неподписанных актах при установке'
+				@subject='РћС‚С‡РµС‚ РїРѕ РЅРµРїРѕРґРїРёСЃР°РЅРЅС‹С… Р°РєС‚Р°С… РїСЂРё СѓСЃС‚Р°РЅРѕРІРєРµ'
 
 	UPDATE Install.InstallDetail
 	SET IND_ACT_MAIL = GETDATE()

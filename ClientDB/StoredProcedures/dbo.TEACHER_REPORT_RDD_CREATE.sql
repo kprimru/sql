@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,9 +8,9 @@ IF OBJECT_ID('[dbo].[TEACHER_REPORT_RDD_CREATE]', 'P ') IS NULL EXEC('CREATE PRO
 GO
 
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[TEACHER_REPORT_RDD_CREATE]

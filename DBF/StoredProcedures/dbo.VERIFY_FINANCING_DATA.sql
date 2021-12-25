@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[VERIFY_FINANCING_DATA]
@@ -189,7 +189,7 @@ BEGIN
 		IF @billinc = 1
 		BEGIN
 			SET @sql = @sql + 'UNION
-			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''Несоответствие данных'' AS VER_TEXT
+			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РґР°РЅРЅС‹С…'' AS VER_TEXT
 			FROM
 				#verify INNER JOIN
 				dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN
@@ -201,7 +201,7 @@ BEGIN
 		IF @billact = 1
 		BEGIN
 			SET @sql = @sql + 'UNION
-			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''Несоответствие данных'' AS VER_TEXT
+			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РґР°РЅРЅС‹С…'' AS VER_TEXT
 			FROM
 				#verify INNER JOIN
 				dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN
@@ -213,7 +213,7 @@ BEGIN
 		IF @incact = 1
 		BEGIN
 			SET @sql = @sql + 'UNION
-			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''Несоответствие данных'' AS VER_TEXT
+			SELECT CL_ID, CL_PSEDO, DIS_STR, PR_DATE, VB_PRICE, VI_PRICE, VA_PRICE, ''РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РґР°РЅРЅС‹С…'' AS VER_TEXT
 			FROM
 				#verify INNER JOIN
 				dbo.ClientTable ON CL_ID = VCL_ID INNER JOIN

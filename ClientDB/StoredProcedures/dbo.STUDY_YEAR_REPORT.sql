@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 
 		SET @SQL = N'
 			SELECT
-				ClientFullName AS [Клиент], ServiceName AS [СИ], ManagerName AS [Рук-ль], ClientTypeName AS [Категория], ConnectDate AS [Подключен], '
+				ClientFullName AS [РљР»РёРµРЅС‚], ServiceName AS [РЎР], ManagerName AS [Р СѓРє-Р»СЊ], ClientTypeName AS [РљР°С‚РµРіРѕСЂРёСЏ], ConnectDate AS [РџРѕРґРєР»СЋС‡РµРЅ], '
 
 		SELECT @SQL = @SQL + 'Teach' + CONVERT(VARCHAR(20), STUDY_YEAR) + ' AS [' + CONVERT(VARCHAR(20), STUDY_YEAR) + '], '
 		FROM @TBL
@@ -56,7 +56,7 @@ BEGIN
 		FROM @TBL
 		ORDER BY STUDY_YEAR
 
-		SET @SQL = LEFT(@SQL, LEN(@SQL) - 4) + ' THEN ''Не обучался'''
+		SET @SQL = LEFT(@SQL, LEN(@SQL) - 4) + ' THEN ''РќРµ РѕР±СѓС‡Р°Р»СЃСЏ'''
 
 		SELECT @CUR_YEAR = MIN(STUDY_YEAR)
 		FROM @TBL
@@ -71,7 +71,7 @@ BEGIN
 			WHERE STUDY_YEAR > @CUR_YEAR
 			ORDER BY STUDY_YEAR
 
-			SET @SQL = @SQL + 'THEN ''Обучался в ' + CONVERT(VARCHAR(20), @CUR_YEAR) + ''''
+			SET @SQL = @SQL + 'THEN ''РћР±СѓС‡Р°Р»СЃСЏ РІ ' + CONVERT(VARCHAR(20), @CUR_YEAR) + ''''
 
 			SET @CUR_YEAR =
 				(
@@ -82,7 +82,7 @@ BEGIN
 		END
 
 		SET @SQL = @SQL + '
-			END AS [Вердикт]'
+			END AS [Р’РµСЂРґРёРєС‚]'
 
 		SET @SQL = @SQL + '
 			FROM

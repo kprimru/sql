@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,10 +29,10 @@ BEGIN
     BEGIN TRY
 
         SET @JobMaxDuration = 10;
-        SET @Prefix = 'Следующие задания выполняются слишком долго:' + Char(10);
+        SET @Prefix = 'РЎР»РµРґСѓСЋС‰РёРµ Р·Р°РґР°РЅРёСЏ РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ СЃР»РёС€РєРѕРј РґРѕР»РіРѕ:' + Char(10);
         SET @Text = '';
 
-        SELECT @Text = @Text + JT.[Name] + '     последний запуск  ' + Convert(VarChar(20), Start, 104) + ' ' + Convert(VarChar(20), Start, 108) + ' (' + Cast(DateDiff(minute, START, GetDate()) AS VarChar(20)) + ' минут)' + Char(10)
+        SELECT @Text = @Text + JT.[Name] + '     РїРѕСЃР»РµРґРЅРёР№ Р·Р°РїСѓСЃРє  ' + Convert(VarChar(20), Start, 104) + ' ' + Convert(VarChar(20), Start, 108) + ' (' + Cast(DateDiff(minute, START, GetDate()) AS VarChar(20)) + ' РјРёРЅСѓС‚)' + Char(10)
         FROM Maintenance.JobType AS JT
         CROSS APPLY
         (

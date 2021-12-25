@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.DATE AS [Дата], ISNULL(e.ClientFullName, c.Comment) AS [Клиент], c.DistrStr AS [Дистрибутив],
-			ISNULL(e.ManagerName, c.SubhostName) AS [РГ], e.ServiceName AS [СИ], a.FIO AS [ФИО],
-			a.QUEST AS [Вопрос], a.EMAIL, a.PHONE AS [Телефон]
+			a.DATE AS [Р”Р°С‚Р°], ISNULL(e.ClientFullName, c.Comment) AS [РљР»РёРµРЅС‚], c.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			ISNULL(e.ManagerName, c.SubhostName) AS [Р Р“], e.ServiceName AS [РЎР], a.FIO AS [Р¤РРћ],
+			a.QUEST AS [Р’РѕРїСЂРѕСЃ], a.EMAIL, a.PHONE AS [РўРµР»РµС„РѕРЅ]
 		FROM
 			dbo.ClientDutyQuestion a
 			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber

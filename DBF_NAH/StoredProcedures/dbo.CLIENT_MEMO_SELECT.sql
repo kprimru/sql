@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,14 +37,14 @@ BEGIN
 				) AS a
 				INNER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.ClientDistrView b WITH(NOEXPAND) ON a.SYS_REG_NAME = b.SystemBaseName AND a.DIS_NUM = b.DISTR AND a.DIS_COMP_NUM = b.COMP
 
-		SELECT a.ID, a.DATE AS [MEMO_DATE], '' AS [MEMO_NAME], 'Служебная записка' AS TP, 0 AS CURVED, MONTH_PRICE AS [MEMO_PRICE]
+		SELECT a.ID, a.DATE AS [MEMO_DATE], '' AS [MEMO_NAME], 'РЎР»СѓР¶РµР±РЅР°СЏ Р·Р°РїРёСЃРєР°' AS TP, 0 AS CURVED, MONTH_PRICE AS [MEMO_PRICE]
 		FROM
 			[PC275-SQL\ALPHA].ClientDB.Memo.ClientMemo a
 			INNER JOIN #client b ON a.ID_CLIENT = b.ClientID
 		/*
 		UNION ALL
 
-		SELECT a.ID, a.DATE, a.NOTE, 'Расчет' AS TP, 0 AS CURVED, NULL AS PERIOD_PRICE
+		SELECT a.ID, a.DATE, a.NOTE, 'Р Р°СЃС‡РµС‚' AS TP, 0 AS CURVED, NULL AS PERIOD_PRICE
 		FROM
 			[PC275-SQL\ALPHA].ClientDB.Memo.ClientCalculation a
 			INNER JOIN #client b ON a.ID_CLIENT = b.ClientID
@@ -52,7 +52,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DISTINCT a.ID, a.DATE, a.NAME, 'Расчет КГС основной' AS TP, 1 AS CURVED,
+			DISTINCT a.ID, a.DATE, a.NAME, 'Р Р°СЃС‡РµС‚ РљР“РЎ РѕСЃРЅРѕРІРЅРѕР№' AS TP, 1 AS CURVED,
 			(
 				SELECT SUM(z.TOTAL_PRICE)
 				FROM [PC275-SQL\ALPHA].ClientDB.Memo.KGSMemoDistr z
@@ -68,7 +68,7 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			DISTINCT a.ID, a.DATE, a.NAME, 'Расчет КГС корректирующий' AS TP, 0 AS CURVED,
+			DISTINCT a.ID, a.DATE, a.NAME, 'Р Р°СЃС‡РµС‚ РљР“РЎ РєРѕСЂСЂРµРєС‚РёСЂСѓСЋС‰РёР№' AS TP, 0 AS CURVED,
 			(
 				SELECT SUM(z.TOTAL_PRICE)
 				FROM [PC275-SQL\ALPHA].ClientDB.Memo.KGSMemoDistr z

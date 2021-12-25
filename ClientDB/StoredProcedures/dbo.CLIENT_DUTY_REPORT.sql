@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -120,7 +120,7 @@ BEGIN
 				SELECT
 					ROW_NUMBER() OVER(PARTITION BY ServiceName ORDER BY ClientFullName) AS RN,
 					ClientID, ClientFullName, ServiceName, ManagerName, ConnectDate, DUTY_COUNT, ANS_COUNT, SAT_COUNT,
-					'Итого клиентов без обращения в ДС: ' +
+					'РС‚РѕРіРѕ РєР»РёРµРЅС‚РѕРІ Р±РµР· РѕР±СЂР°С‰РµРЅРёСЏ РІ Р”РЎ: ' +
 						CONVERT(VARCHAR(20),
 							(
 								SELECT COUNT(*)
@@ -144,7 +144,7 @@ BEGIN
 									WHERE z.ServiceName = a.ServiceName
 									)), 2)) + '%)' AS NOTE,
 					(
-						SELECT ISNULL(CONVERT(VARCHAR(20), DUTY_COUNT), 'Всего') + '     -     ' + CONVERT(VARCHAR(20), CNT) + CHAR(10)
+						SELECT ISNULL(CONVERT(VARCHAR(20), DUTY_COUNT), 'Р’СЃРµРіРѕ') + '     -     ' + CONVERT(VARCHAR(20), CNT) + CHAR(10)
 						FROM
 							(
 								SELECT DISTINCT DUTY_COUNT, COUNT(*) AS CNT

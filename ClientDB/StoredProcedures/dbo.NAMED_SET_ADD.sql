@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 		FROM dbo.NamedSets
 		WHERE RefName=@REF_NAME AND SetName=@SET_NAME
 
-        -- ToDo ïåðåäåëàòü íà Split
+        -- ToDo Ð¿ÐµÑ€ÐµÐ´ÐµÐ»Ð°Ñ‚ÑŒ Ð½Ð° Split
 		WHILE LEN(@VALUES)>0
 		BEGIN
 			IF CHARINDEX(',', @VALUES)<>0

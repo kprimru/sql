@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,10 +7,10 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	2-04-2009
-Описание:		удалят все записи из таблицы строк счета-фактуры,
-				а потом саму счет-фактуру
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	2-04-2009
+РћРїРёСЃР°РЅРёРµ:		СѓРґР°Р»СЏС‚ РІСЃРµ Р·Р°РїРёСЃРё РёР· С‚Р°Р±Р»РёС†С‹ СЃС‚СЂРѕРє СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹,
+				Р° РїРѕС‚РѕРј СЃР°РјСѓ СЃС‡РµС‚-С„Р°РєС‚СѓСЂСѓ
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_DELETE]
@@ -32,7 +32,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление строки с/ф',
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЈРґР°Р»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				ISNULL(INR_GOOD + ' ', '') + ISNULL(INR_NAME + ' ', '') +
 				CASE ISNULL(INR_COUNT, 1)
 					WHEN 1 THEN ''
@@ -44,7 +44,7 @@ BEGIN
 			WHERE INS_ID = @invid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Удаление с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЈРґР°Р»РµРЅРёРµ СЃ/С„', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' РѕС‚ ' + CONVERT(VARCHAR(20), INS_DATE, 104)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @invid

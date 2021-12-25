@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			dbo.DistrString(a.SystemShortName, DistrNumber, CompNumber) AS [Дистрибутив], Comment as [Название клиента в РЦ],
-			ManagerName AS [Рук-ль], RegisterDate AS [Дата регистрации], a.Complect AS [Комплект]
+			dbo.DistrString(a.SystemShortName, DistrNumber, CompNumber) AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], Comment as [РќР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р° РІ Р Р¦],
+			ManagerName AS [Р СѓРє-Р»СЊ], RegisterDate AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё], a.Complect AS [РљРѕРјРїР»РµРєС‚]
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP AND a.HostID=b.HostId

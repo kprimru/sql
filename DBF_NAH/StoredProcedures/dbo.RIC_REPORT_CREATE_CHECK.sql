@@ -1,19 +1,19 @@
-USE [DBF_NAH]
+ï»¿USE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- ====================================================
---	Àâòîð:			Äåíèñîâ Àëåêñåé
---	Äàòà ñîçäàíèÿ:	25.08.2008
---	Äàòà èçìåíåíèÿ:	10.02.2009
---	Îïèñàíèå:		Ñîçäàåò òàáëèöó ñ äàííûìè îò÷åòà.
---					Ïîëÿ òàáëèöû áóäóò ïðè ôèíàëüíîì
---					ðåäàêòèðîâàíèè îòäåëÿòüñÿ çàïÿòûìè
---	×òî íîâîãî:		Òåïåðü ðåçóëüòàò âûâîäà çàíîñèòñÿ
---					â ïðåäâàðèòåëüíî î÷èùåííóþ
---					òàáëèöó dbo.VMIReportTable
+--	ÐÐ²Ñ‚Ð¾Ñ€:			Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹
+--	Ð”Ð°Ñ‚Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ:	25.08.2008
+--	Ð”Ð°Ñ‚Ð° Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ:	10.02.2009
+--	ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:		Ð¡Ð¾Ð·Ð´Ð°ÐµÑ‚ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼Ð¸ Ð¾Ñ‚Ñ‡ÐµÑ‚Ð°.
+--					ÐŸÐ¾Ð»Ñ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð±ÑƒÐ´ÑƒÑ‚ Ð¿Ñ€Ð¸ Ñ„Ð¸Ð½Ð°Ð»ÑŒÐ½Ð¾Ð¼
+--					Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ð¸ Ð¾Ñ‚Ð´ÐµÐ»ÑÑ‚ÑŒÑÑ Ð·Ð°Ð¿ÑÑ‚Ñ‹Ð¼Ð¸
+--	Ð§Ñ‚Ð¾ Ð½Ð¾Ð²Ð¾Ð³Ð¾:		Ð¢ÐµÐ¿ÐµÑ€ÑŒ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ð²Ð¾Ð´Ð° Ð·Ð°Ð½Ð¾ÑÐ¸Ñ‚ÑÑ
+--					Ð² Ð¿Ñ€ÐµÐ´Ð²Ð°Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð¾Ñ‡Ð¸Ñ‰ÐµÐ½Ð½ÑƒÑŽ
+--					Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ dbo.VMIReportTable
 -- ====================================================
 
 ALTER PROCEDURE [dbo].[RIC_REPORT_CREATE_CHECK]
@@ -72,7 +72,7 @@ BEGIN
 																a.DIS_COMP_NUM = b.REG_COMP_NUM INNER JOIN
 											dbo.DistrStatusTable c ON DS_ID = REG_ID_STATUS
 									WHERE TO_ID = TD_ID_TO AND DS_REG = 0 AND REG_ID_PERIOD = @PR_ID
-								) THEN 'Íåò'
+								) THEN 'ÐÐµÑ‚'
 						ELSE ''
 					END
 				) AS CL_SERVICE,
@@ -176,121 +176,121 @@ BEGIN
 		ORDER BY TO_NUM
 
 
-		SELECT 'Ñëèøêîì äëèííîå íàçâàíèå ÒÎ. Ìàêñèìóì 250' AS TO_ERR, TO_NUM, LEN(TO_NAME) AS TO_LEN
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¢Ðž. ÐœÐ°ÐºÑÐ¸Ð¼ÑƒÐ¼ 250' AS TO_ERR, TO_NUM, LEN(TO_NAME) AS TO_LEN
 		FROM #vmi
 		WHERE LEN(TO_NAME) > 250
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå íàçâàíèå íàñ.ïóíêòà. Ìàêñèìóì - 40', TO_NUM, LEN(CL_CITY)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð½Ð°Ñ.Ð¿ÑƒÐ½ÐºÑ‚Ð°. ÐœÐ°ÐºÑÐ¸Ð¼ÑƒÐ¼ - 40', TO_NUM, LEN(CL_CITY)
 		FROM #vmi
 		WHERE LEN(CL_CITY) > 40
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé àäðåñ. Ìàêñèìóì - 250', TO_NUM, LEN(CL_ADDRESS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ð°Ð´Ñ€ÐµÑ. ÐœÐ°ÐºÑÐ¸Ð¼ÑƒÐ¼ - 250', TO_NUM, LEN(CL_ADDRESS)
 		FROM #vmi
 		WHERE LEN(CL_ADDRESS) > 250
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå ÔÈÎ ðóêîâîäèòåëÿ. Ìàêñ - 92', TO_NUM, LEN(CL_DIR_NAME)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð¤Ð˜Ðž Ñ€ÑƒÐºÐ¾Ð²Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ. ÐœÐ°ÐºÑ - 92', TO_NUM, LEN(CL_DIR_NAME)
 		FROM #vmi
 		WHERE LEN(CL_DIR_NAME) > 92
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå ÔÈÎ ãë.áóõãàëòåðà. Ìàêñ - 92', TO_NUM, LEN(CL_BUH_NAME)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð¤Ð˜Ðž Ð³Ð».Ð±ÑƒÑ…Ð³Ð°Ð»Ñ‚ÐµÑ€Ð°. ÐœÐ°ÐºÑ - 92', TO_NUM, LEN(CL_BUH_NAME)
 		FROM #vmi
 		WHERE LEN(CL_BUH_NAME) > 92
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå ÔÈÎ îòâåòñòâåííîãî. Ìàêñ - 92', TO_NUM, LEN(CL_RES_NAME)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð¤Ð˜Ðž Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ð³Ð¾. ÐœÐ°ÐºÑ - 92', TO_NUM, LEN(CL_RES_NAME)
 		FROM #vmi
 		WHERE LEN(CL_RES_NAME) > 92
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå ÔÈÎ 4-ãî ñîòðóäíèêà. Ìàêñ - 92', TO_NUM, LEN(CL_PER4_NAME)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð¤Ð˜Ðž 4-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 92', TO_NUM, LEN(CL_PER4_NAME)
 		FROM #vmi
 		WHERE LEN(CL_PER4_NAME) > 92
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííîå ÔÈÎ 5-ãî ñîòðóäíèêà. Ìàêñ - 92', TO_NUM, LEN(CL_PER5_NAME)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð¾Ðµ Ð¤Ð˜Ðž 5-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 92', TO_NUM, LEN(CL_PER5_NAME)
 		FROM #vmi
 		WHERE LEN(CL_PER5_NAME) > 92
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ äîëæíîñòü ðóêîâîäèòåëÿ. Ìàêñ - 100', TO_NUM, LEN(CL_DIR_POS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ Ñ€ÑƒÐºÐ¾Ð²Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ. ÐœÐ°ÐºÑ - 100', TO_NUM, LEN(CL_DIR_POS)
 		FROM #vmi
 		WHERE LEN(CL_DIR_POS) > 100
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ äîëæíîñòü ãë.áóõãàëòåðà. Ìàêñ - 100', TO_NUM, LEN(CL_BUH_POS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ Ð³Ð».Ð±ÑƒÑ…Ð³Ð°Ð»Ñ‚ÐµÑ€Ð°. ÐœÐ°ÐºÑ - 100', TO_NUM, LEN(CL_BUH_POS)
 		FROM #vmi
 		WHERE LEN(CL_BUH_POS) > 100
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ äîëæíîñòü îòâåòñòâåííîãî. Ìàêñ - 100', TO_NUM, LEN(CL_RES_POS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ð³Ð¾. ÐœÐ°ÐºÑ - 100', TO_NUM, LEN(CL_RES_POS)
 		FROM #vmi
 		WHERE LEN(CL_RES_POS) > 100
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ äîëæíîñòü 4-ãî ñîòðóäíèêà. Ìàêñ - 100', TO_NUM, LEN(CL_PER4_POS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ 4-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 100', TO_NUM, LEN(CL_PER4_POS)
 		FROM #vmi
 		WHERE LEN(CL_PER4_POS) > 100
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ äîëæíîñòü 5-ãî ñîòðóäíèêà. Ìàêñ - 100', TO_NUM, LEN(CL_PER5_POS)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ 5-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 100', TO_NUM, LEN(CL_PER5_POS)
 		FROM #vmi
 		WHERE LEN(CL_PER5_POS) > 100
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé òåëåôîí ðóêîâîäèòåëÿ. Ìàêñ - 62', TO_NUM, LEN(CL_DIR_PHONE)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ Ñ€ÑƒÐºÐ¾Ð²Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ. ÐœÐ°ÐºÑ - 62', TO_NUM, LEN(CL_DIR_PHONE)
 		FROM #vmi
 		WHERE LEN(CL_DIR_PHONE) > 62
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé òåëåôîí ãë.áóõ. Ìàêñ - 62', TO_NUM, LEN(CL_BUH_PHONE)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ Ð³Ð».Ð±ÑƒÑ…. ÐœÐ°ÐºÑ - 62', TO_NUM, LEN(CL_BUH_PHONE)
 		FROM #vmi
 		WHERE LEN(CL_BUH_PHONE) > 62
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé òåëåôîí îòâåòñòâåííîãî. Ìàêñ - 62', TO_NUM, LEN(CL_RES_PHONE)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ð³Ð¾. ÐœÐ°ÐºÑ - 62', TO_NUM, LEN(CL_RES_PHONE)
 		FROM #vmi
 		WHERE LEN(CL_RES_PHONE) > 62
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé òåëåôîí 4-ãî ñîòðóäíèêà. Ìàêñ - 62', TO_NUM, LEN(CL_PER4_PHONE)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ 4-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 62', TO_NUM, LEN(CL_PER4_PHONE)
 		FROM #vmi
 		WHERE LEN(CL_PER4_PHONE) > 62
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé òåëåôîí 5-ãî ñîòðóäíèêà. Ìàêñ - 62', TO_NUM, LEN(CL_PER5_PHONE)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ 5-Ð³Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°. ÐœÐ°ÐºÑ - 62', TO_NUM, LEN(CL_PER5_PHONE)
 		FROM #vmi
 		WHERE LEN(CL_PER5_PHONE) > 62
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííûé êîììåíòàðèé. Ìàêñ - 250', TO_NUM, LEN(CL_COMMENT)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ñ‹Ð¹ ÐºÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹. ÐœÐ°ÐºÑ - 250', TO_NUM, LEN(CL_COMMENT)
 		FROM #vmi
 		WHERE LEN(CL_COMMENT) > 250
 
 		UNION ALL
 
-		SELECT 'Ñëèøêîì äëèííàÿ ñòðîêà ñèñòåì. Ìàêñ - 500', TO_NUM, LEN(CL_SYSTEM)
+		SELECT 'Ð¡Ð»Ð¸ÑˆÐºÐ¾Ð¼ Ð´Ð»Ð¸Ð½Ð½Ð°Ñ ÑÑ‚Ñ€Ð¾ÐºÐ° ÑÐ¸ÑÑ‚ÐµÐ¼. ÐœÐ°ÐºÑ - 500', TO_NUM, LEN(CL_SYSTEM)
 		FROM #vmi
 		WHERE LEN(CL_SYSTEM) > 500
 

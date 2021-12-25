@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,13 +27,13 @@ BEGIN
 		SET language russian
 
 		SELECT
-			ClientFullName AS [Клиент], /*ManagerName AS [Рук-ль], */ServiceName AS [СИ], DistrStr AS [Дистрибутив],
-			FIRST_DATE AS [Дата вопроса], /*FINISH AS [Окончание сессии], */
-			/*EMAIL AS [Email], PHONE AS [Телефон], */CHAT AS [Чат],
-			RIC_PERSONAL AS [Сотрудник РИЦ], FIRST_ANS AS [Время первой реакции],
-			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS [Скорость первой реакции],
-			DATEDIFF(SECOND, START, FIRST_ANS) AS [Время между принятием и ответом],
-			START AS [Начало сессии], FIO AS [ФИО], PROFILE AS [Профиль]
+			ClientFullName AS [РљР»РёРµРЅС‚], /*ManagerName AS [Р СѓРє-Р»СЊ], */ServiceName AS [РЎР], DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			FIRST_DATE AS [Р”Р°С‚Р° РІРѕРїСЂРѕСЃР°], /*FINISH AS [РћРєРѕРЅС‡Р°РЅРёРµ СЃРµСЃСЃРёРё], */
+			/*EMAIL AS [Email], PHONE AS [РўРµР»РµС„РѕРЅ], */CHAT AS [Р§Р°С‚],
+			RIC_PERSONAL AS [РЎРѕС‚СЂСѓРґРЅРёРє Р РР¦], FIRST_ANS AS [Р’СЂРµРјСЏ РїРµСЂРІРѕР№ СЂРµР°РєС†РёРё],
+			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS [РЎРєРѕСЂРѕСЃС‚СЊ РїРµСЂРІРѕР№ СЂРµР°РєС†РёРё],
+			DATEDIFF(SECOND, START, FIRST_ANS) AS [Р’СЂРµРјСЏ РјРµР¶РґСѓ РїСЂРёРЅСЏС‚РёРµРј Рё РѕС‚РІРµС‚РѕРј],
+			START AS [РќР°С‡Р°Р»Рѕ СЃРµСЃСЃРёРё], FIO AS [Р¤РРћ], PROFILE AS [РџСЂРѕС„РёР»СЊ]
 		FROM
 			dbo.HotlineChatView a
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP

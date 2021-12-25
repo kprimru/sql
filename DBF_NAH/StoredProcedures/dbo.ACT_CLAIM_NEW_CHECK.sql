@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 		SELECT COUNT(*) AS CNT
 		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
-		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
+		WHERE ISNULL(CALC_STATUS, '') <> 'Р Р°СЃС‡РёС‚Р°РЅ РїРѕР»РЅРѕСЃС‚СЊСЋ'
 			AND
 				(
 					ISNULL(CONFIRM_NEED,0) = 0
@@ -36,7 +36,7 @@ BEGIN
 
 		SELECT @DT = MAX(DATE)
 		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
-		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
+		WHERE ISNULL(CALC_STATUS, '') <> 'Р Р°СЃС‡РёС‚Р°РЅ РїРѕР»РЅРѕСЃС‚СЊСЋ'
 			AND
 				(
 					ISNULL(CONFIRM_NEED,0) = 0

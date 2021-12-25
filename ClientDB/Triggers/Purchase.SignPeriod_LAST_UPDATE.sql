@@ -1,4 +1,4 @@
-USE [ClientDB]
+﻿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO

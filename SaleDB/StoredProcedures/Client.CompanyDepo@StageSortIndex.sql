@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -57,13 +57,13 @@ BEGIN
 					SELECT
 						[NewSortIndex] =
 									CASE
-										-- у редактируемой записи делаем нужный
+										-- Сѓ СЂРµРґР°РєС‚РёСЂСѓРµРјРѕР№ Р·Р°РїРёСЃРё РґРµР»Р°РµРј РЅСѓР¶РЅС‹Р№
 										WHEN [Id] = @Id THEN @Number
-										-- если запись поднимается вверх, то записям между @Number и @CurNumber увеличиваем счетчик
+										-- РµСЃР»Рё Р·Р°РїРёСЃСЊ РїРѕРґРЅРёРјР°РµС‚СЃСЏ РІРІРµСЂС…, С‚Рѕ Р·Р°РїРёСЃСЏРј РјРµР¶РґСѓ @Number Рё @CurNumber СѓРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє
 										WHEN @CurNumber > @Number AND [SortIndex] >= @Number AND [SortIndex] <= @CurNumber THEN [SortIndex] + 1
-										-- если опускаем вниз и записи выше вставляемой - увеличиваем на 1
+										-- РµСЃР»Рё РѕРїСѓСЃРєР°РµРј РІРЅРёР· Рё Р·Р°РїРёСЃРё РІС‹С€Рµ РІСЃС‚Р°РІР»СЏРµРјРѕР№ - СѓРІРµР»РёС‡РёРІР°РµРј РЅР° 1
 										WHEN @CurNumber < @Number AND [SortIndex] <= @Number AND [SortIndex] >= @CurNumber THEN [SortIndex] - 1
-										-- иначе не меняем
+										-- РёРЅР°С‡Рµ РЅРµ РјРµРЅСЏРµРј
 										ELSE [SortIndex]
 									END
 				) AS R

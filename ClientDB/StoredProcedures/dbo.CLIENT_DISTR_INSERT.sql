@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -45,14 +45,14 @@ BEGIN
 		IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
 		BEGIN
 			INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-				SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
+				SELECT @CLIENT, dbo.Dateof(GETDATE()), 'РќРѕРІС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ', 0, 'РђРІС‚РѕРјР°С‚'
 				WHERE NOT EXISTS
 					(
 						SELECT *
 						FROM dbo.ClientStudyClaim a
 						WHERE ID_CLIENT = @CLIENT
 							AND ID_MASTER IS NULL
-							AND UPD_USER = 'Автомат'
+							AND UPD_USER = 'РђРІС‚РѕРјР°С‚'
 					)
 
 			EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT

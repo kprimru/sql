@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -63,9 +63,9 @@ BEGIN
 			ManagerName, ServiceName, ClientFullName, DistrStr AS DisStr,
 			UF_DATE,
 			CASE UP_FORMAT
-				WHEN 0 THEN 'Не заменен'
-				WHEN 1 THEN 'Заменен'
-				ELSE 'Неизвестно'
+				WHEN 0 THEN 'РќРµ Р·Р°РјРµРЅРµРЅ'
+				WHEN 1 THEN 'Р—Р°РјРµРЅРµРЅ'
+				ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 			END AS UP_RESULT, UD_NAME
 		FROM
 			#client
@@ -79,7 +79,7 @@ BEGIN
 				(
 					SELECT RPR_ID_HOST, RPR_DISTR, RPR_COMP, dbo.DateOf(RPR_DATE) AS RPR_DATE
 					FROM dbo.RegProtocol e
-					WHERE RPR_OPER = 'НОВАЯ'
+					WHERE RPR_OPER = 'РќРћР’РђРЇ'
 				) AS e ON e.RPR_ID_HOST = a.HostID AND RPR_DISTR = UP_DISTR AND RPR_COMP = UP_COMP
 		WHERE DS_REG = 0 AND ISNULL(UP_FORMAT, 0) = 0 AND (RPR_DATE <= DATEADD(MONTH, -1, dbo.DateOf(GETDATE())) OR RPR_DATE IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, DISTR

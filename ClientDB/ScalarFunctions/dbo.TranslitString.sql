@@ -1,4 +1,4 @@
-USE [ClientDB]
+ο»ΏUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	DECLARE @lat2 VARCHAR(100)
 	DECLARE	@lat3 VARCHAR(100)
 
-	SET @rus =  'ΰαβγδεΈζηθικλμνξοπρςστυφχψωϊϋόύώÿ'
+	SET @rus =  'Π°Π±Π²Π³Π΄ΠµΡ‘Π¶Π·ΠΈΠΉΠΊΠ»ΠΌΠ½ΠΎΠΏΡ€ΡΡ‚ΡƒΡ„Ρ…Ρ†Ρ‡ΡΡ‰ΡΡ‹ΡΡΡΡ'
 	SET @lat1 = 'abvgdejzzijklmnoprstufkccss"y''ejj'
 	SET @lat2 = '      oh  j           h hhh   hua'
 	SET @lat3 = '                          h      '

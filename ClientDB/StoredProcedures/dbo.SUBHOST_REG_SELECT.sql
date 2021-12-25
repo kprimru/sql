@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DISTINCT SubhostName, CASE SubhostName WHEN '' THEN 'Владивосток' ELSE SubhostName END AS SubhostCaption
+		SELECT DISTINCT SubhostName, CASE SubhostName WHEN '' THEN 'Р’Р»Р°РґРёРІРѕСЃС‚РѕРє' ELSE SubhostName END AS SubhostCaption
 		FROM Reg.RegNodeSearchView a WITH(NOEXPAND) 
 		ORDER BY SubhostName
 

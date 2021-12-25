@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 			CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
 			LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS TIME_STR, TIME,
 
-			ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
+			ISNULL('РґРѕ ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
 			ISNULL(ClientFullName + CHAR(10), '') +
 			CASE
 				WHEN @SHORT = 1 THEN SHORT
@@ -63,7 +63,7 @@ BEGIN
 			AND DATE BETWEEN @BEGIN AND @END
 			AND
 				(
-					-- личные
+					-- Р»РёС‡РЅС‹Рµ
 					@PERSONAL = 1
 					AND
 						(
@@ -98,7 +98,7 @@ BEGIN
 					CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
 					LEFT(CONVERT(VARCHAR(20), DATE, 108), 5) AS TIME_STR, DATE,
 
-					'Контакт' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') + a.NOTE  + CHAR(10) + a.UPD_USER AS NOTE,
+					'РљРѕРЅС‚Р°РєС‚' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') + a.NOTE  + CHAR(10) + a.UPD_USER AS NOTE,
 
 					NULL, '', ClientFullName
 				FROM

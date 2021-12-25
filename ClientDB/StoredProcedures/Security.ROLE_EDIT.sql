@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 			BEGIN
 				DECLARE @ERROR VARCHAR(MAX)
 
-				SET @ERROR = 'Пользователь или роль "' + @RoleName + '" уже существуют в базе данных'
+				SET @ERROR = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РёР»Рё СЂРѕР»СЊ "' + @RoleName + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‚ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…'
 
 				RAISERROR (@ERROR, 16, 1)
 

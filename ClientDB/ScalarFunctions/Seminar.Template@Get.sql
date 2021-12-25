@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ IF OBJECT_ID('[Seminar].[Template@Get]', 'FN') IS NULL EXEC('CREATE FUNCTION [Se
 GO
 ALTER FUNCTION [Seminar].[Template@Get]
 (
-    @Id             UniqueIdentifier,   -- участник семинара
-    @TemplateCode   VarChar(100)        -- шаблон
+    @Id             UniqueIdentifier,   -- СѓС‡Р°СЃС‚РЅРёРє СЃРµРјРёРЅР°СЂР°
+    @TemplateCode   VarChar(100)        -- С€Р°Р±Р»РѕРЅ
 )
 RETURNS VarChar(Max)
 AS
@@ -30,7 +30,7 @@ BEGIN
 
     /*
     IF @Template_Id IS NULL
-        RaisError('Abstract error: Не найден шаблон по коду "%s"', 16, 1, @TemplateCode);
+        RaisError('Abstract error: РќРµ РЅР°Р№РґРµРЅ С€Р°Р±Р»РѕРЅ РїРѕ РєРѕРґСѓ "%s"', 16, 1, @TemplateCode);
     */
 
     SELECT

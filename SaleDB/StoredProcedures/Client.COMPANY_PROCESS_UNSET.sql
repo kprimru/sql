@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
 				AND PROCESS_TYPE = N'PHONE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение телефонного агента - Возврат'
+				SELECT @ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
@@ -55,7 +55,7 @@ BEGIN
 				AND PROCESS_TYPE = N'SALE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение торгового представителя - Возврат'
+				SELECT @ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY

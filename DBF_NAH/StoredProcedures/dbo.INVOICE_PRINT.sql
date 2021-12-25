@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_PRINT]
 	@numlist VARCHAR(MAX),
@@ -37,7 +37,7 @@ BEGIN
 		DECLARE @idlist VARCHAR(MAX)
 
 		SET @idlist = ''
-		-- если есть список номеров - то все остальное и не трогаем
+		-- РµСЃР»Рё РµСЃС‚СЊ СЃРїРёСЃРѕРє РЅРѕРјРµСЂРѕРІ - С‚Рѕ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅРѕРµ Рё РЅРµ С‚СЂРѕРіР°РµРј
 
 		IF @numlist IS NOT NULL
 		BEGIN
@@ -66,7 +66,7 @@ BEGIN
 			--SELECT @idlist
 		END
 
-		-- список сервис-инженеров тожу тут
+		-- СЃРїРёСЃРѕРє СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂРѕРІ С‚РѕР¶Сѓ С‚СѓС‚
 		IF (@begindate IS NOT NULL) AND (@enddate IS NOT NULL)
 		BEGIN
 			IF OBJECT_ID('tempdb.#cour') IS NOT NULL

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -43,7 +43,7 @@ BEGIN
         IF @DISTR_S IS NOT NULL
             EXEC Seminar.WEB_DISTR_CHECK @ID, @DISTR_S, @MSG OUTPUT, @STATUS OUTPUT, @HOST OUTPUT, @DISTR	OUTPUT, @COMP OUTPUT, @CLIENT OUTPUT, @SubhostName OUTPUT;
 
-        -- это РИЦ или номер неизвестен
+        -- СЌС‚Рѕ Р РР¦ РёР»Рё РЅРѕРјРµСЂ РЅРµРёР·РІРµСЃС‚РµРЅ
         IF @STATUS IS NULL OR @STATUS != 0 OR IsNull(@SubhostName, '') = '' BEGIN
             SET @LIMIT = (SELECT TOP (1) LIMIT FROM Seminar.Schedule WHERE ID = @ID);
 

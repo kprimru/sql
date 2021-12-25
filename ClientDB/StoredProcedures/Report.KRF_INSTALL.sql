@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,14 +25,14 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
-			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
+			ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї РґРёСЃС‚СЂРёР±СѓС‚РёРІР°]
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
 		WHERE a.DS_REG = 0
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND NT_TECH IN (0, 1)
 			AND Complect IS NOT NULL
 			AND
@@ -88,37 +88,37 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
-			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
+			ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї РґРёСЃС‚СЂРёР±СѓС‚РёРІР°]
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
 		WHERE a.DS_REG = 0
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND Complect IS NOT NULL
-			AND a.SystemShortName = 'КРФ'
+			AND a.SystemShortName = 'РљР Р¤'
 			AND	NOT EXISTS
 				(
 					SELECT *
 					FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
 					WHERE a.Complect = z.Complect
 						AND z.DS_REG = 0
-						AND z.SystemShortName <> 'КРФ'
+						AND z.SystemShortName <> 'РљР Р¤'
 				)
 
 		UNION ALL
 
 		SELECT
-			ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ], a.DistrStr AS [Дистрибутив],
-			ISNULL(ClientFullName, Comment) AS [Клиент], NT_SHORT AS [Сеть], SST_SHORT AS [Тип дистрибутива]
+			ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], NT_SHORT AS [РЎРµС‚СЊ], SST_SHORT AS [РўРёРї РґРёСЃС‚СЂРёР±СѓС‚РёРІР°]
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
 		WHERE a.DS_REG = 0
 			AND a.SystemBaseName NOT IN ('RLAW020')
-			AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП')
+			AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ')
 			AND NT_TECH IN (0, 1)
 			AND a.HostId <> 1
 			AND a.SubhostName != '490'

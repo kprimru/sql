@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 
 		IF (SELECT INDX FROM Seminar.PersonalView WITH(NOEXPAND) WHERE ID = @ID) = 3
 		BEGIN
-			RAISERROR ('Сотрудник и так находится в списке отказников', 16, 1)
+			RAISERROR ('РЎРѕС‚СЂСѓРґРЅРёРє Рё С‚Р°Рє РЅР°С…РѕРґРёС‚СЃСЏ РІ СЃРїРёСЃРєРµ РѕС‚РєР°Р·РЅРёРєРѕРІ', 16, 1)
 			RETURN
 		END
 

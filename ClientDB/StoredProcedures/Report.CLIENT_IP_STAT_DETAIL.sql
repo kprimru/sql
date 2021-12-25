@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,11 +28,11 @@ BEGIN
 		DECLARE @SQL NVARCHAR(MAX);
 
 		SET @SQL = N'SELECT DISTINCT
-					ISNULL(ServiceName, SubhostName) AS [Си/подхост],
-					ISNULL(ClientFullName, Comment) AS [Клиент],
-					a.DistrStr AS [Дистрибутив],
-					CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Дата регистрации],
-					Net AS [Сеть], UserCount AS [Количество пользователей],
+					ISNULL(ServiceName, SubhostName) AS [РЎРё/РїРѕРґС…РѕСЃС‚],
+					ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚],
+					a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+					CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё],
+					Net AS [РЎРµС‚СЊ], UserCount AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№],
 					'
 
 
@@ -45,7 +45,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Всего входов],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Р’СЃРµРіРѕ РІС…РѕРґРѕРІ],
 					(
 					SELECT SUM([0Enter])
 					FROM dbo.ClientStatDetail q
@@ -54,7 +54,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 0 входов],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РџРѕР»СЊР·РѕРІР°С‚РµР»РµР№ СЃ 0 РІС…РѕРґРѕРІ],
 					(
 					SELECT SUM([1Enter])
 					FROM dbo.ClientStatDetail q
@@ -63,7 +63,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 1 входом],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РџРѕР»СЊР·РѕРІР°С‚РµР»РµР№ СЃ 1 РІС…РѕРґРѕРј],
 					(
 					SELECT SUM([2Enter])
 					FROM dbo.ClientStatDetail q
@@ -72,7 +72,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 2 входомами],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РџРѕР»СЊР·РѕРІР°С‚РµР»РµР№ СЃ 2 РІС…РѕРґРѕРјР°РјРё],
 					(
 					SELECT SUM([3Enter])
 					FROM dbo.ClientStatDetail q
@@ -81,7 +81,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Пользователей с 3 и более входомами],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РџРѕР»СЊР·РѕРІР°С‚РµР»РµР№ СЃ 3 Рё Р±РѕР»РµРµ РІС…РѕРґРѕРјР°РјРё],
 					(
 					SELECT SUM(SessionTimeSum)
 					FROM dbo.ClientStatDetail q
@@ -90,7 +90,7 @@ BEGIN
 							AND q.Distr = a.DistrNumber
 							AND q.Comp = a.CompNumber
 					GROUP BY HostID, Distr, Comp
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Суммарное время всех сессий (мин)],
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РЎСѓРјРјР°СЂРЅРѕРµ РІСЂРµРјСЏ РІСЃРµС… СЃРµСЃСЃРёР№ (РјРёРЅ)],
 					(LEFT((
 					SELECT SUM(SessionTimeAVG)
 					FROM dbo.ClientStatDetail q
@@ -105,8 +105,8 @@ BEGIN
 																				AND q.HostID = a.HostID
 																				AND q.Distr = a.DistrNumber
 																				AND q.Comp = a.CompNumber
-																		GROUP BY HostID, Distr, Comp))+1)--количество знаков после запятой
-					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|Среднее время одной сессии (мин)],
+																		GROUP BY HostID, Distr, Comp))+1)--РєРѕР»РёС‡РµСЃС‚РІРѕ Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
+					) AS ['+CONVERT(NVARCHAR(128), NAME)+'|РЎСЂРµРґРЅРµРµ РІСЂРµРјСЏ РѕРґРЅРѕР№ СЃРµСЃСЃРёРё (РјРёРЅ)],
 			'
 		FROM Common.Period
 		WHERE TYPE = 1
@@ -128,7 +128,7 @@ BEGIN
 								AND z.Comp = a.CompNumber
 								AND DATEADD(MONTH, 3, START) >= GETDATE()
 						) AS o_O
-				) AS [Кол-во недель со входами]
+				) AS [РљРѕР»-РІРѕ РЅРµРґРµР»СЊ СЃРѕ РІС…РѕРґР°РјРё]
 			FROM 
 				Reg.RegNodeSearchView a WITH(NOEXPAND)
 				INNER JOIN dbo.ClientStatDetail CSD ON CSD.HostID=a.HostID AND CSD.Distr=a.DistrNumber AND CSD.Comp=a.CompNumber

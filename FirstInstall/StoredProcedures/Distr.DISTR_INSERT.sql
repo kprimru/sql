@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -58,7 +58,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'DISTR', @DS_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'DISTR', 'Новый дистрибутив', @DS_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'DISTR', 'РќРѕРІС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ', @DS_ID, @OLD, @NEW
 
 END
 GO

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -61,7 +61,7 @@ BEGIN
 
 		INSERT INTO #client(ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayDate, PayMonth)
 			SELECT
-				ClientID, ClientFullName, ServiceName, CASE WHEN a.ID_HEAD IS NULL THEN PayTypeName ELSE 'не оплачивает' END, ContractPayName,
+				ClientID, ClientFullName, ServiceName, CASE WHEN a.ID_HEAD IS NULL THEN PayTypeName ELSE 'РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚' END, ContractPayName,
 				DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END,
 					DATEADD(DAY,
 						CASE
@@ -247,9 +247,9 @@ BEGIN
 			SELECT
 				ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayDate,
 				CASE
-					WHEN BILL IS NULL THEN 'НЕТ СЧЕТА (' + CONVERT(VARCHAR(20), PayMonth, 104) + ')'
-					WHEN BILL = INCOME THEN 'Да'
-					ELSE 'Нет'
+					WHEN BILL IS NULL THEN 'РќР•Рў РЎР§Р•РўРђ (' + CONVERT(VARCHAR(20), PayMonth, 104) + ')'
+					WHEN BILL = INCOME THEN 'Р”Р°'
+					ELSE 'РќРµС‚'
 				END AS PAY,
 				ROUND(100 * (BILL - ISNULL(INCOME, 0)) / BILL, 2) AS PRC,
 				LAST_PAY, PAY_DATES,
@@ -302,18 +302,18 @@ BEGIN
 			ORDER BY ClientFullName
 
 
-		--тут итоги собрать в текст
+		--С‚СѓС‚ РёС‚РѕРіРё СЃРѕР±СЂР°С‚СЊ РІ С‚РµРєСЃС‚
 
 		SELECT @CL_COUNT = COUNT(*)
 		FROM #client
 
 		SELECT @PAY_COUNT = COUNT(*)
 		FROM #client
-		WHERE PayType NOT IN ('не оплачивает', 'бесплатно РДД')
+		WHERE PayType NOT IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”')
 
 		SELECT @PAY_TOTAL = COUNT(*)
 		FROM #result
-		WHERE PAY = 'Да' AND PayType NOT IN ('не оплачивает', 'бесплатно РДД')
+		WHERE PAY = 'Р”Р°' AND PayType NOT IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”')
 
 		IF @PAY_COUNT = 0
 			SET @PAY_PERCENT = 0
@@ -339,10 +339,10 @@ BEGIN
 			ClientFullName) AS RN,
 			ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayDate, PAY, PRC, LAST_PAY, PAY_DATES, PAY_DELTA,
 			CASE
-				WHEN PayType IN ('не оплачивает', 'бесплатно РДД') THEN 2
+				WHEN PayType IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”') THEN 2
 				ELSE
 					CASE PAY 
-						WHEN 'Да' THEN 1
+						WHEN 'Р”Р°' THEN 1
 						ELSE 0
 					END
 			END AS PAY_ERROR,
@@ -358,7 +358,7 @@ BEGIN
 			END*/0 AS PAY_DATE_ERROR,
 			LAST_MON, LAST_ACT--, SYS_ORD, DIS_NUM
 		FROM #result
-		WHERE @HIDE = 0 OR @HIDE = 1 AND PayType NOT IN ('не оплачивает', 'бесплатно РДД')
+		WHERE @HIDE = 0 OR @HIDE = 1 AND PayType NOT IN ('РЅРµ РѕРїР»Р°С‡РёРІР°РµС‚', 'Р±РµСЃРїР»Р°С‚РЅРѕ Р Р”Р”')
 		ORDER BY
 			ServiceName,
 			CASE

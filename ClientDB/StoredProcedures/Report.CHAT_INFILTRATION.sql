@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,11 +25,11 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ManagerName AS [Руководитель], ServiceName AS [СИ], CL_CNT AS [Кол-во клиентов], COMPLECT_CNT AS [Комплектов подключено к чату], CHAT_CNT AS [Кол-во комплектов, имевших сеансы чата],
+			ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], ServiceName AS [РЎР], CL_CNT AS [РљРѕР»-РІРѕ РєР»РёРµРЅС‚РѕРІ], COMPLECT_CNT AS [РљРѕРјРїР»РµРєС‚РѕРІ РїРѕРґРєР»СЋС‡РµРЅРѕ Рє С‡Р°С‚Сѓ], CHAT_CNT AS [РљРѕР»-РІРѕ РєРѕРјРїР»РµРєС‚РѕРІ, РёРјРµРІС€РёС… СЃРµР°РЅСЃС‹ С‡Р°С‚Р°],
 			ROUND(CASE
 				WHEN COMPLECT_CNT = 0 THEN 0
 				ELSE CONVERT(DECIMAL(8, 2), CHAT_CNT) / COMPLECT_CNT
-			END * 100, 2) AS [Внедрение чата (%)]
+			END * 100, 2) AS [Р’РЅРµРґСЂРµРЅРёРµ С‡Р°С‚Р° (%)]
 		FROM
 			(
 				SELECT

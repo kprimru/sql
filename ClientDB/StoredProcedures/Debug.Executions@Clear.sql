@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
             DELETE
             FROM [Debug].[Executions:Start]
             WHERE
-                [UserName] IN ('¿‚ÚÓÏ‡Ú', 'AURA\denisov')
+                [UserName] IN ('–ê–≤—Ç–æ–º–∞—Ç', 'AURA\denisov')
                 OR
                 [Object] IN ('[dbo].[CLIENT_MESSAGE_CHECK]', '[dbo].[CLIENT_MESSAGE_NOTIFY]')
                 ;

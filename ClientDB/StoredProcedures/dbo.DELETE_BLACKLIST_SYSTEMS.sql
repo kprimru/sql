@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DELETE_BLACKLIST_SYSTEMS]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DELETE_BLACKLIST_SYSTEMS]  AS SELECT 1')
 GO
--- Выборка всех систем клиента
+-- Р’С‹Р±РѕСЂРєР° РІСЃРµС… СЃРёСЃС‚РµРј РєР»РёРµРЅС‚Р°
 
 ALTER PROCEDURE [dbo].[DELETE_BLACKLIST_SYSTEMS]
 @ID INT,

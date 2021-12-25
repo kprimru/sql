@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,8 +39,8 @@ BEGIN
 
 			SELECT
 				ClientID, ClientFullName, ServiceName, ManagerName, CC_DATE, CC_USER,
-				CASE CDC_ANSWER WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_ANS,
-				CASE CDC_SATISF WHEN 0 THEN 'Да' ELSE 'Нет' END AS CDC_SAT,
+				CASE CDC_ANSWER WHEN 0 THEN 'Р”Р°' ELSE 'РќРµС‚' END AS CDC_ANS,
+				CASE CDC_SATISF WHEN 0 THEN 'Р”Р°' ELSE 'РќРµС‚' END AS CDC_SAT,
 				CDC_NOTE
 			INTO #duty
 			FROM
@@ -59,8 +59,8 @@ BEGIN
 			FROM #duty
 			ORDER BY CC_DATE DESC, ManagerName, ServiceName, ClientFullName
 
-			SET @ANS_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_ANS = 'Нет')
-			SET @SAT_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_SAT = 'Нет')
+			SET @ANS_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_ANS = 'РќРµС‚')
+			SET @SAT_CNT = (SELECT COUNT(*) FROM #duty WHERE CDC_SAT = 'РќРµС‚')
 
 			IF OBJECT_ID('tempdb..#duty') IS NOT NULL
 				DROP TABLE #duty

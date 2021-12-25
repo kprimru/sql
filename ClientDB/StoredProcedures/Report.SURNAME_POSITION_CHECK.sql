@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ManagerName AS [Руководитель], ServiceName AS [СИ], ClientFullName AS [Клиент], Pers AS [Не совпадают должности]
+		SELECT ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚], Pers AS [РќРµ СЃРѕРІРїР°РґР°СЋС‚ РґРѕР»Р¶РЅРѕСЃС‚Рё]
 		FROM
 			(
 				SELECT

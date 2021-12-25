@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,7 +50,7 @@ BEGIN
 					AND SCR_ID_PERIOD = @PR_ID
 			)
 		BEGIN
-			RAISERROR('Расчет уже закрыт.', 16, 1)
+			RAISERROR('Р Р°СЃС‡РµС‚ СѓР¶Рµ Р·Р°РєСЂС‹С‚.', 16, 1)
 			RETURN
 		END
 
@@ -62,7 +62,7 @@ BEGIN
 					AND SHC_ID_PERIOD = @PR_ID
 			)
 		BEGIN
-			RAISERROR('Расчет еще не производился.', 16, 1)
+			RAISERROR('Р Р°СЃС‡РµС‚ РµС‰Рµ РЅРµ РїСЂРѕРёР·РІРѕРґРёР»СЃСЏ.', 16, 1)
 			RETURN
 		END
 

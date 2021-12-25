@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ISNULL(ManagerName, SubhostName) AS [Руководитель], ServiceName AS [СИ], ISNULL(ClientFullName, Comment) AS [Клиент], z.DistrStr AS [Осн. система], b.DistrTypeName AS [Сеть], SET_DATE AS [Подключен]
+		SELECT ISNULL(ManagerName, SubhostName) AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], ServiceName AS [РЎР], ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], z.DistrStr AS [РћСЃРЅ. СЃРёСЃС‚РµРјР°], b.DistrTypeName AS [РЎРµС‚СЊ], SET_DATE AS [РџРѕРґРєР»СЋС‡РµРЅ]
 		FROM
 			dbo.HotlineDistr a
 			INNER JOIN Reg.RegNodeSearchView z WITH(NOEXPAND) ON z.HostID = ID_HOST AND DISTR = DistrNumber AND COMP = CompNumber

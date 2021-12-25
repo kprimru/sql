@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -207,14 +207,14 @@ BEGIN
 												AND UD_ID_CLIENT = CL_ID
 												AND
 												CASE
-													WHEN STAT_DATE IS NULL THEN 'Нет'
+													WHEN STAT_DATE IS NULL THEN 'РќРµС‚'
 													WHEN
 														CASE InfoBankDaily
 															WHEN 1 THEN STAT_DAILY
 															ELSE STAT_DAY
-														END < UIU_DATE_S THEN 'Нет'
-													ELSE 'Да'
-												END = 'Нет'
+														END < UIU_DATE_S THEN 'РќРµС‚'
+													ELSE 'Р”Р°'
+												END = 'РќРµС‚'
 										)
 										THEN 0
 									ELSE 1
@@ -260,18 +260,18 @@ BEGIN
 
 		IF (SELECT SUM(TotalCount) FROM #rate) = 0
 			SELECT
-				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' из ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
+				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' РёР· ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
 				@TOTAL_PER = '0'
 			FROM #rate
 		ELSE
 			SELECT
-				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' из ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
+				@TOTAL = CONVERT(VARCHAR(20), SUM(NormalCount)) + ' РёР· ' + CONVERT(VARCHAR(20), SUM(TotalCount)),
 				@TOTAL_PER = CONVERT(VARCHAR(20), CONVERT(DECIMAL(6, 2), ROUND(100 * CONVERT(DECIMAL(8, 4), SUM(NormalCount)) / SUM(TotalCount), 2)))
 			FROM #rate
 
 		SELECT
 			ServiceID, ManagerName, ServiceName,
-			CONVERT(VARCHAR(20), NormalCount) + ' из ' + CONVERT(VARCHAR(20), TotalCount) AS ServiceCount,
+			CONVERT(VARCHAR(20), NormalCount) + ' РёР· ' + CONVERT(VARCHAR(20), TotalCount) AS ServiceCount,
 			CASE TotalCount
 				WHEN 0 THEN 0
 				ELSE ROUND(100 * CONVERT(DECIMAL(8, 4), NormalCount) / TotalCount, 2)

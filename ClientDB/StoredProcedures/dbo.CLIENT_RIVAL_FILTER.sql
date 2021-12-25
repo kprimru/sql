@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -59,12 +59,12 @@ BEGIN
 			ServiceName, ManagerName,
 			CRR.CRR_CREATE_USER AS CR_AUTHOR,
 			CASE CR_CONTROL
-				WHEN 1 THEN 'На контроле ' + CONVERT(VARCHAR(20), CR_CONTROL_DATE, 104)
+				WHEN 1 THEN 'РќР° РєРѕРЅС‚СЂРѕР»Рµ ' + CONVERT(VARCHAR(20), CR_CONTROL_DATE, 104)
 				ELSE ''
 			END AS CR_CONTROL_S,
 			CASE CR_COMPLETE
-				WHEN 1 THEN 'Отработана'
-				ELSE 'Не отработана'
+				WHEN 1 THEN 'РћС‚СЂР°Р±РѕС‚Р°РЅР°'
+				ELSE 'РќРµ РѕС‚СЂР°Р±РѕС‚Р°РЅР°'
 			END AS CR_COMPLETE_S,
 			CRR_CLAIM, CRR_COMPARE, CRR_REJECT, CRR_PARTNER
 		FROM [dbo].[ClientList@Get?Read]()
@@ -74,7 +74,7 @@ BEGIN
 		LEFT JOIN dbo.RivalStatus ON RS_ID = CR_ID_STATUS
 		OUTER APPLY
 		(
-		    --ToDo - это можно кэшировать
+		    --ToDo - СЌС‚Рѕ РјРѕР¶РЅРѕ РєСЌС€РёСЂРѕРІР°С‚СЊ
 		    SELECT
 		        ISNULL(CONVERT(BIT,(
 			        SELECT MAX(CONVERT(INT, CRR_CLAIM))

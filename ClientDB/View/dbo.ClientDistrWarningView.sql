@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,23 +8,23 @@ IF OBJECT_ID('[dbo].[ClientDistrWarningView]', 'V ') IS NULL EXEC('CREATE VIEW [
 GO
 ALTER VIEW [dbo].[ClientDistrWarningView]
 AS
-	-- ToDo - избавиться от этого. План отвратительный
+	-- ToDo - РёР·Р±Р°РІРёС‚СЊСЃСЏ РѕС‚ СЌС‚РѕРіРѕ. РџР»Р°РЅ РѕС‚РІСЂР°С‚РёС‚РµР»СЊРЅС‹Р№
 	SELECT ClientID, REG_ERROR
 	FROM
 		(
 			SELECT ID_CLIENT AS ClientID,
 				CASE
-					WHEN ISNULL(ISNULL(b.SubhostName, c.SubhostName), Maintenance.GlobalSubhostName()) <> Maintenance.GlobalSubhostName() THEN 'Дистрибутив установлен у другого подхоста'
+					WHEN ISNULL(ISNULL(b.SubhostName, c.SubhostName), Maintenance.GlobalSubhostName()) <> Maintenance.GlobalSubhostName() THEN 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅ Сѓ РґСЂСѓРіРѕРіРѕ РїРѕРґС…РѕСЃС‚Р°'
 					WHEN a.SystemReg = 0 THEN ''
 					WHEN b.ID IS NULL THEN
 						CASE
-							WHEN c.ID IS NULL THEN 'Система не найдена в РЦ'
-							ELSE 'Система заменена (' + c.SystemShortName + ')'
+							WHEN c.ID IS NULL THEN 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р Р¦'
+							ELSE 'РЎРёСЃС‚РµРјР° Р·Р°РјРµРЅРµРЅР° (' + c.SystemShortName + ')'
 						END
-					WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
-					WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
-					-- Внимание! Расчет на NULL-значение SST_ID_MASTER
-					-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
+					WHEN a.DistrTypeID <> b.DistrTypeID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ С‚РёРї СЃРµС‚Рё. Р’ Р Р¦ - ' + b.DistrTypeName
+					WHEN a.DS_ID <> b.DS_ID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЃС‚Р°С‚СѓСЃ СЃРёСЃС‚РµРјС‹. Р’ Р Р¦ - ' + b.DS_NAME
+					-- Р’РЅРёРјР°РЅРёРµ! Р Р°СЃС‡РµС‚ РЅР° NULL-Р·РЅР°С‡РµРЅРёРµ SST_ID_MASTER
+					-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'РќРµ СЃРѕРІРїР°РґР°РµС‚ С‚РёРї СЃРёСЃС‚РµРјС‹. Р’ Р Р¦ - ' + b.SST_SHORT
 					WHEN
 						ISNULL((
 							SELECT ID_CLIENT
@@ -32,7 +32,7 @@ AS
 								dbo.ClientDistrView z WITH(NOEXPAND)
 								INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON z.HostID = y.MainHostID AND z.DISTR = y.MainDistrNumber AND z.COMP = y.MainCompNumber
 							WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
-						), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
+						), a.ID_CLIENT) <> a.ID_CLIENT THEN 'РЎРёСЃС‚РµРјР° Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅР° РІ РєРѕРјРїР»РµРєС‚Рµ РєР»РёРµРЅС‚Р° ' + (
 							SELECT ClientFullName + ' (' + y.Complect + ')'
 							FROM
 								dbo.ClientDistrView z WITH(NOEXPAND)
@@ -55,7 +55,7 @@ AS
 
 			UNION ALL
 
-			SELECT ID_CLIENT AS ClientID, 'Дистрибутив установлен в комплекте с системами клиента'
+			SELECT ID_CLIENT AS ClientID, 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅ РІ РєРѕРјРїР»РµРєС‚Рµ СЃ СЃРёСЃС‚РµРјР°РјРё РєР»РёРµРЅС‚Р°'
 			FROM
 				dbo.ClientDistrView a WITH(NOEXPAND)
 				INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID

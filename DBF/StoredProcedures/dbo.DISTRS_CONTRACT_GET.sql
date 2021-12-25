@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ GO
 /*
 Author:		%authorname%
 Create date: 2009-02-02
-Description:	Выдаёт список дистрибутивов
-			договора по заданному контракту
+Description:	Р’С‹РґР°С‘С‚ СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ
+			РґРѕРіРѕРІРѕСЂР° РїРѕ Р·Р°РґР°РЅРЅРѕРјСѓ РєРѕРЅС‚СЂР°РєС‚Сѓ
 */
 
 ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_GET]

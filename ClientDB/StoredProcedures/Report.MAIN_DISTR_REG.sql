@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,17 +35,17 @@ BEGIN
         WHERE HostReg = 'LAW'
 
         SELECT
-            [Дистрибутив]   = DistrStr,
-            [Тип]           = SST_SHORT,
-            [Сеть]          = NT_SHORT,
-            [Клиент]        = Comment,
-            [Дата]          = FirstReg,
-            [Статус]        = DS_NAME,
-            [Подхост]       = SubhostName
+            [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]   = DistrStr,
+            [РўРёРї]           = SST_SHORT,
+            [РЎРµС‚СЊ]          = NT_SHORT,
+            [РљР»РёРµРЅС‚]        = Comment,
+            [Р”Р°С‚Р°]          = FirstReg,
+            [РЎС‚Р°С‚СѓСЃ]        = DS_NAME,
+            [РџРѕРґС…РѕСЃС‚]       = SubhostName
         FROM Reg.RegNodeSearchView AS R WITH(NOEXPAND)
         WHERE R.HostID = @MainHost_Id
             AND FirstReg >= @Date
-            AND SST_SHORT NOT IN ('ОДД')
+            AND SST_SHORT NOT IN ('РћР”Р”')
         ORDER BY FirstReg DESC, CASE WHEN SubhostName = '' THEN 1 ELSE 1 END, SystemOrder, DistrNumber, CompNumber
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

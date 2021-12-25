@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -59,7 +59,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'BONUS_CONDITION', @BC_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'BONUS_CONDITION', 'Редактирование', @BC_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'BONUS_CONDITION', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @BC_ID_MASTER, @OLD, @NEW
 
 END
 

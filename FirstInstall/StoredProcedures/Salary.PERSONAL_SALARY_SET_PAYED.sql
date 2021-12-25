@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,7 +34,7 @@ BEGIN
 
 		EXEC Common.PROTOCOL_VALUE_GET 'PERSONAL_SALARY', @ID, @NEW OUTPUT
 
-		EXEC Common.PROTOCOL_INSERT 'PERSONAL_SALARY', 'Указание признака "выплачено"', @ID, @OLD, @NEW
+		EXEC Common.PROTOCOL_INSERT 'PERSONAL_SALARY', 'РЈРєР°Р·Р°РЅРёРµ РїСЂРёР·РЅР°РєР° "РІС‹РїР»Р°С‡РµРЅРѕ"', @ID, @OLD, @NEW
 
 		FETCH NEXT FROM ID INTO @ID
 	END

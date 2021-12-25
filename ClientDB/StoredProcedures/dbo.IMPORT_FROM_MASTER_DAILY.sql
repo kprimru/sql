@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -16,7 +16,7 @@ BEGIN
 
         DECLARE @Distr Table
 		(
-		    -- HostID - из ALPHA!
+		    -- HostID - РёР· ALPHA!
 			HostID	SmallInt	    NOT NULL,
 			HostReg	VarChar(100)    NOT NULL,
 			Distr	Int			    NOT NULL,
@@ -32,7 +32,7 @@ BEGIN
         INSERT INTO @Distr(HostID, HostReg, Distr, Comp)
         EXEC (@Query);
 
-		-- Обновляем справочник Хостов
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє РҐРѕСЃС‚РѕРІ
 		INSERT INTO dbo.Hosts(HostShort, HostReg, HostOrder)
 		SELECT D.[HostShort], D.[HostReg], D.[HostOrder]
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS D
@@ -51,7 +51,7 @@ BEGIN
 		WHERE H.HostShort != D.HostShort
 			OR H.HostOrder != D.HostOrder;
 
-		-- Обновляем справочник категорий
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє РєР°С‚РµРіРѕСЂРёР№
 		INSERT INTO [dbo].[ClientTypeTable]([ClientTypeName], [ClientTypeDailyDay], [ClientTypeDay], [ClientTypePapper], [SortIndex])
 		SELECT D.[ClientTypeName], D.[ClientTypeDailyDay], D.[ClientTypeDay], D.[ClientTypePapper], D.[SortIndex]
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeTable] AS D
@@ -74,7 +74,7 @@ BEGIN
 			OR H.[ClientTypePapper] != D.[ClientTypePapper]
 			OR H.[SortIndex] != D.[SortIndex];
 
-		-- Обновляем справочник систем
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє СЃРёСЃС‚РµРј
 		INSERT INTO dbo.SystemTable(
 			SystemShortName, SystemName, SystemBaseName, SystemNumber, HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName,
 			SystemDin, SystemActive, SystemStart, SystemEnd, SystemDemo, SystemComplect, SystemReg, SystemBaseCheck
@@ -130,7 +130,7 @@ BEGIN
 			OR S.SystemReg			!= D.SystemReg
 			OR S.SystemBaseCheck	!= D.SystemBaseCheck;
 
-		-- обновляем ИБ
+		-- РѕР±РЅРѕРІР»СЏРµРј РР‘
 
 		INSERT INTO dbo.InfoBankTable(InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankActive, InfoBankDaily, InfoBankActual, InfoBankStart)
 		SELECT InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankActive, InfoBankDaily, InfoBankActual, InfoBankStart
@@ -160,7 +160,7 @@ BEGIN
 			OR I.InfoBankActual		!= D.InfoBankActual
 			OR I.InfoBankStart		!= D.InfoBankStart;
 
-		-- Обновляем состав систем
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРѕСЃС‚Р°РІ СЃРёСЃС‚РµРј
 		/*
 		UPDATE SB
 		SET [Required] = D.[Required]
@@ -195,7 +195,7 @@ BEGIN
 		*/
 
 
-		-- обновляем справочник типов систем
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРёСЃС‚РµРј
 
 		UPDATE S
 		SET SST_NAME = D.SST_NAME,
@@ -217,7 +217,7 @@ BEGIN
 				WHERE S.SST_REG = D.SST_REG
 			);
 
-		-- статусы клиента
+		-- СЃС‚Р°С‚СѓСЃС‹ РєР»РёРµРЅС‚Р°
 		UPDATE S
 		SET [ServiceStatusName]		= D.[ServiceStatusName],
 			[ServiceStatusIndex]	= D.[ServiceStatusIndex],
@@ -240,7 +240,7 @@ BEGIN
 				WHERE S.[ServiceCode] = D.[ServiceCode]
 			);
 
-		-- бизнес-справочник типов сети
+		-- Р±РёР·РЅРµСЃ-СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРµС‚Рё
 		UPDATE N
 		SET DistrTypeName		= D.DistrTypeName,
 			DistrTypeOrder		= D.DistrTypeOrder,
@@ -263,7 +263,7 @@ BEGIN
 				WHERE N.DistrTypeCode = D.DistrTypeCode
 			);
 
-		-- Справочник типов сети
+		-- РЎРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРµС‚Рё
 		UPDATE N
 		SET NT_NAME = D.NT_NAME,
 			NT_SHORT = D.NT_SHORT,
@@ -286,7 +286,7 @@ BEGIN
 				WHERE N.NT_NET = D.NT_NET AND N.NT_TECH = D.NT_TECH AND N.NT_ODON = D.NT_ODON AND N.NT_ODOFF = D.NT_ODOFF
 			);
 
-		-- обновляем справочник статусов дистрибутива
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє СЃС‚Р°С‚СѓСЃРѕРІ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°
 		UPDATE S
 		SET DS_NAME		= D.DS_NAME,
 			DS_INDEX	= D.DS_INDEX
@@ -305,7 +305,7 @@ BEGIN
 				WHERE S.DS_REG = D.DS_REG
 			);
 
-		-- Обновляем справочник правил категорий
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє РїСЂР°РІРёР» РєР°С‚РµРіРѕСЂРёР№
 		INSERT INTO [dbo].[ClientTypeRules]([System_Id], [DistrType_Id], [ClientType_Id])
 		SELECT HS.[SystemID], HD.[DistrTypeID], HC.[ClientTypeID]
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeRules] AS D
@@ -335,7 +335,7 @@ BEGIN
 		INNER JOIN [dbo].[ClientTypeRules] AS H ON D.[System_Id] = HS.[SystemID] AND D.[DistrType_Id] = HD.[DistrTypeID]
 		WHERE H.[ClientType_Id] != HC.[ClientTypeID];
 
-		-- обновляем справочник типов соответствия USR
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ USR
 
 		UPDATE S
 		SET ComplianceTypeShortName	= D.ComplianceTypeShortName,
@@ -355,7 +355,7 @@ BEGIN
 				WHERE S.ComplianceTypeName = D.ComplianceTypeName
 			);
 
-		-- обновляем справочник типов формирования файлов USR
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ USR
 
 		UPDATE S
 		SET USRFileKindShortName	= D.USRFileKindShortName,
@@ -375,7 +375,7 @@ BEGIN
 				WHERE S.USRFileKindName = D.USRFileKindName
 			);
 
-		-- обновляем справочник типов сотрудников
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ
 
 		UPDATE S
 		SET CPT_NAME		= D.CPT_NAME,
@@ -399,7 +399,7 @@ BEGIN
 				WHERE S.CPT_PSEDO = D.CPT_PSEDO
 			);
 
-		-- обновляем количество документов
+		-- РѕР±РЅРѕРІР»СЏРµРј РєРѕР»РёС‡РµСЃС‚РІРѕ РґРѕРєСѓРјРµРЅС‚РѕРІ
 
 		INSERT INTO dbo.StatisticTable(StatisticDate, InfoBankID, Docs)
 		SELECT A.StatisticDate, I.InfoBankID, A.Docs
@@ -521,7 +521,7 @@ BEGIN
 			OR IsNull(SB.Start, '20000101') != IsNull(ASB.Start, '20000101');
 
 
-	    -- Обновляем прейкурант
+	    -- РћР±РЅРѕРІР»СЏРµРј РїСЂРµР№РєСѓСЂР°РЅС‚
 
 		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
 		SELECT DISTINCT S.SystemID, P.ID, ASP.PRICE
@@ -591,7 +591,7 @@ BEGIN
 		FROM dbo.NamedSets S
 		INNER JOIN @NamedSets Z ON S.SetId = Z.SetId;
 
-		-- ToDo Как сделать универсально, а не для каждой таблицы?
+		-- ToDo РљР°Рє СЃРґРµР»Р°С‚СЊ СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕ, Р° РЅРµ РґР»СЏ РєР°Р¶РґРѕР№ С‚Р°Р±Р»РёС†С‹?
 		INSERT INTO dbo.NamedSetsItems(SetId, SetItem)
 		SELECT S.SetId, C.ServiceStatusId
 		FROM @NamedSets S
@@ -657,7 +657,7 @@ BEGIN
 		    )
 		OPTION(FORCE ORDER);
 
-		--ToDo переделать на MERGE
+		--ToDo РїРµСЂРµРґРµР»Р°С‚СЊ РЅР° MERGE
 		DELETE FROM dbo.OnlineActivity;
 
 		INSERT INTO dbo.OnlineActivity(ID_WEEK, ID_HOST, DISTR, COMP, LGN, ACTIVITY, LOGIN_CNT, SESSION_TIME)

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -42,7 +42,7 @@ BEGIN
 			INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
 			INNER JOIN dbo.ClientTable c ON c.ClientID = a.ID_CLIENT
 			INNER JOIN dbo.ServiceStatusTable d ON c.StatusID = d.ServiceStatusID
-		WHERE SENDER <> '¿‚ÚÓÏ‡Ú'
+		WHERE SENDER <> '–ê–≤—Ç–æ–º–∞—Ç'
 			AND a.STATUS = 1
 			AND (a.DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (a.DATE <= @END OR @END IS NULL)

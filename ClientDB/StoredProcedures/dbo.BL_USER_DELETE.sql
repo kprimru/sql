@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 		DECLARE @ERROR VARCHAR(MAX)
 		IF (CHARINDEX('''', @USER) <> 0)
 		BEGIN
-			SET @ERROR = 'Имя пользователя или роль содержат недоспустимые символы (кавычка)'
+			SET @ERROR = 'РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё СЂРѕР»СЊ СЃРѕРґРµСЂР¶Р°С‚ РЅРµРґРѕСЃРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ (РєР°РІС‹С‡РєР°)'
 
 			RAISERROR (@ERROR, 16, 1)
 

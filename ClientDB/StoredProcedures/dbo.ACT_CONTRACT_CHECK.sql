@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,7 +47,7 @@ BEGIN
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = ID_CLIENT
 		WHERE CO_ACTIVE = 1
 			AND RN_SERVICE = 0
-			AND CK_NAME IN ('Государственный контракт', 'Контракт на оказание услуг', 'Контракт', 'муниципальный контракт')
+			AND CK_NAME IN ('Р“РѕСЃСѓРґР°СЂСЃС‚РІРµРЅРЅС‹Р№ РєРѕРЅС‚СЂР°РєС‚', 'РљРѕРЅС‚СЂР°РєС‚ РЅР° РѕРєР°Р·Р°РЅРёРµ СѓСЃР»СѓРі', 'РљРѕРЅС‚СЂР°РєС‚', 'РјСѓРЅРёС†РёРїР°Р»СЊРЅС‹Р№ РєРѕРЅС‚СЂР°РєС‚')
 			AND DSS_REPORT = 1
 			AND SYS_ID_SO = 1
 			AND NOT EXISTS

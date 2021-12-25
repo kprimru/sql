@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 
 	    DECLARE @HEADER NVARCHAR(512)
 
-	    SET @HEADER = N'Отчет за месяц пополненным клиентам ИП сервера с ' + CONVERT(VARCHAR(20), @BEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), @END, 104)
+	    SET @HEADER = N'РћС‚С‡РµС‚ Р·Р° РјРµСЃСЏС† РїРѕРїРѕР»РЅРµРЅРЅС‹Рј РєР»РёРµРЅС‚Р°Рј РРџ СЃРµСЂРІРµСЂР° СЃ ' + CONVERT(VARCHAR(20), @BEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), @END, 104)
 
 	    DECLARE @SQL NVARCHAR(MAX)
 
@@ -111,7 +111,7 @@ BEGIN
 				    --@recipients = N'denisov@bazis',
 				    @body = @HEADER,
 				    @query = @SQL,
-				    @subject='Месячный отчет по ИП серверу',
+				    @subject='РњРµСЃСЏС‡РЅС‹Р№ РѕС‚С‡РµС‚ РїРѕ РРџ СЃРµСЂРІРµСЂСѓ',
 				    @query_result_header = 0,
 				    @attach_query_result_as_file = 1,
 				    @query_attachment_filename = 'ip.txt'

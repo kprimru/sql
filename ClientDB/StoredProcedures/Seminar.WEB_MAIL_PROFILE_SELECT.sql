@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,9 +31,9 @@ BEGIN
         SELECT
 			P.[ID], P.[PSEDO],
 			P.[EMAIL],
-			'Запись на ' + T.[Name] AS SUBJ,
+			'Р—Р°РїРёСЃСЊ РЅР° ' + T.[Name] AS SUBJ,
 			'no-reply@kprim.ru' AS FROM_ADDRESS,
-			'ООО Базис' AS FROM_NAME,
+			'РћРћРћ Р‘Р°Р·РёСЃ' AS FROM_NAME,
 			[Seminar].[Template@Get](P.[ID], 'PROFILE') AS MAIL_BODY
 		FROM [Seminar].[Personal]               AS P
 		INNER JOIN [Seminar].[Schedule]         AS S ON S.[ID] = P.[ID_SCHEDULE]
@@ -43,7 +43,7 @@ BEGIN
 		    AND P.[EMAIL] IS NOT NULL
 			AND P.[ID_STATUS] = @Status_Id
 			AND P.[STATUS] = 1
-			AND T.[Code] = 'VEBINAR' -- ToDo должно настраиваться
+			AND T.[Code] = 'VEBINAR' -- ToDo РґРѕР»Р¶РЅРѕ РЅР°СЃС‚СЂР°РёРІР°С‚СЊСЃСЏ
 			AND
 				(
 					P.ID = @ID

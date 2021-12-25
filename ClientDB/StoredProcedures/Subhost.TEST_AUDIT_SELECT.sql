@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,13 +36,13 @@ BEGIN
 				SELECT
 					a.ID, b.NAME, a.PERSONAL, a.START, Common.TimeSecToStr(DATEDIFF(SECOND, a.START, a.FINISH)) AS LN,
 					CASE
-						WHEN FINISH IS NULL THEN 'Досдать'
+						WHEN FINISH IS NULL THEN 'Р”РѕСЃРґР°С‚СЊ'
 						ELSE
 							CASE ISNULL((SELECT RESULT FROM Subhost.CheckTest z WHERE z.ID_TEST = a.ID), 200)
-								WHEN 200 THEN 'Не проверен'
-								WHEN 0 THEN 'Не сдан'
-								WHEN 1 THEN 'Сдан'
-								ELSE 'Неизвестно'
+								WHEN 200 THEN 'РќРµ РїСЂРѕРІРµСЂРµРЅ'
+								WHEN 0 THEN 'РќРµ СЃРґР°РЅ'
+								WHEN 1 THEN 'РЎРґР°РЅ'
+								ELSE 'РќРµРёР·РІРµСЃС‚РЅРѕ'
 							END
 					END AS RES,
 					CASE
@@ -64,7 +64,7 @@ BEGIN
 					AND (a.ID_SUBHOST = @SUBHOST OR @SUBHOST IS NULL)
 
 			) AS o_O
-		WHERE (@RESULT IS NULL OR @RESULT = 0 OR @RESULT = 1 AND RES = 'Сдан' OR @RESULT = 2 AND RES = 'Не сдан')
+		WHERE (@RESULT IS NULL OR @RESULT = 0 OR @RESULT = 1 AND RES = 'РЎРґР°РЅ' OR @RESULT = 2 AND RES = 'РќРµ СЃРґР°РЅ')
 		ORDER BY START DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 
         SET @Text = '';
         SELECT @Text = @Text +
-                'Семинар "' + J.NAME + '" ' + Convert(VarChar(20), S.Date, 104) + ' не имеет ссылку, необходимо настроить до того, как необходимо будет отправлять письма клиентам' + Char(10) + Char(13)
+                'РЎРµРјРёРЅР°СЂ "' + J.NAME + '" ' + Convert(VarChar(20), S.Date, 104) + ' РЅРµ РёРјРµРµС‚ СЃСЃС‹Р»РєСѓ, РЅРµРѕР±С…РѕРґРёРјРѕ РЅР°СЃС‚СЂРѕРёС‚СЊ РґРѕ С‚РѕРіРѕ, РєР°Рє РЅРµРѕР±С…РѕРґРёРјРѕ Р±СѓРґРµС‚ РѕС‚РїСЂР°РІР»СЏС‚СЊ РїРёСЃСЊРјР° РєР»РёРµРЅС‚Р°Рј' + Char(10) + Char(13)
         FROM [Seminar].[Schedule] AS S
         INNER JOIN [Seminar].[Subject] AS J ON S.ID_SUBJECT = J.ID
         WHERE IsNull(Link, '') = ''
@@ -44,7 +44,7 @@ BEGIN
 		IF @Text != '' BEGIN
 			EXEC [Common].[MAIL_SEND]
                 @Recipients     = 'denisov@bazis;bateneva@bazis',
-                @Subject        = 'Запись на семинар. Предупреждения',
+                @Subject        = 'Р—Р°РїРёСЃСЊ РЅР° СЃРµРјРёРЅР°СЂ. РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёСЏ',
                 @Body_Format    = 'TEXT',
                 @Body           = @Text;
 		END;

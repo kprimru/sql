@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_CONSIGN]
 	@consignid INT,
@@ -74,7 +74,7 @@ BEGIN
 								WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 								ELSE
 									(
-		/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+		/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 									FROM
 										dbo.ClientTable INNER JOIN
 										dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -108,7 +108,7 @@ BEGIN
 								WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 								ELSE
 									(
-		/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+		/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 									FROM
 										dbo.ClientTable INNER JOIN
 										dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -218,20 +218,20 @@ BEGIN
 
 		/*
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'Создание с/ф по накладной', INS_DATA
+			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РїРѕ РЅР°РєР»Р°РґРЅРѕР№', INS_DATA
 			FROM dbo.InvoiceProtocolView
 			WHERE INS_ID = @insid
 		*/
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф по накладной', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РїРѕ РЅР°РєР»Р°РґРЅРѕР№', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' РѕС‚ ' + CONVERT(VARCHAR(20), INS_DATE, 104)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @insid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
+				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Р”РѕР±Р°РІР»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				CONVERT(VARCHAR(20), PR_DATE, 104) +
 					':' + DIS_STR + ' - ' + dbo.MoneyFormat(INR_SALL)
 			FROM

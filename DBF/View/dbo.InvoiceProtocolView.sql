@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ ALTER VIEW [dbo].[InvoiceProtocolView]
 AS
 	SELECT
 		INS_ID, INS_ID_CLIENT,
-		'—/Ù π' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' ÒÛÏÏ‡: ' +
+		'–°/—Ñ ‚Ññ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' —Å—É–º–º–∞: ' +
 			(
 				SELECT dbo.MoneyFormat(SUM(INR_SALL))
 				FROM dbo.InvoiceRowTable

@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[BILL_PRINT]
 	@soid SMALLINT,
@@ -123,7 +123,7 @@ BEGIN
 			ORG_LOGO,
 			--ORG_DIR_FAM, ORG_DIR_NAME, ORG_DIR_OTCH,
 			BA_NAME,
-			c.CT_NAME AS BA_CITY, CO_ID, CO_NUM, CO_DATE, ISNULL(CK_HEADER, 'договору'),
+			c.CT_NAME AS BA_CITY, CO_ID, CO_NUM, CO_DATE, ISNULL(CK_HEADER, 'РґРѕРіРѕРІРѕСЂСѓ'),
 			ORG_BILL_SHORT, ORG_BILL_POS, ORG_BILL_MEMO
 		FROM
 			(
@@ -163,7 +163,7 @@ BEGIN
 			dbo.ContractTable ON CO_ID_CLIENT = BL_ID_CLIENT LEFT OUTER JOIN
 			dbo.ContractKind ON CK_ID = CO_ID_KIND LEFT OUTER JOIN
 			dbo.CityTable c ON c.CT_ID = BA_ID_CITY	INNER JOIN
-			-- 16.06.2009, для типа адреса
+			-- 16.06.2009, РґР»СЏ С‚РёРїР° Р°РґСЂРµСЃР°
 			dbo.ClientAddressView Z ON ClientAddressTable.CA_ID=Z.CA_ID	INNER JOIN
 			dbo.FinancingAddressTypeTable Y ON Z.CA_ID_TYPE = Y.FAT_ID_ADDR_TYPE
 
@@ -181,7 +181,7 @@ BEGIN
 							AND IN_ID_CLIENT = BL_ID_CLIENT
     				), 0)
 			) > 0
-			-- 3.06.09 Денисов А.С. строчка ниже - на случай, если в договор не занесены дистрибутивы или нет адреса грузополучателя
+			-- 3.06.09 Р”РµРЅРёСЃРѕРІ Рђ.РЎ. СЃС‚СЂРѕС‡РєР° РЅРёР¶Рµ - РЅР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё РІ РґРѕРіРѕРІРѕСЂ РЅРµ Р·Р°РЅРµСЃРµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РёР»Рё РЅРµС‚ Р°РґСЂРµСЃР° РіСЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЏ
 			AND*/ --16.06.2009
 				--ISNULL(Z.CA_ID_TYPE, 3) = 3
 				FAT_DOC='BILL'
@@ -395,7 +395,7 @@ BEGIN
 			AND SYS_ID_SO = @soid
 			AND DOC_PSEDO = 'BILL'
 			AND DD_PRINT = 1
-			-- 3.06.09 Денисов А.С. строчка ниже - на случай, если в договор не занесены дистрибутивы или нет адреса грузополучателя
+			-- 3.06.09 Р”РµРЅРёСЃРѕРІ Рђ.РЎ. СЃС‚СЂРѕС‡РєР° РЅРёР¶Рµ - РЅР° СЃР»СѓС‡Р°Р№, РµСЃР»Рё РІ РґРѕРіРѕРІРѕСЂ РЅРµ Р·Р°РЅРµСЃРµРЅС‹ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РёР»Рё РЅРµС‚ Р°РґСЂРµСЃР° РіСЂСѓР·РѕРїРѕР»СѓС‡Р°С‚РµР»СЏ
 			--AND ISNULL(CO_ACTIVE, 1) = 1
 			--AND --16.06.2009
 				--ISNULL(Z.CA_ID_TYPE, 3) = 3
@@ -523,7 +523,7 @@ BEGIN
 			IF (SELECT COUNT(*) FROM #tmp) = 1
 			BEGIN
 				UPDATE #master
-				SET BFM_NUM = 'ЕД' + CONVERT(VARCHAR, DATEPART(m, @prdate)) + '-' + CONVERT(VARCHAR, @min + 1)
+				SET BFM_NUM = 'Р•Р”' + CONVERT(VARCHAR, DATEPART(m, @prdate)) + '-' + CONVERT(VARCHAR, @min + 1)
 				WHERE BFM_DATE = @curdate AND BFM_NUM IS NULL AND ORG_ID = @orgid
 			END
 			ELSE
@@ -550,7 +550,7 @@ BEGIN
 						)
 
 				UPDATE #master
-				SET #master.BFM_NUM = 'ЕД' +
+				SET #master.BFM_NUM = 'Р•Р”' +
 									(CONVERT(VARCHAR, DATEPART(m, @prdate)) +
 									'-' + CONVERT(VARCHAR, a.NUM))
 				FROM #tmp a
@@ -692,7 +692,7 @@ BEGIN
 					SYS_NAME,
 					SYS_ORDER,
 					SYS_ID AS DIS_ID,
-					CONVERT(VARCHAR(20), COUNT(*)) + ' шт' AS DIS_NUM,
+					CONVERT(VARCHAR(20), COUNT(*)) + ' С€С‚' AS DIS_NUM,
 					PR_ID,
 					PR_MONTH,
 					PR_DATE,
@@ -737,7 +737,7 @@ BEGIN
 					SYS_NAME,
 					SYS_ORDER,
 					SYS_ID AS DIS_ID,
-					CONVERT(VARCHAR(20), COUNT(*)) + ' шт' AS DIS_NUM,
+					CONVERT(VARCHAR(20), COUNT(*)) + ' С€С‚' AS DIS_NUM,
 					0 AS DIS_NUM_INT,
 					PR_ID,
 					PR_MONTH,

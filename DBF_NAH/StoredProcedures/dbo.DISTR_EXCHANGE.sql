@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[DISTR_EXCHANGE]
 	@distrid INT,
@@ -33,7 +33,7 @@ BEGIN
 				@distrid,
 				(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid),
 				(SELECT CD_ID_CLIENT FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid),
-				'Замена с ' + (SELECT SYS_SHORT_NAME FROM dbo.DistrView WITH(NOEXPAND) WHERE DIS_ID = @distrid) + ' на ' + (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @newsysid),
+				'Р—Р°РјРµРЅР° СЃ ' + (SELECT SYS_SHORT_NAME FROM dbo.DistrView WITH(NOEXPAND) WHERE DIS_ID = @distrid) + ' РЅР° ' + (SELECT SYS_SHORT_NAME FROM dbo.SystemTable WHERE SYS_ID = @newsysid),
 				ORIGINAL_LOGIN(), GETDATE()
 
 		DECLARE @newid INT
@@ -52,7 +52,7 @@ BEGIN
 
 		IF @newid IS NULL
 			BEGIN
-				--Создаем новый дистрибутив
+				--РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ
 				INSERT INTO dbo.DistrTable(DIS_ID_SYSTEM, DIS_NUM, DIS_COMP_NUM, DIS_ACTIVE)
 					SELECT @newsysid, DIS_NUM, DIS_COMP_NUM, 1
 					FROM dbo.DistrTable
@@ -83,7 +83,7 @@ BEGIN
 			FROM dbo.TODistrTable
 			WHERE TD_ID_DISTR = @distrid
 
-		--Удалить все остальные дистрибутивы с таким же хостом и номером
+		--РЈРґР°Р»РёС‚СЊ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ СЃ С‚Р°РєРёРј Р¶Рµ С…РѕСЃС‚РѕРј Рё РЅРѕРјРµСЂРѕРј
 		DELETE
 		FROM dbo.TODistrTable
 		WHERE TD_ID_DISTR = @distrid
@@ -92,7 +92,7 @@ BEGIN
 		FROM dbo.ClientDistrTable
 		WHERE CD_ID_DISTR = @distrid
 
-		-- задать фин.установки для нового дистрибутива
+		-- Р·Р°РґР°С‚СЊ С„РёРЅ.СѓСЃС‚Р°РЅРѕРІРєРё РґР»СЏ РЅРѕРІРѕРіРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°
 		INSERT INTO dbo.DistrFinancingTable
 				(
 					DF_ID_DISTR, DF_ID_NET, DF_ID_TECH_TYPE, DF_ID_TYPE,

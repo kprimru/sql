@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -247,7 +247,7 @@ BEGIN
 			AND (Complect LIKE '%' + @COMPLECT + '%' OR @COMPLECT IS NULL)
 		ORDER BY Complect, b.SystemOrder, a.DISTR, a.COMP ASC;
 
-		-----------------------------бшдекъел беяэ йнлокейр
+		-----------------------------п▓п╚п■п∙п⌡п╞п∙п° п▓п∙п║п╛ п п·п°п÷п⌡п∙п п╒
 		IF (@COMPL_CHECK IS NOT NULL) AND (@CLR_CHECK = 0)
 		BEGIN
 			UPDATE #distr
@@ -256,7 +256,7 @@ BEGIN
 
 		END;
 
-		-----------------------------декюер ярюпше гюлемеммше дхярпхасрхбш меюйрхбмшлх х ямхлюер я мху цюкнвйс
+		-----------------------------п■п∙п⌡п░п∙п╒ п║п╒п░п═п╚п∙ п≈п░п°п∙п²п∙п²п²п╚п∙ п■п≤п║п╒п═п≤п▒пёп╒п≤п▓п╚ п²п∙п░п п╒п≤п▓п²п╚п°п≤ п≤ п║п²п≤п°п░п∙п╒ п║ п²п≤п╔ п⌠п░п⌡п·п╖п пё
 		UPDATE #distr
 		SET CHECKED = 0,
 			DS_INDEX = 1,
@@ -300,7 +300,7 @@ BEGIN
 		INNER JOIN #distr f ON (v.DistrNumber = f.DistrNumber AND f.MASTER_ID IS NULL)
 		WHERE v.MASTER_ID = 1;
 
-		-------------------------------бшанп оепбнцн оноюбьецняъ юйрхбмнцн йнлокейрю опх оепеунде хг йюпрнвйх----------------
+		-------------------------------п▓п╚п▒п·п═ п÷п∙п═п▓п·п⌠п· п÷п·п÷п░п▓п╗п∙п⌠п·п║п╞ п░п п╒п≤п▓п²п·п⌠п· п п·п°п÷п⌡п∙п п╒п░ п÷п═п≤ п÷п∙п═п∙п╔п·п■п∙ п≤п≈ п п░п═п╒п·п╖п п≤----------------
 		IF @CLIENT_ID IS NOT NULL AND @COMPL_CHECK IS NULL AND @CLR_CHECK=0
 			UPDATE #distr
 			SET CHECKED = 1

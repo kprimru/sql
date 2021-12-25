@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			DistrStr AS [Осн. дистрибутив],
-			Client AS [Клиента], Manager AS [Рук-ль / подхост],
-			ServiceName AS [СИ],
-			UF_CREATE AS [USR получен], UF_INFO_COD AS [Дата файла info.cod]
+			DistrStr AS [РћСЃРЅ. РґРёСЃС‚СЂРёР±СѓС‚РёРІ],
+			Client AS [РљР»РёРµРЅС‚Р°], Manager AS [Р СѓРє-Р»СЊ / РїРѕРґС…РѕСЃС‚],
+			ServiceName AS [РЎР],
+			UF_CREATE AS [USR РїРѕР»СѓС‡РµРЅ], UF_INFO_COD AS [Р”Р°С‚Р° С„Р°Р№Р»Р° info.cod]
 		FROM
 			(
 				SELECT DISTINCT 

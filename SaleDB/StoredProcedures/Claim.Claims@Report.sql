@@ -1,4 +1,4 @@
-USE [SaleDB]
+ï»¿USE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -68,7 +68,7 @@ BEGIN
             AND (C.[CreateDateTime] < @DateTo OR @DateTo IS NULL);
 
         INSERT INTO @Result([Name], [Value])
-        SELECT 'Êîëè÷åñòâî çàÿâîê', Count(*)
+        SELECT 'ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð·Ð°ÑÐ²Ð¾Ðº', Count(*)
         FROM @IDs;
 
         SET @Parent_Id = Scope_Identity();
@@ -82,7 +82,7 @@ BEGIN
         ORDER BY [Count] DESC;
 
         INSERT INTO @Result([Name], [Value])
-        SELECT 'Ñòàòóñû çàÿâîê', NULL;
+        SELECT 'Ð¡Ñ‚Ð°Ñ‚ÑƒÑÑ‹ Ð·Ð°ÑÐ²Ð¾Ðº', NULL;
 
         SET @Parent_Id = Scope_Identity();
 
@@ -95,7 +95,7 @@ BEGIN
         ORDER BY [Count] DESC
 
         INSERT INTO @Result([Name], [Value])
-        SELECT 'Ïðèâÿçàíû ê êàðòî÷êàì', NULL;
+        SELECT 'ÐŸÑ€Ð¸Ð²ÑÐ·Ð°Ð½Ñ‹ Ðº ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°Ð¼', NULL;
 
         SET @Parent_Id = Scope_Identity();
 
@@ -115,8 +115,8 @@ BEGIN
             SELECT
                 [Result] =
                             CASE
-                                WHEN CMP.[SENDER_NOTE] = Cast(C.[Number] AS VarChar(100)) THEN 'Íîâàÿ êàðòî÷êà'
-                                ELSE 'Ñóùåñòâóþùàÿ êàðòî÷êà'
+                                WHEN CMP.[SENDER_NOTE] = Cast(C.[Number] AS VarChar(100)) THEN 'ÐÐ¾Ð²Ð°Ñ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°'
+                                ELSE 'Ð¡ÑƒÑ‰ÐµÑÑ‚Ð²ÑƒÑŽÑ‰Ð°Ñ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°'
                             END
         ) AS R
         WHERE C.[Company_Id] IS NOT NULL

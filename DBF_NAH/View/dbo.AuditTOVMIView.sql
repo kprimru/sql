@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[AuditTOVMIView]
 AS
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, TO_VMI_COMMENT, 'Установлены только дополнительные системы' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, TO_VMI_COMMENT, 'РЈСЃС‚Р°РЅРѕРІР»РµРЅС‹ С‚РѕР»СЊРєРѕ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРёСЃС‚РµРјС‹' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT
@@ -30,7 +30,7 @@ AS
 
 	UNION ALL
 
-	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, TO_VMI_COMMENT, 'Все дистрибутивы переданы в другую ТО' AS TO_ERROR
+	SELECT CL_ID, CL_PSEDO, TO_ID, TO_NUM, TO_NAME, TO_VMI_COMMENT, 'Р’СЃРµ РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ РїРµСЂРµРґР°РЅС‹ РІ РґСЂСѓРіСѓСЋ РўРћ' AS TO_ERROR
 	FROM
 		dbo.TOTable INNER JOIN
 		dbo.ClientTable ON CL_ID = TO_ID_CLIENT

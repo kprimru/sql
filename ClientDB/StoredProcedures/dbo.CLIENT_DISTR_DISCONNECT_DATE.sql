@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,14 +39,14 @@ BEGIN
 				SELECT RPR_DATE AS DT
 				FROM dbo.RegProtocol
 				WHERE RPR_ID_HOST = @HOST AND RPR_DISTR = @DISTR AND RPR_COMP = @COMP
-					AND RPR_OPER = 'Отключение'
+					AND RPR_OPER = 'РћС‚РєР»СЋС‡РµРЅРёРµ'
 
 				UNION ALL
 
 				SELECT DATE
 				FROM Reg.ProtocolText
 				WHERE ID_HOST = @HOST AND DISTR = @DISTR AND COMP = @COMP
-					AND COMMENT = 'Отключение'
+					AND COMMENT = 'РћС‚РєР»СЋС‡РµРЅРёРµ'
 			) AS o_O
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

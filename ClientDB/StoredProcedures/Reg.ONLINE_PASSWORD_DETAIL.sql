@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,9 +27,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			SystemShortName AS [Система], PASS AS [Пароль],
-			CASE STATUS WHEN 1 THEN 'Действующий' WHEN 2 THEN 'Старый' WHEN 3 THEN 'Удален' ELSE '???' END AS [Статус],
-			UPD_DATE AS [Дата установки пароля], UPD_USER AS [Пользователь]
+			SystemShortName AS [РЎРёСЃС‚РµРјР°], PASS AS [РџР°СЂРѕР»СЊ],
+			CASE STATUS WHEN 1 THEN 'Р”РµР№СЃС‚РІСѓСЋС‰РёР№' WHEN 2 THEN 'РЎС‚Р°СЂС‹Р№' WHEN 3 THEN 'РЈРґР°Р»РµРЅ' ELSE '???' END AS [РЎС‚Р°С‚СѓСЃ],
+			UPD_DATE AS [Р”Р°С‚Р° СѓСЃС‚Р°РЅРѕРІРєРё РїР°СЂРѕР»СЏ], UPD_USER AS [РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ]
 		FROM
 			Reg.OnlinePassword a
 			INNER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID

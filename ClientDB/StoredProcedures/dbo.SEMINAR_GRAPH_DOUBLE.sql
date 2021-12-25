@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT a.ClientID, ClientFullName, StudentFam, StudentName, StudentOtch, [Сколько раз посещал]
+		SELECT a.ClientID, ClientFullName, StudentFam, StudentName, StudentOtch, [РЎРєРѕР»СЊРєРѕ СЂР°Р· РїРѕСЃРµС‰Р°Р»]
 		FROM
 			(
-				SELECT ClientID, StudentFam, StudentName, StudentOtch, COUNT(*) AS [Сколько раз посещал]
+				SELECT ClientID, StudentFam, StudentName, StudentOtch, COUNT(*) AS [РЎРєРѕР»СЊРєРѕ СЂР°Р· РїРѕСЃРµС‰Р°Р»]
 				FROM dbo.ClientSeminarView a WITH(NOEXPAND)
 				WHERE StudyDate BETWEEN @BEGIN AND @END
 				GROUP BY ClientID, StudentFam, StudentName, StudentOtch

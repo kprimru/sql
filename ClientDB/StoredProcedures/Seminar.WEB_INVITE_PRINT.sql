@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 			INVITE_NUM,
 			READER AS LECTOR,
 			c.NOTE AS SEMINAR_QUEST,
-			'ŒŒŒ "¡‡ÁËÒ"' AS PLACE
+			'–û–û–û "–ë–∞–∑–∏—Å"' AS PLACE
 		FROM
 			Seminar.Personal a
 			INNER JOIN Seminar.Schedule b ON a.ID_SCHEDULE = b.ID

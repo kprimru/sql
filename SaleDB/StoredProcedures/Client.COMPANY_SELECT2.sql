@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -614,7 +614,7 @@ BEGIN
                 INSERT INTO @IdByFilterType
                 SELECT DISTINCT Company_Id, @FilterType_DEPO
                 FROM Client.CompanyDepo
-                --ToDo убрать хардкод
+                --ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
                 WHERE STATUS = 1 AND Status_Id IN (1, 2, 3);
 
                 INSERT INTO @UsedFilterTypes
@@ -739,7 +739,7 @@ BEGIN
         LEFT JOIN Client.CompanyProcessSaleView j WITH(NOEXPAND) ON j.ID = b.ID
         LEFT JOIN Client.CompanyProcessManagerView n WITH(NOEXPAND) ON n.ID = b.ID
         LEFT JOIN Client.CompanyProcessRivalView s WITH(NOEXPAND) ON s.ID = b.ID
-        -- ToDo сделать лукап-поля
+        -- ToDo СЃРґРµР»Р°С‚СЊ Р»СѓРєР°Рї-РїРѕР»СЏ
         /*
         LEFT JOIN Client.Availability d ON d.ID = b.ID_AVAILABILITY
         LEFT JOIN Client.Potential e ON e.ID = b.ID_POTENTIAL
@@ -785,7 +785,7 @@ BEGIN
             FROM Client.CompanyDepo DP
             WHERE DP.Company_Id = a.ID
                 AND DP.Status = 1
-                -- ToDo убрать хардкод
+                -- ToDo СѓР±СЂР°С‚СЊ С…Р°СЂРґРєРѕРґ
                 AND DP.Status_Id IN (3)
             ORDER BY DP.DateFrom DESC
         ) AS DP

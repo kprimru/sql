@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:		  коллектив авторов
-Описание:
+РђРІС‚РѕСЂ:		  РєРѕР»Р»РµРєС‚РёРІ Р°РІС‚РѕСЂРѕРІ
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_TYPE_GET]

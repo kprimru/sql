@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -93,10 +93,10 @@ BEGIN
 			L.UPD_USER AS AUTHOR_FILTER,
 			L.UPD_USER + ' ' + ServiceName + ' (' + ManagerName + ')' AS AUTHOR,
 			CASE a.STATUS
-				WHEN 1 THEN 'Активна'
-				WHEN 4 THEN 'Отменена'
-				WHEN 5 THEN 'Выполнена'
-				WHEN 9 THEN 'Длительная'
+				WHEN 1 THEN 'РђРєС‚РёРІРЅР°'
+				WHEN 4 THEN 'РћС‚РјРµРЅРµРЅР°'
+				WHEN 5 THEN 'Р’С‹РїРѕР»РЅРµРЅР°'
+				WHEN 9 THEN 'Р”Р»РёС‚РµР»СЊРЅР°СЏ'
 			END AS STATUS_STR,
 			Z.Distrs AS ZVE_DISTR
 		FROM @IDs I

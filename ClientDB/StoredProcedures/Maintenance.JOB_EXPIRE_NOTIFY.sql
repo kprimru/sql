@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,10 +27,10 @@ BEGIN
 			@Prefix	NVarChar(Max),
 			@Text	NVarChar(Max);
 
-		SET @Prefix = 'Следующие задания давно не выполнялись:' + Char(10);
+		SET @Prefix = 'РЎР»РµРґСѓСЋС‰РёРµ Р·Р°РґР°РЅРёСЏ РґР°РІРЅРѕ РЅРµ РІС‹РїРѕР»РЅСЏР»РёСЃСЊ:' + Char(10);
 		SET @Text = '';
 
-		SELECT @Text = @Text + JT.[Name] + '     последний запуск  ' + Convert(VarChar(20), Start, 104) + ' ' + Convert(VarChar(20), Start, 108) + Char(10)
+		SELECT @Text = @Text + JT.[Name] + '     РїРѕСЃР»РµРґРЅРёР№ Р·Р°РїСѓСЃРє  ' + Convert(VarChar(20), Start, 104) + ' ' + Convert(VarChar(20), Start, 108) + Char(10)
 		FROM Maintenance.JobType JT
 		CROSS APPLY
 		(

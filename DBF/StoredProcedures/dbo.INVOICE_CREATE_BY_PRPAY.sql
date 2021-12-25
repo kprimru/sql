@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	26-06-2009
-Описание:		добавить счет-фактуру на первичную оплату (?)
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	26-06-2009
+РћРїРёСЃР°РЅРёРµ:		РґРѕР±Р°РІРёС‚СЊ СЃС‡РµС‚-С„Р°РєС‚СѓСЂСѓ РЅР° РїРµСЂРІРёС‡РЅСѓСЋ РѕРїР»Р°С‚Сѓ (?)
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_PRPAY]
 	@client_id INT,
@@ -51,7 +51,7 @@ BEGIN
 				WHERE	PRP_ID_INVOICE IS NULL
 					AND CD_ID_CLIENT = @client_id
 
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = @docstring + 'в„– ' + IN_PAY_NUM + ' РѕС‚ ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
 				SELECT
@@ -79,7 +79,7 @@ BEGIN
 		IF @docstring <> ''
 			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
 
-		-- мастер-данные
+		-- РјР°СЃС‚РµСЂ-РґР°РЅРЅС‹Рµ
 		INSERT INTO dbo.InvoiceSaleTable(
 			INS_ID_ORG, INS_DATE, INS_NUM, INS_NUM_YEAR, INS_ID_CLIENT,
 			INS_CLIENT_NAME, INS_CLIENT_ADDR, INS_CONSIG_NAME, INS_CONSIG_ADDR,
@@ -104,7 +104,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT INNER JOIN
@@ -112,7 +112,7 @@ BEGIN
 									CL_ID = CD_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
 							*/
-								-- 16.07.2009, Богдан В.С.
+								-- 16.07.2009, Р‘РѕРіРґР°РЅ Р’.РЎ.
 								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
@@ -140,7 +140,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+							/*	SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -148,7 +148,7 @@ BEGIN
 									CL_ID = CD_ID_CLIENT
 									AND CA_ID_TYPE = FAT_ID_ADDR_TYPE
 							*/
-								-- 16.07.2009, Богдан В.С.
+								-- 16.07.2009, Р‘РѕРіРґР°РЅ Р’.РЎ.
 								SELECT
 									CASE ADDR_STRING
 										WHEN '' THEN CA_STR
@@ -200,7 +200,7 @@ BEGIN
 
 		SET @insid = SCOPE_IDENTITY()
 
-		-- деталь-данные
+		-- РґРµС‚Р°Р»СЊ-РґР°РЅРЅС‹Рµ
 		INSERT INTO dbo.InvoiceRowTable (INR_ID_INVOICE,
 									 INR_GOOD, INR_NAME, INR_SUM, INR_ID_TAX, INR_TNDS, INR_SNDS, INR_SALL,
 									 INR_ID_DISTR, INR_PPRICE, INR_UNIT) --, INR_ID_PERIOD)
@@ -234,7 +234,7 @@ BEGIN
 				AND PRP_PRICE <> 0
 
 
-		-- заносим в PrimaryPay сведения о созданной с/ф (в PRP_ID_INVOICE)
+		-- Р·Р°РЅРѕСЃРёРј РІ PrimaryPay СЃРІРµРґРµРЅРёСЏ Рѕ СЃРѕР·РґР°РЅРЅРѕР№ СЃ/С„ (РІ PRP_ID_INVOICE)
 		UPDATE dbo.PrimaryPayTable SET PRP_ID_INVOICE=@insid
 			WHERE
 				PRP_ID IN (
@@ -251,20 +251,20 @@ BEGIN
 
 		/*
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'Создание с/ф на первичку', INS_DATA
+			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РЅР° РїРµСЂРІРёС‡РєСѓ', INS_DATA
 			FROM dbo.InvoiceProtocolView
 			WHERE INS_ID = @insid
 		*/
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф на первичку', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РЅР° РїРµСЂРІРёС‡РєСѓ', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' РѕС‚ ' + CONVERT(VARCHAR(20), INS_DATE, 104)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @insid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
+				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Р”РѕР±Р°РІР»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				CONVERT(VARCHAR(20), PR_DATE, 104) +
 					':' + DIS_STR + ' - ' + dbo.MoneyFormat(INR_SALL)
 			FROM

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 		ORDER BY START DESC
 
 
-		SELECT ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент]
+		SELECT ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚]
 		FROM
 			dbo.ClientInnovation a
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ID_CLIENT = ClientID

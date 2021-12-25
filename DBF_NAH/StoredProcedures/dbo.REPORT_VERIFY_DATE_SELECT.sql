@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[REPORT_VERIFY_DATE_SELECT]
 	@begindate SMALLDATETIME,
@@ -41,8 +41,8 @@ BEGIN
 			AND IN_DATE BETWEEN @begindate AND @enddate
 		GROUP BY IN_DATE, IN_PAY_NUM, IN_PAY_DATE
 
-		-- и вот эти два запроса надо UNION.
-		-- и добавить накладные на ГК. Так и строится все сальдо O_O
+		-- Рё РІРѕС‚ СЌС‚Рё РґРІР° Р·Р°РїСЂРѕСЃР° РЅР°РґРѕ UNION.
+		-- Рё РґРѕР±Р°РІРёС‚СЊ РЅР°РєР»Р°РґРЅС‹Рµ РЅР° Р“Рљ. РўР°Рє Рё СЃС‚СЂРѕРёС‚СЃСЏ РІСЃРµ СЃР°Р»СЊРґРѕ O_O
 
 		UNION
 

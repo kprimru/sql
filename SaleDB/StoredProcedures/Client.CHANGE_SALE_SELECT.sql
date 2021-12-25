@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -122,9 +122,9 @@ BEGIN
 
 		SELECT
 			CASE TP
-				WHEN 'ADDRESS' THEN 'Адрес'
-				WHEN 'PHONE' THEN 'Телефон'
-				WHEN 'PERSONAL' THEN 'Сотрудник'
+				WHEN 'ADDRESS' THEN 'РђРґСЂРµСЃ'
+				WHEN 'PHONE' THEN 'РўРµР»РµС„РѕРЅ'
+				WHEN 'PERSONAL' THEN 'РЎРѕС‚СЂСѓРґРЅРёРє'
 				ELSE TP
 			END + ':' + CHAR(10) + TP_DATA
 		FROM
@@ -134,10 +134,10 @@ BEGIN
 						(
 							SELECT
 								CASE
-									WHEN OLD IS NULL AND NEW IS NOT NULL THEN 'Новый: ' + NEW
-									WHEN OLD IS NOT NULL AND NEW IS NULL THEN 'Удален: ' + OLD
-									WHEN OLD IS NOT NULL AND NEW IS NOT NULL THEN 'Изменен: ' + 'с ' + ISNULL(OLD, '') + ' на ' + ISNULL(NEW, '') + ''
-									ELSE 'ээ.... непонятно'
+									WHEN OLD IS NULL AND NEW IS NOT NULL THEN 'РќРѕРІС‹Р№: ' + NEW
+									WHEN OLD IS NOT NULL AND NEW IS NULL THEN 'РЈРґР°Р»РµРЅ: ' + OLD
+									WHEN OLD IS NOT NULL AND NEW IS NOT NULL THEN 'РР·РјРµРЅРµРЅ: ' + 'СЃ ' + ISNULL(OLD, '') + ' РЅР° ' + ISNULL(NEW, '') + ''
+									ELSE 'СЌСЌ.... РЅРµРїРѕРЅСЏС‚РЅРѕ'
 								END + CHAR(10)
 							FROM #result b
 							WHERE b.TP = a.TP

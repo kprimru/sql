@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_LIST_DELETE]
@@ -32,7 +32,7 @@ BEGIN
 		INSERT INTO @list SELECT * FROM dbo.GET_TABLE_FROM_LIST(@id, ',')
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT b.INS_ID_CLIENT, b.INS_ID, 'INVOICE', 'Удаление с/ф', b.INS_DATA
+			SELECT b.INS_ID_CLIENT, b.INS_ID, 'INVOICE', 'РЈРґР°Р»РµРЅРёРµ СЃ/С„', b.INS_DATA
 			FROM
 				@list a
 				INNER JOIN dbo.InvoiceProtocolView b ON a.ID = b.INS_ID

@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -151,7 +151,7 @@ BEGIN
 		    SELECT
 			    DistrStr, ManagerEmail, ManagerFullName, ClientFullName,
 			    (
-				    SELECT TOP 1 'На ' + CONVERT(VARCHAR(20), UF_DATE, 104) + ': загрузочный диск - ' + dbo.FileSizeToStr(UF_BOOT_FREE * 1024 * 1024) + ', диск с К+ - ' + dbo.FileSizeToStr(UF_CONS_FREE * 1024 * 1024)
+				    SELECT TOP 1 'РќР° ' + CONVERT(VARCHAR(20), UF_DATE, 104) + ': Р·Р°РіСЂСѓР·РѕС‡РЅС‹Р№ РґРёСЃРє - ' + dbo.FileSizeToStr(UF_BOOT_FREE * 1024 * 1024) + ', РґРёСЃРє СЃ Рљ+ - ' + dbo.FileSizeToStr(UF_CONS_FREE * 1024 * 1024)
 				    FROM
 					    [PC275-SQL\ALPHA].ClientDB.USR.USRComplectNumberView z
 					    INNER JOIN [PC275-SQL\ALPHA].ClientDB.USR.USRFile y ON z.UD_ID = y.UF_ID_COMPLECT
@@ -189,14 +189,14 @@ BEGIN
 				    ORDER BY CLIENT FOR XML PATH('')
 			    )
     
-		    SET @BODY = N'У данных клиентов по меньшей мере 3 последних пополнения закончились с кодом 3 (отсутствует место или диск неисправен).' + CHAR(10) + CHAR(10) + @BODY
+		    SET @BODY = N'РЈ РґР°РЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ РїРѕ РјРµРЅСЊС€РµР№ РјРµСЂРµ 3 РїРѕСЃР»РµРґРЅРёС… РїРѕРїРѕР»РЅРµРЅРёСЏ Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ СЃ РєРѕРґРѕРј 3 (РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РјРµСЃС‚Рѕ РёР»Рё РґРёСЃРє РЅРµРёСЃРїСЂР°РІРµРЅ).' + CHAR(10) + CHAR(10) + @BODY
     
 		    EXEC msdb.dbo.sp_send_dbmail
 					    @profile_name	=	'SQLMail',
 					    @recipients		=	@ML,
 					    @blind_copy_recipients = 'denisov@bazis;blohin@bazis;bateneva@bazis',
 					    @body			=	@BODY,
-					    @subject		=	'Проблемы с ИП пополнением',
+					    @subject		=	'РџСЂРѕР±Р»РµРјС‹ СЃ РРџ РїРѕРїРѕР»РЅРµРЅРёРµРј',
 					    @query_result_header	=	0
 
 		    FETCH NEXT FROM E INTO @ML

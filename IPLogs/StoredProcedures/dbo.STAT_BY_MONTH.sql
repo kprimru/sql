@@ -1,4 +1,4 @@
-USE [IPLogs]
+ÔªøUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 		    (
 			    ID					INT IDENTITY(1, 1) PRIMARY KEY,
 			    DT					SMALLDATETIME,
-			    TP					TINYINT, /* 1 - √Œƒ, 2 - Ã≈—ﬂ÷, 3 - ƒ≈Õ‹ */
+			    TP					TINYINT, /* 1 - –ì–û–î, 2 - –ú–ï–°–Ø–¶, 3 - –î–ï–ù–¨ */
 			    QST_SIZE			BIGINT,
 			    QST_PERCENT			DECIMAL(18, 4),
 			    ANS_SIZE			BIGINT,

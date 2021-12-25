@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -49,7 +49,7 @@ BEGIN
 						 WHERE RC_NUM = a.CSD_CODE_CLIENT
 								AND RC_TYPE = 'CLIENT'
 		 				 ORDER BY RC_ID
-					), 'неизвестный код') as CSD_CODE_CLIENT_NOTE,
+					), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ') as CSD_CODE_CLIENT_NOTE,
 					CSD_USR
 				FROM
 					dbo.IPClientDetailView a

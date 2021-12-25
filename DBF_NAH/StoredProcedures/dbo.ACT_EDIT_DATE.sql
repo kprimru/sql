@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[ACT_EDIT_DATE]
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Изменение даты акта', 'с ' + CONVERT(VARCHAR(20), ACT_DATE, 104) + ' на ' + CONVERT(VARCHAR(20), @actdate, 104)
+			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'РР·РјРµРЅРµРЅРёРµ РґР°С‚С‹ Р°РєС‚Р°', 'СЃ ' + CONVERT(VARCHAR(20), ACT_DATE, 104) + ' РЅР° ' + CONVERT(VARCHAR(20), @actdate, 104)
 			FROM dbo.ActTable
 			WHERE ACT_ID = @actid AND ACT_DATE <> @actdate
 

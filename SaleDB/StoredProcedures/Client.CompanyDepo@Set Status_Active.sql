@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ BEGIN
 		SET @Status_Id_TERMINATION	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TERMINATION');
 
 		IF (SELECT TOP (1) [Status_Id] FROM [Client].[CompanyDepo] WHERE [Id] = @Id) != @Status_Id_TERMINATION
-			RaisError('Из текущего статуса невозможно перевести в "действующий"', 16, 1);
+			RaisError('РР· С‚РµРєСѓС‰РµРіРѕ СЃС‚Р°С‚СѓСЃР° РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРµСЂРµРІРµСЃС‚Рё РІ "РґРµР№СЃС‚РІСѓСЋС‰РёР№"', 16, 1);
 
 		EXEC [Client].[CompanyDepo@Set Status(Internal)] @GUIds = @GUIds, @Status_Id = @Status_Id_ACTIVE;
 	END TRY

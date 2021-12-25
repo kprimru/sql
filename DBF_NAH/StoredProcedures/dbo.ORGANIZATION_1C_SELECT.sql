@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
 
 		SELECT ORG_ID, ORG_PSEDO
 		FROM dbo.OrganizationTable
-		WHERE ORG_PSEDO <> '' AND ORG_PSEDO <> 'КонсультантПрим'
+		WHERE ORG_PSEDO <> '' AND ORG_PSEDO <> 'РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџСЂРёРј'
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

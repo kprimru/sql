@@ -1,4 +1,4 @@
-USE [ClientDB]
+﻿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,7 +26,7 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @SH = '�1'
+		IF @SH = 'Н1'
 			EXEC [PC275-SQL\DELTA].DBF_NAH.dbo.FINANCING_TO_CLIENT_SELECT
 		ELSE
 			SELECT '<root/>' AS DATA

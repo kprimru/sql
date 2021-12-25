@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			CC_DATE AS [Дата звонка], ClientFullName AS [Клиент], CC_PERSONAL AS [Сотрудник],
-			CC_NOTE AS [Примечание], CC_USER AS [Кто звонил], CC_SERVICE AS [СИ]
+			CC_DATE AS [Р”Р°С‚Р° Р·РІРѕРЅРєР°], ClientFullName AS [РљР»РёРµРЅС‚], CC_PERSONAL AS [РЎРѕС‚СЂСѓРґРЅРёРє],
+			CC_NOTE AS [РџСЂРёРјРµС‡Р°РЅРёРµ], CC_USER AS [РљС‚Рѕ Р·РІРѕРЅРёР»], CC_SERVICE AS [РЎР]
 		FROM
 			dbo.ClientCall a
 			INNER JOIN dbo.ClientView b ON a.CC_ID_CLIENT = b.ClientID

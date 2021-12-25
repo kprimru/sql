@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -60,7 +60,7 @@ BEGIN
 				INNER JOIN USR.USRData ud ON ud.UD_ID = uav.UD_ID
 				INNER JOIN Reg.RegNodeSearchView rns WITH(NOEXPAND) ON rns.DistrNumber = ud.UD_DISTR AND rns.HostID = ud.UD_ID_HOST AND rns.CompNumber = ud.UD_COMP
 				INNER JOIN InfoBankTable ibt ON ibt.InfoBankID = uib.UI_ID_BASE
-				WHERE cib.Complect = rns.Complect AND cib.InfoBankID = ibt.InfoBankID AND DS_REG = 0 AND SubhostName NOT IN ('”1', 'Õ1', 'Ã', 'À1')
+				WHERE cib.Complect = rns.Complect AND cib.InfoBankID = ibt.InfoBankID AND DS_REG = 0 AND SubhostName NOT IN ('–£1', '–ù1', '–ú', '–õ1')
 			)
 
 

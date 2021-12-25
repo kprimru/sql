@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -77,12 +77,12 @@ BEGIN
 					SST_ID_DHOST AS SST_ID,
 					CASE
 						WHEN REG_ID_OLD_SYS IS NULL AND REG_ID_NEW_SYS IS NULL THEN b.SYS_SHORT_NAME
-						ELSE 'Ò ' + e.SYS_SHORT_NAME + ' Ì‡ '  + f.SYS_SHORT_NAME
+						ELSE '—Å ' + e.SYS_SHORT_NAME + ' –Ω–∞ '  + f.SYS_SHORT_NAME
 					END AS SYS_STR,
 					CASE
 						WHEN REG_ID_OLD_NET IS NULL AND REG_ID_NEW_NET IS NULL THEN c.SN_NAME
 						ELSE
-							'Ò ' + ISNULL(g.SN_NAME, '') + ' Ì‡ ' + ISNULL(h.SN_NAME, '')
+							'—Å ' + ISNULL(g.SN_NAME, '') + ' –Ω–∞ ' + ISNULL(h.SN_NAME, '')
 					END NET_STR,
 					SST_ORDER
 				FROM

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -70,7 +70,7 @@ BEGIN
 
 		SET @REFRESH = @REFRESH + @@ROWCOUNT
 
-		SET @OUT_DATA = 'Обновлено ' + CONVERT(NVARCHAR(32), @REFRESH) + ' записей'
+		SET @OUT_DATA = 'РћР±РЅРѕРІР»РµРЅРѕ ' + CONVERT(NVARCHAR(32), @REFRESH) + ' Р·Р°РїРёСЃРµР№'
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

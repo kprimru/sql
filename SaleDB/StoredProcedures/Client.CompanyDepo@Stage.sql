@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 					AND Status_Id = @Status_STAGE
 					AND STATUS = 1
 			)
-			RaisError('Компания уже задепонирована на следующий этап!', 16, 1);
+			RaisError('РљРѕРјРїР°РЅРёСЏ СѓР¶Рµ Р·Р°РґРµРїРѕРЅРёСЂРѕРІР°РЅР° РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЌС‚Р°Рї!', 16, 1);
 
 		INSERT INTO Client.CompanyDepo(
 					[Company_Id], [Number], [Status_Id], [Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address],

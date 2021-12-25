@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,35 +25,35 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			p.DATE,-- AS [Äàòà ðàçìåùåíèÿ],
-			p.CLAIM_PRIVISION,-- AS [Ñóììà îáåñïå÷åíèÿ çàÿâêè],
-			p.DATE + 6 AS [SPECBILL_TIME],-- AS [Ñðîê âíåñåíèÿ íà ñïåöñ÷åò],
-			p.DATE + 4 AS [REQUEST_DATE],-- AS [Äàòà ïîäà÷è çàÿâêè],
-			p.PROTOCOL AS [PROTOCOL_DATE],-- AS [Äàòà ïðîòîêîëà],
-			p.GK_PROVISION_SUM,-- AS [Ñóììà îáåñïå÷åíèÿ êîíòðàêòà],
-			p.PROTOCOL + 3 AS [TRANSACTION TIME],-- AS [Ñðîê ïåðåâîäà íà ð/ñ Çàêàç÷èêà],
-			p.PART_SUM,-- AS [Ñóììà îïëàòû ýë. ïë.],
-			p.PROTOCOL + 3 AS [SPECBILL_TIME2],-- AS [Ñðîê âíåñåíèÿ íà ñïåöñ÷åò],
-			p.GK_SIGN_FACT,-- AS [Ñðîê ïîäïèñàíèÿ ÃÊ],
-			dbo.GetLastWeekDay(4, @CURDATE) AS [CASHBACK_TIME],-- AS [Îòçûâ îáåñïå÷åíèÿ çàÿâêè], -- ïîñëåäíèé ÷åòâåðã òåêóùåãî ìåñÿöà
-			CONVERT(VARCHAR, p.GK_START, 4) + ' - ' + CONVERT(VARCHAR, p.GK_FINISH, 4) AS [GK_TIME],--	AS [Ñðîê äåéñòâèÿ êîíòðàêòà],
+			p.DATE,-- AS [Ð”Ð°Ñ‚Ð° Ñ€Ð°Ð·Ð¼ÐµÑ‰ÐµÐ½Ð¸Ñ],
+			p.CLAIM_PRIVISION,-- AS [Ð¡ÑƒÐ¼Ð¼Ð° Ð¾Ð±ÐµÑÐ¿ÐµÑ‡ÐµÐ½Ð¸Ñ Ð·Ð°ÑÐ²ÐºÐ¸],
+			p.DATE + 6 AS [SPECBILL_TIME],-- AS [Ð¡Ñ€Ð¾Ðº Ð²Ð½ÐµÑÐµÐ½Ð¸Ñ Ð½Ð° ÑÐ¿ÐµÑ†ÑÑ‡ÐµÑ‚],
+			p.DATE + 4 AS [REQUEST_DATE],-- AS [Ð”Ð°Ñ‚Ð° Ð¿Ð¾Ð´Ð°Ñ‡Ð¸ Ð·Ð°ÑÐ²ÐºÐ¸],
+			p.PROTOCOL AS [PROTOCOL_DATE],-- AS [Ð”Ð°Ñ‚Ð° Ð¿Ñ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð»Ð°],
+			p.GK_PROVISION_SUM,-- AS [Ð¡ÑƒÐ¼Ð¼Ð° Ð¾Ð±ÐµÑÐ¿ÐµÑ‡ÐµÐ½Ð¸Ñ ÐºÐ¾Ð½Ñ‚Ñ€Ð°ÐºÑ‚Ð°],
+			p.PROTOCOL + 3 AS [TRANSACTION TIME],-- AS [Ð¡Ñ€Ð¾Ðº Ð¿ÐµÑ€ÐµÐ²Ð¾Ð´Ð° Ð½Ð° Ñ€/Ñ Ð—Ð°ÐºÐ°Ð·Ñ‡Ð¸ÐºÐ°],
+			p.PART_SUM,-- AS [Ð¡ÑƒÐ¼Ð¼Ð° Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹ ÑÐ». Ð¿Ð».],
+			p.PROTOCOL + 3 AS [SPECBILL_TIME2],-- AS [Ð¡Ñ€Ð¾Ðº Ð²Ð½ÐµÑÐµÐ½Ð¸Ñ Ð½Ð° ÑÐ¿ÐµÑ†ÑÑ‡ÐµÑ‚],
+			p.GK_SIGN_FACT,-- AS [Ð¡Ñ€Ð¾Ðº Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ°Ð½Ð¸Ñ Ð“Ðš],
+			dbo.GetLastWeekDay(4, @CURDATE) AS [CASHBACK_TIME],-- AS [ÐžÑ‚Ð·Ñ‹Ð² Ð¾Ð±ÐµÑÐ¿ÐµÑ‡ÐµÐ½Ð¸Ñ Ð·Ð°ÑÐ²ÐºÐ¸], -- Ð¿Ð¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ Ñ‡ÐµÑ‚Ð²ÐµÑ€Ð³ Ñ‚ÐµÐºÑƒÑ‰ÐµÐ³Ð¾ Ð¼ÐµÑÑÑ†Ð°
+			CONVERT(VARCHAR, p.GK_START, 4) + ' - ' + CONVERT(VARCHAR, p.GK_FINISH, 4) AS [GK_TIME],--	AS [Ð¡Ñ€Ð¾Ðº Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ ÐºÐ¾Ð½Ñ‚Ñ€Ð°ÐºÑ‚Ð°],
 			(SELECT COUNT(NAME)
 			FROM Common.Period
-			WHERE TYPE = 3 AND			--óçíàåì ñêîëüêî êâàðòàëîâ áóäåò çàòðîíóòî
+			WHERE TYPE = 3 AND			--ÑƒÐ·Ð½Ð°ÐµÐ¼ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÐºÐ²Ð°Ñ€Ñ‚Ð°Ð»Ð¾Ð² Ð±ÑƒÐ´ÐµÑ‚ Ð·Ð°Ñ‚Ñ€Ð¾Ð½ÑƒÑ‚Ð¾
 					FINISH > p.GK_START AND
 					START < p.GK_FINISH) AS [QUART_COUNT],
 			CONVERT(VARCHAR, CONVERT(INT, p.GK_PROVISION_SUM)/(SELECT COUNT(NAME)
 												FROM Common.Period
-												WHERE TYPE = 3 AND			--óçíàåì ñêîëüêî êâàðòàëîâ áóäåò çàòðîíóòî
+												WHERE TYPE = 3 AND			--ÑƒÐ·Ð½Ð°ÐµÐ¼ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÐºÐ²Ð°Ñ€Ñ‚Ð°Ð»Ð¾Ð² Ð±ÑƒÐ´ÐµÑ‚ Ð·Ð°Ñ‚Ñ€Ð¾Ð½ÑƒÑ‚Ð¾
 													FINISH > p.GK_START AND
 													START < p.GK_FINISH)) AS [QUART_SUM],
 			CONVERT(VARCHAR, CONVERT(INT, p.GK_PROVISION_SUM)/(SELECT COUNT(NAME)
 												FROM Common.Period
-												WHERE TYPE = 3 AND			--óçíàåì ñêîëüêî êâàðòàëîâ áóäåò çàòðîíóòî
+												WHERE TYPE = 3 AND			--ÑƒÐ·Ð½Ð°ÐµÐ¼ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÐºÐ²Ð°Ñ€Ñ‚Ð°Ð»Ð¾Ð² Ð±ÑƒÐ´ÐµÑ‚ Ð·Ð°Ñ‚Ñ€Ð¾Ð½ÑƒÑ‚Ð¾
 													FINISH > p.GK_START AND
 													START < p.GK_FINISH) +  p.GK_PROVISION_SUM%(SELECT COUNT(NAME)
 																								FROM Common.Period
-																								WHERE TYPE = 3 AND			--óçíàåì ñêîëüêî êâàðòàëîâ áóäåò çàòðîíóòî
+																								WHERE TYPE = 3 AND			--ÑƒÐ·Ð½Ð°ÐµÐ¼ ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÐºÐ²Ð°Ñ€Ñ‚Ð°Ð»Ð¾Ð² Ð±ÑƒÐ´ÐµÑ‚ Ð·Ð°Ñ‚Ñ€Ð¾Ð½ÑƒÑ‚Ð¾
 																									FINISH > p.GK_START AND
 																									START < p.GK_FINISH)) AS [LAST_QUART_SUM],
 			CONVERT(VARCHAR, p.GK_PROVISION_SUM)	AS [CASHBACK]

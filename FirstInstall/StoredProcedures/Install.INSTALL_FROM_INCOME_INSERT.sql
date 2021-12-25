@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -38,7 +38,7 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		SET @INS_ID = NULL
-		-- Пункт 1. Создать запись в Install (Master), если нужно
+		-- РџСѓРЅРєС‚ 1. РЎРѕР·РґР°С‚СЊ Р·Р°РїРёСЃСЊ РІ Install (Master), РµСЃР»Рё РЅСѓР¶РЅРѕ
 		SELECT @INS_ID = INS_ID
 		FROM
 			Install.Install INNER JOIN
@@ -62,7 +62,7 @@ BEGIN
 			EXEC Install.INSTALL_INSERT @CL_ID, @VD_ID, @INS_DATE, @INS_ID OUTPUT
 		END
 
-		-- Пункт 2. Занести запись в InstallDetail
+		-- РџСѓРЅРєС‚ 2. Р—Р°РЅРµСЃС‚Рё Р·Р°РїРёСЃСЊ РІ InstallDetail
 
 		SELECT @IND_ID = IND_ID
 		FROM Install.InstallDetail

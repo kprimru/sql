@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,7 +30,7 @@ BEGIN
 				SELECT @ID,	@PHONE, N'PHONE', @DATE
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'Изменение телефонного агента - Выдача'
+				SELECT @ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’С‹РґР°С‡Р°'
 				FROM Client.Company
 				WHERE ID = @ID
 		END
@@ -41,7 +41,7 @@ BEGIN
 				SELECT @ID,	@SALE, N'SALE', @DATE
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 2, ID_AVAILABILITY, ID_CHARACTER, @SALE, N'Изменение торгового представителя - Выдача'
+				SELECT @ID, @DATE, 2, ID_AVAILABILITY, ID_CHARACTER, @SALE, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’С‹РґР°С‡Р°'
 				FROM Client.Company
 				WHERE ID = @ID
 		END

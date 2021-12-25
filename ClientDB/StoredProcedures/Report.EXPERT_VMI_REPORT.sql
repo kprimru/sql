@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT MON AS [Месяц], ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientFullName AS [Клиент], b.DistrStr AS [Дистрибутив], Comment AS [Название в РЦ]
+		SELECT MON AS [РњРµСЃСЏС†], ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientFullName AS [РљР»РёРµРЅС‚], b.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], Comment AS [РќР°Р·РІР°РЅРёРµ РІ Р Р¦]
 		FROM
 			(
 				SELECT

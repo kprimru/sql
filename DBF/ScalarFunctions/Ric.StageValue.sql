@@ -1,11 +1,11 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-	Полка
+	РџРѕР»РєР°
 */
 ALTER FUNCTION [Ric].[StageValue]
 (

@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -53,7 +53,7 @@ BEGIN
 						AND D.[Status] = 1
 						AND S.[Code] NOT IN ('REFUSED', 'TERMINATION')
 				) AND @Stage = 0
-				RaisError('Компания уже зарегистрирована в программе ДЕПО!', 16, 1);
+				RaisError('РљРѕРјРїР°РЅРёСЏ СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅР° РІ РїСЂРѕРіСЂР°РјРјРµ Р”Р•РџРћ!', 16, 1);
 			ELSE IF @Id IS NULL AND @Stage = 1
 				IF EXISTS
 					(
@@ -64,7 +64,7 @@ BEGIN
 							AND D.[Status] = 1
 							AND S.[Code] IN ('STAGE')
 					)
-					RaisError('Компания уже задепонирована на следующий этап!', 16, 1);
+					RaisError('РљРѕРјРїР°РЅРёСЏ СѓР¶Рµ Р·Р°РґРµРїРѕРЅРёСЂРѕРІР°РЅР° РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЌС‚Р°Рї!', 16, 1);
 
 			SET @Status_NEW		= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'NEW');
 			SET @Status_STAGE	= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'STAGE');
@@ -75,7 +75,7 @@ BEGIN
 				FROM [Client].[Depo@Get Number]();
 
 				IF @Number IS NULL
-					RaisError('Не удалось получить новый номер для Депонирования!', 16, 1);
+					RaisError('РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РЅРѕРІС‹Р№ РЅРѕРјРµСЂ РґР»СЏ Р”РµРїРѕРЅРёСЂРѕРІР°РЅРёСЏ!', 16, 1);
 
 				SET @Status = @Status_NEW
 			END ELSE BEGIN
@@ -102,7 +102,7 @@ BEGIN
 					    INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
 					    WHERE D.[Id] = @Id
 				    ) NOT IN ('ACTIVE', 'TAG')
-				    RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
+				    RaisError('Р’ РґР°РЅРЅРѕРј СЃС‚Р°С‚СѓСЃРµ Р”Р•РџРћ Р·Р°РїСЂРµС‰РµРЅРѕ РёР·РјРµРЅРµРЅРёРµ РґР°РЅРЅС‹С…!', 16, 1);
 
 				UPDATE Client.CompanyDepo
 				SET [Status_Id]				= (SELECT TOP (1) [Id] FROM [Client].[Depo->Statuses] WHERE [Code] = 'TAG'),
@@ -116,7 +116,7 @@ BEGIN
 					    INNER JOIN [Client].[Depo->Statuses] S ON D.[Status_Id] = S.[Id]
 					    WHERE D.[Id] = @Id
 				    ) NOT IN ('NEW', 'STAGE')
-				    RaisError('В данном статусе ДЕПО запрещено изменение данных!', 16, 1);
+				    RaisError('Р’ РґР°РЅРЅРѕРј СЃС‚Р°С‚СѓСЃРµ Р”Р•РџРћ Р·Р°РїСЂРµС‰РµРЅРѕ РёР·РјРµРЅРµРЅРёРµ РґР°РЅРЅС‹С…!', 16, 1);
 
 				UPDATE Client.CompanyDepo
 				SET [Depo:Name]				= @DepoName,

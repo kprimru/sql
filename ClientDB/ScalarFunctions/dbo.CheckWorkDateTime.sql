@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,9 +28,9 @@ BEGIN
 	WHERE CalendarDate = @T
 
 	IF @WORK = 0
-		SET @RES = 'Выходной день'
+		SET @RES = 'Р’С‹С…РѕРґРЅРѕР№ РґРµРЅСЊ'
 	ELSE IF DATEPART(HOUR, @DT) < 9 OR DATEPART(HOUR, @DT) > 18
-		SET @RES = 'Время до 9 или после 18'
+		SET @RES = 'Р’СЂРµРјСЏ РґРѕ 9 РёР»Рё РїРѕСЃР»Рµ 18'
 
 	RETURN @RES
 END

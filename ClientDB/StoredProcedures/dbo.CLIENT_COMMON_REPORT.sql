@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,12 +31,12 @@ BEGIN
 		SELECT
 			ClientFullName, ServiceName, ManagerName,
 			CASE
-				WHEN LastStudy IS NULL THEN 'Не обучался'
+				WHEN LastStudy IS NULL THEN 'РќРµ РѕР±СѓС‡Р°Р»СЃСЏ'
 				WHEN LastStudy <= DATEADD(YEAR, -1, @DATE) THEN CONVERT(VARCHAR(20), DATEPART(YEAR, LastStudy))
-				ELSE CONVERT(CHAR(1),((MONTH(LastStudy) - 1) / 3) % 4 + 1) + ' квартал ' + CONVERT(CHAR(4), YEAR(LastStudy))
+				ELSE CONVERT(CHAR(1),((MONTH(LastStudy) - 1) / 3) % 4 + 1) + ' РєРІР°СЂС‚Р°Р» ' + CONVERT(CHAR(4), YEAR(LastStudy))
 			END AS LastStudy,
 			CASE
-				WHEN LastDuty IS NULL THEN 'Не обращался'
+				WHEN LastDuty IS NULL THEN 'РќРµ РѕР±СЂР°С‰Р°Р»СЃСЏ'
 				ELSE DATENAME(MONTH, LastDuty) + ' ' + CONVERT(VARCHAR(20), DATEPART(YEAR, LastDuty))
 			END AS LastDuty,
 			DutyCount

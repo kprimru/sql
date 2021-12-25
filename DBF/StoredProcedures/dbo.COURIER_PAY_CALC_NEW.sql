@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,31 +31,31 @@ BEGIN
 			(
 				ID INT IDENTITY(1, 1),
 				COUR_NAME VARCHAR(100),
-				COUR_BASE VARCHAR(100), -- базовый город для резидента
+				COUR_BASE VARCHAR(100), -- Р±Р°Р·РѕРІС‹Р№ РіРѕСЂРѕРґ РґР»СЏ СЂРµР·РёРґРµРЅС‚Р°
 				TO_ID INT,
 				CL_ID INT,
 				CL_PSEDO VARCHAR(150),
-				CL_BASE VARCHAR(100), -- базовый город для ТО
+				CL_BASE VARCHAR(100), -- Р±Р°Р·РѕРІС‹Р№ РіРѕСЂРѕРґ РґР»СЏ РўРћ
 				CLT_ID SMALLINT,
 				CLT_NAME VARCHAR(100),
-				-- кол-во систем
+				-- РєРѕР»-РІРѕ СЃРёСЃС‚РµРј
 				SYS_COUNT SMALLINT,
-				-- общая сумма клиента
+				-- РѕР±С‰Р°СЏ СЃСѓРјРјР° РєР»РёРµРЅС‚Р°
 				CL_SUM MONEY,
-				-- кол-во ТО
+				-- РєРѕР»-РІРѕ РўРћ
 				TO_COUNT SMALLINT,
-				-- ст-ть одной ТО, или общая стоимость
+				-- СЃС‚-С‚СЊ РѕРґРЅРѕР№ РўРћ, РёР»Рё РѕР±С‰Р°СЏ СЃС‚РѕРёРјРѕСЃС‚СЊ
 				PRICE MONEY,
-				--итоговая стоимость (которую можно поднять до минималки)
+				--РёС‚РѕРіРѕРІР°СЏ СЃС‚РѕРёРјРѕСЃС‚СЊ (РєРѕС‚РѕСЂСѓСЋ РјРѕР¶РЅРѕ РїРѕРґРЅСЏС‚СЊ РґРѕ РјРёРЅРёРјР°Р»РєРё)
 				TOTAL_PRICE MONEY,
-				-- минимальная сумма
+				-- РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР°
 				COUR_MIN MONEY,
 				COUR_MAX MONEY,
-				-- процент
+				-- РїСЂРѕС†РµРЅС‚
 				COUR_PERCENT DECIMAL(8, 4),
-				-- КОб
+				-- РљРћР±
 				COEF DECIMAL(8, 4),
-				-- оплатил ли или нет
+				-- РѕРїР»Р°С‚РёР» Р»Рё РёР»Рё РЅРµС‚
 				CL_PAY SMALLINT,
 				CL_ACT SMALLINT,
 				KGS SMALLINT,
@@ -124,7 +124,7 @@ BEGIN
 			FROM dbo.CourierPaySettingsTable
 			WHERE CPS_ID_TYPE = @TP
 
-			-- расчет по всем дистрибутивам ТО (по счету)
+			-- СЂР°СЃС‡РµС‚ РїРѕ РІСЃРµРј РґРёСЃС‚СЂРёР±СѓС‚РёРІР°Рј РўРћ (РїРѕ СЃС‡РµС‚Сѓ)
 			IF @SOURCE = 1
 			BEGIN
 				UPDATE t
@@ -151,7 +151,7 @@ BEGIN
 				FROM #salary t
 				WHERE CLT_ID = @TP
 			END
-			-- расчет по всем дистрибутивам ТО (если есть по актам, если нет - то по счету)
+			-- СЂР°СЃС‡РµС‚ РїРѕ РІСЃРµРј РґРёСЃС‚СЂРёР±СѓС‚РёРІР°Рј РўРћ (РµСЃР»Рё РµСЃС‚СЊ РїРѕ Р°РєС‚Р°Рј, РµСЃР»Рё РЅРµС‚ - С‚Рѕ РїРѕ СЃС‡РµС‚Сѓ)
 			ELSE IF @SOURCE = 4
 			BEGIN
 				UPDATE t
@@ -225,7 +225,7 @@ BEGIN
 								AND REG_ID_PERIOD = @PERIOD
 						)
 			END
-			-- делим общую сумму клиента на все ТО
+			-- РґРµР»РёРј РѕР±С‰СѓСЋ СЃСѓРјРјСѓ РєР»РёРµРЅС‚Р° РЅР° РІСЃРµ РўРћ
 			ELSE IF @SOURCE = 5
 			BEGIN
 				UPDATE t
@@ -315,7 +315,7 @@ BEGIN
 								AND REG_ID_PERIOD = @PERIOD
 						)
 			END
-			-- фиксированная минимальная сумма
+			-- С„РёРєСЃРёСЂРѕРІР°РЅРЅР°СЏ РјРёРЅРёРјР°Р»СЊРЅР°СЏ СЃСѓРјРјР°
 			ELSE IF @SOURCE = 2
 			BEGIN
 				UPDATE #salary
@@ -323,7 +323,7 @@ BEGIN
 					CL_ACT = 1
 				WHERE CLT_ID = @TP
 			END
-			-- тоже делим всю сумму на количество, но тут зависит от оплаты
+			-- С‚РѕР¶Рµ РґРµР»РёРј РІСЃСЋ СЃСѓРјРјСѓ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ, РЅРѕ С‚СѓС‚ Р·Р°РІРёСЃРёС‚ РѕС‚ РѕРїР»Р°С‚С‹
 			ELSE IF @SOURCE = 3
 			BEGIN
 				UPDATE t
@@ -499,7 +499,7 @@ BEGIN
 				FROM #salary b
 				WHERE b.COUR_NAME = t.COUR_NAME
 					AND b.CL_BASE = t.CL_BASE
-					AND CLT_NAME LIKE '%КГС%'
+					AND CLT_NAME LIKE '%РљР“РЎ%'
 			) /
 			(
 				SELECT COUNT(*)
@@ -523,7 +523,7 @@ BEGIN
 
 		UPDATE #salary
 		SET COUR_MIN = NULL
-		WHERE KGS < 70 AND CLT_NAME = 'КГС корп.'
+		WHERE KGS < 70 AND CLT_NAME = 'РљР“РЎ РєРѕСЂРї.'
 
 		SELECT
 			ID, COUR_NAME, COUR_BASE,
@@ -538,8 +538,8 @@ BEGIN
 				WHERE a.COUR_NAME = b.COUR_NAME
 			) AS COUR_COUNT,
 			CASE
-				WHEN CL_BASE = COUR_BASE THEN 'БГ'
-				WHEN CL_BASE <> COUR_BASE THEN 'УТ'
+				WHEN CL_BASE = COUR_BASE THEN 'Р‘Р“'
+				WHEN CL_BASE <> COUR_BASE THEN 'РЈРў'
 				ELSE '-'
 			END AS CL_TERR
 		FROM #salary a

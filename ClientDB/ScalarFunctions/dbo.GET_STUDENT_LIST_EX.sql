@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,10 +28,10 @@ BEGIN
 
 		IF @teacher = 1
 			INSERT INTO @TBL(POS_ID)
-				SELECT 'Преподаватель'
+				SELECT 'РџСЂРµРїРѕРґР°РІР°С‚РµР»СЊ'
 		IF @student = 1
 			INSERT INTO @TBL(POS_ID)
-				SELECT 'Студент'
+				SELECT 'РЎС‚СѓРґРµРЅС‚'
 
    SELECT @resstr = @resstr + SURNAME + ' ' + NAME + ' ' + PATRON + ',  '
    FROM

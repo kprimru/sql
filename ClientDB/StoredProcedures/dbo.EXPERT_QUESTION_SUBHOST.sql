@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 				SH_ID		= SH_ID,
 				SH_EMAIL	= SH_EMAIL
 			FROM dbo.Subhost
-			WHERE SH_REG IN ('Ã', '”1', 'Õ1')
+			WHERE SH_REG IN ('–ú', '–£1', '–ù1')
 		) AS SH
 		CROSS APPLY [dbo].[SubhostDistrs@Get](SH.SH_ID, NULL)	AS D
 		INNER JOIN dbo.SystemTable								AS S ON D.[HostId] = S.[HostID]

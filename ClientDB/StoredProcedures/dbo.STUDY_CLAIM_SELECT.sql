@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -52,7 +52,7 @@ BEGIN
 				NEWID(), ID, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACHER_NOTE, MEETING_DATE, MEETING_NOTE,
 				UPD_USER + ' ' + CONVERT(NVARCHAR(32), UPD_DATE, 104) + ' ' + CONVERT(NVARCHAR(32), UPD_DATE, 108),
 				ISNULL(TeacherName + ' ', '') + (
-					SELECT 'Всего: ' +
+					SELECT 'Р’СЃРµРіРѕ: ' +
 						CONVERT(NVARCHAR(16),
 							(
 								SELECT COUNT(*)
@@ -78,10 +78,10 @@ BEGIN
 		SELECT
 			ID, MST, ID_CLAIM, DATE, STUDY_DATE, CALL_DATE, NOTE, TEACH_NOTE, MET_DATE, MET_NOTE, UPD_DATA, P_FIO, P_POS, P_PHONE, P_NOTE,
 			CASE STATUS
-				WHEN 1 THEN 'Активна'
-				WHEN 4 THEN 'Отменена'
-				WHEN 5 THEN 'Выполнена'
-				WHEN 9 THEN 'Длительная'
+				WHEN 1 THEN 'РђРєС‚РёРІРЅР°'
+				WHEN 4 THEN 'РћС‚РјРµРЅРµРЅР°'
+				WHEN 5 THEN 'Р’С‹РїРѕР»РЅРµРЅР°'
+				WHEN 9 THEN 'Р”Р»РёС‚РµР»СЊРЅР°СЏ'
 			END AS STATUS_STR,
 			STATUS
 		FROM #claim

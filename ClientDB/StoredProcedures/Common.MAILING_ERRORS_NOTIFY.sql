@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -39,7 +39,7 @@ BEGIN
 			);
 
 		IF @Cnt > 0 BEGIN
-			SET @Text = N'За прошелдшие ' + Cast(@Hours AS NVarChar(20)) + N' часа возникло ' + Cast(@Cnt AS NVarChar(20)) + N' ошибок. Проверьте журнал отправленных сообщений.';
+			SET @Text = N'Р—Р° РїСЂРѕС€РµР»РґС€РёРµ ' + Cast(@Hours AS NVarChar(20)) + N' С‡Р°СЃР° РІРѕР·РЅРёРєР»Рѕ ' + Cast(@Cnt AS NVarChar(20)) + N' РѕС€РёР±РѕРє. РџСЂРѕРІРµСЂСЊС‚Рµ Р¶СѓСЂРЅР°Р» РѕС‚РїСЂР°РІР»РµРЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№.';
 
 			EXEC Maintenance.MAIL_SEND @Text = @Text;
 		END;

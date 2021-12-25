@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -9,18 +9,18 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
 	/*
-		Слияние базы DBF и DBF_NAH
+		РЎР»РёСЏРЅРёРµ Р±Р°Р·С‹ DBF Рё DBF_NAH
 
-		Шаг 0: Осуществить проверки???
+		РЁР°Рі 0: РћСЃСѓС‰РµСЃС‚РІРёС‚СЊ РїСЂРѕРІРµСЂРєРё???
 
-		Шаг 1: Обновление всех существующих клиентов.
-		Шаг 2: Ввод всех новых клиентов
-		Шаг 3: Обновление существующих дистрибутивов (изменение либо дистрибутива, либо клиента, которому принадлежит дистрибутив)
-		Шаг 4: Ввод новых дистрибутивов
-		Шаг 5: Обновление старых ТО (изменение информации или изменение принадлежности к клиенту)
-		Шаг 6: Ввод новых ТО (с адресом)
-		Шаг 7: Изменение сотрудников ТО
-		Шаг 8: Ввод новых сотрудников ТО
+		РЁР°Рі 1: РћР±РЅРѕРІР»РµРЅРёРµ РІСЃРµС… СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… РєР»РёРµРЅС‚РѕРІ.
+		РЁР°Рі 2: Р’РІРѕРґ РІСЃРµС… РЅРѕРІС‹С… РєР»РёРµРЅС‚РѕРІ
+		РЁР°Рі 3: РћР±РЅРѕРІР»РµРЅРёРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ (РёР·РјРµРЅРµРЅРёРµ Р»РёР±Рѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°, Р»РёР±Рѕ РєР»РёРµРЅС‚Р°, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РґРёСЃС‚СЂРёР±СѓС‚РёРІ)
+		РЁР°Рі 4: Р’РІРѕРґ РЅРѕРІС‹С… РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ
+		РЁР°Рі 5: РћР±РЅРѕРІР»РµРЅРёРµ СЃС‚Р°СЂС‹С… РўРћ (РёР·РјРµРЅРµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё РёР»Рё РёР·РјРµРЅРµРЅРёРµ РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚Рё Рє РєР»РёРµРЅС‚Сѓ)
+		РЁР°Рі 6: Р’РІРѕРґ РЅРѕРІС‹С… РўРћ (СЃ Р°РґСЂРµСЃРѕРј)
+		РЁР°Рі 7: РР·РјРµРЅРµРЅРёРµ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РўРћ
+		РЁР°Рі 8: Р’РІРѕРґ РЅРѕРІС‹С… СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РўРћ
 	*/
 
 	SET NOCOUNT ON
@@ -42,7 +42,7 @@ BEGIN
 		SET @ERROR = ''
 
 		SELECT
-			@ERROR = @ERROR + 'В основной базе отсутствует клиент "' +
+			@ERROR = @ERROR + 'Р’ РѕСЃРЅРѕРІРЅРѕР№ Р±Р°Р·Рµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєР»РёРµРЅС‚ "' +
 			CL_PSEDO + '" (' + CONVERT(VARCHAR(20), CL_NUM) + ')' + CHAR(10)
 		FROM DBF_NAH.dbo.ClientTable a
 		WHERE NOT EXISTS
@@ -58,7 +58,7 @@ BEGIN
 				WHERE a.CL_NUM = -b.CL_NUM
 			)
 
-		SELECT @ERROR = @ERROR + 'Дубликат псевдонимов в базе Находки "' + a.CL_PSEDO + '"' + CHAR(10)
+		SELECT @ERROR = @ERROR + 'Р”СѓР±Р»РёРєР°С‚ РїСЃРµРІРґРѕРЅРёРјРѕРІ РІ Р±Р°Р·Рµ РќР°С…РѕРґРєРё "' + a.CL_PSEDO + '"' + CHAR(10)
 		FROM
 			DBF_NAH.dbo.ClientTable a
 			INNER JOIN DBF.dbo.ClientTable t ON t.CL_NUM = a.CL_NUM
@@ -270,7 +270,7 @@ BEGIN
 				(
 					SELECT TOP 1 DSS_ID
 					FROM DBF.dbo.DistrServiceStatusTable i
-					WHERE i.DSS_NAME = 'Подхост'
+					WHERE i.DSS_NAME = 'РџРѕРґС…РѕСЃС‚'
 				)
 			FROM
 				DBF_NAH.dbo.ClientDistrTable a INNER JOIN
@@ -292,7 +292,7 @@ BEGIN
 
 		UPDATE DBF.dbo.ClientDistrTable
 		SET CD_ID_CLIENT = c.CL_ID/*,
-			CD_ID_SERVICE = (SELECT DSS_ID FROM DBF.dbo.DistrServiceStatusTable WHERE DSS_NAME = 'Подхост')*/
+			CD_ID_SERVICE = (SELECT DSS_ID FROM DBF.dbo.DistrServiceStatusTable WHERE DSS_NAME = 'РџРѕРґС…РѕСЃС‚')*/
 		FROM
 			DBF_NAH.dbo.ClientDistrTable a INNER JOIN
 			DBF_NAH.dbo.ClientTable b ON b.CL_ID = a.CD_ID_CLIENT INNER JOIN

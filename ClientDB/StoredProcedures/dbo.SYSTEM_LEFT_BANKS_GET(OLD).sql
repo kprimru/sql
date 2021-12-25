@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 		BEGIN
 			IF (CHARINDEX(',', @SYS_LIST)<>0)
 			BEGIN
-				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--гдеяэ бшрюяйхбюел он ндмнлс ID яхярелш хг яохяйю
+				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--п≈п■п∙п║п╛ п▓п╚п╒п░п║п п≤п▓п░п∙п° п÷п· п·п■п²п·п°пё ID п║п≤п║п╒п∙п°п╚ п≤п≈ п║п÷п≤п║п п░
 				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))
 			END
 			ELSE

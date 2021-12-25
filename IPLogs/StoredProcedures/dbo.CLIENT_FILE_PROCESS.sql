@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -74,18 +74,18 @@ BEGIN
 		    CSD_CODE_SERVER INT,
 		    CSD_IP_MODE NVARCHAR(64),
 		    /*
-		    эти два поля действуют только с марта 2013.
+		    СЌС‚Рё РґРІР° РїРѕР»СЏ РґРµР№СЃС‚РІСѓСЋС‚ С‚РѕР»СЊРєРѕ СЃ РјР°СЂС‚Р° 2013.
 		    */
 		    CSD_RES_VERSION	NVARCHAR(64),
 		    CSD_DOWNLOAD_SPEED	NVARCHAR(512),
 		    /*
-		    эти три поля - с июля 2013
+		    СЌС‚Рё С‚СЂРё РїРѕР»СЏ - СЃ РёСЋР»СЏ 2013
 		    */
 		    CSD_STT_SEND VARCHAR(20),
 		    CSD_STT_RESULT VARCHAR(20),
 		    CSD_INET_EXT VARCHAR(255)--,
 		    /*
-		    эти 2 поля - с 28 октября 2014
+		    СЌС‚Рё 2 РїРѕР»СЏ - СЃ 28 РѕРєС‚СЏР±СЂСЏ 2014
 		    */
 		    --CSD_PROXY_METOD	NVARCHAR(128),
 		    --CSD_PROXY_INTERFACE	NVARCHAR(128)
@@ -234,8 +234,8 @@ BEGIN
 		    )
 	    ORDER BY CSD_NUM
     
-	    --ВОТ СЮДА ПОДОБНОЕ ТОМУ ЧТО СВЕРХУ, ТОЛЬКО С ЗАМЕНОЙ И В 275TS ClientDB
-	    --ЕСЛИ ЧТО УДАЛЯТЬ ВСЕ
+	    --Р’РћРў РЎР®Р”Рђ РџРћР”РћР‘РќРћР• РўРћРњРЈ Р§РўРћ РЎР’Р•Р РҐРЈ, РўРћР›Р¬РљРћ РЎ Р—РђРњР•РќРћР™ Р Р’ 275TS ClientDB
+	    --Р•РЎР›Р Р§РўРћ РЈР”РђР›РЇРўР¬ Р’РЎР•
 	    ---------------------------------------------------------------------------
 	    UPDATE b
 	    SET	CSD_START				= a.CSD_START,
@@ -246,7 +246,7 @@ BEGIN
 											    WHERE RC_NUM = a.CSD_CODE_CLIENT
 												    AND RC_TYPE = 'CLIENT'
 											    ORDER BY RC_ID
-										    ), 'неизвестный код'),
+										    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ'),
 		    CSD_USR					= a.CSD_USR
 	    FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
 	    INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS = a.CSD_SYS AND b.CSD_DISTR = a.CSD_DISTR AND b.CSD_COMP = a.CSD_COMP
@@ -264,7 +264,7 @@ BEGIN
                     WHERE RC_NUM = a.CSD_CODE_CLIENT
                           AND RC_TYPE = 'CLIENT'
                     ORDER BY RC_ID
-                    ), 'неизвестный код'),
+                    ), 'РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ'),
 		    a.CSD_USR
 	    FROM
 	    (

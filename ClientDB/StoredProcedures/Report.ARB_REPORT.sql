@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,14 +24,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ISNULL(ManagerName, SubhostName) AS 'Руководитель', ServiceName AS 'СИ', a.DistrStr AS 'Дистрибутив', ISNULL(ClientFullName, Comment) AS 'Клиент', SST_SHORT AS 'Тип'
+		SELECT ISNULL(ManagerName, SubhostName) AS 'Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ', ServiceName AS 'РЎР', a.DistrStr AS 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ', ISNULL(ClientFullName, Comment) AS 'РљР»РёРµРЅС‚', SST_SHORT AS 'РўРёРї'
 		FROM
 			Reg.RegNodeSearchView a WITH(NOEXPAND)
 			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.SystemID = a.SystemID AND DISTR = DistrNumber AND COMP = CompNumber
 			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON ClientID = ID_CLIENT
-		WHERE a.SystemShortName IN ('МБП', 'КЮ', 'БО')
+		WHERE a.SystemShortName IN ('РњР‘Рџ', 'РљР®', 'Р‘Рћ')
 			AND a.DS_REG = 0
-			AND SST_SHORT NOT IN ('ДИУ')
+			AND SST_SHORT NOT IN ('Р”РРЈ')
 			AND EXISTS
 				(
 					SELECT *

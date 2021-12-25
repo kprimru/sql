@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -47,12 +47,12 @@ BEGIN
 				SELECT
 					SYS_ID, SYS_OLD_ID,
 					CASE
-						WHEN SYS_OLD_ID IS NOT NULL THEN 'Ò ' + z.SystemShortName + ' Ì‡ ' + b.SystemShortName
+						WHEN SYS_OLD_ID IS NOT NULL THEN '—Å ' + z.SystemShortName + ' –Ω–∞ ' + b.SystemShortName
 						ELSE b.SystemShortName
 					END AS SYS_STR,
 					DISTR, NET_ID, NET_OLD_ID,
 					CASE
-						WHEN NET_OLD_ID IS NOT NULL THEN 'Ò ' + y.DistrTypeName + ' Ì‡ ' + c.DistrTypeName
+						WHEN NET_OLD_ID IS NOT NULL THEN '—Å ' + y.DistrTypeName + ' –Ω–∞ ' + c.DistrTypeName
 						ELSE c.DistrTypeName
 					END AS NET_STR,
 					SystemTypeID, SystemTypeName,

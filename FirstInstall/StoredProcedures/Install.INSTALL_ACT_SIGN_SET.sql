@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ BEGIN
 
 		EXEC Common.PROTOCOL_VALUE_GET 'INSTALL_DETAIL', @ID, @NEW OUTPUT
 
-		EXEC Common.PROTOCOL_INSERT 'INSTALL_DETAIL', 'Указание подписи акта', @ID, @OLD, @NEW
+		EXEC Common.PROTOCOL_INSERT 'INSTALL_DETAIL', 'РЈРєР°Р·Р°РЅРёРµ РїРѕРґРїРёСЃРё Р°РєС‚Р°', @ID, @OLD, @NEW
 
 		FETCH NEXT FROM ID INTO @ID
 	END

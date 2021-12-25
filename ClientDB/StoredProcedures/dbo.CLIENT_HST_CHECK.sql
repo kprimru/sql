@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -122,7 +122,7 @@ BEGIN
 		WHERE a.ID_CLIENT IS NULL
 
 		UPDATE a
-		SET NOTE = 'Неоднозначный клиент',
+		SET NOTE = 'РќРµРѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ РєР»РёРµРЅС‚',
 			ERR_TYPE = 1,
 			ENBL = 0
 		FROM
@@ -137,13 +137,13 @@ BEGIN
 				) AS b ON a.FILE_PATH = b.FILE_PATH
 
 		UPDATE #hst
-		SET NOTE = ISNULL(NOTE + ', ', '') + 'Не удалось идентифицировать клиента',
+		SET NOTE = ISNULL(NOTE + ', ', '') + 'РќРµ СѓРґР°Р»РѕСЃСЊ РёРґРµРЅС‚РёС„РёС†РёСЂРѕРІР°С‚СЊ РєР»РёРµРЅС‚Р°',
 			ERR_TYPE = 3,
 			ENBL = 0
 		WHERE ID_CLIENT IS NULL
 
 		UPDATE a
-		SET NOTE = ISNULL(NOTE + ', ', '') + 'Попытка загрузки одинакового файла',
+		SET NOTE = ISNULL(NOTE + ', ', '') + 'РџРѕРїС‹С‚РєР° Р·Р°РіСЂСѓР·РєРё РѕРґРёРЅР°РєРѕРІРѕРіРѕ С„Р°Р№Р»Р°',
 			ERR_TYPE = 4,
 			ENBL = 0
 		FROM
@@ -158,7 +158,7 @@ BEGIN
 
 		/*
 		UPDATE a
-		SET NOTE = ISNULL(NOTE + ', ', '') + 'Данный файл уже был загружен в папке "' + b.PATH + '" ' + CONVERT(NVARCHAR(32), b.PROCESS_DATE, 104),
+		SET NOTE = ISNULL(NOTE + ', ', '') + 'Р”Р°РЅРЅС‹Р№ С„Р°Р№Р» СѓР¶Рµ Р±С‹Р» Р·Р°РіСЂСѓР¶РµРЅ РІ РїР°РїРєРµ "' + b.PATH + '" ' + CONVERT(NVARCHAR(32), b.PROCESS_DATE, 104),
 			ERR_TYPE = 2,
 			ENBL = 0
 		FROM

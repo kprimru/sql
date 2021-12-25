@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
 			DutyId, CallTypeId, ID_DIRECTION,
 			ClientDutyNPO, ClientDutyComment
 		FROM dbo.ClientDutyTable a
-		-- ToDo. Почему оптимизатор настойчиво не хочет LOOP сам делать? Есть подозрение, что проблема в STATUS = 1
+		-- ToDo. РџРѕС‡РµРјСѓ РѕРїС‚РёРјРёР·Р°С‚РѕСЂ РЅР°СЃС‚РѕР№С‡РёРІРѕ РЅРµ С…РѕС‡РµС‚ LOOP СЃР°Рј РґРµР»Р°С‚СЊ? Р•СЃС‚СЊ РїРѕРґРѕР·СЂРµРЅРёРµ, С‡С‚Рѕ РїСЂРѕР±Р»РµРјР° РІ STATUS = 1
 		INNER LOOP JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
 		WHERE ClientDutyComplete = 0 AND a.STATUS = 1
 		ORDER BY ClientDutyDateTime DESC, ClientFullName

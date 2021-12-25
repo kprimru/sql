@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-Автор:         Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:         Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CLIENT_DISTR_DELIVERY]
@@ -57,7 +57,7 @@ BEGIN
 				FROM @list
 			)
 
-		--удалить из ТО этот дистрибутив
+		--СѓРґР°Р»РёС‚СЊ РёР· РўРћ СЌС‚РѕС‚ РґРёСЃС‚СЂРёР±СѓС‚РёРІ
 
 		DELETE
 		FROM dbo.TODistrTable

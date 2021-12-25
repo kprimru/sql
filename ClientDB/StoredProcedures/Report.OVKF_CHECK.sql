@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,11 +25,11 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			[Рук-ль/Подхост]	=	ISNULL(ManagerName, SubhostName),
-			[СИ]				=	ServiceName,
-			[Клиент]			=	ISNULL(ClientFullName, Comment),
-			[Дистрибутив]		=	r.DistrStr,
-			[Незам. ИБ]			=	REVERSE(STUFF(REVERSE(
+			[Р СѓРє-Р»СЊ/РџРѕРґС…РѕСЃС‚]	=	ISNULL(ManagerName, SubhostName),
+			[РЎР]				=	ServiceName,
+			[РљР»РёРµРЅС‚]			=	ISNULL(ClientFullName, Comment),
+			[Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]		=	r.DistrStr,
+			[РќРµР·Р°Рј. РР‘]			=	REVERSE(STUFF(REVERSE(
 				(
 					SELECT InfoBankShortName + ','
 					FROM
@@ -48,7 +48,7 @@ BEGIN
 		FROM Reg.RegNodeSearchView r WITH(NOEXPAND)
 		LEFT OUTER JOIN dbo.ClientDistrView cd WITH(NOEXPAND) ON r.HostID = cd.HostId AND r.DistrNumber = cd.DISTR AND r.CompNumber = cd.COMP
 		LEFT OUTER JOIN dbo.CLientView WITH(NOEXPAND) ON ClientId = ID_CLIENT
-		WHERE NT_SHORT = 'ОВК-Ф'
+		WHERE NT_SHORT = 'РћР’Рљ-Р¤'
 			AND EXISTS
 				(
 					SELECT *

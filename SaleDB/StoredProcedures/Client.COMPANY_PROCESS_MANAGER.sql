@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -73,7 +73,7 @@ BEGIN
             @Name           = 'EXEC Client.COMPANY_PROCESS_MANAGER_RETURN';
 
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 9, ID_AVAILABILITY, ID_CHARACTER, @MANAGER, N'Изменение менеждера - Выдача'
+			SELECT a.ID, @DATE, 9, ID_AVAILABILITY, ID_CHARACTER, @MANAGER, N'РР·РјРµРЅРµРЅРёРµ РјРµРЅРµР¶РґРµСЂР° - Р’С‹РґР°С‡Р°'
 			FROM
 				Client.Company a
 				INNER JOIN @Companies b ON a.ID = b.ID

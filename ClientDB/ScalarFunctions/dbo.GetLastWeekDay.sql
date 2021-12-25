@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[GetLastWeekDay]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GetLastWeekDay] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION dbo.GetLastWeekDay -- находит последний указанный день недели (wday) в указанном месяце (@day)
+ALTER FUNCTION dbo.GetLastWeekDay -- РЅР°С…РѕРґРёС‚ РїРѕСЃР»РµРґРЅРёР№ СѓРєР°Р·Р°РЅРЅС‹Р№ РґРµРЅСЊ РЅРµРґРµР»Рё (wday) РІ СѓРєР°Р·Р°РЅРЅРѕРј РјРµСЃСЏС†Рµ (@day)
 (
 	@wday	INT,
 	@day	DATETIME
@@ -23,10 +23,10 @@ BEGIN
 	ELSE IF DATEPART(m, @day) IN (4, 6, 9, 11)
 		SET @last_date = @day + (30 - DATEPART(D, @day))
 
-	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 = 0)  --ФЕВРАЛЬ В ВИСОКОСНЫЙ ГОД
+	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 = 0)  --Р¤Р•Р’Р РђР›Р¬ Р’ Р’РРЎРћРљРћРЎРќР«Р™ Р“РћР”
 		SET @last_date = @day + (29 - DATEPART(D, @day))
 
-	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 <> 0)  --ФЕВРАЛЬ В НЕ ВИСОКОСНЫЙ ГОД
+	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 <> 0)  --Р¤Р•Р’Р РђР›Р¬ Р’ РќР• Р’РРЎРћРљРћРЎРќР«Р™ Р“РћР”
 		SET @last_date = @day + (28 - DATEPART(D, @day))
 
 	IF DATEPART(dw, @last_date) = @wday

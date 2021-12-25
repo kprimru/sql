@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -77,19 +77,19 @@ BEGIN
 						TP, ClientID, ClientFullName, ServiceName, ManagerName,
 						SystemShortName, SYS_CNT, SystemOrder,
 						CASE
-							WHEN p.DS_REG = 0 THEN 'Есть'
-							WHEN p.DS_REG <> 0 THEN 'Отключена'
-							WHEN p.DS_REG IS NULL THEN 'Нет'
+							WHEN p.DS_REG = 0 THEN 'Р•СЃС‚СЊ'
+							WHEN p.DS_REG <> 0 THEN 'РћС‚РєР»СЋС‡РµРЅР°'
+							WHEN p.DS_REG IS NULL THEN 'РќРµС‚'
 							ELSE ''
 						END AS SYS_EXISTS,
 						CASE
 							WHEN p.DS_REG = 0 THEN
 								CASE
-									WHEN TP = 'INET' THEN 'Повышение'
-									ELSE 'Обучение'
+									WHEN TP = 'INET' THEN 'РџРѕРІС‹С€РµРЅРёРµ'
+									ELSE 'РћР±СѓС‡РµРЅРёРµ'
 								END
-							WHEN p.DS_REG <> 0 THEN 'Восстановление'
-							WHEN p.DS_REG IS NULL THEN 'Допродажа'
+							WHEN p.DS_REG <> 0 THEN 'Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ'
+							WHEN p.DS_REG IS NULL THEN 'Р”РѕРїСЂРѕРґР°Р¶Р°'
 							ELSE ''
 						END AS VERDIKT
 					FROM
@@ -142,7 +142,7 @@ BEGIN
 								(
 									SELECT TOP 1 q.SystemID, q.SystemShortName, q.SystemOrder
 									FROM dbo.SystemTable q
-									--ToDo убрать злостный хардкод
+									--ToDo СѓР±СЂР°С‚СЊ Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕРґ
 									CROSS APPLY dbo.SystemBankGet(q.SystemID, 2) z
 									WHERE z.InfoBankName = d.IB
 										AND z.SystemBaseName NOT IN ('BVP', 'JURP', 'BUDP', 'JUR', 'MBP')
@@ -171,9 +171,9 @@ BEGIN
 			ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY SystemOrder) AS RN,
 			ClientID, ClientFullName, ServiceName, ManagerName,
 			CASE TP
-				WHEN 'INET' THEN 'Скачан'
-				WHEN 'DUTY' THEN 'ДС'
-				WHEN 'STUDY' THEN 'Обучение'
+				WHEN 'INET' THEN 'РЎРєР°С‡Р°РЅ'
+				WHEN 'DUTY' THEN 'Р”РЎ'
+				WHEN 'STUDY' THEN 'РћР±СѓС‡РµРЅРёРµ'
 				ELSE ''
 			END AS TP_STR,
 			SystemShortName, SYS_CNT, SYS_EXISTS, VERDIKT

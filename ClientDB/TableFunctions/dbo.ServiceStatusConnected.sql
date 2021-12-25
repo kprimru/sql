@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -20,7 +20,7 @@ BEGIN
 
 	INSERT INTO @Tmp
 	SELECT SetItem
-	FROM dbo.NamedSetItemsSelect('dbo.ServiceStatusTable', 'Пополняемые')
+	FROM dbo.NamedSetItemsSelect('dbo.ServiceStatusTable', 'РџРѕРїРѕР»РЅСЏРµРјС‹Рµ')
 
 	INSERT INTO @Result
 	SELECT Cast(ServiceStatus_Id AS SmallInt)

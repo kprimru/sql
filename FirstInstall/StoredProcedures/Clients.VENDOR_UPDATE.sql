@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -41,7 +41,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'VENDOR', @VD_ID_MASTER, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'VENDOR', 'Редактирование', @VD_ID_MASTER, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'VENDOR', 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ', @VD_ID_MASTER, @OLD, @NEW
 END
 
 GO

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -65,7 +65,7 @@ BEGIN
             AND [CompNumber] = @CompNumber
             AND [HostID] = 1;
 
-        -- ToDo именованные множества
+        -- ToDo РёРјРµРЅРѕРІР°РЅРЅС‹Рµ РјРЅРѕР¶РµСЃС‚РІР°
         IF @DistrTypeCode = 'NEK' BEGIN
             SELECT @Subhost_Id = SC_ID_SUBHOST
             FROM dbo.SubhostComplect AS SC
@@ -83,13 +83,13 @@ BEGIN
             WHERE SH_ID = @Subhost_Id;
 
             --SET @EmailRecipients    = 'urazova@bazis;nalunina@bazis';
-            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
+            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - РїР°СЂР°РјРµС‚СЂС‹ РґРѕСЃС‚СѓРїР°';
             SET @EmailBody          = '<table bgcolor="#ffffff">
     <tr>
         <td width=800>
             <span style=" font-family:''verdana''; font-size: 14pt; color: #514da1;">
                 <b>
-                    Онлайн-версия систем КонсультантПлюс
+                    РћРЅР»Р°Р№РЅ-РІРµСЂСЃРёСЏ СЃРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ
                     <br>
                     <br>
                     <br>
@@ -99,30 +99,30 @@ BEGIN
                 <tr>
                     <td width=756>
                         <span style=" font-family:''courier new''; font-size: 12pt;">
-                            <b>Данные для доступа к Системе:
+                            <b>Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РЎРёСЃС‚РµРјРµ:
                                 <br>
                             </b>
-                            <span style=" font-size: 9pt;">Ссылка:</span>
+                            <span style=" font-size: 9pt;">РЎСЃС‹Р»РєР°:</span>
                         </span>
                         <a style=" font-family:''courier new''; font-size: 12pt;" href="https://login.consultant.ru/">https://login.consultant.ru/</a>
                         <br>
-                            <span style=" font-family:''courier new''; font-size: 9pt;">Логин: ' + @Login + '
-                        <br>Пароль: ' + @Password + '
+                            <span style=" font-family:''courier new''; font-size: 9pt;">Р›РѕРіРёРЅ: ' + @Login + '
+                        <br>РџР°СЂРѕР»СЊ: ' + @Password + '
                     </td>
                 </tr>
             </table>'
         END ELSE IF @DistrTypeCode IS NULL BEGIN
             SET @EmailRecipients    = 'denisov@bazis;blohin@bazis;gvv@bazis';
-            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
-            SET @EmailBody          = 'Внимание! Дистрибутив не найден в РЦ!' + Char(13) + Char(10) + 'Получены учетные данные для дистрибутива ' + @Login + Char(13) + Char(10) + 'Пароль: ' + @Password;
+            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - РїР°СЂР°РјРµС‚СЂС‹ РґРѕСЃС‚СѓРїР°';
+            SET @EmailBody          = 'Р’РЅРёРјР°РЅРёРµ! Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ РЅР°Р№РґРµРЅ РІ Р Р¦!' + Char(13) + Char(10) + 'РџРѕР»СѓС‡РµРЅС‹ СѓС‡РµС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° ' + @Login + Char(13) + Char(10) + 'РџР°СЂРѕР»СЊ: ' + @Password;
             SET @EmailBody          = '<table bgcolor="#ffffff">
     <tr>
         <td width=800>
             <span style=" font-family:''verdana''; font-size: 14pt; color: #514da1;">
                 <b>
-                    Получены учетные данные для дистрибутива
+                    РџРѕР»СѓС‡РµРЅС‹ СѓС‡РµС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°
                     <br>
-                    Внимание! Дистрибутив не найден в РЦ!
+                    Р’РЅРёРјР°РЅРёРµ! Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ РЅР°Р№РґРµРЅ РІ Р Р¦!
                     <br>
                     <br>
                     <br>
@@ -132,27 +132,27 @@ BEGIN
                 <tr>
                     <td width=756>
                         <span style=" font-family:''courier new''; font-size: 12pt;">
-                            <b>Данные для доступа к Системе:
+                            <b>Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РЎРёСЃС‚РµРјРµ:
                                 <br>
                             </b>
-                            <span style=" font-size: 9pt;">Ссылка:</span>
+                            <span style=" font-size: 9pt;">РЎСЃС‹Р»РєР°:</span>
                         </span>
                         <a style=" font-family:''courier new''; font-size: 12pt;" href="https://login.consultant.ru/">https://login.consultant.ru/</a>
                         <br>
-                            <span style=" font-family:''courier new''; font-size: 9pt;">Логин: ' + @Login + '
-                        <br>Пароль: ' + @Password + '
+                            <span style=" font-family:''courier new''; font-size: 9pt;">Р›РѕРіРёРЅ: ' + @Login + '
+                        <br>РџР°СЂРѕР»СЊ: ' + @Password + '
                     </td>
                 </tr>
             </table>'
         END ELSE BEGIN
             SET @EmailRecipients    = 'blohin@bazis;gvv@bazis';
-            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
+            SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - РїР°СЂР°РјРµС‚СЂС‹ РґРѕСЃС‚СѓРїР°';
             SET @EmailBody          = '<table bgcolor="#ffffff">
     <tr>
         <td width=800>
             <span style=" font-family:''verdana''; font-size: 14pt; color: #514da1;">
                 <b>
-                    Получены учетные данные для дистрибутива ' + IsNull(@DistrStr, '') + '
+                    РџРѕР»СѓС‡РµРЅС‹ СѓС‡РµС‚РЅС‹Рµ РґР°РЅРЅС‹Рµ РґР»СЏ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° ' + IsNull(@DistrStr, '') + '
                     <br>
                     <br>
                     <br>
@@ -162,15 +162,15 @@ BEGIN
                 <tr>
                     <td width=756>
                         <span style=" font-family:''courier new''; font-size: 12pt;">
-                            <b>Данные для доступа к Системе:
+                            <b>Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РЎРёСЃС‚РµРјРµ:
                                 <br>
                             </b>
-                            <span style=" font-size: 9pt;">Ссылка:</span>
+                            <span style=" font-size: 9pt;">РЎСЃС‹Р»РєР°:</span>
                         </span>
                         <a style=" font-family:''courier new''; font-size: 12pt;" href="https://login.consultant.ru/">https://login.consultant.ru/</a>
                         <br>
-                            <span style=" font-family:''courier new''; font-size: 9pt;">Логин: ' + IsNull(@Login, '') + '
-                        <br>Пароль: ' + IsNull(@Password, '') + '
+                            <span style=" font-family:''courier new''; font-size: 9pt;">Р›РѕРіРёРЅ: ' + IsNull(@Login, '') + '
+                        <br>РџР°СЂРѕР»СЊ: ' + IsNull(@Password, '') + '
                     </td>
                 </tr>
             </table>'

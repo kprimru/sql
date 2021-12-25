@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -67,11 +67,11 @@ BEGIN
                 AND RP.RPR_COMP = R.CompNumber
             ORDER BY RPR_DATE_S
         ) AS RP
-        WHERE R.NT_TECH IN (3, 7, 9) -- ToDo - именованное множество
+        WHERE R.NT_TECH IN (3, 7, 9) -- ToDo - РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
             AND RP.RPR_DATE_S >= '20201228'
             AND R.HostID = 1
             AND R.DS_REG = 0
-            AND R.DistrType NOT IN ('NEK') -- ToDo - именованное множество
+            AND R.DistrType NOT IN ('NEK') -- ToDo - РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
             AND Cast(RegisterDate AS SmallDateTime) >= '20201228';
 
         INSERT INTO @SksDistrs(Host_Id, Distr, Comp, SubhostName, SksDistr)
@@ -148,7 +148,7 @@ BEGIN
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'
                 AND R.DS_REG = 0
-                AND R.NT_TECH IN (3, 7, 9) -- ToDo заменить на именованное множество
+                AND R.NT_TECH IN (3, 7, 9) -- ToDo Р·Р°РјРµРЅРёС‚СЊ РЅР° РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
         ) AS S
         WHERE D.[SubhostName] = ''
             AND D.MainDistr IS NULL
@@ -206,7 +206,7 @@ BEGIN
                 AND R.SystemBaseName = 'SKS'
                 AND R.DS_REG = 0
         ) AS S
-        WHERE D.[SubhostName] = 'М'
+        WHERE D.[SubhostName] = 'Рњ'
             AND D.SksDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -237,9 +237,9 @@ BEGIN
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'
                 AND R.DS_REG = 0
-                AND R.NT_TECH IN (3, 7, 9) -- ToDo заменить на именованное множество
+                AND R.NT_TECH IN (3, 7, 9) -- ToDo Р·Р°РјРµРЅРёС‚СЊ РЅР° РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
         ) AS S
-        WHERE D.[SubhostName] = 'М'
+        WHERE D.[SubhostName] = 'Рњ'
             AND D.MainDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -271,7 +271,7 @@ BEGIN
                 AND R.SystemBaseName = 'SKS'
                 AND R.DS_REG = 0
         ) AS S
-        WHERE D.[SubhostName] = 'Н1'
+        WHERE D.[SubhostName] = 'Рќ1'
             AND D.SksDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -302,9 +302,9 @@ BEGIN
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'
                 AND R.DS_REG = 0
-                AND R.NT_TECH IN (3, 7, 9) -- ToDo заменить на именованное множество
+                AND R.NT_TECH IN (3, 7, 9) -- ToDo Р·Р°РјРµРЅРёС‚СЊ РЅР° РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
         ) AS S
-        WHERE D.[SubhostName] = 'Н1'
+        WHERE D.[SubhostName] = 'Рќ1'
             AND D.MainDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -336,7 +336,7 @@ BEGIN
                 AND R.SystemBaseName = 'SKS'
                 AND R.DS_REG = 0
         ) AS S
-        WHERE D.[SubhostName] = 'У1'
+        WHERE D.[SubhostName] = 'РЈ1'
             AND D.SksDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -367,9 +367,9 @@ BEGIN
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'
                 AND R.DS_REG = 0
-                AND R.NT_TECH IN (3, 7, 9) -- ToDo заменить на именованное множество
+                AND R.NT_TECH IN (3, 7, 9) -- ToDo Р·Р°РјРµРЅРёС‚СЊ РЅР° РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
         ) AS S
-        WHERE D.[SubhostName] = 'У1'
+        WHERE D.[SubhostName] = 'РЈ1'
             AND D.MainDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -401,7 +401,7 @@ BEGIN
                 AND R.SystemBaseName = 'SKS'
                 AND R.DS_REG = 0
         ) AS S
-        WHERE D.[SubhostName] = 'Л1'
+        WHERE D.[SubhostName] = 'Р›1'
             AND D.SksDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
@@ -432,21 +432,21 @@ BEGIN
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'
                 AND R.DS_REG = 0
-                AND R.NT_TECH IN (3, 7, 9) -- ToDo заменить на именованное множество
+                AND R.NT_TECH IN (3, 7, 9) -- ToDo Р·Р°РјРµРЅРёС‚СЊ РЅР° РёРјРµРЅРѕРІР°РЅРЅРѕРµ РјРЅРѕР¶РµСЃС‚РІРѕ
         ) AS S
-        WHERE D.[SubhostName] = 'Л1'
+        WHERE D.[SubhostName] = 'Р›1'
             AND D.MainDistr IS NULL
             AND S.DistrStr IS NOT NULL;
 
         SELECT
-            [Клиент] = IsNull(ClientName, R.Comment),
-            [Подхост]   = D.[SubhostName],
-            [РГ] = IsNull(ManagerName, D.SubhostName),
-            [СИ] = IsNull(ServiceName, D.SubhostName),
-            [Осн.Дистрибутив|Номер] = MainDistr,
-            [Осн.Дистрибутив|Сеть] = MainNet,
-            [Осн.Дистрибутив|Тип] = MainType,
-            [Дистрибутив СКС] = SksDistr
+            [РљР»РёРµРЅС‚] = IsNull(ClientName, R.Comment),
+            [РџРѕРґС…РѕСЃС‚]   = D.[SubhostName],
+            [Р Р“] = IsNull(ManagerName, D.SubhostName),
+            [РЎР] = IsNull(ServiceName, D.SubhostName),
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РќРѕРјРµСЂ] = MainDistr,
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РЎРµС‚СЊ] = MainNet,
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РўРёРї] = MainType,
+            [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЎРљРЎ] = SksDistr
         FROM @Distrs AS D
         LEFT JOIN Reg.RegNodeSearchView AS R WITH(NOEXPAND) ON D.Host_Id = R.HostId AND R.DistrNumber = D.Distr AND R.CompNumber = D.Comp
         WHERE D.SksDistr IS NULL
@@ -454,20 +454,20 @@ BEGIN
         UNION ALL
 
         SELECT
-            [Клиент] = IsNull(ClientName, R.Comment),
-            [Подхост]   = D.[SubhostName],
-            [РГ] = IsNull(ManagerName, D.SubhostName),
-            [СИ] = IsNull(ServiceName, D.SubhostName),
-            [Осн.Дистрибутив|Номер] = MainDistr,
-            [Осн.Дистрибутив|Сеть] = NULL,
-            [Осн.Дистрибутив|Тип] = NULL,
-            [Дистрибутив СКС] = SksDistr
+            [РљР»РёРµРЅС‚] = IsNull(ClientName, R.Comment),
+            [РџРѕРґС…РѕСЃС‚]   = D.[SubhostName],
+            [Р Р“] = IsNull(ManagerName, D.SubhostName),
+            [РЎР] = IsNull(ServiceName, D.SubhostName),
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РќРѕРјРµСЂ] = MainDistr,
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РЎРµС‚СЊ] = NULL,
+            [РћСЃРЅ.Р”РёСЃС‚СЂРёР±СѓС‚РёРІ|РўРёРї] = NULL,
+            [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЎРљРЎ] = SksDistr
         FROM @SksDistrs AS D
         LEFT JOIN Reg.RegNodeSearchView AS R WITH(NOEXPAND) ON D.Host_Id = R.HostId AND R.DistrNumber = D.Distr AND R.CompNumber = D.Comp
         WHERE MainDistr IS NULL
 
         ORDER BY
-            D.SubhostName, [РГ], [СИ], [Клиент];
+            D.SubhostName, [Р Р“], [РЎР], [РљР»РёРµРЅС‚];
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -16,7 +16,7 @@ AS
 		INNER JOIN dbo.DistrStatus d ON d.DS_ID = c.ID_STATUS
 		INNER JOIN dbo.SystemTable e ON e.SystemID = c.ID_SYSTEM
 		INNER JOIN dbo.RegProtocol f ON f.RPR_ID_HOST = e.HostID AND f.RPR_DISTR = c.DISTR AND f.RPR_COMP = c.COMP
-	WHERE /*DS_REG = 0 AND *//*RPR_OPER = 'ÕŒ¬¿ﬂ' AND */a.STATUS = 1 AND c.STATUS = 1
+	WHERE /*DS_REG = 0 AND *//*RPR_OPER = '–ù–û–í–ê–Ø' AND */a.STATUS = 1 AND c.STATUS = 1
 	GROUP BY a.ClientID, dbo.DateOf(RPR_DATE)
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientConnectView(ClientID,ConnectDate)] ON [dbo].[ClientConnectView] ([ClientID] ASC, [ConnectDate] ASC);

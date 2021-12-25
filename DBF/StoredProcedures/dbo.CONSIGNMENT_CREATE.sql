@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,9 +8,9 @@ GO
 
 
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CREATE]
@@ -112,19 +112,19 @@ BEGIN
 			CL_PHONE,
 			CASE LTRIM(RTRIM(ISNULL(CL_ACCOUNT, '')))
 				WHEN '' THEN ''
-				ELSE 'р.с ' + CL_ACCOUNT
+				ELSE 'СЂ.СЃ ' + CL_ACCOUNT
 			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_NAME, '')))
 				WHEN '' THEN ''
-				ELSE ' в ' + BA_NAME
+				ELSE ' РІ ' + BA_NAME
 			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_BIK, '')))
 				WHEN '' THEN ''
-				ELSE ', БИК ' + BA_BIK
+				ELSE ', Р‘РРљ ' + BA_BIK
 			END +
 			CASE LTRIM(RTRIM(ISNULL(BA_LORO, '')))
 				WHEN '' THEN ''
-				ELSE ' корр/с ' + BA_LORO
+				ELSE ' РєРѕСЂСЂ/СЃ ' + BA_LORO
 			END,
 			'', NULL, @consdate, CL_ID_PAYER
 		FROM

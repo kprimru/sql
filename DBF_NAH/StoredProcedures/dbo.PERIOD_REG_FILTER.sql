@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+ÔªøUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,8 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*
-¿‚ÚÓ:
-ŒÔËÒ‡ÌËÂ:
+–ê–≤—Ç–æ—Ä:
+–û–ø–∏—Å–∞–Ω–∏–µ:
 */
 
 ALTER PROCEDURE [dbo].[PERIOD_REG_FILTER]
@@ -43,7 +43,7 @@ BEGIN
 	BEGIN TRY
 
 		-----------
-		--œ≈–»Œƒ€--
+		--–ü–ï–†–ò–û–î–´--
 		-----------
 		IF OBJECT_ID('tempdb..#periods') IS NOT NULL
 			DROP TABLE #periods
@@ -61,7 +61,7 @@ BEGIN
 			END
 
 		-----------
-		--—»—“≈Ã€--
+		--–°–ò–°–¢–ï–ú–´--
 		-----------
 		IF OBJECT_ID('tempdb..#systems') IS NOT NULL
 			DROP TABLE #systems
@@ -78,7 +78,7 @@ BEGIN
 			END
 
 		------------
-		--œŒƒ’Œ—“€--
+		--–ü–û–î–•–û–°–¢–´--
 		------------
 		IF OBJECT_ID('tempdb..#subhosts') IS NOT NULL
 			DROP TABLE #subhosts
@@ -95,7 +95,7 @@ BEGIN
 			END
 
 		---------------
-		--“»œ€ —»—“≈Ã--
+		--–¢–ò–ü–´ –°–ò–°–¢–ï–ú--
 		---------------
 		IF OBJECT_ID('tempdb..#systemtypes') IS NOT NULL
 			DROP TABLE #systemtypes
@@ -129,7 +129,7 @@ BEGIN
 			END
 
 		-----------
-		-- ”–‹≈–€--
+		--–ö–£–†–¨–ï–†–´--
 		-----------
 		IF OBJECT_ID('tempdb..#cours') IS NOT NULL
 			DROP TABLE #cours
@@ -146,7 +146,7 @@ BEGIN
 			END
 
 		------------------------
-		--—“¿“”—€ Œ¡—À”∆»¬¿Õ»ﬂ--
+		--–°–¢–ê–¢–£–°–´ –û–ë–°–õ–£–ñ–ò–í–ê–ù–ò–Ø--
 		------------------------
 		IF OBJECT_ID('tempdb..#statuses') IS NOT NULL
 			DROP TABLE #statuses

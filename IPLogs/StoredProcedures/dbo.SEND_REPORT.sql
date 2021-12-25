@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 	    SELECT
 		    @currDate = DATEADD(WEEK, -1, CONVERT(DATETIME, CONVERT(VARCHAR(20), GETDATE(), 112), 112))
 
-	    /********** ищем понедельник ************/
+	    /********** РёС‰РµРј РїРѕРЅРµРґРµР»СЊРЅРёРє ************/
 	    SELECT @currDateTmp = @currDate
 
 	    WHILE DATEPART(WEEKDAY, @currDateTmp) <> 1
@@ -39,7 +39,7 @@ BEGIN
 
 	    SELECT @mondayDate = @currDateTmp
 
-	    /********** ищем воскресенье ************/
+	    /********** РёС‰РµРј РІРѕСЃРєСЂРµСЃРµРЅСЊРµ ************/
 	    SELECT @sundayDate = DATEADD(WEEK, 1, @mondayDate)
     
 
@@ -51,7 +51,7 @@ BEGIN
 
 	    DECLARE @HEADER NVARCHAR(512)
 
-	    SET @HEADER = N'Отчет по пополненным клиентам ИП сервера с ' + CONVERT(VARCHAR(20), @BEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), @END, 104)
+	    SET @HEADER = N'РћС‚С‡РµС‚ РїРѕ РїРѕРїРѕР»РЅРµРЅРЅС‹Рј РєР»РёРµРЅС‚Р°Рј РРџ СЃРµСЂРІРµСЂР° СЃ ' + CONVERT(VARCHAR(20), @BEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), @END, 104)
 
 	    DECLARE @SQL NVARCHAR(MAX)
     
@@ -134,7 +134,7 @@ BEGIN
 				    @recipients = N'it@kprim.ru;ois@kprim.ru;denisov@bazis;bateneva@bazis;jurba@bazis;matv@bazis',
 				    @body = @HEADER,
 				    @query = @SQL,
-				    @subject='Отчет по ИП серверу',
+				    @subject='РћС‚С‡РµС‚ РїРѕ РРџ СЃРµСЂРІРµСЂСѓ',
 				    @query_result_header = 0,
 				    @attach_query_result_as_file = 1,
 				    @query_attachment_filename = 'ip.txt'

@@ -1,4 +1,4 @@
-USE [BuhDB]
+ÔªøUSE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
 	        SystemExpire, --IsGenerated
 	        IsGenerated = CASE WHEN SystemPrice = 60 THEN Row_Number() OVER(PARTITION BY SystemName, DistrNumber, SystemPrice ORDER BY SystemOrder) ELSE 0 END
 	    FROM ActSystemsTable WITH(NOLOCK)
-	    WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%ÙÎ˝¯%')
+	    WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%—Ñ–ª—ç—à%')
 	) AS o_O
 	ORDER BY SystemOrder, DistrNumber, SystemPrice
 END

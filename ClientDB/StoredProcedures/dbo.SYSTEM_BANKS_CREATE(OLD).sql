@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,15 +26,15 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @TEMP_S					NVARCHAR(15)			--оепелеммше дкъ упюмемхъ йюфднцн оюпюлерпю он ндмнлс б жхйке
+		DECLARE @TEMP_S					NVARCHAR(15)			--п÷п∙п═п∙п°п∙п²п²п╚п∙ п■п⌡п╞ п╔п═п░п²п∙п²п≤п╞ п п░п√п■п·п⌠п· п÷п░п═п░п°п∙п╒п═п░ п÷п· п·п■п²п·п°пё п▓ п╕п≤п п⌡п∙
 		DECLARE @TEMP_D					NVARCHAR(15)
 		DECLARE @TEMP_B					NVARCHAR(15)
 		DECLARE @TEMP_R					BIT
 
-		DECLARE @DISTR_TYPE_TEMP_LIST	NVARCHAR(MAX)			--оепелеммше дкъ упюмемхъ йнохх яохяйю врнаш ецн лнфмн ашкн бняярюмнбхрэ дкъ якедсчыеи хрепюжхх жхйкю
+		DECLARE @DISTR_TYPE_TEMP_LIST	NVARCHAR(MAX)			--п÷п∙п═п∙п°п∙п²п²п╚п∙ п■п⌡п╞ п╔п═п░п²п∙п²п≤п╞ п п·п÷п≤п≤ п║п÷п≤п║п п░ п╖п╒п·п▒п╚ п∙п⌠п· п°п·п√п²п· п▒п╚п⌡п· п▓п·п║п║п╒п░п²п·п▓п≤п╒п╛ п■п⌡п╞ п║п⌡п∙п■пёп╝п╘п∙п≥ п≤п╒п∙п═п░п╕п≤п≤ п╕п≤п п⌡п░
 		DECLARE @BANK_REQ_TEMP_LIST		NVARCHAR(MAX)
 
-		DECLARE @SYS_END				BIT						--оепелеммше дкъ нопедекемхъ йнмжю яохяйю
+		DECLARE @SYS_END				BIT						--п÷п∙п═п∙п°п∙п²п²п╚п∙ п■п⌡п╞ п·п÷п═п∙п■п∙п⌡п∙п²п≤п╞ п п·п²п╕п░ п║п÷п≤п║п п░
 		DECLARE @DISTR_TYPE_END			BIT
 		DECLARE @BANK_REQ_END			BIT
 
@@ -48,7 +48,7 @@ BEGIN
 		BEGIN
 			IF (CHARINDEX(',', @SYS_LIST)<>0)
 			BEGIN
-				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--гдеяэ бшрюяйхбюел он ндмнлс ID яхярелш хг яохяйю
+				SET @TEMP_S = SUBSTRING(@SYS_LIST, 1, CHARINDEX(',', @SYS_LIST)-1)						--п≈п■п∙п║п╛ п▓п╚п╒п░п║п п≤п▓п░п∙п° п÷п· п·п■п²п·п°пё ID п║п≤п║п╒п∙п°п╚ п≤п≈ п║п÷п≤п║п п░
 				SET @SYS_LIST = SUBSTRING(@SYS_LIST, CHARINDEX(',', @SYS_LIST)+1, LEN(@SYS_LIST))
 			END
 			ELSE
@@ -78,7 +78,7 @@ BEGIN
 
 				DELETE
 				FROM dbo.SystemsBanks
-				WHERE	System_Id = @TEMP_S AND			--онкмнярэч бяе сдюкъел дкъ щрни яхярелш х яерх х гюонкмъел гюмнбн
+				WHERE	System_Id = @TEMP_S AND			--п÷п·п⌡п²п·п║п╒п╛п╝ п▓п║п∙ пёп■п░п⌡п╞п∙п° п■п⌡п╞ п╜п╒п·п≥ п║п≤п║п╒п∙п°п╚ п≤ п║п∙п╒п≤ п≤ п≈п░п÷п·п⌡п²п╞п∙п° п≈п░п²п·п▓п·
 						DistrType_Id = @TEMP_D
 
 				WHILE @BANK_REQ_END = 0
@@ -86,7 +86,7 @@ BEGIN
 					IF (CHARINDEX(',', @BANK_REQ_TEMP_LIST)<>0)
 					BEGIN
 						SET @TEMP_B = SUBSTRING(@BANK_REQ_TEMP_LIST, 1, CHARINDEX('-', @BANK_REQ_TEMP_LIST)-1)
-						SET @TEMP_R = SUBSTRING(@BANK_REQ_TEMP_LIST, CHARINDEX('-', @BANK_REQ_TEMP_LIST)+1, 1) --бюфмн онлмхрэ, 3 юпцслемр - дкхмю ю ме йнмевмюъ онгхжхъ
+						SET @TEMP_R = SUBSTRING(@BANK_REQ_TEMP_LIST, CHARINDEX('-', @BANK_REQ_TEMP_LIST)+1, 1) --п▓п░п√п²п· п÷п·п°п²п≤п╒п╛, 3 п░п═п⌠пёп°п∙п²п╒ - п■п⌡п≤п²п░ п░ п²п∙ п п·п²п∙п╖п²п░п╞ п÷п·п≈п≤п╕п≤п╞
 
 						SET @BANK_REQ_TEMP_LIST = SUBSTRING(@BANK_REQ_TEMP_LIST, CHARINDEX(',', @BANK_REQ_TEMP_LIST)+1, LEN(@BANK_REQ_TEMP_LIST))
 					END

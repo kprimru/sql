@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -69,7 +69,7 @@ BEGIN
 			    @LOG_COMP = dbo.LOG_COMP(@FILENAME), @LOG_DATE = dbo.LOG_DATE(@FILENAME);
     
 		    /*
-		    обновляем кэш в ДК
+		    РѕР±РЅРѕРІР»СЏРµРј РєСЌС€ РІ Р”Рљ
 		    */
 		    UPDATE [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast]
 		    SET DATE = @LOG_DATE

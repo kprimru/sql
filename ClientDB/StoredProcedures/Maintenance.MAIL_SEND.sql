@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
 					@profile_name	=	'SQLMail',
 					@recipients		=	'denisov@bazis;blohin@bazis',
 					@body			=	@TEXT,
-					@subject		=	'Уведомление "Досье клиентов"',
+					@subject		=	'РЈРІРµРґРѕРјР»РµРЅРёРµ "Р”РѕСЃСЊРµ РєР»РёРµРЅС‚РѕРІ"',
 					@query_result_header	=	0
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

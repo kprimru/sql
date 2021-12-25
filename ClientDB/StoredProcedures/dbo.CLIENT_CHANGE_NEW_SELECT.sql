@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -89,7 +89,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Название', 1,
+						'РќР°Р·РІР°РЅРёРµ', 1,
 						(
 							SELECT TOP 1 ClientFullName
 							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
@@ -107,7 +107,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Название', 1,
+						'РќР°Р·РІР°РЅРёРµ', 1,
 						(
 							SELECT TOP 1 ClientFullName
 							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
@@ -134,7 +134,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ИНН', 2,
+						'РРќРќ', 2,
 						(
 							SELECT TOP 1 ClientINN
 							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
@@ -152,7 +152,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ИНН', 2,
+						'РРќРќ', 2,
 						(
 							SELECT TOP 1 ClientINN
 							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
@@ -179,7 +179,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Адрес', 3,
+						'РђРґСЂРµСЃ', 3,
 						(
 							SELECT TOP 1 CA_STR
 							FROM dbo.ClientEditionView z
@@ -197,7 +197,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Адрес', 3,
+						'РђРґСЂРµСЃ', 3,
 						(
 							SELECT TOP 1 CA_STR
 							FROM dbo.ClientEditionView z
@@ -224,7 +224,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО руководителя', 4,
+						'Р¤РРћ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 4,
 						(
 							SELECT TOP 1 DIR_FIO
 							FROM dbo.ClientEditionView z
@@ -242,7 +242,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО руководителя', 4,
+						'Р¤РРћ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 4,
 						(
 							SELECT TOP 1 DIR_FIO
 							FROM dbo.ClientEditionView z
@@ -269,7 +269,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность руководителя', 5,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 5,
 						(
 							SELECT TOP 1 DIR_POS
 							FROM dbo.ClientEditionView z
@@ -287,7 +287,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность руководителя', 5,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 5,
 						(
 							SELECT TOP 1 DIR_POS
 							FROM dbo.ClientEditionView z
@@ -314,7 +314,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон руководителя', 6,
+						'РўРµР»РµС„РѕРЅ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 6,
 						(
 							SELECT TOP 1 DIR_PHONE
 							FROM dbo.ClientEditionView z
@@ -332,7 +332,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон руководителя', 6,
+						'РўРµР»РµС„РѕРЅ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ', 6,
 						(
 							SELECT TOP 1 DIR_PHONE
 							FROM dbo.ClientEditionView z
@@ -359,7 +359,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО гл.бух.', 7,
+						'Р¤РРћ РіР».Р±СѓС….', 7,
 						(
 							SELECT TOP 1 BUH_FIO
 							FROM dbo.ClientEditionView z
@@ -377,7 +377,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО гл.бух.', 7,
+						'Р¤РРћ РіР».Р±СѓС….', 7,
 						(
 							SELECT TOP 1 BUH_FIO
 							FROM dbo.ClientEditionView z
@@ -404,7 +404,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность гл.бух.', 8,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РіР».Р±СѓС….', 8,
 						(
 							SELECT TOP 1 BUH_POS
 							FROM dbo.ClientEditionView z
@@ -422,7 +422,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность гл.бух.', 8,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РіР».Р±СѓС….', 8,
 						(
 							SELECT TOP 1 BUH_POS
 							FROM dbo.ClientEditionView z
@@ -449,7 +449,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон гл.бух.', 9,
+						'РўРµР»РµС„РѕРЅ РіР».Р±СѓС….', 9,
 						(
 							SELECT TOP 1 BUH_PHONE
 							FROM dbo.ClientEditionView z
@@ -467,7 +467,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон гл.бух.', 9,
+						'РўРµР»РµС„РѕРЅ РіР».Р±СѓС….', 9,
 						(
 							SELECT TOP 1 BUH_PHONE
 							FROM dbo.ClientEditionView z
@@ -494,7 +494,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО ответственного', 10,
+						'Р¤РРћ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 10,
 						(
 							SELECT TOP 1 RES_FIO
 							FROM dbo.ClientEditionView z
@@ -512,7 +512,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'ФИО ответственного', 10,
+						'Р¤РРћ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 10,
 						(
 							SELECT TOP 1 RES_FIO
 							FROM dbo.ClientEditionView z
@@ -539,7 +539,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность ответственного', 11,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 11,
 						(
 							SELECT TOP 1 RES_POS
 							FROM dbo.ClientEditionView z
@@ -557,7 +557,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Должность ответственного', 11,
+						'Р”РѕР»Р¶РЅРѕСЃС‚СЊ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 11,
 						(
 							SELECT TOP 1 RES_POS
 							FROM dbo.ClientEditionView z
@@ -584,7 +584,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон ответственного', 12,
+						'РўРµР»РµС„РѕРЅ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 12,
 						(
 							SELECT TOP 1 RES_PHONE
 							FROM dbo.ClientEditionView z
@@ -602,7 +602,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Телефон ответственного', 12,
+						'РўРµР»РµС„РѕРЅ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕРіРѕ', 12,
 						(
 							SELECT TOP 1 RES_PHONE
 							FROM dbo.ClientEditionView z
@@ -630,7 +630,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Сервис-инженер', 13,
+						'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ', 13,
 						(
 							SELECT TOP 1 ServiceName
 							FROM
@@ -650,7 +650,7 @@ BEGIN
 				INSERT INTO #change(ClientID, FieldName, FieldOrder, OldValue, NewValue, UpdateDate, UserName)
 					SELECT
 						a.ID,
-						'Сервис-инженер', 13,
+						'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ', 13,
 						ISNULL((
 							SELECT TOP 1 ServiceName
 							FROM

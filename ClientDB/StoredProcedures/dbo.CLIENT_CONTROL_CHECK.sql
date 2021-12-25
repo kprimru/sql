@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 				AND CC_REMOVE_DATE IS NULL
 		END
 
-		--RAISERROR('Œ¯Ë·Í‡Ì‡Ï˝!', 15, 1)
+		--RAISERROR('–û—à–∏–±–∫–∞–Ω–∞–º—ç!', 15, 1)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

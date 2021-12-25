@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,7 +56,7 @@ BEGIN
 
 			IF @SIGN IS NULL
 			BEGIN
-				RAISERROR ('Ошибка записи о клиенте. Обратитесь к разработчику.', 10, 1)
+				RAISERROR ('РћС€РёР±РєР° Р·Р°РїРёСЃРё Рѕ РєР»РёРµРЅС‚Рµ. РћР±СЂР°С‚РёС‚РµСЃСЊ Рє СЂР°Р·СЂР°Р±РѕС‚С‡РёРєСѓ.', 10, 1)
 				RETURN
 			END
 

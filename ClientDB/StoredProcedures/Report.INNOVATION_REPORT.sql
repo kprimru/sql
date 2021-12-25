@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT EXECUTE_DATE_S AS [Дата исполнения], DETAIL_DATA AS [Описание], EXECUTOR_NOTE AS [Примечание исполнителя]
+		SELECT EXECUTE_DATE_S AS [Р”Р°С‚Р° РёСЃРїРѕР»РЅРµРЅРёСЏ], DETAIL_DATA AS [РћРїРёСЃР°РЅРёРµ], EXECUTOR_NOTE AS [РџСЂРёРјРµС‡Р°РЅРёРµ РёСЃРїРѕР»РЅРёС‚РµР»СЏ]
 		FROM dbo.TaskDBView
 		ORDER BY EXECUTE_DATE_S DESC
 

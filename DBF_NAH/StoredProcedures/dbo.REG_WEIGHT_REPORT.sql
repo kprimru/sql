@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -210,8 +210,8 @@ BEGIN
 					WHEN ID_MASTER IS NULL THEN NULL
 					ELSE
 						CASE SH_SUBHOST
-							WHEN 1 THEN 'на подхосте'
-							WHEN 0 THEN 'на хосте'
+							WHEN 1 THEN 'РЅР° РїРѕРґС…РѕСЃС‚Рµ'
+							WHEN 0 THEN 'РЅР° С…РѕСЃС‚Рµ'
 							ELSE '???'
 						END
 				END AS SH_SUBHOST, SH_COEF,

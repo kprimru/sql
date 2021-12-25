@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DELIVERY]
@@ -37,12 +37,12 @@ BEGIN
 
 		DECLARE @TXT VARCHAR(MAX)
 
-		SELECT @TXT = 'От "' + a.CL_FULL_NAME + '" к "' + b.CL_FULL_NAME + '"'
+		SELECT @TXT = 'РћС‚ "' + a.CL_FULL_NAME + '" Рє "' + b.CL_FULL_NAME + '"'
 		FROM dbo.ClientTable a, dbo.ClientTable b
 		WHERE a.CL_ID = @OLD AND b.CL_ID = @clientid
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Передача акта', @TXT, @CLIENTID, @actid
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Передача акта', @TXT, @OLD, @actid
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'РџРµСЂРµРґР°С‡Р° Р°РєС‚Р°', @TXT, @CLIENTID, @actid
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'РџРµСЂРµРґР°С‡Р° Р°РєС‚Р°', @TXT, @OLD, @actid
 
 		UPDATE dbo.ActTable
 		SET ACT_ID_CLIENT = @clientid,

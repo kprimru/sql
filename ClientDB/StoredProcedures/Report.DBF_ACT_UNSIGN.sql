@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,10 +40,10 @@ BEGIN
         EXEC [PC275-SQL\DELTA].[DBF].[dbo].[ACT_UNSIGN_REPORT] @Date;
 
         SELECT
-            [Клиент]    = [Psedo],
-            [СИ]        = [ServiceName],
-            [Дата акта] = [ActDate],
-            [Месяц]     = [PeriodDate]
+            [РљР»РёРµРЅС‚]    = [Psedo],
+            [РЎР]        = [ServiceName],
+            [Р”Р°С‚Р° Р°РєС‚Р°] = [ActDate],
+            [РњРµСЃСЏС†]     = [PeriodDate]
         FROM @Result
         ORDER BY 2, 1, 4, 3
 

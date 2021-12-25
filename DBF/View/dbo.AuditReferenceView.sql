@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ GO
 ALTER VIEW [dbo].[AuditReferenceView]
 AS
 	SELECT
-		'Справочник отчетных должностей' AS REF_NAME,
-		'Отсутствует руководитель' AS REF_ERROR
+		'РЎРїСЂР°РІРѕС‡РЅРёРє РѕС‚С‡РµС‚РЅС‹С… РґРѕР»Р¶РЅРѕСЃС‚РµР№' AS REF_NAME,
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЊ' AS REF_ERROR
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -20,8 +20,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Справочник отчетных должностей',
-		'Отсутствует главный бухгалтер'
+		'РЎРїСЂР°РІРѕС‡РЅРёРє РѕС‚С‡РµС‚РЅС‹С… РґРѕР»Р¶РЅРѕСЃС‚РµР№',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РіР»Р°РІРЅС‹Р№ Р±СѓС…РіР°Р»С‚РµСЂ'
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -32,8 +32,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Справочник отчетных должностей',
-		'Отсутствует ответственный'
+		'РЎРїСЂР°РІРѕС‡РЅРёРє РѕС‚С‡РµС‚РЅС‹С… РґРѕР»Р¶РЅРѕСЃС‚РµР№',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РѕС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№'
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -44,8 +44,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Справочник отчетных должностей',
-		'Отсутствует 4-й сотрудник'
+		'РЎРїСЂР°РІРѕС‡РЅРёРє РѕС‚С‡РµС‚РЅС‹С… РґРѕР»Р¶РЅРѕСЃС‚РµР№',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 4-Р№ СЃРѕС‚СЂСѓРґРЅРёРє'
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -56,8 +56,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Справочник отчетных должностей',
-		'Отсутствует 5-й сотрудник'
+		'РЎРїСЂР°РІРѕС‡РЅРёРє РѕС‚С‡РµС‚РЅС‹С… РґРѕР»Р¶РЅРѕСЃС‚РµР№',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 5-Р№ СЃРѕС‚СЂСѓРґРЅРёРє'
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -68,8 +68,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Количество сетевых станций',
-		'Неизвестное количество сетевых станций "' + CONVERT(VARCHAR, SNC_NET_COUNT) + '" в справочнике'
+		'РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРµС‚РµРІС‹С… СЃС‚Р°РЅС†РёР№',
+		'РќРµРёР·РІРµСЃС‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРµС‚РµРІС‹С… СЃС‚Р°РЅС†РёР№ "' + CONVERT(VARCHAR, SNC_NET_COUNT) + '" РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ'
 	FROM
 		(
 			SELECT DISTINCT SNC_NET_COUNT
@@ -90,8 +90,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Период',
-		'Неверная дата начала/окончания периода "' + PR_NAME + '"' AS ER_MSG
+		'РџРµСЂРёРѕРґ',
+		'РќРµРІРµСЂРЅР°СЏ РґР°С‚Р° РЅР°С‡Р°Р»Р°/РѕРєРѕРЅС‡Р°РЅРёСЏ РїРµСЂРёРѕРґР° "' + PR_NAME + '"' AS ER_MSG
 	FROM dbo.PeriodTable
 	WHERE
 		(PR_END_DATE <> DATEADD(MONTH, 1, DATEADD(DAY, 1 - DAY(PR_DATE), PR_DATE)) - 1)
@@ -100,8 +100,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Период',
-		'Пропущен период "' + CONVERT(VARCHAR, DATEADD(MONTH, 1, a.PR_DATE), 104) + '"' AS ER_MSG
+		'РџРµСЂРёРѕРґ',
+		'РџСЂРѕРїСѓС‰РµРЅ РїРµСЂРёРѕРґ "' + CONVERT(VARCHAR, DATEADD(MONTH, 1, a.PR_DATE), 104) + '"' AS ER_MSG
 	FROM PeriodTable a
 	WHERE NOT EXISTS
 		(
@@ -118,8 +118,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Период',
-		'Отсутствуют периоды на ближайшие 6 месяцев' AS ER_MSG
+		'РџРµСЂРёРѕРґ',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓСЋС‚ РїРµСЂРёРѕРґС‹ РЅР° Р±Р»РёР¶Р°Р№С€РёРµ 6 РјРµСЃСЏС†РµРІ' AS ER_MSG
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -136,8 +136,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Подхосты',
-		'Неизвестный подхост "' + RN_COMMENT + '"'
+		'РџРѕРґС…РѕСЃС‚С‹',
+		'РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїРѕРґС…РѕСЃС‚ "' + RN_COMMENT + '"'
 	FROM
 		(
 			SELECT DISTINCT dbo.GET_HOST_BY_COMMENT(RN_COMMENT) AS RN_COMMENT
@@ -153,8 +153,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Прейскурант',
-		'Система "' + SYS_SHORT_NAME + '" отсутствует в прейскуранте' AS ER_MSG
+		'РџСЂРµР№СЃРєСѓСЂР°РЅС‚',
+		'РЎРёСЃС‚РµРјР° "' + SYS_SHORT_NAME + '" РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Рµ' AS ER_MSG
 	FROM dbo.SystemTable a
 	WHERE SYS_ACTIVE = 1
 		AND NOT EXISTS
@@ -173,8 +173,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Прейскурант',
-		'Отсутствует прейскурант на следующий месяц' AS ER_MSG
+		'РџСЂРµР№СЃРєСѓСЂР°РЅС‚',
+		'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ РјРµСЃСЏС†' AS ER_MSG
 	WHERE NOT EXISTS
 		(
 			SELECT *
@@ -197,8 +197,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Системы',
-		'Неизвестная система в справочнике "' + SYS_SHORT_NAME + '"'
+		'РЎРёСЃС‚РµРјС‹',
+		'РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРёСЃС‚РµРјР° РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ "' + SYS_SHORT_NAME + '"'
 	FROM
 		(
 			SELECT DISTINCT SYS_SHORT_NAME
@@ -228,8 +228,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Системы',
-		'Система с отсутствующим признаком РЦ "' + SYS_SHORT_NAME + '"включена в отчет'
+		'РЎРёСЃС‚РµРјС‹',
+		'РЎРёСЃС‚РµРјР° СЃ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёРј РїСЂРёР·РЅР°РєРѕРј Р Р¦ "' + SYS_SHORT_NAME + '"РІРєР»СЋС‡РµРЅР° РІ РѕС‚С‡РµС‚'
 	FROM dbo.SystemTable
 	WHERE SYS_REPORT = 1
 		AND SYS_REG_NAME = '-'
@@ -237,8 +237,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Статус дистрибутива',
-		'Неизвестный статус дистрибутива в РЦ"' + CONVERT(VARCHAR, RN_SERVICE) + '"'
+		'РЎС‚Р°С‚СѓСЃ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°',
+		'РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃС‚Р°С‚СѓСЃ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° РІ Р Р¦"' + CONVERT(VARCHAR, RN_SERVICE) + '"'
 	FROM
 		(
 			SELECT DISTINCT RN_SERVICE
@@ -254,8 +254,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Статус дистрибутива',
-		'Неизвестный статус дистрибутива "' + CONVERT(VARCHAR, DS_NAME) + '" в справочнике'
+		'РЎС‚Р°С‚СѓСЃ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°',
+		'РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃС‚Р°С‚СѓСЃ РґРёСЃС‚СЂРёР±СѓС‚РёРІР° "' + CONVERT(VARCHAR, DS_NAME) + '" РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ'
 	FROM
 		(
 			SELECT DISTINCT DS_NAME
@@ -277,8 +277,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Тип системы',
-		'Неизвестный тип системы в РЦ "' + RN_DISTR_TYPE + '"'
+		'РўРёРї СЃРёСЃС‚РµРјС‹',
+		'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹ РІ Р Р¦ "' + RN_DISTR_TYPE + '"'
 	FROM
 		(
 			SELECT DISTINCT RN_DISTR_TYPE
@@ -294,8 +294,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Тип системы',
-		'Неизвестный тип системы "' + SST_CAPTION + '" в справочнике'
+		'РўРёРї СЃРёСЃС‚РµРјС‹',
+		'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹ "' + SST_CAPTION + '" РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ'
 	FROM
 		(
 			SELECT DISTINCT SST_CAPTION
@@ -317,8 +317,8 @@ AS
 	UNION ALL
 
 	SELECT
-		'Населенный пункт',
-		'Для населенного пункта не указан № региона "' + CT_NAME + '"'
+		'РќР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚',
+		'Р”Р»СЏ РЅР°СЃРµР»РµРЅРЅРѕРіРѕ РїСѓРЅРєС‚Р° РЅРµ СѓРєР°Р·Р°РЅ в„– СЂРµРіРёРѕРЅР° "' + CT_NAME + '"'
 	FROM
 		(
 			SELECT DISTINCT CT_NAME
@@ -329,12 +329,12 @@ AS
 	UNION ALL
 
 	SELECT
-		'Рег.Узел',
+		'Р РµРі.РЈР·РµР»',
 		ER_MSG
 	FROM
 		(
 			SELECT
-				'Неизвестная система "' + RN_SYS_NAME + '". ' +
+				'РќРµРёР·РІРµСЃС‚РЅР°СЏ СЃРёСЃС‚РµРјР° "' + RN_SYS_NAME + '". ' +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM) AS ER_MSG, 1 AS ER_TYPE
 			FROM
 				(
@@ -351,7 +351,7 @@ AS
 			UNION ALL
 
 			SELECT
-				'Неизвестный тип системы "' + RN_DISTR_TYPE + '". ' +
+				'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї СЃРёСЃС‚РµРјС‹ "' + RN_DISTR_TYPE + '". ' +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM), 1
 			FROM
 				(
@@ -368,7 +368,7 @@ AS
 			UNION ALL
 
 			SELECT
-				'Неизвестный подхост "' + REG_COMMENT + '". ' +
+				'РќРµРёР·РІРµСЃС‚РЅС‹Р№ РїРѕРґС…РѕСЃС‚ "' + REG_COMMENT + '". ' +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM), 1
 			FROM
 				(
@@ -386,7 +386,7 @@ AS
 			UNION ALL
 
 			SELECT
-				'Неизвестное количество сетевых станций "' + CONVERT(VARCHAR, RN_NET_COUNT) + '". ' +
+				'РќРµРёР·РІРµСЃС‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРµС‚РµРІС‹С… СЃС‚Р°РЅС†РёР№ "' + CONVERT(VARCHAR, RN_NET_COUNT) + '". ' +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM), 1
 			FROM
 				(
@@ -403,7 +403,7 @@ AS
 			UNION ALL
 
 			SELECT
-				'Неизвестный статус обслуживания "' + CONVERT(VARCHAR,RN_SERVICE) + '". ' +
+				'РќРµРёР·РІРµСЃС‚РЅС‹Р№ СЃС‚Р°С‚СѓСЃ РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ "' + CONVERT(VARCHAR,RN_SERVICE) + '". ' +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM), 1
 			FROM
 				(
@@ -420,7 +420,7 @@ AS
 			UNION ALL
 
 			SELECT
-				'Неверный признак подхоста. '  +
+				'РќРµРІРµСЂРЅС‹Р№ РїСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р°. '  +
 				RN_SYS_NAME + ' ' + CONVERT(VARCHAR, RN_DISTR_NUM), 2
 			FROM
 				(

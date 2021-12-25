@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 			D.DistrStr,
 			P.LAST_ACT,
 			P.LAST_PAY_MON,
-			/*c.NEXT_MONTH AS 'ближайшие незакрытый месяц', */
+			/*c.NEXT_MONTH AS 'Р±Р»РёР¶Р°Р№С€РёРµ РЅРµР·Р°РєСЂС‹С‚С‹Р№ РјРµСЃСЏС†', */
 			P.PAY_DELTA,
 			P.LAST_BILL_SUM
 		FROM dbo.ClientDistrView AS D WITH(NOEXPAND)

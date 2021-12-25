@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -71,7 +71,7 @@ BEGIN
 
         SELECT @SQL = @SQL +
             CASE Q.[TP]
-                -- однозначный ответ
+                -- РѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ РѕС‚РІРµС‚
                 WHEN 0 THEN
         '
         (

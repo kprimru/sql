@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,8 +8,8 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DISTR_DELETE]
@@ -42,14 +42,14 @@ BEGIN
 
 		IF @actid IS NOT NULL
 			BEGIN
-				--парсить строчку и выбирать нужные значения
+				--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 				INSERT INTO #act
 					SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@actid, ',')
 			END
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				ACT_ID_CLIENT, ACT_ID, 'ACT', 'Удаление строки акта',
+				ACT_ID_CLIENT, ACT_ID, 'ACT', 'РЈРґР°Р»РµРЅРёРµ СЃС‚СЂРѕРєРё Р°РєС‚Р°',
 				CONVERT(VARCHAR(20), PR_DATE, 104) + ' ' + DIS_STR + ' - ' + dbo.MoneyFormat(AD_TOTAL_PRICE)
 			FROM
 				dbo.ActTable a

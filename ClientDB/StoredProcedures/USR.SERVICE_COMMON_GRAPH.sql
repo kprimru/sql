@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -127,7 +127,7 @@ BEGIN
 			WHERE CSD_START >= @MON_BEGIN AND CSD_START < @MON_END
 			GROUP BY CSD_SYS, CSD_DISTR, CSD_COMP
 
-		/* ôîðìèðóåì êîñòÿê äëÿ èòîãîâîé òàáëèöû.*/
+		/* Ñ„Ð¾Ñ€Ð¼Ð¸Ñ€ÑƒÐµÐ¼ ÐºÐ¾ÑÑ‚ÑÐº Ð´Ð»Ñ Ð¸Ñ‚Ð¾Ð³Ð¾Ð²Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹.*/
 		INSERT INTO #res(
 				ID, ClientID, ClientFullName, SystemList, ClientTypeName, TypeDailyDays, TypeDays, ServiceType,
 				DayOrder, ServiceDay, DayTime, ResVersion, ConsExe, ConsExeActual, ResActual, ClientEvent, DistrTypeBaseCheck, LastSTT)
@@ -157,9 +157,9 @@ BEGIN
 				ClientTypeName, ClientTypeDailyDay,
 				ClientTypeDay, ServiceTypeShortName, DayOrder,
 				ISNULL(c.DayShort, '') + ' ' + ISNULL(LEFT(CONVERT(VARCHAR(20), ServiceStart, 108), 5), ''), ServiceStart,
-				/* âïèñûâàåì ÷åðåç çàïÿòóþ âñå òåõíîëîãè÷åñêèå ìîäóëè, âåðñèè cons.exe äëÿ
-				 àêòèâíûõ êîìïëåêòîâ, â êîòîðûõ îñíîâíàÿ ñèñòåìà ñîïðîâîæäàåòñÿ.
-				 à òàêæå âû÷èñëÿåì, åñëè åñòü óñòàðåâøèå ìîäóëè èëè cons.exe - âûâîäèì ïðèçíàê
+				/* Ð²Ð¿Ð¸ÑÑ‹Ð²Ð°ÐµÐ¼ Ñ‡ÐµÑ€ÐµÐ· Ð·Ð°Ð¿ÑÑ‚ÑƒÑŽ Ð²ÑÐµ Ñ‚ÐµÑ…Ð½Ð¾Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð¼Ð¾Ð´ÑƒÐ»Ð¸, Ð²ÐµÑ€ÑÐ¸Ð¸ cons.exe Ð´Ð»Ñ
+				 Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ñ… ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ð¾Ð², Ð² ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ñ… Ð¾ÑÐ½Ð¾Ð²Ð½Ð°Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÑÐ¾Ð¿Ñ€Ð¾Ð²Ð¾Ð¶Ð´Ð°ÐµÑ‚ÑÑ.
+				 Ð° Ñ‚Ð°ÐºÐ¶Ðµ Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÑÐµÐ¼, ÐµÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÑƒÑÑ‚Ð°Ñ€ÐµÐ²ÑˆÐ¸Ðµ Ð¼Ð¾Ð´ÑƒÐ»Ð¸ Ð¸Ð»Ð¸ cons.exe - Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ Ð¿Ñ€Ð¸Ð·Ð½Ð°Ðº
 				*/
 				(
 					REVERSE(STUFF(REVERSE((
@@ -215,7 +215,7 @@ BEGIN
 					WHERE z.ClientID = a.ClientID
 						AND EventDate >= @BEGIN AND EventDate <= @END
 						AND EventActive = 1
-						AND EventTypeName NOT IN ('ÊÃÑ 223', 'ÊÃÑ 94')
+						AND EventTypeName NOT IN ('ÐšÐ“Ð¡ 223', 'ÐšÐ“Ð¡ 94')
 					ORDER BY EventDate FOR XML PATH('')
 				)), 1, 2, '')),
 				(
@@ -242,7 +242,7 @@ BEGIN
 							INNER JOIN dbo.ClientDistrView y WITH(NOEXPAND) ON z.DISTR = y.DISTR AND z.COMP = y.COMP
 							INNER JOIN dbo.SystemTable x ON x.SystemID = y.SystemID AND x.SystemNumber = z.SYS
 						WHERE y.ID_CLIENT = a.ClientID
-					)), 104) + ' (È)')
+					)), 104) + ' (Ð˜)')
 			FROM
 				dbo.ClientTable a
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
@@ -647,7 +647,7 @@ BEGIN
 			UpdateSkipError, REPLACE(UpdateSkip, '&#x0A;', CHAR(10)) AS UpdateSkip,
 			UpdateLostError,  REPLACE(UpdateLost, '&#x0A;', CHAR(10)) AS UpdateLost,
 			CASE
-				WHEN UpdateSkipError = 1 THEN 'Íàðóøåíà'
+				WHEN UpdateSkipError = 1 THEN 'ÐÐ°Ñ€ÑƒÑˆÐµÐ½Ð°'
 				ELSE NULL
 			END AS UpdatePeriod,
 			LastSearch,
@@ -702,14 +702,14 @@ BEGIN
 							) THEN '' + 
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										#compl z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
 									ORDER BY Week_ID FOR XML PATH('')
 								)
-						ELSE 'Ñîâïàäàåò'
+						ELSE 'Ð¡Ð¾Ð²Ð¿Ð°Ð´Ð°ÐµÑ‚'
 					END AS Compliance,
 					CASE
 						WHEN DistrTypeBaseCheck = 0 THEN 0
@@ -733,14 +733,14 @@ BEGIN
 							) THEN '' +
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Actual + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Actual + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										#actual z ON Week_ID = WeekID
 									WHERE z.ClientID = a.ClientID
 									ORDER BY Week_ID FOR XML PATH('')
 								)
-						ELSE 'Àêòóàëüíî'
+						ELSE 'ÐÐºÑ‚ÑƒÐ°Ð»ÑŒÐ½Ð¾'
 					END AS Actual,
 					CASE
 						WHEN DIstrTypeBaseCheck = 0 THEN 0
@@ -762,7 +762,7 @@ BEGIN
 							) THEN '' + 
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										#skip z ON Week_ID = WeekID
@@ -793,7 +793,7 @@ BEGIN
 							) THEN '' + 
 								(
 									SELECT
-										ISNULL('ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')
+										ISNULL('Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')
 									FROM
 										@WEEK INNER JOIN
 										#lost z ON Week_ID = WeekID

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -15,7 +15,7 @@ ALTER FUNCTION [Memo].[MemoSplit]
 )
 RETURNS @TBL TABLE
 (
-	/* это специальная поделка для разделения "нормального" месяца и "кривого"*/
+	/* СЌС‚Рѕ СЃРїРµС†РёР°Р»СЊРЅР°СЏ РїРѕРґРµР»РєР° РґР»СЏ СЂР°Р·РґРµР»РµРЅРёСЏ "РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ" РјРµСЃСЏС†Р° Рё "РєСЂРёРІРѕРіРѕ"*/
 	TP			TINYINT,
 	SystemID	INT,
 	DistrTypeID	INT,
@@ -42,7 +42,7 @@ BEGIN
 
 	IF (@MON_CNT = 1) OR (ROUND((@TOTAL_NDS / @MON_CNT / @DefaultTaxRate), 2) * @DefaultTaxRate * @MON_CNT = @TOTAL_NDS)
 	BEGIN
-		/* все хорошо, сумма сходится*/
+		/* РІСЃРµ С…РѕСЂРѕС€Рѕ, СЃСѓРјРјР° СЃС…РѕРґРёС‚СЃСЏ*/
 		DECLARE @MON_PRICE_NDS	MONEY
 
 		SET @MON_PRICE_NDS = ROUND((@TOTAL_NDS / @MON_CNT), 2)
@@ -53,7 +53,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		/* все плохо сумма не сходится*/
+		/* РІСЃРµ РїР»РѕС…Рѕ СЃСѓРјРјР° РЅРµ СЃС…РѕРґРёС‚СЃСЏ*/
 		DECLARE @MON_PRICE_1_NDS	MONEY
 		DECLARE @MON_PRICE_2_NDS	MONEY
 

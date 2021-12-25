@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -103,8 +103,8 @@ BEGIN
 		DEALLOCATE S
 
 		SELECT
-			ServiceName AS [СИ], ManagerName AS [Руководитель], CLIENT AS [Всего клиентов], DUTY AS [Звонков в ДС],
-			RIVAL AS [Конкурентов], STUDY AS [Проведено обучений], SEMINAR AS [Участий в семинарах], ERR AS [Среднее кол-во ошибок]
+			ServiceName AS [РЎР], ManagerName AS [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], CLIENT AS [Р’СЃРµРіРѕ РєР»РёРµРЅС‚РѕРІ], DUTY AS [Р—РІРѕРЅРєРѕРІ РІ Р”РЎ],
+			RIVAL AS [РљРѕРЅРєСѓСЂРµРЅС‚РѕРІ], STUDY AS [РџСЂРѕРІРµРґРµРЅРѕ РѕР±СѓС‡РµРЅРёР№], SEMINAR AS [РЈС‡Р°СЃС‚РёР№ РІ СЃРµРјРёРЅР°СЂР°С…], ERR AS [РЎСЂРµРґРЅРµРµ РєРѕР»-РІРѕ РѕС€РёР±РѕРє]
 		FROM #result
 		ORDER BY ManagerName, ServiceName
 

@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[REPORT_REG_NODE_COMPARE_WEIGHT]
 	@SRC_PR		SMALLINT,
@@ -41,15 +41,15 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT @TITLE = 'Сравнение РЦ в период от ' + Convert(VarChar(20), S.PR_EREPORT, 104) + ' по ' + Convert(VarChar(20), D.PR_EREPORT, 104)
+		SELECT @TITLE = 'РЎСЂР°РІРЅРµРЅРёРµ Р Р¦ РІ РїРµСЂРёРѕРґ РѕС‚ ' + Convert(VarChar(20), S.PR_EREPORT, 104) + ' РїРѕ ' + Convert(VarChar(20), D.PR_EREPORT, 104)
 		FROM dbo.PeriodTable S
 		CROSS JOIN dbo.PeriodTable D
 		WHERE S.PR_ID = @SRC_PR
 			AND D.PR_ID = @DEST_PR;
 
 		/******************************************************
-		Строим таблицы фильтров по системам, подхостам
-		и типам сети
+		РЎС‚СЂРѕРёРј С‚Р°Р±Р»РёС†С‹ С„РёР»СЊС‚СЂРѕРІ РїРѕ СЃРёСЃС‚РµРјР°Рј, РїРѕРґС…РѕСЃС‚Р°Рј
+		Рё С‚РёРїР°Рј СЃРµС‚Рё
 		*******************************************************/
 
 		IF OBJECT_ID('tempdb..#system') IS NOT NULL
@@ -152,7 +152,7 @@ BEGIN
 			)
 
 		/******************************************************
-		Заполняем исходный список (системы-сеть-подхост и т.д.)
+		Р—Р°РїРѕР»РЅСЏРµРј РёСЃС…РѕРґРЅС‹Р№ СЃРїРёСЃРѕРє (СЃРёСЃС‚РµРјС‹-СЃРµС‚СЊ-РїРѕРґС…РѕСЃС‚ Рё С‚.Рґ.)
 		*******************************************************/
 
 		INSERT INTO #source(
@@ -193,7 +193,7 @@ BEGIN
 			)
 
 		/******************************************************
-		Заполняем целевой список (хосты-системы-сеть и т.д.)
+		Р—Р°РїРѕР»РЅСЏРµРј С†РµР»РµРІРѕР№ СЃРїРёСЃРѕРє (С…РѕСЃС‚С‹-СЃРёСЃС‚РµРјС‹-СЃРµС‚СЊ Рё С‚.Рґ.)
 		*******************************************************/
 
 		INSERT INTO #dest(
@@ -223,7 +223,7 @@ BEGIN
 			)
 
 		/******************************************************
-		Устанавливаем признак для проблемных РЗ
+		РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїСЂРёР·РЅР°Рє РґР»СЏ РїСЂРѕР±Р»РµРјРЅС‹С… Р Р—
 		*******************************************************/
 
 		INSERT INTO #problem(SYS_ID, SYS_ID_HOST)
@@ -290,7 +290,7 @@ BEGIN
 			INNER JOIN #system ON a.REG_ID_SYSTEM = TSYS_ID
 
 		/******************************************************
-		Вычисляем начальный вес для каждой позиции исходного списка
+		Р’С‹С‡РёСЃР»СЏРµРј РЅР°С‡Р°Р»СЊРЅС‹Р№ РІРµСЃ РґР»СЏ РєР°Р¶РґРѕР№ РїРѕР·РёС†РёРё РёСЃС…РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР°
 		*******************************************************/
 
 		IF @NEW_WEIGHT = 0
@@ -320,7 +320,7 @@ BEGIN
 		END
 
 		/******************************************************
-		Заполняем вес для каждой позиции целевого списка
+		Р—Р°РїРѕР»РЅСЏРµРј РІРµСЃ РґР»СЏ РєР°Р¶РґРѕР№ РїРѕР·РёС†РёРё С†РµР»РµРІРѕРіРѕ СЃРїРёСЃРєР°
 		*******************************************************/
 
 		IF @NEW_WEIGHT = 0
@@ -360,7 +360,7 @@ BEGIN
 			)
 
 		/******************************************************
-		Строим список дистрибутивов, которые поменялись
+		РЎС‚СЂРѕРёРј СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ, РєРѕС‚РѕСЂС‹Рµ РїРѕРјРµРЅСЏР»РёСЃСЊ
 		*******************************************************/
 
 		INSERT INTO #hosts(HST_ID, DISTR, COMP)
@@ -445,10 +445,10 @@ BEGIN
 				REG_WEIGHT	DECIMAL(10, 4)
 			)
 
-		--1. Новые системы
+		--1. РќРѕРІС‹Рµ СЃРёСЃС‚РµРјС‹
 
 		/******************************************************
-		Заполняем список новых систем
+		Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє РЅРѕРІС‹С… СЃРёСЃС‚РµРј
 		*******************************************************/
 
 
@@ -461,7 +461,7 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, SYS_ID, REG_DISTR_NUM, REG_COMP_NUM,
-					REG_ID_NET, REG_ID_HOST, 'Новая система', '', REG_COMMENT,
+					REG_ID_NET, REG_ID_HOST, 'РќРѕРІР°СЏ СЃРёСЃС‚РµРјР°', '', REG_COMMENT,
 					REG_ID_TYPE, a.REG_PROBLEM, a.REG_WEIGHT
 				FROM
 					#dest a
@@ -494,9 +494,9 @@ BEGIN
 
 
 
-		--2. Исчезнувшие системы
+		--2. РСЃС‡РµР·РЅСѓРІС€РёРµ СЃРёСЃС‚РµРјС‹
 		/******************************************************
-		Заполняем список систем, ушедших в теневой список
+		Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє СЃРёСЃС‚РµРј, СѓС€РµРґС€РёС… РІ С‚РµРЅРµРІРѕР№ СЃРїРёСЃРѕРє
 		*******************************************************/
 		IF @LOST = 1
 			INSERT INTO #rn
@@ -507,7 +507,7 @@ BEGIN
 					)
 				SELECT
 					REG_ID_HOST, REG_ID_SYSTEM, REG_DISTR_NUM, REG_COMP_NUM,
-					REG_ID_NET, REG_ID_HOST, 'Система пропала', '', REG_COMMENT,
+					REG_ID_NET, REG_ID_HOST, 'РЎРёСЃС‚РµРјР° РїСЂРѕРїР°Р»Р°', '', REG_COMMENT,
 					REG_ID_TYPE, REG_PROBLEM, -a.REG_WEIGHT
 				FROM
 					#source a INNER JOIN
@@ -539,9 +539,9 @@ BEGIN
 						)
 
 
-		--3. Изменение системы
+		--3. РР·РјРµРЅРµРЅРёРµ СЃРёСЃС‚РµРјС‹
 		/******************************************************
-		Заполняем список замен систем в пределах одного хоста
+		Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє Р·Р°РјРµРЅ СЃРёСЃС‚РµРј РІ РїСЂРµРґРµР»Р°С… РѕРґРЅРѕРіРѕ С…РѕСЃС‚Р°
 		*******************************************************/
 		IF @sys = 1
 			INSERT INTO #rn
@@ -552,9 +552,9 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, e.SYS_ID, d.REG_DISTR_NUM, d.REG_COMP_NUM,
-					d.REG_ID_NET, d.REG_ID_HOST, 'Изменилась система',
-					'Была "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '", ' +
-					'стала "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '"',
+					d.REG_ID_NET, d.REG_ID_HOST, 'РР·РјРµРЅРёР»Р°СЃСЊ СЃРёСЃС‚РµРјР°',
+					'Р‘С‹Р»Р° "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '", ' +
+					'СЃС‚Р°Р»Р° "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '"',
 					d.REG_COMMENT, d.REG_ID_TYPE, d.REG_PROBLEM, ISNULL(d.REG_WEIGHT, 0) - ISNULL(a.REG_WEIGHT, 0)
 				FROM
 					#source a
@@ -581,9 +581,9 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, e.SYS_ID, d.REG_DISTR_NUM, d.REG_COMP_NUM,
-					d.REG_ID_NET, d.REG_ID_HOST, 'Изменилась система',
-					'Была "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '", ' +
-					'стала "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '"',
+					d.REG_ID_NET, d.REG_ID_HOST, 'РР·РјРµРЅРёР»Р°СЃСЊ СЃРёСЃС‚РµРјР°',
+					'Р‘С‹Р»Р° "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '", ' +
+					'СЃС‚Р°Р»Р° "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '"',
 					d.REG_COMMENT, d.REG_ID_TYPE, d.REG_PROBLEM, ISNULL(d.REG_WEIGHT, 0) - ISNULL(a.REG_WEIGHT, 0)
 				FROM
 					#source a
@@ -627,9 +627,9 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, e.SYS_ID, d.REG_DISTR_NUM, d.REG_COMP_NUM,
-					d.REG_ID_NET, d.REG_ID_HOST, 'Изменился вес',
-					''/*'Была "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '", ' +
-					'стала "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END + '"'*/,
+					d.REG_ID_NET, d.REG_ID_HOST, 'РР·РјРµРЅРёР»СЃСЏ РІРµСЃ',
+					''/*'Р‘С‹Р»Р° "' + b.SYS_SHORT_NAME + CASE a.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '", ' +
+					'СЃС‚Р°Р»Р° "' + e.SYS_SHORT_NAME + CASE d.REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END + '"'*/,
 					d.REG_COMMENT, d.REG_ID_TYPE, d.REG_PROBLEM, ISNULL(d.REG_WEIGHT, 0) - ISNULL(a.REG_WEIGHT, 0)
 				FROM
 					#source a
@@ -657,9 +657,9 @@ BEGIN
 					AND k.DS_REG = 0
 
 
-		--4. Изменение типа сети
+		--4. РР·РјРµРЅРµРЅРёРµ С‚РёРїР° СЃРµС‚Рё
 		/******************************************************
-		Заполняем список дистрибутивов, у которых поменялась сеть
+		Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ, Сѓ РєРѕС‚РѕСЂС‹С… РїРѕРјРµРЅСЏР»Р°СЃСЊ СЃРµС‚СЊ
 		*******************************************************/
 		IF @net = 1
 		BEGIN
@@ -671,8 +671,8 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, f.REG_ID_HOST, 'Изменился тип сети',
-					'Был "' + e.SN_NAME + '", стал "' + j.SN_NAME + '"', f.REG_COMMENT,
+					f.REG_ID_NET, f.REG_ID_HOST, 'РР·РјРµРЅРёР»СЃСЏ С‚РёРї СЃРµС‚Рё',
+					'Р‘С‹Р» "' + e.SN_NAME + '", СЃС‚Р°Р» "' + j.SN_NAME + '"', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT - a.REG_WEIGHT
 				FROM
 					#source a
@@ -696,8 +696,8 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, f.REG_ID_HOST, 'Изменился тип сети',
-					'Был "' + e.SN_NAME + '", стал "' + j.SN_NAME + '"', f.REG_COMMENT,
+					f.REG_ID_NET, f.REG_ID_HOST, 'РР·РјРµРЅРёР»СЃСЏ С‚РёРї СЃРµС‚Рё',
+					'Р‘С‹Р» "' + e.SN_NAME + '", СЃС‚Р°Р» "' + j.SN_NAME + '"', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT - a.REG_WEIGHT
 				FROM
 					#source a
@@ -733,9 +733,9 @@ BEGIN
 						)
 		END
 
-		--5. Включение системы
+		--5. Р’РєР»СЋС‡РµРЅРёРµ СЃРёСЃС‚РµРјС‹
 		/******************************************************
-		Строим список включенных систем
+		РЎС‚СЂРѕРёРј СЃРїРёСЃРѕРє РІРєР»СЋС‡РµРЅРЅС‹С… СЃРёСЃС‚РµРј
 		*******************************************************/
 		IF @CONNECT = 1
 			INSERT INTO #rn
@@ -746,7 +746,7 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, f.REG_ID_HOST, 'Включение', '', f.REG_COMMENT,
+					f.REG_ID_NET, f.REG_ID_HOST, 'Р’РєР»СЋС‡РµРЅРёРµ', '', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT
 				FROM
 					#source a
@@ -780,7 +780,7 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, f.REG_ID_HOST, 'Включение', '', f.REG_COMMENT,
+					f.REG_ID_NET, f.REG_ID_HOST, 'Р’РєР»СЋС‡РµРЅРёРµ', '', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT
 				FROM
 					#source a
@@ -811,9 +811,9 @@ BEGIN
 								AND p.OLD_HOST = a.SYS_ID_HOST
 						)
 
-		--6. Отключение системы
+		--6. РћС‚РєР»СЋС‡РµРЅРёРµ СЃРёСЃС‚РµРјС‹
 		/******************************************************
-		Строим список отключенных систем
+		РЎС‚СЂРѕРёРј СЃРїРёСЃРѕРє РѕС‚РєР»СЋС‡РµРЅРЅС‹С… СЃРёСЃС‚РµРј
 		*******************************************************/
 		IF @DISCONNECT = 1
 			INSERT INTO #rn
@@ -824,7 +824,7 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, a.REG_ID_HOST, 'Отключение', '', f.REG_COMMENT,
+					f.REG_ID_NET, a.REG_ID_HOST, 'РћС‚РєР»СЋС‡РµРЅРёРµ', '', f.REG_COMMENT,
 					f.REG_ID_TYPE, a.REG_PROBLEM, -a.REG_WEIGHT
 				FROM
 					#source a
@@ -857,7 +857,7 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, a.REG_ID_HOST, 'Отключение', '', f.REG_COMMENT,
+					f.REG_ID_NET, a.REG_ID_HOST, 'РћС‚РєР»СЋС‡РµРЅРёРµ', '', f.REG_COMMENT,
 					f.REG_ID_TYPE, a.REG_PROBLEM, -a.REG_WEIGHT
 				FROM
 					#source a
@@ -887,10 +887,10 @@ BEGIN
 								AND p.OLD_HOST = a.SYS_ID_HOST
 						)
 
-		--7. Изменение подхоста
+		--7. РР·РјРµРЅРµРЅРёРµ РїРѕРґС…РѕСЃС‚Р°
 		/******************************************************
-		Строим список систем, перешедших от одного подхоста к
-		другому
+		РЎС‚СЂРѕРёРј СЃРїРёСЃРѕРє СЃРёСЃС‚РµРј, РїРµСЂРµС€РµРґС€РёС… РѕС‚ РѕРґРЅРѕРіРѕ РїРѕРґС…РѕСЃС‚Р° Рє
+		РґСЂСѓРіРѕРјСѓ
 		*******************************************************/
 		IF @subhost = 1
 			INSERT INTO #rn
@@ -901,8 +901,8 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, y.SH_ID, 'Изменился подхост',
-					'Был "' + z.SH_SHORT_NAME + '", стал "' + y.SH_SHORT_NAME + '"', f.REG_COMMENT,
+					f.REG_ID_NET, y.SH_ID, 'РР·РјРµРЅРёР»СЃСЏ РїРѕРґС…РѕСЃС‚',
+					'Р‘С‹Р» "' + z.SH_SHORT_NAME + '", СЃС‚Р°Р» "' + y.SH_SHORT_NAME + '"', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT - a.REG_WEIGHT
 				FROM
 					#source a
@@ -923,8 +923,8 @@ BEGIN
 
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, y.SH_ID, 'Изменился подхост',
-					'Был "' + z.SH_SHORT_NAME + '", стал "' + y.SH_SHORT_NAME + '"', f.REG_COMMENT,
+					f.REG_ID_NET, y.SH_ID, 'РР·РјРµРЅРёР»СЃСЏ РїРѕРґС…РѕСЃС‚',
+					'Р‘С‹Р» "' + z.SH_SHORT_NAME + '", СЃС‚Р°Р» "' + y.SH_SHORT_NAME + '"', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, f.REG_WEIGHT - a.REG_WEIGHT
 				FROM
 					#source a
@@ -955,8 +955,8 @@ BEGIN
 						)
 
 		/******************************************************
-		Строим список дистрибутивов, перергистрированных
-		на другой хост
+		РЎС‚СЂРѕРёРј СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ, РїРµСЂРµСЂРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅС‹С…
+		РЅР° РґСЂСѓРіРѕР№ С…РѕСЃС‚
 		*******************************************************/
 
 		IF @host = 1
@@ -968,7 +968,7 @@ BEGIN
 					)
 				SELECT
 					a.SYS_ID_HOST, f.REG_ID_SYSTEM, f.REG_DISTR_NUM, f.REG_COMP_NUM,
-					f.REG_ID_NET, a.REG_ID_HOST, 'Перерегистрирован на другой хост',
+					f.REG_ID_NET, a.REG_ID_HOST, 'РџРµСЂРµСЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ РЅР° РґСЂСѓРіРѕР№ С…РѕСЃС‚',
 					'', f.REG_COMMENT,
 					f.REG_ID_TYPE, f.REG_PROBLEM, 0
 				FROM
@@ -998,11 +998,11 @@ BEGIN
 
 
 		/******************************************************
-		Делаем результирующую выборку
+		Р”РµР»Р°РµРј СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰СѓСЋ РІС‹Р±РѕСЂРєСѓ
 		*******************************************************/
 
 		SELECT
-			ID, SYS_SHORT_NAME + CASE REG_PROBLEM WHEN 1 THEN ' Пробл.' ELSE '' END AS SYS_SHORT_NAME,
+			ID, SYS_SHORT_NAME + CASE REG_PROBLEM WHEN 1 THEN ' РџСЂРѕР±Р».' ELSE '' END AS SYS_SHORT_NAME,
 			REG_DISTR_NUM, REG_COMP_NUM,
 			SYS_SHORT_NAME + ' ' + CONVERT(VARCHAR(20), REG_DISTR_NUM) +
 			CASE REG_COMP_NUM

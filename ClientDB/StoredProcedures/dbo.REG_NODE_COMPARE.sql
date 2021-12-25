@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -32,7 +32,7 @@ BEGIN
 
 	BEGIN TRY
 
-		/* @SUBHOST_NOT - заменим на SUBHOST и будем проверять соответствие подхостов	*/
+		/* @SUBHOST_NOT - Р·Р°РјРµРЅРёРј РЅР° SUBHOST Рё Р±СѓРґРµРј РїСЂРѕРІРµСЂСЏС‚СЊ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РїРѕРґС…РѕСЃС‚РѕРІ	*/
 
 		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
 			DROP TABLE #temp
@@ -55,7 +55,7 @@ BEGIN
 			INSERT INTO #temp (ClientID, ClientFullName, ManagerName, ServiceName, DisStr, ErType, BaseValue, RegValue, RegComment, RegisterDate)
 				SELECT
 					a.ClientID, ClientFullName, ManagerName, ServiceName, dbo.DistrString(SystemShortName, DISTR, COMP),
-					'Система не найдена в РЦ', '', '', '', NULL
+					'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р Р¦', '', '', '', NULL
 				FROM
 					dbo.ClientView a WITH(NOEXPAND) INNER JOIN
 					dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
@@ -75,7 +75,7 @@ BEGIN
 
 		IF @BASE = 1
 			INSERT INTO #temp (ClientID, ClientFullName, ManagerName, ServiceName, DisStr, ErType, BaseValue, RegValue, RegComment, RegisterDate)
-				SELECT C.ID_CLIENT, '', C.ManagerName, C.ServiceName, d.DistrStr, 'Система не найдена в базе', '', '', Comment, RegisterDate
+				SELECT C.ID_CLIENT, '', C.ManagerName, C.ServiceName, d.DistrStr, 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р±Р°Р·Рµ', '', '', Comment, RegisterDate
 				FROM Reg.RegNodeSearchView d WITH(NOEXPAND)
 				OUTER APPLY
 				(
@@ -114,7 +114,7 @@ BEGIN
 				FROM
 					(
 						SELECT
-							a.ClientID, ClientFullName, ManagerName, ServiceName, b.DistrStr, 'Несоответствие типа сети' AS ErType,
+							a.ClientID, ClientFullName, ManagerName, ServiceName, b.DistrStr, 'РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ С‚РёРїР° СЃРµС‚Рё' AS ErType,
 							b.DistrTypeName AS BaseValue,
 							g.DistrTypeName AS RegValue,
 							Comment, RegisterDate
@@ -142,7 +142,7 @@ BEGIN
 						SELECT
 							a.ClientID, ClientFullName, ManagerName, ServiceName,
 							b.DistrStr,
-							'Несоответствие статуса' AS ErType,
+							'РќРµСЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ СЃС‚Р°С‚СѓСЃР°' AS ErType,
 							b.DS_NAME AS BaseValue,
 							d.DS_NAME AS RegValue,
 							Comment, RegisterDate

@@ -1,4 +1,4 @@
-USE [ClientDB]
+﻿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[SubhostDistrs@Get]', 'IF') IS NULL EXEC('CREATE FUNCTION [d
 GO
 /*
 SELECT *
-FROM [dbo].[SubhostDistrs@Get](NULL, '�1')
+FROM [dbo].[SubhostDistrs@Get](NULL, 'Л1')
 
 SELECT *
 FROM [dbo].[SubhostDistrs@Get]('BE1CE068-519A-E111-8DAE-000C2986905F', NULL)

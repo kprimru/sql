@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -136,8 +136,8 @@ BEGIN
 			@DIR_SHORT_ROD + ' ' + LEFT(@NAME, 1) + '.' + LEFT(@PATRON, 1) + '.' AS DIRECTOR_SHORT,
 			CASE
 				WHEN @NAME <> '' OR @PATRON <> '' THEN
-					CASE @SEX WHEN 1 THEN 'Уважаемый '
-					ELSE 'Уважаемая '
+					CASE @SEX WHEN 1 THEN 'РЈРІР°Р¶Р°РµРјС‹Р№ '
+					ELSE 'РЈРІР°Р¶Р°РµРјР°СЏ '
 				END + @NAME + ' ' + @PATRON
 				ELSE ''
 			END AS DIRECTOR_IO, a.FULL_NAME AS CLIENT,
@@ -187,7 +187,7 @@ BEGIN
 			)) AS TOTAL_SUPPORT_2,
 			CASE ISNULL(DISCOUNT, 0)
 				WHEN 0 THEN N''
-				ELSE N'Скидка ' + CONVERT(NVARCHAR(32), CONVERT(INT, DISCOUNT)) + ' %'
+				ELSE N'РЎРєРёРґРєР° ' + CONVERT(NVARCHAR(32), CONVERT(INT, DISCOUNT)) + ' %'
 			END AS DISCOUNT_STR,
 			(
 				SELECT OFFER_STRING

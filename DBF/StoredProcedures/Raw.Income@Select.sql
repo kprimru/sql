@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -63,15 +63,15 @@ BEGIN
             SELECT
                 [Err] =
                     CASE
-                        WHEN I.[IN_ID] IS NOT NULL THEN 'Платеж уже загружен'
-                        WHEN IsNull(CD.[CL_ID], C.[CL_ID]) IS NULL THEN 'Не удалось идентифицировать клиента'
-                        WHEN D.[NotForImport] = 1 THEN 'Платеж не для загрузки'
+                        WHEN I.[IN_ID] IS NOT NULL THEN 'РџР»Р°С‚РµР¶ СѓР¶Рµ Р·Р°РіСЂСѓР¶РµРЅ'
+                        WHEN IsNull(CD.[CL_ID], C.[CL_ID]) IS NULL THEN 'РќРµ СѓРґР°Р»РѕСЃСЊ РёРґРµРЅС‚РёС„РёС†РёСЂРѕРІР°С‚СЊ РєР»РёРµРЅС‚Р°'
+                        WHEN D.[NotForImport] = 1 THEN 'РџР»Р°С‚РµР¶ РЅРµ РґР»СЏ Р·Р°РіСЂСѓР·РєРё'
                         WHEN EXISTS
                             (
                                 SELECT TOP (1) *
                                 FROM [dbo].[PurposesForbiddenWords] AS W
                                 WHERE D.[Purpose] LIKE W.[Mask]
-                            ) THEN 'В назначении есть запрещенные слова'
+                            ) THEN 'Р’ РЅР°Р·РЅР°С‡РµРЅРёРё РµСЃС‚СЊ Р·Р°РїСЂРµС‰РµРЅРЅС‹Рµ СЃР»РѕРІР°'
                     END
         ) AS E
         OUTER APPLY

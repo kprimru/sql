@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -165,7 +165,7 @@ BEGIN
 			INNER JOIN #system f ON f.SystemID = a.SystemID
 			INNER JOIN #service g ON g.ServiceID = b.ServiceID
 			INNER JOIN #manager h ON h.ManagerID = b.ManagerID
-		WHERE ORIGINAL_LOGIN() = 'Евдокимова' AND SystemBaseName IN ('RLAW020', 'RBAS020') AND DS_REG = 1 AND GETDATE() < '20150401'
+		WHERE ORIGINAL_LOGIN() = 'Р•РІРґРѕРєРёРјРѕРІР°' AND SystemBaseName IN ('RLAW020', 'RBAS020') AND DS_REG = 1 AND GETDATE() < '20150401'
 
 		ORDER BY SystemOrder, DISTR, COMP, ClientFullName
 

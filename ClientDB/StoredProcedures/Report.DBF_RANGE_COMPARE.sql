@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -59,11 +59,11 @@ BEGIN
     ) AS D;
 
     SELECT
-        [СИ]        = C.ServiceName,
-        [Клиент]    = C.ClientFullName,
-        [Коэффициент удаленности|В ДК] = R.RangeValue,
-        [Коэффициент удаленности|В DBF] = D.Range,
-        [Осн.дистрибутив] = CD.DistrStr
+        [РЎР]        = C.ServiceName,
+        [РљР»РёРµРЅС‚]    = C.ClientFullName,
+        [РљРѕСЌС„С„РёС†РёРµРЅС‚ СѓРґР°Р»РµРЅРЅРѕСЃС‚Рё|Р’ Р”Рљ] = R.RangeValue,
+        [РљРѕСЌС„С„РёС†РёРµРЅС‚ СѓРґР°Р»РµРЅРЅРѕСЃС‚Рё|Р’ DBF] = D.Range,
+        [РћСЃРЅ.РґРёСЃС‚СЂРёР±СѓС‚РёРІ] = CD.DistrStr
     FROM @DBFTo AS D
     INNER JOIN dbo.ClientDistrView AS CD WITH(NOEXPAND) ON D.Distr = CD.DISTR AND D.Comp = CD.COMP AND D.SysReg = CD.SystemBaseName
     INNER JOIN dbo.ClientView AS C WITH(NOEXPAND) ON C.ClientID = CD.ID_CLIENT

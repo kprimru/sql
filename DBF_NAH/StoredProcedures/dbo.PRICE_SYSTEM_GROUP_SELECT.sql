@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[PRICE_SYSTEM_GROUP_SELECT]
 	@group SMALLINT,
@@ -33,7 +33,7 @@ BEGIN
 
 		SET @sql =
 		'
-		SELECT DISTINCT ''Система'' AS IS_SYS, SYS_ID, SYS_ORDER, PR_ID, SYS_SHORT_NAME
+		SELECT DISTINCT ''РЎРёСЃС‚РµРјР°'' AS IS_SYS, SYS_ID, SYS_ORDER, PR_ID, SYS_SHORT_NAME
 		'
 
 		DECLARE @tp SMALLINT
@@ -86,7 +86,7 @@ BEGIN
 
 		SET @sql = @sql +
 		'
-		SELECT DISTINCT ''Доп.услуга'' AS IS_SYS, PGD_ID, 9999999 AS SYS_ORDER, PR_ID, PGD_NAME
+		SELECT DISTINCT ''Р”РѕРї.СѓСЃР»СѓРіР°'' AS IS_SYS, PGD_ID, 9999999 AS SYS_ORDER, PR_ID, PGD_NAME
 		'
 
 		--DECLARE @tp SMALLINT

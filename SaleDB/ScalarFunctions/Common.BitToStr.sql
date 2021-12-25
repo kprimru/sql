@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -11,6 +11,6 @@ ALTER FUNCTION [Common].[BitToStr]
 RETURNS NVarChar(50)
 AS
 BEGIN
-    RETURN CASE @Value WHEN 1 THEN 'Да' WHEN 0 THEN 'Нет' ELSE 'Неизв.' END
+    RETURN CASE @Value WHEN 1 THEN 'Р”Р°' WHEN 0 THEN 'РќРµС‚' ELSE 'РќРµРёР·РІ.' END
 END
 GO

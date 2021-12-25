@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		-- ToDo да что же это такое...
+		-- ToDo РґР° С‡С‚Рѕ Р¶Рµ СЌС‚Рѕ С‚Р°РєРѕРµ...
 		SELECT R.*, S.SystemID, S.SystemShortName
 		FROM dbo.RegNodeTable R
 		LEFT JOIN dbo.SystemTable S ON S.SystemBaseName = R.SystemName

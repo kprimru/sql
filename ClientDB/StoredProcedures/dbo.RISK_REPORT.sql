@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -9,7 +9,7 @@ GO
 ALTER PROCEDURE [dbo].[RISK_REPORT]
 	@MANAGER	NVARCHAR(MAX),
 	@SERVICE	SMALLINT,
-	-- мин и макс кол-во проблем
+	-- РјРёРЅ Рё РјР°РєСЃ РєРѕР»-РІРѕ РїСЂРѕР±Р»РµРј
 	@TOTAL_B	SMALLINT,
 	@TOTAL_E	SMALLINT,
 	@TYPE		NVARCHAR(MAX),
@@ -33,39 +33,39 @@ BEGIN
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
 
-		-- за сколько месяцев считать среднее количество пользователей
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ СЃС‡РёС‚Р°С‚СЊ СЃСЂРµРґРЅРµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 		DECLARE @SEARCH_MON	SMALLINT
-		-- минимальный порог для среднего количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ СЃСЂРµРґРЅРµРіРѕ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @SEARCH_CNT	SMALLINT
 
-		-- за сколько месяцев считать звонки в ДС
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ СЃС‡РёС‚Р°С‚СЊ Р·РІРѕРЅРєРё РІ Р”РЎ
 		DECLARE @DUTY_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @DUTY_CNT	SMALLINT
 
-		-- за сколько месяцев считать конкурентов
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ СЃС‡РёС‚Р°С‚СЊ РєРѕРЅРєСѓСЂРµРЅС‚РѕРІ
 		DECLARE @RIVAL_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @RIVAL_CNT	SMALLINT
 
-		-- за сколько недель считать пополнения
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РЅРµРґРµР»СЊ СЃС‡РёС‚Р°С‚СЊ РїРѕРїРѕР»РЅРµРЅРёСЏ
 		DECLARE @UPD_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @UPD_CNT	SMALLINT
 
-		-- за сколько недель считать контрольные пополнения и пополнения руками
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РЅРµРґРµР»СЊ СЃС‡РёС‚Р°С‚СЊ РєРѕРЅС‚СЂРѕР»СЊРЅС‹Рµ РїРѕРїРѕР»РЅРµРЅРёСЏ Рё РїРѕРїРѕР»РЅРµРЅРёСЏ СЂСѓРєР°РјРё
 		DECLARE @CONTROL_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @CONTROL_CNT	SMALLINT
 
-		-- за сколько месяцев считать обучение
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ СЃС‡РёС‚Р°С‚СЊ РѕР±СѓС‡РµРЅРёРµ
 		DECLARE @STUDY_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @STUDY_CNT	SMALLINT
 
-		-- за сколько месяцев считать семинары
+		-- Р·Р° СЃРєРѕР»СЊРєРѕ РјРµСЃСЏС†РµРІ СЃС‡РёС‚Р°С‚СЊ СЃРµРјРёРЅР°СЂС‹
 		DECLARE @SEMINAR_MON	SMALLINT
-		-- минимальный порог для количества
+		-- РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РїРѕСЂРѕРі РґР»СЏ РєРѕР»РёС‡РµСЃС‚РІР°
 		DECLARE @SEMINAR_CNT	SMALLINT
 
 		SELECT
@@ -275,12 +275,12 @@ BEGIN
 			SEARCH, SEARCH_AVG, DUTY, DUTY_CNT, RIVAL, RIVAL_CNT,
 			UPDATES, UPDATES_CNT, STUDY, STUDY_CNT, SEMINAR, SEMINAR_CNT,
 			ERR_CNT,
-			CONVERT(NVARCHAR(32), @SEARCH_MON) + ' мес.' AS SEARCH_PARAM,
-			CONVERT(NVARCHAR(32), @DUTY_MON) + ' мес.' AS DUTY_PARAM,
-			CONVERT(NVARCHAR(32), @RIVAL_MON) + ' мес.' AS RIVAL_PARAM,
-			CONVERT(NVARCHAR(32), @UPD_MON) + ' нед.' AS UPDATE_PARAM,
-			CONVERT(NVARCHAR(32), @STUDY_MON) + ' мес.' AS STUDY_PARAM,
-			CONVERT(NVARCHAR(32), @SEMINAR_MON) + ' мес.' AS SEMINAR_PARAM
+			CONVERT(NVARCHAR(32), @SEARCH_MON) + ' РјРµСЃ.' AS SEARCH_PARAM,
+			CONVERT(NVARCHAR(32), @DUTY_MON) + ' РјРµСЃ.' AS DUTY_PARAM,
+			CONVERT(NVARCHAR(32), @RIVAL_MON) + ' РјРµСЃ.' AS RIVAL_PARAM,
+			CONVERT(NVARCHAR(32), @UPD_MON) + ' РЅРµРґ.' AS UPDATE_PARAM,
+			CONVERT(NVARCHAR(32), @STUDY_MON) + ' РјРµСЃ.' AS STUDY_PARAM,
+			CONVERT(NVARCHAR(32), @SEMINAR_MON) + ' РјРµСЃ.' AS SEMINAR_PARAM
 		FROM
 			@client a
 			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID

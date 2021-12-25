@@ -1,15 +1,15 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
-Правка:			21.07.2009
-Описание:		Добавлена группировка по деталь-данным
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
+РџСЂР°РІРєР°:			21.07.2009
+РћРїРёСЃР°РЅРёРµ:		Р”РѕР±Р°РІР»РµРЅР° РіСЂСѓРїРїРёСЂРѕРІРєР° РїРѕ РґРµС‚Р°Р»СЊ-РґР°РЅРЅС‹Рј
 */
 ALTER PROCEDURE [dbo].[INVOICE_PRINT_BY_ID_LIST]
 	@invid VARCHAR(MAX),
@@ -47,7 +47,7 @@ BEGIN
 		FROM dbo.GET_TABLE_FROM_LIST(@invid, ',');
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-		SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Печать с/ф', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
+		SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РџРµС‡Р°С‚СЊ СЃ/С„', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR)
 		FROM
 			dbo.InvoiceSaleTable
 			INNER JOIN #inv ON INS_ID = INV_ID
@@ -123,7 +123,7 @@ BEGIN
 						WHERE TO_ID_CLIENT = INS_ID_CLIENT
 						ORDER BY TO_MAIN DESC
 					),
-					INS_IDENT, IsNUll(ACT_DATE, CSG_DATE), IsNull(Cast(CSG_NUM AS VarChar(100)), 'б/н')
+					INS_IDENT, IsNUll(ACT_DATE, CSG_DATE), IsNull(Cast(CSG_NUM AS VarChar(100)), 'Р±/РЅ')
 				FROM	dbo.InvoiceSaleTable	A									INNER JOIN
 						#inv				B	ON	A.INS_ID = B.INV_ID			INNER JOIN
 						dbo.OrganizationView	C	ON	A.INS_ID_ORG=C.ORG_ID		INNER JOIN
@@ -308,7 +308,7 @@ BEGIN
 				        MAX_RN= SUM(1) OVER (PARTITION BY IFD_ID_IFM),
 					    --INR_ID_INVOICE,	INS_ID,
 					    IFD_ID_IFM,
-					    CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					    CASE WHEN CL_ID = 5031 THEN 'РЈСЃР»СѓРіРё РїРѕРїРѕР»РЅРµРЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ,СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІ РїРѕРґСЂР°Р·РґРµР»РµРЅРёСЏС… Р—Р°РєР°Р·С‡РёРєР° РѕР±СЉРµРјРѕРј РёРЅС„РѕСЂРјР°С†РёРё,РєРѕС‚РѕСЂС‹Р№ РїРѕСЃС‚СѓРїРёР» РСЃРїРѕР»РЅРёС‚РµР»СЋ РѕС‚ Р Р°Р·СЂР°Р±РѕС‚С‡РёРєР° РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ СЃ СЏРЅРІР°СЂСЏ РїРѕ РёСЋР»СЊ 2020Рі.РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ'
 					    ELSE INR_GOOD END AS INR_GOOD,
 					    --INR_GOOD,
 					    INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
@@ -328,10 +328,10 @@ BEGIN
 				        MAX_RN= SUM(1) OVER (PARTITION BY IFD_ID_IFM),
 					    --INR_ID_INVOICE,	INS_ID,
 					    IFD_ID_IFM,
-					    --CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					    --CASE WHEN CL_ID = 5031 THEN 'РЈСЃР»СѓРіРё РїРѕРїРѕР»РЅРµРЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ,СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІ РїРѕРґСЂР°Р·РґРµР»РµРЅРёСЏС… Р—Р°РєР°Р·С‡РёРєР° РѕР±СЉРµРјРѕРј РёРЅС„РѕСЂРјР°С†РёРё,РєРѕС‚РѕСЂС‹Р№ РїРѕСЃС‚СѓРїРёР» РСЃРїРѕР»РЅРёС‚РµР»СЋ РѕС‚ Р Р°Р·СЂР°Р±РѕС‚С‡РёРєР° РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ СЃ СЏРЅРІР°СЂСЏ РїРѕ РёСЋР»СЊ 2020Рі.РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ'
 					    --ELSE INR_GOOD END AS INR_GOOD,
 					    INR_GOOD,
-					    INR_NAME + ' (' + CONVERT(VARCHAR(20), COUNT(*)) + ' шт)' AS INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
+					    INR_NAME + ' (' + CONVERT(VARCHAR(20), COUNT(*)) + ' С€С‚)' AS INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,
 					    INR_TNDS, SUM(INR_SNDS) AS INR_SNDS, SUM(INR_SALL) AS INR_SALL,
 					    SUM(INR_COUNT) AS INR_COUNT
 				    FROM
@@ -373,7 +373,7 @@ BEGIN
 				        MAX_RN= SUM(1) OVER (PARTITION BY IFD_ID_IFM),
 					    --INR_ID_INVOICE,	INS_ID,
 					    IFD_ID_IFM,
-					    --CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					    --CASE WHEN CL_ID = 5031 THEN 'РЈСЃР»СѓРіРё РїРѕРїРѕР»РЅРµРЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ,СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІ РїРѕРґСЂР°Р·РґРµР»РµРЅРёСЏС… Р—Р°РєР°Р·С‡РёРєР° РѕР±СЉРµРјРѕРј РёРЅС„РѕСЂРјР°С†РёРё,РєРѕС‚РѕСЂС‹Р№ РїРѕСЃС‚СѓРїРёР» РСЃРїРѕР»РЅРёС‚РµР»СЋ РѕС‚ Р Р°Р·СЂР°Р±РѕС‚С‡РёРєР° РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ СЃ СЏРЅРІР°СЂСЏ РїРѕ РёСЋР»СЊ 2020Рі.РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ'
 					    --ELSE INR_GOOD END AS INR_GOOD,
 					    INR_GOOD,
 					    INR_NAME, SO_INV_UNIT, SO_INV_OKEI, INR_SUM,
@@ -392,7 +392,7 @@ BEGIN
 				        MAX_RN= SUM(1) OVER (PARTITION BY IFD_ID_IFM),
 					    --INR_ID_INVOICE,	INS_ID,
 					    IFD_ID_IFM,
-					    --CASE WHEN CL_ID = 5031 THEN 'Услуги пополнения экземпляров Систем КонсультантПлюс,установленных в подразделениях Заказчика объемом информации,который поступил Исполнителю от Разработчика Систем КонсультантПлюс с января по июль 2020г.включительно'
+					    --CASE WHEN CL_ID = 5031 THEN 'РЈСЃР»СѓРіРё РїРѕРїРѕР»РЅРµРЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ,СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… РІ РїРѕРґСЂР°Р·РґРµР»РµРЅРёСЏС… Р—Р°РєР°Р·С‡РёРєР° РѕР±СЉРµРјРѕРј РёРЅС„РѕСЂРјР°С†РёРё,РєРѕС‚РѕСЂС‹Р№ РїРѕСЃС‚СѓРїРёР» РСЃРїРѕР»РЅРёС‚РµР»СЋ РѕС‚ Р Р°Р·СЂР°Р±РѕС‚С‡РёРєР° РЎРёСЃС‚РµРј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ СЃ СЏРЅРІР°СЂСЏ РїРѕ РёСЋР»СЊ 2020Рі.РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ'
 					    --ELSE INR_GOOD END AS INR_GOOD,
 					    INR_GOOD,
 					    INR_NAME, SO_INV_UNIT, SO_INV_OKEI, SUM(INR_SUM) AS INR_SUM,

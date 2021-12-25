@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -88,11 +88,11 @@ BEGIN
 		SET DATA = RIGHT(DATA, LEN(DATA) - CHARINDEX(' ', DATA))
 
 		UPDATE #res
-		SET DATA = LTRIM(RTRIM(REPLACE(DATA, 'ïîëüçîâàòåëåì', '')))
+		SET DATA = LTRIM(RTRIM(REPLACE(DATA, 'Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼', '')))
 
 		UPDATE #res
 		SET A1 = LEFT(DATA, CHARINDEX(' ', DATA) - 1)
-		WHERE OPER = 'Çàøåë' AND CHARINDEX(' ', DATA) > 0
+		WHERE OPER = 'Ð—Ð°ÑˆÐµÐ»' AND CHARINDEX(' ', DATA) > 0
 
 
 		UPDATE #res

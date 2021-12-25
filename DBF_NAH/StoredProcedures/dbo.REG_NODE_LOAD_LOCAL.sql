@@ -1,12 +1,12 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:		  Денисов Алексей
-Описание:	  Процедура создания копии рег.узла
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:	  РџСЂРѕС†РµРґСѓСЂР° СЃРѕР·РґР°РЅРёСЏ РєРѕРїРёРё СЂРµРі.СѓР·Р»Р°
 */
 ALTER PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 
 	@filename VARCHAR(MAX)
@@ -27,12 +27,12 @@ BEGIN
 
 	BEGIN TRY
 
-		--Шаг 1. Выгрузить из РЦ данные с ключом /outcsv
+		--РЁР°Рі 1. Р’С‹РіСЂСѓР·РёС‚СЊ РёР· Р Р¦ РґР°РЅРЅС‹Рµ СЃ РєР»СЋС‡РѕРј /outcsv
 		DECLARE @bcppath VARCHAR(MAX)
 
 		SET @bcppath = dbo.GET_SETTING('BCP_PATH')
 
-		--Шаг 2. Закинуть данные во временную таблицу
+		--РЁР°Рі 2. Р—Р°РєРёРЅСѓС‚СЊ РґР°РЅРЅС‹Рµ РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ
 
 		DECLARE @sql NVARCHAR(4000)
 
@@ -81,7 +81,7 @@ BEGIN
 			)'
 		--SELECT 1 AS ER_MSG, @sql
 		EXEC sp_executesql @sql
-		--Шаг 1. Выгрузить из РЦ данные с ключом /outcsv
+		--РЁР°Рі 1. Р’С‹РіСЂСѓР·РёС‚СЊ РёР· Р Р¦ РґР°РЅРЅС‹Рµ СЃ РєР»СЋС‡РѕРј /outcsv
 
 		UPDATE #reg
 		SET RN_COMMENT = REPLACE(LEFT(RIGHT(RN_COMMENT, LEN(RN_COMMENT) - 1), LEN(RN_COMMENT) - 2), '""', '"')

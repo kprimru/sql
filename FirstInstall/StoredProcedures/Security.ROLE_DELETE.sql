@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -12,7 +12,7 @@ BEGIN
 
 	IF EXISTS(SELECT * FROM Security.Roles WHERE RL_ID_MASTER = @ID)
 	BEGIN
-		--Есть подчиненные роли
+		--Р•СЃС‚СЊ РїРѕРґС‡РёРЅРµРЅРЅС‹Рµ СЂРѕР»Рё
 		DECLARE LIST CURSOR LOCAL FOR
 			SELECT RL_ID
 			FROM Security.Roles
@@ -36,7 +36,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		-- нет подчиненных ролей
+		-- РЅРµС‚ РїРѕРґС‡РёРЅРµРЅРЅС‹С… СЂРѕР»РµР№
 		DECLARE @ROLE VARCHAR(100)
 
 		SELECT @ROLE = RL_ROLE

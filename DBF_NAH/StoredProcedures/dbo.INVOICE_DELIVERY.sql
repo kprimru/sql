@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_DELIVERY]
@@ -31,9 +31,9 @@ BEGIN
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				INS_ID_CLIENT, @insid, 'INVOICE', 'Передача с/ф',
-				'№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) +
-				' от ' + b.CL_FULL_NAME + ' к ' + ISNULL((SELECT CL_FULL_NAME FROM dbo.CLientTable WHERE CL_ID = @clientid), '')
+				INS_ID_CLIENT, @insid, 'INVOICE', 'РџРµСЂРµРґР°С‡Р° СЃ/С„',
+				'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) +
+				' РѕС‚ ' + b.CL_FULL_NAME + ' Рє ' + ISNULL((SELECT CL_FULL_NAME FROM dbo.CLientTable WHERE CL_ID = @clientid), '')
 			FROM
 				dbo.InvoiceSaleTable a
 				INNER JOIN dbo.ClientTable b ON a.INS_ID_CLIENT = b.CL_ID

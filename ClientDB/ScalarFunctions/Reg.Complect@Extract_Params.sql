@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -16,7 +16,7 @@ SELECT
 ALTER FUNCTION [Reg].[Complect@Extract?Params]
 (
 	@Complect	VarChar(100),
-	-- параметр, который вернуть: SYSTEM, DISTR, COMP
+	-- РїР°СЂР°РјРµС‚СЂ, РєРѕС‚РѕСЂС‹Р№ РІРµСЂРЅСѓС‚СЊ: SYSTEM, DISTR, COMP
 	@ParamName	VarChar(20)
 )
 RETURNS Sql_Variant

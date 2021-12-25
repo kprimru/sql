@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,9 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ISNULL(ClientFullName, d.Comment) AS [Клиент], ISNULL(ManagerName, SubhostName) AS [Рук-ль], ServiceName AS [СИ],
-			ISNULL(b.DistrStr, d.DistrStr) AS [Осн.дистрибутив], dbo.DateOf(CSD_DATE) AS [Последняя отправка STT],
-			Common.DateDiffString(CSD_DATE, GETDATE()) AS [Как давно]
+			ISNULL(ClientFullName, d.Comment) AS [РљР»РёРµРЅС‚], ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР],
+			ISNULL(b.DistrStr, d.DistrStr) AS [РћСЃРЅ.РґРёСЃС‚СЂРёР±СѓС‚РёРІ], dbo.DateOf(CSD_DATE) AS [РџРѕСЃР»РµРґРЅСЏСЏ РѕС‚РїСЂР°РІРєР° STT],
+			Common.DateDiffString(CSD_DATE, GETDATE()) AS [РљР°Рє РґР°РІРЅРѕ]
 		FROM
 			(
 				SELECT HostID, CSD_DISTR, CSD_COMP, MAX(ISNULL(CSD_START, CSD_END)) AS CSD_DATE

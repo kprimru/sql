@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,8 +7,8 @@ GO
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[ACT_DELETE]
@@ -34,7 +34,7 @@ BEGIN
 
 		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
 
-		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Удаление акта', @TXT, @CLIENT, @actid
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'РЈРґР°Р»РµРЅРёРµ Р°РєС‚Р°', @TXT, @CLIENT, @actid
 
 		DELETE
 		FROM dbo.SaldoTable

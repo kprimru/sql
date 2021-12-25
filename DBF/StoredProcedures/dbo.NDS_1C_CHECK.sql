@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 		WHERE PR_ID = @PERIOD
 
 
-		SELECT CLIENT, 'Отсутствует клиент в ДБФ' AS ERR
+		SELECT CLIENT, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєР»РёРµРЅС‚ РІ Р”Р‘Р¤' AS ERR
 		FROM
 			(
 				SELECT DISTINCT CLIENT
@@ -62,7 +62,7 @@ BEGIN
 
 		UNION ALL
 
-		SELECT CL_1C, 'Отсутствует клиент в 1С'
+		SELECT CL_1C, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РєР»РёРµРЅС‚ РІ 1РЎ'
 		FROM
 			(
 				SELECT DISTINCT CL_1C

@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,10 +25,10 @@ BEGIN
 		SELECT
 			a.ID, b.SHORT, PROCESS_TYPE,
 			CASE PROCESS_TYPE
-				WHEN N'PHONE' THEN N'ТА'
-				WHEN N'SALE' THEN N'ТП'
-				WHEN N'MANAGER' THEN N'Менеджер'
-				WHEN N'RIVAL' THEN 'Конкурентный менеджер'
+				WHEN N'PHONE' THEN N'РўРђ'
+				WHEN N'SALE' THEN N'РўРџ'
+				WHEN N'MANAGER' THEN N'РњРµРЅРµРґР¶РµСЂ'
+				WHEN N'RIVAL' THEN 'РљРѕРЅРєСѓСЂРµРЅС‚РЅС‹Р№ РјРµРЅРµРґР¶РµСЂ'
 				ELSE N'???'
 			END AS PROCESS_TYPE_CAPT,
 			BDATE, EDATE,

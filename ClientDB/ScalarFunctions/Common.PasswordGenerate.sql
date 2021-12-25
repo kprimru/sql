@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ IF OBJECT_ID('[Common].[PasswordGenerate]', 'FN') IS NULL EXEC('CREATE FUNCTION 
 GO
 ALTER FUNCTION [Common].[PasswordGenerate]
 (
-	-- кол-во симоволов
+	-- РєРѕР»-РІРѕ СЃРёРјРѕРІРѕР»РѕРІ
 	@LN	SMALLINT
 )
 RETURNS NVARCHAR(128)

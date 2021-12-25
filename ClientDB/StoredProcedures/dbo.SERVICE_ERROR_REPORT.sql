@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -27,7 +27,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT @MANAGER = 'Сводка по актуальному состоянию систем ' + ServiceName + '(' + ManagerName + ') за ' + dbo.MonthString(GETDATE())
+		SELECT @MANAGER = 'РЎРІРѕРґРєР° РїРѕ Р°РєС‚СѓР°Р»СЊРЅРѕРјСѓ СЃРѕСЃС‚РѕСЏРЅРёСЋ СЃРёСЃС‚РµРј ' + ServiceName + '(' + ManagerName + ') Р·Р° ' + dbo.MonthString(GETDATE())
 		FROM
 			dbo.ServiceTable a
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
@@ -166,9 +166,9 @@ BEGIN
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT
-						CASE ResVersionNumber WHEN '' THEN '' ELSE 'ТМ : ' + ResVersionNumber + ',' END +
+						CASE ResVersionNumber WHEN '' THEN '' ELSE 'РўРњ : ' + ResVersionNumber + ',' END +
 						CASE ConsExeVersionNumber WHEN '' THEN '' ELSE ' Cons.exe : ' + ConsExeVersionNumber + ',' END --+
-						--CASE KDVersionName WHEN '' THEN '' ELSE ' КД : ' + KDVersionName + ',' END
+						--CASE KDVersionName WHEN '' THEN '' ELSE ' РљР” : ' + KDVersionName + ',' END
 					FROM @RES b
 					WHERE a.DISTR = b.Complect
 					FOR XML PATH('')
@@ -215,7 +215,7 @@ BEGIN
 					(
 						SELECT COUNT(*) FROM #check WHERE TECH_DATA IS NOT NULL OR IB IS NOT NULL OR COMPLIANCE IS NOT NULL
 					))
-				 + ' из ' +
+				 + ' РёР· ' +
 				CONVERT(VARCHAR(20),
 					(
 						SELECT COUNT(*) FROM #check
@@ -224,11 +224,11 @@ BEGIN
 		UPDATE #check
 		SET NOTE =
 			CASE
-				WHEN IB_DATE IS NOT NULL THEN 'ИБ с ' + CONVERT(VARCHAR(20), IB_DATE, 104) + ' '
+				WHEN IB_DATE IS NOT NULL THEN 'РР‘ СЃ ' + CONVERT(VARCHAR(20), IB_DATE, 104) + ' '
 				ELSE ''
 			END +
 			CASE
-				WHEN COMPLIANCE_DATE IS NOT NULL THEN 'Статистика с ' + CONVERT(VARCHAR(20), COMPLIANCE_DATE, 104)
+				WHEN COMPLIANCE_DATE IS NOT NULL THEN 'РЎС‚Р°С‚РёСЃС‚РёРєР° СЃ ' + CONVERT(VARCHAR(20), COMPLIANCE_DATE, 104)
 				ELSE ''
 			END
 

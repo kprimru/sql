@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -26,23 +26,23 @@ BEGIN
 
 		DECLARE @LAST_DATE	DATETIME
 		SELECT
-			t.CLIENT AS [Наименование заказчика],
-			SHORT AS [Базис/К-Прим],
-			p.GK_PROVISION_SUM AS [Сумма обеспечения контракта],
+			t.CLIENT AS [РќР°РёРјРµРЅРѕРІР°РЅРёРµ Р·Р°РєР°Р·С‡РёРєР°],
+			SHORT AS [Р‘Р°Р·РёСЃ/Рљ-РџСЂРёРј],
+			p.GK_PROVISION_SUM AS [РЎСѓРјРјР° РѕР±РµСЃРїРµС‡РµРЅРёСЏ РєРѕРЅС‚СЂР°РєС‚Р°],
 			CASE DATEPART(dw, p.PROTOCOL + 3)
-				WHEN 1 THEN p.PROTOCOL + 3 + 2       --необходимо показать ближайшую среду или пятницу к дате протокола + 3 дня
+				WHEN 1 THEN p.PROTOCOL + 3 + 2       --РЅРµРѕР±С…РѕРґРёРјРѕ РїРѕРєР°Р·Р°С‚СЊ Р±Р»РёР¶Р°Р№С€СѓСЋ СЃСЂРµРґСѓ РёР»Рё РїСЏС‚РЅРёС†Сѓ Рє РґР°С‚Рµ РїСЂРѕС‚РѕРєРѕР»Р° + 3 РґРЅСЏ
 				WHEN 2 THEN p.PROTOCOL + 3 + 1
 				WHEN 3 THEN p.PROTOCOL + 3
 				WHEN 4 THEN p.PROTOCOL + 3 + 1
 				WHEN 5 THEN p.PROTOCOL + 3
 				WHEN 6 THEN p.PROTOCOL + 3 + 4
 				WHEN 7 THEN p.PROTOCOL + 3 + 3
-			END	AS [Срок оплаты],
-			'' AS [Реквизиты организации],
-			GK_SUM AS [НМЦК],
-			GK_PROVISION_PRC AS [Размер обеспечения заявки в %],
-			CONVERT(VARCHAR, GK_START, 104) + ' - ' + CONVERT(VARCHAR, GK_FINISH, 104) AS [Период действия ГК],
-			'' AS [Срок возврата]
+			END	AS [РЎСЂРѕРє РѕРїР»Р°С‚С‹],
+			'' AS [Р РµРєРІРёР·РёС‚С‹ РѕСЂРіР°РЅРёР·Р°С†РёРё],
+			GK_SUM AS [РќРњР¦Рљ],
+			GK_PROVISION_PRC AS [Р Р°Р·РјРµСЂ РѕР±РµСЃРїРµС‡РµРЅРёСЏ Р·Р°СЏРІРєРё РІ %],
+			CONVERT(VARCHAR, GK_START, 104) + ' - ' + CONVERT(VARCHAR, GK_FINISH, 104) AS [РџРµСЂРёРѕРґ РґРµР№СЃС‚РІРёСЏ Р“Рљ],
+			'' AS [РЎСЂРѕРє РІРѕР·РІСЂР°С‚Р°]
 		FROM
 			Tender.Tender t
 			INNER JOIN Tender.Placement p ON t.ID = p.ID_TENDER

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -52,11 +52,11 @@ BEGIN
 			IF @@ROWCOUNT = 0
 			BEGIN
 				SET @STATUS = 1
-				SET @MSG = 'Вы не зарегистрированы в нашей базе как клиент.'
+				SET @MSG = 'Р’С‹ РЅРµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹ РІ РЅР°С€РµР№ Р±Р°Р·Рµ РєР°Рє РєР»РёРµРЅС‚.'
 			END
 
-			SELECT @Body = 'Поступил вопрос от клиента "' + ClientFullName + '", сотрудник "' + @PSEDO + ' (' + @EMAIL + ')".' + Char(10) + Char(13) +
-				'Текст вопроса: ' + @QUESTION
+			SELECT @Body = 'РџРѕСЃС‚СѓРїРёР» РІРѕРїСЂРѕСЃ РѕС‚ РєР»РёРµРЅС‚Р° "' + ClientFullName + '", СЃРѕС‚СЂСѓРґРЅРёРє "' + @PSEDO + ' (' + @EMAIL + ')".' + Char(10) + Char(13) +
+				'РўРµРєСЃС‚ РІРѕРїСЂРѕСЃР°: ' + @QUESTION
 			FROM dbo.ClientDistrView WITH(NOEXPAND)
 			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON ClientID = ID_CLIENT
 			WHERE HostID = @HOST
@@ -66,7 +66,7 @@ BEGIN
 			EXEC [Common].[MAIL_SEND]
 				@Recipients	= 'gazeta@kprim.ru;bateneva@bazis;denisov@bazis',
 				--@Recipients	= 'denisov@bazis',
-				@Subject	= 'Вопрос для семинара',
+				@Subject	= 'Р’РѕРїСЂРѕСЃ РґР»СЏ СЃРµРјРёРЅР°СЂР°',
 				@Body		= @Body;
 		END
 

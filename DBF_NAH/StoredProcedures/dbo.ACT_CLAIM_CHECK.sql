@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -77,7 +77,7 @@ BEGIN
 										SELECT *
 										FROM dbo.ClientDistrView c
 										WHERE SYS_REG_NAME = SYS_REG AND DISTR = DIS_NUM AND DIS_COMP_NUM = COMP
-									) THEN 'Отсутствует дистрибутив у клиента (' + ISNULL(DIS_STR, SYS_REG_NAME + CONVERT(NVARCHAR(32), DIS_NUM)) + ')'
+									) THEN 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РґРёСЃС‚СЂРёР±СѓС‚РёРІ Сѓ РєР»РёРµРЅС‚Р° (' + ISNULL(DIS_STR, SYS_REG_NAME + CONVERT(NVARCHAR(32), DIS_NUM)) + ')'
 								WHEN NOT EXISTS
 									(
 										SELECT *
@@ -85,7 +85,7 @@ BEGIN
 										WHERE BL_ID_CLIENT = CD_ID_CLIENT
 											AND DIS_ID = CD_ID_DISTR
 											AND z.PR_ID = b.PR_ID
-									) THEN 'Отсутствует счет начисл. у клиента (' + CL_PSEDO + ') за (' + CONVERT(NVARCHAR(32), PR_DATE, 104) + ') (' + DIS_STR + ')'
+									) THEN 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЃС‡РµС‚ РЅР°С‡РёСЃР». Сѓ РєР»РёРµРЅС‚Р° (' + CL_PSEDO + ') Р·Р° (' + CONVERT(NVARCHAR(32), PR_DATE, 104) + ') (' + DIS_STR + ')'
 							END AS ERR_TXT
 						FROM
 							--[PC275-SQL\ALPHA].ClientDB.dbo.ActCalcDetail a

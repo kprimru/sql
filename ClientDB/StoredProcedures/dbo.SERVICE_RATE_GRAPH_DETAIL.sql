@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -55,7 +55,7 @@ BEGIN
 				SELECT
 					ClientID, ClientFullName,
 					REVERSE(STUFF(REVERSE((
-							SELECT 'Ñ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' ïî ' + CONVERT(VARCHAR(20), WEND, 104) + ', '
+							SELECT 'Ð¡ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), WEND, 104) + ', '
 							FROM @WEEK
 							WHERE  NOT EXISTS
 								(

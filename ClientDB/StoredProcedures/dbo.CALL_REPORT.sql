@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -50,7 +50,7 @@ BEGIN
 				(
 					SELECT COUNT(*)
 					FROM dbo.ClientContact
-					WHERE PERSONAL = '¡ÛÓ‚‡'
+					WHERE PERSONAL = '–ë—É—Ä–æ–≤–∞'
 						AND DATE BETWEEN START AND FINISH
 				) AS CALL_CLIENT_COUNT,
 				(

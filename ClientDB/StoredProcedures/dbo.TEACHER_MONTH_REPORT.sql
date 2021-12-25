@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -10,8 +10,8 @@ ALTER PROCEDURE [dbo].[TEACHER_MONTH_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@TEACHER	NVARCHAR(MAX),
-	@TP			TINYINT, /*0 - количество занятий, 1 - колиечство клиентов, 2 - количество пользователей*/
-	@TYPE		NVARCHAR(MAX) -- тип клиента
+	@TP			TINYINT, /*0 - РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РЅСЏС‚РёР№, 1 - РєРѕР»РёРµС‡СЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ, 2 - РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№*/
+	@TYPE		NVARCHAR(MAX) -- С‚РёРї РєР»РёРµРЅС‚Р°
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -99,23 +99,23 @@ BEGIN
 
 		SELECT
 			NAME, TeacherName, VAL, DAY_CNT, DAY_CNT * TeacherNorma AS NORMA, ROUND(100 * CONVERT(FLOAT, VAL) / NULLIF((DAY_CNT * TeacherNorma), 0), 2) AS PRC,
-			'Дней в месяце: ' + CONVERT(VARCHAR(20), DAY_CNT) + CHAR(10) +
-			'Норма: ' + CONVERT(VARCHAR(20), DAY_CNT * TeacherNorma) + CHAR(10) +
-			'Итого занятий: ' + CONVERT(VARCHAR(20), VAL) AS DATA
-			--'Норма выполнена на ' + CONVERT(VARCHAR(20), ROUND(100 * CONVERT(FLOAT, VAL) / (DAY_CNT * TeacherNorma), 2)) + ' %' ,
+			'Р”РЅРµР№ РІ РјРµСЃСЏС†Рµ: ' + CONVERT(VARCHAR(20), DAY_CNT) + CHAR(10) +
+			'РќРѕСЂРјР°: ' + CONVERT(VARCHAR(20), DAY_CNT * TeacherNorma) + CHAR(10) +
+			'РС‚РѕРіРѕ Р·Р°РЅСЏС‚РёР№: ' + CONVERT(VARCHAR(20), VAL) AS DATA
+			--'РќРѕСЂРјР° РІС‹РїРѕР»РЅРµРЅР° РЅР° ' + CONVERT(VARCHAR(20), ROUND(100 * CONVERT(FLOAT, VAL) / (DAY_CNT * TeacherNorma), 2)) + ' %' ,
 			--CASE WHEN ROUND(100 * CONVERT(FLOAT, VAL) / (DAY_CNT * TeacherNorma), 2) >= 100 THEN 1 ELSE 0 END AS NORMA_COMPLETE
 		FROM
 			(
 				SELECT
 					START, NAME, TeacherName, ISNULL(TeacherNorma, 0) AS TeacherNorma,
-					/*CASE @TP*/ /*0 - количество занятий, 1 - колиечство клиентов, 2 - количество пользователей*/
+					/*CASE @TP*/ /*0 - РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РЅСЏС‚РёР№, 1 - РєРѕР»РёРµС‡СЃС‚РІРѕ РєР»РёРµРЅС‚РѕРІ, 2 - РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№*/
 						/*WHEN 0 THEN LESSON
 						WHEN 1 THEN CL_COUNT
 						WHEN 2 THEN PEOPLE
 						ELSE*/ LESSON
 					/*END*/ AS VAL,
 					/*
-					считаем количество рабочих дней между датами исключая понедельники
+					СЃС‡РёС‚Р°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р±РѕС‡РёС… РґРЅРµР№ РјРµР¶РґСѓ РґР°С‚Р°РјРё РёСЃРєР»СЋС‡Р°СЏ РїРѕРЅРµРґРµР»СЊРЅРёРєРё
 					*/
 					(
 						SELECT COUNT(*)

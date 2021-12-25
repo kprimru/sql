@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -53,7 +53,7 @@ BEGIN
 
 		IF @CHECKED = 0 AND @CPO_ID IS NOT NULL
 		BEGIN
-			/* удаляем */
+			/* СѓРґР°Р»СЏРµРј */
 			DELETE
 			FROM Purchase.ClientConditionPlacementOrderClaimCancelReason
 			WHERE ID_CPO = @CPO_ID
@@ -84,7 +84,7 @@ BEGIN
 		END
 		ELSE IF @CHECKED = 1 AND @CPO_ID IS NOT NULL
 		BEGIN
-			/* изменяем */
+			/* РёР·РјРµРЅСЏРµРј */
 			UPDATE Purchase.ClientConditionPlacementOrder
 			SET	CPO_USE_CONDITION		=	@USE_CONDITION,
 				CPO_CLAIM_CANCEL_REASON	=	@CLAIM_CANCEL,
@@ -96,7 +96,7 @@ BEGIN
 		END
 		ELSE IF @CHECKED = 1 AND @CPO_ID IS NULL
 		BEGIN
-			/* добавляем */
+			/* РґРѕР±Р°РІР»СЏРµРј */
 			DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 
 			INSERT INTO Purchase.ClientConditionPlacementOrder(
@@ -115,7 +115,7 @@ BEGIN
 		/*
 		ELSE IF @CHECKED = 0 AND @CPO_ID IS NULL
 		BEGIN
-			/* ничего не надо делать.*/
+			/* РЅРёС‡РµРіРѕ РЅРµ РЅР°РґРѕ РґРµР»Р°С‚СЊ.*/
 
 		END
 		*/

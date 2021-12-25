@@ -1,4 +1,4 @@
-USE [ClientDB]
+О╩©USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,10 +21,10 @@ BEGIN
 	ELSE IF DATEPART(m, @day) IN (4, 6, 9, 11)
 		SET @last_date = @day + (30 - DATEPART(D, @day))
 
-	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 = 0)  --тебпюкэ б бхянйнямши цнд
+	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 = 0)  --п╓п∙п▓п═п░п⌡п╛ п▓ п▓п≤п║п·п п·п║п²п╚п≥ п⌠п·п■
 		SET @last_date = @day + (29 - DATEPART(D, @day))
 
-	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 <> 0)  --тебпюкэ б ме бхянйнямши цнд
+	ELSE IF (DATEPART(m, @day) = 2) AND (DATEPART(y, @day)%4 <> 0)  --п╓п∙п▓п═п░п⌡п╛ п▓ п²п∙ п▓п≤п║п·п п·п║п²п╚п≥ п⌠п·п■
 		SET @last_date = @day + (28 - DATEPART(D, @day))
 
 

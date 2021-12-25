@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -35,7 +35,7 @@ BEGIN
 
 		IF @ID IS NULL
 		BEGIN
-			/* новая запись*/
+			/* РЅРѕРІР°СЏ Р·Р°РїРёСЃСЊ*/
 			INSERT INTO Memo.KGSMemo(NAME, DATE, PRICE, ID_MONTH, MON_CNT)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@NAME, @DATE, @PRICE, @MONTH, @MON_CNT)
@@ -45,7 +45,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			/* изменение старой*/
+			/* РёР·РјРµРЅРµРЅРёРµ СЃС‚Р°СЂРѕР№*/
 			INSERT INTO Memo.KGSMemo(ID_MASTER, NAME, DATE, PRICE, ID_MONTH, MON_CNT, STATUS, UPD_DATE, UPD_USER)
 				OUTPUT inserted.ID INTO @TBL
 				SELECT @ID, NAME, DATE, PRICE, ID_MONTH, MON_CNT, 2, UPD_DATE, UPD_USER

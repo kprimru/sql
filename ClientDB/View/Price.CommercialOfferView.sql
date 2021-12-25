@@ -1,4 +1,4 @@
-USE [ClientDB]
+ÔªøUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -19,23 +19,23 @@ AS
 		END AS SYS_ORDER,
 		CASE
 			WHEN f.SystemID IS NOT NULL THEN f.SystemShortName
-			ELSE 'Ò ' + g.SystemShortName + ' Ì‡ ' + h.SystemShortName
+			ELSE '—Å ' + g.SystemShortName + ' –Ω–∞ ' + h.SystemShortName
 		END AS SYS_STR,
 		CASE
 			WHEN f.SystemID IS NOT NULL THEN f.SystemFullName
-			ELSE /*'Ò ' + g.SystemFullName + ' Ì‡ ' + */h.SystemFullName
+			ELSE /*'—Å ' + g.SystemFullName + ' –Ω–∞ ' + */h.SystemFullName
 		END AS SYS_FULL_STR,
 		a.ID_NET, a.ID_OLD_NET, a.ID_NEW_NET,
 		CASE
 			WHEN i.DistrTypeID IS NOT NULL THEN i.DistrTypeFull
-			ELSE /*'Ò ' + j.DistrTypeFull + ' Ì‡ ' + */k.DistrTypeFull
+			ELSE /*'—Å ' + j.DistrTypeFull + ' –Ω–∞ ' + */k.DistrTypeFull
 		END AS NET_STR,
 		CASE
 			WHEN f.SystemID IS NOT NULL AND i.DistrTypeID IS NOT NULL THEN ''
-			WHEN f.SystemID IS NOT NULL AND i.DistrTypeID IS NULL THEN 'Ò ' + j.DistrTypeFull + ' Ì‡ ' + k.DistrTypeFull
-			WHEN f.SystemID IS NULL AND i.DistrTypeID IS NOT NULL THEN 'Ò ' + g.SystemFullName + ' Ì‡ ' + h.SystemFullName
-			WHEN f.SystemID IS NULL AND i.DistrTypeID IS NULL THEN 'Ò ' + g.SystemFullName + ' ' + j.DistrTypeFull + ' Ì‡ ' + h.SystemFullName + ' ' + k.DistrTypeFull
-			ELSE '!!!Œÿ»¡ ¿!!!'
+			WHEN f.SystemID IS NOT NULL AND i.DistrTypeID IS NULL THEN '—Å ' + j.DistrTypeFull + ' –Ω–∞ ' + k.DistrTypeFull
+			WHEN f.SystemID IS NULL AND i.DistrTypeID IS NOT NULL THEN '—Å ' + g.SystemFullName + ' –Ω–∞ ' + h.SystemFullName
+			WHEN f.SystemID IS NULL AND i.DistrTypeID IS NULL THEN '—Å ' + g.SystemFullName + ' ' + j.DistrTypeFull + ' –Ω–∞ ' + h.SystemFullName + ' ' + k.DistrTypeFull
+			ELSE '!!!–û–®–ò–ë–ö–ê!!!'
 		END AS FULL_STR,
 		a.DELIVERY_DISCOUNT, a.SUPPORT_DISCOUNT, a.FURTHER_DISCOUNT,
 		a.DELIVERY_INFLATION, a.SUPPORT_INFLATION, a.FURTHER_INFLATION,
@@ -45,7 +45,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.DELIVERY_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.DELIVERY_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.DELIVERY_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS DEL_DISCOUNT_STR,
@@ -53,7 +53,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.SUPPORT_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.SUPPORT_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.SUPPORT_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS SUP_DISCOUNT_STR,
@@ -61,7 +61,7 @@ AS
 			WHEN 0 THEN
 				CASE ISNULL(a.FURTHER_DISCOUNT, 0)
 					WHEN 0 THEN ''
-					ELSE 'ÒÍË‰Í‡ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.FURTHER_DISCOUNT)) + ' %'
+					ELSE '—Å–∫–∏–¥–∫–∞ ' + CONVERT(VARCHAR(20), CONVERT(INT, a.FURTHER_DISCOUNT)) + ' %'
 				END
 			ELSE ''
 		END AS FUR_DISCOUNT_STR,

@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -34,14 +34,14 @@ BEGIN
         SELECT ML, Source
         FROM
         (
-            SELECT ClientEMail AS ML, 'Êàðòî÷êà' AS Source
+            SELECT ClientEMail AS ML, 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°' AS Source
 			FROM dbo.ClientTable
 			WHERE ClientID = @CLIENT
 				AND STATUS = 1
 
 			UNION ALL
 
-			SELECT DISTINCT CP_EMAIL, 'Ñîòðóäíèê'
+			SELECT DISTINCT CP_EMAIL, 'Ð¡Ð¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸Ðº'
 			FROM
 				dbo.ClientPersonal
 				INNER JOIN dbo.ClientTable ON ClientID = CP_ID_CLIENT
@@ -50,26 +50,26 @@ BEGIN
 
 			UNION ALL
 
-			SELECT DISTINCT EMAIL, 'Ðàññûëêà'
+			SELECT DISTINCT EMAIL, 'Ð Ð°ÑÑÑ‹Ð»ÐºÐ°'
 			FROM dbo.ClientDelivery
 			WHERE ID_CLIENT = @CLIENT
 
 			UNION ALL
 
-			SELECT DISTINCT EMAIL, 'Çàïèñü ÄÑ'
+			SELECT DISTINCT EMAIL, 'Ð—Ð°Ð¿Ð¸ÑÑŒ Ð”Ð¡'
 			FROM dbo.ClientDutyTable
 			WHERE ClientID = @CLIENT
 				AND STATUS = 1
 
 			UNION ALL
 
-			SELECT DISTINCT E.EMail, 'Ïðîòîêîë ÐÖ'
+			SELECT DISTINCT E.EMail, 'ÐŸÑ€Ð¾Ñ‚Ð¾ÐºÐ¾Ð» Ð Ð¦'
             FROM dbo.ClientDistrView AS D WITH(NOEXPAND)
             CROSS APPLY
             (
                 SELECT [EMail] = LTrim(RTrim(SubString(RPR_OPER, CharIndex('->', RPR_OPER) + 2, Len(RPR_OPER))))
                 FROM dbo.RegProtocol AS R
-                WHERE R.RPR_OPER LIKE 'Èçìåíåí email:%->%'
+                WHERE R.RPR_OPER LIKE 'Ð˜Ð·Ð¼ÐµÐ½ÐµÐ½ email:%->%'
                     AND R.RPR_ID_HOST = D.HostID
                     AND R.RPR_DISTR = D.DISTR
                     AND R.RPR_COMP = D.COMP

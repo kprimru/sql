@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -64,7 +64,7 @@ BEGIN
 
 		SET @ADD = @ADD + @@ROWCOUNT
 
-		SET @OUT_DATA = 'Добавлено ' + CONVERT(NVARCHAR(32), @ADD) + ' записей.'
+		SET @OUT_DATA = 'Р”РѕР±Р°РІР»РµРЅРѕ ' + CONVERT(NVARCHAR(32), @ADD) + ' Р·Р°РїРёСЃРµР№.'
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

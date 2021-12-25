@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -67,9 +67,9 @@ BEGIN
 						a.PR_ID,
 						CONVERT(MONEY, CASE
 						/*
-							Замена только сетевитости.
-							Берем стоимость системы по прейскуранту
-							и накручиваем правильный коэффициент
+							Р—Р°РјРµРЅР° С‚РѕР»СЊРєРѕ СЃРµС‚РµРІРёС‚РѕСЃС‚Рё.
+							Р‘РµСЂРµРј СЃС‚РѕРёРјРѕСЃС‚СЊ СЃРёСЃС‚РµРјС‹ РїРѕ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Сѓ
+							Рё РЅР°РєСЂСѓС‡РёРІР°РµРј РїСЂР°РІРёР»СЊРЅС‹Р№ РєРѕСЌС„С„РёС†РёРµРЅС‚
 						*/
 							WHEN SST_ID IN (7, 16, 17)
 								THEN
@@ -210,8 +210,8 @@ BEGIN
 								END
 							ELSE
 							/*
-								Замента системы.
-								Берем разницу в прейскурантах
+								Р—Р°РјРµРЅС‚Р° СЃРёСЃС‚РµРјС‹.
+								Р‘РµСЂРµРј СЂР°Р·РЅРёС†Сѓ РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°С…
 							*/
 								(
 									SELECT PS_PRICE
@@ -428,7 +428,7 @@ BEGIN
 						ROUND(SYS_COUNT *
 							PS_PRICE *
 							CASE
-								WHEN (@PR_ID = 253 OR @PR_ID = 256) AND SST_CAPTION = 'Спец. выпуск' THEN 1
+								WHEN (@PR_ID = 253 OR @PR_ID = 256) AND SST_CAPTION = 'РЎРїРµС†. РІС‹РїСѓСЃРє' THEN 1
 								ELSE
 									CASE SST_KBU
 										WHEN 1 THEN SHC_KBU
@@ -445,7 +445,7 @@ BEGIN
 						ROUND(SYS_COUNT *
 						PRICE *
 						CASE
-							WHEN (@PR_ID = 253 OR @PR_ID = 256) AND SST_CAPTION = 'Спец. выпуск' THEN 1
+							WHEN (@PR_ID = 253 OR @PR_ID = 256) AND SST_CAPTION = 'РЎРїРµС†. РІС‹РїСѓСЃРє' THEN 1
 							ELSE
 								CASE SST_KBU
 									WHEN 1 THEN SHC_KBU
@@ -632,13 +632,13 @@ BEGIN
 				SELECT SUM(CNT)
 				FROM #support z
 				WHERE z.PR_ID = a.PR_ID
-					AND SST_CAPTION IN ('Коммерческий', 'Серия Л')
+					AND SST_CAPTION IN ('РљРѕРјРјРµСЂС‡РµСЃРєРёР№', 'РЎРµСЂРёСЏ Р›')
 			) AS SUP_COM_COUNT,
 			(
 				SELECT SUM(CNT)
 				FROM #support z
 				WHERE z.PR_ID = a.PR_ID
-					AND SST_CAPTION IN ('Спец. выпуск')
+					AND SST_CAPTION IN ('РЎРїРµС†. РІС‹РїСѓСЃРє')
 			) AS SUP_SPEC_COUNT,
 			(
 				SELECT SUM(PRICE)

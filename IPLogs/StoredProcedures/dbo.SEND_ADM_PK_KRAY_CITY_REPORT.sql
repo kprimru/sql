@@ -1,4 +1,4 @@
-USE [IPLogs]
+п»їUSE [IPLogs]
 GO
 SET ANSI_NULLS ON
 GO
@@ -127,7 +127,7 @@ BEGIN
 	EXEC msdb.dbo.sp_send_dbmail @profile_name = 'SQLMail',
 				@recipients = N'blohin@bazis',
 				@body = @BODY,
-				@subject='Отчет по пополнению администрации края'
+				@subject='РћС‚С‡РµС‚ РїРѕ РїРѕРїРѕР»РЅРµРЅРёСЋ Р°РґРјРёРЅРёСЃС‚СЂР°С†РёРё РєСЂР°СЏ'
 END
 
 

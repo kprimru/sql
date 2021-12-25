@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -127,7 +127,7 @@ BEGIN
                 ) AS ND
                 WHERE NCC.[Client_Id] = CC.[CLient_Id]
                     AND NCC.[Contract_Id] != C.[ID]
-                    -- åñòü äîãîâîð, êîòîðûé äåéñòâóåò ïîñëå íàñòóïëåíèÿ ExpireDate
+                    -- ÐµÑÑ‚ÑŒ Ð´Ð¾Ð³Ð¾Ð²Ð¾Ñ€, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð´ÐµÐ¹ÑÑ‚Ð²ÑƒÐµÑ‚ Ð¿Ð¾ÑÐ»Ðµ Ð½Ð°ÑÑ‚ÑƒÐ¿Ð»ÐµÐ½Ð¸Ñ ExpireDate
                     AND (NC.[DateTo] IS NULL OR NC.[DateTo] > D.[ExpireDate])
                     AND (ND.[ExpireDate] IS NULL OR ND.[ExpireDate] > D.[ExpireDate])
 

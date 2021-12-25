@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 		    SET @COMPANY = Client.CompanyFilterWrite(@COMPANY);
 
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'Изменение телефонного агента - Возврат'
+			SELECT a.ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’РѕР·РІСЂР°С‚'
 			FROM
 				Client.Company a
 				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID

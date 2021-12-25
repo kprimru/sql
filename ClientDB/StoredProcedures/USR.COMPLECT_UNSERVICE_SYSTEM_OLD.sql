@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -92,7 +92,7 @@ BEGIN
 						ISNULL('(' + CONVERT(VARCHAR(20), (
 							SELECT dbo.DateOf(MAX(RPR_DATE))
 							FROM dbo.RegProtocol
-							WHERE RPR_OPER IN ('Отключение', 'Сопровождение отключено') AND RPR_ID_HOST = HostID AND RPR_DISTR = SystemDistrNumber AND RPR_COMP = CompNumber
+							WHERE RPR_OPER IN ('РћС‚РєР»СЋС‡РµРЅРёРµ', 'РЎРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ РѕС‚РєР»СЋС‡РµРЅРѕ') AND RPR_ID_HOST = HostID AND RPR_DISTR = SystemDistrNumber AND RPR_COMP = CompNumber
 						), 104) + ')', '') + ', '
 					FROM #usrdata z
 					WHERE z.UP_ID_USR = d.UP_ID_USR AND z.Service = 1

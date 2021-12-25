@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		IF (SELECT STATUS FROM dbo.ActCalc WHERE ID = @ID) <> 1
-			RAISERROR('Уже нельзя удалить заявку', 16, 1)
+			RAISERROR('РЈР¶Рµ РЅРµР»СЊР·СЏ СѓРґР°Р»РёС‚СЊ Р·Р°СЏРІРєСѓ', 16, 1)
 		ELSE
 		BEGIN
 			UPDATE dbo.ActCalc
@@ -33,7 +33,7 @@ BEGIN
 			WHERE ID = @ID AND STATUS = 1
 
 			IF @@ROWCOUNT = 0
-				RAISERROR('Уже нельзя удалить заявку', 16, 1)
+				RAISERROR('РЈР¶Рµ РЅРµР»СЊР·СЏ СѓРґР°Р»РёС‚СЊ Р·Р°СЏРІРєСѓ', 16, 1)
 		END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

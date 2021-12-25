@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[INVOICE_SET_ACT]
@@ -30,7 +30,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'Изменение привязки к счету-фактуры', 'Был номер ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' стал номер ' + (SELECT CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) FROM dbo.InvoiceSaleTable WHERE INS_ID = @invoiceid)
+			SELECT ACT_ID_CLIENT, ACT_ID, 'ACT', 'РР·РјРµРЅРµРЅРёРµ РїСЂРёРІСЏР·РєРё Рє СЃС‡РµС‚Сѓ-С„Р°РєС‚СѓСЂС‹', 'Р‘С‹Р» РЅРѕРјРµСЂ ' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' СЃС‚Р°Р» РЅРѕРјРµСЂ ' + (SELECT CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) FROM dbo.InvoiceSaleTable WHERE INS_ID = @invoiceid)
 			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.InvoiceSaleTable b ON a.ACT_ID_INVOICE = b.INS_ID

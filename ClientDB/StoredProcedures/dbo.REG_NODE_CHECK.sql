@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -56,7 +56,7 @@ BEGIN
 
 		IF @BASE = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
-				SELECT a.HostID, DISTR, COMP, DistrStr, ID_CLIENT, 'Система не найдена в РЦ', '', '', NULL, NULL, NULL
+				SELECT a.HostID, DISTR, COMP, DistrStr, ID_CLIENT, 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р Р¦', '', '', NULL, NULL, NULL
 				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN dbo.SystemTable b ON a.SystemID = b.SystemID
@@ -75,7 +75,7 @@ BEGIN
 		IF @REG = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
 				SELECT
-					a.HostID, DistrNumber, CompNumber, DistrStr, ID_CLIENT, 'Система не найдена в базе', '', '', RegisterDate, Complect, Comment
+					a.HostID, DistrNumber, CompNumber, DistrStr, ID_CLIENT, 'РЎРёСЃС‚РµРјР° РЅРµ РЅР°Р№РґРµРЅР° РІ Р±Р°Р·Рµ', '', '', RegisterDate, Complect, Comment
 				FROM
 					Reg.RegNodeSearchView a WITH(NOEXPAND)
 					INNER JOIN dbo.DistrStatus b ON a.DS_ID = b.DS_ID
@@ -90,7 +90,7 @@ BEGIN
 							WHERE c.Complect = a.Complect
 							ORDER BY d.SystemOrder
 						) AS o_O
-				WHERE SST_SHORT NOT IN ('АДМ', 'ДИУ', 'ОДД', 'ДСП')
+				WHERE SST_SHORT NOT IN ('РђР”Рњ', 'Р”РРЈ', 'РћР”Р”', 'Р”РЎРџ')
 					AND (@REG_ON = 0 OR @REG_ON = 1 AND b.DS_REG = 0)
 					AND (@REG_SUBHOST = 1 AND SubhostName = '' OR @REG_SUBHOST = 0)
 					AND NOT EXISTS
@@ -104,7 +104,7 @@ BEGIN
 
 		IF @NET = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
-				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Не совпадает тип сети', a.DistrTypeName, b.NT_SHORT, RegisterDate, Complect, Comment
+				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'РќРµ СЃРѕРІРїР°РґР°РµС‚ С‚РёРї СЃРµС‚Рё', a.DistrTypeName, b.NT_SHORT, RegisterDate, Complect, Comment
 				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber
@@ -116,7 +116,7 @@ BEGIN
 
 		IF @STATUS = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
-				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Не совпадает статус', a.DS_NAME, d.DS_NAME, b.RegisterDate, Complect, Comment
+				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'РќРµ СЃРѕРІРїР°РґР°РµС‚ СЃС‚Р°С‚СѓСЃ', a.DS_NAME, d.DS_NAME, b.RegisterDate, Complect, Comment
 				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber
@@ -128,7 +128,7 @@ BEGIN
 
 		IF @SYSTEM = 1
 			INSERT INTO #res(ID_HOST, DISTR, COMP, DIS_STR, ID_CLIENT, TP, BASE_VALUE, REG_VALUE, LAST_REG, COMPLECT, COMMENT)
-				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'Система заменена', a.SystemShortName, b.SystemShortName, b.RegisterDate, Complect, Comment
+				SELECT a.HostID, DISTR, COMP, a.DistrStr, ID_CLIENT, 'РЎРёСЃС‚РµРјР° Р·Р°РјРµРЅРµРЅР°', a.SystemShortName, b.SystemShortName, b.RegisterDate, Complect, Comment
 				FROM
 					dbo.ClientDistrView a WITH(NOEXPAND)
 					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber

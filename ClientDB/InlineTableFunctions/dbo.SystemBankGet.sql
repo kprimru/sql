@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,9 +8,9 @@ IF OBJECT_ID('[dbo].[SystemBankGet]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].
 GO
 ALTER FUNCTION [dbo].[SystemBankGet]
 (
-	-- Id системы
+	-- Id СЃРёСЃС‚РµРјС‹
 	@System		Int,
-	-- Id типа сети из таблицы dbo.DistrTypeTable
+	-- Id С‚РёРїР° СЃРµС‚Рё РёР· С‚Р°Р±Р»РёС†С‹ dbo.DistrTypeTable
 	@DistrType	Int
 )
 RETURNS TABLE

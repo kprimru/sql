@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -29,7 +29,7 @@ BEGIN
         SET @RestrictionType_Id_INET = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'INET');
 
 		SELECT
-				ManagerName AS [Рук-ль], ServiceName AS [СИ], ClientName AS [Клиент], a.DistrStr AS [Дистрибутив], a.NT_SHORT AS [Сеть], a.SST_SHORT AS [Тип],
+				ManagerName AS [Р СѓРє-Р»СЊ], ServiceName AS [РЎР], ClientName AS [РљР»РёРµРЅС‚], a.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], a.NT_SHORT AS [РЎРµС‚СЊ], a.SST_SHORT AS [РўРёРї],
 				(
 					SELECT SET_DATE
 					FROM dbo.HotlineDistr b
@@ -37,7 +37,7 @@ BEGIN
 						AND a.DistrNumber = b.DISTR
 						AND a.CompNumber = b.COMP
 						AND STATUS = 1
-				) AS [Дата подключения к чату],
+				) AS [Р”Р°С‚Р° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє С‡Р°С‚Сѓ],
 
 				dbo.DateOf((
 							SELECT	MAX(RPR_DATE)
@@ -45,11 +45,11 @@ BEGIN
 							WHERE	RPR_ID_HOST = a.HostId
 									AND RPR_DISTR = a.DistrNumber
 									AND RPR_COMP = a.CompNumber
-									AND (RPR_OPER LIKE '%Перв%'
-									OR RPR_OPER LIKE '%НОВАЯ%'
-									OR RPR_OPER LIKE '%Включение%'
-									OR RPR_OPER LIKE '%Изм%')
-				)) AS [Дата регистрации],
+									AND (RPR_OPER LIKE '%РџРµСЂРІ%'
+									OR RPR_OPER LIKE '%РќРћР’РђРЇ%'
+									OR RPR_OPER LIKE '%Р’РєР»СЋС‡РµРЅРёРµ%'
+									OR RPR_OPER LIKE '%РР·Рј%')
+				)) AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё],
 
 				dbo.DateOf(
 				(
@@ -58,13 +58,13 @@ BEGIN
 						dbo.HotlineChat z
 						INNER JOIN dbo.SystemTable y ON z.SYS = y.SystemNumber
 					WHERE z.DISTR = a.DistrNumber AND z.COMP = a.CompNumber AND y.HostID = a.HostID
-				)) AS [Последний сеанс чата]
+				)) AS [РџРѕСЃР»РµРґРЅРёР№ СЃРµР°РЅСЃ С‡Р°С‚Р°]
 			FROM dbo.RegNodeComplectClientView a
 			LEFT JOIN [dbo].[Clients:Restrictions] c ON c.Client_Id = a.ClientID AND c.[Type_Id] = @RestrictionType_Id_INET
 			--LEFT OUTER JOIN  ON d.RPR_DISTR = a.DistrNumber AND a.HostID = d.RPR_ID_HOST AND a.CompNumber = d.RPR_COMP
 			WHERE /*NT_TECH IN (0, 1)
 				AND */a.DS_REG = 0
-				AND a.SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ОДД')
+				AND a.SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ', 'РћР”Р”')
 				AND (c.Id IS NULL)
 				/*
 				AND EXISTS

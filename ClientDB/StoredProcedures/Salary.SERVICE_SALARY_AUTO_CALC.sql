@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 				WHERE ID_MONTH = @MONTH
 			)
 		BEGIN
-			RAISERROR ('В этом месяце уже есть расчитанные СИ. Автоматическое заполнение невозможно', 16, 1)
+			RAISERROR ('Р’ СЌС‚РѕРј РјРµСЃСЏС†Рµ СѓР¶Рµ РµСЃС‚СЊ СЂР°СЃС‡РёС‚Р°РЅРЅС‹Рµ РЎР. РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ Р·Р°РїРѕР»РЅРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ', 16, 1)
 
 			RETURN
 		END
@@ -47,7 +47,7 @@ BEGIN
 						INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
 						WHERE a.ServiceID = b.ServiceID
 					)
-				AND ServiceName NOT LIKE 'самостоятельно%'
+				AND ServiceName NOT LIKE 'СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅРѕ%'
 				AND ManagerID NOT IN (22, 5, 23)
 
 		OPEN SRVC

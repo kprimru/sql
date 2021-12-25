@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,11 +25,11 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			SH_CAPTION AS [Подхост],
-			ComplectCount AS [Количество комплектов],
-			QUEST_CLIENT AS [Количество комплектов с которыми был сеанс чата],
-			QUEST_COUNT AS [Количество чатов],
-			CONVERT(DECIMAL(8, 2), ROUND(100.0 * QUEST_CLIENT / ComplectCount, 2)) AS [% внедрения]
+			SH_CAPTION AS [РџРѕРґС…РѕСЃС‚],
+			ComplectCount AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРїР»РµРєС‚РѕРІ],
+			QUEST_CLIENT AS [РљРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРїР»РµРєС‚РѕРІ СЃ РєРѕС‚РѕСЂС‹РјРё Р±С‹Р» СЃРµР°РЅСЃ С‡Р°С‚Р°],
+			QUEST_COUNT AS [РљРѕР»РёС‡РµСЃС‚РІРѕ С‡Р°С‚РѕРІ],
+			CONVERT(DECIMAL(8, 2), ROUND(100.0 * QUEST_CLIENT / ComplectCount, 2)) AS [% РІРЅРµРґСЂРµРЅРёСЏ]
 		FROM
 			(
 				SELECT
@@ -39,7 +39,7 @@ BEGIN
 						FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
 						WHERE a.SubhostName = SH_NAME
 							AND DS_REG = 0
-							AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ОДД')
+							AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ', 'РћР”Р”')
 					) AS ComplectCount,
 					(
 						SELECT COUNT(DISTINCT b.COMPLECT)
@@ -49,7 +49,7 @@ BEGIN
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber AND c.HostID = b.HostID
 						WHERE b.SubhostName = SH_NAME
 							AND DS_REG = 0
-							AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ОДД')
+							AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ', 'РћР”Р”')
 					) AS QUEST_CLIENT,
 					(
 						SELECT COUNT(*)
@@ -59,19 +59,19 @@ BEGIN
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.DISTR = b.DistrNumber AND a.COMP = b.CompNumber AND c.HostID = b.HostID
 						WHERE b.SubhostName = SH_NAME
 							AND DS_REG = 0
-							AND SST_SHORT NOT IN ('ДИУ', 'АДМ', 'ДСП', 'ОДД')
+							AND SST_SHORT NOT IN ('Р”РРЈ', 'РђР”Рњ', 'Р”РЎРџ', 'РћР”Р”')
 					) AS QUEST_COUNT
 				FROM
 					(
-						SELECT 'Владивосток' AS SH_CAPTION, '' AS SH_NAME
+						SELECT 'Р’Р»Р°РґРёРІРѕСЃС‚РѕРє' AS SH_CAPTION, '' AS SH_NAME
 						UNION ALL
-						SELECT 'Славянка' AS CAPTION, 'Л1' AS SubhostName
+						SELECT 'РЎР»Р°РІСЏРЅРєР°' AS CAPTION, 'Р›1' AS SubhostName
 						UNION ALL
-						SELECT 'Находка' AS CAPTION, 'Н1' AS SubhostName
+						SELECT 'РќР°С…РѕРґРєР°' AS CAPTION, 'Рќ1' AS SubhostName
 						UNION ALL
-						SELECT 'Уссурийск' AS CAPTION, 'У1' AS SubhostName
+						SELECT 'РЈСЃСЃСѓСЂРёР№СЃРє' AS CAPTION, 'РЈ1' AS SubhostName
 						UNION ALL
-						SELECT 'Артем' AS CAPTION, 'М' AS SubhostName
+						SELECT 'РђСЂС‚РµРј' AS CAPTION, 'Рњ' AS SubhostName
 					) AS SH
 			) AS o_O
 		WHERE ComplectCount <> 0

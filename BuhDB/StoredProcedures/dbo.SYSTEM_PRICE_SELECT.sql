@@ -1,4 +1,4 @@
-USE [BuhDB]
+ï»¿USE [BuhDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -36,7 +36,7 @@ BEGIN
 				(
 					'SKBO', 'SKUO', 'SBOO', 'SKJP', 'SKZO', 'SKZB'
 				)
-		) AND @DISTR IN ('ÎÂÌ-Ô(3)')
+		) AND @DISTR IN ('ÐžÐ’Ðœ-Ð¤(3)')
 		)
 		OR
 		(@SYSTEM IN
@@ -47,7 +47,7 @@ BEGIN
 				(
 					'SKZO'
 				)
-		) AND @DISTR IN ('ÎÂÊ')
+		) AND @DISTR IN ('ÐžÐ’Ðš')
 		)
 	BEGIN
 		SET @DCOEF = 1.3
@@ -61,7 +61,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ÎÂÌ-Ô(3)')
+		) AND @DISTR IN ('ÐžÐ’Ðœ-Ð¤(3)')
 	BEGIN
 		SET @DCOEF = 1.5
 		SET @DROUND = 2
@@ -74,7 +74,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ÎÂÑ (5 ÎÄ)')
+		) AND @DISTR IN ('ÐžÐ’Ð¡ (5 ÐžÐ”)')
 	BEGIN
 		SET @DCOEF = 2.3
 		SET @DROUND = 2
@@ -86,7 +86,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ÎÂÑ (10 ÎÄ)')
+		) AND @DISTR IN ('ÐžÐ’Ð¡ (10 ÐžÐ”)')
 	BEGIN
 		SET @DCOEF = 2.52
 		SET @DROUND = 2
@@ -98,7 +98,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ÎÂÑ (20 ÎÄ)')
+		) AND @DISTR IN ('ÐžÐ’Ð¡ (20 ÐžÐ”)')
 	BEGIN
 		SET @DCOEF = 2.64
 		SET @DROUND = 2
@@ -110,7 +110,7 @@ BEGIN
 				(
 					'SKUP', 'SBOP'
 				)
-		) AND @DISTR IN ('ÎÂÑ (50 ÎÄ)')
+		) AND @DISTR IN ('ÐžÐ’Ð¡ (50 ÐžÐ”)')
 	BEGIN
 		SET @DCOEF = 2.86
 		SET @DROUND = 2
@@ -122,7 +122,7 @@ BEGIN
 				(
 					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
 				)
-		) AND @DISTR IN ('ÎÂÌ1')
+		) AND @DISTR IN ('ÐžÐ’Ðœ1')
 	BEGIN
 		SET @DCOEF = 1.25
 		SET @DROUND = 2
@@ -134,7 +134,7 @@ BEGIN
 				(
 					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
 				)
-		) AND @DISTR IN ('ÎÂÌ2')
+		) AND @DISTR IN ('ÐžÐ’Ðœ2')
 	BEGIN
 		SET @DCOEF = 1.5
 		SET @DROUND = 2
@@ -146,7 +146,7 @@ BEGIN
 				(
 					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
 				)
-		) AND @DISTR IN ('ÎÂÌ3')
+		) AND @DISTR IN ('ÐžÐ’Ðœ3')
 	BEGIN
 		SET @DCOEF = 2
 		SET @DROUND = 2
@@ -158,7 +158,7 @@ BEGIN
 				(
 					'SKBP', 'SKBO', 'SKBB', 'SKJE', 'SKJP', 'SKJO', 'SKJB', 'SKUE', 'SKUP', 'SKUO', 'SKUB', 'SBOE', 'SBOP', 'SBOO', 'SBOB', 'SKZB', 'SKZO'
 				)
-		) AND @DISTR IN ('ÎÂÌ5')
+		) AND @DISTR IN ('ÐžÐ’Ðœ5')
 	BEGIN
 		SET @DCOEF = 3
 		SET @DROUND = 2
@@ -170,7 +170,7 @@ BEGIN
 			SELECT ROUND(SystemServicePrice * @DCOEF, @DROUND) AS MONTH_PRICE
 			FROM dbo.SystemTable
 			WHERE SystemName = @SYSTEM
-		ELSE IF @SYSTEM = 'ÊîíñóëüòàíòÞðèñò' AND GETDATE() >= '20170601' AND GETDATE() <= '20170630'
+		ELSE IF @SYSTEM = 'ÐšÐ¾Ð½ÑÑƒÐ»ÑŒÑ‚Ð°Ð½Ñ‚Ð®Ñ€Ð¸ÑÑ‚' AND GETDATE() >= '20170601' AND GETDATE() <= '20170630'
 			SELECT ROUND(4300 * DistrTypeCoefficient, DistrTypeRound) AS MONTH_PRICE
 			FROM dbo.DistrTypeTable
 			WHERE DistrTypeName = @DISTR
@@ -229,7 +229,7 @@ BEGIN
 			SELECT ROUND(SystemServicePrice * @DCOEF, @DROUND) AS MONTH_PRICE
 			FROM dbo.SystemHistoryTable
 			WHERE SystemName = @SYSTEM AND PriceDate = @DATE
-		ELSE IF @SYSTEM = 'ÊîíñóëüòàíòÞðèñò' AND @DATE >= '20170601' AND @DATE <= '20170630'
+		ELSE IF @SYSTEM = 'ÐšÐ¾Ð½ÑÑƒÐ»ÑŒÑ‚Ð°Ð½Ñ‚Ð®Ñ€Ð¸ÑÑ‚' AND @DATE >= '20170601' AND @DATE <= '20170630'
 			SELECT ROUND(4300 * DistrTypeCoefficient, DistrTypeRound) AS MONTH_PRICE
 			FROM dbo.DistrTypeTable
 			WHERE DistrTypeName = @DISTR

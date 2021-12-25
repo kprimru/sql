@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[CLIENT_DISTR_DISCONNECT_LIST]', 'P ') IS NULL EXEC('CREATE 
 GO
 ALTER PROCEDURE [dbo].[CLIENT_DISTR_DISCONNECT_LIST]
 	@ID		UNIQUEIDENTIFIER,
-	@TP		TINYINT, -- 0 - отключить, 1 - включить,
+	@TP		TINYINT, -- 0 - РѕС‚РєР»СЋС‡РёС‚СЊ, 1 - РІРєР»СЋС‡РёС‚СЊ,
 	@NOTE	NVARCHAR(MAX)
 AS
 BEGIN

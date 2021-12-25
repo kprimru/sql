@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -53,7 +53,7 @@ BEGIN
 
 		IF (SELECT ID_STATUS FROM dbo.ClientDistr WHERE ID = @ID) <> @STATUS
 		BEGIN
-			RAISERROR('Дистрибутив уже отключен от сопровождения. Операция отменена', 16, 1)
+			RAISERROR('Р”РёСЃС‚СЂРёР±СѓС‚РёРІ СѓР¶Рµ РѕС‚РєР»СЋС‡РµРЅ РѕС‚ СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ. РћРїРµСЂР°С†РёСЏ РѕС‚РјРµРЅРµРЅР°', 16, 1)
 			RETURN
 		END
 

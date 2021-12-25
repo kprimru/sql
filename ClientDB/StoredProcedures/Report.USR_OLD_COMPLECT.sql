@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT Sys1 AS [Старая система], Sys2 AS [Новая система], UD_DISTR AS [Номер дистрибутива], UD_COMP AS [Номер комп], MAX_DATE AS [Дата последнего файла USR]
+		SELECT Sys1 AS [РЎС‚Р°СЂР°СЏ СЃРёСЃС‚РµРјР°], Sys2 AS [РќРѕРІР°СЏ СЃРёСЃС‚РµРјР°], UD_DISTR AS [РќРѕРјРµСЂ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°], UD_COMP AS [РќРѕРјРµСЂ РєРѕРјРї], MAX_DATE AS [Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ С„Р°Р№Р»Р° USR]
 		FROM
 			(
 				SELECT

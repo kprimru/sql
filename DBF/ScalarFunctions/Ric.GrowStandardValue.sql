@@ -1,11 +1,11 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-	Показатель нормального роста
+	РџРѕРєР°Р·Р°С‚РµР»СЊ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ СЂРѕСЃС‚Р°
 */
 ALTER FUNCTION [Ric].[GrowStandardValue]
 (

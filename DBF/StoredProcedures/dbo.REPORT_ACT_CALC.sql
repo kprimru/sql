@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,9 +7,9 @@ GO
 
 
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_ACT_CALC]
@@ -93,7 +93,7 @@ BEGIN
 						AND BL_ID_PERIOD = AD_ID_PERIOD
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
-				-- неоплаченная сумма счета
+				-- РЅРµРѕРїР»Р°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° СЃС‡РµС‚Р°
 				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)
@@ -169,7 +169,7 @@ BEGIN
 						AND BL_ID_PERIOD = AD_ID_PERIOD
 						AND BL_ID_CLIENT = ACT_ID_CLIENT
 				) AND
-				-- неоплаченная сумма счета
+				-- РЅРµРѕРїР»Р°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° СЃС‡РµС‚Р°
 				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)
@@ -247,7 +247,7 @@ BEGIN
 						AND BL_ID_PERIOD = CSD_ID_PERIOD
 						AND BL_ID_CLIENT = CSG_ID_CLIENT
 				) AND
-				-- неоплаченная сумма счета
+				-- РЅРµРѕРїР»Р°С‡РµРЅРЅР°СЏ СЃСѓРјРјР° СЃС‡РµС‚Р°
 				BD_TOTAL_PRICE =
 				ISNULL((
 					SELECT SUM(ID_PRICE)

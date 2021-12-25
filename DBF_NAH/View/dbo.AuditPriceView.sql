@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,7 +7,7 @@ GO
 
 ALTER VIEW [dbo].[AuditPriceView]
 AS
-SELECT 'Система "' + SYS_SHORT_NAME + '" отсутствует в прейскуранте' AS ER_MSG
+SELECT 'РЎРёСЃС‚РµРјР° "' + SYS_SHORT_NAME + '" РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Рµ' AS ER_MSG
 FROM dbo.SystemTable a
 WHERE
 	NOT EXISTS
@@ -25,7 +25,7 @@ WHERE
 
 UNION ALL
 
-SELECT 'Отсутствует прейскурант на следующий месяц' AS ER_MSG
+SELECT 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚ РЅР° СЃР»РµРґСѓСЋС‰РёР№ РјРµСЃСЏС†' AS ER_MSG
 WHERE NOT EXISTS
 	(
 		SELECT *
@@ -46,7 +46,7 @@ WHERE NOT EXISTS
 
 UNION ALL
 
-SELECT 'Отсутствует прейскурант на текущий месяц' AS ER_MSG
+SELECT 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїСЂРµР№СЃРєСѓСЂР°РЅС‚ РЅР° С‚РµРєСѓС‰РёР№ РјРµСЃСЏС†' AS ER_MSG
 WHERE NOT EXISTS
 	(
 		SELECT *

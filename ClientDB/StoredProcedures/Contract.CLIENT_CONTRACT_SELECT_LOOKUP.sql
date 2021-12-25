@@ -1,4 +1,4 @@
-USE [ClientDB]
+ï»¿USE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT C.ID, NUM_S = C.NUM_S + ISNULL(' îò ' + CONVERT(VARCHAR(20), C.SignDate, 104), ''), DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments
+		SELECT C.ID, NUM_S = C.NUM_S + ISNULL(' Ð¾Ñ‚ ' + CONVERT(VARCHAR(20), C.SignDate, 104), ''), DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments
 		FROM Contract.ClientContracts	CC
 		INNER JOIN Contract.Contract	C	ON C.ID = CC.Contract_Id
 		CROSS APPLY

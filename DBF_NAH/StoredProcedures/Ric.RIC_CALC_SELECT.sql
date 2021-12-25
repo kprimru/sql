@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -259,7 +259,7 @@ BEGIN
 		SELECT
 			ID, ID_MASTER,
 			CASE
-				WHEN PR_DATE = @CUR_DATE THEN 'Первый месяц СПУ'
+				WHEN PR_DATE = @CUR_DATE THEN 'РџРµСЂРІС‹Р№ РјРµСЃСЏС† РЎРџРЈ'
 				ELSE ''
 			END AS SPU_FIRST,
 			SYS_SHORT, SST_CAPTION, SN_NAME, SH_SUBHOST,

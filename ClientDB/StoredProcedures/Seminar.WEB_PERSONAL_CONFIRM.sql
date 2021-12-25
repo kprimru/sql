@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -42,7 +42,7 @@ BEGIN
         IF @STATUS = 0
         BEGIN
             IF @SubhostName = '' BEGIN
-                -- клиент Базиса
+                -- РєР»РёРµРЅС‚ Р‘Р°Р·РёСЃР°
                 IF (SELECT LIMIT FROM Seminar.Schedule WHERE ID = @SCHEDULE) <=
                                 (
                                     SELECT COUNT(*)
@@ -51,7 +51,7 @@ BEGIN
                                     WHERE ID_SCHEDULE = @SCHEDULE AND b.INDX = 1 AND a.STATUS = 1
                                 ) BEGIN
                     SET @STATUS = 1;
-                    SET @MSG = 'Свободные места для записи на семинар закончились';
+                    SET @MSG = 'РЎРІРѕР±РѕРґРЅС‹Рµ РјРµСЃС‚Р° РґР»СЏ Р·Р°РїРёСЃРё РЅР° СЃРµРјРёРЅР°СЂ Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ';
                 END ELSE BEGIN
                     INSERT INTO Seminar.Personal(ID_SCHEDULE, ID_CLIENT, PSEDO, EMAIL, ID_STATUS, ADDRESS)
                     SELECT @SCHEDULE, @CLIENT, @PSEDO, @EMAIL,
@@ -73,15 +73,15 @@ BEGIN
                                 SELECT ID
                                 FROM Seminar.Status
                                 --WHERE INDX = 2
-                                -- это не даст записываться в резервный список
+                                -- СЌС‚Рѕ РЅРµ РґР°СЃС‚ Р·Р°РїРёСЃС‹РІР°С‚СЊСЃСЏ РІ СЂРµР·РµСЂРІРЅС‹Р№ СЃРїРёСЃРѕРє
                                 WHERE INDX = 10
                             )
                         END, @ADDRESS;
                 END
             END ELSE BEGIN
-                -- клиент подхоста
+                -- РєР»РёРµРЅС‚ РїРѕРґС…РѕСЃС‚Р°
 
-                -- ToDo сделать нормально
+                -- ToDo СЃРґРµР»Р°С‚СЊ РЅРѕСЂРјР°Р»СЊРЅРѕ
                 IF (
                         SELECT LIMIT
                         FROM Seminar.ScheduleSubhosts AS SS
@@ -99,8 +99,8 @@ BEGIN
                             AND P.STATUS = 1
                     ) BEGIN
                     SET @STATUS = 1;
-                    SET @MSG = 'Невозможно записать сотрудника, превышен лимит свободных мест';
-                    --RaisError('Невозможно записать сотрудника, превышен лимит свободных мест', 16, 1);
+                    SET @MSG = 'РќРµРІРѕР·РјРѕР¶РЅРѕ Р·Р°РїРёСЃР°С‚СЊ СЃРѕС‚СЂСѓРґРЅРёРєР°, РїСЂРµРІС‹С€РµРЅ Р»РёРјРёС‚ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚';
+                    --RaisError('РќРµРІРѕР·РјРѕР¶РЅРѕ Р·Р°РїРёСЃР°С‚СЊ СЃРѕС‚СЂСѓРґРЅРёРєР°, РїСЂРµРІС‹С€РµРЅ Р»РёРјРёС‚ СЃРІРѕР±РѕРґРЅС‹С… РјРµСЃС‚', 16, 1);
                 END ELSE IF (SELECT LIMIT FROM Seminar.Schedule WHERE ID = @SCHEDULE) <=
                                 (
                                     SELECT COUNT(*)
@@ -109,8 +109,8 @@ BEGIN
                                     WHERE ID_SCHEDULE = @SCHEDULE AND b.INDX = 1 AND a.STATUS = 1
                                 ) BEGIN
                     SET @STATUS = 1;
-                    SET @MSG = 'Свободные места для записи на семинар закончились';
-                    --RaisError('Свободные места для записи на семинар закончились', 16, 1);
+                    SET @MSG = 'РЎРІРѕР±РѕРґРЅС‹Рµ РјРµСЃС‚Р° РґР»СЏ Р·Р°РїРёСЃРё РЅР° СЃРµРјРёРЅР°СЂ Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ';
+                    --RaisError('РЎРІРѕР±РѕРґРЅС‹Рµ РјРµСЃС‚Р° РґР»СЏ Р·Р°РїРёСЃРё РЅР° СЃРµРјРёРЅР°СЂ Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ', 16, 1);
                 END ELSE BEGIN
                     INSERT INTO Seminar.Personal(ID_SCHEDULE, ID_CLIENT, PSEDO, EMAIL, ID_STATUS, ADDRESS, [Host_Id], Distr, Comp)
                     SELECT @SCHEDULE, @CLIENT, @PSEDO, LTrim(RTrim(Replace(@EMAIL, Char(9), ''))),
@@ -142,7 +142,7 @@ BEGIN
                                 SELECT ID
                                 FROM Seminar.Status
                                 --WHERE INDX = 2
-                                -- это не даст записываться в резервный список
+                                -- СЌС‚Рѕ РЅРµ РґР°СЃС‚ Р·Р°РїРёСЃС‹РІР°С‚СЊСЃСЏ РІ СЂРµР·РµСЂРІРЅС‹Р№ СЃРїРёСЃРѕРє
                                 WHERE INDX = 10
                             )
                         END, @ADDRESS, @Host, @Distr, @Comp;

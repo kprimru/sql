@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_SUBHOST_SYSTEM_LIST]
@@ -51,7 +51,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_status
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@statuslist, ',')
 		END
@@ -74,7 +74,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_system
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemlist, ',')
 		END
@@ -97,7 +97,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemtype
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemtypelist, ',')
 		END
@@ -119,7 +119,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_subhost
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@subhostlist, ',')
 		END
@@ -143,12 +143,12 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--парсить строчку и выбирать нужные значения
+			--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
 			INSERT INTO #dbf_systemnet
 				SELECT * FROM dbo.GET_TABLE_FROM_LIST(@systemnetlist, ',')
 		END
 
-	  --Шаг 1. Создать таблицу со всеми полями (надо чтобы были отсортированы по порядку)
+	  --РЁР°Рі 1. РЎРѕР·РґР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ СЃРѕ РІСЃРµРјРё РїРѕР»СЏРјРё (РЅР°РґРѕ С‡С‚РѕР±С‹ Р±С‹Р»Рё РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РїРѕСЂСЏРґРєСѓ)
 		DECLARE @sql VARCHAR(MAX)
 
 		IF OBJECT_ID('tempdb..#keys') IS NOT NULL
@@ -175,7 +175,7 @@ BEGIN
 						dbo.SystemTypeTable f ON f.SST_ID = a.SST_ID_MOS,
 						dbo.SystemNetTable b INNER JOIN #dbf_systemnet e ON e.TSN_ID = b.SN_ID
 					UNION
-					SELECT DISTINCT f.SST_CAPTION + ' | Все', f.SST_ID, NULL, f.SST_ORDER, 1 AS KEY_SUM
+					SELECT DISTINCT f.SST_CAPTION + ' | Р’СЃРµ', f.SST_ID, NULL, f.SST_ORDER, 1 AS KEY_SUM
 					FROM
 						dbo.SystemTypeTable a INNER JOIN
 						#dbf_systemtype d ON d.TST_ID = a.SST_ID INNER JOIN
@@ -429,7 +429,7 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 			INSERT INTO #final(IS_GROUP, IS_FINAL, SYS_ID, SH_SHORT_NAME)
-				SELECT 1, 0, @sysid, @sysname + '    месяц     ' + PR_NAME
+				SELECT 1, 0, @sysid, @sysname + '    РјРµСЃСЏС†     ' + PR_NAME
 				FROM dbo.PeriodTable
 				WHERE PR_ID = @period
 
@@ -470,7 +470,7 @@ BEGIN
 			SET @sql = @sql + '[-], [-, X]'
 
 			SET @sql = @sql + ')
-				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ', ''Итого'', '
+				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ', ''РС‚РѕРіРѕ'', '
 			SELECT @sql = @sql + 'SUM([' + CONVERT(VARCHAR, KEY_ID) + ']),'
 			FROM #keys
 			WHERE KEY_SUM <> 3
@@ -490,7 +490,7 @@ BEGIN
 			WHERE KEY_ID = 1
 
 			SET @sql = @sql + '
-				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ',''Всего в списке: '', '
+				SELECT 0, 1, ' + CONVERT(VARCHAR(20), @sysid) + ',''Р’СЃРµРіРѕ РІ СЃРїРёСЃРєРµ: '', '
 
 			SELECT @sql = @sql + '[' + CONVERT(VARCHAR, KEY_NAME) + '] +'
 			FROM #keys

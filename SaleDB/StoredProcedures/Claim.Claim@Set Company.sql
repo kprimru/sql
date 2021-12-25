@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -48,7 +48,7 @@ BEGIN
         FROM [Claim].[Claims] AS C
         WHERE [Id] = @Id;
 
-        -- если компании нет - создаем
+        -- РµСЃР»Рё РєРѕРјРїР°РЅРёРё РЅРµС‚ - СЃРѕР·РґР°РµРј
         IF @Company_Id IS NULL BEGIN
             EXEC [Client].[COMPANY_NUMBER_GET]
                 @NUM = @Number OUT;

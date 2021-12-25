@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -28,7 +28,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.ID, TP, CASE TP WHEN 1 THEN 'Коммерч' WHEN 2 THEN 'Контракт' ELSE '???' END AS TP_STR,
+			a.ID, TP, CASE TP WHEN 1 THEN 'РљРѕРјРјРµСЂС‡' WHEN 2 THEN 'РљРѕРЅС‚СЂР°РєС‚' ELSE '???' END AS TP_STR,
 			DATE, ID_CLIENT, CL_NAME, b.SHORT AS VD_NAME, c.TS_SHORT AS TRADESITE, DATE_LIMIT
 		FROM
 			KGS.MemoClaim a

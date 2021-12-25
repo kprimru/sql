@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	31.03.2009
-Описание:		добавление строки таблицы счета-фактуры
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	31.03.2009
+РћРїРёСЃР°РЅРёРµ:		РґРѕР±Р°РІР»РµРЅРёРµ СЃС‚СЂРѕРєРё С‚Р°Р±Р»РёС†С‹ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹
 */
 ALTER PROCEDURE [dbo].[CLIENT_INVOICE_ROW_ADD]
 	@INR_ID_INVOICE INT,
@@ -40,7 +40,7 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Р”РѕР±Р°РІР»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				ISNULL(@INR_GOOD + ' ', '') + ISNULL(@INR_NAME + ' ', '') +
 				CASE ISNULL(@inrcount, 1)
 					WHEN 1 THEN ''

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -306,7 +306,7 @@ BEGIN
 			V.value('@Code[1]',		'VarChar(100)')
 		FROM @Data.nodes('/DATA[1]/REFERENCES[1]/CLIENT_STATUS[1]/ITEM') N(V)
 
-		-- Обновляем справочник Хостов
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє РҐРѕСЃС‚РѕРІ
 		INSERT INTO dbo.Hosts(HostShort, HostReg, HostOrder)
 		SELECT [Short], [Reg], [Order]
 		FROM @Hosts D
@@ -326,7 +326,7 @@ BEGIN
 			OR H.HostOrder != D.[Order]
 
 
-		-- Обновляем справочник систем
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє СЃРёСЃС‚РµРј
 		INSERT INTO dbo.SystemTable(
 			SystemShortName, SystemName, SystemBaseName, SystemNumber, HostID, SystemRic, SystemOrder, SystemVMI, SystemFullName,
 			SystemDin, SystemActive, SystemStart, SystemEnd, SystemDemo, SystemComplect, SystemReg, SystemBaseCheck
@@ -380,7 +380,7 @@ BEGIN
 			OR S.SystemReg			!= D.[Reg]
 			OR S.SystemBaseCheck	!= D.[BaseCheck];
 
-		-- обновляем ИБ
+		-- РѕР±РЅРѕРІР»СЏРµРј РР‘
 
 		INSERT INTO dbo.InfoBankTable(InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankActive, InfoBankDaily, InfoBankActual, InfoBankStart)
 		SELECT [Name], [Short], [Full], [Order], [Active], [Daily], [Actual], [Start]
@@ -410,7 +410,7 @@ BEGIN
 			OR I.InfoBankActual		!= D.Actual
 			OR I.InfoBankStart		!= D.Start;
 
-		-- Обновляем состав систем
+		-- РћР±РЅРѕРІР»СЏРµРј СЃРѕСЃС‚Р°РІ СЃРёСЃС‚РµРј
 		UPDATE SB
 		SET [Required] = D.[Required]
 		FROM dbo.SystemBankTable SB
@@ -443,7 +443,7 @@ BEGIN
 			);
 
 
-		-- обновляем справочник систем
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє СЃРёСЃС‚РµРј
 
 		UPDATE S
 		SET SST_NAME = D.[Name],
@@ -465,7 +465,7 @@ BEGIN
 				WHERE S.SST_REG = D.Reg
 			);
 
-		-- статусы клиента
+		-- СЃС‚Р°С‚СѓСЃС‹ РєР»РёРµРЅС‚Р°
 		UPDATE S
 		SET [ServiceStatusName]		= D.[Name],
 			[ServiceStatusIndex]	= D.[Index],
@@ -488,7 +488,7 @@ BEGIN
 				WHERE S.[ServiceCode] = D.[Code]
 			);
 
-		-- бизнес-справочник типов сети
+		-- Р±РёР·РЅРµСЃ-СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРµС‚Рё
 		UPDATE N
 		SET DistrTypeName		= D.Name,
 			DistrTypeOrder		= D.[Order],
@@ -511,7 +511,7 @@ BEGIN
 				WHERE N.DistrTypeCode = D.Code
 			);
 
-		-- Справочник типов сети
+		-- РЎРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРµС‚Рё
 		UPDATE N
 		SET NT_NAME = D.Name,
 			NT_SHORT = D.Short,
@@ -534,7 +534,7 @@ BEGIN
 				WHERE N.NT_NET = D.NetCnt AND N.NT_TECH = D.Tech AND N.NT_ODON = D.Odon AND N.NT_ODOFF = D.Odoff
 			);
 
-		-- обновляем справочник статусов дистрибутива
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє СЃС‚Р°С‚СѓСЃРѕРІ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°
 		UPDATE S
 		SET DS_NAME		= D.[Name],
 			DS_INDEX	= D.[Index]
@@ -553,7 +553,7 @@ BEGIN
 				WHERE S.DS_REG = D.Reg
 			);
 
-		-- обновляем справочник типов соответствия USR
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ USR
 
 		UPDATE S
 		SET ComplianceTypeShortName	= D.[Short],
@@ -573,7 +573,7 @@ BEGIN
 				WHERE S.ComplianceTypeName = D.Name
 			);
 
-		-- обновляем справочник типов формирования файлов USR
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ USR
 
 		UPDATE S
 		SET USRFileKindShortName	= D.[ShortName],
@@ -593,7 +593,7 @@ BEGIN
 				WHERE S.USRFileKindName = D.Name
 			);
 
-		-- обновляем справочник типов сотрудников
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїСЂР°РІРѕС‡РЅРёРє С‚РёРїРѕРІ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ
 
 		UPDATE S
 		SET CPT_NAME		= D.[Name],
@@ -617,7 +617,7 @@ BEGIN
 				WHERE S.CPT_PSEDO = D.Psedo
 			);
 
-		-- обновляем список дистрибутивов подключенных к ЗВЭ
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїРёСЃРѕРє РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… Рє Р—Р’Р­
 		TRUNCATE TABLE dbo.ExpertDistr;
 
 		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE)
@@ -633,7 +633,7 @@ BEGIN
 		) AS D
 		INNER JOIN dbo.Hosts H ON H.HostReg = D.Host;
 
-		-- обновляем списко дистрибутивов подключенных к чату
+		-- РѕР±РЅРѕРІР»СЏРµРј СЃРїРёСЃРєРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РїРѕРґРєР»СЋС‡РµРЅРЅС‹С… Рє С‡Р°С‚Сѓ
 
 		TRUNCATE TABLE dbo.HotlineDistr;
 
@@ -650,7 +650,7 @@ BEGIN
 		) AS D
 		INNER JOIN dbo.Hosts H ON H.HostReg = D.Host;
 
-		-- Обновляем черный список ИП
+		-- РћР±РЅРѕРІР»СЏРµРј С‡РµСЂРЅС‹Р№ СЃРїРёСЃРѕРє РРџ
 
 		TRUNCATE TABLE dbo.BLACK_LIST_REG;
 
@@ -667,7 +667,7 @@ BEGIN
 		) AS D
 		INNER JOIN dbo.SystemTable S ON D.Sys = S.SystemBaseName;
 
-		-- Обновляем протокол РЦ
+		-- РћР±РЅРѕРІР»СЏРµРј РїСЂРѕС‚РѕРєРѕР» Р Р¦
 
 		INSERT INTO dbo.RegProtocol(RPR_DATE, RPR_ID_HOST, RPR_DISTR, RPR_COMP, RPR_OPER, RPR_REG, RPR_TYPE, RPR_TEXT, RPR_USER, RPR_COMPUTER)
 		SELECT Date, HostID, Distr, Comp, Oper, Reg, [Type], [Text], [User], Computer
@@ -700,7 +700,7 @@ BEGIN
 					AND R.RPR_TYPE = D.[Type]
 			);
 
-		-- Обновляем текстовый протокол РЦ
+		-- РћР±РЅРѕРІР»СЏРµРј С‚РµРєСЃС‚РѕРІС‹Р№ РїСЂРѕС‚РѕРєРѕР» Р Р¦
 
 		INSERT INTO Reg.ProtocolText(ID_HOST, DATE, DISTR, COMP, CNT, COMMENT)
 		SELECT HostID, Date, Distr, Comp, Cnt, Comment
@@ -727,7 +727,7 @@ BEGIN
 					AND R.COMMENT = D.Comment
 			);
 
-		-- Обновляем прейкурант
+		-- РћР±РЅРѕРІР»СЏРµРј РїСЂРµР№РєСѓСЂР°РЅС‚
 
 		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
 		SELECT DISTINCT SystemID, ID, PRICE
@@ -749,7 +749,7 @@ BEGIN
 					AND SP.ID_MONTH = P.ID
 			);
 
-		-- обновляем количество документов
+		-- РѕР±РЅРѕРІР»СЏРµРј РєРѕР»РёС‡РµСЃС‚РІРѕ РґРѕРєСѓРјРµРЅС‚РѕРІ
 
 		INSERT INTO dbo.StatisticTable(StatisticDate, InfoBankID, Docs)
 		SELECT IDate, y.InfoBankID, IDOCS
@@ -771,7 +771,7 @@ BEGIN
 					AND x.Docs = z.IDOCS
 			)
 
-		-- Обновляем РЦ
+		-- РћР±РЅРѕРІР»СЏРµРј Р Р¦
 
 		DELETE FROM dbo.RegNodeTable;
 
@@ -1003,7 +1003,7 @@ BEGIN
 		FROM dbo.NamedSets S
 		INNER JOIN @NamedSets Z ON S.SetId = Z.SetId;
 
-		-- ToDo Как сделать универсально, а не для каждой таблицы?
+		-- ToDo РљР°Рє СЃРґРµР»Р°С‚СЊ СѓРЅРёРІРµСЂСЃР°Р»СЊРЅРѕ, Р° РЅРµ РґР»СЏ РєР°Р¶РґРѕР№ С‚Р°Р±Р»РёС†С‹?
 		INSERT INTO dbo.NamedSetsItems(SetId, SetItem)
 		SELECT S.SetId, C.ServiceStatusId
 		FROM @NamedSets S

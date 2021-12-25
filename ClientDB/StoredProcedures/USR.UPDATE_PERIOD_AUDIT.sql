@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -87,7 +87,7 @@ BEGIN
 		INSERT INTO #client_banks(ClientID, ClientFullName, ServiceName, ManagerName, DistrStr, Period, WBEGIN, WEND, DIS_NUM, DIS_COMP, IB_ID, IB_SHORT, SYS_ORDER, IB_ORDER)
 			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
-				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
+				'СЃ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
 			FROM
 				#client a
@@ -100,7 +100,7 @@ BEGIN
 
 			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
-				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
+				'СЃ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
 			FROM
 				#client a
@@ -115,7 +115,7 @@ BEGIN
 
 			SELECT
 				a.ClientID, ClientFullName, ServiceName, ManagerName, DistrStr,
-				'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
+				'СЃ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 				WBEGIN, WEND, DISTR, COMP, InfoBankID, InfoBankShortName, b.SystemOrder, InfoBankOrder
 			FROM
 				#client a
@@ -164,7 +164,7 @@ BEGIN
 			a.ClientID, ClientFullName, ServiceName, ManagerName,
 			DistrStr,
 			IB_SHORT AS InfoBankShortName,
-			'с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
+			'СЃ ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' РїРѕ ' + CONVERT(VARCHAR(20), WEND, 104) AS Period,
 			(
 				SELECT TOP 1 UIU_DATE_S
 				FROM USR.USRIBDateView WITH(NOEXPAND)

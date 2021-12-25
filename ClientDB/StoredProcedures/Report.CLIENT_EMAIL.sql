@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,14 +25,14 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			rnccv.ClientName AS [Название клиента], rnccv.ManagerName [Руководитель], rnccv.ServiceName AS [СИ],
-			rnccv.NT_SHORT AS [Сеть], rnccv.DistrStr AS [Дистрибутив], SST_SHORT AS [Тип системы], rnccv.Complect AS [Комплект], ct.ClientEmail AS [E-Mail],
+			rnccv.ClientName AS [РќР°Р·РІР°РЅРёРµ РєР»РёРµРЅС‚Р°], rnccv.ManagerName [Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ], rnccv.ServiceName AS [РЎР],
+			rnccv.NT_SHORT AS [РЎРµС‚СЊ], rnccv.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹], rnccv.Complect AS [РљРѕРјРїР»РµРєС‚], ct.ClientEmail AS [E-Mail],
 			CASE
 				WHEN ct.ClientEmail = '' OR ct.ClientEmail IS NULL THEN
 					CONVERT(BIT, 0)
 				WHEN ct.ClientEmail <> '' AND ct.ClientEmail IS NOT NULL THEN
 					CONVERT(BIT, 1)
-			END AS [Наличие E-Mail]
+			END AS [РќР°Р»РёС‡РёРµ E-Mail]
 		FROM
 			dbo.RegNodeComplectClientView rnccv
 			INNER JOIN dbo.ClientTable ct ON ct.ClientID = rnccv.ClientID

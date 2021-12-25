@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -40,7 +40,7 @@ BEGIN
 					FROM dbo.ClientDistrView WITH(NOEXPAND)
 					WHERE ID_CLIENT = ClientID
 						AND DS_REG = 0
-						AND HostShort = 'К+'
+						AND HostShort = 'Рљ+'
 					ORDER BY SystemOrder, DISTR FOR XML PATH('')
 				)
 			), 1, 2, '')) AS DISTR,
@@ -57,8 +57,8 @@ BEGIN
 					FROM dbo.ClientStudyPeople z
 					WHERE z.ID_STUDY = c.ID
 						AND z.ID_SERT_TYPE IS NOT NULL
-				) THEN 'Есть'
-				ELSE 'Нет'
+				) THEN 'Р•СЃС‚СЊ'
+				ELSE 'РќРµС‚'
 			END AS SERTIFICAT,
 			CASE
 				WHEN @LAST_NOTE = 1 AND c.DATE = a.LAST_DATE THEN c.NOTE

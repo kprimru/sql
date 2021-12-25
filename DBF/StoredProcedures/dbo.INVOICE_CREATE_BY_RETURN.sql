@@ -1,13 +1,13 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_RETURN]
 	@inid INT,
@@ -79,7 +79,7 @@ BEGIN
 				AND IN_ID_INVOICE IS NULL
 				AND IN_DATE <= @invdate
 
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = @docstring + 'в„– ' + IN_PAY_NUM + ' РѕС‚ ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
 		FROM
 			(
 				SELECT
@@ -132,7 +132,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -166,7 +166,7 @@ BEGIN
 							WHEN ISNULL(FAT_ID_ADDR_TYPE, '') = '' THEN FAT_TEXT
 							ELSE
 								(
-	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', д.'+CA_HOME, CA_STR)
+	/*							SELECT ISNULL(CT_PREFIX+CT_NAME+', '+ST_PREFIX+ST_NAME+', Рґ.'+CA_HOME, CA_STR)
 								FROM
 									dbo.ClientTable INNER JOIN
 									dbo.ClientAddressView a ON CL_ID = CA_ID_CLIENT
@@ -269,10 +269,10 @@ BEGIN
 						)
 				SELECT
 					@insid, ID_ID_DISTR, GD_NAME, ISNULL(SYS_PREFIX, '') + ' ' + SYS_NAME,
-					-- стоимость без НДС
+					-- СЃС‚РѕРёРјРѕСЃС‚СЊ Р±РµР· РќР”РЎ
 					CAST(ROUND((ID_PRICE - DELTA) /(1 + ROUND(TX_PERCENT / 100, 2)), 2) AS MONEY),
 					TX_ID, TX_PERCENT,
-					-- НДС
+					-- РќР”РЎ
 					CAST(ROUND((ID_PRICE - DELTA) - CAST(ROUND((ID_PRICE - DELTA) /(1 + ROUND(TX_PERCENT / 100, 2)), 2) AS MONEY), 2) AS MONEY),
 					(ID_PRICE - DELTA),
 					NULL, UN_NAME,
@@ -324,19 +324,19 @@ BEGIN
 
 		/*
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'Создание с/ф по оплате', INS_DATA
+			SELECT INS_ID_CLIENT, @insid, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РїРѕ РѕРїР»Р°С‚Рµ', INS_DATA
 			FROM dbo.InvoiceProtocolView
 			WHERE INS_ID = @insid
 		*/
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
-			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'Создание с/ф по возвратам', '№' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' от ' + CONVERT(VARCHAR(20), INS_DATE, 104)
+			SELECT INS_ID_CLIENT, INS_ID, 'INVOICE', 'РЎРѕР·РґР°РЅРёРµ СЃ/С„ РїРѕ РІРѕР·РІСЂР°С‚Р°Рј', 'в„–' + CONVERT(VARCHAR(20), INS_NUM) + '/' + CONVERT(VARCHAR(20), INS_NUM_YEAR) + ' РѕС‚ ' + CONVERT(VARCHAR(20), INS_DATE, 104)
 			FROM
 				dbo.InvoiceSaleTable
 			WHERE INS_ID = @insid
 
 		INSERT INTO dbo.FinancingProtocol(ID_CLIENT, ID_DOCUMENT, TP, OPER, TXT)
 			SELECT
-				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Добавление строки с/ф',
+				INS_ID_CLIENT, INS_ID, 'INVOICE', 'Р”РѕР±Р°РІР»РµРЅРёРµ СЃС‚СЂРѕРєРё СЃ/С„',
 				CONVERT(VARCHAR(20), PR_DATE, 104) +
 					':' + DIS_STR + ' - ' + dbo.MoneyFormat(INR_SALL)
 			FROM

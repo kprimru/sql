@@ -1,4 +1,4 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
@@ -21,22 +21,22 @@ BEGIN
 			WHEN
 				TT_OLD IS NULL AND TT_NEW IS NULL
 				AND SN_OLD IS NOT NULL AND SN_NEW IS NOT NULL
-				THEN 'с ' + SOLD.SN_NAME + ' на ' + SNEW.SN_NAME
+				THEN 'СЃ ' + SOLD.SN_NAME + ' РЅР° ' + SNEW.SN_NAME
 			WHEN
 				TT_OLD IS NOT NULL AND TT_NEW IS NOT NULL
 				AND SN_OLD IS NULL AND SN_NEW IS NULL
 				THEN
 				CASE
 					WHEN TT_OLD > TT_NEW
-						THEN 'с ' + TOLD.TT_NAME + ' на ' + 'лок'
-						ELSE 'с ' + 'лок' + ' на ' + TNEW.TT_NAME
+						THEN 'СЃ ' + TOLD.TT_NAME + ' РЅР° ' + 'Р»РѕРє'
+						ELSE 'СЃ ' + 'Р»РѕРє' + ' РЅР° ' + TNEW.TT_NAME
 					END
 			WHEN TT_OLD IS NOT NULL AND TT_NEW IS NOT NULL AND SN_OLD IS NOT NULL AND SN_NEW IS NOT NULL
 				THEN
 					CASE
 						WHEN TT_OLD > TT_NEW
-							THEN 'с ' + TOLD.TT_NAME + ' на ' + SNEW.SN_NAME
-						ELSE 'с ' + SOLD.SN_NAME + ' на ' + TNEW.TT_NAME
+							THEN 'СЃ ' + TOLD.TT_NAME + ' РЅР° ' + SNEW.SN_NAME
+						ELSE 'СЃ ' + SOLD.SN_NAME + ' РЅР° ' + TNEW.TT_NAME
 					END
 			ELSE NULL
 		END

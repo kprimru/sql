@@ -1,13 +1,13 @@
-USE [DBF_NAH]
+п»їUSE [DBF_NAH]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:
-Дата создания:  
-Описание:
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[COURIER_REPORT]
@@ -96,7 +96,7 @@ BEGIN
 																a.DIS_NUM = b.RN_DISTR_NUM AND
 																a.DIS_COMP_NUM = b.RN_COMP_NUM
 									WHERE TD_ID_TO = TO_ID AND RN_SERVICE = 0
-								) THEN 'Нет'
+								) THEN 'РќРµС‚'
 						ELSE ''
 					END
 				) AS CL_SERVICE,

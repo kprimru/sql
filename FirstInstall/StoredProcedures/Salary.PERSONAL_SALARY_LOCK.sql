@@ -1,4 +1,4 @@
-USE [FirstInstall]
+п»їUSE [FirstInstall]
 GO
 SET ANSI_NULLS ON
 GO
@@ -22,7 +22,7 @@ BEGIN
 
 	EXEC Common.PROTOCOL_VALUE_GET 'PERSONAL_SALARY', @PS_ID, @NEW OUTPUT
 
-	EXEC Common.PROTOCOL_INSERT 'PERSONAL_SALARY', 'Блокировка', @PS_ID, @OLD, @NEW
+	EXEC Common.PROTOCOL_INSERT 'PERSONAL_SALARY', 'Р‘Р»РѕРєРёСЂРѕРІРєР°', @PS_ID, @OLD, @NEW
 END
 GO
 GRANT EXECUTE ON [Salary].[PERSONAL_SALARY_LOCK] TO rl_salary_w;

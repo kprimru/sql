@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -25,8 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT 
-			'Добрый день!' + CHAR(10) + CLIENT + ' проводит ' + TENDER_TYPE + ' на ' + SUBJECT + '.' + CHAR(10) + CHAR(10) +
-			'Подача документов до ' + ISNULL(CONVERT(NVARCHAR(32), CLAIM_FINISH, 104) + ' г.', '')
+			'Р”РѕР±СЂС‹Р№ РґРµРЅСЊ!' + CHAR(10) + CLIENT + ' РїСЂРѕРІРѕРґРёС‚ ' + TENDER_TYPE + ' РЅР° ' + SUBJECT + '.' + CHAR(10) + CHAR(10) +
+			'РџРѕРґР°С‡Р° РґРѕРєСѓРјРµРЅС‚РѕРІ РґРѕ ' + ISNULL(CONVERT(NVARCHAR(32), CLAIM_FINISH, 104) + ' Рі.', '')
 					AS MAIL_BODY
 		FROM
 			(

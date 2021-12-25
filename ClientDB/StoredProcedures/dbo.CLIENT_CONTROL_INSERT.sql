@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -43,7 +43,7 @@ BEGIN
 
 		IF @TYPE IS NULL
 		BEGIN
-			RAISERROR ('Вам запрещено ставить клиента на контроль', 16, 1)
+			RAISERROR ('Р’Р°Рј Р·Р°РїСЂРµС‰РµРЅРѕ СЃС‚Р°РІРёС‚СЊ РєР»РёРµРЅС‚Р° РЅР° РєРѕРЅС‚СЂРѕР»СЊ', 16, 1)
 
 			RETURN
 		END

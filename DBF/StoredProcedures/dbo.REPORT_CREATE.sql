@@ -1,12 +1,12 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 /*
-Автор:		  коллектив авторов
-Описание:
+РђРІС‚РѕСЂ:		  РєРѕР»Р»РµРєС‚РёРІ Р°РІС‚РѕСЂРѕРІ
+РћРїРёСЃР°РЅРёРµ:
 */
 ALTER PROCEDURE [dbo].[REPORT_CREATE]
 /*
@@ -63,14 +63,14 @@ BEGIN
 
 	BEGIN TRY
 
-		------------------ Кол-во систем -------------------
+		------------------ РљРѕР»-РІРѕ СЃРёСЃС‚РµРј -------------------
 		IF @reporttype = 1
 			EXEC dbo.REPORT_SYSTEM_SUBHOST
 				@distrstats, @subhosts,
 				@systems, @systemtypes, @systemnets,
 				@periods, @techtypes, @total
 		ELSE
-		--------- Кол-во систем разной сетевитости ---------
+		--------- РљРѕР»-РІРѕ СЃРёСЃС‚РµРј СЂР°Р·РЅРѕР№ СЃРµС‚РµРІРёС‚РѕСЃС‚Рё ---------
 		IF @reporttype = 2
 			EXEC dbo.REPORT_SYSTEM_NAME_HOST_NET
 				@distrstats, @subhosts,
@@ -78,7 +78,7 @@ BEGIN
 				@periods, @techtypes,
 				@total, @totalric
 		ELSE
-		--------------- Кол-во новых систем  ---------------
+		--------------- РљРѕР»-РІРѕ РЅРѕРІС‹С… СЃРёСЃС‚РµРј  ---------------
 		IF @reporttype = 3
 			EXEC dbo.REPORT_NEW_SYSTEM
 				@subhosts,
@@ -86,7 +86,7 @@ BEGIN
 				@periods, @techtypes,
 				@total
 		ELSE
-		--------------- Список новых систем ----------------
+		--------------- РЎРїРёСЃРѕРє РЅРѕРІС‹С… СЃРёСЃС‚РµРј ----------------
 		IF @reporttype = 4
 			EXEC dbo.REPORT_NEW_SYSTEM_LIST
 				@subhosts,

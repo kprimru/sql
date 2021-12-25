@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[GET_CONTRACT_OUT_DATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE]  AS SELECT 1')
 GO
--- получение просроченных договоров
+-- РїРѕР»СѓС‡РµРЅРёРµ РїСЂРѕСЃСЂРѕС‡РµРЅРЅС‹С… РґРѕРіРѕРІРѕСЂРѕРІ
 
 ALTER PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE]
 	@curdate VARCHAR(20),
@@ -16,7 +16,7 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	--ToDo сделать нормально
+	--ToDo СЃРґРµР»Р°С‚СЊ РЅРѕСЂРјР°Р»СЊРЅРѕ
 
 	DECLARE
 		@DebugError		VarChar(512),

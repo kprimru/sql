@@ -1,4 +1,4 @@
-USE [DBF]
+ï»¿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -67,9 +67,9 @@ BEGIN
 					SET @KOB = 1
 				ELSE
 				BEGIN
-					IF /*@KGS > 70 AND @CL_TERR = 'ÁÃ' AND */@CPS_MIN IS NOT NULL AND @CPS_MIN > @TO_CALC
+					IF /*@KGS > 70 AND @CL_TERR = 'Ð‘Ð“' AND */@CPS_MIN IS NOT NULL AND @CPS_MIN > @TO_CALC
 						SET @TO_CALC = 230
-					IF /*@CL_TERR = 'ÓÒ' AND */@CPS_MIN IS NOT NULL AND @CPS_MIN > @TO_CALC
+					IF /*@CL_TERR = 'Ð£Ð¢' AND */@CPS_MIN IS NOT NULL AND @CPS_MIN > @TO_CALC
 						SET @TO_CALC = 230
 				END
 			END

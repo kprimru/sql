@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,10 +30,10 @@ BEGIN
 			DATE, STUDY_DATE, CALL_DATE, NOTE, NULL AS TP,
 			TeacherName, TEACHER_NOTE, MEETING_DATE, MEETING_NOTE, STATUS,
 			CASE STATUS
-				WHEN 1 THEN 'Активна'
-				WHEN 4 THEN 'Отменена'
-				WHEN 5 THEN 'Выполнена'
-				WHEN 9 THEN 'Длительная'
+				WHEN 1 THEN 'РђРєС‚РёРІРЅР°'
+				WHEN 4 THEN 'РћС‚РјРµРЅРµРЅР°'
+				WHEN 5 THEN 'Р’С‹РїРѕР»РЅРµРЅР°'
+				WHEN 9 THEN 'Р”Р»РёС‚РµР»СЊРЅР°СЏ'
 			END AS STATUS_STR,
 			(
 				SELECT ISNULL(SURNAME + ' ', '') + ISNULL(NAME + ' ', '') + ISNULL(PATRON, '') + CHAR(10) + POSITION + CHAR(10) + PHONE + CHAR(10) + a.NOTE + CHAR(10)
@@ -58,7 +58,7 @@ BEGIN
 		SELECT
 			a.ID, a.ID_CLAIM,
 			a.ID_CLAIM, a.ID,
-			a.DATE, NULL, NULL AS CALL_DATE, NULL, CASE TP WHEN 0 THEN 'Звонок' WHEN 1 THEN 'Визит' ELSE 'o_O' END AS TP,
+			a.DATE, NULL, NULL AS CALL_DATE, NULL, CASE TP WHEN 0 THEN 'Р—РІРѕРЅРѕРє' WHEN 1 THEN 'Р’РёР·РёС‚' ELSE 'o_O' END AS TP,
 			TEACHER, a.NOTE, MEETING_DATE, MEETING_NOTE, NULL, NULL, NULL, '' AS CREATE_USER
 		FROM
 			dbo.ClientStudyClaimWork a

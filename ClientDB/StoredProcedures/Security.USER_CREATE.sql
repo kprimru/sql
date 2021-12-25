@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,7 +33,7 @@ BEGIN
 		IF (CHARINDEX('''', @NAME) <> 0)
 			OR (CHARINDEX('''', @PASS) <> 0)
 		BEGIN
-			SET @ERROR = 'Имя пользователя или пароль содержат недоспустимые символы (кавычка)'
+			SET @ERROR = 'РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ СЃРѕРґРµСЂР¶Р°С‚ РЅРµРґРѕСЃРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ (РєР°РІС‹С‡РєР°)'
 
 			RAISERROR (@ERROR, 16, 1)
 
@@ -47,7 +47,7 @@ BEGIN
 				WHERE name = @NAME
 			)
 		BEGIN
-			SET @ERROR = 'Пользователь "' + @NAME + '" уже есть на сервере'
+			SET @ERROR = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @NAME + '" СѓР¶Рµ РµСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ'
 
 			RAISERROR (@ERROR, 16, 1)
 
@@ -62,7 +62,7 @@ BEGIN
 				WHERE name = @NAME
 			)
 		BEGIN
-			SET @ERROR = 'Пользователь или роль "' + @NAME + '" уже существуют в базе данных'
+			SET @ERROR = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РёР»Рё СЂРѕР»СЊ "' + @NAME + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‚ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…'
 
 			RAISERROR (@ERROR, 16, 1)
 
@@ -77,7 +77,7 @@ BEGIN
 					FROM sys.server_principals
 					WHERE name = @NAME
 				)
-			/* авторизация Windows*/
+			/* Р°РІС‚РѕСЂРёР·Р°С†РёСЏ Windows*/
 				EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')
 		END
 		ELSE
@@ -88,7 +88,7 @@ BEGIN
 					FROM sys.server_principals
 					WHERE name = @NAME
 				)
-			/* авторизация SQL		*/
+			/* Р°РІС‚РѕСЂРёР·Р°С†РёСЏ SQL		*/
 				EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')
 		END
 

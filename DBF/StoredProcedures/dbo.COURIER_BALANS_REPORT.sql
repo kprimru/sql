@@ -1,4 +1,4 @@
-USE [DBF]
+ÔªøUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -55,7 +55,7 @@ BEGIN
 				Oper varchar(100) NULL,
 				REG_COMMENT VARCHAR(100)
 			)
-		 -- ÔÂ‰˚‰Û˘ËÈ ÔÂËÓ‰
+		 -- –ø—Ä–µ–¥—ã–¥—É—â–∏–π –ø–µ—Ä–∏–æ–¥
 			SELECT @PR_ID_OLD = PR_ID
 			FROM dbo.PeriodTable
 			WHERE PR_DATE = DATEADD(month, -1, (SELECT PR_DATE FROM dbo.PeriodTable P WHERE P.PR_ID = @PR_ID))
@@ -66,7 +66,7 @@ BEGIN
 				RETURN
 			END
 
-			-- ‚˚ÍÎ->‚ÍÎ
+			-- –≤—ã–∫–ª->–≤–∫–ª
 			INSERT INTO #o_reg_list
 			SELECT     P.[REG_DISTR_NUM]
 					  ,P.[REG_COMP_NUM]
@@ -76,7 +76,7 @@ BEGIN
 					  ,O.[REG_ID_SYSTEM] 
 					  ,P.[REG_ID_STATUS]
 					  ,0-(T.[SN_COEF] * S.[STW_WEIGHT])
-					  ,'Œ“ Àﬁ◊≈Õ»≈'
+					  ,'–û–¢–ö–õ–Æ–ß–ï–ù–ò–ï'
 					  ,P.REG_COMMENT
 				  FROM [dbo].[PeriodRegTable] P
 				  LEFT JOIN [dbo].[PeriodRegTable] O ON (O.[REG_ID_PERIOD]=@PR_ID_OLD)
@@ -89,7 +89,7 @@ BEGIN
 				  WHERE (P.[REG_ID_STATUS] = 2)AND(NOT(O.[REG_ID_SYSTEM] IS NULL))
 						AND(P.[REG_ID_PERIOD]=@PR_ID)
 						AND(P.[REG_ID_COUR] IN (SELECT * FROM @COUR))
-			-- ‚ÍÎ->‚˚ÍÎ
+			-- –≤–∫–ª->–≤—ã–∫–ª
 			INSERT INTO #o_reg_list
 			SELECT     P.[REG_DISTR_NUM]
 					  ,P.[REG_COMP_NUM]
@@ -99,7 +99,7 @@ BEGIN
 					  ,O.[REG_ID_SYSTEM] 
 					  ,P.[REG_ID_STATUS]
 					  ,T.[SN_COEF] * S.[STW_WEIGHT]
-					  ,'¬ Àﬁ◊≈Õ»≈'
+					  ,'–í–ö–õ–Æ–ß–ï–ù–ò–ï'
 					  ,P.REG_COMMENT
 				  FROM [dbo].[PeriodRegTable] P
 				  LEFT JOIN [dbo].[PeriodRegTable] O ON (O.[REG_ID_PERIOD]=@PR_ID_OLD)
@@ -112,7 +112,7 @@ BEGIN
 				  WHERE (P.[REG_ID_STATUS] = 1)AND(NOT(O.[REG_ID_SYSTEM] IS NULL))
 						AND(P.[REG_ID_PERIOD]=@PR_ID)
 						AND(P.[REG_ID_COUR] IN (SELECT * FROM @COUR))
-			-- ÔÓ‚˚¯ÂÌËÂ/ÔÓÌËÊÂÌËÂ
+			-- –ø–æ–≤—ã—à–µ–Ω–∏–µ/–ø–æ–Ω–∏–∂–µ–Ω–∏–µ
 			INSERT INTO #o_reg_list
 			SELECT     P.[REG_DISTR_NUM]
 					  ,P.[REG_COMP_NUM]
@@ -127,19 +127,19 @@ BEGIN
 						  CASE
 							WHEN (P.[REG_ID_SYSTEM] <> O.[REG_ID_SYSTEM]) THEN
 							  CASE
-								  WHEN T.[SN_COEF] = T_O.[SN_COEF] THEN 'œŒ¬€ÿ≈Õ»≈ '+' Ò ' + Q_O.[SYS_SHORT_NAME] +' Ì‡ '+Q.[SYS_SHORT_NAME]
-								  ELSE 'œŒ¬€ÿ≈Õ»≈ '+' Ò ' + Q_O.[SYS_SHORT_NAME] +' Ì‡ '+Q.[SYS_SHORT_NAME] +' Ò ' + T_O.[SN_NAME] +' Ì‡ '+T.[SN_NAME]
+								  WHEN T.[SN_COEF] = T_O.[SN_COEF] THEN '–ü–û–í–´–®–ï–ù–ò–ï '+' —Å ' + Q_O.[SYS_SHORT_NAME] +' –Ω–∞ '+Q.[SYS_SHORT_NAME]
+								  ELSE '–ü–û–í–´–®–ï–ù–ò–ï '+' —Å ' + Q_O.[SYS_SHORT_NAME] +' –Ω–∞ '+Q.[SYS_SHORT_NAME] +' —Å ' + T_O.[SN_NAME] +' –Ω–∞ '+T.[SN_NAME]
                     		  END
-							 ELSE 'œŒ¬€ÿ≈Õ»≈ ' +' Ò ' + T_O.[SN_NAME] +' Ì‡ '+T.[SN_NAME]
+							 ELSE '–ü–û–í–´–®–ï–ù–ò–ï ' +' —Å ' + T_O.[SN_NAME] +' –Ω–∞ '+T.[SN_NAME]
 						  END
 						  WHEN (((T.[SN_COEF] * S.[STW_WEIGHT])-(T_O.[SN_COEF] * S_O.[STW_WEIGHT]))<0) THEN
 						  CASE
 							WHEN (P.[REG_ID_SYSTEM] <> O.[REG_ID_SYSTEM]) THEN
 							  CASE
-								  WHEN T.[SN_COEF] = T_O.[SN_COEF] THEN 'œŒÕ»∆≈Õ»≈ '+' Ò ' + Q_O.[SYS_SHORT_NAME] +' Ì‡ '+Q.[SYS_SHORT_NAME]
-								  ELSE 'œŒÕ»∆≈Õ»≈ '+' Ò ' + Q_O.[SYS_SHORT_NAME] +' Ì‡ '+Q.[SYS_SHORT_NAME] +' Ò ' + T_O.[SN_NAME] +' Ì‡ '+T.[SN_NAME]
+								  WHEN T.[SN_COEF] = T_O.[SN_COEF] THEN '–ü–û–ù–ò–ñ–ï–ù–ò–ï '+' —Å ' + Q_O.[SYS_SHORT_NAME] +' –Ω–∞ '+Q.[SYS_SHORT_NAME]
+								  ELSE '–ü–û–ù–ò–ñ–ï–ù–ò–ï '+' —Å ' + Q_O.[SYS_SHORT_NAME] +' –Ω–∞ '+Q.[SYS_SHORT_NAME] +' —Å ' + T_O.[SN_NAME] +' –Ω–∞ '+T.[SN_NAME]
                     		  END
-							 ELSE 'œŒÕ»∆≈Õ»≈' +' Ò ' + T_O.[SN_NAME] +' Ì‡ '+T.[SN_NAME]
+							 ELSE '–ü–û–ù–ò–ñ–ï–ù–ò–ï' +' —Å ' + T_O.[SN_NAME] +' –Ω–∞ '+T.[SN_NAME]
 						  END
 					   END
 					,P.REG_COMMENT

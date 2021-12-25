@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -23,7 +23,7 @@ BEGIN
 
     BEGIN TRY
         IF EXISTS(SELECT * FROM Client.CompanyDepo WHERE [Number] = @Number AND [Status] = 1 AND [Id] != @Id)
-            RaisError('Ошибка! Данный номер уже используется!', 16, 1);
+            RaisError('РћС€РёР±РєР°! Р”Р°РЅРЅС‹Р№ РЅРѕРјРµСЂ СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ!', 16, 1);
 
         UPDATE Client.CompanyDepo
         SET [Number] = @Number

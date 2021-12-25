@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -10,8 +10,8 @@ GO
 
 
 /*
-Автор:		  Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[REPORT_HEADER_GET]
@@ -32,9 +32,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	'Отчет РИЦ ' + (SELECT dbo.GET_SETTING('REPORT_RIC_NUM')) +
-				' по клиентам КонсультантПлюс за ' + CONVERT(VARCHAR, DATENAME(mm, PR_DATE)) + ' ' + CONVERT(VARCHAR, DATENAME(yyyy, PR_DATE)) +
-			   ' года, ответственный ' + (SELECT dbo.GET_SETTING('REPORT_NAME')) AS RPT_HEADER
+		SELECT	'РћС‚С‡РµС‚ Р РР¦ ' + (SELECT dbo.GET_SETTING('REPORT_RIC_NUM')) +
+				' РїРѕ РєР»РёРµРЅС‚Р°Рј РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ Р·Р° ' + CONVERT(VARCHAR, DATENAME(mm, PR_DATE)) + ' ' + CONVERT(VARCHAR, DATENAME(yyyy, PR_DATE)) +
+			   ' РіРѕРґР°, РѕС‚РІРµС‚СЃС‚РІРµРЅРЅС‹Р№ ' + (SELECT dbo.GET_SETTING('REPORT_NAME')) AS RPT_HEADER
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @prid
 

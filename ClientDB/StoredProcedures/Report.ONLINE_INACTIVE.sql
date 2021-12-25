@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -30,15 +30,15 @@ BEGIN
         SET @LastWeek = (SELECT TOP (1) P.ID FROM Common.Period AS P INNER JOIN dbo.OnlineActivity AS OA ON OA.ID_WEEK = P.ID ORDER BY P.START DESC);
 
         SELECT
-            [РГ]                                    = IsNull(C.ManagerName, R.SubhostName),
-            [СИ]                                    = IsNull(C.ServiceName, R.SubhostName),
-            [Клиент]                                = IsNull(C.ClientFullName, R.Comment),
-            [Дистрибутив]                           = R.DistrStr,
-            [Сеть]                                  = R.NT_SHORT,
-            [Тип]                                   = R.SST_SHORT,
-            [Последняя неделя активности]           = LOA.NAME,
-            [Недель с момента первой регистрации]   = DateDiff(Week, R.FirstReg, OA.Start),
-            [Недель без активности]                 = DateDiff(Week, LOA.Start, OA.Start)
+            [Р Р“]                                    = IsNull(C.ManagerName, R.SubhostName),
+            [РЎР]                                    = IsNull(C.ServiceName, R.SubhostName),
+            [РљР»РёРµРЅС‚]                                = IsNull(C.ClientFullName, R.Comment),
+            [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ]                           = R.DistrStr,
+            [РЎРµС‚СЊ]                                  = R.NT_SHORT,
+            [РўРёРї]                                   = R.SST_SHORT,
+            [РџРѕСЃР»РµРґРЅСЏСЏ РЅРµРґРµР»СЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё]           = LOA.NAME,
+            [РќРµРґРµР»СЊ СЃ РјРѕРјРµРЅС‚Р° РїРµСЂРІРѕР№ СЂРµРіРёСЃС‚СЂР°С†РёРё]   = DateDiff(Week, R.FirstReg, OA.Start),
+            [РќРµРґРµР»СЊ Р±РµР· Р°РєС‚РёРІРЅРѕСЃС‚Рё]                 = DateDiff(Week, LOA.Start, OA.Start)
         FROM
         (
             SELECT DISTINCT OA.ID_HOST, OA.DISTR, OA.COMP, P.NAME, P.START
@@ -62,8 +62,8 @@ BEGIN
                 AND LOA.ACTIVITY = 1
             ORDER BY LP.START DESC
         ) AS LOA
-        WHERE   R.SST_SHORT NOT IN ('ДСП')
-            AND R.NT_SHORT NOT IN ('сеть 100', 'сеть 50', 'сеть 5', 'сеть 255')
+        WHERE   R.SST_SHORT NOT IN ('Р”РЎРџ')
+            AND R.NT_SHORT NOT IN ('СЃРµС‚СЊ 100', 'СЃРµС‚СЊ 50', 'СЃРµС‚СЊ 5', 'СЃРµС‚СЊ 255')
             AND
             (
                     LOA.START IS NULL

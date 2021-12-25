@@ -1,4 +1,4 @@
-USE [SaleDB]
+ÔªøUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -10,7 +10,7 @@ BEGIN
 	SELECT MIN(DEPO_NUM) AS DEPO_NUM
 	FROM Client.DepoNumbers
 	WHERE	STATUS = 1 AND
-			DEPO_NUM > 6229 -- ¬Œ“ ›“Œ Õ¿ƒŒ ¡”ƒ≈“ ”¡–¿“‹,  Œ√ƒ¿ ¬—≈’ ƒŒ 6000 ƒŒ¡¿¬ﬂ“
+			DEPO_NUM > 6229 -- –í–û–¢ –≠–¢–û –ù–ê–î–û –ë–£–î–ï–¢ –£–ë–†–ê–¢–¨, –ö–û–ì–î–ê –í–°–ï–• –î–û 6000 –î–û–ë–ê–í–Ø–¢
 END
 
 GO

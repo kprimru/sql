@@ -1,4 +1,4 @@
-USE [DBF]
+п»їUSE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
@@ -7,12 +7,12 @@ GO
 
 
 /*
-Автор:			Денисов Алексей
-Описание:
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
 ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
-	-- Список параметров процедуры
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕС†РµРґСѓСЂС‹
 	@gsname VARCHAR(50),
 	@gsvalue VARCHAR(50),
 	@active BIT = 1,

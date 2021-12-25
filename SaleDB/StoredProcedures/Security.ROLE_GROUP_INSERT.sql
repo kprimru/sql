@@ -1,4 +1,4 @@
-USE [SaleDB]
+п»їUSE [SaleDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -31,7 +31,7 @@ BEGIN
 			SELECT * FROM sys.database_principals WHERE name = @NAME
 		)
 		BEGIN
-			SET @TXT = 'Роль или пользователь "' + @NAME + '" уже существует. Выберите другое название.'
+			SET @TXT = 'Р РѕР»СЊ РёР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @NAME + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РЅР°Р·РІР°РЅРёРµ.'
 
 			RAISERROR(@TXT, 16, 1)
 

@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -33,8 +33,8 @@ BEGIN
 			/*ISNULL(ST_STR + ', ', '') + ISNULL(CA_HOME + ', ', '') + ISNULL(CA_OFFICE, '') AS CA_STR, */
 			CA_NAME, CA_MAP,
 			CASE
-				WHEN CA_MAP IS NULL THEN 'Нет'
-				ELSE 'Есть'
+				WHEN CA_MAP IS NULL THEN 'РќРµС‚'
+				ELSE 'Р•СЃС‚СЊ'
 			END AS CA_MAP_EXISTS
 		FROM
 			dbo.ClientAddress a

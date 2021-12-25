@@ -1,4 +1,4 @@
-USE [ClientDB]
+п»їUSE [ClientDB]
 GO
 SET ANSI_NULLS ON
 GO
@@ -46,7 +46,7 @@ BEGIN
 							FROM dbo.ClientSearchView z WITH(NOEXPAND)
 							WHERE z.ClientID = a.ClientID
 								AND z.SearchMonthDate >= DATEADD(MONTH, -2, @DATE)
-						) THEN 'Последний поиск за ' +
+						) THEN 'РџРѕСЃР»РµРґРЅРёР№ РїРѕРёСЃРє Р·Р° ' +
 							(
 								SELECT DATENAME(MONTH, MAX(SearchMonth))
 								FROM dbo.ClientSearchTable z
@@ -67,14 +67,14 @@ BEGIN
 							WHERE z.ClientID = a.ClientID
 								AND z.SearchMonthDate = DATEADD(MONTH, -1, @DATE)
 								AND CNT = 1
-						) THEN 'По одному запросу в месяц'
+						) THEN 'РџРѕ РѕРґРЅРѕРјСѓ Р·Р°РїСЂРѕСЃСѓ РІ РјРµСЃСЏС†'
 					WHEN
 						(
 							SELECT CNT
 							FROM dbo.ClientSearchView z WITH(NOEXPAND)
 							WHERE z.ClientID = a.ClientID
 								AND z.SearchMonthDate = DATEADD(MONTH, -1, @DATE)
-						) < 8 THEN 'Обратить внимание на историю поисков'
+						) < 8 THEN 'РћР±СЂР°С‚РёС‚СЊ РІРЅРёРјР°РЅРёРµ РЅР° РёСЃС‚РѕСЂРёСЋ РїРѕРёСЃРєРѕРІ'
 					ELSE ''
 				END AS COMMENT
 			FROM
