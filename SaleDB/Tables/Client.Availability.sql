@@ -8,7 +8,7 @@ CREATE TABLE [Client].[Availability]
 (
         [ID]      UniqueIdentifier      NOT NULL,
         [NAME]    NVarChar(512)         NOT NULL,
-        [GR]      NVarChar(512)             NULL,
+        [GR]      NVarChar(512)         NOT NULL,
         [ORD]     Int                       NULL,
         [COLOR]   Int                       NULL,
         [LAST]    DateTime              NOT NULL,

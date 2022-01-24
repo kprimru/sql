@@ -21,7 +21,7 @@ BEGIN
         @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
-		SELECT	ID, NAME, SHORT
+		SELECT	ID, NAME, SHORT, GR
 		FROM	Client.PayCategory
 		WHERE	ID		=	@ID
 

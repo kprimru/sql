@@ -8,7 +8,7 @@ CREATE TABLE [Client].[RivalSystem]
 (
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
-        [GR]     NVarChar(512)             NULL,
+        [GR]     NVarChar(512)         NOT NULL,
         [ORD]    Int                       NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Client.RivalSystem] PRIMARY KEY CLUSTERED ([ID])

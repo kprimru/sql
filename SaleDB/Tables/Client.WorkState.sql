@@ -11,7 +11,7 @@ CREATE TABLE [Client].[WorkState]
         [SALE_AUTO]      Bit                       NULL,
         [PHONE_AUTO]     Bit                       NULL,
         [ARCHIVE_AUTO]   Bit                       NULL,
-        [GR]             NVarChar(512)             NULL,
+        [GR]             NVarChar(512)         NOT NULL,
         [ORD]            Int                       NULL,
         [LAST]           DateTime              NOT NULL,
         CONSTRAINT [PK_Client.WorkState] PRIMARY KEY CLUSTERED ([ID])

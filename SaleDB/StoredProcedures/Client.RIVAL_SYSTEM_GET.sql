@@ -21,7 +21,7 @@ BEGIN
         @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
-		SELECT	ID, NAME
+		SELECT	ID, NAME, GR
 		FROM	Client.RivalSystem
 		WHERE	ID		=	@ID
 

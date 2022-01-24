@@ -9,7 +9,7 @@ CREATE TABLE [Client].[PayCategory]
         [ID]      UniqueIdentifier      NOT NULL,
         [NAME]    NVarChar(256)         NOT NULL,
         [SHORT]   NVarChar(128)         NOT NULL,
-        [GR]      NVarChar(256)             NULL,
+        [GR]      NVarChar(256)         NOT NULL,
         [ORD]     Int                       NULL,
         [LAST]    DateTime              NOT NULL,
         CONSTRAINT [PK_Client.PayCategory] PRIMARY KEY CLUSTERED ([ID])

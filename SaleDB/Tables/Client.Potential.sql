@@ -8,7 +8,7 @@ CREATE TABLE [Client].[Potential]
 (
         [ID]     UniqueIdentifier      NOT NULL,
         [NAME]   NVarChar(512)         NOT NULL,
-        [GR]     NVarChar(512)             NULL,
+        [GR]     NVarChar(512)         NOT NULL,
         [ORD]    Int                       NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Client.Potential] PRIMARY KEY CLUSTERED ([ID])
