@@ -62,7 +62,10 @@ BEGIN
 				(
 					SELECT
 						a.PR_ID,
-						CONVERT(MONEY, CASE
+						CONVERT(MONEY,
+						CASE WHEN PR_DATE >= '20220101' AND @SH_ID NOT IN (12) THEN Subhost.MinPrice(@SH_ID)
+			            ELSE
+						CASE
 							-- если не нужно использовать коэффициент сети - то берем сумму по прейскуранту сумму (из групп 4 и 6 - это подхосты поставка)
 							-- и умножаем на 1.
 							-- UNION ALL с таблицей Subhost.SubhostPriceSystemTable - потому что можно задавать исключения из основного прейскуранта (например, для РИЦ 490)
@@ -326,7 +329,7 @@ BEGIN
 												AND PTS_ID_ST = SST_ID
 										) AS o_O
 									WHERE PS_PRICE IS NOT NULL
-								) * 
+								) *
 								CASE
 									WHEN (SELECT SST_COEF FROM dbo.SystemTypeTable z WHERE z.SST_ID = a.SST_ID) = 0 THEN 1
 									WHEN (
@@ -470,6 +473,7 @@ BEGIN
 											WHERE SN_ID = SN_OLD_ID
 										)
 								END, Subhost.MinPrice(@SH_ID))
+						END
 						END) AS RNS_SUM
 					FROM
 						(
@@ -704,7 +708,7 @@ BEGIN
 				SUM(CONVERT(MONEY, ROUND(SPC_COUNT *
 					ROUND(SPP_PRICE * (1 + ISNULL(SP_COEF, 0)/100), 2), 2)
 				))
-			FROM 
+			FROM
 				Subhost.SubhostProductCalc
 				INNER JOIN Subhost.SubhostProduct ON SP_ID = SPC_ID_PROD
 				INNER JOIN Subhost.SubhostProductPrice ON SPP_ID_PRODUCT = SP_ID
@@ -784,7 +788,7 @@ BEGIN
 						SCR_TRAFFIC + SCR_DELIVERY - (SCR_IC /*+ (SELECT SHP_DEBT / 1.18 FROM #tmp_study)*/) + SCR_MARKET + SCR_STUDY + SCR_PAPPER +
 						SCR_DELIVERY_SYS + SCR_SUPPORT - SCR_DIU AS SCR_TOTAL_18,
 					CONVERT(MONEY, ROUND((SCR_TRAFFIC + SCR_DELIVERY - (SCR_IC  /*+ (SELECT SHP_DEBT / 1.18 FROM #tmp_study)*/) + SCR_MARKET + SCR_STUDY + SCR_PAPPER +
-						SCR_DELIVERY_SYS + SCR_SUPPORT - SCR_DIU) * @TX_RATE, 2)) AS SCR_NDS_18, 
+						SCR_DELIVERY_SYS + SCR_SUPPORT - SCR_DIU) * @TX_RATE, 2)) AS SCR_NDS_18,
 					SCR_INCOME, SCR_DEBT, SCR_SALDO, SCR_PENALTY
 				FROM
 					(
@@ -838,7 +842,7 @@ BEGIN
 							END*/
 							SHP_PENALTY AS  SCR_PENALTY
 						FROM
-							Subhost.SubhostCalc 
+							Subhost.SubhostCalc
 							INNER JOIN dbo.SubhostTable z ON z.SH_ID = SHC_ID_SUBHOST
 							LEFT OUTER JOIN #pay d ON 1 = 1
 						WHERE SHC_ID_SUBHOST = @SH_ID AND SHC_ID_PERIOD = @PR_ID

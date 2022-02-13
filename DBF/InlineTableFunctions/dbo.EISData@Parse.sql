@@ -24,7 +24,8 @@ RETURN
         PP.[ProductOKEICode],
         PP.[ProductOKEIFullName],
         R.[RegNum],
-        R.[Number]
+        R.[Number],
+        S.[Stage_GUId]
 
     FROM @Data.nodes('(/export/contract)') AS E(C)
     OUTER APPLY
@@ -41,14 +42,15 @@ RETURN
     ) AS EP
     OUTER APPLY
     (
-        SELECT TOP (1) [StagePrice]
+        SELECT TOP (1) [StagePrice], [Stage_GUId]
         FROM
         (
             SELECT
                 [Data]          = S.query('.'),
                 [StartDate]     = Convert(SmallDateTime, S.value('(./startDate)[1]', 'VarChar(100)'), 120),
                 [FinishDate]    = Convert(SmallDateTime, S.value('(./endDate)[1]', 'VarChar(100)'), 120),
-                [StagePrice]    = S.value('(./stagePrice)[1]', 'VarChar(100)')
+                [StagePrice]    = S.value('(./stagePrice)[1]', 'VarChar(100)'),
+                [Stage_GUId]     = S.value('(./guid)[1]', 'VarChar(100)')
             FROM EP.[ExecutionPeriods].nodes('*/stages') AS E(S)
         ) AS SS
         WHERE @ActDate BETWEEN SS.[StartDate] AND SS.[FinishDate]

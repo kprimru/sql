@@ -52,7 +52,10 @@ BEGIN
 					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(SN_OLD_NAME + ' ', '') +
 					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(SN_NEW_NAME, '')
 			END AS OPER,
-			CONVERT(MONEY, CASE
+			CONVERT(MONEY,
+			CASE WHEN PR_DATE >= '20220101' AND @SH_ID NOT IN (12) THEN Subhost.MinPrice(@SH_ID)
+			ELSE
+			CASE
 				WHEN (
 								SELECT PT_COEF
 								FROM
@@ -448,6 +451,7 @@ BEGIN
 								WHERE SN_ID = SN_OLD_ID
 							)
 					END, Subhost.MinPrice(@SH_ID))
+			END
 			END) AS RNS_SUM
 			/*
 			SYS_OLD_ID, SYS_OLD_NAME,
