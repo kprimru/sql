@@ -48,25 +48,9 @@ BEGIN
         -- обновляем список дистрибутивов подключенных к ЗВЭ
 		TRUNCATE TABLE dbo.ExpertDistr;
 
-		INSERT INTO dbo.ExpertDistr(ID_HOST, DISTR, COMP, SET_DATE)
-		SELECT H.HostID, A.Distr, A.Comp, A.SET_DATE
-		FROM @Distr AS D
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[ExpertDistr] AS A ON A.ID_HOST = D.HostID AND A.DISTR = D.Distr AND A.COMP = D.Comp
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS AH ON A.ID_HOST = AH.HostID
-		INNER JOIN dbo.Hosts H ON H.HostReg = AH.HostReg
-		WHERE A.UNSET_DATE IS NULL;
-
 		-- обновляем списко дистрибутивов подключенных к чату
 
 		TRUNCATE TABLE dbo.HotlineDistr;
-
-		INSERT INTO dbo.HotlineDistr(ID_HOST, DISTR, COMP, SET_DATE)
-		SELECT H.HostID, A.Distr, A.Comp, A.SET_DATE
-		FROM @Distr AS D
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[HotlineDistr] AS A ON A.ID_HOST = D.HostID AND A.DISTR = D.Distr AND A.COMP = D.Comp
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS AH ON A.ID_HOST = AH.HostID
-		INNER JOIN dbo.Hosts H ON H.HostReg = AH.HostReg
-		WHERE A.UNSET_DATE IS NULL;
 
 		-- Обновляем черный список ИП
 

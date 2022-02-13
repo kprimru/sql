@@ -396,7 +396,9 @@ BEGIN
 				WHEN 20 THEN ''
 				ELSE '/' + CONVERT(VARCHAR(20), UP_RIC)
 			END + '/' +
+			-- ToDo в справочники!!!
 			CASE
+			    WHEN UP_TECH = 'INTN' THEN 'Интранет ' + CONVERT(VARCHAR(20), UP_NET)
 				WHEN UP_TECH = 'FLS' THEN 'Флеш-версия'
 				WHEN UP_TECH = 'OVKF' THEN 'ОВК-Ф'
 				WHEN UP_TECH = 'OVMF' THEN 'ОВМ-Ф'

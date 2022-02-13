@@ -12,9 +12,14 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+	DECLARE @DefaultCategory_Id SmallInt;
+
+	SELECT TOP (1) @DefaultCategory_Id = ClientTypeID
+	FROM [dbo].[ClientTypeTable]
+	ORDER BY [SortIndex] DESC;
+
 	INSERT INTO [dbo].[ClientTypeRules]([System_Id], [DistrType_Id], [ClientType_Id])
-	-- ToDo заменить 3 на какое-то дефолтное значение
-	SELECT S.[SystemID], D.[DistrTypeID], 3
+	SELECT S.[SystemID], D.[DistrTypeID], @DefaultCategory_Id
     FROM dbo.SystemTable AS S
     CROSS JOIN dbo.DistrTypeTable AS D
     WHERE NOT EXISTS

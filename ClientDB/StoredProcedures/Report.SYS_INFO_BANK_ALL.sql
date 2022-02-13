@@ -31,15 +31,15 @@ BEGIN
 				SystemBaseName , DistrTypeName,
 				REVERSE(STUFF(REVERSE((
 				SELECT InfoBankName + ', '
-				FROM dbo.SystemInfoBanksView b
+				FROM dbo.SystemInfoBanksView b WITH(NOEXPAND)
 				WHERE b.System_ID = a.System_ID AND b.DistrType_ID = a.DistrType_ID
 				ORDER BY InfoBankName
 				FOR XML PATH('')
 				)), 1, 2, '')) AS Banks,
 				(SELECT COUNT(*)
-				FROM dbo.SystemInfoBanksView b
+				FROM dbo.SystemInfoBanksView b WITH(NOEXPAND)
 				WHERE b.System_ID = a.System_ID AND b.DistrType_ID = a.DistrType_ID) AS BanksCount
-		FROM dbo.SystemInfoBanksView a
+		FROM dbo.SystemInfoBanksView a WITH(NOEXPAND)
 		WHERE SystemActive = 1
 		GROUP BY SystemBaseName, DistrTypeName, a.System_ID, a.DistrType_ID
 
@@ -66,5 +66,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+
+
 
 GO

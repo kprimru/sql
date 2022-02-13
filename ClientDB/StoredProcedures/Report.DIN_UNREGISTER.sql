@@ -29,10 +29,10 @@ BEGIN
 			NT_SHORT AS [Сеть], SST_SHORT AS [Тип], dbo.DateOf(DF_CREATE) AS [Получен],
 			(
 				SELECT TOP 1 WEIGHT
-				FROM dbo.WeightView W WITH(NOEXPAND)
-				WHERE W.SystemID = b.DF_ID_SYS
-					AND W.NT_ID = b.DF_ID_NET
-					AND W.SST_ID = b.DF_ID_TYPE
+				FROM dbo.Weight W
+				WHERE W.System_Id = b.DF_ID_SYS
+					AND W.NetType_Id = b.DF_ID_NET
+					AND W.SystemType_Id = b.DF_ID_TYPE
 				ORDER BY W.DATE DESC
 			) AS [Вес]
 		FROM

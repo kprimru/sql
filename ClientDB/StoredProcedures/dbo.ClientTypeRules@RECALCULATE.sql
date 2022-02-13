@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[dbo].[ClientTypeRules@RECALCULATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ClientTypeRules@RECALCULATE]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[ClientTypeRules@RECALCULATE]
-    @Client_IDs         VarChar(Max)
+    @Client_IDs         VarChar(Max) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;

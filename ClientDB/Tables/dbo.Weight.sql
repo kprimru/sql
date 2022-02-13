@@ -6,14 +6,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Weight]
 (
-        [Date]       SmallDateTime      NOT NULL,
-        [Sys]        VarChar(50)        NOT NULL,
-        [SysType]    VarChar(50)        NOT NULL,
-        [NetCount]   SmallInt           NOT NULL,
-        [NetTech]    SmallInt           NOT NULL,
-        [NetOdon]    SmallInt           NOT NULL,
-        [NetOdoff]   SmallInt           NOT NULL,
-        [Weight]     decimal            NOT NULL,
-        CONSTRAINT [PK_dbo.Weight] PRIMARY KEY CLUSTERED ([Date],[Sys],[SysType],[NetCount],[NetTech],[NetOdon],[NetOdoff])
+        [Date]            SmallDateTime      NOT NULL,
+        [System_Id]       Int                NOT NULL,
+        [SystemType_Id]   Int                NOT NULL,
+        [NetType_Id]      Int                NOT NULL,
+        [Weight]          decimal            NOT NULL,
+        CONSTRAINT [PK_dbo.Weight] PRIMARY KEY CLUSTERED ([Date],[System_Id],[SystemType_Id],[NetType_Id]),
+        CONSTRAINT [FK_dbo.Weight_dbo.NetTypeTable] FOREIGN KEY  ([NetType_Id]) REFERENCES [Din].[NetType] ([NT_ID]),
+        CONSTRAINT [FK_dbo.Weight_dbo.SystemTable] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID]),
+        CONSTRAINT [FK_dbo.Weight_dbo.SystemTypeTable] FOREIGN KEY  ([SystemType_Id]) REFERENCES [Din].[SystemType] ([SST_ID])
 );
 GO

@@ -426,75 +426,12 @@ BEGIN
 						INNER JOIN USR.USRFileTech b ON a.UF_ID = b.UF_ID
 				) AS o_O
 			WHERE (UF_CONS_FREE < 2000 AND UF_COMPLECT_SIZE_MB < 4000) OR (UF_CONS_FREE < 4000 AND UF_COMPLECT_SIZE_MB >= 4000)
-			ORDER BY UD_NAME
-
-		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-			SELECT
-				C.UD_NAME, 'Дистрибутивы в списке "Задать вопрос эксперту"',
-				(
-					SELECT TOP (1) Convert(VarChar(20), a.SET_DATE, 104)
-					FROM
-						dbo.ExpertDistr a
-					WHERE a.STATUS = 1
-						AND a.ID_HOST = C.UD_HOST
-						AND a.DISTR = C.UD_DISTR
-						AND a.COMP = C.UD_COMP
-						AND a.UNSET_DATE IS NULL
-				),
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM USR.USRActiveView U
-							INNER JOIN USR.USRFileTech T ON T.UF_ID = U.UF_ID
-							WHERE C.UD_ID = U.UD_ID
-								AND
-								(
-									T.UF_EXPCONS IS NULL AND T.UF_FORMAT >= 11
-									OR
-									T.UF_EXPCONS_KIND IN ('N')
-								)
-						) THEN 1
-						ELSE 0
-						END
-			FROM #Complect C
-
-		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
-			SELECT
-				C.UD_NAME, 'Подключен сервис "Онлайн-диалог"',
-				(
-					SELECT TOP (1) Convert(VarChar(20), a.SET_DATE, 104)
-					FROM
-						dbo.HotlineDistr a
-					WHERE a.STATUS = 1
-						AND a.ID_HOST = C.UD_HOST
-						AND a.DISTR = C.UD_DISTR
-						AND a.COMP = C.UD_COMP
-						AND a.UNSET_DATE IS NULL
-				),
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM USR.USRActiveView U
-							INNER JOIN USR.USRFileTech T ON T.UF_ID = U.UF_ID
-							WHERE C.UD_ID = U.UD_ID
-								AND
-								(
-									T.UF_HOTLINE IS NULL AND T.UF_FORMAT >= 11
-									OR
-									T.UF_HOTLINE_KIND IN ('N')
-								)
-						) THEN 1
-						ELSE 0
-						END
-			FROM #Complect C
-
+			ORDER BY UD_NAME;
 
 		SELECT *
 		FROM #result
 		WHERE PARAM_VALUE IS NOT NULL
-		ORDER BY ID
+		ORDER BY ID;
 
 		IF OBJECT_ID('tempdb..#complect') IS NOT NULL
 			DROP TABLE #complect

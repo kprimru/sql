@@ -55,37 +55,6 @@ BEGIN
 		) P
 		WHERE a.STATUS IN (1, 9);
 
-		INSERT INTO @ZVE
-		SELECT C.Client_Id, Distrs
-		FROM
-		(
-			SELECT DISTINCT Client_Id
-			FROM @IDs
-		) C
-		CROSS APPLY
-		(
-			SELECT [Distrs] = REVERSE(STUFF(REVERSE(
-				(
-					SELECT DistrStr + ', '
-					FROM
-						(
-							SELECT DISTINCT g.DistrStr, SystemOrder, DISTR, COMP
-							FROM
-								dbo.RegNodeMainDistrView f WITH(NOEXPAND)
-								INNER JOIN dbo.ClientDistrView g WITH(NOEXPAND) ON f.MainHostID = g.HostID AND f.MainDistrNumber = g.DISTR AND f.MainCompNumber = g.COMP
-							WHERE g.ID_CLIENT = C.Client_Id
-								AND NOT EXISTS
-									(
-										SELECT *
-										FROM dbo.ExpertDistr z
-										WHERE z.ID_HOST = g.HostID AND z.DISTR = g.DISTR AND z.COMP = g.COMP
-									)
-						) AS o_O
-					ORDER BY SystemOrder, DISTR, COMP FOR XML PATH('')
-				)), 1, 2, ''))
-		) AS D
-		OPTION(RECOMPILE)
-
 		SELECT
 			A.ID, ID_CLIENT AS ClientID, DATE, STUDY_DATE, MEETING_DATE, b.ClientFullName + ISNULL(' (' + t.ClientTypeName + ')', '') AS ClientFullName, a.STATUS,
 			NOTE = Cast(NOTE AS VarChar(4000)), REPEAT, TeacherName, ServiceName + ' (' + ManagerName + ')' AS ServiceName, CALL_DATE, TEACHER_NOTE,
@@ -98,11 +67,10 @@ BEGIN
 				WHEN 5 THEN 'Выполнена'
 				WHEN 9 THEN 'Длительная'
 			END AS STATUS_STR,
-			Z.Distrs AS ZVE_DISTR
+			NULL AS ZVE_DISTR
 		FROM @IDs I
 		INNER JOIN dbo.ClientStudyClaim a ON I.ID = A.ID
 		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON b.ClientID = ID_CLIENT
-		INNER JOIN @ZVE Z ON Z.Client_Id = A.ID_CLIENT
 		LEFT JOIN dbo.ClientTypeTable t ON t.ClientTypeID = b.CLientTypeID
 		LEFT JOIN dbo.TeacherTable c ON c.TeacherID = a.ID_TEACHER
 		OUTER APPLY

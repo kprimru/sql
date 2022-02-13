@@ -19,7 +19,6 @@ ALTER PROCEDURE [Reg].[REG_NODE_SEARCH]
     @COMPLECT   NVarChar(150)   =    NULL,
     @CNT        Bit             =    NULL,
     @RC         Int             =    NULL   OUTPUT
-WITH RECOMPILE
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -255,7 +254,6 @@ BEGIN
             Weight = W.WEIGHT,
             D.[DisconnectDate],
             C.[ComplectDate]
-
         FROM #temp z
         INNER JOIN Reg.RegNodeSearchView a WITH(NOEXPAND) ON z.HST = a.HostID AND z.DISTR = a.DistrNumber AND z.COMP = a.CompNumber
         LEFT JOIN dbo.SubhostComplect ON SC_ID_HOST = HostID AND SC_DISTR = DistrNumber AND SC_COMP = CompNumber
@@ -266,10 +264,10 @@ BEGIN
         OUTER APPLY
         (
             SELECT TOP (1) WEIGHT
-            FROM dbo.WeightView W WITH(NOEXPAND)
-            WHERE W.SystemID = a.SystemID
-                AND W.SST_ID = a.SST_ID
-                AND W.NT_ID = a.NT_ID
+            FROM dbo.Weight W
+            WHERE W.System_Id = a.SystemID
+                AND W.SystemType_Id = a.SST_ID
+                AND W.NetType_Id = a.NT_ID
             ORDER BY W.Date DESC
         ) AS W
         OUTER APPLY
@@ -289,13 +287,7 @@ BEGIN
             WHERE C.Complect = A.Complect
             ORDER BY Convert(SmallDateTime, C.[RegisterDate], 104) DESC
         ) AS C
-        /*
-        WHERE (DistrNumber = @DISTR OR @DISTR IS NULL)
-        	AND (a.Comment LIKE @COMMENT OR @COMMENT IS NULL)
-        	AND (RegisterDate >= @BEGIN OR @BEGIN IS NULL)
-        	AND (RegisterDate <= @END OR @END IS NULL)
-        */
-        ORDER BY a.SystemOrder, DistrNumber, CompNumber
+        ORDER BY a.SystemOrder, DistrNumber, CompNumber;
 
         SELECT @RC = @@ROWCOUNT
 

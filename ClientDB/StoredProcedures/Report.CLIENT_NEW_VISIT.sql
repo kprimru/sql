@@ -60,10 +60,10 @@ BEGIN
 			ManagerName, ServiceName, ClientID, ClientFullName, DistrStr, DistrTypeName,
 			(
 				SELECT TOP (1) WEIGHT
-				FROM dbo.WeightView W WITH(NOEXPAND)
-				INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON W.SystemID = R.SystemID
-																	AND W.NT_ID = R.NT_ID
-																	AND W.SST_ID = R.SST_ID
+				FROM dbo.Weight W
+				INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON W.System_Id = R.SystemID
+																	AND W.NetType_Id = R.NT_ID
+																	AND W.SystemType_Id = R.SST_ID
 				WHERE R.DistrNumber = b.DISTR AND R.CompNumber = b.COMP AND R.HostId = b.HostId
 					AND W.DATE <= a.DATE
 				ORDER BY a.DATE DESC

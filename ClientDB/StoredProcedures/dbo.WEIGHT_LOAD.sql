@@ -28,9 +28,9 @@ BEGIN
 		INSERT INTO dbo.Weight
 		SELECT
 			PR_DATE,
-			SYS_REG_NAME,
-			SST_NAME,
-			SNC_NET_COUNT, SNC_TECH, SNC_ODON, SNC_ODOFF,
+			SystemID,
+			SST_ID,
+			NT_ID,
 			W.WEIGHT
 		FROM
 		(
@@ -47,8 +47,10 @@ BEGIN
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemTypeTable		ST	ON W.ID_TYPE = ST.SST_ID
 			INNER JOIN [PC275-SQL\DELTA].DBF.dbo.SystemNetCountTable	SN	ON W.ID_NET = SN.SNC_ID
 		) AS W
-		WHERE RN = 1
-		ORDER BY PR_DATE, SYS_REG_NAME, SST_NAME
+		INNER JOIN dbo.SystemTable AS S ON S.SystemBaseName = W.SYS_REG_NAME
+		INNER JOIN Din.SystemType AS T ON T.SST_REG = W.SST_NAME
+		INNER JOIN Din.NetType AS N ON N.NT_NET = W.SNC_NET_COUNT AND N.NT_TECH = W.SNC_TECH AND N.NT_ODON = W.SNC_ODON AND N.NT_ODOFF = W.SNC_ODOFF
+		WHERE RN = 1;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

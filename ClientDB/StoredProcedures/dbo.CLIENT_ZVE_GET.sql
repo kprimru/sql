@@ -28,6 +28,7 @@ BEGIN
 
 		SET @ZVE = N''
 
+		/*
 		SELECT @ZVE = @ZVE + DistrStr + ', '
 		FROM
 			(
@@ -46,6 +47,7 @@ BEGIN
 					AND d.NT_TECH IN (0, 1)
 			) AS o_O
 		ORDER BY SystemOrder, DISTR, COMP --FOR XML PATH('')
+		*/
 
 		IF @ZVE <> ''
 			SET @ZVE = 'Не подключены к ЗВЭ: ' + REVERSE(STUFF(REVERSE(@ZVE), 1, 2, ''))
