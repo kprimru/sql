@@ -51,9 +51,18 @@ BEGIN
             SET @Client_Id = @ExpectedClient_Id;
         END;
 
-        IF @Client_Id IS NOT NULL
-            INSERT INTO dbo.ClientFinancingEIS(Client_Id, Date, Data)
-            SELECT @Client_Id, GetDate(), @Data;
+        IF @Client_Id IS NOT NULL BEGIN
+            UPDATE dbo.ClientFinancing SET
+                EIS_DATA = @Data,
+                EIS_REG_NUM = @RegNum,
+                EIS_CONTRACT = @Contract,
+                EIS_LINK = @Url,
+                UPD_PRINT = 1
+            WHERE ID_CLIENT = @Client_Id;
+
+            INSERT INTO dbo.ClientFinancingEIS(Client_Id, Date, Data, Contract, RegNum)
+            SELECT @Client_Id, GetDate(), @Data, @Contract, @RegNum;
+        END;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

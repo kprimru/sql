@@ -37,6 +37,8 @@ ALTER PROCEDURE [dbo].[ORGANIZATION_ADD]
 	@dirfam VARCHAR(50),
 	@dirname VARCHAR(50),
 	@dirotch VARCHAR(50),
+	@eiscode    varchar(100),
+	@eiscommcode varchar(100),
 	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
@@ -61,13 +63,13 @@ BEGIN
 				ORG_HOME, ORG_S_INDEX, ORG_S_ID_STREET, ORG_S_HOME, ORG_PHONE,
 				ORG_ID_BANK, ORG_ACCOUNT, ORG_LORO, ORG_BIK, ORG_INN, ORG_KPP, ORG_OKONH,
 				ORG_OKPO, ORG_BUH_FAM, ORG_BUH_NAME, ORG_BUH_OTCH, ORG_DIR_FAM,
-				ORG_DIR_NAME,ORG_DIR_OTCH, ORG_ACTIVE
+				ORG_DIR_NAME,ORG_DIR_OTCH, EIS_CODE, EIS_COMM_CODE, ORG_ACTIVE
 			)
 		VALUES
 			(
 				@psedo, @fullname, @shortname, @index, @streetid, @home, @sindex, @sstreetid,
 				@shome,	@phone,	@bankid, @acc, @loro, @bik, @inn,	@kpp, @okonh, @okpo,
-				@buhfam, @buhname, @buhotch, @dirfam, @dirname, @dirotch, @active
+				@buhfam, @buhname, @buhotch, @dirfam, @dirname, @dirotch, @eiscode, @eiscommcode, @active
 			)
 
 		IF @returnvalue = 1

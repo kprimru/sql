@@ -44,6 +44,8 @@ ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT]
 	@billshort  VarChar(100),
 	@billpos    VarChar(100),
 	@billmemo   VarChar(100),
+	@eiscode    VarChar(100),
+	@eiscommcode    VarChar(100),
 	@active     Bit = 1
 AS
 BEGIN
@@ -92,6 +94,8 @@ BEGIN
 			ORG_BILL_SHORT  = @billshort,
 			ORG_BILL_POS    = @billpos,
 			ORG_BILL_MEMO   = @billmemo,
+			EIS_CODE        = @eiscode,
+			EIS_COMM_CODE   = @eiscommcode,
 			ORG_ACTIVE      = @active
 		WHERE ORG_ID = @id
 

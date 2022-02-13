@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[ClientFinancing]
         [EIS_CONTRACT]        VarChar(100)                       NULL,
         [EIS_REG_NUM]         VarChar(100)                       NULL,
         [EIS_LINK]            VarChar(512)                       NULL,
+        [EIS_COMM_CODE]       VarChar(100)                       NULL,
         CONSTRAINT [PK_dbo.ClientFinancing] PRIMARY KEY NONCLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.ClientFinancing(ID_CLIENT)_dbo.ClientTable(CL_ID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([CL_ID])
 );

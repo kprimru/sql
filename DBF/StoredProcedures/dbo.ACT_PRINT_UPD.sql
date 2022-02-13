@@ -339,7 +339,7 @@ BEGIN
                     SELECT
                         [РеестрНомКонт] = F.EIS_REG_NUM,
                         [ИдВерсКонт]    = F.EIS_CONTRACT,
-                        [ИдЭтапКонт]    = IsNull(F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)'), F.EIS_DATA.value('(/export/contract/finances/extrabudgetFunds/stages/guid)[1]', 'VarChar(100)'))
+                        [ИдЭтапКонт]    = ED.[Stage_GUId]
                     FOR XML RAW('СведКонт'), TYPE
                 ),
                 (

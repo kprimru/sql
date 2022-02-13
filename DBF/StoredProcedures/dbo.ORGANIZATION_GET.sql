@@ -31,7 +31,8 @@ BEGIN
             ORG_BUH_FAM, ORG_BUH_NAME, ORG_BUH_OTCH,
             ORG_DIR_FAM, ORG_DIR_NAME, ORG_DIR_OTCH, ORG_DIR_POS,
             ORG_BILL_SHORT, ORG_BILL_POS, ORG_BILL_MEMO,
-            ORG_1C
+            ORG_1C,
+            EIS_CODE, EIS_COMM_CODE
         FROM dbo.OrganizationTable
         LEFT JOIN dbo.BankTable ON BA_ID = ORG_ID_BANK
         LEFT JOIN dbo.StreetTable a ON a.ST_ID = ORG_ID_STREET
