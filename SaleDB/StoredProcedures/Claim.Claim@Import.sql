@@ -16,7 +16,8 @@ ALTER PROCEDURE [Claim].[Claim@Import]
     @Special        NVarChar(MAX) = NULL,
     @Actions        NVarChar(MAX) = NULL,
     @PageURL        NVarChar(256) = NULL,
-    @PageTitle      NVarChar(256) = NULL
+    @PageTitle      NVarChar(256) = NULL,
+    @Section        NVarChar(256) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -50,6 +51,23 @@ BEGIN
         @DebugContext   = @DebugContext OUT;
 
     BEGIN TRY
+
+        IF @TypeCode = N'DOCUMENT-INFO' BEGIN
+            EXEC [Claim].[Claim@Import?Document Info]
+                @Number         = @Number,
+                @CreateDateTime = @CreateDateTime,
+                @FIO            = @FIO,
+                @CityName       = @CityName,
+                @EMail          = @EMail,
+                @Phone          = @Phone,
+                @Actions        = @Actions;
+
+
+            EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+
+            RETURN;
+        END;
+
         SET @StatusCode_New = 'NEW';
         SET @Type_Id = (SELECT [Id] FROM [Claim].[Claims->Types] WHERE [Code] = @TypeCode);
         SET @Status_Id = (SELECT [Id] FROM [Claim].[Claims->Statuses] WHERE [Code] = @StatusCode_New);
@@ -68,6 +86,7 @@ BEGIN
                     [Actions],
                     [PageURL],
                     [PageTitle],
+                    [Section],
                     [Status_Id]
                 )
         SELECT
@@ -83,6 +102,7 @@ BEGIN
             @Actions,
             @PageURL,
             @PageTitle,
+            @Section,
             @Status_Id
         WHERE NOT EXISTS
             (

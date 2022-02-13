@@ -30,6 +30,11 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
+    DECLARE @Claims Table
+    (
+        [Id]    Int NOT NULL PRIMARY KEY CLUSTERED
+    );
+
     DECLARE @StatusesIDs Table
     (
         [Id]    TinyInt NOT NULL PRIMARY KEY CLUSTERED
@@ -75,36 +80,9 @@ BEGIN
             SELECT ID
             FROM [Common].[TableStringFromXML](@Specials);
 
-        SELECT
-            [Id]                = C.[Id],
-            [Type_Id]           = C.[Type_Id],
-            [Number]            = C.[Number],
-            [CreateDateTime]    = C.[CreateDateTime],
-            [FIO]               = C.[FIO],
-            [ClientName]        = C.[ClientName],
-            [CityName]          = C.[CityName],
-            [EMail]             = C.[EMail],
-            [Phone]             = C.[Phone],
-            [Status_Id]         = C.[Status_Id],
-            [WorkDateTime]      = CA.[WorkDateTime],
-            [WorkNote]          = CA.[WorkNote],
-            [Distr]             = C.[Distr],
-            [Personal_Id]       = C.[Personal_Id],
-            [Special]           = C.[Special],
-            [Actions]           = C.[Actions],
-            [PageURL]           = C.[PageURL],
-            [PageTitle]         = C.[PageTitle],
-            [Company_Id]        = Reverse(Stuff(Reverse((SELECT '{' + Convert(VarChar(100), CO.[ID]) + '}' + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
-            [CompanyNumber]     = Reverse(Stuff(Reverse((SELECT Convert(VarChar(100), CO.[Number]) + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
-            [DeliveryDate]      = CS.[DeliveryDate],
-            [ClaimIndex]        = CA.[ClaimIndex],
-            [Meeting]           = CA.[Meeting],
-            [Offer]             = CA.[Offer],
-            [Mailing]           = CA.[Mailing],
-            [Color]             = CCS.[Color]
+        INSERT INTO @Claims
+        SELECT C.[Id]
         FROM [Claim].[Claims] AS C
-        INNER JOIN [Claim].[Claims->Statuses] AS CCS ON C.[Status_Id] = CCS.[Id]
-        --LEFT JOIN [Client].[Company] AS CC ON C.[Company_Id] = CC.[ID]
         LEFT JOIN @StatusesIDs AS S ON C.[Status_Id] = S.[Id]
         LEFT JOIN @TypesIDs AS T ON C.[Type_Id] = T.[Id]
         LEFT JOIN @SpecialsIDs AS SP ON C.[Special] = SP.[Id]
@@ -143,7 +121,104 @@ BEGIN
             AND (@Offer IS NULL OR @Offer = -1 OR @Offer = 0 OR @Offer = 1 AND Offer = 1 OR @Offer = 2 AND Offer = 0)
             AND (@Mailing IS NULL OR @Mailing = -1 OR @Mailing = 0 OR @Mailing = 1 AND Mailing = 1 OR @Mailing = 2 AND Mailing = 0)
             AND (C.[FIO] LIKE @FioOrClient OR C.[ClientName] LIKE @FioOrClient OR @FioOrClient IS NULL)
-            AND (C.[Phone]LIKE @Phone OR @Phone IS NULL)
+            AND (C.[Phone]LIKE @Phone OR @Phone IS NULL);
+
+        SELECT
+            [Row:Id]            = Cast(C.[Id] AS VarChar(100)),
+            [Id]                = C.[Id],
+            [Parent_Id]         = NULL,
+            [Type_Id]           = C.[Type_Id],
+            [Number]            = C.[Number],
+            [CreateDateTime]    = C.[CreateDateTime],
+            [FIO]               = C.[FIO],
+            [ClientName]        = C.[ClientName],
+            [CityName]          = C.[CityName],
+            [EMail]             = C.[EMail],
+            [Phone]             = C.[Phone],
+            [Status_Id]         = C.[Status_Id],
+            [WorkDateTime]      = CA.[WorkDateTime],
+            [WorkNote]          = CA.[WorkNote],
+            [Distr]             = C.[Distr],
+            [Personal_Id]       = C.[Personal_Id],
+            [Special]           = C.[Special],
+            [Actions]           = C.[Actions],
+            [PageURL]           = C.[PageURL],
+            [PageTitle]         = C.[PageTitle],
+            [Section]           = C.[Section],
+            [Company_Id]        = Reverse(Stuff(Reverse((SELECT '{' + Convert(VarChar(100), CO.[ID]) + '}' + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
+            [CompanyNumber]     = Reverse(Stuff(Reverse((SELECT Convert(VarChar(100), CO.[Number]) + ',' FROM [Claim].[Claims:Companies] AS CC INNER JOIN [Client].[Company]   AS CO ON CC.[Company_Id] = CO.[ID] WHERE CC.[Claim_Id] = C.[Id] ORDER BY CO.[Number], CO.[ID] FOR XML PATH(''))), 1, 1, '')),
+            [DeliveryDate]      = CS.[DeliveryDate],
+            [ClaimIndex]        = CA.[ClaimIndex],
+            [Meeting]           = CA.[Meeting],
+            [Offer]             = CA.[Offer],
+            [Mailing]           = CA.[Mailing],
+            [Color]             = CCS.[Color]
+        FROM @Claims AS IDs
+        INNER JOIN [Claim].[Claims] AS C ON C.[Id] = IDs.[Id]
+        INNER JOIN [Claim].[Claims->Statuses] AS CCS ON C.[Status_Id] = CCS.[Id]
+        --LEFT JOIN [Client].[Company] AS CC ON C.[Company_Id] = CC.[ID]
+        LEFT JOIN @StatusesIDs AS S ON C.[Status_Id] = S.[Id]
+        LEFT JOIN @TypesIDs AS T ON C.[Type_Id] = T.[Id]
+        LEFT JOIN @SpecialsIDs AS SP ON C.[Special] = SP.[Id]
+        OUTER APPLY
+        (
+            SELECT TOP (1)
+                [ClaimIndex]    = CA.[Index],
+                [WorkDateTime]  = CA.[DateTime],
+                [WorkNote]      = CA.[Note],
+                [Meeting]       = [Common].[BitToStr](CA.[Meeting]),
+                [Offer]         = [Common].[BitToStr](CA.[Offer]),
+                [Mailing]       = [Common].[BitToStr](CA.[Mailing])
+            FROM [Claim].[Claims:Actions] AS CA
+            WHERE CA.[Claim_Id] = C.[Id]
+            ORDER BY
+                CA.[Index] DESC
+        ) AS CA
+        OUTER APPLY
+        (
+            SELECT TOP (1)
+                [DeliveryDate] = CS.[DateTime]
+            FROM [Claim].[Claims:Statuses] AS CS
+            WHERE CS.[Claim_Id] = C.[Id]
+                AND CS.[Status_Id] = @Status_Id_DELIVERY
+            ORDER BY CS.[DateTime]
+        ) AS CS
+
+        UNION ALL
+
+        SELECT
+            [Row:Id]            = Cast(C.[Claim_Id] AS VarChar(100)) + ':' + Cast(C.[Id] AS VarChar(100)),
+            [Id]                = C.[Claim_Id],
+            [Parent_Id]         = Cast(C.[Claim_Id] AS VarChar(100)),
+            [Type_Id]           = NULL,
+            [Number]            = NULL,
+            [CreateDateTime]    = C.[CreateDateTime],
+            [FIO]               = C.[FIO],
+            [ClientName]        = NULL,
+            [CityName]          = C.[CityName],
+            [EMail]             = C.[EMail],
+            [Phone]             = C.[Phone],
+            [Status_Id]         = NULL,
+            [WorkDateTime]      = NULL,
+            [WorkNote]          = NULL,
+            [Distr]             = NULL,
+            [Personal_Id]       = NULL,
+            [Special]           = NULL,
+            [Actions]           = C.[Actions],
+            [PageURL]           = NULL,
+            [PageTitle]         = NULL,
+            [Section]           = NULL,
+            [Company_Id]        = NULL,
+            [CompanyNumber]     = NULL,
+            [DeliveryDate]      = NULL,
+            [ClaimIndex]        = NULL,
+            [Meeting]           = NULL,
+            [Offer]             = NULL,
+            [Mailing]           = NULL,
+            [Color]             = NULL
+        FROM @Claims AS IDs
+        INNER JOIN [Claim].[Claims:Document Info] AS C ON C.[Claim_Id] = IDs.[Id]
+
         ORDER BY C.[CreateDateTime] DESC, C.[Number];
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

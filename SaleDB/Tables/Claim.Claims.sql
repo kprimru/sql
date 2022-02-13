@@ -24,6 +24,7 @@ CREATE TABLE [Claim].[Claims]
         [Personal_Id]      UniqueIdentifier                       NULL,
         [Company_Id]       UniqueIdentifier                       NULL,
         [GUId]             UniqueIdentifier                       NULL,
+        [Section]          NVarChar(512)                          NULL,
         CONSTRAINT [PK_Claim.Claims] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
