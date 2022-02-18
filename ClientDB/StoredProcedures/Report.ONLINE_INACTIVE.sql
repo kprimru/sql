@@ -62,8 +62,16 @@ BEGIN
                 AND LOA.ACTIVITY = 1
             ORDER BY LP.START DESC
         ) AS LOA
-        WHERE   R.SST_SHORT NOT IN ('ДСП')
+        WHERE   R.SST_SHORT NOT IN ('ДСП', 'ОДД')
             AND R.NT_SHORT NOT IN ('сеть 100', 'сеть 50', 'сеть 5', 'сеть 255')
+            AND
+            (
+                -- хотя бы 2 недели как зарегистрирован
+                    DateDiff(Week, R.FirstReg, OA.Start) >= 2
+                OR
+                -- нет информации о первой регистрации - таких всегда показываем
+                    R.FirstReg IS NULL
+            )
             AND
             (
                     LOA.START IS NULL
