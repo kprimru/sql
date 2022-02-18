@@ -7,8 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[DISTR_TYPE_COEF_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTR_TYPE_COEF_SELECT]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[DISTR_TYPE_COEF_SELECT]
-	@NET	INT,
-	@PERIOD	UNIQUEIDENTIFIER
+	@NET		Int,
+	@PERIOD		UniqueIdentifier = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,15 +25,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT NAME, DistrTypeName, COEF, WEIGHT, RND, b.ID, c.DistrTypeID
-		FROM
-			dbo.DistrTypeCoef a
-			INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
-			INNER JOIN dbo.DistrTypeTable c ON c.DistrTypeID = a.ID_NET
-		WHERE (DistrTypeID = @NET OR @NET IS NULL)
-			AND (b.ID = @PERIOD OR @PERIOD IS NULL)
-			AND START <= DATEADD(MONTH, 3, GETDATE())
-		ORDER BY START DESC, DistrTypeOrder
+		SELECT P.[NAME], C.[DistrTypeName], a.[Coef], a.[Round], a.[Date], c.[DistrTypeID]
+		FROM [Price].[DistrType:Coef]		AS a
+		INNER JOIN [dbo].[DistrTypeTable]	AS c ON c.[DistrTypeID] = a.[DistrType_Id]
+		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
+		WHERE (a.[DistrType_Id] = @NET OR @NET IS NULL)
+		ORDER BY a.[Date] DESC, c.[DistrTypeOrder];
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

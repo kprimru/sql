@@ -17,6 +17,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Date			SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -24,11 +27,13 @@ BEGIN
 
 	BEGIN TRY
 
+		SELECT @Date = START
+		FROM [Common].[Period]
+		WHERE [ID] = @MONTH;
+
 		SELECT SystemID, SystemShortName, PRICE
-		FROM
-			Price.SystemPrice
-			INNER JOIN dbo.SystemTable ON SystemID = ID_SYSTEM
-		WHERE ID_MONTH = @MONTH
+		FROM [Price].[Systems:Price@Get](@Date) AS P
+		INNER JOIN [dbo].[SystemTable]			AS S ON S.[SystemID] = P.[System_Id]
 		ORDER BY SystemOrder
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

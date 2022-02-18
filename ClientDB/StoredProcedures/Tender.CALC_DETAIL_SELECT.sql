@@ -83,7 +83,13 @@ BEGIN
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
 					INNER JOIN Common.Period e ON e.ID = a.MON_ID
 					INNER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
-					INNER JOIN Price.SystemPrice d ON d.ID_MONTH = a.MON_ID AND d.ID_SYSTEM = a.SYS_ID
+					CROSS APPLY
+					(
+						SELECT TOP (1)
+							[Price]
+						FROM [Price].[Systems:Price@Get](e.[START]) AS D
+						WHERE d.[System_Id] = a.[SYS_ID]
+					) AS D
 					INNER JOIN Common.Tax t ON t.ID = a.TAX_ID
 					LEFT OUTER JOIN dbo.SystemTable z ON z.SystemID = a.SYS_OLD_ID
 					LEFT OUTER JOIN dbo.DistrTypeTable y ON y.DistrTypeID = a.NET_OLD_ID

@@ -14,6 +14,15 @@ RETURNS TABLE
 AS
 RETURN
 (
+    SELECT
+		[System_Id] = S.[SystemID],
+		[Date]		= @Date,
+		[Price]		= P.[Price]
+	FROM dbo.SystemTable AS S
+	INNER JOIN Price.SystemPrice AS P ON P.ID_SYSTEM = S.SystemID
+	INNER JOIN Common.Period AS PR ON PR.ID = P.ID_MONTH
+	WHERE PR.START = @Date AND PR.TYPE = 2
+    /*
 	SELECT
 		[System_Id] = S.[SystemID],
 		[Date]		= P.[Date],
@@ -29,5 +38,6 @@ RETURN
 			AND P.[Date] <= @Date
 		ORDER BY P.[Date] DESC
 	) AS P
+	*/
 )
 GO

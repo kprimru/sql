@@ -19,7 +19,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
-	DECLARE @DBFDate SmallDateTime;
+	DECLARE
+		@DBFDate		SmallDateTime,
+		@ClientDate		SmallDateTime;
 
 	DECLARE @DBFPrice Table
 	(
@@ -42,6 +44,10 @@ BEGIN
 
 	BEGIN TRY
 
+		SELECT @ClientDate = START
+		FROM Common.Period
+		WHERE Id = @ClientMonth;
+
 		SELECT @DBFDate = START
 		FROM Common.Period
 		WHERE Id = @DBFMonth;
@@ -49,13 +55,12 @@ BEGIN
 		INSERT INTO @DBFPrice
 		SELECT SYS_REG_NAME, PS_PRICE
 		FROM dbo.DBFPriceView
-		WHERE PR_DATE = @DBFDate
+		WHERE PR_DATE = @DBFDate;
 
 		INSERT INTO @ClientPrice
 		SELECT SystemBaseName, PRICE
-		FROM Price.SystemPrice P
-		INNER JOIN dbo.SystemTable S ON P.ID_SYSTEM = S.SystemId
-		WHERE ID_MONTH = @ClientMonth
+		FROM [Price].[Systems:Price@Get](@ClientDate) AS P
+		INNER JOIN [dbo].[SystemTable] S ON P.[System_Id] = S.[SystemID];
 
 		SELECT
 			[SystemShortName]	= S.[SystemShortName],
@@ -74,7 +79,7 @@ BEGIN
 		INNER JOIN dbo.SystemTable S ON S.SystemBaseName = P.SYS_REG_NAME
 		WHERE @OnlyDiff = 0
 			OR IsNull([DBFPrice], 0) - IsNull([ClientPrice], 0) != 0
-		ORDER BY S.SystemOrder
+		ORDER BY S.SystemOrder;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

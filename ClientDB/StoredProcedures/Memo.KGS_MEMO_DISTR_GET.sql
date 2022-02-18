@@ -17,6 +17,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Date			SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -24,11 +27,10 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @MONTH	UNIQUEIDENTIFIER
-
-		SELECT @MONTH = ID_MONTH
-		FROM Memo.KGSMemo
-		WHERE ID = @ID
+		SELECT @Date = P.[START]
+		FROM [Memo].[KGSMemo]			AS K
+		INNER JOIN [Common].[Period]	AS P ON P.[ID] = K.[ID_MONTH]
+		WHERE K.ID = @ID
 
 		SELECT
 			a.ID_CLIENT, a.NUM,
@@ -46,8 +48,8 @@ BEGIN
 			INNER JOIN dbo.SystemTable c ON c.SystemID = b.ID_SYSTEM
 			INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = b.ID_NET
 			INNER JOIN dbo.SystemTypeTable e ON e.SystemTypeID = b.ID_TYPE
-			INNER JOIN Price.SystemPrice g ON b.ID_SYSTEM = g.ID_SYSTEM
-		WHERE a.ID_MEMO = @ID AND g.ID_MONTH = @MONTH AND CURVED = 1
+			INNER JOIN [Price].[Systems:Price@Get](@Date) AS G ON G.[System_Id] = b.[ID_SYSTEM]
+		WHERE a.ID_MEMO = @ID AND CURVED = 1
 		ORDER BY a.NUM, c.SystemOrder, d.DistrTypeOrder
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

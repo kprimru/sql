@@ -26,14 +26,17 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO Price.SystemPrice(ID_MONTH, ID_SYSTEM, PRICE)
-			SELECT @MONTH, @SYSTEM, @PRICE
-			WHERE NOT EXISTS
+		INSERT INTO [Price].[System:Price]([System_Id], [Date], [Price])
+		SELECT @SYSTEM, P.[START], @PRICE
+		FROM [Common].[Period] AS P
+		WHERE [ID] = @MONTH
+			AND NOT EXISTS
 				(
 					SELECT *
-					FROM Price.SystemPrice
-					WHERE ID_SYSTEM = @SYSTEM AND ID_MONTH = @MONTH
-				)
+					FROM [Price].[System:Price]
+					WHERE [System_Id] = @SYSTEM
+						AND [Date] = P.[START]
+				);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

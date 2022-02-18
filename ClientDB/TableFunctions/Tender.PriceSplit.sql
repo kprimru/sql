@@ -21,7 +21,9 @@ RETURNS @TBL TABLE
 )
 AS
 BEGIN
-	DECLARE @XML XML
+	DECLARE
+		@XML	Xml,
+		@Date	SmallDateTime;
 
 	SET @XML = CAST(@LIST AS XML)
 
@@ -33,6 +35,10 @@ BEGIN
 			TOTAL_PRICE	MONEY
 		)
 
+	SELECT @Date = START
+	FROM [Common].[Period]
+	WHERE [ID] = @MONTH;
+
 	INSERT INTO @RES(SystemID, DistrTypeID, CNT, TOTAL_PRICE)
 		SELECT
 			SystemID, DistrTypeID, COUNT(*) AS CNT, PRICE_TOTAL
@@ -41,19 +47,17 @@ BEGIN
 				SELECT
 					b.SystemID,
 					DistrTypeID,
-					CONVERT(MONEY, ROUND(PRICE * e.COEF, 0)) AS PRICE_TOTAL
+					CONVERT(MONEY, ROUND(PRICE * dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @DATE), 0)) AS PRICE_TOTAL
 				FROM
 					(
-						SELECT 
+						SELECT
 							c.value('(@sys)', 'INT') AS SYS_ID,
 							c.value('(@net)', 'INT') AS NET_ID
 						FROM @xml.nodes('/root/item') AS a(c)
 					) AS a
 					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-					INNER JOIN Price.SystemPrice d ON ID_SYSTEM = SYS_ID
-					INNER JOIN dbo.DistrTypeCoef e ON e.ID_NET = c.DistrTypeID AND e.ID_MONTH = @MONTH
-				WHERE d.ID_MONTH = @MONTH
+					INNER JOIN [Price].[Systems:Price@Get](@Date) AS D ON D.[System_Id] = [SYS_ID]
 			) AS o_O
 		GROUP BY SystemID, DistrTypeID, PRICE_TOTAL
 

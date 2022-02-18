@@ -19,6 +19,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@BEGIN_DATE		SmallDateTime,
+		@END_DATE		SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -26,16 +30,13 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @BEGIN_DATE SMALLDATETIME
-		DECLARE @END_DATE SMALLDATETIME
-
 		SELECT @BEGIN_DATE = START
-		FROM Common.Period
-		WHERE ID = @BEGIN
+		FROM [Common].[Period]
+		WHERE ID = @BEGIN;
 
 		SELECT @END_DATE = START
-		FROM Common.Period
-		WHERE ID = @END
+		FROM [Common].[Period]
+		WHERE ID = @END;
 
 		SELECT
 			DistrStr, DistrTypeName,
@@ -72,8 +73,8 @@ BEGIN
 							ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)) * 1.18, 2) AS NEW_PRICE_NDS
 						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
-							INNER JOIN Price.SystemPrice op ON a.SystemID = op.ID_SYSTEM AND op.ID_MONTH = @BEGIN
-							INNER JOIN Price.SystemPrice np ON a.SystemID = np.ID_SYSTEM AND np.ID_MONTH = @END
+							INNER JOIN [Price].[Systems:Price@Get](@BEGIN_DATE) AS op ON op.[System_Id] = a.[SystemID]
+							INNER JOIN [Price].[Systems:Price@Get](@END_DATE) AS np ON np.[System_Id] = a.[SystemID]
 							LEFT OUTER JOIN dbo.DBFDistrView ON SystemBaseName = SYS_REG_NAME AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
 						WHERE a.ID_CLIENT = @CLIENT AND DS_REG = 0
 					) AS a

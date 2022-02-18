@@ -121,7 +121,7 @@ BEGIN
 								PRICE
 							FROM
 								(
-									SELECT 
+									SELECT
 										c.value('@client[1]', 'INT') AS CL_ID,
 										c.value('@num[1]', 'INT') AS CL_NUM,
 										c.value('@sys[1]', 'INT') AS SYS_ID,
@@ -135,10 +135,15 @@ BEGIN
 									) AS a
 								INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 								INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-								INNER JOIN Price.SystemPrice d ON ID_SYSTEM = SYS_ID
 								INNER JOIN Common.Period e ON e.ID = @MONTH
+								CROSS APPLY
+								(
+									SELECT TOP (1)
+										[Price]
+									FROM [Price].[Systems:Price@Get](e.[START]) AS D
+									WHERE D.[System_Id] = a.[SYS_ID]
+								) AS D
 								LEFT OUTER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
-							WHERE d.ID_MONTH = @MONTH
 						) AS o_O
 				) AS o_O
 			ORDER BY CL_NUM, SystemOrder, DistrTypeOrder

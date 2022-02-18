@@ -420,7 +420,7 @@ BEGIN
 			NULL AS UIU_DOCS,
 			NULL AS UIU_DATE,
 			NULL AS ComplianceTypeShortName,
-			NULL AS USRFileKindShortName, 
+			NULL AS USRFileKindShortName,
 			NULL AS StandartDate,
 			NULL AS Standart,
 
@@ -451,7 +451,7 @@ BEGIN
 			NULL AS UIU_DOCS,
 			NULL AS UIU_DATE,
 			NULL AS ComplianceTypeShortName,
-			NULL AS USRFileKindShortName, 
+			NULL AS USRFileKindShortName,
 			NULL AS StandartDate,
 			NULL AS Standart,
 			NULL AS UP_FORMAT,
@@ -584,7 +584,7 @@ BEGIN
 					AND x.UI_COMP = q.UI_COMP
 				ORDER BY ComplianceTypeOrder
 			) AS ComplianceTypeShortName,
-			USRFileKindShortName, 
+			USRFileKindShortName,
 
 			STAT_DATE,
 			CASE

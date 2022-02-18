@@ -51,16 +51,6 @@ BEGIN
 			SET @FIX_END = NULL
 		END
 
-		DECLARE @MONTH UNIQUEIDENTIFIER
-
-		SELECT @MONTH = Common.PeriodCurrent(2)
-
-		DECLARE @MONTH_DATE	SMALLDATETIME
-
-		SELECT @MONTH_DATE = START
-		FROM Common.Period
-		WHERE ID = @MONTH
-
 		SELECT
 			ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
 			DISCOUNT,	DF_FIXED_PRICE, REAL_DISCOUNT
@@ -83,8 +73,8 @@ BEGIN
 						SELECT
 							ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
 							DF_ID_PRICE, DSS_REPORT,
-							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
-							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
+							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS COEF,
+							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS RND,
 							PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
 						FROM
 							dbo.ClientView a WITH(NOEXPAND)
@@ -92,7 +82,7 @@ BEGIN
 							INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
 																		AND DIS_NUM = b.DISTR
 																		AND DIS_COMP_NUM = b.COMP
-							INNER JOIN Price.SystemPrice g ON ID_SYSTEM = SystemID AND g.ID_MONTH = @MONTH
+							INNER JOIN [Price].[Systems:Price@Get](GetDate()) AS G ON G.[System_Id] = B.[SystemID]
 						WHERE b.DS_REG = 0
 							AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 							AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)

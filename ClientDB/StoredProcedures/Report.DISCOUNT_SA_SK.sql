@@ -76,7 +76,7 @@ BEGIN
 					INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
 																		AND DIS_NUM = b.DISTR
 																		AND DIS_COMP_NUM = b.COMP
-					INNER JOIN  Price.SystemPrice g ON ID_SYSTEM = SystemID AND ID_MONTH = Common.PeriodCurrent(2)
+					INNER JOIN [Price].[Systems:Price@Get](GetDate()) g ON [System_Id] = SystemID
 			) AS o_O
 			INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP
 			INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP

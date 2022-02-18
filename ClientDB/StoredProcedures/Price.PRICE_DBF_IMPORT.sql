@@ -18,6 +18,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@DBFDate		SmallDateTime,
+		@ClientDate		SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -25,11 +29,13 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @DBFDate SmallDateTime;
-
 		SELECT @DBFDate = START
-		FROM Common.Period
-		WHERE Id = @DBFMonth;
+		FROM [Common].[Period]
+		WHERE [ID] = @DBFMonth;
+
+		SELECT @ClientDate = START
+		FROM [Common].[Period]
+		WHERE [ID] = @ClientMonth;
 
 		DECLARE @DBFPrice Table
 		(
@@ -43,10 +49,10 @@ BEGIN
 		FROM dbo.DBFPriceView
 		WHERE PR_DATE = @DBFDate
 
-		-- удялем данные за целевой месяц, мы ведь сейчас загрузим новые
+        -- удялем данные за целевой месяц, мы ведь сейчас загрузим новые
 		DELETE
 		FROM Price.SystemPrice
-		WHERE ID_MONTH = @ClientMonth
+		WHERE ID_MONTH = @ClientMonth;
 
 		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
 		SELECT
@@ -55,6 +61,27 @@ BEGIN
 			[Price]			= D.[PRICE]
 		FROM @DBFPrice D
 		INNER JOIN dbo.SystemTable S ON S.SystemBaseName = D.SYS_REG;
+
+		UPDATE P SET
+			[Price] = D.[PRICE]
+		FROM @DBFPrice AS D
+		INNER JOIN dbo.SystemTable S ON S.[SystemBaseName] = D.[SYS_REG]
+		INNER JOIN [Price].[Systems:Price@Get](@ClientDate) AS PD ON PD.[System_Id] = S.[SystemID]
+		INNER JOIN [Price].[System:Price] AS P ON P.[Date] = @ClientDate AND P.[System_Id] = S.[SystemID]
+		WHERE P.[Price] != D.[PRICE];
+
+		INSERT INTO [Price].[System:Price]([System_Id], [Date], [Price])
+		SELECT S.[SystemID], @ClientDate, D.[PRICE]
+		FROM @DBFPrice AS D
+		INNER JOIN dbo.SystemTable S ON S.[SystemBaseName] = D.[SYS_REG]
+		INNER JOIN [Price].[Systems:Price@Get](@ClientDate) AS P ON P.[System_Id] = S.[SystemID]
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [Price].[System:Price] AS SP
+				WHERE SP.[System_Id] = S.[SystemID]
+					AND SP.[Date] = @ClientDate
+			);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

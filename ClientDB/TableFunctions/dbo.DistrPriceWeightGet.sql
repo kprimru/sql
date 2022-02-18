@@ -82,44 +82,38 @@ BEGIN
 	DECLARE @PRICE_OLD MONEY
 	DECLARE @PRICE_NEW MONEY
 
-	SELECT @PRICE_OLD = ROUND(PRICE * COEF, RND) * @STATUS_OLD * @SST_OLD
-	FROM
-		Price.SystemPrice a
-		CROSS JOIN dbo.DistrTypeCoef b
-	WHERE a.ID_MONTH = @MONTH
-		AND ID_SYSTEM = @SYSTEM_OLD
-		AND ID_NET = @NET_OLD
-		AND b.ID_MONTH = @MONTH
+	SELECT @PRICE_OLD = ROUND(A.[Price] * [Coef], [Round]) * @STATUS_OLD * @SST_OLD
+	FROM [Price].[Systems:Price@Get](@FINISH) AS A
+	-- ToDo а не надо ли DistrCoef использовать?
+	CROSS JOIN [Price].[DistrTypes:Coef@Get](@FINISH) AS B
+	WHERE	A.[System_Id] = @SYSTEM_OLD
+		AND B.[DistrType_Id] = @NET_OLD;
 
-	SELECT @PRICE_NEW = ROUND(PRICE * COEF, RND) * @STATUS_NEW * @SST_NEW
-	FROM
-		Price.SystemPrice a
-		CROSS JOIN dbo.DistrTypeCoef b
-	WHERE a.ID_MONTH = @MONTH
-		AND ID_SYSTEM = @SYSTEM_NEW
-		AND ID_NET = @NET_NEW
-		AND b.ID_MONTH = @MONTH
+	SELECT @PRICE_NEW = ROUND(A.[Price] * [Coef], [Round]) * @STATUS_NEW * @SST_NEW
+	FROM [Price].[Systems:Price@Get](@FINISH) AS A
+	CROSS JOIN [Price].[DistrTypes:Coef@Get](@FINISH) AS B
+	WHERE A.[System_Id] = @SYSTEM_NEW
+		AND B.[DistrType_Id] = @NET_NEW;
 
 	DECLARE @WEIGHT_OLD DECIMAL(8, 4)
 	DECLARE @WEIGHT_NEW DECIMAL(8, 4)
 
+	--ToDo что за хрень с весом? Он в другой таблице!!!
 	SELECT @WEIGHT_OLD = a.SystemSalaryWeight * b.WEIGHT * @STATUS_OLD * @SST_OLD
-	FROM
-		dbo.SystemTable a
-		CROSS JOIN dbo.DistrTypeCoef b
+	FROM dbo.SystemTable a
+	CROSS JOIN dbo.DistrTypeCoef b
 	WHERE SystemID = @SYSTEM_OLD
 		--AND ID_PERIOD = @MONTH
 		AND ID_MONTH = @MONTH
-		AND ID_NET = @NET_OLD
+		AND ID_NET = @NET_OLD;
 
 	SELECT @WEIGHT_NEW = a.SystemSalaryWeight * b.WEIGHT * @STATUS_NEW * @SST_NEW
-	FROM
-		dbo.SystemTable a
-		CROSS JOIN dbo.DistrTypeCoef b
+	FROM dbo.SystemTable a
+	CROSS JOIN dbo.DistrTypeCoef b
 	WHERE SystemID = @SYSTEM_NEW
 		--AND ID_PERIOD = @MONTH
 		AND ID_MONTH = @MONTH
-		AND ID_NET = @NET_NEW
+		AND ID_NET = @NET_NEW;
 
 
 	INSERT INTO @TBL(WEIGHT_OLD, WEIGHT_NEW, PRICE_OLD, PRICE_NEW, SYS_OLD, SYS_NEW, NET_OLD, NET_NEW)

@@ -25,17 +25,17 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@PRICE			Money,
+		@PRICE_OLD		Money,
+		@MONTH_DATE		SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
-		DECLARE @PRICE		MONEY
-		DECLARE @PRICE_OLD	MONEY
-
-		DECLARE @MONTH_DATE	SMALLDATETIME
 
 		SELECT @MONTH_DATE = START
 		FROM Common.Period
@@ -45,8 +45,8 @@ BEGIN
 			SET @PRICE_OLD = 0
 		ELSE
 			SELECT @PRICE_OLD = ROUND(a.PRICE * dbo.DistrCoef(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE), dbo.DistrCoefRound(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE))
-			FROM Price.SystemPrice a
-			WHERE a.ID_MONTH = @MONTH AND ID_SYSTEM = ISNULL(@SYS_OLD, @SYS)
+			FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
+			WHERE [System_Id] = ISNULL(@SYS_OLD, @SYS)
 
 		IF @PRICE_OLD <> 0
 		BEGIN
@@ -55,8 +55,8 @@ BEGIN
 		END
 
 		SELECT @PRICE = ROUND(a.PRICE * dbo.DistrCoef(@SYS, @NET, '', @MONTH_DATE), dbo.DistrCoefRound(@SYS, @NET, '', @MONTH_DATE))
-		FROM Price.SystemPrice a
-		WHERE a.ID_MONTH = @MONTH AND ID_SYSTEM = @SYS
+		FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
+		WHERE [System_Id] = @SYS;
 
 		IF @PRICE <> 0
 		BEGIN

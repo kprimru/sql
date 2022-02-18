@@ -37,7 +37,7 @@ BEGIN
 
         IF OBJECT_ID('tempdb..#temp') IS NOT NULL
         	DROP TABLE #temp
-        
+
         CREATE TABLE #temp
         (
             HST     SmallInt,

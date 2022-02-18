@@ -19,6 +19,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@SH_NAME		VarChar(20),
+		@SH_CHECK		Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -26,30 +30,18 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @MONTH UNIQUEIDENTIFIER
+		SET @SH_NAME = Maintenance.GlobalSubhostName();
+		SET @SH_CHECK = Maintenance.GlobalSubhostCheck();
 
-		DECLARE @SH_NAME VARCHAR(20)
-		DECLARE @SH_CHECK BIT
+		SET @SYS_LIST = '';
 
-		SET @SH_NAME = Maintenance.GlobalSubhostName()
-		SET @SH_CHECK = Maintenance.GlobalSubhostCheck()
-
-		SELECT @MONTH = Common.PeriodCurrent(2)
-
-		DECLARE @MONTH_DATE SMALLDATETIME
-
-		SELECT @MONTH_DATE = START
-		FROM Common.Period
-		WHERE ID = @MONTH
-
-		SET @SYS_LIST = ''
 		SELECT @SYS_LIST = @SYS_LIST + SystemBaseName + ','
 		FROM dbo.ClientDistrView WITH(NOEXPAND)
 		WHERE ID_CLIENT = @CLIENTID
-			AND DS_REG = 0
+			AND DS_REG = 0;
 
 		IF @SYS_LIST <> ''
-			SET @SYS_LIST = LEFT(@SYS_LIST, LEN(@SYS_LIST) - 1)
+			SET @SYS_LIST = LEFT(@SYS_LIST, LEN(@SYS_LIST) - 1);
 
 		SELECT
 			STATUS,
@@ -80,14 +72,11 @@ BEGIN
 			NOTE, CASE WHEN DISCONNECT_STATUS = 1 AND DS_REG = 0 THEN 0 ELSE 1 END AS DISC_LIST,
 			TransferLeft, SystemShortName,
 			(
-				SELECT TOP(1) Weight
-				FROM dbo.Weight
-				WHERE	ds.SystemBaseName	= Sys
-					AND ds.DistrType		= SysType
-					AND ds.NetCount			= NetCount
-					AND ds.TechnolType		= NetTech
-					AND ds.ODOn				= NetOdon
-					AND ds.ODOff			= NetOdoff
+				SELECT TOP(1) [Weight]
+				FROM [dbo].[Weight] AS W
+				WHERE	W.[System_Id] = ds.SystemID
+					AND W.[SystemType_Id] = ds.[SST_ID]
+					AND W.[NetType_Id] = ds.[NT_ID]
 				ORDER BY Date DESC
 			) AS Weight
 		FROM
@@ -98,12 +87,10 @@ BEGIN
 					TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE,
 					w.NOTE, w.STATUS AS DISCONNECT_STATUS,
 					c.PRICE,
-					dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
-					dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
-					NetCount AS NetCount,
-					TechnolType AS TechnolType,
-					ODOn AS ODOn,
-					ODOff AS ODOff
+					dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS COEF,
+					dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
+					SST_ID,
+					NT_ID
 				FROM
 					(
 						SELECT
@@ -167,12 +154,10 @@ BEGIN
 							END AS REG_ERROR,
 							1 AS ERROR_TYPE,
 							1 AS STATUS,
-							d.TransferLeft,
+							b.TransferLeft,
 							a.SystemShortName,
-							d.NetCount AS NetCount,
-							d.TechnolType AS TechnolType,
-							d.ODOn AS ODOn,
-							d.ODOff AS ODOff
+							b.SST_ID,
+							b.NT_ID
 						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
 							LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
@@ -199,19 +184,16 @@ BEGIN
 							'Дистрибутив установлен в комплекте с системами клиента',
 							2 AS ERROR_TYPE,
 							1 AS STATUS,
-							d.TransferLeft,
+							c.TransferLeft,
 							c.SystemShortName,
-							d.NetCount AS NetCount,
-							d.TechnolType AS TechnolType,
-							d.ODOn AS ODOn,
-							d.ODOff AS ODOff
+							c.SST_ID,
+							c.NT_ID
 						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
 											AND b.DistrNumber = a.DISTR
 											AND b.CompNumber = a.COMP
 							INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
-							INNER JOIN dbo.RegNodeTable d ON d.ID = c.ID
 						WHERE  ID_CLIENT = @CLIENTID AND c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
 							AND c.SubhostName = Maintenance.GlobalSubhostName()
 							AND NOT EXISTS
@@ -231,7 +213,7 @@ BEGIN
 							SystemOrder, NULL, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 							SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
 							3 AS ERROR_TYPE,
-							STATUS, NULL, '', '' AS NetCount, '' AS TechnolType, '' AS ODOn, '' AS ODOff
+							STATUS, NULL, '', NULL AS SST_ID, NULL AS NT_ID
 						FROM
 							dbo.ClientDistr
 							INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
@@ -240,7 +222,7 @@ BEGIN
 						WHERE @HISTORY = 1 AND ID_CLIENT = @CLIENTID AND STATUS IN (3, 4)
 					) AS o_O
 					LEFT OUTER JOIN dbo.DBFDistrView ON SYS_REG_NAME = SystemBaseName AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-					LEFT OUTER JOIN Price.SystemPrice c ON c.ID_SYSTEM = o_O.SystemID AND c.ID_MONTH = @MONTH
+					LEFT JOIN [Price].[Systems:Price@Get](GetDate()) AS C ON C.[System_Id] = o_O.[SystemID]
 					LEFT OUTER JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
 					LEFT OUTER JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
 			) AS ds

@@ -22,6 +22,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@XML			Xml,
+		@Date			SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -29,9 +33,11 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @XML XML
+		SET @XML = CAST(@LIST AS XML);
 
-		SET @XML = CAST(@LIST AS XML)
+		SELECT @Date = [START]
+		FROM [Common].[Period]
+		WHERE [ID] = @MONTH;
 
 		IF @TYPE = 1
 			SELECT ID, PRICE
@@ -39,25 +45,23 @@ BEGIN
 				(
 					SELECT
 						a.ID,
-						CONVERT(MONEY, ROUND(PRICE * c.COEF * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
+						CONVERT(MONEY, ROUND(PRICE * dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @Date) * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
 					FROM
 						(
-							SELECT 
+							SELECT
 								c.value('(@id)', 'UNIQUEIDENTIFIER') AS ID,
 								c.value('(@sys)', 'INT') AS SYS_ID,
 								c.value('(@net)', 'INT') AS NET_ID
 							FROM @xml.nodes('/root/item') AS a(c)
 						) AS a
 						INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
-						INNER JOIN dbo.DistrTypeCoef c ON c.ID_NET = a.NET_ID AND c.ID_MONTH = @MONTH
-						INNER JOIN Price.SystemPrice d ON ID_SYSTEM = SYS_ID
-					WHERE d.ID_MONTH = @MONTH
+						INNER JOIN [Price].[Systems:Price@Get](@Date) d ON System_Id = SYS_ID
 				) AS o_O
 		ELSE
 			SELECT ID, PRICE
 			FROM
 				(
-					SELECT 
+					SELECT
 						c.value('(@id)', 'UNIQUEIDENTIFIER') AS ID,
 						c.value('(@sys)', 'INT') AS SYS_ID,
 						c.value('(@net)', 'INT') AS NET_ID

@@ -31,16 +31,11 @@ BEGIN
 		FROM Common.Period
 		WHERE ID = @MONTH
 
-		SELECT NAME, PRICE
-		FROM
-			(
-				SELECT START, NAME, PRICE, ROW_NUMBER() OVER(PARTITION BY PRICE ORDER BY START) AS RN
-				FROM
-					Price.SystemPrice a
-					INNER JOIN Common.Period b ON a.ID_MONTH = b.ID
-				WHERE ID_SYSTEM = @SYSTEM AND START <= @START
-			) AS o_O
-		WHERE RN = 1
+		SELECT b.NAME, a.PRICE
+		FROM [Price].[System:Price]		AS a
+		INNER JOIN [Common].[Period]	AS b ON a.DATE = b.START AND b.[TYPE] = 2
+		WHERE A.[System_Id] = @SYSTEM
+			AND B.START <= @START
 		ORDER BY START DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

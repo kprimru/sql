@@ -25,9 +25,14 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE
+        DELETE
 		FROM Price.SystemPrice
 		WHERE ID_SYSTEM = @SYSTEM AND ID_MONTH = @MONTH
+
+		DELETE
+		FROM [Price].[System:Price]
+		WHERE [System_Id] = @SYSTEM
+			AND [Date] = (SELECT [START] FROM [Common].[Period] WHERE [ID] = @MONTH);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

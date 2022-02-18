@@ -28,6 +28,20 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@PRICE			Money,
+		@OLD_PRICE		Money,
+		@NEW_PRICE		Money,
+		@Date			SmallDateTime,
+
+		@COEF			Decimal(8, 4),
+		@OLD_COEF		Decimal(8, 4),
+		@NEW_COEF		Decimal(8, 4),
+
+		@RND			SmallInt,
+		@OLD_RND		SmallInt,
+		@NEW_RND		SmallInt;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -35,81 +49,40 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @PRICE		MONEY
-		DECLARE @OLD_PRICE	MONEY
-		DECLARE	@NEW_PRICE	MONEY
-
-		DECLARE @DT	SMALLDATETIME
-
-		SELECT @DT = START FROM Common.Period WHERE ID = @MONTH
-
-		IF NOT EXISTS
-			(
-				SELECT *
-				FROM Price.SystemPrice
-				WHERE ID_MONTH = @MONTH
-			)
-			SELECT @MONTH = ID
-			FROM Common.Period
-			WHERE TYPE = 2 AND START =
-				(
-					SELECT MAX(START)
-					FROM
-						Common.Period a
-						INNER JOIN Price.SystemPrice b ON a.ID = b.ID_MONTH
-					WHERE TYPE = 2 AND START <= @DT
-				)
-
-		DECLARE @MONTH_DATE SMALLDATETIME
-
-		SELECT @MONTH_DATE = START
-		FROM Common.Period
-		WHERE ID = @MONTH
+		SELECT @Date = [START]
+		FROM [Common].[Period]
+		WHERE [ID] = @MONTH;
 
 		IF @OLD_DISC IS NULL AND @NEW_DISC IS NOT NULL
 			SET @OLD_DISC = @NEW_DISC
 
 		IF @SYS IS NOT NULL
 			SELECT @PRICE = PRICE
-			FROM
-				Price.SystemPrice
-				INNER JOIN dbo.SystemTable ON SystemID = ID_SYSTEM
-			WHERE ID_MONTH = @MONTH AND SystemID = @SYS
+			FROM [Price].[Systems:Price@Get](@Date)
+			WHERE [System_Id] = @SYS
 		ELSE
 		BEGIN
 			SELECT @OLD_PRICE = PRICE
-			FROM
-				Price.SystemPrice
-				INNER JOIN dbo.SystemTable ON SystemID = ID_SYSTEM
-			WHERE ID_MONTH = @MONTH AND SystemID = @SYS_OLD
+			FROM [Price].[Systems:Price@Get](@Date)
+			WHERE [System_Id] = @SYS_OLD;
 
 			SELECT @NEW_PRICE = PRICE
-			FROM
-				Price.SystemPrice
-				INNER JOIN dbo.SystemTable ON SystemID = ID_SYSTEM
-			WHERE ID_MONTH = @MONTH AND SystemID = @SYS_NEW
+			FROM [Price].[Systems:Price@Get](@Date)
+			WHERE [System_Id] = @SYS_NEW;
 		END
-
-		DECLARE @COEF		DECIMAL(8, 4)
-		DECLARE	@OLD_COEF	DECIMAL(8, 4)
-		DECLARE	@NEW_COEF	DECIMAL(8, 4)
-
-		DECLARE @RND		SMALLINT
-		DECLARE	@OLD_RND	SMALLINT
-		DECLARE	@NEW_RND	SMALLINT
 
 		IF @NET IS NOT NULL
 		BEGIN
-			SET @COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET, '', @MONTH_DATE)
-			SET @RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET, '', @MONTH_DATE)
+			SET @COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET, '', @Date)
+			SET @RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET, '', @Date)
 		END
 		ELSE
 		BEGIN
-			SET @OLD_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @MONTH_DATE)
-			SET @OLD_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @MONTH_DATE)
+			SET @OLD_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @Date)
+			SET @OLD_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @Date)
 
-			SET @NEW_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @MONTH_DATE)
-			SET @NEW_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @MONTH_DATE)
+			SET @NEW_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @Date)
+			SET @NEW_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @Date)
 		END
 
 		IF @PRICE IS NOT NULL

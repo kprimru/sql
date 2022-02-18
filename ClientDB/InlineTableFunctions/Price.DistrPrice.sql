@@ -59,4 +59,5 @@ RETURN
 			[Round]	= CASE WHEN SC.[Date] IS NOT NULL THEN SC.[Round] ELSE NC.[Round] END
 	) AS C
 	OUTER APPLY [Common].[TaxDefaultSelect](@Date) AS T
-)GO
+)
+GO

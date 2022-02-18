@@ -90,7 +90,7 @@ BEGIN
 							CASE ISNULL(g.SystemPostfix, '') WHEN '' THEN '' ELSE ' ' + g.SystemPostfix END AS SystemFullName
 						FROM
 							(
-								SELECT 
+								SELECT
 									c.value('(@sys)', 'INT') AS SYS_ID,
 									c.value('(@distr)', 'VARCHAR(20)') AS DISTR,
 									c.value('(@net)', 'INT') AS NET_ID,
@@ -106,8 +106,13 @@ BEGIN
 							) AS a
 							INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 							INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-							INNER JOIN Price.SystemPrice d ON ID_MONTH = MON_ID AND ID_SYSTEM = SYS_ID
 							INNER JOIN Common.Period e ON e.ID = a.MON_ID
+							CROSS APPLY
+							(
+								SELECT [Price]
+								FROM [Price].[Systems:Price@Get](e.[START]) AS D
+								WHERE D.[System_Id] = SYS_ID
+							) AS D
 							LEFT OUTER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
 							LEFT OUTER JOIN dbo.SystemBuhView g ON g.SystemReg = b.SystemBaseName
 							LEFT OUTER JOIN Common.Tax t ON t.ID = a.TAX_ID

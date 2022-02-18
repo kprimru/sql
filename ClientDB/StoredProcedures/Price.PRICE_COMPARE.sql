@@ -52,8 +52,8 @@ BEGIN
 					ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, @NET, '', @END_DATE), dbo.DistrCoefRound(a.SystemID, @NET, '', @END_DATE)) * e.TOTAL_RATE, 2) AS NEW_PRICE_NDS
 				FROM
 					dbo.SystemTable a
-					INNER JOIN Price.SystemPrice op ON a.SystemID = op.ID_SYSTEM AND op.ID_MONTH = @BEGIN
-					INNER JOIN Price.SystemPrice np ON a.SystemID = np.ID_SYSTEM AND np.ID_MONTH = @END
+					INNER JOIN [Price].[Systems:Price@Get](@BEGIN_DATE) AS op ON op.[System_Id] = a.[SystemID]
+					INNER JOIN [Price].[Systems:Price@Get](@END_DATE) AS np ON np.[System_Id] = a.[SystemID]
 					OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
 					OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e
 			) AS a

@@ -26,9 +26,10 @@ BEGIN
 
 	BEGIN TRY
 
-		UPDATE Price.SystemPrice
-		SET PRICE = @PRICE
-		WHERE ID_SYSTEM = @SYSTEM AND ID_MONTH = @MONTH
+		UPDATE [Price].[System:Price] SET
+			PRICE = @PRICE
+		WHERE [System_Id] = @SYSTEM
+			AND [Date] = (SELECT [START] FROM [Common].[Period] WHERE [ID] = @MONTH);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

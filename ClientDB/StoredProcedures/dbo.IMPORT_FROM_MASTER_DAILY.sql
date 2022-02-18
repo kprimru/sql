@@ -414,45 +414,33 @@ BEGIN
 					AND Z.StatisticDate = A.StatisticDate
 			)
 
-		DELETE FROM dbo.Weight;
+		DELETE FROM [dbo].[Weight];
 
-		INSERT INTO dbo.Weight(Date, Sys, SysType, NetCount, NetTech, NetOdon, NetOdoff, Weight)
-		SELECT Date, Sys, SysType, NetCount, NetTech, NetOdon, NetOdoff, Weight
-		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[Weight] AS A;
+		INSERT INTO [dbo].[Weight]([Date], [System_Id], [SystemType_Id], [NetType_Id], [Weight])
+		SELECT W.[Date], DS.[SystemID], DT.[SST_ID], DN.[NT_ID], W.[Weight]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[Weight] AS W
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS S ON S.[SystemID] = W.[System_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Din].[SystemType] AS T ON T.[SST_ID] = W.[SystemType_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Din].[NetType] AS N ON N.[NT_ID] = W.[NetType_Id]
+		INNER JOIN [dbo].[SystemTable] AS DS ON DS.[SYstemBaseName] = S.[SystemBaseName]
+		INNER JOIN [Din].[SystemType] AS DT ON DT.[SST_REG] = T.[SST_REG]
+		INNER JOIN [Din].[NetType] AS DN ON DN.[NT_NET] = N.[NT_NET] AND DN.[NT_TECH] = N.[NT_TECH] AND DN.[NT_ODON] = N.[NT_ODON] AND DN.[NT_ODOFF] = N.[NT_ODOFF]
 
-		UPDATE C
-		SET COEF = AC.COEF,
-		    RND = AC.RND
-		FROM dbo.DistrTypeCoef AS C
-		INNER JOIN Common.Period AS P ON C.ID_MONTH = P.ID
-		INNER JOIN Din.NetType N ON C.ID_NET = N.NT_ID
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Din].[NetType] AS AN ON        AN.NT_NET = N.NT_NET
-									                                        AND AN.NT_TECH =N.NT_TECH
-									                                        AND AN.NT_ODON = N.NT_ODON
-									                                        AND AN.NT_ODOFF = N.NT_ODOFF
-	    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON AP.START = P.START AND AP.TYPE = P.TYPE
-	    INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeCoef] AS AC ON AC.ID_MONTH = AP.ID AND AC.ID_NET = AN.NT_ID
-	    WHERE AC.COEF != C.COEF
-	        AND AC.RND != C.RND
+		TRUNCATE TABLE [Price].[DistrType:Coef];
 
-		INSERT INTO dbo.DistrTypeCoef(ID_NET, ID_MONTH, COEF, RND)
-		SELECT N.NT_ID_MASTER, P.ID, AC.COEF, AC.RND
-		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeCoef] AS AC
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON AC.ID_MONTH = AP.ID
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Din].[NetType] AS AN ON AC.ID_NET = AN.NT_ID
-		INNER JOIN Din.NetType N ON     AN.NT_NET = N.NT_NET
-									AND AN.NT_TECH =N.NT_TECH
-									AND AN.NT_ODON = N.NT_ODON
-									AND AN.NT_ODOFF = N.NT_ODOFF
-									AND N.NT_ID_MASTER IS NOT NULL
-		INNER JOIN Common.Period AS P ON AP.START = P.START AND AP.TYPE = P.TYPE
-	    WHERE NOT EXISTS
-	        (
-	            SELECT *
-	            FROM dbo.DistrTypeCoef AS D
-	            WHERE D.ID_MONTH = P.ID
-	                AND D.ID_NET = N.NT_ID_MASTER
-	        );
+		INSERT INTO [Price].[DistrType:Coef]([DistrType_Id], [Date], [Coef], [Round])
+		SELECT N.[DistrTypeID], AC.[Date], AC.[Coef], AC.[Round]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[Price].[DistrType:Coef]		AS AC
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable]	AS D ON AC.[DistrType_Id] = D.[DistrTypeID]
+		INNER JOIN [dbo].[DistrTypeTable]								AS N ON N.[DistrTypeCode] = D.[DistrTypeCode];
+
+		TRUNCATE TABLE [Price].[SystemType:Coef];
+
+		INSERT INTO [Price].[SystemType:Coef]([SystemType_Id], [Date], [Coef], [Round])
+		SELECT N.[SystemTypeID], AC.[Date], AC.[Coef], AC.[Round]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[Price].[SystemType:Coef]		AS AC
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTypeTable]	AS D ON AC.[SystemType_Id] = D.[SystemTypeID]
+		INNER JOIN [dbo].[SystemTypeTable]								AS N ON N.[SystemTypeName] = D.[SystemTypeName];
 
 	    DELETE SB
 		FROM dbo.SystemsBanks SB
@@ -522,31 +510,13 @@ BEGIN
 
 
 	    -- Обновляем прейкурант
+		TRUNCATE TABLE [Price].[System:Price];
 
-		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
-		SELECT DISTINCT S.SystemID, P.ID, ASP.PRICE
-		FROM [PC275-SQL\ALPHA].[ClientDB].[Price].[SystemPrice] AS ASP
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS AST ON ASP.ID_SYSTEM = AST.SystemID
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON ASP.ID_MONTH = AP.ID
-		INNER JOIN dbo.SystemTable S ON S.SystemBaseName = AST.SystemBaseName
-		INNER JOIN Common.Period P ON P.START = AP.START AND P.TYPE = AP.TYPE
-		WHERE NOT EXISTS
-			(
-				SELECT *
-				FROM Price.SystemPrice SP
-				WHERE SP.ID_SYSTEM = S.SystemID
-					AND SP.ID_MONTH = P.ID
-			);
-
-	    UPDATE SP SET
-		    PRICE = ASP.PRICE
-		FROM Price.SystemPrice AS SP
-		INNER JOIN dbo.SystemTable S ON SP.ID_SYSTEM = S.SystemID
-		INNER JOIN Common.Period P ON SP.ID_MONTH = P.ID
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS AST ON S.SystemBaseName = AST.SystemBaseName
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON P.START = AP.START AND P.TYPE = AP.TYPE
-		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Price].[SystemPrice] AS ASP ON ASP.ID_SYSTEM = AST.SystemID AND ASP.ID_MONTH = AP.ID
-		WHERE SP.PRICE != ASP.PRICE
+		INSERT INTO [Price].[System:Price]([System_Id], [Date], [Price])
+		SELECT S.[SystemID], P.[Date], P.[Price]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[Price].[System:Price]	AS P
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS SS	ON SS.[SystemID] = P.[System_Id]
+		INNER JOIN [dbo].[SystemTable]								AS S	ON S.[SystemBaseName] = SS.[SystemBaseName];
 
 		/*
 		INSERT INTO @NamedSets
