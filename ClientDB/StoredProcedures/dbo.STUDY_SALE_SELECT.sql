@@ -24,8 +24,26 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT ID, DATE, FIO, RIVAL_CLIENT_ID, RIVAL_CLIENT, LPR, USER_POST, NOTE
-		FROM dbo.StudySale
+		SELECT
+		    ID, DATE, FIO, LPR, USER_POST, NOTE,
+		    ('<LIST>' +
+				(
+					SELECT CONVERT(VARCHAR(50), R.RivalType_Id)AS ITEM
+					FROM dbo.StudySaleRivals AS R
+		            WHERE R.StudySale_Id = S.ID
+					FOR XML PATH('')
+				)
+			+ '</LIST>') AS RivalType_IDs,
+		    REVERSE(STUFF(REVERSE(
+		        (
+		            SELECT Cast(T.RivalTypeName AS VarChar(100)) + ','
+		            FROM dbo.StudySaleRivals AS R
+		            INNER JOIN dbo.RivalTypeTable AS T ON T.RivalTypeID = R.RivalType_Id
+		            WHERE R.StudySale_Id = S.ID
+		            FOR XML PATH('')
+		        )
+		    ), 1, 1, '')) AS RIVAL_CLIENT
+		FROM dbo.StudySale AS S
 		WHERE ID_CLIENT = @CLIENT
 		ORDER BY DATE DESC
 

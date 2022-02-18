@@ -25,6 +25,10 @@ BEGIN
 
 	BEGIN TRY
 
+        DELETE
+        FROM dbo.StudySaleRivals
+        WHERE StudySale_Id=  @ID
+
 		DELETE
 		FROM dbo.StudySale
 		WHERE ID = @ID

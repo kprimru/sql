@@ -11,7 +11,7 @@ ALTER PROCEDURE [dbo].[STUDY_SALE_SAVE]
 	@CLIENT				INT,
 	@DATE				SMALLDATETIME,
 	@FIO				NVARCHAR(256),
-	@RIVAL_CLIENT_ID	NVARCHAR(30),
+	@RivalType_IDs      VarChar(Max),
 	@LPR				NVARCHAR(256),
 	@USER_POST			NVARCHAR(100),
 	@NOTE				NVARCHAR(MAX)
@@ -31,22 +31,28 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		DECLARE @RIVAL_CLIENT NVARCHAR(20)
-		SELECT @RIVAL_CLIENT = RivalTypeName FROM dbo.RivalTypeTable WHERE RivalTypeID = @RIVAL_CLIENT_ID
+		IF @ID IS NULL BEGIN
+		    SET @ID = NewId();
 
-		IF @ID IS NULL
-			INSERT INTO dbo.StudySale(ID_CLIENT, DATE, FIO, RIVAL_CLIENT_ID, RIVAL_CLIENT, LPR, USER_POST, NOTE)
-				VALUES(@CLIENT, @DATE, @FIO, @RIVAL_CLIENT_ID, @RIVAL_CLIENT, @LPR, @USER_POST, @NOTE)
-		ELSE
+			INSERT INTO dbo.StudySale(ID, ID_CLIENT, DATE, FIO, LPR, USER_POST, NOTE)
+			VALUES(@ID, @CLIENT, @DATE, @FIO, @LPR, @USER_POST, @NOTE)
+		END ELSE BEGIN
 			UPDATE dbo.StudySale
 			SET DATE = @DATE,
 				FIO = @FIO,
-				RIVAL_CLIENT_ID = @RIVAL_CLIENT_ID,
-				RIVAL_CLIENT = @RIVAL_CLIENT,
 				LPR = @LPR,
 				USER_POST = @USER_POST,
 				NOTE = @NOTE
-			WHERE ID = @ID
+			WHERE ID = @ID;
+
+			DELETE
+			FROM dbo.StudySaleRivals
+			WHERE StudySale_Id = @ID;
+		END;
+
+		INSERT INTO dbo.StudySaleRivals(StudySale_Id, RivalType_Id)
+		SELECT @ID, ID
+		FROM dbo.TableIDFromXML(@RivalType_IDs);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
