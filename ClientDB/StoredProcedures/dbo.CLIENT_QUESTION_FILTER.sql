@@ -28,12 +28,15 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
+		    a.ClientID,
 			ClientFullName, ClientQuestionDate, ClientQuestionComment,
 			CASE
 				WHEN b.AnswerID IS NOT NULL THEN AnswerName
 				WHEN b.ClientQuestionText IS NOT NULL THEN b.ClientQuestionText
 				ELSE NULL
-			END AS AnswerName, ServiceName
+			END AS AnswerName, ServiceName,
+			ClientQuestionCreateUser,
+			ClientQuestionLastUpdateUser
 		FROM
 			[dbo].[ClientList@Get?Read]() INNER JOIN
 			dbo.ClientTable a ON WCL_ID = ClientID INNER JOIN
