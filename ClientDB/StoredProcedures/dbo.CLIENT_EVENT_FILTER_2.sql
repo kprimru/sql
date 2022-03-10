@@ -49,7 +49,7 @@ BEGIN
 
 		SELECT
 			c.ClientID, EventDate, c.ClientFullName, ServiceName, ManagerName, ServiceStatusIndex, CATEGORY = ClientTypeName, EventTypeName, EventComment,
-			EventCreateUser AS EventCreateData,
+			EventCreateUser AS EventCreateData, EventCreate,
 			CASE
 				WHEN EventLastUpdate <> EventCreate THEN EventLastUpdateUser
 				ELSE ''

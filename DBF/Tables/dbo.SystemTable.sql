@@ -31,5 +31,5 @@ CREATE TABLE [dbo].[SystemTable]
         CONSTRAINT [FK_dbo.SystemTable(SYS_ID_SO)_dbo.SaleObjectTable(SO_ID)] FOREIGN KEY  ([SYS_ID_SO]) REFERENCES [dbo].[SaleObjectTable] ([SO_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SystemTable()] ON [dbo].[SystemTable] ([SYS_SHORT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SystemTable(SYS_SHORT_NAME)] ON [dbo].[SystemTable] ([SYS_SHORT_NAME] ASC);
 GO

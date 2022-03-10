@@ -15,5 +15,5 @@ CREATE TABLE [Distr].[NetTypeDetail]
         [NT_DATE]        SmallDateTime         NOT NULL,
         [NT_END]         SmallDateTime             NULL,
         [NT_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_NetType] PRIMARY KEY CLUSTERED ([NT_ID])
+        CONSTRAINT [PK_Distr.NetTypeDetail] PRIMARY KEY CLUSTERED ([NT_ID])
 );GO

@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[ClientKind]
         CONSTRAINT [PK_dbo.ClientKind] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ClientKind()] ON [dbo].[ClientKind] ([Name] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ClientKind(Name)] ON [dbo].[ClientKind] ([Name] ASC);
 GO

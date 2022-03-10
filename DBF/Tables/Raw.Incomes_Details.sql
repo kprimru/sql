@@ -17,5 +17,5 @@ CREATE TABLE [Raw].[Incomes:Details]
         [Client_Id]      Int                                 NULL,
         [NotForImport]   Bit                             NOT NULL,
         CONSTRAINT [PK_Raw.Incomes:Details] PRIMARY KEY CLUSTERED ([Id]),
-        CONSTRAINT [FK_Incomes:Details_Incomes] FOREIGN KEY  ([Income_Id]) REFERENCES [Raw].[Incomes] ([Id])
+        CONSTRAINT [FK_Raw.Incomes:Details(Income_Id)_Raw.Incomes(Id)] FOREIGN KEY  ([Income_Id]) REFERENCES [Raw].[Incomes] ([Id])
 );GO

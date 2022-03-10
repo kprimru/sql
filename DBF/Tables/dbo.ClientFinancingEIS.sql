@@ -11,5 +11,5 @@ CREATE TABLE [dbo].[ClientFinancingEIS]
         [Data]        xml                NOT NULL,
         [Contract]    VarChar(100)           NULL,
         [RegNum]      VarChar(100)           NULL,
-        CONSTRAINT [PK__ClientFinancingE__56806A05] PRIMARY KEY CLUSTERED ([Client_Id],[Date])
+        CONSTRAINT [PK_dbo.ClientFinancingEIS] PRIMARY KEY CLUSTERED ([Client_Id],[Date])
 );GO

@@ -18,7 +18,7 @@ AS
 	WHERE CL_REF IN (1, 3) AND VD_REF IN (1, 3)
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [INS_IX_CLUST] ON [Install].[InstallMasterView] ([INS_ID] ASC);
-CREATE NONCLUSTERED INDEX [IX_CL_NAME] ON [Install].[InstallMasterView] ([CL_NAME] ASC) INCLUDE ([INS_ID]);
-CREATE NONCLUSTERED INDEX [IX_DATE] ON [Install].[InstallMasterView] ([INS_DATE] ASC) INCLUDE ([INS_ID]);
+CREATE UNIQUE CLUSTERED INDEX [UC_Install.InstallMasterView(INS_ID)] ON [Install].[InstallMasterView] ([INS_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Install.InstallMasterView(CL_NAME)+(INS_ID)] ON [Install].[InstallMasterView] ([CL_NAME] ASC) INCLUDE ([INS_ID]);
+CREATE NONCLUSTERED INDEX [IX_Install.InstallMasterView(INS_DATE)+(INS_ID)] ON [Install].[InstallMasterView] ([INS_DATE] ASC) INCLUDE ([INS_ID]);
 GO

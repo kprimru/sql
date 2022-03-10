@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[FinancingTable]
         CONSTRAINT [PK_dbo.FinancingTable] PRIMARY KEY CLUSTERED ([FIN_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.FinancingTable()] ON [dbo].[FinancingTable] ([FIN_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.FinancingTable(FIN_NAME)] ON [dbo].[FinancingTable] ([FIN_NAME] ASC);
 GO

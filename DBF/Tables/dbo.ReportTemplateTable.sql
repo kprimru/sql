@@ -23,5 +23,5 @@ CREATE TABLE [dbo].[ReportTemplateTable]
         CONSTRAINT [FK_dbo.ReportTemplateTable(RT_ID_REPORT_TYPE)_dbo.ReportTypeTable(RTY_ID)] FOREIGN KEY  ([RT_ID_REPORT_TYPE]) REFERENCES [dbo].[ReportTypeTable] ([RTY_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportTemplateTable()] ON [dbo].[ReportTemplateTable] ([RT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportTemplateTable(RT_NAME)] ON [dbo].[ReportTemplateTable] ([RT_NAME] ASC);
 GO

@@ -9,6 +9,7 @@ GO
 ALTER PROCEDURE [Price].[PRICE_DBF_IMPORT]
 	@DBFMonth		UniqueIdentifier,
 	@ClientMonth	UniqueIdentifier
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;

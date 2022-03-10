@@ -16,5 +16,5 @@ CREATE TABLE [dbo].[PriceTable]
         CONSTRAINT [FK_dbo.PriceTable(PP_ID_TYPE)_dbo.PriceTypeTable(PT_ID)] FOREIGN KEY  ([PP_ID_TYPE]) REFERENCES [dbo].[PriceTypeTable] ([PT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.PriceTable()] ON [dbo].[PriceTable] ([PP_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.PriceTable(PP_NAME)] ON [dbo].[PriceTable] ([PP_NAME] ASC);
 GO

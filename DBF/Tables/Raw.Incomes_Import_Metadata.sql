@@ -13,5 +13,5 @@ CREATE TABLE [Raw].[Incomes:Import?Metadata]
         CONSTRAINT [PK_Raw.Incomes:Import?Metadata] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [PK_Raw.Incomes:Import?Metadata(Code)] ON [Raw].[Incomes:Import?Metadata] ([Code] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_Raw.Incomes:Import?Metadata(Code)] ON [Raw].[Incomes:Import?Metadata] ([Code] ASC);
 GO

@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[ActivityTable]
         CONSTRAINT [PK_dbo.ActivityTable] PRIMARY KEY CLUSTERED ([AC_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ActivityTable()] ON [dbo].[ActivityTable] ([AC_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ActivityTable(AC_NAME)] ON [dbo].[ActivityTable] ([AC_NAME] ASC);
 GO

@@ -28,8 +28,8 @@ CREATE TABLE [dbo].[ProviderTable]
         [ProviderLogo]           varbinary                          NULL,
         CONSTRAINT [PK_dbo.ProviderTable] PRIMARY KEY CLUSTERED ([ProviderID]),
         CONSTRAINT [FK_dbo.ProviderTable(OwnerFormID)_dbo.OwnerFormTable(OwnerFormID)] FOREIGN KEY  ([OwnerFormID]) REFERENCES [dbo].[OwnerFormTable] ([OwnerFormID]),
-        CONSTRAINT [FK_dbo.ProviderTable(StreetID)_dbo.StreetTable(StreetID)] FOREIGN KEY  ([StreetID]) REFERENCES [dbo].[StreetTable] ([StreetID]),
-        CONSTRAINT [FK_dbo.ProviderTable(BankID)_dbo.BankTable(BankID)] FOREIGN KEY  ([BankID]) REFERENCES [dbo].[BankTable] ([BankID])
+        CONSTRAINT [FK_dbo.ProviderTable(BankID)_dbo.BankTable(BankID)] FOREIGN KEY  ([BankID]) REFERENCES [dbo].[BankTable] ([BankID]),
+        CONSTRAINT [FK_dbo.ProviderTable(StreetID)_dbo.StreetTable(StreetID)] FOREIGN KEY  ([StreetID]) REFERENCES [dbo].[StreetTable] ([StreetID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.ProviderTable(ProviderName,ProviderINN)] ON [dbo].[ProviderTable] ([ProviderName] ASC, [ProviderINN] ASC);

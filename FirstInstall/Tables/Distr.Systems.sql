@@ -8,8 +8,8 @@ CREATE TABLE [Distr].[Systems]
 (
         [SYSMS_ID]     UniqueIdentifier      NOT NULL,
         [SYSMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Systems_1] PRIMARY KEY CLUSTERED ([SYSMS_ID])
+        CONSTRAINT [PK_Distr.Systems] PRIMARY KEY CLUSTERED ([SYSMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_SYSMS_LAST] ON [Distr].[Systems] ([SYSMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Distr.Systems(SYSMS_LAST)] ON [Distr].[Systems] ([SYSMS_LAST] DESC);
 GO

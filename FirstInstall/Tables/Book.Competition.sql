@@ -8,8 +8,8 @@ CREATE TABLE [Book].[Competition]
 (
         [CPMS_ID]     UniqueIdentifier      NOT NULL,
         [CPMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Competition] PRIMARY KEY CLUSTERED ([CPMS_ID])
+        CONSTRAINT [PK_Book.Competition] PRIMARY KEY CLUSTERED ([CPMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_CPMS_LAST] ON [Book].[Competition] ([CPMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Book.Competition(CPMS_LAST)] ON [Book].[Competition] ([CPMS_LAST] DESC);
 GO

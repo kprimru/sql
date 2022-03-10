@@ -12,9 +12,9 @@ CREATE TABLE [Price].[Coef:Special]
         [Date]            SmallDateTime      NOT NULL,
         [Coef]            decimal            NOT NULL,
         [Round]           SmallInt           NOT NULL,
-        CONSTRAINT [PK_dbo.Coef:Special] PRIMARY KEY NONCLUSTERED ([System_Id],[DistrType_Id],[SystemType_Id],[Date]),
-        CONSTRAINT [FK_dbo.Coef:Special(DistrType_Id)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrType_Id]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
-        CONSTRAINT [FK_dbo.Coef:Special(SystemType_Id)_dbo.SystemTypeTable(SystemTypeID)] FOREIGN KEY  ([SystemType_Id]) REFERENCES [dbo].[SystemTypeTable] ([SystemTypeID]),
-        CONSTRAINT [FK_dbo.Coef:Special(System_Id)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID])
+        CONSTRAINT [PK_Price.Coef:Special] PRIMARY KEY NONCLUSTERED ([System_Id],[DistrType_Id],[SystemType_Id],[Date]),
+        CONSTRAINT [FK_Price.Coef:Special(DistrType_Id)_Price.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrType_Id]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
+        CONSTRAINT [FK_Price.Coef:Special(SystemType_Id)_Price.SystemTypeTable(SystemTypeID)] FOREIGN KEY  ([SystemType_Id]) REFERENCES [dbo].[SystemTypeTable] ([SystemTypeID]),
+        CONSTRAINT [FK_Price.Coef:Special(System_Id)_Price.SystemTable(SystemID)] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID])
 );
 GO

@@ -202,11 +202,26 @@ DECLARE cur CURSOR
 FOR 
 SELECT
 	sch.name AS 'schema', t.name AS 'table', kc.name AS 'index',
-	'UQ_'+sch.name+'.'+t.name+'('+')' AS 'right name'
+	'UQ_'+sch.name+'.'+t.name+'('+[Columns] +')' AS 'right name'
 FROM
 	sys.key_constraints kc
 	INNER JOIN sys.tables t ON kc.parent_object_id=t.object_id
 	INNER JOIN sys.schemas sch ON sch.schema_id=kc.schema_id
+	INNER JOIN sys.indexes AS i ON i.index_id = kc.unique_index_id AND i.object_id = t.object_id
+	OUTER APPLY
+	(
+		SELECT [Columns] = STUFF(
+			(
+				SELECT ',' + c.name 
+				FROM sys.columns				c
+				INNER JOIN sys.index_columns	ic ON c.column_id = ic.column_id
+				WHERE t.object_id = c.object_id
+					AND ic.index_id = i.index_id
+					AND t.object_id = ic.object_id
+					AND ic.is_included_column = 0
+				ORDER BY ic.key_ordinal FOR XML PATH('')
+			),1,1,'')
+	) AS mc
 WHERE
 	kc.type='UQ'
 
@@ -219,7 +234,7 @@ FETCH NEXT FROM cur INTO @schema, @table, @index, @index_right
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	SET @index_name = @schema+'.'+@table+'.'+@index
+	SET @index_name = '[' + @schema + '].['+@table+'].['+@index + ']'
 	IF LEN(@index_right)>100
 	BEGIN
 		PRINT 'Объект '+@index+' не был переименован, так как сгенерированное имя слишком длинное' -- ЕСЛИ И ПОСЛЕ ЭТОГО СЛИШКОМ ДЛИННОЕ, ТОГДА НИЧЕГО НЕ ДЕЛАТЬ

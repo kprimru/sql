@@ -8,8 +8,8 @@ CREATE TABLE [Security].[Users]
 (
         [USMS_ID]     UniqueIdentifier      NOT NULL,
         [USMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([USMS_ID])
+        CONSTRAINT [PK_Security.Users] PRIMARY KEY CLUSTERED ([USMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_USMS_LAST] ON [Security].[Users] ([USMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Security.Users(USMS_LAST)] ON [Security].[Users] ([USMS_LAST] DESC);
 GO

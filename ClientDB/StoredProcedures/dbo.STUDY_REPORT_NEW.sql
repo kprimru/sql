@@ -7,8 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[STUDY_REPORT_NEW]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[STUDY_REPORT_NEW]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[STUDY_REPORT_NEW]
-	@pbegindate VARCHAR(20),
-	@penddate VARCHAR(20),
+	@pbegindate SmallDateTime,
+	@penddate SmallDateTime,
 	@serviceid INT = null,
 	@statusid INT = null,
 	@TEACHER	NVARCHAR(MAX) = NULL

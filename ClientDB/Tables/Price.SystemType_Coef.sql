@@ -11,6 +11,6 @@ CREATE TABLE [Price].[SystemType:Coef]
         [Coef]            decimal            NOT NULL,
         [Round]           SmallInt           NOT NULL,
         CONSTRAINT [PK_Price.SystemType:Coef] PRIMARY KEY CLUSTERED ([SystemType_Id],[Date]),
-        CONSTRAINT [FK_Price.SystemType:Coef(SystemType_Id)_dbo.SystemTypeTable(SystemTypeID)] FOREIGN KEY  ([SystemType_Id]) REFERENCES [dbo].[SystemTypeTable] ([SystemTypeID])
+        CONSTRAINT [FK_Price.SystemType:Coef(SystemType_Id)_Price.SystemTypeTable(SystemTypeID)] FOREIGN KEY  ([SystemType_Id]) REFERENCES [dbo].[SystemTypeTable] ([SystemTypeID])
 );
 GO

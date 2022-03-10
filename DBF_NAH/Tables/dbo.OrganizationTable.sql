@@ -46,6 +46,6 @@ CREATE TABLE [dbo].[OrganizationTable]
         CONSTRAINT [FK_dbo.OrganizationTable(ORG_S_ID_STREET)_dbo.StreetTable(ST_ID)] FOREIGN KEY  ([ORG_S_ID_STREET]) REFERENCES [dbo].[StreetTable] ([ST_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_ORG_SHORT] ON [dbo].[OrganizationTable] ([ORG_SHORT_NAME] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.OrganizationTable()] ON [dbo].[OrganizationTable] ([ORG_FULL_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.OrganizationTable(ORG_FULL_NAME)] ON [dbo].[OrganizationTable] ([ORG_FULL_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.OrganizationTable(ORG_SHORT_NAME)] ON [dbo].[OrganizationTable] ([ORG_SHORT_NAME] ASC);
 GO

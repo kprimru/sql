@@ -19,5 +19,5 @@ CREATE TABLE [dbo].[SaleObjectTable]
         CONSTRAINT [FK_dbo.SaleObjectTable(SO_ID_TAX)_dbo.TaxTable(TX_ID)] FOREIGN KEY  ([SO_ID_TAX]) REFERENCES [dbo].[TaxTable] ([TX_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SaleObjectTable()] ON [dbo].[SaleObjectTable] ([SO_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SaleObjectTable(SO_NAME)] ON [dbo].[SaleObjectTable] ([SO_NAME] ASC);
 GO

@@ -16,6 +16,6 @@ CREATE TABLE [Distr].[TechTypeDetail]
         [TT_END]         SmallDateTime             NULL,
         [TT_REF]         TinyInt               NOT NULL,
         [TT_WEIGHT]      decimal                   NULL,
-        CONSTRAINT [PK_TechType] PRIMARY KEY CLUSTERED ([TT_ID]),
-        CONSTRAINT [FK_TechType_TechType] FOREIGN KEY  ([TT_ID_MASTER]) REFERENCES [Distr].[TechType] ([TTMS_ID])
+        CONSTRAINT [PK_Distr.TechTypeDetail] PRIMARY KEY CLUSTERED ([TT_ID]),
+        CONSTRAINT [FK_Distr.TechTypeDetail(TT_ID_MASTER)_Distr.TechType(TTMS_ID)] FOREIGN KEY  ([TT_ID_MASTER]) REFERENCES [Distr].[TechType] ([TTMS_ID])
 );GO

@@ -14,6 +14,7 @@ BEGIN
 
     DECLARE
 		@DebugError		VarChar(512),
+		@DebugComment	VarChar(512),
 		@DebugContext	Xml,
 		@Params			Xml;
 
@@ -33,7 +34,17 @@ BEGIN
 		    Primary Key Clustered([Id])
 	    );
     
+		SET @DebugComment = '@FILENAME = ' + @FILENAME + ' @FILESIZE = ' + Cast(@FILESIZE AS VarChar(Max)) + ' @SERVER = ' + Cast(@SERVER AS VarChar(Max));
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
+
 	    EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 2, @FILEID OUTPUT, @RESULT OUTPUT
+
+		SET @DebugComment = 'EXEC dbo.FILE_PROCESS';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
 
 	    IF (@FILEID IS NULL) OR (@RESULT = 0)
 	    BEGIN
@@ -105,6 +116,11 @@ BEGIN
 				    ) ON [PRIMARY]*/
 		    ) ON [PRIMARY]
 
+		SET @DebugComment = 'BEFORE BULK INSERT';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
+
 	    DECLARE @ROW CHAR
 
 	    SET @ROW = CHAR(10)
@@ -121,6 +137,11 @@ BEGIN
 				    KEEPNULLS
 			    )')
 
+		SET @DebugComment = 'AFTER BULK INSERT';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
+
 	    DECLARE @STATID	INT
 
 	    SELECT @STATID = CS_ID
@@ -134,6 +155,11 @@ BEGIN
 
 		    SELECT @STATID = SCOPE_IDENTITY()
 	    END
+
+		SET @DebugComment = 'INSERT INTO dbo.ClientStat(CS_ID_FILE)';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
 
 	    INSERT INTO dbo.ClientStatDetail
 		    (
@@ -234,6 +260,11 @@ BEGIN
 		    )
 	    ORDER BY CSD_NUM
     
+		SET @DebugComment = 'INSERT INTO dbo.ClientStatDetail';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
+
 	    --ВОТ СЮДА ПОДОБНОЕ ТОМУ ЧТО СВЕРХУ, ТОЛЬКО С ЗАМЕНОЙ И В 275TS ClientDB
 	    --ЕСЛИ ЧТО УДАЛЯТЬ ВСЕ
 	    ---------------------------------------------------------------------------
@@ -248,11 +279,11 @@ BEGIN
 											    ORDER BY RC_ID
 										    ), 'неизвестный код'),
 		    CSD_USR					= a.CSD_USR
-	    FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
+	    FROM [ClientDB].[IP].[ClientStatDetailCache] b
 	    INNER JOIN dbo.ClientStatDetail a ON b.CSD_SYS = a.CSD_SYS AND b.CSD_DISTR = a.CSD_DISTR AND b.CSD_COMP = a.CSD_COMP
 	    INNER JOIN @IDs I ON a.CSD_ID = I.Id;
 
-	    INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR)
+	    INSERT INTO [ClientDB].[IP].[ClientStatDetailCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR)
 	    SELECT
 		    a.CSD_SYS,
 		    a.CSD_DISTR,
@@ -284,11 +315,11 @@ BEGIN
 	    WHERE NOT EXISTS
 		    (
 			    SELECT *
-			    FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatDetailCache] b
+			    FROM [ClientDB].[IP].[ClientStatDetailCache] b
 			    WHERE b.CSD_SYS=a.CSD_SYS AND b.CSD_DISTR=a.CSD_DISTR AND b.CSD_COMP=a.CSD_COMP
 		    )
     
-	    INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatSTTCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_END)
+	    INSERT INTO [ClientDB].[IP].[ClientStatSTTCache] (CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_END)
 	    SELECT
 		    a.CSD_SYS,
 		    a.CSD_DISTR,
@@ -300,7 +331,7 @@ BEGIN
 	    WHERE NOT EXISTS
 		    (
 			    SELECT *
-			    FROM [PC275-SQL\ALPHA].[ClientDB].[IP].[ClientStatSTTCache] b
+			    FROM [ClientDB].[IP].[ClientStatSTTCache] b
 			    WHERE	b.CSD_SYS = a.CSD_SYS
 				    AND b.CSD_DISTR = a.CSD_DISTR
 				    AND b.CSD_COMP = a.CSD_COMP
@@ -309,6 +340,11 @@ BEGIN
 		    AND CSD_STT_SEND = 1
 		    AND CSD_STT_RESULT = 1
 	    ---------------------------------------------------------------------------
+
+		SET @DebugComment = 'UPDATE CACHE';
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
 
 	    IF OBJECT_ID('tempdb..#csd') IS NOT NULL
 		    DROP TABLE #csd

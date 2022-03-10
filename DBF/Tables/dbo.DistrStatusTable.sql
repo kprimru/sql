@@ -13,6 +13,6 @@ CREATE TABLE [dbo].[DistrStatusTable]
         CONSTRAINT [PK_dbo.DistrStatusTable] PRIMARY KEY CLUSTERED ([DS_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_STATUS_NAME] ON [dbo].[DistrStatusTable] ([DS_NAME] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrStatusTable()] ON [dbo].[DistrStatusTable] ([DS_REG] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrStatusTable(DS_NAME)] ON [dbo].[DistrStatusTable] ([DS_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrStatusTable(DS_REG)] ON [dbo].[DistrStatusTable] ([DS_REG] ASC);
 GO

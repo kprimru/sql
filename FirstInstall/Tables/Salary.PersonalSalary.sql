@@ -20,10 +20,10 @@ CREATE TABLE [Salary].[PersonalSalary]
         [PS_ID_PAY]           UniqueIdentifier          NULL,
         [PS_DEBT]             Money                     NULL,
         [PS_LOCK]             Bit                   NOT NULL,
-        CONSTRAINT [PK_PersonalSalary] PRIMARY KEY CLUSTERED ([PS_ID]),
-        CONSTRAINT [FK_PersonalSalary_Personals] FOREIGN KEY  ([PS_ID_PERSONAL]) REFERENCES [Personal].[Personals] ([PERMS_ID]),
-        CONSTRAINT [FK_PersonalSalary_Period] FOREIGN KEY  ([PS_ID_PERIOD]) REFERENCES [Common].[Period] ([PRMS_ID]),
-        CONSTRAINT [FK_PersonalSalary_Competition] FOREIGN KEY  ([PS_ID_COMPETITION]) REFERENCES [Book].[Competition] ([CPMS_ID]),
-        CONSTRAINT [FK_PersonalSalary_Vendors] FOREIGN KEY  ([PS_ID_VENDOR]) REFERENCES [Clients].[Vendors] ([VDMS_ID]),
-        CONSTRAINT [FK_PersonalSalary_Period1] FOREIGN KEY  ([PS_ID_PAY]) REFERENCES [Common].[Period] ([PRMS_ID])
+        CONSTRAINT [PK_Salary.PersonalSalary] PRIMARY KEY CLUSTERED ([PS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_PERSONAL)_Salary.Personals(PERMS_ID)] FOREIGN KEY  ([PS_ID_PERSONAL]) REFERENCES [Personal].[Personals] ([PERMS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_PERIOD)_Salary.Period(PRMS_ID)] FOREIGN KEY  ([PS_ID_PERIOD]) REFERENCES [Common].[Period] ([PRMS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_COMPETITION)_Salary.Competition(CPMS_ID)] FOREIGN KEY  ([PS_ID_COMPETITION]) REFERENCES [Book].[Competition] ([CPMS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_VENDOR)_Salary.Vendors(VDMS_ID)] FOREIGN KEY  ([PS_ID_VENDOR]) REFERENCES [Clients].[Vendors] ([VDMS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_PAY)_Salary.Period(PRMS_ID)] FOREIGN KEY  ([PS_ID_PAY]) REFERENCES [Common].[Period] ([PRMS_ID])
 );GO

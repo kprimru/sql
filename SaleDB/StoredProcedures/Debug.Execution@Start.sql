@@ -4,7 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Debug].[Execution@Start]
+
+CREATE   PROCEDURE [Debug].[Execution@Start]
 	@Proc_Id		Int,
 	@Params			Xml,
 	@DebugContext	Xml OUT
@@ -13,35 +14,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE
-		@Id				BigInt,
-		@StartDateTime	DateTime,
-		@Object			VarChar(512),
-		@UserName		VarChar(128),
-		@HostName		VarChar(128);
+    IF [Debug].[Execution@Enabled]() = 0
+        RETURN;
 
-	SET @StartDateTime	= GetDate();
-	SET @Object			= '[' + Object_Schema_Name(@Proc_Id) + '].[' + Object_Name(@Proc_Id) + ']';
-	SET @UserName 		= Original_Login();
-	SET @HostName 		= Host_Name();
+    DECLARE
+        @Id             BigInt,
+        @StartDateTime  DateTime,
+        @Object         VarChar(512),
+        @UserName       VarChar(128),
+        @HostName       VarChar(128);
 
-	INSERT INTO [Debug].[Executions:Start]([StartDateTime], [Object], [UserName], [HostName])
-	VALUES(@StartDateTime, @Object, @UserName, @HostName);
+    SET @StartDateTime  = GetDate();
+    SET @Object         = '[' + Object_Schema_Name(@Proc_Id) + '].[' + Object_Name(@Proc_Id) + ']';
+    SET @UserName       = Original_Login();
+    SET @HostName       = Host_Name();
 
-	SELECT @Id = Scope_Identity();
+    INSERT INTO [Debug].[Executions:Start]([StartDateTime], [Object], [UserName], [HostName])
+    VALUES(@StartDateTime, @Object, @UserName, @HostName);
 
-	SET @DebugContext =
-		(
-			SELECT
-				[Id]			= @Id,
-				[StartDateTime] = @StartDateTime
-			FOR XML RAW('DEBUG'), TYPE
-		);
+    SELECT @Id = Scope_Identity();
 
-	IF @Params IS NOT NULL BEGIN
-		INSERT INTO [Debug].[Executions:Start:Params]([Id], [Row:Index], [Name], [Value])
-		SELECT @Id, P.[Row:Index], P.[Name], P.[Value]
-		FROM [Debug].[Execution:Params@Parse](@Params) P;
-	END;
+    SET @DebugContext =
+        (
+            SELECT
+                [Id]            = @Id,
+                [StartDateTime] = @StartDateTime
+            FOR XML RAW('DEBUG'), TYPE
+        );
+
+    IF @Params IS NOT NULL BEGIN
+        INSERT INTO [Debug].[Executions:Start:Params]([Id], [Row:Index], [Name], [Value])
+        SELECT @Id, P.[Row:Index], P.[Name], P.[Value]
+        FROM [Debug].[Execution:Params@Parse](@Params) P;
+    END;
 END;
 GO

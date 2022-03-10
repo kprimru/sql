@@ -13,7 +13,7 @@ CREATE TABLE [Book].[BookPriceDetail]
         [BP_DATE]        SmallDateTime         NOT NULL,
         [BP_END]         SmallDateTime             NULL,
         [BP_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_BookPriceDetail] PRIMARY KEY CLUSTERED ([BP_ID]),
-        CONSTRAINT [FK_BookPriceDetail_BookPrice] FOREIGN KEY  ([BP_ID_MASTER]) REFERENCES [Book].[BookPrice] ([BPMS_ID]),
-        CONSTRAINT [FK_BookPriceDetail_Period] FOREIGN KEY  ([BP_ID_HALF]) REFERENCES [Common].[Half] ([HLFMS_ID])
+        CONSTRAINT [PK_Book.BookPriceDetail] PRIMARY KEY CLUSTERED ([BP_ID]),
+        CONSTRAINT [FK_Book.BookPriceDetail(BP_ID_MASTER)_Book.BookPrice(BPMS_ID)] FOREIGN KEY  ([BP_ID_MASTER]) REFERENCES [Book].[BookPrice] ([BPMS_ID]),
+        CONSTRAINT [FK_Book.BookPriceDetail(BP_ID_HALF)_Book.Half(HLFMS_ID)] FOREIGN KEY  ([BP_ID_HALF]) REFERENCES [Common].[Half] ([HLFMS_ID])
 );GO

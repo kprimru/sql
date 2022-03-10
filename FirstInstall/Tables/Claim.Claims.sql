@@ -10,6 +10,6 @@ CREATE TABLE [Claim].[Claims]
         [CLM_DATE]      DateTime              NOT NULL,
         [CLM_ID_USER]   UniqueIdentifier      NOT NULL,
         [CLM_NUM]       Int                   NOT NULL,
-        CONSTRAINT [PK_Claims] PRIMARY KEY CLUSTERED ([CLM_ID]),
-        CONSTRAINT [FK_Claims_Users] FOREIGN KEY  ([CLM_ID_USER]) REFERENCES [Security].[Users] ([USMS_ID])
+        CONSTRAINT [PK_Claim.Claims] PRIMARY KEY CLUSTERED ([CLM_ID]),
+        CONSTRAINT [FK_Claim.Claims(CLM_ID_USER)_Claim.Users(USMS_ID)] FOREIGN KEY  ([CLM_ID_USER]) REFERENCES [Security].[Users] ([USMS_ID])
 );GO

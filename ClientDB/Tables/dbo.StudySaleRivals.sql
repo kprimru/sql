@@ -10,6 +10,6 @@ CREATE TABLE [dbo].[StudySaleRivals]
         [RivalType_Id]   Int                   NOT NULL,
         CONSTRAINT [PK_dbo.StudySaleRivals] PRIMARY KEY CLUSTERED ([StudySale_Id],[RivalType_Id]),
         CONSTRAINT [FK_dbo.StudySaleRivals(StudySale_Id)_dbo.StudySale(ID)] FOREIGN KEY  ([StudySale_Id]) REFERENCES [dbo].[StudySale] ([ID]),
-        CONSTRAINT [FK_dbo.StudySaleRivals(StudySale_Id)_dbo.RivalTypeTable(RivalType_Id)] FOREIGN KEY  ([RivalType_Id]) REFERENCES [dbo].[RivalTypeTable] ([RivalTypeID])
+        CONSTRAINT [FK_dbo.StudySaleRivals(RivalType_Id)_dbo.RivalTypeTable(RivalTypeID)] FOREIGN KEY  ([RivalType_Id]) REFERENCES [dbo].[RivalTypeTable] ([RivalTypeID])
 );
 GO

@@ -24,8 +24,8 @@ RETURN
 		[Result]			= Node.value('@Result[1]', 				'VarChar(50)'),
 		[Status]			= Node.value('@Status[1]', 				'VarChar(50)'),
 		[AlienInn]			= Node.value('@AlienInn[1]', 			'VarChar(50)'),
-		[DepoDate]			= Node.value('@DepoDate[1]', 			'SmallDateTime'),
-		[DepoExpireDate]	= Node.value('@DepoExpireDate[1]',		'SmallDateTime'),
+		[DepoDate]			= Convert(SmallDateTime, Node.value('@DepoDate[1]', 			'VarChar(100)'), 3),
+		[DepoExpireDate]	= Convert(SmallDateTime, Node.value('@DepoExpireDate[1]',		'VarChar(100)'), 3),
 		[Rival]				= Node.value('@Rival[1]',				'VarChar(50)')
 	FROM @Data.nodes('/DEPO/ITEM') Data(Node)
 )

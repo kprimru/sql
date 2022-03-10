@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[RegionTable]
         CONSTRAINT [PK_dbo.RegionTable] PRIMARY KEY CLUSTERED ([RG_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.RegionTable()] ON [dbo].[RegionTable] ([RG_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.RegionTable(RG_NAME)] ON [dbo].[RegionTable] ([RG_NAME] ASC);
 GO

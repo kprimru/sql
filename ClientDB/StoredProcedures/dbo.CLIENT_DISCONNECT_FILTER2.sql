@@ -96,11 +96,11 @@ BEGIN
 			(
 				SELECT TOP (1) WEIGHT
 				FROM [dbo].[Weight] W
-				INNER JOIN Din.SystemType S ON W.SST_ID = S.SST_ID
-				INNER JOIN Din.NetType N ON W.NT_ID = N.NT_ID
+				INNER JOIN Din.SystemType S ON W.SystemType_Id = S.SST_ID
+				INNER JOIN Din.NetType N ON W.NetType_Id = N.NT_ID
 				WHERE S.SST_ID_MASTER = b.SystemTypeID
 					AND N.NT_ID_MASTER = b.DistrTypeID
-					AND W.SystemID = b.SystemID
+					AND W.System_Id = b.SystemID
 					AND W.DATE <= a.DATE
 				ORDER BY W.DATE DESC
 			) AS WEIGHT

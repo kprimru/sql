@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[GlobalSettingsTable]
         CONSTRAINT [PK_dbo.GlobalSettingsTable] PRIMARY KEY CLUSTERED ([GS_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.GlobalSettingsTable()] ON [dbo].[GlobalSettingsTable] ([GS_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.GlobalSettingsTable(GS_NAME)] ON [dbo].[GlobalSettingsTable] ([GS_NAME] ASC);
 GO

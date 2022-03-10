@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[RoleTable]
         CONSTRAINT [PK_dbo.RoleTable] PRIMARY KEY CLUSTERED ([ROLE_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.RoleTable()] ON [dbo].[RoleTable] ([ROLE_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.RoleTable(ROLE_NAME)] ON [dbo].[RoleTable] ([ROLE_NAME] ASC);
 GO

@@ -16,8 +16,8 @@ CREATE TABLE [dbo].[PeriodTable]
         CONSTRAINT [PK_dbo.PeriodTable] PRIMARY KEY CLUSTERED ([PR_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_PR_DATE] ON [dbo].[PeriodTable] ([PR_DATE] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.PeriodTable()] ON [dbo].[PeriodTable] ([PR_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.PeriodTable(PR_DATE)] ON [dbo].[PeriodTable] ([PR_DATE] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.PeriodTable(PR_NAME)] ON [dbo].[PeriodTable] ([PR_NAME] ASC);
 GO
 GRANT SELECT ON [dbo].[PeriodTable] TO rl_fin_r;
 GRANT SELECT ON [dbo].[PeriodTable] TO rl_reg_node_report_r;

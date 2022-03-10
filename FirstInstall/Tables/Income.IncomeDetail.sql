@@ -40,21 +40,21 @@ CREATE TABLE [Income].[IncomeDetail]
         [ID_COLOR]          Int                       NULL,
         [ID_INSTALL]        Bit                       NULL,
         [ID_ORANGE]         Bit                   NOT NULL,
-        CONSTRAINT [PK_IncomeDetail] PRIMARY KEY CLUSTERED ([ID_ID]),
-        CONSTRAINT [FK_IncomeDetail_Period] FOREIGN KEY  ([ID_ID_FIRST_MON]) REFERENCES [Common].[Period] ([PRMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_DistrType] FOREIGN KEY  ([ID_ID_TYPE]) REFERENCES [Distr].[DistrType] ([DTMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_NetType] FOREIGN KEY  ([ID_ID_NET]) REFERENCES [Distr].[NetType] ([NTMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_Systems] FOREIGN KEY  ([ID_ID_SYSTEM]) REFERENCES [Distr].[Systems] ([SYSMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_TechType] FOREIGN KEY  ([ID_ID_TECH]) REFERENCES [Distr].[TechType] ([TTMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_Period1] FOREIGN KEY  ([ID_ID_FIRST_MON]) REFERENCES [Common].[Period] ([PRMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_Period2] FOREIGN KEY  ([ID_ID_FULL_PAY]) REFERENCES [Common].[Period] ([PRMS_ID]),
-        CONSTRAINT [FK_IncomeDetail_Incomes] FOREIGN KEY  ([ID_ID_INCOME]) REFERENCES [Income].[Incomes] ([IN_ID])
+        CONSTRAINT [PK_Income.IncomeDetail] PRIMARY KEY CLUSTERED ([ID_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_FIRST_MON)_Income.Period(PRMS_ID)] FOREIGN KEY  ([ID_ID_FIRST_MON]) REFERENCES [Common].[Period] ([PRMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_TYPE)_Income.DistrType(DTMS_ID)] FOREIGN KEY  ([ID_ID_TYPE]) REFERENCES [Distr].[DistrType] ([DTMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_NET)_Income.NetType(NTMS_ID)] FOREIGN KEY  ([ID_ID_NET]) REFERENCES [Distr].[NetType] ([NTMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_SYSTEM)_Income.Systems(SYSMS_ID)] FOREIGN KEY  ([ID_ID_SYSTEM]) REFERENCES [Distr].[Systems] ([SYSMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_TECH)_Income.TechType(TTMS_ID)] FOREIGN KEY  ([ID_ID_TECH]) REFERENCES [Distr].[TechType] ([TTMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_FIRST_MON)_Income.Period(PRMS_ID)1] FOREIGN KEY  ([ID_ID_FIRST_MON]) REFERENCES [Common].[Period] ([PRMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_FULL_PAY)_Income.Period(PRMS_ID)] FOREIGN KEY  ([ID_ID_FULL_PAY]) REFERENCES [Common].[Period] ([PRMS_ID]),
+        CONSTRAINT [FK_Income.IncomeDetail(ID_ID_INCOME)_Income.Incomes(IN_ID)] FOREIGN KEY  ([ID_ID_INCOME]) REFERENCES [Income].[Incomes] ([IN_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_INC] ON [Income].[IncomeDetail] ([ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID_INCOME]);
-CREATE NONCLUSTERED INDEX [IX_IncomeDetail_ID_FULL_DATE] ON [Income].[IncomeDetail] ([ID_FULL_DATE] ASC);
-CREATE NONCLUSTERED INDEX [IX_IncomeDetail_ID_ID_INCOME_ID_ID_SYSTEM_ID_ID_TYPE_ID_ID_NET_ID_ID_TECH] ON [Income].[IncomeDetail] ([ID_ID_INCOME] ASC, [ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID]);
-CREATE NONCLUSTERED INDEX [IX_IncomeDetail_ID_ID_SYSTEM_ID_ID_TYPE_ID_ID_NET_ID_ID_TECH] ON [Income].[IncomeDetail] ([ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID_INCOME], [ID_DEL_SUM], [ID_ID_FULL_PAY], [ID_ID_FIRST_MON]);
-CREATE NONCLUSTERED INDEX [IX_IncomeDetail_ID_LOCK] ON [Income].[IncomeDetail] ([ID_LOCK] ASC) INCLUDE ([ID_ID], [ID_FULL_DATE]);
-CREATE NONCLUSTERED INDEX [IX_IncomeDetail_ID_RESTORE_ID_LOCK] ON [Income].[IncomeDetail] ([ID_RESTORE] ASC, [ID_LOCK] ASC) INCLUDE ([ID_ID], [ID_FULL_DATE]);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_FULL_DATE)] ON [Income].[IncomeDetail] ([ID_FULL_DATE] ASC);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_ID_INCOME,ID_ID_SYSTEM,ID_ID_TYPE,ID_ID_NET,ID_ID_TECH)+(ID_ID)] ON [Income].[IncomeDetail] ([ID_ID_INCOME] ASC, [ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID]);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_ID_SYSTEM,ID_ID_TYPE,ID_ID_NET,ID_ID_TECH)+(ID_ID_INCOME)] ON [Income].[IncomeDetail] ([ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID_INCOME]);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_ID_SYSTEM,ID_ID_TYPE,ID_ID_NET,ID_ID_TECH)+INCL] ON [Income].[IncomeDetail] ([ID_ID_SYSTEM] ASC, [ID_ID_TYPE] ASC, [ID_ID_NET] ASC, [ID_ID_TECH] ASC) INCLUDE ([ID_ID_INCOME], [ID_DEL_SUM], [ID_ID_FULL_PAY], [ID_ID_FIRST_MON]);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_LOCK)+(ID_ID,ID_FULL_DATE)] ON [Income].[IncomeDetail] ([ID_LOCK] ASC) INCLUDE ([ID_ID], [ID_FULL_DATE]);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomeDetail(ID_RESTORE,ID_LOCK)+(ID_ID,ID_FULL_DATE)] ON [Income].[IncomeDetail] ([ID_RESTORE] ASC, [ID_LOCK] ASC) INCLUDE ([ID_ID], [ID_FULL_DATE]);
 GO

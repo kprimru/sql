@@ -47,7 +47,7 @@ BEGIN
 
 		IF @TEXT IS NULL
 		BEGIN
-			SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
+			SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate, EventCreate
 			FROM
 				[dbo].[ClientList@Get?Read]()
 				INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
@@ -65,7 +65,7 @@ BEGIN
 		ELSE
 		BEGIN
 			IF @FLAG = 1
-				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
+				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate, EventCreate
 				FROM
 					[dbo].[ClientList@Get?Read]()
 					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID
@@ -86,7 +86,7 @@ BEGIN
 						)
 				ORDER BY EventDate DESC, ServiceName, ClientFullName
 			ELSE
-				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate
+				SELECT EventID, ClientFullName, EventDate AS EventDateStr, EventTypeName, EventComment, ServiceName, ManagerName, a.ClientID, EventDate, EventCreate
 				FROM
 					[dbo].[ClientList@Get?Read]()
 					INNER JOIN dbo.EventTable a ON ClientID = WCL_ID

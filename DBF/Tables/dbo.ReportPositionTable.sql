@@ -13,6 +13,6 @@ CREATE TABLE [dbo].[ReportPositionTable]
         CONSTRAINT [PK_dbo.ReportPositionTable] PRIMARY KEY CLUSTERED ([RP_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_PR_PSEDO] ON [dbo].[ReportPositionTable] ([RP_PSEDO] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportPositionTable()] ON [dbo].[ReportPositionTable] ([RP_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportPositionTable(RP_NAME)] ON [dbo].[ReportPositionTable] ([RP_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportPositionTable(RP_PSEDO)] ON [dbo].[ReportPositionTable] ([RP_PSEDO] ASC);
 GO

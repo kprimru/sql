@@ -8,6 +8,7 @@ IF OBJECT_ID('[Report].[DBF_ACT_UNSIGN]', 'P ') IS NULL EXEC('CREATE PROCEDURE [
 GO
 ALTER PROCEDURE [Report].[DBF_ACT_UNSIGN]
 	@PARAM	NVARCHAR(MAX) = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -37,7 +38,7 @@ BEGIN
 		SET @Date = GetDate()
 
         INSERT INTO @Result
-        EXEC [PC275-SQL\DELTA].[DBF].[dbo].[ACT_UNSIGN_REPORT] @Date;
+        EXEC [DBF].[dbo].[ACT_UNSIGN_REPORT] @Date;
 
         SELECT
             [Клиент]    = [Psedo],

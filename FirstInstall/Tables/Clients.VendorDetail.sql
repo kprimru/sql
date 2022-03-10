@@ -12,6 +12,6 @@ CREATE TABLE [Clients].[VendorDetail]
         [VD_DATE]        SmallDateTime         NOT NULL,
         [VD_END]         SmallDateTime             NULL,
         [VD_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_Vendors] PRIMARY KEY CLUSTERED ([VD_ID]),
-        CONSTRAINT [FK_Vendors_Vendors] FOREIGN KEY  ([VD_ID_MASTER]) REFERENCES [Clients].[Vendors] ([VDMS_ID])
+        CONSTRAINT [PK_Clients.VendorDetail] PRIMARY KEY CLUSTERED ([VD_ID]),
+        CONSTRAINT [FK_Clients.VendorDetail(VD_ID_MASTER)_Clients.Vendors(VDMS_ID)] FOREIGN KEY  ([VD_ID_MASTER]) REFERENCES [Clients].[Vendors] ([VDMS_ID])
 );GO

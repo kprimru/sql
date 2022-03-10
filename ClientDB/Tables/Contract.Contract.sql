@@ -33,7 +33,7 @@ CREATE TABLE [Contract].[Contract]
         CONSTRAINT [FK_Contract.Contract(ID_YEAR)_Contract.Period(ID)] FOREIGN KEY  ([ID_YEAR]) REFERENCES [Common].[Period] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_Contract.Contract(DateTo] ON [Contract].[Contract] ([DateTo] ASC);
+CREATE NONCLUSTERED INDEX [IX_Contract.Contract(DateTo)] ON [Contract].[Contract] ([DateTo] ASC);
 CREATE NONCLUSTERED INDEX [IX_Contract.Contract(ID_VENDOR)+(NUM,ID_YEAR)] ON [Contract].[Contract] ([ID_VENDOR] ASC) INCLUDE ([NUM], [ID_YEAR]);
-CREATE NONCLUSTERED INDEX [IX_Contract.Contract(ID_VENDOR,ID_YEAR] ON [Contract].[Contract] ([ID_VENDOR] ASC, [ID_YEAR] ASC) INCLUDE ([NUM]);
+CREATE NONCLUSTERED INDEX [IX_Contract.Contract(ID_VENDOR,ID_YEAR)+(NUM)] ON [Contract].[Contract] ([ID_VENDOR] ASC, [ID_YEAR] ASC) INCLUDE ([NUM]);
 GO

@@ -15,5 +15,5 @@ CREATE TABLE [dbo].[FieldTable]
         CONSTRAINT [PK_dbo.FieldTable] PRIMARY KEY CLUSTERED ([FL_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.FieldTable()] ON [dbo].[FieldTable] ([FL_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.FieldTable(FL_NAME)] ON [dbo].[FieldTable] ([FL_NAME] ASC);
 GO

@@ -20,7 +20,7 @@ GO
 CREATE CLUSTERED INDEX [IC_dbo.ClientDistrTable(CD_ID_CLIENT,CD_ID_SERVICE)] ON [dbo].[ClientDistrTable] ([CD_ID_CLIENT] ASC, [CD_ID_SERVICE] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrTable(CD_ID_SERVICE)+(CD_ID,CD_ID_CLIENT,CD_ID_DISTR)] ON [dbo].[ClientDistrTable] ([CD_ID_SERVICE] ASC) INCLUDE ([CD_ID], [CD_ID_CLIENT], [CD_ID_DISTR]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientDistrTable(CD_REG_DATE,CD_ID,CD_ID_DISTR)] ON [dbo].[ClientDistrTable] ([CD_REG_DATE] ASC, [CD_ID] ASC, [CD_ID_DISTR] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ClientDistrTable()] ON [dbo].[ClientDistrTable] ([CD_ID_DISTR] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ClientDistrTable(CD_ID_DISTR)] ON [dbo].[ClientDistrTable] ([CD_ID_DISTR] ASC);
 GO
 GRANT SELECT ON [dbo].[ClientDistrTable] TO rl_all_r;
 GRANT SELECT ON [dbo].[ClientDistrTable] TO rl_client_fin_r;

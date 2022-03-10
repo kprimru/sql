@@ -4,7 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Debug].[Execution@Point]
+
+CREATE   PROCEDURE [Debug].[Execution@Point]
     @DebugContext   Xml,
     @Name           VarChar(128),
     @Params         Xml             = NULL
@@ -12,6 +13,9 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    IF [Debug].[Execution@Enabled]() = 0
+        RETURN;
 
     DECLARE
         @Id             BigInt,
@@ -40,5 +44,4 @@ BEGIN
         FROM [Debug].[Execution:Params@Parse](@Params) P;
     END;
 END;
-
 GO

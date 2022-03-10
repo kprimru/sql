@@ -13,6 +13,6 @@ CREATE TABLE [Distr].[HostDetail]
         [HST_DATE]        SmallDateTime         NOT NULL,
         [HST_END]         SmallDateTime             NULL,
         [HST_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_Hosts] PRIMARY KEY CLUSTERED ([HST_ID]),
-        CONSTRAINT [FK_HostDetail_Hosts] FOREIGN KEY  ([HST_ID_MASTER]) REFERENCES [Distr].[Hosts] ([HSTMS_ID])
+        CONSTRAINT [PK_Distr.HostDetail] PRIMARY KEY CLUSTERED ([HST_ID]),
+        CONSTRAINT [FK_Distr.HostDetail(HST_ID_MASTER)_Distr.Hosts(HSTMS_ID)] FOREIGN KEY  ([HST_ID_MASTER]) REFERENCES [Distr].[Hosts] ([HSTMS_ID])
 );GO

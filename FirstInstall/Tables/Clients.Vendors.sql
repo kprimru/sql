@@ -8,8 +8,8 @@ CREATE TABLE [Clients].[Vendors]
 (
         [VDMS_ID]     UniqueIdentifier      NOT NULL,
         [VDMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_Vendors_1] PRIMARY KEY CLUSTERED ([VDMS_ID])
+        CONSTRAINT [PK_Clients.Vendors] PRIMARY KEY CLUSTERED ([VDMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_VDMS_LAST] ON [Clients].[Vendors] ([VDMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Clients.Vendors(VDMS_LAST)] ON [Clients].[Vendors] ([VDMS_LAST] DESC);
 GO

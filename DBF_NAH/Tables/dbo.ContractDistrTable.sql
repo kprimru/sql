@@ -15,5 +15,5 @@ CREATE TABLE [dbo].[ContractDistrTable]
 );
 GO
 CREATE CLUSTERED INDEX [IC_dbo.ContractDistrTable(COD_ID_CONTRACT,COD_ID_DISTR)] ON [dbo].[ContractDistrTable] ([COD_ID_CONTRACT] ASC, [COD_ID_DISTR] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ContractDistrTable()] ON [dbo].[ContractDistrTable] ([COD_ID_DISTR] ASC, [COD_ID_CONTRACT] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ContractDistrTable(COD_ID_DISTR,COD_ID_CONTRACT)] ON [dbo].[ContractDistrTable] ([COD_ID_DISTR] ASC, [COD_ID_CONTRACT] ASC);
 GO

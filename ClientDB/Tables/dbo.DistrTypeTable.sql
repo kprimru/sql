@@ -15,7 +15,7 @@ CREATE TABLE [dbo].[DistrTypeTable]
         CONSTRAINT [PK_dbo.DistrTypeTable] PRIMARY KEY CLUSTERED ([DistrTypeID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrTypeTable()] ON [dbo].[DistrTypeTable] ([DistrTypeName] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrTypeTable(DistrTypeName)] ON [dbo].[DistrTypeTable] ([DistrTypeName] ASC);
 CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.DistrTypeTable(DistrTypeCode)] ON [dbo].[DistrTypeTable] ([DistrTypeCode] ASC);
 GO
 GRANT SELECT ON [dbo].[DistrTypeTable] TO BL_READER;

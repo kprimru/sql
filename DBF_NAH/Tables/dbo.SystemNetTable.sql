@@ -18,6 +18,6 @@ CREATE TABLE [dbo].[SystemNetTable]
         CONSTRAINT [PK_dbo.SystemNetTable] PRIMARY KEY CLUSTERED ([SN_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_SN_FULL_NAME] ON [dbo].[SystemNetTable] ([SN_FULL_NAME] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SystemNetTable()] ON [dbo].[SystemNetTable] ([SN_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SystemNetTable(SN_FULL_NAME)] ON [dbo].[SystemNetTable] ([SN_FULL_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SystemNetTable(SN_NAME)] ON [dbo].[SystemNetTable] ([SN_NAME] ASC);
 GO

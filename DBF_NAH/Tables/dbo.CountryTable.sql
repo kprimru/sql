@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[CountryTable]
         CONSTRAINT [PK_dbo.CountryTable] PRIMARY KEY CLUSTERED ([CNT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.CountryTable()] ON [dbo].[CountryTable] ([CNT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.CountryTable(CNT_NAME)] ON [dbo].[CountryTable] ([CNT_NAME] ASC);
 GO

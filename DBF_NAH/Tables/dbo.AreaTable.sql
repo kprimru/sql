@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[AreaTable]
         CONSTRAINT [PK_dbo.AreaTable] PRIMARY KEY CLUSTERED ([AR_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.AreaTable()] ON [dbo].[AreaTable] ([AR_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.AreaTable(AR_NAME)] ON [dbo].[AreaTable] ([AR_NAME] ASC);
 GO

@@ -25,6 +25,6 @@ CREATE TABLE [Meta].[Reference]
         [REF_SELECT_SQL]     VarChar(250)              NULL,
         [REF_DELETED_SQL]    VarChar(250)              NULL,
         [REF_DEFAULT_SORT]   VarChar(100)              NULL,
-        CONSTRAINT [PK_Reference] PRIMARY KEY CLUSTERED ([REF_ID]),
-        CONSTRAINT [FK_Reference_Reference] FOREIGN KEY  ([REF_ID_MASTER]) REFERENCES [Meta].[Reference] ([REF_ID])
+        CONSTRAINT [PK_Meta.Reference] PRIMARY KEY CLUSTERED ([REF_ID]),
+        CONSTRAINT [FK_Meta.Reference(REF_ID_MASTER)_Meta.Reference(REF_ID)] FOREIGN KEY  ([REF_ID_MASTER]) REFERENCES [Meta].[Reference] ([REF_ID])
 );GO

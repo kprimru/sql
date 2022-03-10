@@ -18,5 +18,5 @@ CREATE TABLE [Maintenance].[Jobs]
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Maintenance.Jobs(START)] ON [Maintenance].[Jobs] ([START] ASC);
-CREATE NONCLUSTERED INDEX [IX_Maintenance.Jobs(Type_Id,START)] ON [Maintenance].[Jobs] ([Type_Id] ASC, [START] ASC) INCLUDE ([FINISH]);
+CREATE NONCLUSTERED INDEX [IX_Maintenance.Jobs(Type_Id,START)+(FINISH)] ON [Maintenance].[Jobs] ([Type_Id] ASC, [START] ASC) INCLUDE ([FINISH]);
 GO

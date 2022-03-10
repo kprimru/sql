@@ -124,8 +124,8 @@ BEGIN
 					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName) AS SYS_REG,
 					ISNULL(b.SystemOrder, d.SystemOrder) AS SYS_ORDER,
 					b.SystemOrder AS BORDER, c.SystemOrder AS CORDER,
-					ISNULL(e.NoteWTitle, f.NoteWTitle) AS SYSTEM_NOTE,
-					ISNULL(e.NOTE, f.NOTE) AS SYSTEM_NOTE_FULL,
+					ISNULL(f.NoteWTitle, e.NoteWTitle) AS SYSTEM_NOTE,
+					ISNULL(f.NOTE, e.NOTE) AS SYSTEM_NOTE_FULL,
 					ISNULL(a.DOCS, a.NEW_DOCS) AS DOCS,
 					a.OPER_STRING AS OPER, a.OPER_UNDERLINE, a.FULL_STR AS NOTE
 				FROM
@@ -140,8 +140,8 @@ BEGIN
 					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName),
 					ISNULL(b.SystemOrder, d.SystemOrder),
 					b.SystemOrder, c.SystemOrder,
-					ISNULL(e.NoteWTitle, f.NoteWTitle),
-					ISNULL(e.NOTE, f.NOTE),
+					ISNULL(f.NoteWTitle, e.NoteWTitle),
+					ISNULL(f.NOTE, e.NOTE),
 					ISNULL(a.DOCS, a.NEW_DOCS),
 					a.OPER_STRING, a.OPER_UNDERLINE, a.FULL_STR
 			) AS t

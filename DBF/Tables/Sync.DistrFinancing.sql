@@ -10,5 +10,5 @@ CREATE TABLE [Sync].[DistrFinancing]
         [DIS_NUM]        Int              NOT NULL,
         [DIS_COMP_NUM]   TinyInt          NOT NULL,
         [UPD_DATE]       DateTime         NOT NULL,
-        CONSTRAINT [PK_DistrFinancing] PRIMARY KEY CLUSTERED ([SYS_REG_NAME],[DIS_NUM],[DIS_COMP_NUM])
+        CONSTRAINT [PK_Sync.DistrFinancing] PRIMARY KEY CLUSTERED ([SYS_REG_NAME],[DIS_NUM],[DIS_COMP_NUM])
 );GO

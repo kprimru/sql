@@ -27,7 +27,7 @@ BEGIN
 	    FROM dbo.Settings
 	    WHERE ST_NAME = 'COPY_BAT_PATH'
 
-	    EXEC xp_cmdshell @cmd
+	    --EXEC xp_cmdshell @cmd
 
 	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

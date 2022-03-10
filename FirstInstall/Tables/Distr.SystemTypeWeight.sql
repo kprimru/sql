@@ -10,5 +10,5 @@ CREATE TABLE [Distr].[SystemTypeWeight]
         [STW_ID_SYSTEM]   UniqueIdentifier      NOT NULL,
         [STW_ID_TYPE]     UniqueIdentifier      NOT NULL,
         [STW_WEIGHT]      Int                       NULL,
-        CONSTRAINT [PK_SystemTypeWeight] PRIMARY KEY CLUSTERED ([STW_ID])
+        CONSTRAINT [PK_Distr.SystemTypeWeight] PRIMARY KEY CLUSTERED ([STW_ID])
 );GO

@@ -21,5 +21,5 @@ CREATE TABLE [Distr].[DistrIncome]
         [ID_SUBHOST]     UniqueIdentifier          NULL,
         [PROCESS_DATE]   DateTime                  NULL,
         [UPD_DATE]       DateTime                  NULL,
-        CONSTRAINT [PK_DistrIncome] PRIMARY KEY CLUSTERED ([ID])
+        CONSTRAINT [PK_Distr.DistrIncome] PRIMARY KEY CLUSTERED ([ID])
 );GO

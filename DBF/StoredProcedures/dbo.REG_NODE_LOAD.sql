@@ -150,7 +150,7 @@ BEGIN
 				) AS dt
 
 		INSERT INTO #tmp
-			SELECT 'Неизвестное количество сетевых станций "' + CONVERT(VARCHAR,REG_NET) + '/' + CONVERT(VARCHAR,REG_TECH_TYPE) + '" ОДОН=' + ISNULL(REG_ODON, '') + '  ОДОФ=' + ISNULL(REG_ODOFF, '') + '. ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
+			SELECT 'Неизвестное количество сетевых станций: сеть=' + CONVERT(VARCHAR,REG_NET) + ' Тех.признак=' + CONVERT(VARCHAR,REG_TECH_TYPE) + ' ОДОН=' + ISNULL(REG_ODON, '') + '  ОДОФ=' + ISNULL(REG_ODOFF, '') + '. ' + REG_SYSTEM + ' ' + CONVERT(VARCHAR, REG_DISTR), 1
 			FROM (
 				SELECT DISTINCT REG_NET, REG_TECH_TYPE, REG_SYSTEM, REG_DISTR, REG_ODON, REG_ODOFF
 				FROM #temp

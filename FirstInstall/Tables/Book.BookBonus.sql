@@ -8,8 +8,8 @@ CREATE TABLE [Book].[BookBonus]
 (
         [BBMS_ID]     UniqueIdentifier      NOT NULL,
         [BBMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_BookBonus] PRIMARY KEY CLUSTERED ([BBMS_ID])
+        CONSTRAINT [PK_Book.BookBonus] PRIMARY KEY CLUSTERED ([BBMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_BBMS_LAST] ON [Book].[BookBonus] ([BBMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Book.BookBonus(BBMS_LAST)] ON [Book].[BookBonus] ([BBMS_LAST] DESC);
 GO

@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[NamedSets]
         CONSTRAINT [PK_dbo.NamedSets] PRIMARY KEY CLUSTERED ([SetId])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.NamedSets()] ON [dbo].[NamedSets] ([RefName] ASC, [SetName] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.NamedSets(RefName,SetName)] ON [dbo].[NamedSets] ([RefName] ASC, [SetName] ASC);
 GO

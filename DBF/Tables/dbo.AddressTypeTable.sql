@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[AddressTypeTable]
         CONSTRAINT [PK_dbo.AddressTypeTable] PRIMARY KEY CLUSTERED ([AT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.AddressTypeTable()] ON [dbo].[AddressTypeTable] ([AT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.AddressTypeTable(AT_NAME)] ON [dbo].[AddressTypeTable] ([AT_NAME] ASC);
 GO

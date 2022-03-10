@@ -71,14 +71,15 @@ BEGIN
 		    /*
 		    обновляем кэш в ДК
 		    */
-		    UPDATE [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast]
+			-- ToDo MERGE
+		    UPDATE [ClientDB].[IP].[LogLast]
 		    SET DATE = @LOG_DATE
 		    WHERE SYS = @LOG_SYS
 			    AND DISTR = @LOG_DISTR
 			    AND COMP = @LOG_COMP;
     
 		    IF @@ROWCOUNT = 0
-			    INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
+			    INSERT INTO [ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
 			    SELECT @LOG_SYS, @LOG_DISTR, @LOG_COMP, @LOG_DATE
     
 		    IF @RESULT = 1

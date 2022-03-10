@@ -8,8 +8,8 @@ CREATE TABLE [Distr].[NetType]
 (
         [NTMS_ID]     UniqueIdentifier      NOT NULL,
         [NTMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_NetType_1] PRIMARY KEY CLUSTERED ([NTMS_ID])
+        CONSTRAINT [PK_Distr.NetType] PRIMARY KEY CLUSTERED ([NTMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_NTMS_LAST] ON [Distr].[NetType] ([NTMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Distr.NetType(NTMS_LAST)] ON [Distr].[NetType] ([NTMS_LAST] DESC);
 GO

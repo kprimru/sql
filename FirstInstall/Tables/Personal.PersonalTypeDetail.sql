@@ -13,6 +13,6 @@ CREATE TABLE [Personal].[PersonalTypeDetail]
         [PT_DATE]        SmallDateTime         NOT NULL,
         [PT_END]         SmallDateTime             NULL,
         [PT_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_PersonalType] PRIMARY KEY CLUSTERED ([PT_ID]),
-        CONSTRAINT [FK_PersonalType_PersonalType] FOREIGN KEY  ([PT_ID_MASTER]) REFERENCES [Personal].[PersonalType] ([PTMS_ID])
+        CONSTRAINT [PK_Personal.PersonalTypeDetail] PRIMARY KEY CLUSTERED ([PT_ID]),
+        CONSTRAINT [FK_Personal.PersonalTypeDetail(PT_ID_MASTER)_Personal.PersonalType(PTMS_ID)] FOREIGN KEY  ([PT_ID_MASTER]) REFERENCES [Personal].[PersonalType] ([PTMS_ID])
 );GO

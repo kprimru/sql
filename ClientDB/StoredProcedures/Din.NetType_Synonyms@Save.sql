@@ -30,9 +30,16 @@ BEGIN
 		WHERE Net_Id = @Net_Id;
 
 		INSERT INTO [Din].[NetType:Synonyms]([Net_Id], [NT_NAME], [NT_NOTE])
-		SELECT @Net_Id, c.value('@NT_NAME[1]', 'VarChar(100)'), c.value('@NT_NOTE[1]', 'VarChar(100)')
-		FROM @Synonyms.nodes('/root/item') a(c)
-
+		SELECT N.[Net_Id], N.[Name], N.[Note]
+		FROM
+		(
+			SELECT
+				[Net_Id]	= @Net_Id,
+				[Name]		= c.value('@NT_NAME[1]', 'VarChar(100)'),
+				[Note]		= c.value('@NT_NOTE[1]', 'VarChar(100)')
+			FROM @Synonyms.nodes('/root/item') a(c)
+		) AS N
+		WHERE N.[Name] != '' OR N.[Note] != '';
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

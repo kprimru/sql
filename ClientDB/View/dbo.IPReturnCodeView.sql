@@ -6,8 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[IPReturnCodeView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPReturnCodeView]  AS SELECT 1')
 GO
+
 ALTER VIEW [dbo].[IPReturnCodeView]
 AS
 	SELECT RC_ID, RC_NUM, RC_TEXT, RC_TYPE, RC_ERROR, RC_WARNING
-	FROM [PC275-SQL\OMEGA].IPLogs.dbo.ReturnCode
+	FROM IPLogs.dbo.ReturnCode
 GO

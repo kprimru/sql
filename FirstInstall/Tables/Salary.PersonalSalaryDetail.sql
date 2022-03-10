@@ -18,10 +18,10 @@ CREATE TABLE [Salary].[PersonalSalaryDetail]
         [PSD_PAYED]       Bit                   NOT NULL,
         [PSD_SECOND]      Bit                       NULL,
         [PSD_PAY_DATE]    SmallDateTime             NULL,
-        CONSTRAINT [PK_PersonalSalaryDetail] PRIMARY KEY CLUSTERED ([PSD_ID]),
-        CONSTRAINT [FK_PersonalSalaryDetail_PersonalSalary] FOREIGN KEY  ([PSD_ID_MASTER]) REFERENCES [Salary].[PersonalSalary] ([PS_ID]),
-        CONSTRAINT [FK_PersonalSalaryDetail_IncomeDetail] FOREIGN KEY  ([PSD_ID_INCOME]) REFERENCES [Income].[IncomeDetail] ([ID_ID])
+        CONSTRAINT [PK_Salary.PersonalSalaryDetail] PRIMARY KEY CLUSTERED ([PSD_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalaryDetail(PSD_ID_MASTER)_Salary.PersonalSalary(PS_ID)] FOREIGN KEY  ([PSD_ID_MASTER]) REFERENCES [Salary].[PersonalSalary] ([PS_ID]),
+        CONSTRAINT [FK_Salary.PersonalSalaryDetail(PSD_ID_INCOME)_Salary.IncomeDetail(ID_ID)] FOREIGN KEY  ([PSD_ID_INCOME]) REFERENCES [Income].[IncomeDetail] ([ID_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_PersonalSalaryDetail_PSD_ID_MASTER] ON [Salary].[PersonalSalaryDetail] ([PSD_ID_MASTER] ASC);
+CREATE NONCLUSTERED INDEX [IX_Salary.PersonalSalaryDetail(PSD_ID_MASTER)] ON [Salary].[PersonalSalaryDetail] ([PSD_ID_MASTER] ASC);
 GO

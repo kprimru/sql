@@ -23,6 +23,6 @@ CREATE TABLE [Salary].[BonusConditionDetail]
         [BC_DATE]             SmallDateTime         NOT NULL,
         [BC_END]              SmallDateTime             NULL,
         [BC_REF]              TinyInt               NOT NULL,
-        CONSTRAINT [PK_BonusConditionDetail] PRIMARY KEY CLUSTERED ([BC_ID]),
-        CONSTRAINT [FK_BonusConditionDetail_BonusCondition] FOREIGN KEY  ([BC_ID_MASTER]) REFERENCES [Salary].[BonusCondition] ([BCMS_ID])
+        CONSTRAINT [PK_Salary.BonusConditionDetail] PRIMARY KEY CLUSTERED ([BC_ID]),
+        CONSTRAINT [FK_Salary.BonusConditionDetail(BC_ID_MASTER)_Salary.BonusCondition(BCMS_ID)] FOREIGN KEY  ([BC_ID_MASTER]) REFERENCES [Salary].[BonusCondition] ([BCMS_ID])
 );GO

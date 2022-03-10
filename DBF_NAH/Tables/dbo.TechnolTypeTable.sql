@@ -16,6 +16,6 @@ CREATE TABLE [dbo].[TechnolTypeTable]
         CONSTRAINT [PK_dbo.TechnolTypeTable] PRIMARY KEY CLUSTERED ([TT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_TT_REG] ON [dbo].[TechnolTypeTable] ([TT_REG] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.TechnolTypeTable()] ON [dbo].[TechnolTypeTable] ([TT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.TechnolTypeTable(TT_NAME)] ON [dbo].[TechnolTypeTable] ([TT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.TechnolTypeTable(TT_REG)] ON [dbo].[TechnolTypeTable] ([TT_REG] ASC);
 GO

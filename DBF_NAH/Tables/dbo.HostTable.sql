@@ -16,5 +16,5 @@ CREATE TABLE [dbo].[HostTable]
         CONSTRAINT [PK_dbo.HostTable] PRIMARY KEY CLUSTERED ([HST_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.HostTable()] ON [dbo].[HostTable] ([HST_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.HostTable(HST_NAME)] ON [dbo].[HostTable] ([HST_NAME] ASC);
 GO

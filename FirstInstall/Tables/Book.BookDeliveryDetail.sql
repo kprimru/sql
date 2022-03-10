@@ -13,6 +13,6 @@ CREATE TABLE [Book].[BookDeliveryDetail]
         [BD_DATE]        SmallDateTime         NOT NULL,
         [BD_END]         SmallDateTime             NULL,
         [BD_REF]         TinyInt                   NULL,
-        CONSTRAINT [PK_BookDeliveryDetail] PRIMARY KEY CLUSTERED ([BD_ID]),
-        CONSTRAINT [FK_BookDeliveryDetail_BookDelivery] FOREIGN KEY  ([BD_ID_MASTER]) REFERENCES [Book].[BookDelivery] ([BDMS_ID])
+        CONSTRAINT [PK_Book.BookDeliveryDetail] PRIMARY KEY CLUSTERED ([BD_ID]),
+        CONSTRAINT [FK_Book.BookDeliveryDetail(BD_ID_MASTER)_Book.BookDelivery(BDMS_ID)] FOREIGN KEY  ([BD_ID_MASTER]) REFERENCES [Book].[BookDelivery] ([BDMS_ID])
 );GO

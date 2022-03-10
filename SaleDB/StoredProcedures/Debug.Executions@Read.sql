@@ -4,7 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Debug].[Executions@Read]
+
+CREATE   PROCEDURE [Debug].[Executions@Read]
     @MaxResultCount Int             = 20,
     @Object         NVarChar(512)   = NULL,
     @Exec_Id        BigInt          = NULL

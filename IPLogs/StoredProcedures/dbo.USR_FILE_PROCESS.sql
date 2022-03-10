@@ -19,6 +19,7 @@ BEGIN
 
     DECLARE
 		@DebugError		VarChar(512),
+		@DebugComment	VarChar(512),
 		@DebugContext	Xml,
 		@Params			Xml;
 
@@ -34,6 +35,11 @@ BEGIN
 
 	    EXEC dbo.FILE_PROCESS @SERVER, @FILENAME, @FILESIZE, 4, @FILEID OUTPUT, @RESULT OUTPUT
 
+		SET @DebugComment = 'FileName = ' + @FILENAME;
+		EXEC [Debug].[Execution@Point]
+			@DebugContext	= @DebugContext,
+			@Name			= @DebugComment;
+
 	    IF @FILEID IS NOT NULL
 	    BEGIN
 		    IF @RESULT = 1
@@ -46,13 +52,15 @@ BEGIN
 			    WHERE UF_ID_FILE = @FILEID
     
 			    UPDATE dbo.ConsErr
-			    SET ERROR_DATA = @ERROR_DATA,
-				    INET_LOG_DATA = @LOG_DATA
+			    SET --ERROR_DATA = @ERROR_DATA,
+					ERROR_DATA_COMPRESSED = Compress(@ERROR_DATA),
+				    --INET_LOG_DATA = @LOG_DATA,
+					INET_LOG_DATA_COMPRESSED = Compress(@LOG_DATA)
 			    WHERE ID_USR = (SELECT UF_ID FROM dbo.USRFiles WHERE UF_ID_FILE = @FILEID)
     
 			    IF @@ROWCOUNT = 0
-				    INSERT INTO dbo.ConsErr(ID_USR, ERROR_DATA, INET_LOG_DATA)
-					    SELECT UF_ID, @ERROR_DATA, @LOG_DATA
+				    INSERT INTO dbo.ConsErr(ID_USR, ERROR_DATA_COMPRESSED, INET_LOG_DATA_COMPRESSED)
+					    SELECT UF_ID, Compress(@ERROR_DATA), Compress(@LOG_DATA)
 					    FROM dbo.USRFiles
 					    WHERE UF_ID_FILE = @FILEID
 		    END
@@ -71,20 +79,21 @@ BEGIN
     
 			    SELECT @ID = SCOPE_IDENTITY()
     
-			    INSERT INTO dbo.ConsErr(ID_USR, ERROR_DATA, INET_LOG_DATA)
-				    SELECT @ID, @ERROR_DATA, @LOG_DATA
+			    INSERT INTO dbo.ConsErr(ID_USR, /*ERROR_DATA, */ERROR_DATA_COMPRESSED, /*INET_LOG_DATA, */INET_LOG_DATA_COMPRESSED)
+				    SELECT @ID, /*@ERROR_DATA, */Compress(@ERROR_DATA), /*@LOG_DATA, */Compress(@LOG_DATA)
 				    FROM dbo.USRFiles
 				    WHERE UF_ID_FILE = @FILEID
 		    END
     
-		    UPDATE [PC275-SQL\ALPHA].[ClientDB].[IP].[ConsErr]
+			-- ToDo MERGE
+		    UPDATE [ClientDB].[IP].[ConsErr]
 		    SET DATE = CONVERT(DATETIME, dbo.USR_PARSE(@FILENAME, 'DATE'), 120)
 		    WHERE SYS = CONVERT(SMALLINT, dbo.USR_PARSE(@FILENAME, 'SYS'))
 			    AND DISTR = CONVERT(INT, dbo.USR_PARSE(@FILENAME, 'DISTR'))
 			    AND COMP = CONVERT(TINYINT, dbo.USR_PARSE(@FILENAME, 'COMP'))
     
 		    IF @@ROWCOUNT = 0
-			    INSERT INTO [PC275-SQL\ALPHA].[ClientDB].[IP].[ConsErr]
+			    INSERT INTO [ClientDB].[IP].[ConsErr]
 			    SELECT
 				    CONVERT(SMALLINT, dbo.USR_PARSE(@FILENAME, 'SYS')), CONVERT(INT, dbo.USR_PARSE(@FILENAME, 'DISTR')),
 				    CONVERT(TINYINT, dbo.USR_PARSE(@FILENAME, 'COMP')), CONVERT(DATETIME, dbo.USR_PARSE(@FILENAME, 'DATE'), 120)

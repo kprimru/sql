@@ -14,9 +14,9 @@ CREATE TABLE [Common].[PeriodDetail]
         [PR_DATE]         SmallDateTime         NOT NULL,
         [PR_END]          SmallDateTime             NULL,
         [PR_REF]          TinyInt               NOT NULL,
-        CONSTRAINT [PK_Period] PRIMARY KEY CLUSTERED ([PR_ID]),
-        CONSTRAINT [FK_Period_Period] FOREIGN KEY  ([PR_ID_MASTER]) REFERENCES [Common].[Period] ([PRMS_ID])
+        CONSTRAINT [PK_Common.PeriodDetail] PRIMARY KEY CLUSTERED ([PR_ID]),
+        CONSTRAINT [FK_Common.PeriodDetail(PR_ID_MASTER)_Common.Period(PRMS_ID)] FOREIGN KEY  ([PR_ID_MASTER]) REFERENCES [Common].[Period] ([PRMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_PERIOD_MASTER] ON [Common].[PeriodDetail] ([PR_ID_MASTER] ASC, [PR_BEGIN_DATE] ASC);
+CREATE NONCLUSTERED INDEX [IX_Common.PeriodDetail(PR_ID_MASTER,PR_BEGIN_DATE)] ON [Common].[PeriodDetail] ([PR_ID_MASTER] ASC, [PR_BEGIN_DATE] ASC);
 GO

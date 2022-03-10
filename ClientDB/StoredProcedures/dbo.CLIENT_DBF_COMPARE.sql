@@ -10,6 +10,7 @@ ALTER PROCEDURE [dbo].[CLIENT_DBF_COMPARE]
 	@MANAGER	INT,
 	@SERVICE	INT,
 	@TYPE		NVARCHAR(MAX)
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -258,9 +259,9 @@ BEGIN
 				(
 					SELECT TOP 1 DIS_STR
 					FROM
-						[PC275-SQL\DELTA].DBF.dbo.DistrView z
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
+						DBF.dbo.DistrView z
+						INNER JOIN DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
+						INNER JOIN DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
 												AND DIS_NUM = RN_DISTR_NUM
 												AND DIS_COMP_NUM = RN_COMP_NUM
 					WHERE y.TD_ID_TO = o_O.TD_ID_TO AND RN_SERVICE = 0
@@ -272,10 +273,10 @@ BEGIN
 					FROM
 						#client a
 						INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
+						INNER JOIN DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
 																			AND d.DIS_NUM = c.DISTR
 																			AND d.DIS_COMP_NUM = c.COMP
-						INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
+						INNER JOIN DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
 						INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON f.SystemBaseName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
 					WHERE f.Service = 0
 				) AS o_O
@@ -376,9 +377,9 @@ BEGIN
 				DIR_LAST = TP_LAST
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
+				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
+				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
+				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
 
 			IF @DIR_PHONE = 1
 			BEGIN
@@ -437,9 +438,9 @@ BEGIN
 				BUH_LAST = TP_LAST
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'BUH'
+				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
+				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
+				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'BUH'
 
 			IF @BUH_PHONE = 1
 			BEGIN
@@ -497,9 +498,9 @@ BEGIN
 				RES_LAST = TP_LAST
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'RES'
+				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
+				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
+				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'RES'
 
 			IF @RES_PHONE = 1
 			BEGIN
@@ -523,8 +524,8 @@ BEGIN
 			SET SERVICE = COUR_NAME
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.TOTable b ON a.TO_ID = b.TO_ID
-				INNER JOIN [PC275-SQL\DELTA].[DBF].dbo.CourierTable c ON c.COUR_ID = b.TO_ID_COUR
+				INNER JOIN [DBF].dbo.TOTable b ON a.TO_ID = b.TO_ID
+				INNER JOIN [DBF].dbo.CourierTable c ON c.COUR_ID = b.TO_ID_COUR
 		END
 
 		IF @ADDRESS = 1
@@ -556,10 +557,10 @@ BEGIN
 				ADDRESS_LAST = TO_LAST
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOAddressTable f ON f.TA_ID_TO = a.TO_ID
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.StreetTable g ON g.ST_ID = f.TA_ID_STREET
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable n ON n.TO_ID = f.TA_ID_TO
+				INNER JOIN DBF.dbo.TOAddressTable f ON f.TA_ID_TO = a.TO_ID
+				INNER JOIN DBF.dbo.StreetTable g ON g.ST_ID = f.TA_ID_STREET
+				INNER JOIN DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
+				INNER JOIN DBF.dbo.TOTable n ON n.TO_ID = f.TA_ID_TO
 		END
 
 		IF @INN = 1
@@ -574,7 +575,7 @@ BEGIN
 			SET INN = TO_INN
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+				INNER JOIN DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
 		END
 
 		IF @NAME = 1
@@ -589,7 +590,7 @@ BEGIN
 			SET TO_NAME = b.TO_NAME
 			FROM
 				#dbf a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+				INNER JOIN DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
 		END
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL

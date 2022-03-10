@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[ActCalcDetail]
         [CONFRM]      Bit                       NULL,
         [CALC_NOTE]   NVarChar(512)             NULL,
         [CALC_DATE]   DateTime                  NULL,
-        CONSTRAINT [PK_ActCalcDetail] PRIMARY KEY CLUSTERED ([ID_MASTER],[SYS_REG],[DISTR],[COMP],[MON]),
+        CONSTRAINT [PK_dbo.ActCalcDetail] PRIMARY KEY CLUSTERED ([ID_MASTER],[SYS_REG],[DISTR],[COMP],[MON]),
         CONSTRAINT [FK_dbo.ActCalcDetail(ID_MASTER)_dbo.ActCalc(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [dbo].[ActCalc] ([ID])
 );
 GO

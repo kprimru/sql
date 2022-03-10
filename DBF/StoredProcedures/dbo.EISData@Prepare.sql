@@ -17,6 +17,7 @@ BEGIN
 
     DECLARE
         @Xml            Xml,
+        @X              NVarChar(Max),
         @Xml_S          NVarChar(Max),
         @RowIndex       Int,
         @Status         Int,
@@ -48,19 +49,17 @@ BEGIN
 
     BEGIN TRY
 
-        SET @Xml_S = 
-            Replace(
-                Cast(@InData AS VarChar(Max)),
-                'xmlns="http://zakupki.gov.ru/eruz/types/1" xmlns:ns5="http://zakupki.gov.ru/eruz/SMTypes/1" xmlns:ns2="http://zakupki.gov.ru/eruz/common/1" xmlns:ns4="http://zakupki.gov.ru/eruz/nsi/1" xmlns:ns3="http://zakupki.gov.ru/oos/export/1"'
-                , '')
+        SET @Xml_S = Cast(@InData AS NVarChar(Max));
+        SET @Xml_S = Replace(@Xml_S, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '');
+        SET @X = SubString(@Xml_S, CharIndex('<', @Xml_S), CharIndex('>', @Xml_S));
+        
+        SET @Xml_S = Replace(@Xml_S, @X, '<export>');
 
         SET @Xml_S = Replace(Replace(Cast(@Xml_S AS NVarChar(Max)), '<ns2:', '<'), '</ns2:', '</');
         SET @Xml_S = Replace(Replace(Cast(@Xml_S AS NVarChar(Max)), '<ns3:', '<'), '</ns3:', '</');
         SET @Xml_S = Replace(Replace(Cast(@Xml_S AS NVarChar(Max)), '<ns4:', '<'), '</ns4:', '</');
         SET @Xml_S = Replace(Replace(Cast(@Xml_S AS NVarChar(Max)), '<ns5:', '<'), '</ns5:', '</');
     
-        SET @Xml_S = Replace(@Xml_S, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '')
-
         SET @Xml = Cast(@Xml_S AS Xml);
         
         INSERT INTO @Customers ([Customer_Id], [Url], [Contract_Id], [RegNum])

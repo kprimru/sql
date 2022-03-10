@@ -10,6 +10,7 @@ ALTER PROCEDURE [Price].[PRICE_DBF_IMPORT_SELECT]
 	@DBFMonth		UniqueIdentifier,
 	@ClientMonth	UniqueIdentifier,
 	@OnlyDiff		Bit					= 0
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;

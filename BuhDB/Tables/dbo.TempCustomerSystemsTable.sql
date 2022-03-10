@@ -19,8 +19,8 @@ CREATE TABLE [dbo].[TempCustomerSystemsTable]
         [SystemSet]             Int                           NOT NULL,
         [MonthPrice]            Money                             NULL,,
         CONSTRAINT [FK_dbo.TempCustomerSystemsTable(SystemID)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([SystemID]) REFERENCES [dbo].[SystemTable] ([SystemID]),
-        CONSTRAINT [FK_dbo.TempCustomerSystemsTable(CustomerID)_dbo.CustomerTable(CustomerID)] FOREIGN KEY  ([CustomerID]) REFERENCES [dbo].[CustomerTable] ([CustomerID]),
-        CONSTRAINT [FK_dbo.TempCustomerSystemsTable(DistrTypeID)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrTypeID]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID])
+        CONSTRAINT [FK_dbo.TempCustomerSystemsTable(DistrTypeID)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrTypeID]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
+        CONSTRAINT [FK_dbo.TempCustomerSystemsTable(CustomerID)_dbo.CustomerTable(CustomerID)] FOREIGN KEY  ([CustomerID]) REFERENCES [dbo].[CustomerTable] ([CustomerID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.TempCustomerSystemsTable+COL+INCL] ON [dbo].[TempCustomerSystemsTable] ([CustomerID] ASC, [DistrTypeID] ASC, [SystemID] ASC, [PriceAbonement] ASC, [DiscountRate] ASC, [FixedSum] ASC, [BeginMonth] ASC, [MonthCount] ASC, [SystemPriceModeName] ASC, [SystemSet] ASC);

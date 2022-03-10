@@ -51,8 +51,10 @@ BEGIN
 			[RN_TRANSFER_COUNT] [smallint] NULL,
 			[RN_TRANSFER_LEFT] [smallint] NULL,
 			[RN_SERVICE] [smallint] NULL,
-			[RN_REG_DATE] [smalldatetime] NULL,
-			[RN_FIRST_REG] [smalldatetime] NULL,
+			--[RN_REG_DATE] [smalldatetime] NULL,
+			--[RN_FIRST_REG] [smalldatetime] NULL,
+			[RN_REG_DATE] VarChar(100) NULL,
+			[RN_FIRST_REG] VarChar(100) NULL,
 			[RN_COMMENT] [varchar](255) NULL,
 			[RN_COMPLECT] [varchar](50) NULL,
 			[RN_REPORT_CODE] [varchar](10) NULL,
@@ -100,7 +102,8 @@ BEGIN
 			TRUNCATE TABLE dbo.RegNodeTable
 
 			INSERT INTO dbo.RegNodeTable
-			SELECT * FROM #reg
+			SELECT [RN_SYS_NAME], [RN_DISTR_NUM], [RN_COMP_NUM], [RN_DISTR_TYPE], [RN_TECH_TYPE], [RN_NET_COUNT], [RN_SUBHOST], [RN_TRANSFER_COUNT], [RN_TRANSFER_LEFT], [RN_SERVICE], Convert(SmallDateTime, [RN_REG_DATE], 104), Convert(SmallDateTime, [RN_FIRST_REG], 104), [RN_COMMENT], [RN_COMPLECT], [RN_REPORT_CODE], [RN_REPORT_VALUE], [RN_SHORT], [RN_MAIN], [RN_SUB], [RN_OFFLINE], [RN_YUBIKEY], [RN_KRF], [RN_KRF1], [REG_PARAM], [REG_ODON], [REG_ODOFF]
+			FROM #reg
 
 			SELECT @@ROWCOUNT AS ROW_COUNT 
 

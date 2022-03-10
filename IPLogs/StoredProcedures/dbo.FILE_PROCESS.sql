@@ -41,20 +41,19 @@ BEGIN
 
 	    IF @FILEID IS NOT NULL
 	    BEGIN
-		    IF @EXSIZE = @FILESIZE
+		    IF @EXSIZE <> @FILESIZE
 		    BEGIN
-			    SET @RESULT =	0
-			    SET @FILEID = NULL
-			    RETURN
-		    END
-		    ELSE
-		    BEGIN
-			    UPDATE	dbo.Files
+				UPDATE	dbo.Files
 			    SET		FL_SIZE = @FILESIZE,
 					    FL_DATE = GETDATE()
 			    WHERE	FL_ID = @FILEID
 
 			    SET @RESULT = 1
+		    END
+		    ELSE
+		    BEGIN
+			    SET @RESULT =	0
+			    SET @FILEID = NULL
 		    END
 	    END
 	    ELSE

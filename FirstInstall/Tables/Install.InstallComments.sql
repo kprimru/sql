@@ -11,9 +11,9 @@ CREATE TABLE [Install].[InstallComments]
         [IC_USER]     VarChar(50)           NOT NULL,
         [IC_DATE]     DateTime              NOT NULL,
         [IC_TEXT]     VarChar(Max)          NOT NULL,
-        CONSTRAINT [PK_InstallComments] PRIMARY KEY CLUSTERED ([IC_ID]),
-        CONSTRAINT [FK_InstallComments_InstallDetail] FOREIGN KEY  ([IC_ID_IND]) REFERENCES [Install].[InstallDetail] ([IND_ID])
+        CONSTRAINT [PK_Install.InstallComments] PRIMARY KEY CLUSTERED ([IC_ID]),
+        CONSTRAINT [FK_Install.InstallComments(IC_ID_IND)_Install.InstallDetail(IND_ID)] FOREIGN KEY  ([IC_ID_IND]) REFERENCES [Install].[InstallDetail] ([IND_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IC_ID_IND] ON [Install].[InstallComments] ([IC_ID_IND] ASC, [IC_DATE] ASC) INCLUDE ([IC_TEXT]);
+CREATE NONCLUSTERED INDEX [IX_Install.InstallComments(IC_ID_IND,IC_DATE)+(IC_TEXT)] ON [Install].[InstallComments] ([IC_ID_IND] ASC, [IC_DATE] ASC) INCLUDE ([IC_TEXT]);
 GO

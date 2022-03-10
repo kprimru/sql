@@ -18,5 +18,5 @@ AS
 	WHERE CL_REF IN (1, 3) AND VD_REF IN (1, 3)
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [IX_CLUST] ON [Income].[IncomeMasterView] ([IN_ID] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_Income.IncomeMasterView(IN_ID)] ON [Income].[IncomeMasterView] ([IN_ID] ASC);
 GO

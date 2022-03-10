@@ -298,7 +298,6 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );

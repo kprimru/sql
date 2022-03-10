@@ -20,5 +20,5 @@ CREATE TABLE [dbo].[DistrServiceStatusTable]
         CONSTRAINT [FK_dbo.DistrServiceStatusTable(DSS_ID_STATUS)_dbo.DistrStatusTable(DS_ID)] FOREIGN KEY  ([DSS_ID_STATUS]) REFERENCES [dbo].[DistrStatusTable] ([DS_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrServiceStatusTable()] ON [dbo].[DistrServiceStatusTable] ([DSS_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.DistrServiceStatusTable(DSS_NAME)] ON [dbo].[DistrServiceStatusTable] ([DSS_NAME] ASC);
 GO

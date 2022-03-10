@@ -23,9 +23,9 @@ CREATE TABLE [dbo].[CustomerTable]
         [CustomerUrAdress]    VarChar(250)                       NULL,
         [CustomerBik]         VarChar(50)                        NULL,
         CONSTRAINT [PK_dbo.CustomerTable] PRIMARY KEY CLUSTERED ([CustomerID]),
-        CONSTRAINT [FK_dbo.CustomerTable(StreetID)_dbo.StreetTable(StreetID)] FOREIGN KEY  ([StreetID]) REFERENCES [dbo].[StreetTable] ([StreetID]),
         CONSTRAINT [FK_dbo.CustomerTable(OwnerFormID)_dbo.OwnerFormTable(OwnerFormID)] FOREIGN KEY  ([OwnerFormID]) REFERENCES [dbo].[OwnerFormTable] ([OwnerFormID]),
-        CONSTRAINT [FK_dbo.CustomerTable(BankID)_dbo.BankTable(BankID)] FOREIGN KEY  ([BankID]) REFERENCES [dbo].[BankTable] ([BankID])
+        CONSTRAINT [FK_dbo.CustomerTable(BankID)_dbo.BankTable(BankID)] FOREIGN KEY  ([BankID]) REFERENCES [dbo].[BankTable] ([BankID]),
+        CONSTRAINT [FK_dbo.CustomerTable(StreetID)_dbo.StreetTable(StreetID)] FOREIGN KEY  ([StreetID]) REFERENCES [dbo].[StreetTable] ([StreetID])
 );GO
 GRANT DELETE ON [dbo].[CustomerTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[CustomerTable] TO DBAdministrator;

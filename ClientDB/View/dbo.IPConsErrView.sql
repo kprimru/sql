@@ -6,10 +6,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[IPConsErrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPConsErrView]  AS SELECT 1')
 GO
+
 ALTER VIEW [dbo].[IPConsErrView]
 AS
 	SELECT ERROR_DATA, UF_DATE, UF_DISTR, UF_COMP, UF_SYS
 	FROM
-		[PC275-SQL\OMEGA].IPLogs.dbo.USRFiles b
-		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ConsErr a ON b.UF_ID = a.ID_USR
+		IPLogs.dbo.USRFiles b
+		INNER JOIN IPLogs.dbo.ConsErr a ON b.UF_ID = a.ID_USR
 GO

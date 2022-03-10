@@ -14,8 +14,8 @@ CREATE TABLE [Personal].[PersonalDetail]
         [PER_DATE]        SmallDateTime         NOT NULL,
         [PER_END]         SmallDateTime             NULL,
         [PER_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_Personals] PRIMARY KEY CLUSTERED ([PER_ID]),
-        CONSTRAINT [FK_Personals_Department] FOREIGN KEY  ([PER_ID_DEP]) REFERENCES [Personal].[Department] ([DPMS_ID]),
-        CONSTRAINT [FK_Personals_PersonalType] FOREIGN KEY  ([PER_ID_TYPE]) REFERENCES [Personal].[PersonalType] ([PTMS_ID]),
-        CONSTRAINT [FK_Personals_Personals] FOREIGN KEY  ([PER_ID_MASTER]) REFERENCES [Personal].[Personals] ([PERMS_ID])
+        CONSTRAINT [PK_Personal.PersonalDetail] PRIMARY KEY CLUSTERED ([PER_ID]),
+        CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_DEP)_Personal.Department(DPMS_ID)] FOREIGN KEY  ([PER_ID_DEP]) REFERENCES [Personal].[Department] ([DPMS_ID]),
+        CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_TYPE)_Personal.PersonalType(PTMS_ID)] FOREIGN KEY  ([PER_ID_TYPE]) REFERENCES [Personal].[PersonalType] ([PTMS_ID]),
+        CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_MASTER)_Personal.Personals(PERMS_ID)] FOREIGN KEY  ([PER_ID_MASTER]) REFERENCES [Personal].[Personals] ([PERMS_ID])
 );GO

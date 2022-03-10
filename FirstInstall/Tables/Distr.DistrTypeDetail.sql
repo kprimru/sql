@@ -14,6 +14,6 @@ CREATE TABLE [Distr].[DistrTypeDetail]
         [DT_DATE]        SmallDateTime         NOT NULL,
         [DT_END]         SmallDateTime             NULL,
         [DT_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_DistrType] PRIMARY KEY CLUSTERED ([DT_ID]),
-        CONSTRAINT [FK_DistrType_DistrType] FOREIGN KEY  ([DT_ID_MASTER]) REFERENCES [Distr].[DistrType] ([DTMS_ID])
+        CONSTRAINT [PK_Distr.DistrTypeDetail] PRIMARY KEY CLUSTERED ([DT_ID]),
+        CONSTRAINT [FK_Distr.DistrTypeDetail(DT_ID_MASTER)_Distr.DistrType(DTMS_ID)] FOREIGN KEY  ([DT_ID_MASTER]) REFERENCES [Distr].[DistrType] ([DTMS_ID])
 );GO

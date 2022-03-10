@@ -795,8 +795,8 @@ BEGIN
 					OR	TRANS_COUNT <> TransferCount
 					OR	TRANS_LEFT <> TransferLeft
 					OR	r.SERVICE <> t.Service
-					OR	ISNULL(REG_DATE, '19910101') <> ISNULL(RegisterDate, '19910101')
-					OR	ISNULL(FIRST_REG, '19910101') <> ISNULL(FirstReg, '19910101')
+					OR	ISNULL(REG_DATE, '1991-01-01') <> ISNULL(RegisterDate, '1991-01-01')
+					OR	ISNULL(FIRST_REG, '01.01.1991') <> ISNULL(Convert(VarChar(20), FirstReg, 104), '01.01.1991')
 					OR	ISNULL(r.Comment, '') <> ISNULL(t.Comment, '')
 					OR	ISNULL(r.Complect, '') <> ISNULL(t.Complect, '')
 					OR	ISNULL(r.Offline, '') <> ISNULL(t.Offline, '')

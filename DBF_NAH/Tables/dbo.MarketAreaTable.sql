@@ -13,6 +13,6 @@ CREATE TABLE [dbo].[MarketAreaTable]
         CONSTRAINT [PK_dbo.MarketAreaTable] PRIMARY KEY CLUSTERED ([MA_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_U_MA_SHORT] ON [dbo].[MarketAreaTable] ([MA_SHORT_NAME] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.MarketAreaTable()] ON [dbo].[MarketAreaTable] ([MA_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.MarketAreaTable(MA_NAME)] ON [dbo].[MarketAreaTable] ([MA_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.MarketAreaTable(MA_SHORT_NAME)] ON [dbo].[MarketAreaTable] ([MA_SHORT_NAME] ASC);
 GO

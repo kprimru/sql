@@ -106,4 +106,21 @@ AS
 	FROM
 		dbo.ClientGraphView
 	WHERE GR_ERROR IS NOT NULL
+
+	UNION ALL
+
+	SELECT ClientID, ClientFullName, 'WORK_TIME', 'Не указано время работы. ' + 'С ' + IsNull(a.ClientDayBegin, '') + ' по ' + IsNull(a.ClientDayEnd, '')
+	FROM dbo.ClientTable a
+	INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
+	WHERE ServiceStatusReg = 0 AND STATUS = 1
+	    AND
+	        (
+	                ClientDayBegin IS NULL
+	            OR
+	                ClientDayBegin = '  :  '
+	            OR
+	                ClientDayEnd IS NULL
+	            OR
+	                ClientDayEnd = '  :  '
+	        )
 GO

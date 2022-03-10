@@ -8,6 +8,7 @@ IF OBJECT_ID('[Report].[DZ_ACTION_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE 
 GO
 ALTER PROCEDURE [Report].[DZ_ACTION_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -48,23 +49,23 @@ BEGIN
 					END
 					 + '), '
 				FROM
-					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+					DBF.dbo.ClientDistrView a
+					INNER JOIN DBF.dbo.RegNodeView b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 				ORDER BY RN_TECH_TYPE, SYS_ORDER, DIS_NUM FOR XML PATH('')
 			) AS [Дистрибутивы],
 			(
 				SELECT COUR_NAME
-				FROM [PC275-SQL\DELTA].DBF.dbo.ClientCourVIew t
+				FROM DBF.dbo.ClientCourVIew t
 				WHERE t.CL_ID = z.CL_ID
 			) AS [СИ]
-		FROM [PC275-SQL\DELTA].DBF.dbo.ClientTable z
+		FROM DBF.dbo.ClientTable z
 		WHERE EXISTS
 			(
 				SELECT *
 				FROM
-					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+					DBF.dbo.ClientDistrView a
+					INNER JOIN DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 					AND b.RN_TECH_TYPE IN (1, 7)
 			)
@@ -72,8 +73,8 @@ BEGIN
 			(
 				SELECT *
 				FROM
-					[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-					INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+					DBF.dbo.ClientDistrView a
+					INNER JOIN DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
 				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
 					AND b.RN_DISTR_TYPE = 'UZ2'
 			)

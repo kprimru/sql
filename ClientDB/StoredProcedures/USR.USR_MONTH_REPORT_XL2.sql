@@ -21,6 +21,7 @@ ALTER PROCEDURE [USR].[USR_MONTH_REPORT_XL2]
 	@DATE		VarChar(20)		= NULL,
 	@INET		Bit 			= NULL,
 	@MANAGER	SmallInt		= NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -410,7 +411,9 @@ BEGIN
 					WHERE z.CL_ID = a.CL_ID
 						AND WEEK_ID = 5
 			   ) AS ServicedSystemCount5
-			FROM @client						AS a			INNER JOIN dbo.ClientTable			AS b ON a.CL_ID = b.ClientID			INNER JOIN dbo.RangeTable			AS c ON c.RangeID = b.RangeID
+			FROM @client						AS a
+			INNER JOIN dbo.ClientTable			AS b ON a.CL_ID = b.ClientID
+			INNER JOIN dbo.RangeTable			AS c ON c.RangeID = b.RangeID
 			INNER JOIN dbo.ServiceTable 		AS d ON d.ServiceID = b.ClientServiceID
 			INNER JOIN dbo.ManagerTable 		AS e ON e.ManagerID = d.ManagerID
 			LEFT JOIN dbo.PayTypeTable			AS f ON f.PayTypeID = b.PayTypeID

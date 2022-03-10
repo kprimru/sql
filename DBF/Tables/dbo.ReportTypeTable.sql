@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[ReportTypeTable]
         CONSTRAINT [PK_dbo.ReportTypeTable] PRIMARY KEY CLUSTERED ([RTY_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportTypeTable()] ON [dbo].[ReportTypeTable] ([RTY_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReportTypeTable(RTY_NAME)] ON [dbo].[ReportTypeTable] ([RTY_NAME] ASC);
 GO

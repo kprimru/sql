@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[IP].[ClientStatDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [IP].[ClientStatDetailView]  AS SELECT 1')
 GO
+
 ALTER VIEW [IP].[ClientStatDetailView]
 AS
 	SELECT
@@ -26,10 +27,10 @@ AS
 		SRV_PATH + CSD_LOG_PATH + '\' + CSD_LOG_FILE AS CSD_LOG_FULL,
 		SRV_PATH + 'Reports' + '\' + CSD_USR AS CSD_USR_FULL
 	FROM
-		[PC275-SQL\OMEGA].IPLogs.dbo.ClientStatDetail a
-		LEFT JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ReturnCode b ON a.CSD_CODE_CLIENT = b.RC_NUM AND b.RC_TYPE = 'CLIENT'
-		LEFT JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ReturnCode c ON a.CSD_CODE_SERVER = c.RC_NUM AND c.RC_TYPE = 'SERVER'
-		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.ClientStat d ON a.CSD_ID_CS = d.CS_ID
-		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.Files e ON e.FL_ID = d.CS_ID_FILE
-		INNER JOIN [PC275-SQL\OMEGA].IPLogs.dbo.Servers f ON f.SRV_ID = e.FL_ID_SERVER
+		IPLogs.dbo.ClientStatDetail a
+		LEFT JOIN IPLogs.dbo.ReturnCode b ON a.CSD_CODE_CLIENT = b.RC_NUM AND b.RC_TYPE = 'CLIENT'
+		LEFT JOIN IPLogs.dbo.ReturnCode c ON a.CSD_CODE_SERVER = c.RC_NUM AND c.RC_TYPE = 'SERVER'
+		INNER JOIN IPLogs.dbo.ClientStat d ON a.CSD_ID_CS = d.CS_ID
+		INNER JOIN IPLogs.dbo.Files e ON e.FL_ID = d.CS_ID_FILE
+		INNER JOIN IPLogs.dbo.Servers f ON f.SRV_ID = e.FL_ID_SERVER
 GO

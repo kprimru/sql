@@ -8,8 +8,8 @@ CREATE TABLE [Salary].[BonusCondition]
 (
         [BCMS_ID]     UniqueIdentifier      NOT NULL,
         [BCMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_BonusCondition] PRIMARY KEY CLUSTERED ([BCMS_ID])
+        CONSTRAINT [PK_Salary.BonusCondition] PRIMARY KEY CLUSTERED ([BCMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_BCMS_LAST] ON [Salary].[BonusCondition] ([BCMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Salary.BonusCondition(BCMS_LAST)] ON [Salary].[BonusCondition] ([BCMS_LAST] DESC);
 GO

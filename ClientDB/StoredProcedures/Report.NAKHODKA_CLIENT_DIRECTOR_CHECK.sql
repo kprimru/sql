@@ -8,6 +8,7 @@ IF OBJECT_ID('[Report].[NAKHODKA_CLIENT_DIRECTOR_CHECK]', 'P ') IS NULL EXEC('CR
 GO
 ALTER PROCEDURE [Report].[NAKHODKA_CLIENT_DIRECTOR_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -92,13 +93,13 @@ BEGIN
 		OUTER APPLY
 		(
 			SELECT TOP (1) CL_FULL_NAME, DBF_FIO, POS_NAME, [DBF_ADDRESS], [DBF_CITY], [DBF_STREET], [DBF_HOME], DBF_INDEX
-			FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientTable] DC
-			INNER JOIN [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientDistrView] DD ON DD.CD_ID_CLIENT = DC.CL_ID
+			FROM [DBF_NAH].[dbo].[ClientTable] DC
+			INNER JOIN [DBF_NAH].[dbo].[ClientDistrView] DD ON DD.CD_ID_CLIENT = DC.CL_ID
 			OUTER APPLY
 			(
 				SELECT TOP (1) [DBF_FIO] = PER_FAM + ' ' + PER_NAME + ' ' + PER_OTCH, PP.POS_NAME
-				FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientPersonalTable] DCP
-				INNER JOIN [PC275-SQL\DELTA].[DBF_NAH].[dbo].[PositionTable] PP ON POS_ID = PER_ID_POS
+				FROM [DBF_NAH].[dbo].[ClientPersonalTable] DCP
+				INNER JOIN [DBF_NAH].[dbo].[PositionTable] PP ON POS_ID = PER_ID_POS
 				WHERE DCP.PER_ID_CLIENT = DC.CL_ID AND DCP.PER_ID_REPORT_POS = 1
 			) P
 			OUTER APPLY
@@ -130,7 +131,7 @@ BEGIN
 										'.', ''),
 										',', ''
 									)
-			    FROM [PC275-SQL\DELTA].[DBF_NAH].[dbo].[ClientAddressView] DCA WITH(NOEXPAND)
+			    FROM [DBF_NAH].[dbo].[ClientAddressView] DCA
 			    WHERE DCA.CA_ID_CLIENT = DC.CL_ID
 			        AND CA_ID_TYPE = 2
 			) AS DCA

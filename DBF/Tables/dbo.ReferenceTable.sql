@@ -17,5 +17,5 @@ CREATE TABLE [dbo].[ReferenceTable]
         CONSTRAINT [PK_dbo.ReferenceTable] PRIMARY KEY CLUSTERED ([REF_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReferenceTable()] ON [dbo].[ReferenceTable] ([REF_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ReferenceTable(REF_NAME)] ON [dbo].[ReferenceTable] ([REF_NAME] ASC);
 GO

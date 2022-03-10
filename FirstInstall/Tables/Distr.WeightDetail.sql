@@ -14,7 +14,7 @@ CREATE TABLE [Distr].[WeightDetail]
         [WG_DATE]        SmallDateTime         NOT NULL,
         [WG_END]         SmallDateTime             NULL,
         [WG_REF]         TinyInt               NOT NULL,
-        CONSTRAINT [PK_Weight] PRIMARY KEY CLUSTERED ([WG_ID]),
-        CONSTRAINT [FK_Weight_Systems] FOREIGN KEY  ([WG_ID_SYSTEM]) REFERENCES [Distr].[Systems] ([SYSMS_ID]),
-        CONSTRAINT [FK_Weight_Weight] FOREIGN KEY  ([WG_ID_MASTER]) REFERENCES [Distr].[Weight] ([WGMS_ID])
+        CONSTRAINT [PK_Distr.WeightDetail] PRIMARY KEY CLUSTERED ([WG_ID]),
+        CONSTRAINT [FK_Distr.WeightDetail(WG_ID_SYSTEM)_Distr.Systems(SYSMS_ID)] FOREIGN KEY  ([WG_ID_SYSTEM]) REFERENCES [Distr].[Systems] ([SYSMS_ID]),
+        CONSTRAINT [FK_Distr.WeightDetail(WG_ID_MASTER)_Distr.Weight(WGMS_ID)] FOREIGN KEY  ([WG_ID_MASTER]) REFERENCES [Distr].[Weight] ([WGMS_ID])
 );GO

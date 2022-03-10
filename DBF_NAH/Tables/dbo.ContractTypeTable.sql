@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[ContractTypeTable]
         CONSTRAINT [PK_dbo.ContractTypeTable] PRIMARY KEY CLUSTERED ([CTT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ContractTypeTable()] ON [dbo].[ContractTypeTable] ([CTT_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.ContractTypeTable(CTT_NAME)] ON [dbo].[ContractTypeTable] ([CTT_NAME] ASC);
 GO

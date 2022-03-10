@@ -14,6 +14,6 @@ CREATE TABLE [Common].[HalfDetail]
         [HLF_DATE]         SmallDateTime         NOT NULL,
         [HLF_END]          SmallDateTime             NULL,
         [HLF_REF]          TinyInt               NOT NULL,
-        CONSTRAINT [PK_HalfDetail] PRIMARY KEY CLUSTERED ([HLF_ID]),
-        CONSTRAINT [FK_HalfDetail_Half] FOREIGN KEY  ([HLF_ID_MASTER]) REFERENCES [Common].[Half] ([HLFMS_ID])
+        CONSTRAINT [PK_Common.HalfDetail] PRIMARY KEY CLUSTERED ([HLF_ID]),
+        CONSTRAINT [FK_Common.HalfDetail(HLF_ID_MASTER)_Common.Half(HLFMS_ID)] FOREIGN KEY  ([HLF_ID_MASTER]) REFERENCES [Common].[Half] ([HLFMS_ID])
 );GO

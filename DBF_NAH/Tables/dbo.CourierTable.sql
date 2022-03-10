@@ -17,5 +17,5 @@ CREATE TABLE [dbo].[CourierTable]
         CONSTRAINT [FK_dbo.CourierTable(COUR_ID_CITY)_dbo.CityTable(CT_ID)] FOREIGN KEY  ([COUR_ID_CITY]) REFERENCES [dbo].[CityTable] ([CT_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.CourierTable()] ON [dbo].[CourierTable] ([COUR_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.CourierTable(COUR_NAME)] ON [dbo].[CourierTable] ([COUR_NAME] ASC);
 GO

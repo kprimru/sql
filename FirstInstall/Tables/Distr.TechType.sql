@@ -8,8 +8,8 @@ CREATE TABLE [Distr].[TechType]
 (
         [TTMS_ID]     UniqueIdentifier      NOT NULL,
         [TTMS_LAST]   DateTime              NOT NULL,
-        CONSTRAINT [PK_TechType_1] PRIMARY KEY CLUSTERED ([TTMS_ID])
+        CONSTRAINT [PK_Distr.TechType] PRIMARY KEY CLUSTERED ([TTMS_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_TTMS_LAST] ON [Distr].[TechType] ([TTMS_LAST] DESC);
+CREATE NONCLUSTERED INDEX [IX_Distr.TechType(TTMS_LAST)] ON [Distr].[TechType] ([TTMS_LAST] DESC);
 GO

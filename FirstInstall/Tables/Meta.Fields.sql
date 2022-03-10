@@ -12,8 +12,8 @@ CREATE TABLE [Meta].[Fields]
         [FL_WIDTH]     SmallInt              NOT NULL,
         [FL_VISIBLE]   Bit                   NOT NULL,
         [FL_SYSTEM]    Bit                   NOT NULL,
-        CONSTRAINT [PK_Fields] PRIMARY KEY CLUSTERED ([FL_ID])
+        CONSTRAINT [PK_Meta.Fields] PRIMARY KEY CLUSTERED ([FL_ID])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Fields] ON [Meta].[Fields] ([FL_NAME] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Meta.Fields(FL_NAME)] ON [Meta].[Fields] ([FL_NAME] ASC);
 GO
