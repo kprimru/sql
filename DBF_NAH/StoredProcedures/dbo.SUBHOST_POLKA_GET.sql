@@ -40,3 +40,6 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[SUBHOST_POLKA_GET] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[SUBHOST_POLKA_GET] TO rl_reg_report_r;
+GO

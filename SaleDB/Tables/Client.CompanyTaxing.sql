@@ -12,5 +12,6 @@ CREATE TABLE [Client].[CompanyTaxing]
         CONSTRAINT [PK_Client.CompanyTaxing] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_Client.CompanyTaxing(ID_COMPANY)] ON [Client].[CompanyTaxing] ([ID_COMPANY] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Client.CompanyTaxing(ID_COMPANY)] ON [Client].[CompanyTaxing] ([ID_COMPANY] ASC, [ID_TAXING] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Client.CompanyTaxing(ID_TAXING)] ON [Client].[CompanyTaxing] ([ID_TAXING] ASC, [ID_COMPANY] ASC);
 GO

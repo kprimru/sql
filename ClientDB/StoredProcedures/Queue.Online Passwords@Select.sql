@@ -55,3 +55,5 @@ BEGIN
     END CATCH
 END
 GO
+GRANT EXECUTE ON [Queue].[Online Passwords@Select] TO rl_online_passwords_r;
+GO

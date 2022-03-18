@@ -26,9 +26,10 @@ BEGIN
         @Data           Xml,
         @MainContent    Xml,
         @ApplyContent   Xml,
+        @IsActual       Bit,
         @File_Id        VarChar(100),
         @MainBase64     VarChar(Max),
-        @ActBase64     VarChar(Max),
+        @ActBase64      VarChar(Max),
         @ApplyBase64    VarChar(Max);
 
     EXEC [Debug].[Execution@Start]
@@ -43,7 +44,8 @@ BEGIN
         SELECT
             @ActDate = ACT_DATE,
             @Client_Id  = ACT_ID_CLIENT,
-            @ActPrice = ACT_PRICE
+            @ActPrice = ACT_PRICE,
+            @IsActual = IsNull(I.[IsActual], 0)
         FROM dbo.ActTable
         OUTER APPLY
         (
@@ -51,6 +53,15 @@ BEGIN
             FROM dbo.ActDistrTable
             WHERE AD_ID_ACT = ACT_ID
         ) AS AD
+        OUTER APPLY
+        (
+            SELECT
+                [IsActual] = 1
+            FROM dbo.InvoiceSaleTable
+            INNER JOIN dbo.InvoiceRowTable ON INS_ID = INR_ID_INVOICE
+            WHERE INS_ID = ACT_ID_INVOICE
+                AND INR_GOOD LIKE '%Актуализац%'
+        ) AS I
         WHERE ACT_ID = @Act_Id;
 
         SELECT @Data = EIS_DATA
@@ -263,8 +274,10 @@ BEGIN
                                         [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
                                         [ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
                                         --[ДатаПер]   = Convert(VarChar(20), GetDate(), 104),
-                                        [ДатаНач]   = Convert(VarChar(20), PR_DATE, 104),
-                                        [ДатаОкон]  = Convert(VarChar(20), PR_END_DATE, 104),
+                                        [ДатаНач]   = Convert(VarChar(20), CASE WHEN ED.[StartDate] > PR_DATE THEN ED.[StartDate] ELSE PR_DATE END, 104),
+                                                    --CASE @Client_Id WHEN 4700 THEN '13.02.2022' WHEN 6824 THEN '17.02.2022' WHEN 8250 THEN '15.02.2022' ELSE Convert(VarChar(20), PR_DATE, 104) END,
+                                        [ДатаОкон]  = Convert(VarChar(20), CASE WHEN ED.[FinishDate] <= @ActDate THEN ED.[FinishDate] ELSE @ActDate END, 104),
+                                                    --CASE @Client_Id WHEN 4700 THEN '17.02.2022' WHEN 6824 THEN '17.02.2022' WHEN 8250 THEN '17.02.2022' ELSE Convert(VarChar(20), PR_END_DATE, 104) END,
                                         /*(
                                             SELECT
                                                 [НаимОсн]   = 'Без документа-основания'
@@ -323,7 +336,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );
@@ -339,7 +352,7 @@ BEGIN
                     SELECT
                         [РеестрНомКонт] = F.EIS_REG_NUM,
                         [ИдВерсКонт]    = F.EIS_CONTRACT,
-                        [ИдЭтапКонт]    = IsNull(F.EIS_DATA.value('(/export/contract/finances/budgetFunds/stages/guid)[1]', 'VarChar(100)'), F.EIS_DATA.value('(/export/contract/finances/extrabudgetFunds/stages/guid)[1]', 'VarChar(100)'))
+                        [ИдЭтапКонт]    = ED.[Stage_GUId]
                     FOR XML RAW('СведКонт'), TYPE
                 ),
                 (
@@ -482,7 +495,7 @@ BEGIN
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
             INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice) AS ED
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлУПДПрод'), TYPE
         );

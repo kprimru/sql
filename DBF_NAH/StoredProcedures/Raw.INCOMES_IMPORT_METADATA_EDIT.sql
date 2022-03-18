@@ -43,3 +43,5 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [Raw].[INCOMES_IMPORT_METADATA_EDIT] TO rl_incomes_import_metadata_w;
+GO

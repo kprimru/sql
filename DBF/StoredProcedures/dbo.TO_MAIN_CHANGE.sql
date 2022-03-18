@@ -1,12 +1,11 @@
-﻿USE [DBF_NAH]
+﻿USE [DBF]
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[SUBHOST_NORM_GET]
-	@SH_ID	SMALLINT,
-	@PR_ID	SMALLINT
+ALTER PROCEDURE [dbo].[TO_MAIN_CHANGE]
+	@TO_Id		Int
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,10 +22,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT NORM
-		FROM dbo.SubhostNorm
-		WHERE ID_PERIOD = @PR_ID
-			AND ID_SUBHOST = @SH_ID
+		UPDATE dbo.TOTable SET
+			TO_MAIN = CASE TO_MAIN WHEN 0 THEN 1 ELSE 0 END
+		WHERE TO_ID = @TO_Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -38,8 +36,7 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
-GRANT EXECUTE ON [dbo].[SUBHOST_NORM_GET] TO rl_reg_node_report_r;
-GRANT EXECUTE ON [dbo].[SUBHOST_NORM_GET] TO rl_reg_report_r;
+GRANT EXECUTE ON [dbo].[TO_MAIN_CHANGE] TO rl_client_w;
+GRANT EXECUTE ON [dbo].[TO_MAIN_CHANGE] TO rl_to_w;
 GO

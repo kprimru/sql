@@ -24,17 +24,6 @@ BEGIN
 
 	BEGIN TRY
 
-	    DELETE
-	    FROM dbo.Files
-	    WHERE FL_TYPE = 4
-		    AND NOT EXISTS
-			    (
-				    SELECT *
-				    FROM dbo.USRFiles
-				    WHERE UF_ID_FILE = FL_ID
-			    )
-		    AND FL_DATE >= DATEADD(MONTH, -1, GETDATE())
-
 	    DECLARE @XML XML
 	    DECLARE @HDOC INT
     

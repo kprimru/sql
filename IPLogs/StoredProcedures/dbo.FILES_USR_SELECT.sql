@@ -40,7 +40,7 @@ BEGIN
 					    AND NOT EXISTS
 						    (
 							    SELECT *
-							    FROM [PC275-SQL\ALPHA].[ClientDB].USR.USRFile C
+							    FROM [ClientDB].USR.USRFile C
 							    WHERE I.UF_USR_NAME = C.UF_NAME
 								    AND I.UF_MD5 = C.UF_HASH
 						    )

@@ -41,3 +41,5 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [Salary].[TO_SALARY_SET] TO rl_courier_pay;
+GO

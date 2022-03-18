@@ -38,3 +38,5 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [Raw].[INCOMES_IMPORT_METADATA_DELETE] TO rl_incomes_import_metadata_d;
+GO

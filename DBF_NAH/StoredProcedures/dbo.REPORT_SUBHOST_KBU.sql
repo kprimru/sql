@@ -89,3 +89,6 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[REPORT_SUBHOST_KBU] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[REPORT_SUBHOST_KBU] TO rl_reg_report_r;
+GO

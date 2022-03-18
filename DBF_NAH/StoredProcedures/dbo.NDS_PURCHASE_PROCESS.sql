@@ -73,3 +73,5 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[NDS_PURCHASE_PROCESS] TO rl_book_sale_p;
+GO

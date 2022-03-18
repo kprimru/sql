@@ -133,3 +133,6 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [dbo].[REPORT_VKSP] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[REPORT_VKSP] TO rl_reg_report_r;
+GO

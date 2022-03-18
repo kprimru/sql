@@ -38,3 +38,5 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[CLIENT_1C_GET] TO rl_book_sale_p;
+GO

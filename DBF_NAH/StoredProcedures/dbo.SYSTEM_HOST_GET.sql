@@ -58,4 +58,6 @@ END
 
 GO
 GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_distr_w;
+GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_host_r;
+GRANT EXECUTE ON [dbo].[SYSTEM_HOST_GET] TO rl_system_r;
 GO

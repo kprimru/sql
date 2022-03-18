@@ -4,9 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[SUBHOST_NORM_GET]
-	@SH_ID	SMALLINT,
-	@PR_ID	SMALLINT
+ALTER PROCEDURE [dbo].[DISTR_DOCUMENT_DEFAULT_SELECT]
+	@SaleObject_Id  SmallInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,10 +22,17 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT NORM
-		FROM dbo.SubhostNorm
-		WHERE ID_PERIOD = @PR_ID
-			AND ID_SUBHOST = @SH_ID
+		SELECT
+		    Cast(0 AS Bit) AS DD_SELECT,
+		    DOC_ID, DOC_NAME,
+		    GD_ID, GD_NAME,
+		    UN_ID, UN_NAME
+	    FROM dbo.DocumentSaleObjectDefaultTable AS DD
+	    LEFT JOIN dbo.DocumentTable ON DOC_ID = DSD_ID_DOC
+	    LEFT JOIN dbo.GoodTable ON GD_ID = DSD_ID_GOOD
+	    LEFT JOIN dbo.UnitTable ON UN_ID = DSD_ID_UNIT
+	    WHERE DD.DSD_ID_SO = @SaleObject_Id
+	    ORDER BY DOC_ID;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -38,8 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
-GRANT EXECUTE ON [dbo].[SUBHOST_NORM_GET] TO rl_reg_node_report_r;
-GRANT EXECUTE ON [dbo].[SUBHOST_NORM_GET] TO rl_reg_report_r;
+GRANT EXECUTE ON [dbo].[DISTR_DOCUMENT_DEFAULT_SELECT] TO rl_distr_financing_w;
 GO

@@ -22,10 +22,10 @@ BEGIN
 	BEGIN TRY
 
 		SELECT CL_ID, CL_PSEDO
-		FROM
-			dbo.ClientTable INNER JOIN dbo.ClientFinancing ON ID_CLIENT = CL_ID
+		FROM dbo.ClientFinancing	AS F
+		INNER JOIN dbo.ClientTable	AS C ON C.CL_ID = F.ID_CLIENT
 		WHERE UNKNOWN_FINANCING = 1
-		ORDER BY CL_PSEDO
+		ORDER BY CL_PSEDO;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -37,7 +37,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[CLIENT_FINANCING_ALERT] TO rl_distr_financing_w;
 GO

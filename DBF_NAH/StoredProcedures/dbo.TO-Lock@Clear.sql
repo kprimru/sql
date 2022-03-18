@@ -40,3 +40,5 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[TO-Lock@Clear] TO rl_to_locks;
+GO

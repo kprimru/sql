@@ -45,3 +45,6 @@ BEGIN
 END
 
 GO
+GRANT EXECUTE ON [dbo].[SUBHOST_VKSP_SET] TO rl_reg_node_report_r;
+GRANT EXECUTE ON [dbo].[SUBHOST_VKSP_SET] TO rl_reg_report_r;
+GO

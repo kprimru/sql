@@ -31,7 +31,7 @@ BEGIN
 
 		--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 		--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
+		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2022-sql\ptl\consreg_client.ptl'
 
 		EXEC xp_cmdshell @cmd, no_output
 
@@ -53,8 +53,8 @@ BEGIN
 
 		EXEC('
 		BULK INSERT #ptl
-		FROM ''\\PC275-SQL\ptl\consreg_client.ptl''
-		WITH (FIRSTROW = 2, FORMATFILE = ''\\PC275-SQL\ptl\ProtoFormat.fmt'');');
+		FROM ''\\PC2022-SQL\ptl\consreg_client.ptl''
+		WITH (FIRSTROW = 2, FORMATFILE = ''\\PC2022-SQL\ptl\ProtoFormat.fmt'');');
 
 		UPDATE #ptl
 		SET PTL_OPER = ISNULL(PTL_OPER, ''),
@@ -136,7 +136,7 @@ BEGIN
 				(
 					SELECT *
 					FROM dbo.RegProtocol b
-					WHERE a.PTL_DATE = b.RPR_DATE
+					WHERE a.PTL_DATE_FMT = b.RPR_DATE
 						AND c.HostID = b.RPR_ID_HOST
 						AND ISNULL(a.PTL_DISTR_FMT, 0) = ISNULL(b.RPR_DISTR, 0)
 						AND ISNULL(a.PTL_COMP_FMT, 0) = ISNULL(b.RPR_COMP, 0)

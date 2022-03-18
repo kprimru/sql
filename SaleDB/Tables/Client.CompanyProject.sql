@@ -13,4 +13,5 @@ CREATE TABLE [Client].[CompanyProject]
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Client.CompanyProject(ID_COMPANY)+(ID_PROJECT)] ON [Client].[CompanyProject] ([ID_COMPANY] ASC) INCLUDE ([ID_PROJECT]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyProject(ID_PROJECT)+(ID_COMPANY)] ON [Client].[CompanyProject] ([ID_PROJECT] ASC) INCLUDE ([ID_COMPANY]);
 GO

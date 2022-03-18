@@ -14,7 +14,8 @@ ALTER FUNCTION [dbo].[GET_HOST_BY_COMMENT2]
 (
     @Comment    VarChar(200),
     @Distr      Int,
-    @System     VarChar(20)
+    @System     VarChar(20),
+	@SystemType VarChar(20)
 )
 RETURNS VarChar(10)
 AS
@@ -28,7 +29,7 @@ BEGIN
     SET @Comment = ISNULL(@Comment, '');
 
     -- для ДИУ
-    IF @Distr = 20 OR @System = 'SKS' BEGIN
+    IF @Distr = 20 OR @System = 'SKS' OR @SystemType = 'NEK' BEGIN
         IF CharIndex(')', Reverse(@Comment)) = 1 AND CharIndex('(', Reverse(@Comment)) != 0
             SET @Temp = Reverse(SubString(Reverse(@Comment), 2, CharIndex('(', Reverse(@Comment)) - 2))
         ELSE
@@ -47,8 +48,4 @@ BEGIN
 
     RETURN @Host;
 END
-
-
-
-
 GO
