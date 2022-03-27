@@ -79,7 +79,8 @@ BEGIN
 					AND W.[SystemType_Id] = ds.[SST_ID]
 					AND W.[NetType_Id] = ds.[NT_ID]
 				ORDER BY Date DESC
-			) AS Weight
+			) AS Weight,
+			[OnlineQuantity] = [MainQuantity] + IsNull([AdditionalQuantity], 0)
 		FROM
 			(
 				SELECT
@@ -91,7 +92,8 @@ BEGIN
 					dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS COEF,
 					dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
 					SST_ID,
-					NT_ID
+					NT_ID,
+					O.[MainQuantity], O.[AdditionalQuantity]
 				FROM
 					(
 						SELECT
@@ -158,7 +160,8 @@ BEGIN
 							b.TransferLeft,
 							a.SystemShortName,
 							b.SST_ID,
-							b.NT_ID
+							b.NT_ID,
+							[Complect] = CASE WHEN a.SystemBaseName = [Reg].[Complect@Extract?Params](b.Complect, 'SYSTEM') THEN b.Complect ELSE NULL END
 						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
 							LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
@@ -188,7 +191,8 @@ BEGIN
 							c.TransferLeft,
 							c.SystemShortName,
 							c.SST_ID,
-							c.NT_ID
+							c.NT_ID,
+							NULL
 						FROM
 							dbo.ClientDistrView a WITH(NOEXPAND)
 							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
@@ -214,7 +218,7 @@ BEGIN
 							SystemOrder, NULL, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
 							SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
 							3 AS ERROR_TYPE,
-							STATUS, NULL, '', NULL AS SST_ID, NULL AS NT_ID
+							STATUS, NULL, '', NULL AS SST_ID, NULL AS NT_ID, NULL
 						FROM
 							dbo.ClientDistr
 							INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
@@ -226,6 +230,7 @@ BEGIN
 					LEFT JOIN [Price].[Systems:Price@Get](GetDate()) AS C ON C.[System_Id] = o_O.[SystemID]
 					LEFT OUTER JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
 					LEFT OUTER JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
+					OUTER APPLY [Reg].[Complect@Online Count]([Complect]) AS O
 			) AS ds
 		ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 
