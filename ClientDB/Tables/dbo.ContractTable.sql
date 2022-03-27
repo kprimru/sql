@@ -30,6 +30,7 @@ CREATE TABLE [dbo].[ContractTable]
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ContractTable(ClientID,ContractID)] ON [dbo].[ContractTable] ([ClientID] ASC, [ContractID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ContractTable(ClientID,ContractEnd)+(ContractPayID)] ON [dbo].[ContractTable] ([ClientID] ASC, [ContractEnd] ASC) INCLUDE ([ContractPayID]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ContractTable(ContractBegin,ContractEnd)+(ContractPayID)] ON [dbo].[ContractTable] ([ContractBegin] ASC, [ContractEnd] ASC) INCLUDE ([ContractPayID]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ContractTable(ContractEnd)+(ContractID,ClientID,ContractPayID)] ON [dbo].[ContractTable] ([ContractEnd] ASC) INCLUDE ([ContractID], [ClientID], [ContractPayID]);
 GO

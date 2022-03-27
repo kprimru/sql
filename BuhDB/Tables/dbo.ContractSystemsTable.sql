@@ -24,7 +24,10 @@ CREATE TABLE [dbo].[ContractSystemsTable]
         [TotalPrice]         Money             NOT NULL,
         [SystemNote]         VarChar(250)          NULL,
         [IsGenerated]        Bit                   NULL,
-);GO
+);
+GO
+CREATE CLUSTERED INDEX [IC_dbo.ContractSystemsTable(ContractNumber,ProviderName,ContractDate)] ON [dbo].[ContractSystemsTable] ([ContractNumber] ASC, [ProviderName] ASC, [ContractDate] ASC);
+GO
 GRANT DELETE ON [dbo].[ContractSystemsTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[ContractSystemsTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[ContractSystemsTable] TO DBAdministrator;

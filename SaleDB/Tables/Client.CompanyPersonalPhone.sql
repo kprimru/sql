@@ -21,5 +21,5 @@ CREATE TABLE [Client].[CompanyPersonalPhone]
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Client.CompanyPersonalPhone(ID_PERSONAL)+(ID,ID_TYPE,PHONE,PHONE_S,NOTE)] ON [Client].[CompanyPersonalPhone] ([ID_PERSONAL] ASC) INCLUDE ([ID], [ID_TYPE], [PHONE], [PHONE_S], [NOTE]);
-CREATE NONCLUSTERED INDEX [IX_Client.CompanyPersonalPhone(PHONE_S)+(ID_PERSONAL,STATUS)] ON [Client].[CompanyPersonalPhone] ([PHONE_S] ASC) INCLUDE ([ID_PERSONAL], [STATUS]);
+CREATE NONCLUSTERED INDEX [IX_Client.CompanyPersonalPhone(PHONE_S,ID_PERSONAL)] ON [Client].[CompanyPersonalPhone] ([PHONE_S] ASC, [ID_PERSONAL] ASC);
 GO

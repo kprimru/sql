@@ -12,7 +12,10 @@ CREATE TABLE [dbo].[ContractTaxTable]
         [TaxName]          VarChar(100)      NOT NULL,
         [TaxRate]          VarChar(50)       NOT NULL,
         [TaxPrice]         Money             NOT NULL,
-);GO
+);
+GO
+CREATE CLUSTERED INDEX [IC_dbo.ContractTaxTable(ContractNumber,ProviderName,ContractDate)] ON [dbo].[ContractTaxTable] ([ContractNumber] ASC, [ProviderName] ASC, [ContractDate] ASC);
+GO
 GRANT DELETE ON [dbo].[ContractTaxTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[ContractTaxTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[ContractTaxTable] TO DBAdministrator;

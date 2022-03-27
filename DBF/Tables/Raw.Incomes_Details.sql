@@ -20,5 +20,5 @@ CREATE TABLE [Raw].[Incomes:Details]
         CONSTRAINT [FK_Raw.Incomes:Details(Income_Id)_Raw.Incomes(Id)] FOREIGN KEY  ([Income_Id]) REFERENCES [Raw].[Incomes] ([Id])
 );
 GO
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220315-034915] ON [Raw].[Incomes:Details] ([Income_Id] ASC) INCLUDE ([Date], [INN], [Name], [Purpose], [Num], [Price], [Client_Id], [NotForImport]);
+CREATE NONCLUSTERED INDEX [IX_Raw.Incomes:Details(Income_Id)+(Date,INN,Name,Purpose,Num,Price,Client_Id,NotForImport)] ON [Raw].[Incomes:Details] ([Income_Id] ASC) INCLUDE ([Date], [INN], [Name], [Purpose], [Num], [Price], [Client_Id], [NotForImport]);
 GO

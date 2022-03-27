@@ -22,6 +22,6 @@ CREATE TABLE [dbo].[ClientFinancing]
         CONSTRAINT [FK_dbo.ClientFinancing(ID_CLIENT)_dbo.ClientTable(CL_ID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([CL_ID])
 );
 GO
-CREATE CLUSTERED INDEX [IC_dbo.ClientFinancing(ID)] ON [dbo].[ClientFinancing] ([ID_CLIENT] ASC);
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220307-143803] ON [dbo].[ClientFinancing] ([UNKNOWN_FINANCING] ASC);
+CREATE CLUSTERED INDEX [IC_dbo.ClientFinancing(ID_CLIENT)] ON [dbo].[ClientFinancing] ([ID_CLIENT] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientFinancing(UNKNOWN_FINANCING)] ON [dbo].[ClientFinancing] ([UNKNOWN_FINANCING] ASC);
 GO

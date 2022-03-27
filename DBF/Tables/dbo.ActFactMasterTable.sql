@@ -53,4 +53,5 @@ CREATE TABLE [dbo].[ActFactMasterTable]
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_dbo.ActFactMasterTable(AFM_DATE,CL_ID)] ON [dbo].[ActFactMasterTable] ([AFM_DATE] ASC, [CL_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ActFactMasterTable(CL_ID)] ON [dbo].[ActFactMasterTable] ([CL_ID] ASC);
 GO

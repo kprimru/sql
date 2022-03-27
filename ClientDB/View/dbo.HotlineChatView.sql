@@ -25,4 +25,5 @@ AS
 
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.HotlineChatView(ID)] ON [dbo].[HotlineChatView] ([ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.HotlineChatView(START,DISTR,COMP,HostID)] ON [dbo].[HotlineChatView] ([START] ASC, [DISTR] ASC, [COMP] ASC, [HostID] ASC);
 GO

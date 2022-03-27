@@ -29,5 +29,6 @@ CREATE TABLE [Claim].[Claims]
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Claim.Claims(Company_Id)] ON [Claim].[Claims] ([Company_Id] ASC);
+CREATE NONCLUSTERED INDEX [IX_Claim.Claims(Type_id)+(Special)] ON [Claim].[Claims] ([Type_id] ASC) INCLUDE ([Special]);
 CREATE UNIQUE NONCLUSTERED INDEX [UX_Claim.Claims(Number,Type_id,CreateDateTime)] ON [Claim].[Claims] ([Number] ASC, [Type_id] ASC, [CreateDateTime] ASC);
 GO

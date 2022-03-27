@@ -12,5 +12,5 @@ CREATE TABLE [dbo].[ConsErr]
         [ERROR_DATA]                  AS (Decompress([ERROR_DATA_COMPRESSED])) ,
         [INET_LOG_DATA]               AS (Decompress([INET_LOG_DATA_COMPRESSED])) ,
         CONSTRAINT [PK_dbo.ConsErr] PRIMARY KEY CLUSTERED ([ID_USR]),
-        CONSTRAINT [FK_ConsErr_USRFiles] FOREIGN KEY  ([ID_USR]) REFERENCES [dbo].[USRFiles] ([UF_ID])
+        CONSTRAINT [FK_dbo.ConsErr(ID_USR)_dbo.USRFiles(UF_ID)] FOREIGN KEY  ([ID_USR]) REFERENCES [dbo].[USRFiles] ([UF_ID])
 );GO

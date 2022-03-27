@@ -30,9 +30,9 @@ CREATE TABLE [dbo].[IncomeTable]
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.IncomeTable(IN_ID_CLIENT,IN_ID)] ON [dbo].[IncomeTable] ([IN_ID_CLIENT] ASC, [IN_ID] ASC);
-CREATE NONCLUSTERED INDEX [IX_dbo.IncomeTable(IN_DATE)] ON [dbo].[IncomeTable] ([IN_DATE] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.IncomeTable(IN_DATE)+(IN_ID_ORG,IN_PAY_NUM,Raw_Id)] ON [dbo].[IncomeTable] ([IN_DATE] ASC) INCLUDE ([IN_ID_ORG], [IN_PAY_NUM], [Raw_Id]);
 CREATE NONCLUSTERED INDEX [IX_dbo.IncomeTable(IN_ID_INVOICE,IN_DATE,IN_SUM)] ON [dbo].[IncomeTable] ([IN_ID_INVOICE] DESC, [IN_DATE] ASC, [IN_SUM] ASC);
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220315-034737] ON [dbo].[IncomeTable] ([Raw_Id] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.IncomeTable(Raw_Id)] ON [dbo].[IncomeTable] ([Raw_Id] ASC);
 GO
 GRANT SELECT ON [dbo].[IncomeTable] TO rl_all_r;
 GO

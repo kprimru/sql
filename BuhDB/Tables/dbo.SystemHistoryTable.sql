@@ -30,7 +30,7 @@ CREATE TABLE [dbo].[SystemHistoryTable]
         CONSTRAINT [PK_dbo.SystemHistoryTable] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_dbo.SystemHistoryTable(PriceDate)+INCL] ON [dbo].[SystemHistoryTable] ([PriceDate] ASC) INCLUDE ([ID], [SystemID], [SystemName], [SystemPrefix], [SystemGroupID], [SystemVolume], [SystemDocNumber], [SystemServicePrice], [SystemOrder], [SystemPrint]);
+CREATE NONCLUSTERED INDEX [IX_dbo.SystemHistoryTable(PriceDate)+INCL] ON [dbo].[SystemHistoryTable] ([PriceDate] ASC) INCLUDE ([ID], [SystemID], [SystemName], [SystemPrefix], [SystemGroupID], [SystemVolume], [SystemDocNumber], [SystemServicePrice], [SystemOrder], [SystemPrint], [SystemPeriodicity], [SaleObjectID], [SystemPostfix], [SystemReg], [SystemMain], [SystemPeriodicityOnline], [SystemPriceMos], [SystemPriceOnline2], [SystemPriceRec], [IsExpired]);
 GO
 GRANT DELETE ON [dbo].[SystemHistoryTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[SystemHistoryTable] TO DBAdministrator;

@@ -18,5 +18,5 @@ CREATE TABLE [Claim].[Claims:Document Info]
         CONSTRAINT [FK_Claim.Claims:Document Info(Claim_Id)_Claim.Claims(Id)] FOREIGN KEY  ([Claim_Id]) REFERENCES [Claim].[Claims] ([Id])
 );
 GO
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220307-144511] ON [Claim].[Claims:Document Info] ([Claim_Id] ASC, [CreateDateTime] ASC);
+CREATE NONCLUSTERED INDEX [IX_Claim.Claims:Document Info(Claim_Id,CreateDateTime)] ON [Claim].[Claims:Document Info] ([Claim_Id] ASC, [CreateDateTime] ASC);
 GO

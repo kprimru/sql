@@ -31,5 +31,5 @@ CREATE TABLE [dbo].[ActFactDetailTable]
         CONSTRAINT [FK_dbo.ActFactDetailTable(AFD_ID_AFM)_dbo.ActFactMasterTable(AFM_ID)] FOREIGN KEY  ([AFD_ID_AFM]) REFERENCES [dbo].[ActFactMasterTable] ([AFM_ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_dbo.ActFactDetailTable(AFD_ID_AFM)] ON [dbo].[ActFactDetailTable] ([AFD_ID_AFM] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ActFactDetailTable(AFD_ID_AFM)+(AD_TOTAL_PRICE)] ON [dbo].[ActFactDetailTable] ([AFD_ID_AFM] ASC) INCLUDE ([AD_TOTAL_PRICE]);
 GO
