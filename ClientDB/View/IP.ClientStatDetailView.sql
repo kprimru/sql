@@ -7,6 +7,7 @@ GO
 IF OBJECT_ID('[IP].[ClientStatDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [IP].[ClientStatDetailView]  AS SELECT 1')
 GO
 
+
 ALTER VIEW [IP].[ClientStatDetailView]
 AS
 	SELECT
@@ -25,7 +26,8 @@ AS
 			ELSE 'Незивестно'
 		END AS STT_SEND,
 		SRV_PATH + CSD_LOG_PATH + '\' + CSD_LOG_FILE AS CSD_LOG_FULL,
-		SRV_PATH + 'Reports' + '\' + CSD_USR AS CSD_USR_FULL
+		SRV_PATH + 'Reports' + '\' + CSD_USR AS CSD_USR_FULL,
+		f.SRV_NAME
 	FROM
 		IPLogs.dbo.ClientStatDetail a
 		LEFT JOIN IPLogs.dbo.ReturnCode b ON a.CSD_CODE_CLIENT = b.RC_NUM AND b.RC_TYPE = 'CLIENT'
