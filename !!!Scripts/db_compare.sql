@@ -4,8 +4,8 @@ DECLARE
     @Src        NVarChar(256),
     @Dst        NVarChar(256);
 
-SET @Src = '[PC275-SQL\DELTA].[DBF]';
-SET @Dst = '[PC275-SQL\DELTA].[DBF_NAH]';
+SET @Src = '[PC2022-SQL\ALPHA].[ClientDB]';
+SET @Dst = '[PC276-SQL\NKH].[ClientDB]';
 
 DECLARE @SrcSchemas Table
 (

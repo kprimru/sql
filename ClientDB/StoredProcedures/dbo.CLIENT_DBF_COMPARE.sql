@@ -537,18 +537,20 @@ BEGIN
 				STREET = b.ST_NAME,
 				HOME = b.CA_HOME,
 				OFFICE = b.CA_OFFICE,
-				ADDRESS_LAST =
-						(
-							SELECT MAX(ClientLast)
-							FROM dbo.ClientAddressLastView z
-							WHERE z.ID_MASTER = a.ClientID
-								AND z.CA_ID_STREET = b.ST_ID
-								AND z.CA_HOME = b.CA_HOME
-								AND z.CA_OFFICE = b.CA_OFFICE
-						)
-			FROM
-				#client a
-				INNER JOIN dbo.ClientAddressView b ON a.ClientID = b.CA_ID_CLIENT
+				ADDRESS_LAST = L.[ClientLast]
+			FROM #client a
+			INNER JOIN dbo.ClientAddressView b ON a.ClientID = b.CA_ID_CLIENT
+			OUTER APPLY
+			(
+				SELECT TOP (1) [ClientLast]
+				FROM dbo.ClientTable z
+				INNER JOIN dbo.ClientAddress y ON z.ClientID = y.CA_ID_CLIENT
+				WHERE z.ID_MASTER = a.ClientID
+					AND y.CA_ID_STREET = b.ST_ID
+					AND y.CA_HOME = b.CA_HOME
+					AND y.CA_OFFICE = b.CA_OFFICE
+				ORDER BY [ClientLast] DESC
+			) AS L;
 
 			UPDATE a
 			SET CITY = h.CT_NAME,

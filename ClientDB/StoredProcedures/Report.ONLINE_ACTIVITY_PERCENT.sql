@@ -67,7 +67,7 @@ BEGIN
 		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON OA.ID_HOST = D.HostId AND OA.DISTr = D.DISTR AND OA.COMP = D.COMP
 		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON D.ID_CLIENT = C.ClientID
 		WHERE R.SST_SHORT NOT IN ('ОДД', 'ДСП')
-			AND NT_TECH NOT IN (0, 1)
+			--AND NT_TECH NOT IN (0, 1)
 			AND r.DS_REG = 0
 		ORDER BY R.SubhostName, C.ManagerName, C.ServiceName, C.ClientFullName, R.Comment, R.SystemOrder, R.DistrNumber, R.CompNumber
 

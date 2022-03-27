@@ -66,3 +66,5 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [Seminar].[Schedules->Types_Templates@Select] TO rl_seminar_admin;
+GO

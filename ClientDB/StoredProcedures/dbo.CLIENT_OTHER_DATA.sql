@@ -230,61 +230,47 @@ BEGIN
 			SELECT
 				UD_NAME, 'Последнее обращение к серверу ИП',
 				(
-					SELECT TOP 1 CONVERT(VARCHAR(20), DATE, 104) + ' ' + CONVERT(VARCHAR(20), DATE, 108)
-					FROM
-						IP.LogLast b
-						INNER JOIN dbo.SystemTable c ON b.SYS = c.SystemNumber
-					WHERE b.DISTR = a.UD_DISTR AND b.COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-					ORDER BY DATE DESC
+					SELECT TOP 1 CONVERT(VARCHAR(20), LF_DATE, 104) + ' ' + CONVERT(VARCHAR(20), LF_DATE, 108)
+					FROM [dbo].[IPLogView] AS b
+					INNER JOIN dbo.SystemTable c ON b.LF_SYS = c.SystemNumber
+					WHERE b.LF_DISTR = a.UD_DISTR AND b.LF_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
+					ORDER BY LF_DATE DESC
 				)
 				, 0
 			FROM #complect a
-			/*WHERE EXISTS
-				(
-					SELECT *
-					FROM
-						dbo.IPLogView b
-						INNER JOIN dbo.SystemTable c ON b.LF_SYS = c.SystemNumber
-					WHERE b.LF_DISTR = a.UD_DISTR AND b.LF_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-				)*/
 			ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
 			SELECT
 				UD_NAME, 'Последняя сессия на ИП',
-				(
-					SELECT TOP 1
-						'Дата: ' + CONVERT(VARCHAR(20), CSD_START, 104) + ' ' + CONVERT(VARCHAR(20), CSD_START, 108) + ', ' +
-						'Код возврата: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +CONVERT(VARCHAR(20), CSD_CODE_CLIENT_NOTE) + '), ' +
-						'Файл USR: ' + CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Есть' END
-					FROM
-						IP.ClientStatDetailCache b
-						INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
-					WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-					ORDER BY CSD_START DESC
-				)
-				,
-				CASE WHEN
-						(
-							SELECT TOP 1 CSD_CODE_CLIENT
-							FROM
-								IP.ClientStatDetailCache b
-								INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
-							WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-							ORDER BY CSD_START DESC
-						) IN (0, 70) THEN 0
+				'Дата: ' + CONVERT(VARCHAR(20), CSD_START, 104) + ' ' + CONVERT(VARCHAR(20), CSD_START, 108) + ', ' +
+				'Код возврата: ' + CONVERT(VARCHAR(20), CSD_CODE_CLIENT) + ' (' +CONVERT(VARCHAR(20), CSD_CODE_CLIENT_NOTE) + '), ' +
+				'Файл USR: ' + CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Есть' END,
+				CASE
+					WHEN CSD_CODE_CLIENT IN (0, 70) THEN 0
 					ELSE 1
 				END
 			FROM #complect a
-			/*
-			WHERE EXISTS
+			CROSS APPLY
+			(
+				SELECT TOP (1)
+					CSD_START, CSD_CODE_CLIENT, CSD_CODE_CLIENT_NOTE, CSD_USR
+				FROM dbo.IPClientDetailView b
+				INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
+				OUTER APPLY
 				(
-					SELECT *
-					FROM
-						dbo.IPClientDetailView b
-						INNER JOIN dbo.SystemTable c ON b.CSD_SYS = c.SystemNumber
-					WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-				)*/
+					SELECT
+						[CSD_CODE_CLIENT_NOTE] =
+								ISNULL((SELECT TOP 1 RC_TEXT
+									FROM dbo.IPReturnCodeView
+									WHERE RC_NUM = b.CSD_CODE_CLIENT
+										AND RC_TYPE = 'CLIENT'
+		 							ORDER BY RC_ID
+							), 'неизвестный код')
+				) AS N
+				WHERE b.CSD_DISTR = a.UD_DISTR AND b.CSD_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
+				ORDER BY CSD_START DESC
+			) AS I
 			ORDER BY UD_NAME
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
@@ -315,43 +301,22 @@ BEGIN
 						WHERE z.ID_CLIENT = @ID AND z.DS_REG = 0 AND y.P_DELETE = 0
 						ORDER BY x.SystemOrder, z.DISTR, z.COMP FOR XML PATH('')
 					)
-					), 1, 2, '')), 1
-			/*FROM #complect a*/
-
-			/*WHERE EXISTS
-				(
-					SELECT *
-					FROM
-						dbo.ClientDistrView b WITH(NOEXPAND)
-						INNER JOIN dbo.BLACK_LIST_REG c ON b.SystemID = c.ID_SYS AND b.DISTR = c.DISTR AND b.COMP = c.COMP
-					WHERE b.ID_CLIENT = @ID AND b.DS_REG = 0 AND c.P_DELETE = 0
-				)
-				*/
+					), 1, 2, '')), 1;
 
 
 		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT, TECH, HOST, DISTR, COMP)
 			SELECT
 				UD_NAME, 'Последний файл cons_err',
 				(
-					SELECT TOP 1 CONVERT(VARCHAR(20), DATE, 104) + ' ' + CONVERT(VARCHAR(20), DATE, 108)
-					FROM
-						IP.ConsErr b
-						INNER JOIN dbo.SystemTable c ON b.SYS = c.SystemNumber
-					WHERE b.DISTR = a.UD_DISTR AND b.COMP = a.UD_COMP AND c.HostID = a.UD_HOST
-					ORDER BY UF_DATE DESC
-				)
-				, 0, 1, UD_HOST, UD_DISTR, UD_COMP
-			FROM #complect a
-			/*
-			WHERE EXISTS
-				(
-					SELECT *
+					SELECT TOP 1 CONVERT(VARCHAR(20), UF_DATE, 104) + ' ' + CONVERT(VARCHAR(20), UF_DATE, 108)
 					FROM
 						dbo.IPConsErrView b
 						INNER JOIN dbo.SystemTable c ON b.UF_SYS = c.SystemNumber
 					WHERE b.UF_DISTR = a.UD_DISTR AND b.UF_COMP = a.UD_COMP AND c.HostID = a.UD_HOST
+					ORDER BY UF_DATE DESC
 				)
-				*/
+				, 0, 1, UD_HOST, UD_DISTR, UD_COMP
+			FROM #complect a
 			ORDER BY UD_NAME
 
 

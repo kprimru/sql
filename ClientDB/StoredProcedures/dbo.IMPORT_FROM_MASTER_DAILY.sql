@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[IMPORT_FROM_MASTER_DAILY]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[IMPORT_FROM_MASTER_DAILY]  AS SELECT 1')
 GO
+
 ALTER PROCEDURE [dbo].[IMPORT_FROM_MASTER_DAILY]
 AS
 BEGIN
@@ -319,8 +320,8 @@ BEGIN
 			(
 				SELECT *
 				FROM [dbo].[ClientTypeRules] AS H
-		        WHERE D.[System_Id] = HS.[SystemID]
-		            AND D.[DistrType_Id] = HD.[DistrTypeID]
+		        WHERE H.[System_Id] = HS.[SystemID]
+		            AND H.[DistrType_Id] = HD.[DistrTypeID]
 			);
 
 		UPDATE H

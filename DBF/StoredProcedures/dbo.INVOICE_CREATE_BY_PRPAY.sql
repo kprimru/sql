@@ -31,53 +31,22 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @docstring varchar(1000)
-			SET @docstring = ''
+		DECLARE @docstring varchar(1000);
 
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-		CREATE TABLE #doc
+		SELECT @docstring = String_Agg('№ ' + [IN_PAY_NUMS] + ' от ' + CONVERT(VARCHAR, [IN_PAY_DATE], 104), '; ')
+		FROM
+		(
+			SELECT IN_PAY_DATE, [IN_PAY_NUMS] = String_Agg(I.IN_PAY_NUM, ',')
+			FROM
 			(
-				IN_DATE SMALLDATETIME,
-				IN_PAY_NUM VARCHAR(20)
-			)
-
-		INSERT INTO #doc
-			SELECT DISTINCT	PRP_DATE, PRP_DOC
-				FROM
-					dbo.PrimaryPayTable INNER JOIN
-					dbo.ClientDistrTable ON PRP_ID_DISTR = CD_ID_DISTR
+				SELECT DISTINCT	IN_PAY_DATE = PRP_DATE, IN_PAY_NUM = PRP_DOC
+				FROM dbo.PrimaryPayTable
+				INNER JOIN dbo.ClientDistrTable ON PRP_ID_DISTR = CD_ID_DISTR
 				WHERE	PRP_ID_INVOICE IS NULL
 					AND CD_ID_CLIENT = @client_id
-
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
-		FROM
-			(
-				SELECT
-				T.IN_DATE,
-				STUFF(
-						(
-							SELECT ',' + TT.IN_PAY_NUM
-							FROM
-								(
-									SELECT DISTINCT IN_PAY_NUM
-									FROM #doc O_O
-									WHERE O_O.IN_DATE = T.IN_DATE
-								) TT
-							ORDER BY TT.IN_PAY_NUM FOR XML PATH('')
-						), 1, 1, ''
-					) IN_PAY_NUM
-				FROM #doc T
-				GROUP BY T.IN_DATE
-			) AS O_O
-		ORDER BY O_O.IN_DATE
-
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-		IF @docstring <> ''
-			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
+			) AS I
+			GROUP BY IN_PAY_DATE
+		) AS I;
 
 		-- мастер-данные
 		INSERT INTO dbo.InvoiceSaleTable(

@@ -241,7 +241,7 @@ BEGIN
                 SELECT ID_COMPANY, @FilterType_PHONE
                 FROM
                 (
-                    SELECT DISTINCT ID_COMPANY
+                    SELECT ID_COMPANY
                     FROM Client.CompanyPhone a
                     INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
                     WHERE PHONE_S LIKE @PHONE
@@ -249,7 +249,7 @@ BEGIN
 
                     UNION
 
-                    SELECT DISTINCT c.ID
+                    SELECT c.ID
                     FROM Client.CompanyPersonal a
                     INNER JOIN Client.CompanyPersonalPhone b ON a.ID = b.ID_PERSONAL
                     INNER JOIN Client.Company c ON c.ID = a.ID_COMPANY
@@ -664,7 +664,7 @@ BEGIN
                 (
                     SELECT
                         [Id] = D.[Id]
-                    FROM    
+                    FROM
                     (
                         SELECT DISTINCT [Id] = CD.[Id]
                         FROM @IdByFilterType CD

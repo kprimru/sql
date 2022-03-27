@@ -63,7 +63,7 @@ BEGIN
             ORDER BY LP.START DESC
         ) AS LOA
         WHERE   R.SST_SHORT NOT IN ('ДСП', 'ОДД')
-            AND R.NT_SHORT NOT IN ('сеть 100', 'сеть 50', 'сеть 5', 'сеть 255')
+            --AND R.NT_SHORT NOT IN ('сеть 100', 'сеть 50', 'сеть 5', 'сеть 255')
             AND
             (
                 -- хотя бы 2 недели как зарегистрирован

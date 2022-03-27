@@ -25,6 +25,7 @@ BEGIN
         @Customer_Id    VarChar(100),
         @Response       NVarChar(Max);
 
+	-- ToDo избавить от таблицы. Сделать одним запросом
     DECLARE @Customers Table
     (
         [Row:Index]             Int             Identity(1,1)   NOT NULL,

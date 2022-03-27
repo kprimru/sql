@@ -38,3 +38,5 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [Seminar].[TemplatesTypes@Select] TO rl_seminar_admin;
+GO

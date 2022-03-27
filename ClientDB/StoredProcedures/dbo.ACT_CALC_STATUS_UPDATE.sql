@@ -23,16 +23,11 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER, OLD_STATUS NVARCHAR(128), NEW_STATUS NVARCHAR(128))
-
-        DECLARE @act Table
-		(
-			SYS_REG_NAME	NVARCHAR(32),
-			DIS_NUM			INT,
-			DIS_COMP_NUM	TINYINT,
-			PR_DATE			SMALLDATETIME,
-			PRIMARY KEY CLUSTERED(DIS_NUM, SYS_REG_NAME, PR_DATE, DIS_COMP_NUM)
-		)
+		DECLARE @TBL TABLE (
+			ID UNIQUEIDENTIFIER,
+			OLD_STATUS NVARCHAR(128),
+			NEW_STATUS NVARCHAR(128)
+		)
 
 		INSERT INTO @TBL (ID, OLD_STATUS)
 		SELECT ID, ISNULL(CALC_STATUS, 'Не расчитан')
@@ -42,16 +37,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO @TBL (ID, OLD_STATUS)';
-
-		INSERT INTO @act(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE)
-		SELECT DISTINCT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE
-		FROM dbo.DBFActView c WITH(NOLOCK)
-		WHERE PR_DATE >= DATEADD(YEAR, -2, GETDATE())
-
-        EXEC [Debug].[Execution@Point]
-            @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO @act';
+            @Name           = 'INSERT INTO @TBL (ID, OLD_STATUS)';
 
 		--ToDo переписать это убожество
 		UPDATE z
@@ -64,7 +50,7 @@ BEGIN
 							dbo.ActCalcDetail b
 							INNER JOIN dbo.SystemTable p ON b.SYS_REG = p.SystemBaseName
 							INNER JOIN dbo.SystemTable q ON p.HostID = q.HostID
-							INNER JOIN @act c ON q.SystemBaseName = c.SYS_REG_NAME AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM AND MON = PR_DATE
+							INNER JOIN dbo.DBFActView c ON q.SystemBaseName = c.SYS_REG_NAME AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM AND MON = PR_DATE
 						WHERE a.ID = b.ID_MASTER
 					) THEN 'Не расчитан'
 				WHEN NOT EXISTS
@@ -78,13 +64,14 @@ BEGIN
 									FROM
 										dbo.SystemTable p
 										INNER JOIN dbo.SystemTable q ON p.HostID = q.HostID
-										INNER JOIN @act c ON q.SystemBaseName = c.SYS_REG_NAME
+										INNER JOIN dbo.DBFActView c ON q.SystemBaseName = c.SYS_REG_NAME
 									WHERE DISTR = DIS_NUM
 										AND COMP = DIS_COMP_NUM
 										AND MON = PR_DATE
 										AND b.SYS_REG = p.SystemBaseName
 								)
 					) THEN 'Расчитан полностью'
+				/*
 				WHEN EXISTS
 					(
 						SELECT *
@@ -136,6 +123,8 @@ BEGIN
 					)
 					THEN 'Расчитан частично'
 				ELSE 'ХЗ'
+				*/
+				ELSE 'Расчитан частично'
 			END
 		FROM
 			dbo.ActCalc a
@@ -144,7 +133,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE @TBL SET NEW_STATUS';
+            @Name           = 'UPDATE @TBL SET NEW_STATUS';
 
 		UPDATE @TBL
 		SET NEW_STATUS = 'Расчитан частично'
@@ -152,7 +141,7 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE @TBL SET NEW_STATUS X3';
+            @Name           = 'UPDATE @TBL SET NEW_STATUS X3';
 
 		UPDATE a
 		SET CALC_STATUS = z.NEW_STATUS
@@ -163,20 +152,20 @@ BEGIN
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'UPDATE dbo.ActCalc SET NEW_STATUS';
+            @Name           = 'UPDATE dbo.ActCalc SET NEW_STATUS';
 
 		--EXEC dbo.CLIENT_MESSAGE_SEND NULL, 1, 'boss',  @MSG, 0
 
 		INSERT INTO dbo.ClientMessage(TP, DATE, NOTE, RECEIVE_USER, HARD_READ)
-			SELECT 1, GETDATE(), 'Изменен статус расчета "' + USR + ' (' + SERVICE + ') с ' + OLD_STATUS + ' на ' + NEW_STATUS, USR, 0
-			FROM
-				dbo.ActCalc a
-				INNER JOIN @TBL z ON a.ID = z.ID
-			WHERE OLD_STATUS <> NEW_STATUS
+		SELECT 1, GETDATE(), 'Изменен статус расчета "' + USR + ' (' + SERVICE + ') с ' + OLD_STATUS + ' на ' + NEW_STATUS, USR, 0
+		FROM
+			dbo.ActCalc a
+			INNER JOIN @TBL z ON a.ID = z.ID
+		WHERE OLD_STATUS <> NEW_STATUS
 
         EXEC [Debug].[Execution@Point]
             @DebugContext   = @DebugContext,
-            @Name           = 'INSERT INTO dbo.ClientMessage';
+            @Name           = 'INSERT INTO dbo.ClientMessage';
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

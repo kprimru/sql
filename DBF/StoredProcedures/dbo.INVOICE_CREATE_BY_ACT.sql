@@ -25,6 +25,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@docstring		VarChar(1000);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -54,60 +57,24 @@ BEGIN
 			)
 			RETURN
 
-		DECLARE @docstring varchar(1000)
-			SET @docstring = ''
-
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-		CREATE TABLE #doc
-			(
-				IN_DATE SMALLDATETIME,
-				IN_PAY_NUM VARCHAR(20)
-			)
-
-		INSERT INTO #doc
-			SELECT DISTINCT	IN_PAY_DATE, IN_PAY_NUM
-				FROM
-					dbo.ActTable INNER JOIN
-					dbo.ActDistrTable ON ACT_ID = AD_ID_ACT INNER JOIN
-					dbo.IncomeDistrTable ON ID_ID_DISTR = AD_ID_DISTR
-									AND ID_ID_PERIOD = AD_ID_PERIOD INNER JOIN
-					dbo.IncomeTable ON IN_ID = ID_ID_INCOME
-								--AND ACT_ID_CLIENT = IN_ID_CLIENT
-
-				WHERE	ACT_ID = @actid AND
-						ACT_ID_INVOICE IS NULL
-						AND IN_DATE <= ACT_DATE
-
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = String_Agg('№ ' + [IN_PAY_NUMS] + ' от ' + CONVERT(VARCHAR, [IN_PAY_DATE], 104), '; ')
 		FROM
+		(
+			SELECT IN_PAY_DATE, [IN_PAY_NUMS] = String_Agg(I.IN_PAY_NUM, ',')
+			FROM
 			(
-				SELECT
-				T.IN_DATE,
-				STUFF(
-						(
-							SELECT ',' + TT.IN_PAY_NUM
-							FROM
-								(
-									SELECT DISTINCT IN_PAY_NUM
-									FROM #doc O_O
-									WHERE O_O.IN_DATE = T.IN_DATE
-								) TT
-							ORDER BY TT.IN_PAY_NUM FOR XML PATH('')
-						), 1, 1, ''
-					) IN_PAY_NUM
-				FROM #doc T
-				GROUP BY T.IN_DATE
-			) AS O_O
-		ORDER BY O_O.IN_DATE
-
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-
-		IF @docstring <> ''
-			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
+				SELECT DISTINCT	IN_PAY_DATE, IN_PAY_NUM
+				FROM dbo.ActTable
+				INNER JOIN dbo.ActDistrTable ON ACT_ID = AD_ID_ACT
+				INNER JOIN dbo.IncomeDistrTable ON	ID_ID_DISTR = AD_ID_DISTR
+												AND ID_ID_PERIOD = AD_ID_PERIOD
+				INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME
+				WHERE	ACT_ID = @actid
+					AND ACT_ID_INVOICE IS NULL
+					AND IN_DATE <= ACT_DATE
+			) AS I
+			GROUP BY IN_PAY_DATE
+		) AS I;
 
 		INSERT INTO dbo.InvoiceSaleTable
 					(

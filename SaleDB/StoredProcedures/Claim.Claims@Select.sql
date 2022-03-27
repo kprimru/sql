@@ -81,7 +81,7 @@ BEGIN
             FROM [Common].[TableStringFromXML](@Specials);
 
         INSERT INTO @Claims
-        SELECT C.[Id]
+        SELECT TOP (500) C.[Id]
         FROM [Claim].[Claims] AS C
         LEFT JOIN @StatusesIDs AS S ON C.[Status_Id] = S.[Id]
         LEFT JOIN @TypesIDs AS T ON C.[Type_Id] = T.[Id]
@@ -121,7 +121,8 @@ BEGIN
             AND (@Offer IS NULL OR @Offer = -1 OR @Offer = 0 OR @Offer = 1 AND Offer = 1 OR @Offer = 2 AND Offer = 0)
             AND (@Mailing IS NULL OR @Mailing = -1 OR @Mailing = 0 OR @Mailing = 1 AND Mailing = 1 OR @Mailing = 2 AND Mailing = 0)
             AND (C.[FIO] LIKE @FioOrClient OR C.[ClientName] LIKE @FioOrClient OR @FioOrClient IS NULL)
-            AND (C.[Phone]LIKE @Phone OR @Phone IS NULL);
+            AND (C.[Phone]LIKE @Phone OR @Phone IS NULL)
+		ORDER BY C.[CreateDateTime] DESC, C.[Number]
 
         SELECT
             [Row:Id]            = Cast(C.[Id] AS VarChar(100)),

@@ -28,11 +28,35 @@ BEGIN
 		SET @WARN_COUNT =
 			(
 				SELECT COUNT(*)
-				FROM
-					dbo.ClientContractWarningView
-					INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = ClientID
+				FROM dbo.ClientTable a
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+				INNER JOIN [dbo].[ClientList@Get?Write]() ON WCL_ID = ClientID
 				WHERE ClientID = @CLIENT
-			)
+					AND NOT EXISTS
+							(
+								SELECT *
+								FROM dbo.ContractTable e
+								WHERE e.ClientID = a.ClientID
+									AND e.ContractEnd >= dbo.DateOf(GETDATE())
+							)
+					AND NOT EXISTS
+						(
+							SELECT *
+							FROM Contract.ClientContracts CC
+							INNER JOIN Contract.Contract C ON C.ID = CC.Contract_Id
+							CROSS APPLY
+							(
+								SELECT TOP (1) ExpireDate
+								FROM Contract.ClientContractsDetails D
+								WHERE D.Contract_Id = C.ID
+								ORDER BY DATE DESC
+							) D
+							WHERE CC.Client_Id = a.ClientID
+								AND C.DateTo IS NULL
+								AND D.ExpireDate >= dbo.DateOf(GETDATE())
+						)
+
+			);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

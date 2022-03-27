@@ -28,14 +28,15 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@MON_DATE		SmallDateTime;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-
-		DECLARE @MON_DATE SMALLDATETIME
 
 		SELECT @MON_DATE = START FROM Common.Period WHERE ID = @MONTH
 
@@ -49,79 +50,95 @@ BEGIN
 			DROP TABLE #client
 
 		CREATE TABLE #client
-			(
+		(
 				ClientID		INT,
 				ClientFullName	VARCHAR(500),
 				ServiceName		VARCHAR(150),
 				PayType			VARCHAR(150),
 				ContractPay		VARCHAR(150),
 				PayDate			SMALLDATETIME,
-				PayMonth		SMALLDATETIME
-			)
+				PayMonth		SMALLDATETIME,
+				PRIMARY KEY CLUSTERED([ClientID])
+		);
 
 		INSERT INTO #client(ClientID, ClientFullName, ServiceName, PayType, ContractPay, PayDate, PayMonth)
-			SELECT
-				ClientID, ClientFullName, ServiceName, CASE WHEN a.ID_HEAD IS NULL THEN PayTypeName ELSE 'не оплачивает' END, ContractPayName,
-				DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END,
-					DATEADD(DAY,
-						CASE
-							WHEN DATEPART(MONTH, @MON_DATE) = 2 AND DATEPART(YEAR, @MON_DATE) % 4 = 0 AND ContractPayDay > 29 THEN 29
-							WHEN DATEPART(MONTH, @MON_DATE) = 2 AND DATEPART(YEAR, @MON_DATE) % 4 <> 0 AND ContractPayDay > 28 THEN 28
-							WHEN DATEPART(MONTH, @MON_DATE) IN (4, 6, 11) AND DATEPART(YEAR, @MON_DATE) % 4 <> 0 AND ContractPayDay > 30 THEN 30
-							ELSE ContractPayDay - 1
-						END, DATEADD(MONTH, PayTypeMonth, @MON_DATE))),
-				CASE @DAY
-					WHEN 1 THEN DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END, DATEADD(MONTH, PayTypeMonth, @MON_DATE))
-					ELSE DATEADD(MONTH, PayTypeMonth, @MON_DATE)
-				END
-
-			FROM
-				dbo.ClientTable a
-				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
-				INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
-				INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
-				OUTER APPLY dbo.ClientContractPayGet(a.ClientID, NULL) AS o_O
-			WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
-				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
-				AND STATUS = 1 --AND ID_HEAD IS NULL
+		SELECT
+			ClientID, ClientFullName, ServiceName, CASE WHEN a.ID_HEAD IS NULL THEN PayTypeName ELSE 'не оплачивает' END, ContractPayName,
+			DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END,
+				DATEADD(DAY,
+					CASE
+						WHEN DATEPART(MONTH, @MON_DATE) = 2 AND DATEPART(YEAR, @MON_DATE) % 4 = 0 AND ContractPayDay > 29 THEN 29
+						WHEN DATEPART(MONTH, @MON_DATE) = 2 AND DATEPART(YEAR, @MON_DATE) % 4 <> 0 AND ContractPayDay > 28 THEN 28
+						WHEN DATEPART(MONTH, @MON_DATE) IN (4, 6, 11) AND DATEPART(YEAR, @MON_DATE) % 4 <> 0 AND ContractPayDay > 30 THEN 30
+						ELSE ContractPayDay - 1
+					END, DATEADD(MONTH, PayTypeMonth, @MON_DATE))),
+			CASE @DAY
+				WHEN 1 THEN DATEADD(MONTH, CASE WHEN ContractPayDay > DATEPART(DAY, GETDATE()) THEN -1 ELSE 0 END, DATEADD(MONTH, PayTypeMonth, @MON_DATE))
+				ELSE DATEADD(MONTH, PayTypeMonth, @MON_DATE)
+			END
+		FROM dbo.ClientTable a
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.StatusId = s.ServiceStatusId
+		INNER JOIN dbo.ServiceTable ON ClientServiceID = ServiceID
+		INNER JOIN dbo.PayTypeTable b ON a.PayTypeID = b.PayTypeID
+		OUTER APPLY dbo.ClientContractPayGet(a.ClientID, NULL) AS o_O
+		WHERE (ServiceID = @SERVICE OR @SERVICE IS NULL)
+			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+			AND STATUS = 1;
 
 		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
 			DROP TABLE #distr
 
 		CREATE TABLE #distr
-			(
-				CL_ID		INT,
-				DisStr		VARCHAR(50),
-				SYS_REG		VARCHAR(20),
-				SYS_ORD		INT,
-				DISTR		INT,
-				COMP		TINYINT,
-				BILL		MONEY,
-				INCOME		MONEY,
-				LAST_PAY	SMALLDATETIME,
-				LAST_ACT	SMALLDATETIME,
-				MON_DATE	SMALLDATETIME,
-				BILL_DATE	SMALLDATETIME
-			)
+		(
+			CL_ID		INT,
+			DisStr		VARCHAR(50),
+			SYS_REG		VARCHAR(20),
+			SYS_ORD		INT,
+			DISTR		INT,
+			COMP		TINYINT,
+			BILL		MONEY,
+			INCOME		MONEY,
+			LAST_PAY	SMALLDATETIME,
+			LAST_ACT	SMALLDATETIME,
+			MON_DATE	SMALLDATETIME,
+			BILL_DATE	SMALLDATETIME,
+			PRIMARY KEY CLUSTERED (CL_ID, SYS_REG, DISTR, COMP)
+		);
 
-		INSERT INTO #distr(CL_ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP/*, LAST_PAY, BILL, INCOME*/)
+		IF @BEGIN IS NULL AND @END IS NULL BEGIN
+			INSERT INTO #distr(CL_ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP/*, LAST_PAY, BILL, INCOME*/)
 			SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
 			FROM
-				#client
-				INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON ClientID = ID_CLIENT
-			WHERE (DS_REG = 0 OR @BEGIN IS NOT NULL OR @END IS NOT NULL)
-
-			UNION
-
-			SELECT a.ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
+			(
+				SELECT ClientID, IsNull(ChildClientID, a.ClientID) AS UnionClientID
+				FROM #client AS a
+				OUTER APPLY
+				(
+					SELECT b.ClientID AS ChildClientID
+					FROM dbo.ClientTable b
+					WHERE a.ClientID = b.ID_HEAD
+						AND b.STATUS = 1
+				) AS b
+			) AS C
+			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT
+			WHERE DS_REG = 0;
+		END ELSE BEGIN
+			INSERT INTO #distr(CL_ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP/*, LAST_PAY, BILL, INCOME*/)
+			SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
 			FROM
-				#client a
-				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ID_HEAD
-				INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON b.ClientID = ID_CLIENT
-			WHERE (DS_REG = 0 OR @BEGIN IS NOT NULL OR @END IS NOT NULL) AND b.STATUS = 1
+			(
+				SELECT ClientID, IsNull(ChildClientID, a.ClientID) AS UnionClientID
+				FROM #client AS a
+				OUTER APPLY
+				(
+					SELECT b.ClientID AS ChildClientID
+					FROM dbo.ClientTable b
+					WHERE a.ClientID = b.ID_HEAD
+						AND b.STATUS = 1
+				) AS b
+			) AS C
+			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT;
 
-		IF @BEGIN IS NOT NULL OR @END IS NOT NULL
-		BEGIN
 			DELETE
 			FROM #distr
 			WHERE NOT EXISTS
@@ -133,106 +150,107 @@ BEGIN
 						AND DIS_COMP_NUM = COMP
 						AND (IN_DATE >= @BEGIN OR @BEGIN IS NULL)
 						AND (IN_DATE <= @END OR @END IS NULL)
-				)
-
-			/*
-			UPDATE #distr
-			SET MON_DATE =
-				(
-					SELECT MAX(PR_DATE)
-					FROM dbo.DBFIncomeDateView
-					WHERE SYS_REG_NAME = SYS_REG
-						AND DIS_NUM = DISTR
-						AND DIS_COMP_NUM = COMP
-				)
-			*/
-		END
-		--ELSE
+				);
+		END;
 
 		UPDATE #distr
-		SET MON_DATE = (SELECT PayMonth FROM #client WHERE ClientID = CL_ID)
+		SET MON_DATE = (SELECT PayMonth FROM #client WHERE ClientID = CL_ID);
 
 		UPDATE #distr
 		SET BILL =
 			(
 				SELECT BD_TOTAL_PRICE
 				FROM dbo.DBFBillView
-				WHERE PR_DATE = MON_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+				WHERE PR_DATE = MON_DATE
+					AND SYS_REG_NAME = SYS_REG
+					AND DIS_NUM = DISTR
+					AND DIS_COMP_NUM = COMP
 			),
 			INCOME =
 			(
 				SELECT ID_PRICE
 				FROM dbo.DBFIncomeView
-				WHERE PR_DATE = MON_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+				WHERE PR_DATE = MON_DATE
+					AND SYS_REG_NAME = SYS_REG
+					AND DIS_NUM = DISTR
+					AND DIS_COMP_NUM = COMP
 			),
 			LAST_PAY =
 			(
-				SELECT MAX(PR_DATE)
+				SELECT TOP (1) PR_DATE
 				FROM dbo.DBFBillRestView
-				WHERE SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-					/*AND PR_DATE <= MON_DATE*/ AND BD_REST = 0
+				WHERE SYS_REG_NAME = SYS_REG
+					AND DIS_NUM = DISTR
+					AND DIS_COMP_NUM = COMP
+					AND BD_REST = 0
+				ORDER BY PR_DATE DESC
 			),
 			LAST_ACT =
 			(
-				SELECT MAX(PR_DATE)
+				SELECT TOP (1) PR_DATE
 				FROM dbo.DBFActView
-				WHERE SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+				WHERE SYS_REG_NAME = SYS_REG
+					AND DIS_NUM = DISTR
+					AND DIS_COMP_NUM = COMP
 					AND PR_DATE <= @MON_DATE
+				ORDER BY PR_DATE DESC
 			),
 			BILL_DATE =
 			(
-				SELECT MAX(PR_DATE)
+				SELECT TOP (1) PR_DATE
 				FROM dbo.DBFBillView
-				WHERE SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+				WHERE SYS_REG_NAME = SYS_REG
+					AND DIS_NUM = DISTR
+					AND DIS_COMP_NUM = COMP
 					AND PR_DATE = @MON_DATE
+				ORDER BY PR_DATE DESC
 			)
 
 		IF OBJECT_ID('tempdb..#distr_date') IS NOT NULL
 			DROP TABLE #distr_date
 
 		CREATE TABLE #distr_date
-			(
-				CL_ID	INT,
-				DisStr	VARCHAR(50),
-				DATE	SMALLDATETIME
-			)
+		(
+			CL_ID	INT,
+			DisStr	VARCHAR(50),
+			DATE	SMALLDATETIME,
+			PRIMARY KEY CLUSTERED (CL_ID, DisStr, DATE)
+		);
 
 		IF @BEGIN IS NOT NULL OR @END IS NOT NULL
 			INSERT INTO #distr_date(CL_ID, DisStr, DATE)
-				SELECT CL_ID, DisStr, IN_DATE
-				FROM
-					#distr
-					INNER JOIN dbo.DBFIncomeDateView ON /*PR_DATE = MON_DATE AND */SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-				WHERE (IN_DATE >= @BEGIN OR @BEGIN IS NULL)
-					AND (IN_DATE <= @END OR @END IS NULL)
+			SELECT DISTINCT CL_ID, DisStr, IN_DATE
+			FROM #distr
+			INNER JOIN dbo.DBFIncomeDateView ON SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+			WHERE (IN_DATE >= @BEGIN OR @BEGIN IS NULL)
+				AND (IN_DATE <= @END OR @END IS NULL)
 		ELSE
 			INSERT INTO #distr_date(CL_ID, DisStr, DATE)
-				SELECT CL_ID, DisStr, IN_DATE
-				FROM
-					#distr
-					INNER JOIN dbo.DBFIncomeDateView ON PR_DATE = MON_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+			SELECT DISTINCT CL_ID, DisStr, IN_DATE
+			FROM #distr
+			INNER JOIN dbo.DBFIncomeDateView ON PR_DATE = MON_DATE AND SYS_REG_NAME = SYS_REG AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP;
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
 		CREATE TABLE #result
-			(
-				ClientID		INT,
-				ClientFullName	VARCHAR(500),
-				ServiceName		VARCHAR(150),
-				PayType			VARCHAR(150),
-				ContractPay		VARCHAR(150),
-				PayDate			SMALLDATETIME,
-				PAY				VARCHAR(50),
-				PRC				DECIMAL(8, 4),
-				LAST_PAY		SMALLDATETIME,
-				PAY_DATES		VARCHAR(MAX),
-				PAY_DELTA		INT,
-				LAST_MON		SMALLDATETIME,
-				SYS_ORD			INT,
-				DIS_NUM			INT,
-				LAST_ACT		SMALLDATETIME
-			)
+		(
+			ClientID		INT,
+			ClientFullName	VARCHAR(500),
+			ServiceName		VARCHAR(150),
+			PayType			VARCHAR(150),
+			ContractPay		VARCHAR(150),
+			PayDate			SMALLDATETIME,
+			PAY				VARCHAR(50),
+			PRC				DECIMAL(8, 4),
+			LAST_PAY		SMALLDATETIME,
+			PAY_DATES		VARCHAR(MAX),
+			PAY_DELTA		INT,
+			LAST_MON		SMALLDATETIME,
+			SYS_ORD			INT,
+			DIS_NUM			INT,
+			LAST_ACT		SMALLDATETIME
+		);
 
 		IF @BEGIN IS NOT NULL OR @END IS NOT NULL
 			DELETE FROM #client

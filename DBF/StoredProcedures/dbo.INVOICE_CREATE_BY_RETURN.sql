@@ -58,55 +58,23 @@ BEGIN
 			)
 			RETURN
 
-		DECLARE @docstring varchar(MAX)
-			SET @docstring = ''
+		DECLARE @docstring varchar(MAX);
 
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-		CREATE TABLE #doc
-			(
-				IN_DATE SMALLDATETIME,
-				IN_PAY_NUM VARCHAR(20)
-			)
-
-		INSERT INTO #doc
-			SELECT DISTINCT	IN_DATE, IN_PAY_NUM
-			FROM
-				dbo.IncomeTable inner join
-				dbo.IncomeDistrTable on IN_ID = ID_ID_INCOME
-			WHERE	IN_ID = @inid
-				AND IN_ID_INVOICE IS NULL
-				AND IN_DATE <= @invdate
-
-		SELECT @docstring = @docstring + '№ ' + IN_PAY_NUM + ' от ' + CONVERT(VARCHAR, IN_DATE, 104) + '; '
+		SELECT @docstring = String_Agg('№ ' + [IN_PAY_NUMS] + ' от ' + CONVERT(VARCHAR, [IN_PAY_DATE], 104), '; ')
 		FROM
+		(
+			SELECT IN_PAY_DATE, [IN_PAY_NUMS] = String_Agg(I.IN_PAY_NUM, ',')
+			FROM
 			(
-				SELECT
-				T.IN_DATE,
-				STUFF(
-						(
-							SELECT ',' + TT.IN_PAY_NUM
-							FROM
-								(
-									SELECT DISTINCT IN_PAY_NUM
-									FROM #doc O_O
-									WHERE O_O.IN_DATE = T.IN_DATE
-								) TT
-							ORDER BY TT.IN_PAY_NUM FOR XML PATH('')
-						), 1, 1, ''
-					) IN_PAY_NUM
-				FROM #doc T
-				GROUP BY T.IN_DATE
-			) AS O_O
-		ORDER BY O_O.IN_DATE
-
-		IF OBJECT_ID('tempdb..#doc') IS NOT NULL
-			DROP TABLE #doc
-
-		IF @docstring <> ''
-			SET @docstring = LEFT(@docstring, LEN(@docstring) - 1)
-
+				SELECT DISTINCT	IN_PAY_DATE, IN_PAY_NUM
+				FROM dbo.IncomeTable
+				INNER JOIN dbo.IncomeDistrTable ON IN_ID = ID_ID_INCOME
+				WHERE	IN_ID = @inid
+					AND IN_ID_INVOICE IS NULL
+					AND IN_DATE <= @invdate
+			) AS I
+			GROUP BY IN_PAY_DATE
+		) AS I;
 
 		INSERT INTO dbo.InvoiceSaleTable
 					(
