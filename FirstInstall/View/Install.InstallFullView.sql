@@ -5,6 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 ALTER VIEW [Install].[InstallFullView]
 --WITH SCHEMABINDING
 AS
@@ -40,8 +41,8 @@ SELECT
 			SELECT TOP 1 ID_PERSONAL
 			FROM Income.IncomeFullView z
 			WHERE z.ID_ID = b.ID_ID
-		) AS ID_PERSONAL
-	FROM
-		Install.InstallMasterView a WITH(NOEXPAND) INNER JOIN
-		Install.InstallDetailFullView b ON a.INS_ID = b.INS_ID
+		) AS ID_PERSONAL,
+		IND_ID_ACT_PERSONAL, IND_ACT_PERSONAL
+	FROM  Install.InstallMasterView a WITH(NOEXPAND)
+	INNER JOIN Install.InstallDetailFullView b ON a.INS_ID = b.INS_ID
 GO
