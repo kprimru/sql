@@ -7,10 +7,12 @@ GO
 IF OBJECT_ID('[dbo].[CLIENT_CALL_EMPTY]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CALL_EMPTY]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[CLIENT_CALL_EMPTY]
-	@BEGIN		SMALLDATETIME,
-	@END		SMALLDATETIME,
-	@MANAGER	INT,
-	@TYPE		NVARCHAR(MAX) = NULL
+	@Begin		SmallDateTime = NULL,
+	@End		SmallDateTime = NULL,
+	@Manager_Id	Int = NULL,
+	@Service_Id	Int = NULL,
+	@Kinds_IDs	NVarChar(MAX) = NULL,
+	@Types_IDs	NVarChar(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,8 +29,11 @@ BEGIN
 
 	BEGIN TRY
 
+		IF @Service_Id IS NOT NULL
+			SET @Manager_Id = NULL;
+
 		SELECT
-			a.ClientID, a.ClientFullName, ServiceName, ManagerName,
+			a.ClientID, a.ClientFullName, ServiceName, ManagerName, ClientTypeId,
 			(
 				SELECT TOP 1 CC_DATE
 				FROM dbo.ClientTrustView WITH(NOEXPAND)
@@ -64,11 +69,12 @@ BEGIN
 				FROM dbo.ClientConnectView z WITH(NOEXPAND)
 				WHERE z.ClientID = a.CLientID
 			) AS CONNECT_DATE
-		FROM
-			dbo.ClientView a WITH(NOEXPAND)
-			INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
-		WHERE	(@TYPE IS NULL OR ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@TYPE)))
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+		FROM dbo.ClientView a WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+		WHERE	(@Kinds_IDs IS NULL OR ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXML(@Kinds_IDs)))
+			AND (@Types_IDs IS NULL OR ClientTypeId IN (SELECT ID FROM dbo.TableIDFromXML(@Types_IDs)))
+			AND (ManagerID = @Manager_Id OR @Manager_Id IS NULL)
+			AND (ServiceID = @Service_Id OR @Service_Id IS NULL)
 			AND NOT EXISTS
 				(
 					SELECT *
