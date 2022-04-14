@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT DATE, ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments
+		SELECT DATE, ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments, DocumentFlowType_Id
 		FROM Contract.ClientContractsDetails
 		WHERE Contract_Id = @Contract_Id;
 

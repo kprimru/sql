@@ -7,17 +7,18 @@ GO
 IF OBJECT_ID('[Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]
-	@Contract_Id		UniqueIdentifier,
-	@Date				SmallDateTime,
-	@ExpireDate			SmallDateTime,
-	@Type_Id			Int,
-	@PayType_Id			Int,
-	@Discount_Id		Int,
-	@ContractPrice		Money,
-	@Comments			VarChar(Max),
-	@DateFrom			SmallDateTime,
-	@SignDate			SmallDateTime,
-	@DateTo				SmallDateTime
+	@Contract_Id			UniqueIdentifier,
+	@Date					SmallDateTime,
+	@ExpireDate				SmallDateTime,
+	@Type_Id				Int,
+	@PayType_Id				Int,
+	@Discount_Id			Int,
+	@ContractPrice			Money,
+	@Comments				VarChar(Max),
+	@DateFrom				SmallDateTime,
+	@SignDate				SmallDateTime,
+	@DateTo					SmallDateTime,
+	@DocumentFlowType_Id	TinyInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -42,12 +43,13 @@ BEGIN
 		WHERE [Id] = @Contract_Id;
 
 		UPDATE [Contract].[ClientContractsDetails]
-		SET [ExpireDate]	= @ExpireDate,
-			[Type_Id]		= @Type_Id,
-			[PayType_Id]	= @PayType_Id,
-			[Discount_Id]	= @Discount_Id,
-			[ContractPrice] = @ContractPrice,
-			[Comments]		= @Comments
+		SET [ExpireDate]			= @ExpireDate,
+			[Type_Id]				= @Type_Id,
+			[PayType_Id]			= @PayType_Id,
+			[Discount_Id]			= @Discount_Id,
+			[ContractPrice]			= @ContractPrice,
+			[Comments]				= @Comments,
+			[DocumentFlowType_Id]	= @DocumentFlowType_Id
 		WHERE [Contract_Id] = @Contract_Id
 			AND [DATE] = @Date
 

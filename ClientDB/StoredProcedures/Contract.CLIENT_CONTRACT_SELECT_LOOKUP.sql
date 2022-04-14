@@ -24,12 +24,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT C.ID, NUM_S = C.NUM_S + ISNULL(' от ' + CONVERT(VARCHAR(20), C.SignDate, 104), ''), DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments
+		SELECT C.ID, NUM_S = C.NUM_S + ISNULL(' от ' + CONVERT(VARCHAR(20), C.SignDate, 104), ''), DateFrom, DateTo, ExpireDate, ContractTypeName, ContractPayName, DiscountValue, ContractPrice, Comments, [DocumentFlowTypeName] = F.[Name]
 		FROM Contract.ClientContracts	CC
 		INNER JOIN Contract.Contract	C	ON C.ID = CC.Contract_Id
 		CROSS APPLY
 		(
-			SELECT TOP (1) ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments
+			SELECT TOP (1) ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments, DocumentFlowType_Id
 			FROM Contract.ClientContractsDetails CCD
 			WHERE CCD.Contract_Id = CC.Contract_Id
 			ORDER BY CCD.DATE DESC
@@ -37,6 +37,7 @@ BEGIN
 		INNER JOIN dbo.DiscountTable DD ON DD.DiscountID = D.Discount_Id
 		INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id
 		INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeId = D.Type_Id
+		LEFT JOIN [Contract].[Contracts->Documents Flow Types@Select] AS F ON F.[Id] = D.[DocumentFlowType_Id]
 		WHERE CC.Client_Id = @ClientId
 		ORDER BY DateFrom DESC
 

@@ -27,30 +27,31 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			[NUM_S]				= C.[NUM_S],
-			[ID_VENDOR]			= C.[ID_VENDOR],
+			[NUM_S]					= C.[NUM_S],
+			[ID_VENDOR]				= C.[ID_VENDOR],
 
-			[DateFrom]			= C.[DateFrom],
-			[SignDate]			= C.[SignDate],
+			[DateFrom]				= C.[DateFrom],
+			[SignDate]				= C.[SignDate],
 
-			[DateTo]			= C.[DateTo],
+			[DateTo]				= C.[DateTo],
 
-			[DATE]				= D.[DATE],
-			[ExpireDate]		= D.[ExpireDate],
-			[Type_Id]			= D.[Type_Id],
-			[PayType_Id]		= D.[PayType_Id],
-			[Discount_Id]		= D.[Discount_Id],
-			[ContractPrice]		= D.[ContractPrice],
-			[Comments]			= D.[Comments],
+			[DATE]					= D.[DATE],
+			[ExpireDate]			= D.[ExpireDate],
+			[Type_Id]				= D.[Type_Id],
+			[PayType_Id]			= D.[PayType_Id],
+			[Discount_Id]			= D.[Discount_Id],
+			[ContractPrice]			= D.[ContractPrice],
+			[Comments]				= D.[Comments],
+			[DocumentFlowType_Id]	= D.[DocumentFlowType_Id],
 
-			[DocumentType_Id]	= F.[Type_Id],
-			[DocumentDate]		= F.[Date],
-			[DocumentNote]		= F.[Note]
+			[DocumentType_Id]		= F.[Type_Id],
+			[DocumentDate]			= F.[Date],
+			[DocumentNote]			= F.[Note]
 		FROM Contract.Contract C
 		OUTER APPLY
 		(
 			SELECT TOP (1)
-				D.[DATE], D.[ExpireDate], D.[Type_Id], D.[PayType_Id], D.[Discount_Id], D.[ContractPrice], D.[Comments]
+				D.[DATE], D.[ExpireDate], D.[Type_Id], D.[PayType_Id], D.[Discount_Id], D.[ContractPrice], D.[Comments], D.[DocumentFlowType_Id]
 			FROM Contract.ClientContractsDetails D
 			WHERE	C.[Id] = D.[Contract_Id]
 				AND (D.[DATE] = @Date OR @Date IS NULL)

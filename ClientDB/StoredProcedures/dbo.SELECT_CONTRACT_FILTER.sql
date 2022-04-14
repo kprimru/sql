@@ -11,7 +11,8 @@ ALTER PROCEDURE [dbo].[SELECT_CONTRACT_FILTER]
 	@SERVICE	INT,
 	@STATUS		INT,
 	@PAY		INT,
-	@TYPE		INT
+	@TYPE		INT,
+	@FLOW		INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -68,7 +69,7 @@ BEGIN
 		    SELECT
 			    ContractID = C.ID, ClientFullName, ManagerName, MaxContractEnd = ExpireDate, ContractDate = SignDate,
 			    ContractNumber = NUM_S, ServiceStatusName, ContractTypeName,
-			    ServiceName, ContractPayName,
+			    ServiceName, ContractPayName, [FlowTypeName] = F.Name,
 			    REVERSE(STUFF(REVERSE(
 				    (
 					    SELECT SystemShortName + ', '
@@ -87,7 +88,7 @@ BEGIN
 		    INNER JOIN Contract.Contract		C	ON C.ID = CC.Contract_Id
 		    CROSS APPLY
 		    (
-			    SELECT TOP (1) PayType_Id, Discount_Id, Type_Id, ExpireDate
+			    SELECT TOP (1) PayType_Id, Discount_Id, DocumentFlowType_Id, Type_Id, ExpireDate
 			    FROM Contract.ClientContractsDetails D
 			    WHERE D.Contract_Id = C.ID
 			    ORDER BY DATE DESC
@@ -95,12 +96,14 @@ BEGIN
 		    INNER JOIN dbo.ClientView CL WITH(NOEXPAND) ON CL.ClientID = R.WCL_ID
 		    INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeID = CD.Type_Id
 		    INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = CD.PayType_Id
+			LEFT JOIN [Contract].[Contracts->Documents Flow Types] AS F ON F.[Id] = CD.[DocumentFlowType_Id]
 		    WHERE DateTo IS NULL
 			    AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
 			    AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			    AND (ServiceStatusID = @STATUS	OR @STATUS IS NULL)
 			    AND (P.ContractPayID = @PAY OR @PAY IS NULL)
 			    AND (T.ContractTypeID = @TYPE OR @TYPE IS NULL)
+				AND (F.Id = @FLOW OR @FLOW IS NULL)
 		    ORDER BY ClientFullName, ExpireDate DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
