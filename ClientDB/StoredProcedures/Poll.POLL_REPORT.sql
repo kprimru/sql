@@ -9,6 +9,7 @@ GO
 ALTER PROCEDURE [Poll].[POLL_REPORT]
     @Blank_Id   UniqueIdentifier,
     @Service_Id Int = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -39,6 +40,7 @@ BEGIN
             [Blank_Id]          UniqueIdentifier        NULL,
             [BlankDate]         SmallDateTime           NULL,
             [CallNote]          VarChar(Max)            NULL,
+			[CallPersonal]		VarChar(250)			NULL,
             PRIMARY KEY CLUSTERED([Client_Id])
         );
 
@@ -49,7 +51,8 @@ BEGIN
             C.[ClientFullName],
             P.[ID],
             P.[DATE],
-            P.[CC_NOTE]
+            P.[CC_NOTE],
+			P.[CC_PERSONAL]
         FROM [dbo].[ClientView]                     AS C WITH(NOEXPAND)
         INNER JOIN [dbo].[ServiceStatusConnected]() AS S ON S.[ServiceStatusId] = C.[ServiceStatusID]
         CROSS APPLY
@@ -57,7 +60,8 @@ BEGIN
             SELECT TOP (1)
                 P.[ID],
                 P.[DATE],
-                CC.[CC_NOTE]
+                CC.[CC_NOTE],
+				CC.[CC_PERSONAL]
             FROM [Poll].[ClientPoll]        AS P
             INNER JOIN [dbo].[ClientCall]   AS CC ON CC.[CC_ID] = P.[ID_CALL]
             WHERE P.[ID_CLIENT] = C.[ClientID]
@@ -119,7 +123,7 @@ BEGIN
 
         --SET @SQL = Left(@SQL, Len(@SQL) - 1)
 
-        SET @SQL = @SQL + ' C.[CallNote]
+        SET @SQL = @SQL + ' C.[CallNote], C.[CallPersonal]
         FROM #Clients AS C'
 
         SET @SQL = @SQL + '
