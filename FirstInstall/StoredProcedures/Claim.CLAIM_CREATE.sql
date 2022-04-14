@@ -13,11 +13,14 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE
-		@Body	VarChar(Max),
-		@NUM	INT,
-		@USER	UNIQUEIDENTIFIER
+		@CurClient	VarChar(256),
+		@Subject	VarChar(255),
+		@Body		VarChar(Max),
+		@NUM		INT,
+		@USER		UniqueIdentifier
 
-	DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER);
+	DECLARE @TBL TABLE(ID UniqueIdentifier);
+	DECLARE @Clients Table(CL_NAME VarChar(256));
 
 	SELECT @USER = US_ID_MASTER
 	FROM Security.UserActive
@@ -61,44 +64,62 @@ BEGIN
 		);
 
 	IF @EMAIL = 1 BEGIN
-		SET @Body =
-			'
-			<h2>Наряд на выдачу дистрибутивов:</h2>
-			<table width=800 border="1">
-				<tr>
-					<td width=50>№</td>
-					<td width=100>Поставщик</td>
-					<td width=250>Клиент</td>
-					<td width=400>Дистрибутивы</td>
-				</tr>';
+		INSERT INTO @Clients
+		SELECT DISTINCT CL_NAME
+		FROM Claim.ClaimFullView AS C
+		WHERE CLM_ID = @CLM_ID;
 
-		SELECT
-			@Body = @Body + '
-			<tr>
-				<td>' + Cast(Row_Number() OVER(ORDER BY CL_NAME) AS VarChar(100)) + '</td>
-				<td>' + VD_NAME + '</td>
-				<td>' + CL_NAME + '</td>
-				<td>' + [DistrData] + '</td>
-			</tr>'
-	 	FROM
-		(
+		SET @CurClient = '';
+
+		WHILE (1 = 1) BEGIN
+			SELECT TOP (1)
+				@CurClient = CL_NAME
+			FROM @Clients
+			WHERE CL_NAME > @CurClient
+			ORDER BY CL_NAME;
+
+			IF @@RowCount < 1
+				BREAK;
+
+			SET @Subject = 'Наряд на выдачу дистрибутивов, клиент: ' + @CurClient;
+
+			SET @Body =
+				'
+				<h2>Наряд на выдачу дистрибутивов (' + @CurClient + '):</h2>
+				<table width=800 border="1">
+					<tr>
+						<td width=200>Поставщик</td>
+						<td width=600>Дистрибутивы</td>
+					</tr>';
+
 			SELECT
-				CL_NAME, VD_NAME,
-				[DistrData] = String_Agg('<div>' + C.SYS_SHORT + ' ' + C.DT_SHORT + ' ' + C.NT_SHORT + ' ' + C.TT_SHORT + CASE WHEN CLD_COUNT != 1 THEN CAST(CLD_COUNT AS VarChar(10)) + ' шт.' ELSE '' END + '</div>', Char(10))
-			FROM Claim.ClaimFullView AS C
-			WHERE CLM_ID = @CLM_ID
-			GROUP BY CL_NAME, VD_NAME
-		) AS C
-		ORDER BY CL_NAME
+				@Body = @Body + '
+				<tr>
+					<td>' + VD_NAME + '</td>
+					<td>' + [DistrData] + '</td>
+				</tr>'
+	 		FROM
+			(
+				SELECT
+					VD_NAME,
+					[DistrData] = String_Agg('<div>' + C.SYS_SHORT + ' ' + C.DT_SHORT + ' ' + C.NT_SHORT + ' ' + C.TT_SHORT + CASE WHEN CLD_COUNT != 1 THEN CAST(CLD_COUNT AS VarChar(10)) + ' шт.' ELSE '' END + '</div>', Char(10))
+				FROM Claim.ClaimFullView AS C
+				WHERE CLM_ID = @CLM_ID
+					AND CL_NAME = @CurClient
+				GROUP BY VD_NAME
+			) AS C
+			ORDER BY VD_NAME
 
-		SET @Body = @Body + '</table>'
+			SET @Body = @Body + '</table>'
 
-		EXEC [Common].[MAIL_SEND]
-			@Recipients             = 'gvv@bazis;blohin@bazis;samusenko@bazis;sklad@bazis',
-			@blind_copy_recipients  = NULL,
-			@Subject                = 'Наряд на выдачу дистрибутивов',
-			@Body                   = @Body,
-			@Body_Format            = 'html'
+			EXEC [Common].[MAIL_SEND]
+				--@Recipients             = 'gvv@bazis;blohin@bazis;samusenko@bazis;sklad@bazis',
+				@Recipients             = 'gvv@bazis;blohin@bazis;samusenko@bazis;sklad@bazis',
+				@blind_copy_recipients  = NULL,
+				@Subject                = @Subject,
+				@Body                   = @Body,
+				@Body_Format            = 'html'
+		END;
 	END;
 END
 GO

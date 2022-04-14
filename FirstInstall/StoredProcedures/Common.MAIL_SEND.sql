@@ -7,7 +7,7 @@ GO
 ALTER PROCEDURE [Common].[MAIL_SEND]
     @Recipients             VarChar(Max),
     @blind_copy_recipients  VarChar(Max)    = NULL,
-    @Subject                VarChar(255),
+    @Subject                NVarChar(255),
     @Body                   NVarChar(Max),
     @Body_Format            VarChar(20)     = 'TEXT'
 WITH EXECUTE AS OWNER

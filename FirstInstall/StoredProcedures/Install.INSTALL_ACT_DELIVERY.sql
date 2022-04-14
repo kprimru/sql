@@ -11,7 +11,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @Email VarChar(Max);
+	DECLARE
+		@CurClient	VarChar(256),
+		@Subject	VarChar(255),
+		@Body		VarChar(Max),
+		@Email VarChar(Max);
+
+	DECLARE @Clients Table(CL_NAME VarChar(256));
 
 	SELECT @Email = PER_EMAIL
 	FROM Personal.PersonalActive
@@ -55,46 +61,61 @@ BEGIN
 	CLOSE ID
 	DEALLOCATE ID
 
-	DECLARE @Body VarChar(Max);
+	INSERT INTO @Clients
+	SELECT DISTINCT CL_NAME
+	FROM Install.InstallFullView AS C
+	WHERE IND_ID IN (SELECT ID FROM Common.TableFromList(@IND_ID, ','))
 
-	SET @Body =
-		'
-		<h2>Переданы акты:</h2>
-		<table width=800 border="1">
-			<tr>
-				<td width=50>№</td>
-				<td width=100>Поставщик</td>
-				<td width=250>Клиент</td>
-				<td width=400>Дистрибутивы</td>
-			</tr>';
+	SET @CurClient = '';
 
-	SELECT
-		@Body = @Body + '
-		<tr>
-			<td>' + Cast(Row_Number() OVER(ORDER BY CL_NAME) AS VarChar(100)) + '</td>
-			<td>' + VD_NAME + '</td>
-			<td>' + CL_NAME + '</td>
-			<td>' + [DistrData] + '</td>
-		</tr>'
-	FROM
-	(
+	WHILE (1 = 1) BEGIN
+		SELECT TOP (1)
+			@CurClient = CL_NAME
+		FROM @Clients
+		WHERE CL_NAME > @CurClient
+		ORDER BY CL_NAME;
+
+		IF @@RowCount < 1
+			BREAK;
+
+		SET @Subject = 'Передан акт, клиент: ' + @CurClient;
+
+		SET @Body =
+			'
+			<h2>Переданы акты: (' + @CurClient + '):</h2>
+			<table width=800 border="1">
+				<tr>
+					<td width=200>Поставщик</td>
+					<td width=600>Дистрибутивы</td>
+				</tr>';
+
 		SELECT
-			CL_NAME, VD_NAME,
+			@Body = @Body + '
+			<tr>
+				<td>' + VD_NAME + '</td>
+				<td>' + [DistrData] + '</td>
+			</tr>'
+	 	FROM
+		(
+			SELECT
+				VD_NAME,
 			[DistrData] = String_Agg('<div>' + C.SYS_SHORT + ' ' + C.DT_SHORT + ' ' + C.NT_NEW_NAME + ' ' + IND_DISTR + '</div>', Char(10))
-		FROM Install.InstallFullView AS C
-		WHERE IND_ID IN (SELECT ID FROM Common.TableFromList(@IND_ID, ','))
-		GROUP BY CL_NAME, VD_NAME
-	) AS C
-	ORDER BY CL_NAME
+			FROM Install.InstallFullView AS C
+			WHERE IND_ID IN (SELECT ID FROM Common.TableFromList(@IND_ID, ','))
+				AND C.CL_NAME = @CurClient
+			GROUP BY VD_NAME
+		) AS C
+		ORDER BY VD_NAME
 
-	SET @Body = @Body + '</table>'
+		SET @Body = @Body + '</table>'
 
-	EXEC [Common].[MAIL_SEND]
-		@Recipients             = 'denisov@bazis',--@Email
-		@blind_copy_recipients  = NULL,
-		@Subject                = 'Передан акт',
-		@Body                   = @Body,
-		@Body_Format            = 'html'
+		EXEC [Common].[MAIL_SEND]
+			@Recipients             = @Email,
+			@blind_copy_recipients  = NULL,
+			@Subject                = @Subject,
+			@Body                   = @Body,
+			@Body_Format            = 'html'
+	END;
 END
 GO
 GRANT EXECUTE ON [Install].[INSTALL_ACT_DELIVERY] TO rl_install_act_sign;
