@@ -42,18 +42,18 @@ BEGIN
 
 		SELECT @ID = ID FROM @TBL
 
-		IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
+		IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1 AND (SELECT SystemBaseName FROM dbo.SystemTable WHERE SystemID = @SYSTEM) != 'SKS'
 		BEGIN
 			INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-				SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
-				WHERE NOT EXISTS
-					(
-						SELECT *
-						FROM dbo.ClientStudyClaim a
-						WHERE ID_CLIENT = @CLIENT
-							AND ID_MASTER IS NULL
-							AND UPD_USER = 'Автомат'
-					)
+			SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
+			WHERE NOT EXISTS
+				(
+					SELECT *
+					FROM dbo.ClientStudyClaim a
+					WHERE ID_CLIENT = @CLIENT
+						AND ID_MASTER IS NULL
+						AND UPD_USER = 'Автомат'
+				);
 
 			EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
 		END
