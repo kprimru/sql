@@ -52,6 +52,21 @@ BEGIN
 				WHERE DistrNumber = DISTR AND CompNumber = COMP AND HostID = ID_HOST AND SST_WEIGHT = 0
 			)
 
+		DELETE
+		FROM #distr
+		WHERE EXISTS
+			(
+				SELECT *
+				FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
+				WHERE DistrNumber = DISTR AND CompNumber = COMP AND HostID = ID_HOST
+					AND
+					(
+							a.SystemBaseName IN ('SKS')
+						OR
+							a.SystemBaseName LIKE 'SPK-%'
+					)
+			)
+
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL
 			DROP TABLE #result
 
