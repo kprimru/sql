@@ -88,7 +88,7 @@ RETURN
         (
             SELECT
                 [Row_Number]        = Row_Number() Over(ORDER BY (SELECT 0)),
-                [IsActualRow]       = CASE WHEN @IsActual = 1 AND V.value('(./name)[1]', 'VarChar(Max)') LIKE '%Актуализ%' THEN 1 ELSE 0 END,
+                [IsActualRow]       = CASE WHEN V.value('(./name)[1]', 'VarChar(Max)') LIKE '%Актуализ%' THEN 1 ELSE 0 END,
                 [Product_GUId]      = V.value('(./guid)[1]', 'VarChar(100)'),
                 --[ProductOKPD2Code]  = V.value('(./OKPD2/code)[1]', 'VarChar(100)'),
 				[ProductOKPD2Code]  = IsNull(V.value('(./OKPD2/code)[1]', 'VarChar(100)'), V.value('(./KTRU/code)[1]', 'VarChar(100)')),
@@ -103,7 +103,11 @@ RETURN
         ORDER BY CASE
             WHEN PP.[ProductPrice] = @ActPrice THEN 1 ELSE 2 END,
             --CASE WHEN PP.[ProductSum] = S.[StagePrice] THEN 1 ELSE 2 END,
-            CASE WHEN [IsActualRow] = 1 THEN 0 ELSE 1 END,
+            CASE
+				WHEN @IsActual = 1 AND PP.[IsActualRow] = 1 THEN 0
+				WHEN @IsActual = 0 AND PP.[IsActualRow] = 0 THEN 0
+				ELSE 1
+			END,
             [Row_Number]
     ) AS PP
 )

@@ -52,8 +52,16 @@ BEGIN
         [ClientTypeName]    VarChar(20),
         [ClientKindName]    VarChar(50),
         [Names]             VarChar(Max),
-        [Addresses]         VarChar(Max),
-        [Personals]         VarChar(Max),
+        [Address]			VarChar(Max),
+		[DirFIO]			VarChar(Max),
+		[DirPos]			VarChar(Max),
+		[DirPhone]			VarChar(Max),
+		[BuhFIO]			VarChar(Max),
+		[BuhPos]			VarChar(Max),
+		[BuhPhone]			VarChar(Max),
+		[ResFIO]			VarChar(Max),
+		[ResPos]			VarChar(Max),
+		[ResPhone]			VarChar(Max),
         PRIMARY KEY CLUSTERED([Row:index])
     );
 
@@ -99,8 +107,16 @@ BEGIN
             [ClientTypeName]    = CT.[ClientTypeName],
             [ClientKindName]    = CK.[Name],
             [Names]             = N.[NAMES],
-            [Addresses]         = A.[ADDRESSES],
-            [Personals]         = PR.[PERSONALS]
+            [Addresses]         = A.[ADDRESS],
+            [DirFIO]			= DIR.[CP_FIO],
+			[DirPos]			= DIR.[CP_POS],
+			[DirPhone]			= DIR.[CP_PHONE],
+			[BuhFIO]			= BUH.[CP_FIO],
+			[BuhPos]			= BUH.[CP_POS],
+			[BuhPhone]			= BUH.[CP_PHONE],
+			[ResFIO]			= RES.[CP_FIO],
+			[ResPos]			= RES.[CP_POS],
+			[ResPhone]			= RES.[CP_PHONE]
         FROM [dbo].[ClientTable]                AS C
         LEFT JOIN [dbo].[ServiceTable]          AS S    ON S.[ServiceID] = C.[ClientServiceID]
         LEFT JOIN [dbo].[DayTable]              AS D    ON D.[DayID] = C.[DayID]
@@ -127,39 +143,71 @@ BEGIN
         OUTER APPLY
         (
             SELECT
-                [ADDRESSES] =
+                [ADDRESS] =
                     (
-                        SELECT A.[CA_STR_PRNT] + CHAR(10)
+                        SELECT A.[CA_STR_PRNT]
                         FROM [dbo].[ClientAddressFullView] AS A
                         WHERE A.[CA_ID_CLIENT] = C.[ClientID]
-                        ORDER BY A.[CA_STR_PRNT]
-                        FOR XML PATH('')
+							AND A.[AT_REQUIRED] = 1
                     )
         ) AS A
-        OUTER APPLY
-        (
-            SELECT
-                [PERSONALS] =
-                    (
-                        SELECT
-                            CASE ISNULL(CP_SURNAME, '')
-                                WHEN '' THEN ''
-                                ELSE CP_SURNAME + ' '
-                            END +
-                            CASE ISNULL(CP_NAME, '')
-                                WHEN '' THEN ''
-                                ELSE CP_NAME + ' '
-                            END +
-                            ISNULL(CP_PATRON, '') +
-                            ' ' + CP_POS + ' ' + CP_PHONE + ' ' + CP_EMAIL +
-                            CHAR(10)
-                        FROM [dbo].[ClientPersonal]             AS PR
-                        LEFT JOIN [dbo].[ClientPersonalType]    AS T ON T.[CPT_ID] = PR.[CP_ID_TYPE]
-                        WHERE PR.[CP_ID_CLIENT] = C.[ClientID]
-                        ORDER BY T.[CPT_REQUIRED] DESC, T.[CPT_ORDER], [CP_SURNAME], [CP_NAME]
-                        FOR XML PATH('')
-                    )
-        ) AS PR
+		OUTER APPLY
+		(
+			SELECT
+				[CP_FIO] = CASE ISNULL(CP_SURNAME, '')
+							WHEN '' THEN ''
+							ELSE CP_SURNAME + ' '
+						END +
+						CASE ISNULL(CP_NAME, '')
+							WHEN '' THEN ''
+							ELSE CP_NAME + ' '
+						END +
+						ISNULL(CP_PATRON, ''),
+					[CP_POS]	= CP_POS,
+					CP_PHONE	= CP_PHONE
+            FROM [dbo].[ClientPersonal]             AS PR
+            INNER JOIN [dbo].[ClientPersonalType]    AS T ON T.[CPT_ID] = PR.[CP_ID_TYPE]
+            WHERE PR.[CP_ID_CLIENT] = C.[ClientID]
+				AND T.[CPT_PSEDO] = 'DIR'
+		) AS DIR
+		OUTER APPLY
+		(
+			SELECT
+				[CP_FIO] = CASE ISNULL(CP_SURNAME, '')
+							WHEN '' THEN ''
+							ELSE CP_SURNAME + ' '
+						END +
+						CASE ISNULL(CP_NAME, '')
+							WHEN '' THEN ''
+							ELSE CP_NAME + ' '
+						END +
+						ISNULL(CP_PATRON, ''),
+					[CP_POS]	= CP_POS,
+					CP_PHONE	= CP_PHONE
+            FROM [dbo].[ClientPersonal]             AS PR
+            INNER JOIN [dbo].[ClientPersonalType]    AS T ON T.[CPT_ID] = PR.[CP_ID_TYPE]
+            WHERE PR.[CP_ID_CLIENT] = C.[ClientID]
+				AND T.[CPT_PSEDO] = 'BUH'
+		) AS BUH
+		OUTER APPLY
+		(
+			SELECT
+				[CP_FIO] = CASE ISNULL(CP_SURNAME, '')
+							WHEN '' THEN ''
+							ELSE CP_SURNAME + ' '
+						END +
+						CASE ISNULL(CP_NAME, '')
+							WHEN '' THEN ''
+							ELSE CP_NAME + ' '
+						END +
+						ISNULL(CP_PATRON, ''),
+					[CP_POS]	= CP_POS,
+					CP_PHONE	= CP_PHONE
+            FROM [dbo].[ClientPersonal]             AS PR
+            INNER JOIN [dbo].[ClientPersonalType]    AS T ON T.[CPT_ID] = PR.[CP_ID_TYPE]
+            WHERE PR.[CP_ID_CLIENT] = C.[ClientID]
+				AND T.[CPT_PSEDO] = 'RES'
+		) AS RES
         WHERE [ID_MASTER] = @Client_Id
         ORDER BY C.[ClientLast] DESC;
 
@@ -194,8 +242,16 @@ BEGIN
                             [ClientTypeName],
                             [ClientKindName],
                             [Names],
-                            [Addresses],
-                            [Personals]
+                            [Address],
+                            [DirFIO],
+							[DirPos],
+							[DirPhone],
+							[BuhFIO],
+							[BuhPos],
+							[BuhPhone],
+							[ResFIO],
+							[ResPos],
+							[ResPhone]
                             );
 
         WITH CTE AS
@@ -232,8 +288,16 @@ BEGIN
                 D.[ClientTypeName],
                 D.[ClientKindName],
                 D.[Names],
-                D.[Addresses],
-                D.[Personals],
+                D.[Address],
+                D.[DirFIO],
+				D.[DirPos],
+				D.[DirPhone],
+				D.[BuhFIO],
+				D.[BuhPos],
+				D.[BuhPhone],
+				D.[ResFIO],
+				D.[ResPos],
+				D.[ResPhone],
                 D.[Checksum],
                 D.[UpdateDate],
                 D.[UPD_USER]
@@ -274,8 +338,16 @@ BEGIN
                 D.[ClientTypeName],
                 D.[ClientKindName],
                 D.[Names],
-                D.[Addresses],
-                D.[Personals],
+                D.[Address],
+                D.[DirFIO],
+				D.[DirPos],
+				D.[DirPhone],
+				D.[BuhFIO],
+				D.[BuhPos],
+				D.[BuhPhone],
+				D.[ResFIO],
+				D.[ResPos],
+				D.[ResPhone],
                 D.[Checksum],
                 D.[UpdateDate],
                 D.[UPD_USER]
@@ -313,10 +385,19 @@ BEGIN
             [ClientTypeName],
             [ClientKindName],
             [Names],
-            [Addresses],
-            [Personals],
+            [Address],
+            [DirFIO],
+			[DirPos],
+			[DirPhone],
+			[BuhFIO],
+			[BuhPos],
+			[BuhPhone],
+			[ResFIO],
+			[ResPos],
+			[ResPhone],
             [UpdateDate],
-            [UPD_USER]
+            [UPD_USER],
+			[RowVisible] = Cast(1 AS Bit)
         FROM CTE
         WHERE [Index] = 1
         ORDER BY [UpdateDate] DESC
