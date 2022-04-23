@@ -7,10 +7,12 @@ GO
 
 ALTER FUNCTION [dbo].[EISData@Parse]
 (
-    @Data       Xml,
-    @ActDate    SmallDateTime,
-    @ActPrice   Money,
-    @IsActual   Bit
+    @Data			Xml,
+    @ActDate		SmallDateTime,
+    @ActPrice		Money,
+    @IsActual		Bit,
+	@StageGuid		VarChar(100),
+	@ProductGuid	VarChar(100)
 )
 RETURNS TABLE
 AS
@@ -67,7 +69,10 @@ RETURN
             --FROM EP.[ExecutionPeriods].nodes('*/stages') AS E(S)
             FROM EP.[BudgetFunds].nodes('*/stages') AS E(S)
         ) AS SS
-        WHERE @ActDate BETWEEN SS.[StartDate] AND SS.[FinishDate]
+        WHERE
+			(@StageGuid IS NOT NULL AND SS.[Stage_GUId] = @StageGuid)
+			OR
+			(@StageGuid IS NULL AND @ActDate BETWEEN SS.[StartDate] AND SS.[FinishDate])
         ORDER BY CASE WHEN [IsActualRow] = 1 THEN 0 ELSE 1 END
     ) AS S
     OUTER APPLY
@@ -99,7 +104,7 @@ RETURN
                 [ProductPrice]      = V.value('(./price)[1]', 'VarChar(100)')
             FROM P.[Products].nodes('/products/product') AS PR(V)
         ) AS PP
-        --WHERE PP.[ProductPrice] = S.[StagePrice]
+        WHERE (@ProductGuid IS NOT NULL AND PP.[Product_GUId] = @ProductGuid)
         ORDER BY CASE
             WHEN PP.[ProductPrice] = @ActPrice THEN 1 ELSE 2 END,
             --CASE WHEN PP.[ProductSum] = S.[StagePrice] THEN 1 ELSE 2 END,

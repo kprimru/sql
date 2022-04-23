@@ -5,8 +5,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER PROCEDURE [dbo].[ACT_PRINT?UPD]
-    @Act_Id     Int,
-    @ActData    VarBinary(Max) = NULL
+    @Act_Id			Int,
+	@StageGuid		VarChar(100)	= NULL,
+	@ProductGuid	VarChar(100)	= NULL,
+    @ActData		VarBinary(Max)	= NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -18,7 +20,6 @@ BEGIN
 
     DECLARE
         @IdentGUId      VarChar(100),
-        @Stage          VarChar(100),
         @ActDate        SmallDateTime,
         @ActPrice       Money,
         @Client_Id      Int,
@@ -41,9 +42,10 @@ BEGIN
 
         SET @File_Id    = Cast(NewId() AS VarChar(100));
         SET @IdentGUId  = Replace(Cast(NewId() AS VarChar(100)), '-', '');
+
         SELECT
             @ActDate = ACT_DATE,
-            @Client_Id  = ACT_ID_CLIENT,
+            @Client_Id  = IsNull(ACT_ID_PAYER, ACT_ID_CLIENT),
             @ActPrice = ACT_PRICE,
             @IsActual = IsNull(I.[IsActual], 0)
         FROM dbo.ActTable
@@ -169,7 +171,7 @@ BEGIN
                                                 [Улица]     = CA.ST_NAME,
                                                 [Дом]       = CA_HOME
                                             FROM dbo.ClientAddressView AS CA
-                                            WHERE CA.CA_ID_CLIENT = CL.CL_ID
+                                            WHERE CA.CA_ID_CLIENT = @Client_Id
                                                 AND CA.CA_ID_TYPE = 1
                                             FOR XML RAW('АдрРФ'), TYPE, ROOT('Адрес')
                                         ),
@@ -179,13 +181,29 @@ BEGIN
                                                 [ЭлПочта]   = NullIf(CL.CL_EMAIL, '')
                                             FOR XML RAW('Контакт'), TYPE
                                         ),
+										/*
                                         (
                                             SELECT
                                                 [Id] = NULL
                                             FOR XML RAW('СвБанк'), TYPE, ROOT('БанкРекв')
                                         )
+										*/
+										(
+											SELECT
+                                                [НомерСчета] = CL.CL_ACCOUNT,
+                                                (
+                                                    SELECT
+                                                        [НаимБанк]  = BA.BA_NAME,
+                                                        [БИК]       = BA.BA_BIK,
+                                                        [КорСчет]   = IsNull(NullIf(BA.BA_LORO, ''), '-')
+                                                    FROM dbo.BankTable AS BA
+                                                    WHERE BA_ID = CL_ID_BANK
+                                                    FOR XML RAW('СвБанк'), TYPE
+                                                )
+                                            FOR XML RAW('БанкРекв'), TYPE
+										)
                                     FROM dbo.ClientTable AS CL
-                                    WHERE CL.CL_ID = I.INS_ID_CLIENT
+                                    WHERE CL.CL_ID = @Client_Id
                                     FOR XML RAW ('СвПокуп'), TYPE
                                 ),
                                 (
@@ -210,16 +228,18 @@ BEGIN
                             SELECT
                                 (
                                     SELECT
-                                        [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
-                                        --[НаимТов]       = ED.[ProductName],
-                                        [НаимТов]       = R.INR_GOOD + ' ' + R.INR_NAME,
+                                        --[НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+										[НомСтр]        = 1,
+                                        [НаимТов]       = ED.[ProductName],
+                                        --[НаимТов]       = R.INR_GOOD + ' ' + R.INR_NAME,
                                         [ОКЕИ_Тов]      = ED.[ProductOKEICode],
                                         [КолТов]        = 1,
                                         -- ToDo хардкод 20%
-                                        [ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
-                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(R.INR_SUM * IsNull(R.INR_COUNT, 1), '.'),
+                                        --[ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
+										[ЦенаТов]       = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                         [НалСт]         = '20%',
-                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
+                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                         (
                                             SELECT
                                                 [БезАкциз] = 'без акциза'
@@ -227,7 +247,7 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [СумНал] = dbo.MoneyFormatCustom(R.INR_SNDS, '.')
+                                                [СумНал] = dbo.MoneyFormatCustom(Sum(R.INR_SNDS), '.')
                                             FOR XML PATH('СумНал'), TYPE
                                         ),
                                         (
@@ -242,13 +262,16 @@ BEGIN
                                     INNER JOIN dbo.DistrView AS D WITH(NOEXPAND) ON R.INR_ID_DISTR = D.DIS_ID
                                     INNER JOIN dbo.SaleObjectTable AS S ON S.SO_ID = D.SYS_ID_SO
                                     INNER JOIN dbo.TaxTable AS T ON T.TX_ID = R.INR_ID_TAX
+									/*
                                     OUTER APPLY
                                     (
                                         SELECT
                                             [Price] = [Common].[Trim#Right](Convert(VarChar(100), Cast(Cast(R.INR_SALL AS Decimal(20, 12)) / (1 + 20.0/100) AS Decimal(20, 11))), '0')
                                     ) AS P
+									*/
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
-                                    ORDER BY D.SYS_ORDER, D.DIS_NUM FOR XML RAW('СведТов'), TYPE
+                                    --ORDER BY D.SYS_ORDER, D.DIS_NUM
+									FOR XML RAW('СведТов'), TYPE
                                 ),
                                 (
                                     SELECT
@@ -335,8 +358,8 @@ BEGIN
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
-            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual) AS ED
+			INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = @Client_Id
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual, @StageGuid, @ProductGuid) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );
@@ -372,7 +395,10 @@ BEGIN
                                     SELECT
                                         (
                                             SELECT
-                                                [ИдТРУ]         = ED.[Product_GUId],
+                                                [ИдТРУ]         = CASE
+																	WHEN @Client_Id = 10826 THEN '1B725AAF13F64E84BF3460E269A20448'
+																	ELSE ED.[Product_GUId]
+																  END,
                                                 [КодТов]        = ED.[ProductOKPD2Code],
                                                 [НаимТов]       = ED.[ProductName],
                                                 --[НаимТов]       = Max(INR_GOOD),
@@ -414,10 +440,11 @@ BEGIN
                                         ),
                                         (
                                             SELECT
-                                                [НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+                                                --[НомСтр]        = Row_Number() OVER(ORDER BY D.SYS_ORDER, D.DIS_NUM),
+												[НомСтр]        = 1,
                                                 --[ИдТРУ]     = F.EIS_DATA.value('(/export/contract/products/product/guid)[1]', 'VarChar(100)'),
                                                 [ИдТРУ]         = Replace(Cast(NewId() AS VarChar(100)), '-', ''),
-                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(R.INR_SALL, '.'),
+                                                [ЦенаСНДС]      = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                                 [ПрУлучшХаракт] = 1
                                                 /*,
                                                 (
@@ -466,7 +493,7 @@ BEGIN
                                 )
                                 */
                             FROM dbo.ClientAddressView AS CA
-                            WHERE CA.CA_ID_CLIENT = A.ACT_ID_CLIENT
+                            WHERE CA.CA_ID_CLIENT = @Client_Id
                                 AND CA.CA_ID_TYPE = 1
                             FOR XML RAW('СведМестоПоставки'), TYPE
 
@@ -494,8 +521,8 @@ BEGIN
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
             INNER JOIN dbo.InvoiceSaleTable AS I ON A.ACT_ID_INVOICE = I.INS_ID
             INNER JOIN dbo.PeriodTable AS P ON ACT_DATE BETWEEN PR_DATE AND PR_END_DATE
-            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
-            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual) AS ED
+            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = @Client_Id
+            OUTER APPLY [dbo].[EISData@Parse](F.EIS_DATA, @ActDate, @ActPrice, @IsActual, @StageGuid, @ProductGuid) AS ED
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлУПДПрод'), TYPE
         );
@@ -602,14 +629,14 @@ BEGIN
                 )
             FROM dbo.ActTable AS A
             INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
-            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = A.ACT_ID_CLIENT
+            INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = @Client_Id
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлПакет'), TYPE
         );
 
         SELECT
-            [Folder]        = RTrim(Ltrim(C.CL_PSEDO)),
-            [FileName]      = IsNull(F.[FileName], Cast(NewId() AS VarChar(50))), -- ToDo костыль
+            [Folder]        = Replace(Replace(Replace(RTrim(Ltrim(C.CL_PSEDO)), '\', ''), ':', ''), '/', ''),
+            [FileName]      = IsNull(Replace(Replace(Replace(F.[FileName], '\', ''), ':', ''), '/', ''), Cast(NewId() AS VarChar(50))), -- ToDo костыль
             [Data]          = F.[Data]
         FROM dbo.ActTable           AS A
         INNER JOIN dbo.ClientTable  AS C ON A.ACT_ID_CLIENT = C.CL_ID
