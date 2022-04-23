@@ -108,24 +108,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Название', 1,
-						(
-							SELECT TOP 1 ClientFullName
-							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 ClientFullName
-							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.ClientFullName,
+						c.ClientFullName,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientFullName, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientFullName
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.ClientFullName != b.ClientFullName
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @INN = 1
@@ -153,24 +165,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'ИНН', 2,
-						(
-							SELECT TOP 1 ClientINN
-							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 ClientINN
-							FROM dbo.ClientUpdateView z WITH(NOEXPAND)
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.ClientINN,
+						c.ClientINN,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientINN, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientINN
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.ClientINN != b.ClientINN
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @ADDRESS = 1
@@ -198,24 +222,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Адрес', 3,
-						(
-							SELECT TOP 1 CA_STR
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 CA_STR
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.CA_STR,
+						c.CA_STR,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 CA_STR, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 CA_STR
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.CA_STR != b.CA_STR
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @DIR = 1
@@ -243,24 +279,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'ФИО руководителя', 4,
-						(
-							SELECT TOP 1 DIR_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 DIR_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.DIR_FIO,
+						c.DIR_FIO,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_FIO, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_FIO
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.DIR_FIO != b.DIR_FIO
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @DIR_POS = 1
@@ -288,24 +336,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Должность руководителя', 5,
-						(
-							SELECT TOP 1 DIR_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 DIR_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.DIR_POS,
+						c.DIR_POS,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_POS, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_POS
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.DIR_POS != b.DIR_POS
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @DIR_PHONE = 1
@@ -333,24 +393,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Телефон руководителя', 6,
-						(
-							SELECT TOP 1 DIR_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 DIR_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.DIR_PHONE,
+						c.DIR_PHONE,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_PHONE, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 DIR_PHONE
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.DIR_PHONE != b.DIR_PHONE
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @BUH = 1
@@ -378,24 +450,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'ФИО гл.бух.', 7,
-						(
-							SELECT TOP 1 BUH_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 BUH_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.BUH_FIO,
+						c.BUH_FIO,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_FIO, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_FIO
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.BUH_FIO != b.BUH_FIO
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @BUH_POS = 1
@@ -423,24 +507,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Должность гл.бух.', 8,
-						(
-							SELECT TOP 1 BUH_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 BUH_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.BUH_POS,
+						c.BUH_POS,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_POS, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_POS
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.BUH_POS != b.BUH_POS
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @BUH_PHONE = 1
@@ -468,24 +564,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Телефон гл.бух.', 9,
-						(
-							SELECT TOP 1 BUH_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 BUH_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.BUH_PHONE,
+						c.BUH_PHONE,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_PHONE, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 BUH_PHONE
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.BUH_PHONE != b.BUH_PHONE
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @RES = 1
@@ -513,24 +621,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'ФИО ответственного', 10,
-						(
-							SELECT TOP 1 RES_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 RES_FIO
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.RES_FIO,
+						c.RES_FIO,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_FIO, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_FIO
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.RES_FIO != b.RES_FIO
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @RES_POS = 1
@@ -558,24 +678,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Должность ответственного', 11,
-						(
-							SELECT TOP 1 RES_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 RES_POS
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.RES_POS,
+						c.RES_POS,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_POS, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_POS
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.RES_POS != b.RES_POS
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 		IF @RES_PHONE = 1
@@ -603,24 +735,36 @@ BEGIN
 					SELECT
 						a.ID,
 						'Телефон ответственного', 12,
-						(
-							SELECT TOP 1 RES_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast <= @BEGIN
-							ORDER BY ClientLast DESC
-						),
-						(
-							SELECT TOP 1 RES_PHONE
-							FROM dbo.ClientEditionView z
-							WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
-								AND ClientLast < @END
-							ORDER BY ClientLast DESC
-						),
-						ClientLast, UPD_USER
-					FROM
-						#client a
-						INNER JOIN dbo.ClientTable b ON a.ID = b.ClientID
+						b.RES_PHONE,
+						c.RES_PHONE,
+						z.ClientLast, z.UPD_USER
+					FROM #client a
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_PHONE, ClientLast
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast <= @BEGIN
+						ORDER BY ClientLast DESC
+					) AS b
+					OUTER APPLY
+					(
+						SELECT TOP 1 RES_PHONE
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+						ORDER BY ClientLast DESC
+					) AS c
+					OUTER APPLY
+					(
+						SELECT TOP 1 ClientLast,UPD_USER
+						FROM dbo.ClientEditionView z
+						WHERE (z.ClientID = a.ID OR z.ID_MASTER = a.ID)
+							AND ClientLast < @END
+							AND z.RES_PHONE != b.RES_PHONE
+							AND z.ClientLast > b.CLientLast
+						ORDER BY ClientLast
+					) AS Z
 		END
 
 
