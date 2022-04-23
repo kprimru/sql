@@ -33,9 +33,6 @@ BEGIN
 			INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 		WHERE a.ServiceID = @SERVICE
 
-		IF @DATE IS NULL
-			SET @DATE = DATEADD(MONTH, -1, dbo.DateOf(GETDATE()))
-
 		IF OBJECT_ID('tempdb..#check') IS NOT NULL
 			DROP TABLE #check
 

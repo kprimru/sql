@@ -27,7 +27,6 @@ BEGIN
 	) AS o_O
 	ORDER BY SystemOrder, DistrNumber, SystemPrice
 END
-
 GO
 GRANT EXECUTE ON [dbo].[ACT_DETAIL_PRINT] TO DBCount;
 GO

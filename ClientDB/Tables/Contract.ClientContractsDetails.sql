@@ -20,6 +20,6 @@ CREATE TABLE [Contract].[ClientContractsDetails]
         CONSTRAINT [FK_Contract.ClientContractsDetails(Type_Id)_Contract.ContractTypeTable(ContractTypeID)] FOREIGN KEY  ([Type_Id]) REFERENCES [dbo].[ContractTypeTable] ([ContractTypeID]),
         CONSTRAINT [FK_Contract.ClientContractsDetails(PayType_Id)_Contract.ContractPayTable(ContractPayID)] FOREIGN KEY  ([PayType_Id]) REFERENCES [dbo].[ContractPayTable] ([ContractPayID]),
         CONSTRAINT [FK_Contract.ClientContractsDetails(Discount_Id)_Contract.DiscountTable(DiscountID)] FOREIGN KEY  ([Discount_Id]) REFERENCES [dbo].[DiscountTable] ([DiscountID]),
-        CONSTRAINT [FK__ClientCon__Docum__6F57D01E] FOREIGN KEY  ([DocumentFlowType_Id]) REFERENCES [Contract].[Contracts->Documents Flow Types] ([Id])
+        CONSTRAINT [FK_Contract.ClientContractsDetails(DocumentFlowType_Id)_Contract.Contracts->Documents Flow Types(Id)] FOREIGN KEY  ([DocumentFlowType_Id]) REFERENCES [Contract].[Contracts->Documents Flow Types] ([Id])
 );
 GO

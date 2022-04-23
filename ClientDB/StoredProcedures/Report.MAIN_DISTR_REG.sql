@@ -35,6 +35,7 @@ BEGIN
         WHERE HostReg = 'LAW'
 
         SELECT
+			[Система]		= R.[SystemShortName],
             [Дистрибутив]   = DistrStr,
             [Тип]           = SST_SHORT,
             [Сеть]          = NT_SHORT,

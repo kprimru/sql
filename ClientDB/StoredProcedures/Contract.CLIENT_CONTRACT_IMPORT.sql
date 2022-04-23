@@ -16,7 +16,8 @@ ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_IMPORT]
 	@PayType_Id			Int,
 	@Discount_Id		Int,
 	@ContractPrice		Money,
-	@Comments			VarChar(Max)
+	@Comments			VarChar(Max),
+	@DocumentFlowType_Id	TinyInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -53,8 +54,8 @@ BEGIN
 			WHERE [ID] = @Contract_Id
 				AND [DateFrom] IS NULL;
 
-			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments])
-			VALUES (@Contract_Id, @DateFrom, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments);
+			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments], [DocumentFlowType_Id])
+			VALUES (@Contract_Id, @DateFrom, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments, @DocumentFlowType_Id);
 		END;
 
 		IF @@TranCount > 0
