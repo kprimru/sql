@@ -37,7 +37,7 @@ BEGIN
 		INNER JOIN dbo.DiscountTable DD ON DD.DiscountID = D.Discount_Id
 		INNER JOIN dbo.ContractPayTable P ON P.ContractPayID = D.PayType_Id
 		INNER JOIN dbo.ContractTypeTable T ON T.ContractTypeId = D.Type_Id
-		LEFT JOIN [Contract].[Contracts->Documents Flow Types@Select] AS F ON F.[Id] = D.[DocumentFlowType_Id]
+		LEFT JOIN [Contract].[Contracts->Documents Flow Types] AS F ON F.[Id] = D.[DocumentFlowType_Id]
 		WHERE CC.Client_Id = @ClientId
 		ORDER BY DateFrom DESC
 

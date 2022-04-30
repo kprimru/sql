@@ -20,5 +20,6 @@ CREATE TABLE [Common].[MailingLog]
 GO
 CREATE NONCLUSTERED INDEX [IX_Common.MailingLog(Address)] ON [Common].[MailingLog] ([Address] ASC);
 CREATE NONCLUSTERED INDEX [IX_Common.MailingLog(Date)] ON [Common].[MailingLog] ([Date] ASC);
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220307-14475] ON [Common].[MailingLog] ([Date] ASC);
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-20220307-144757] ON [Common].[MailingLog] ([Date] ASC);
 GO
