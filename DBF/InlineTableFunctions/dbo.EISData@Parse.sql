@@ -105,6 +105,7 @@ RETURN
             FROM P.[Products].nodes('/products/product') AS PR(V)
         ) AS PP
         WHERE (@ProductGuid IS NOT NULL AND PP.[Product_GUId] = @ProductGuid)
+			OR @ProductGuid IS NULL
         ORDER BY CASE
             WHEN PP.[ProductPrice] = @ActPrice THEN 1 ELSE 2 END,
             --CASE WHEN PP.[ProductSum] = S.[StagePrice] THEN 1 ELSE 2 END,

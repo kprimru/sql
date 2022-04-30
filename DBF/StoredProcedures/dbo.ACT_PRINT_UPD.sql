@@ -236,8 +236,10 @@ BEGIN
                                         [КолТов]        = 1,
                                         -- ToDo хардкод 20%
                                         --[ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
-										[ЦенаТов]       = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
-                                        [СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+										[ЦенаТов]       = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
+														  --dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        [СтТовБезНДС]   = --[dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
+														  dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                         [НалСт]         = '20%',
                                         [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                         (
@@ -270,12 +272,18 @@ BEGIN
                                     ) AS P
 									*/
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
+									GROUP BY TX_PERCENT
                                     --ORDER BY D.SYS_ORDER, D.DIS_NUM
 									FOR XML RAW('СведТов'), TYPE
                                 ),
                                 (
                                     SELECT
-                                        [СтТовБезНДСВсего]  = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        [СтТовБезНДСВсего]  = --[dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
+															  dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+										/*CASE
+																WHEN @Client_Id = 11011 THEN '41441.66666666667'
+																ELSE dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.')
+															END,*/
                                         [СтТовУчНалВсего]   = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                         (
                                             SELECT
@@ -283,7 +291,9 @@ BEGIN
                                             FOR XML PATH('СумНалВсего'), TYPE
                                         )
                                     FROM dbo.InvoiceRowTable AS R
+									INNER JOIN dbo.TaxTable AS T ON T.TX_ID = R.INR_ID_TAX
                                     WHERE R.INR_ID_INVOICE = I.INS_ID
+									GROUP BY TX_PERCENT
                                     FOR XML RAW('ВсегоОпл'), TYPE
                                 )
                             FOR XML RAW('ТаблСчФакт'), TYPE
