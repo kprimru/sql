@@ -79,6 +79,7 @@ DECLARE @SrcIndexes Table
     [Schema]                SysName,
     [Table]                 SysName,
     [Name]                  SysName,
+	[Filter]				VarChar(Max),
     [Columns]               VarChar(Max),
     [Included]              VarChar(Max),
     [IsClustered]           Bit,
@@ -92,6 +93,7 @@ DECLARE @DstIndexes Table
     [Schema]                SysName,
     [Table]                 SysName,
     [Name]                  SysName,
+	[Filter]				VarChar(Max),
     [Columns]               VarChar(Max),
     [Included]              VarChar(Max),
     [IsClustered]           Bit,
@@ -283,7 +285,7 @@ WHERE type = ''R'';');
 
 INSERT INTO @SrcIndexes
 EXEC ('SELECT
-    S.[name], O.[name], I.[name],
+    S.[name], O.[name], I.[name], I.[filter_definition],
     C.[Columns], IC.[IncludedColumns],
     [IsClustered] = CASE WHEN I.[type] = 1 THEN 1 WHEN I.[type] = 2 THEN 0 ELSE NULL END,
     I.[is_primary_key],
@@ -325,7 +327,7 @@ WHERE I.[type] != 0');
 
 INSERT INTO @DstIndexes
 EXEC ('SELECT
-    S.[name], O.[name], I.[name],
+    S.[name], O.[name], I.[name], I.[filter_definition],
     C.[Columns], IC.[IncludedColumns],
     [IsClustered] = CASE WHEN I.[type] = 1 THEN 1 WHEN I.[type] = 2 THEN 0 ELSE NULL END,
     I.[is_primary_key],
@@ -702,6 +704,7 @@ IF EXISTS (SELECT * FROM @SrcIndexes        S
 FULL JOIN @DstIndexes   D ON    S.[Schema] = D.[Schema]
                             AND S.[Table] = D.[Table]
                             --AND D.[Name] = S.[Name]
+							AND D.[Filter] = S.[Filter]
                             AND D.[Columns] = S.[Columns]
                             AND IsNull(D.[Included], '') = IsNull(S.[Included], '')
                             AND D.[IsClustered] = S.[IsClustered]
@@ -741,7 +744,9 @@ SELECT
                                 CASE WHEN S.[IsUnique] = 1 THEN ' UNIQUE' ELSE '' END +
                                 CASE WHEN S.[IsClustered] = 1 THEN ' CLUSTERED' ELSE ' NONCLUSTERED' END + 
                                 ' INDEX [' + S.[Name] + '] ON [' + S.[Schema] + '].[' + S.[Table] + '] (' + S.[Columns] + ')' +
-                                CASE WHEN S.[Included] IS NOT NULL THEN ' INCLUDE (' + S.[Included] + ')' ELSE '' END + ';'
+                                CASE WHEN S.[Included] IS NOT NULL THEN ' INCLUDE (' + S.[Included] + ')' ELSE '' END +
+								CASE WHEN S.[Filter] IS NOT NULL THEN ' WHERE (' + S.[Filter] + ')' ELSE '' END
+								+ ';'
                         END
                     END
                     
