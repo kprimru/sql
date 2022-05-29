@@ -24,18 +24,20 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT C.ID, C.NUM_S, C.SignDate, DateFrom, DateTo, ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments, DocumentFlowType_Id
-		FROM Contract.ClientContracts	CC
-		INNER JOIN Contract.Contract	C	ON C.ID = CC.Contract_Id
+		SELECT
+			C.[ID], C.[NUM_S], C.[SignDate], C.[DateFrom], C.[DateTo],
+			D.[ExpireDate], D.[Type_Id], D.[PayType_Id], D.[Discount_Id], D.[ContractPrice], D.[Comments], D.[DocumentFlowType_Id], D.[ActSignPeriod_Id]
+		FROM [Contract].[ClientContracts]	CC
+		INNER JOIN [Contract].[Contract]	C	ON C.ID = CC.Contract_Id
 		CROSS APPLY
 		(
-			SELECT TOP (1) ExpireDate, Type_Id, PayType_Id, Discount_Id, ContractPrice, Comments, DocumentFlowType_Id
-			FROM Contract.ClientContractsDetails CCD
-			WHERE CCD.Contract_Id = CC.Contract_Id
-			ORDER BY CCD.DATE DESC
+			SELECT TOP (1) CCD.[ExpireDate], CCD.[Type_Id], CCD.[PayType_Id], CCD.[Discount_Id], CCD.[ContractPrice], CCD.[Comments], CCD.[DocumentFlowType_Id], CCD.[ActSignPeriod_Id]
+			FROM [Contract].[ClientContractsDetails] CCD
+			WHERE CCD.[Contract_Id] = CC.[Contract_Id]
+			ORDER BY CCD.[DATE] DESC
 		) D
-		WHERE CC.Client_Id = @ClientId
-		ORDER BY DateFrom DESC
+		WHERE CC.[Client_Id] = @ClientId
+		ORDER BY C.[DateFrom] DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

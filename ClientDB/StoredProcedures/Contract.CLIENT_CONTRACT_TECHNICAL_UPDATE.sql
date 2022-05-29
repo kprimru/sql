@@ -18,7 +18,8 @@ ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_TECHNICAL_UPDATE]
 	@DateFrom				SmallDateTime,
 	@SignDate				SmallDateTime,
 	@DateTo					SmallDateTime,
-	@DocumentFlowType_Id	TinyInt
+	@DocumentFlowType_Id	TinyInt,
+	@ActSignPeriod_Id		SmallInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -49,7 +50,8 @@ BEGIN
 			[Discount_Id]			= @Discount_Id,
 			[ContractPrice]			= @ContractPrice,
 			[Comments]				= @Comments,
-			[DocumentFlowType_Id]	= @DocumentFlowType_Id
+			[DocumentFlowType_Id]	= @DocumentFlowType_Id,
+			[ActSignPeriod_Id]		= @ActSignPeriod_Id
 		WHERE [Contract_Id] = @Contract_Id
 			AND [DATE] = @Date
 

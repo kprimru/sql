@@ -43,16 +43,17 @@ BEGIN
 			[ContractPrice]			= D.[ContractPrice],
 			[Comments]				= D.[Comments],
 			[DocumentFlowType_Id]	= D.[DocumentFlowType_Id],
+			[ActSignPeriod_Id]		= D.[ActSignPeriod_Id],
 
 			[DocumentType_Id]		= F.[Type_Id],
 			[DocumentDate]			= F.[Date],
 			[DocumentNote]			= F.[Note]
-		FROM Contract.Contract C
+		FROM [Contract].[Contract] C
 		OUTER APPLY
 		(
 			SELECT TOP (1)
-				D.[DATE], D.[ExpireDate], D.[Type_Id], D.[PayType_Id], D.[Discount_Id], D.[ContractPrice], D.[Comments], D.[DocumentFlowType_Id]
-			FROM Contract.ClientContractsDetails D
+				D.[DATE], D.[ExpireDate], D.[Type_Id], D.[PayType_Id], D.[Discount_Id], D.[ContractPrice], D.[Comments], D.[DocumentFlowType_Id], D.[ActSignPeriod_Id]
+			FROM [Contract].[ClientContractsDetails] D
 			WHERE	C.[Id] = D.[Contract_Id]
 				AND (D.[DATE] = @Date OR @Date IS NULL)
 			ORDER BY D.[DATE] DESC
@@ -61,11 +62,11 @@ BEGIN
 		(
 			SELECT TOP (1)
 				F.[Type_Id], F.[Date], F.[Note]
-			FROM Contract.ClientContractsDocuments F
+			FROM [Contract].[ClientContractsDocuments] F
 			WHERE	F.[Contract_Id] = @Id
 				AND F.[RowIndex] IS NULL
 		) F
-		WHERE ID = @Id
+		WHERE C.[ID] = @Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

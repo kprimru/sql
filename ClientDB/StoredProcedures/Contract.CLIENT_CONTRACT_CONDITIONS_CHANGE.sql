@@ -19,7 +19,8 @@ ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_CONDITIONS_CHANGE]
 	@DocumentType_Id		UniqueIdentifier,
 	@DocumentDate			SmallDateTime,
 	@DocumentNote			VarChar(Max),
-	@DocumentFlowType_Id	TinyInt
+	@DocumentFlowType_Id	TinyInt,
+	@ActSignPeriod_Id		SmallInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -42,7 +43,8 @@ BEGIN
 		@OldDiscount_Id				Int,
 		@OldContractPrice			Money,
 		@OldComments				VarChar(Max),
-		@OldDocumentFlowType_Id		TinyInt;
+		@OldDocumentFlowType_Id		TinyInt,
+		@OldActSignPeriod_Id		SmallInt;
 
 	BEGIN TRY
 		BEGIN TRAN;
@@ -60,7 +62,8 @@ BEGIN
 			@OldDiscount_Id			= [Discount_Id],
 			@OldContractPrice		= [ContractPrice],
 			@OldComments			= [Comments],
-			@OldDocumentFlowType_Id	= [DocumentFlowType_Id]
+			@OldDocumentFlowType_Id	= [DocumentFlowType_Id],
+			@OldActSignPeriod_Id	= [ActSignPeriod_Id]
 		FROM [Contract].[ClientContractsDetails]
 		WHERE [Contract_Id] = @Contract_Id
 		ORDER BY [DATE] DESC;
@@ -73,13 +76,14 @@ BEGIN
 			OR	[Common].[Is Equal(Money)](@ContractPrice, @OldContractPrice) = 0
 			OR	[Common].[Is Equal(VarChar)](@Comments, @OldComments) = 0
 			OR	[Common].[Is Equal(TinyInt)](@DocumentFlowType_Id, @OldDocumentFlowType_Id) = 0
+			OR	[Common].[Is Equal(SmallInt)](@ActSignPeriod_Id, @OldActSignPeriod_Id) = 0
 			SET @ConditionChanged = 1
 		ELSE
 			SET @ConditionChanged = 0;
 
 		IF @ConditionChanged = 1
-			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments], [DocumentFlowType_Id])
-			VALUES (@Contract_Id, @Date, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments, @DocumentFlowType_Id);
+			INSERT INTO [Contract].[ClientContractsDetails]([Contract_Id], [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments], [DocumentFlowType_Id], [ActSignPeriod_Id])
+			VALUES (@Contract_Id, @Date, @ExpireDate, @Type_Id, @PayType_Id, @Discount_Id, @ContractPrice, @Comments, @DocumentFlowType_Id, @ActSignPeriod_Id);
 
 		IF @DocumentExists = 1
 			INSERT INTO [Contract].[ClientContractsDocuments]([Contract_Id], [RowIndex], [Type_Id], [Date], [Note])

@@ -4,10 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF OBJECT_ID('[Contract].[CLIENT_CONTRACT_SELECT_DETAIL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_DETAIL]  AS SELECT 1')
+IF OBJECT_ID('[Contract].[Contracts->Act Sign Periods@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contracts->Act Sign Periods@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_DETAIL]
-	@Contract_Id	UniqueIdentifier
+
+ALTER PROCEDURE [Contract].[Contracts->Act Sign Periods@Select]
+	@Filter		VarChar(500) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,9 +25,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments], [DocumentFlowType_Id], [ActSignPeriod_Id]
-		FROM [Contract].[ClientContractsDetails]
-		WHERE [Contract_Id] = @Contract_Id;
+		SELECT [Id], [Name], [Code]
+		FROM [Contract].[Contracts->Act Sign Periods]
+		ORDER BY [Name];
+
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -39,5 +41,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_DETAIL] TO rl_client_contract_r;
+GRANT EXECUTE ON [Contract].[Contracts->Act Sign Periods@Select] TO rl_contract_act_sign_period_r;
 GO

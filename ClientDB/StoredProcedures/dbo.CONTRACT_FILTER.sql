@@ -14,6 +14,7 @@ ALTER PROCEDURE [dbo].[CONTRACT_FILTER]
 	@PayTypes		VarChar(Max)	= NULL,
 	@ContractTypes	VarChar(Max)	= NULL,
 	@FlowTypes		VarChar(Max)	= NULL,
+	@ActSignPeriods	VarChar(Max)	= NULL,
 	@Discounts		VarChar(Max)	= NULL
 AS
 BEGIN
@@ -49,6 +50,7 @@ BEGIN
 				[Discount_Id]			= C.[DiscountID],
 				[ExpireDate]			= NULL,
 				[DocumentFlowType_Id]	= NULL,
+				[ActSignPeriod_Id]		= NULL,
 				[DistrsList]			= CD.[DistrsList]
 	        FROM [dbo].[ClientReadList]()			AS R
 		    INNER JOIN [dbo].[ClientView]			AS CL WITH(NOEXPAND) ON CL.[ClientID] = R.[RCL_ID]
@@ -90,6 +92,7 @@ BEGIN
 				[Discount_Id]			= D.[Discount_Id],
 				[ExpireDate]			= D.[ExpireDate],
 				[DocumentFlowType_Id]	= D.[DocumentFlowType_Id],
+				[ActSignPeriod_Id]		= D.[ActSignPeriod_Id],
 				[DistrsList]			= CD.[DistrsList]
 	        FROM [dbo].[ClientList@Get?Read]()		AS R
 		    INNER JOIN [dbo].[ClientView]			AS CL WITH(NOEXPAND) ON CL.[ClientID] = R.[WCL_ID]
@@ -97,7 +100,7 @@ BEGIN
 		    INNER JOIN [Contract].[Contract]		AS C ON C.[ID] = CC.[Contract_Id]
 		    CROSS APPLY
 		    (
-			    SELECT TOP (1) D.[PayType_Id], D.[Discount_Id], D.[DocumentFlowType_Id], D.[Type_Id], D.[ExpireDate]
+			    SELECT TOP (1) D.[PayType_Id], D.[Discount_Id], D.[DocumentFlowType_Id], D.[Type_Id], D.[ExpireDate], D.[ActSignPeriod_Id]
 			    FROM [Contract].[ClientContractsDetails] D
 			    WHERE D.[Contract_Id] = C.[ID]
 					AND D.[DATE] <= @Date
@@ -123,6 +126,7 @@ BEGIN
 				AND (D.[PayType_Id] IN (SELECT S.[Id] FROM dbo.TableIDFromXML(@PayTypes) AS S) OR @PayTypes IS NULL)
 				AND (D.[Type_Id] IN (SELECT S.[Id] FROM dbo.TableIDFromXML(@ContractTypes) AS S) OR @ContractTypes IS NULL)
 				AND (D.[DocumentFlowType_Id] IN (SELECT S.[Id] FROM dbo.TableIDFromXML(@FlowTypes) AS S) OR @FlowTypes IS NULL)
+				AND (D.[ActSignPeriod_Id] IN (SELECT S.[Id] FROM dbo.TableIDFromXML(@ActSignPeriods) AS S) OR @ActSignPeriods IS NULL)
 				AND (D.[Discount_Id] IN (SELECT S.[Id] FROM dbo.TableIDFromXML(@Discounts) AS S) OR @Discounts IS NULL)
 	        ORDER BY CL.[ClientFullName], D.[ExpireDate] DESC;
 

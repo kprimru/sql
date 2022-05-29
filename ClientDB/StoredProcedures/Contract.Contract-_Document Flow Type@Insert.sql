@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF OBJECT_ID('[Contract].[CLIENT_CONTRACT_SELECT_DETAIL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_DETAIL]  AS SELECT 1')
+IF OBJECT_ID('[Contract].[Contract->Document Flow Type@Insert]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contract->Document Flow Type@Insert]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_SELECT_DETAIL]
-	@Contract_Id	UniqueIdentifier
+ALTER PROCEDURE [Contract].[Contract->Document Flow Type@Insert]
+	@Id		TinyInt,
+	@Code	VarChar(50),
+	@Name	VarChar(100)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,9 +26,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT [DATE], [ExpireDate], [Type_Id], [PayType_Id], [Discount_Id], [ContractPrice], [Comments], [DocumentFlowType_Id], [ActSignPeriod_Id]
-		FROM [Contract].[ClientContractsDetails]
-		WHERE [Contract_Id] = @Contract_Id;
+		INSERT INTO [Contract].[Contracts->Documents Flow Types]([Code], [Name])
+		VALUES(@Code, @Name);
+
+		SELECT @Id = Scope_Identity();
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -39,5 +42,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [Contract].[CLIENT_CONTRACT_SELECT_DETAIL] TO rl_client_contract_r;
+GRANT EXECUTE ON [Contract].[Contract->Document Flow Type@Insert] TO rl_contract_document_flow_type_i;
 GO
