@@ -53,20 +53,18 @@ BEGIN
 			LEFT OUTER JOIN
 			(
 				SELECT CL_PSEDO, COP_NAME, COP_MONTH, COP_DAY, SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM
-				FROM
-					DBF.dbo.ClientTable a
-					INNER JOIN DBF.dbo.ClientDistrTable b ON a.CL_ID = CD_ID_CLIENT
-					INNER JOIN DBF.dbo.DistrView c ON b.CD_ID_DISTR = c.DIS_ID
-					INNER JOIN DBF.dbo.DistrServiceStatusTable d ON d.DSS_ID = b.CD_ID_SERVICE AND DSS_REPORT = 1
-					CROSS APPLY
-					(
-						SELECT TOP 1 COP_NAME, COP_DAY, COP_MONTH
-						FROM
-							DBF.dbo.ContractDistrTable e
-							INNER JOIN DBF.dbo.ContractTable f ON f.CO_ID = e.COD_ID_CONTRACT
-							INNER JOIN DBF.dbo.ContractPayTable g ON g.COP_ID = CO_ID_PAY
-						WHERE COD_ID_DISTR = DIS_ID AND CO_ACTIVE = 1 AND CO_ID_CLIENT = CL_ID
-					) AS u
+				FROM [DBF].[dbo.ClientTable] a
+				INNER JOIN [DBF].[dbo.ClientDistrTable] b ON a.CL_ID = CD_ID_CLIENT
+				INNER JOIN [DBF].[dbo.DistrView] c ON b.CD_ID_DISTR = c.DIS_ID
+				INNER JOIN [DBF].[dbo.DistrServiceStatusTable] d ON d.DSS_ID = b.CD_ID_SERVICE AND DSS_REPORT = 1
+				CROSS APPLY
+				(
+					SELECT TOP 1 COP_NAME, COP_DAY, COP_MONTH
+					FROM [DBF].[dbo.ContractDistrTable] e
+					INNER JOIN [DBF].[dbo.ContractTable] f ON f.CO_ID = e.COD_ID_CONTRACT
+					INNER JOIN [DBF].[dbo.ContractPayTable] g ON g.COP_ID = CO_ID_PAY
+					WHERE COD_ID_DISTR = DIS_ID AND CO_ACTIVE = 1 AND CO_ID_CLIENT = CL_ID
+				) AS u
 			) AS DBF ON SYS_REG_NAME = SystemBaseName AND DISTR = DIS_NUM AND COMP = DIS_COMP_NUM
 		WHERE ContractPayDay <> COP_DAY OR ContractPayMonth <> COP_MONTH
 		ORDER BY ServiceName, ClientFullname

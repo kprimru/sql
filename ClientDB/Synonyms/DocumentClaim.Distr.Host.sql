@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DocumentClaim].[Distr.Host] FOR [DocumentClaim].[Distr].[Host];

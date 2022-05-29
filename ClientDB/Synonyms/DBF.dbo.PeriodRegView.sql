@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.PeriodRegView] FOR [DBF].[dbo].[PeriodRegView];

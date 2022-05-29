@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.DistrView] FOR [DBF].[dbo].[DistrView];

@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DocumentClaim].[Distr.System] FOR [DocumentClaim].[Distr].[System];

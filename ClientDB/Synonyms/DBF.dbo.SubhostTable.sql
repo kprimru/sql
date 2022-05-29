@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.SubhostTable] FOR [DBF].[dbo].[SubhostTable];

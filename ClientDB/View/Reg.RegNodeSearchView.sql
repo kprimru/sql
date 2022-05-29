@@ -30,7 +30,7 @@ AS
 
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegNodeSearchView(ID)] ON [Reg].[RegNodeSearchView] ([ID] ASC);
-CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(Complect,DS_REG,DistrStr)+INCL] ON [Reg].[RegNodeSearchView] ([Complect] ASC, [DS_REG] ASC, [DistrStr] ASC) INCLUDE ([CompNumber], [DistrNumber], [HostID], [SystemBaseName], [RegisterDate], [SystemID], [DIstrTypeId]);
+CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(Complect,DS_REG,DistrStr)+INCL] ON [Reg].[RegNodeSearchView] ([Complect] ASC, [DS_REG] ASC, [DistrStr] ASC) INCLUDE ([CompNumber], [DistrNumber], [HostID], [SystemBaseName], [RegisterDate], [SystemID], [DIstrTypeId], [DistrTypeName]);
 CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(DistrNumber,CompNumber,HostID)+(SystemOrder,SystemID,Complect,DistrStr)] ON [Reg].[RegNodeSearchView] ([DistrNumber] ASC, [CompNumber] ASC, [HostID] ASC) INCLUDE ([SystemOrder], [SystemID], [Complect], [DistrStr]);
 CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(DS_REG,DistrNumber,CompNumber,SystemBaseName)+(DIstrTypeId,SystemID)] ON [Reg].[RegNodeSearchView] ([DS_REG] ASC, [DistrNumber] ASC, [CompNumber] ASC, [SystemBaseName] ASC) INCLUDE ([DIstrTypeId], [SystemID]);
 CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(DS_REG,SST_SHORT,NT_SHORT)+INCL] ON [Reg].[RegNodeSearchView] ([DS_REG] ASC, [SST_SHORT] ASC, [NT_SHORT] ASC) INCLUDE ([SystemID], [SystemOrder], [HostID], [DistrNumber], [CompNumber], [DistrStr], [Complect], [SubhostName], [SystemBaseName]);

@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [BuhDB].[dbo.SystemTable] FOR [BuhDB].[dbo].[SystemTable];

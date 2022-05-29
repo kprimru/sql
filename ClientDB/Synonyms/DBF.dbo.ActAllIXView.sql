@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.ActAllIXView] FOR [DBF].[dbo].[ActAllIXView];

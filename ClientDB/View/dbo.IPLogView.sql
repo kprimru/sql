@@ -7,8 +7,9 @@ GO
 IF OBJECT_ID('[dbo].[IPLogView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPLogView]  AS SELECT 1')
 GO
 
+
 ALTER VIEW [dbo].[IPLogView]
 AS
 	SELECT LF_DATE, LF_SYS, LF_DISTR, LF_COMP
-	FROM IPLogs.dbo.LogFiles
+	FROM [IPLogs].[dbo.LogFiles]
 GO

@@ -7,10 +7,10 @@ GO
 IF OBJECT_ID('[dbo].[IPConsErrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPConsErrView]  AS SELECT 1')
 GO
 
+
 ALTER VIEW [dbo].[IPConsErrView]
 AS
 	SELECT ERROR_DATA, UF_DATE, UF_DISTR, UF_COMP, UF_SYS
-	FROM
-		IPLogs.dbo.USRFiles b
-		INNER JOIN IPLogs.dbo.ConsErr a ON b.UF_ID = a.ID_USR
+	FROM [IPLogs].[dbo.USRFiles] b
+	INNER JOIN [IPLogs].[dbo.ConsErr] a ON b.UF_ID = a.ID_USR
 GO

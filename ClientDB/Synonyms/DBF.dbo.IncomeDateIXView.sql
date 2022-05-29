@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.IncomeDateIXView] FOR [DBF].[dbo].[IncomeDateIXView];

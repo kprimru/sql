@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.PositionTable] FOR [DBF].[dbo].[PositionTable];

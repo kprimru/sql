@@ -24,8 +24,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT SystemID, SystemShortName, SystemName, SystemBaseName, SystemNumber, MainInfoBankID, SystemOrder, SystemFullName, SystemActive
-		FROM dbo.SystemView
-		ORDER BY SystemOrder
+		FROM dbo.SystemTable
+		ORDER BY SystemOrder;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

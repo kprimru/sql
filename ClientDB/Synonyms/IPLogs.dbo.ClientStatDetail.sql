@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [IPLogs].[dbo.ClientStatDetail] FOR [IPLogs].[dbo].[ClientStatDetail];

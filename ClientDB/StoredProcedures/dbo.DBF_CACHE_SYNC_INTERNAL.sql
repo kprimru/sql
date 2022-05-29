@@ -123,7 +123,7 @@ BEGIN
         INSERT INTO @Act(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE)
         SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, A.PR_DATE, SUM(A.AD_TOTAL_PRICE)
         FROM @Distr D
-        INNER JOIN DBF.dbo.ActAllIXView A WITH(NOEXPAND) ON   D.SYS_REG_NAME  = A.SYS_REG_NAME
+        INNER JOIN [DBF].[dbo.ActAllIXView] A WITH(NOEXPAND) ON   D.SYS_REG_NAME  = A.SYS_REG_NAME
                                                                             AND D.DIS_NUM       = A.DIS_NUM
                                                                             AND D.DIS_COMP_NUM  = A.DIS_COMP_NUM
         GROUP BY D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, A.PR_DATE;
@@ -131,28 +131,28 @@ BEGIN
         INSERT INTO @Bill(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_TOTAL_PRICE)
         SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, B.PR_DATE, B.BD_TOTAL_PRICE
         FROM @Distr D
-        INNER JOIN DBF.dbo.BillAllIXView B WITH(NOEXPAND) ON  D.SYS_REG_NAME  = B.SYS_REG_NAME
+        INNER JOIN [DBF].[dbo.BillAllIXView] B WITH(NOEXPAND) ON  D.SYS_REG_NAME  = B.SYS_REG_NAME
                                                                             AND D.DIS_NUM       = B.DIS_NUM
                                                                             AND D.DIS_COMP_NUM  = B.DIS_COMP_NUM;
 
         INSERT INTO @Income(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE)
         SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, I.PR_DATE, I.ID_PRICE
         FROM @Distr D
-        INNER JOIN DBF.dbo.IncomeAllIXView I WITH(NOEXPAND) ON    D.SYS_REG_NAME  = I.SYS_REG_NAME
+        INNER JOIN [DBF].[dbo.IncomeAllIXView] I WITH(NOEXPAND) ON    D.SYS_REG_NAME  = I.SYS_REG_NAME
                                                                                 AND D.DIS_NUM       = I.DIS_NUM
                                                                                 AND D.DIS_COMP_NUM  = I.DIS_COMP_NUM;
 
         INSERT INTO @IncomeDate(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE)
         SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, I.PR_DATE, I.IN_DATE
         FROM @Distr D
-        INNER JOIN DBF.dbo.IncomeDateIXView I WITH(NOEXPAND) ON   D.SYS_REG_NAME  = I.SYS_REG_NAME
+        INNER JOIN [DBF].[dbo.IncomeDateIXView] I WITH(NOEXPAND) ON   D.SYS_REG_NAME  = I.SYS_REG_NAME
                                                                                 AND D.DIS_NUM       = I.DIS_NUM
                                                                                 AND D.DIS_COMP_NUM  = I.DIS_COMP_NUM;
 
         INSERT INTO @BillRest(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_REST)
         SELECT D.SYS_REG_NAME, D.DIS_NUM, D.DIS_COMP_NUM, B.PR_DATE, B.BD_REST
         FROM @Distr D
-        INNER JOIN DBF.dbo.BillAllRestView B ON    D.SYS_REG_NAME  = B.SYS_REG_NAME
+        INNER JOIN [DBF].[dbo.BillAllRestView] B ON    D.SYS_REG_NAME  = B.SYS_REG_NAME
                                                                                 AND D.DIS_NUM       = B.DIS_NUM
                                                                                 AND D.DIS_COMP_NUM  = B.DIS_COMP_NUM;
 

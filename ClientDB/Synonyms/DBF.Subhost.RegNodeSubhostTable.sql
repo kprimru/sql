@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[Subhost.RegNodeSubhostTable] FOR [DBF].[Subhost].[RegNodeSubhostTable];

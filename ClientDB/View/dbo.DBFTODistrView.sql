@@ -6,8 +6,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DBFTODistrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[DBFTODistrView]  AS SELECT 1')
 GO
+
 ALTER VIEW [dbo].[DBFTODistrView]
 AS
 	SELECT DIS_NUM, TD_ID_TO
-	FROM DBF.dbo.TODistrView
+	FROM [DBF].[dbo.TODistrView]
 GO

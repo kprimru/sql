@@ -6,9 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[IPClientDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPClientDetailView]  AS SELECT 1')
 GO
-
 ALTER VIEW [dbo].[IPClientDetailView]
 AS
 	SELECT CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_CODE_CLIENT, CSD_USR
-	FROM IPLogs.dbo.ClientStatDetail
+	FROM [IPLogs].[dbo.ClientStatDetail]
 GO

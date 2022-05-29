@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [FirstInstallNah].[Distr.SYSTEM_INSERT] FOR [FirstInstallNah].[Distr].[SYSTEM_INSERT];

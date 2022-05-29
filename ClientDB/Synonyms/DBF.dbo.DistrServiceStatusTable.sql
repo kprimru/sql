@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.DistrServiceStatusTable] FOR [DBF].[dbo].[DistrServiceStatusTable];

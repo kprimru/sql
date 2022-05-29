@@ -42,11 +42,11 @@ BEGIN
 				SNC_NET_COUNT, SNC_TECH, SNC_ODON, SNC_ODOFF,
 				W.WEIGHT,
 				RN = ROW_NUMBER() OVER(PARTITION BY SYS_REG_NAME, SST_NAME, SNC_NET_COUNT, SNC_TECH, SNC_ODON, SNC_ODOFF, WEIGHT ORDER BY PR_DATE)
-			FROM DBF.dbo.WeightRules					W
-			INNER JOIN DBF.dbo.PeriodTable			P	ON W.ID_PERIOD = P.PR_ID
-			INNER JOIN DBF.dbo.SystemTable			S	ON W.ID_SYSTEM = S.SYS_ID
-			INNER JOIN DBF.dbo.SystemTypeTable		ST	ON W.ID_TYPE = ST.SST_ID
-			INNER JOIN DBF.dbo.SystemNetCountTable	SN	ON W.ID_NET = SN.SNC_ID
+			FROM [DBF].[dbo.WeightRules]					W
+			INNER JOIN [DBF].[dbo.PeriodTable]			P	ON W.ID_PERIOD = P.PR_ID
+			INNER JOIN [DBF].[dbo.SystemTable]			S	ON W.ID_SYSTEM = S.SYS_ID
+			INNER JOIN [DBF].[dbo.SystemTypeTable]		ST	ON W.ID_TYPE = ST.SST_ID
+			INNER JOIN [DBF].[dbo.SystemNetCountTable]	SN	ON W.ID_NET = SN.SNC_ID
 		) AS W
 		INNER JOIN dbo.SystemTable AS S ON S.SystemBaseName = W.SYS_REG_NAME
 		INNER JOIN Din.SystemType AS T ON T.SST_REG = W.SST_NAME

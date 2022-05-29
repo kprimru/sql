@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [IPLogs].[dbo.ConsErr] FOR [IPLogs].[dbo].[ConsErr];

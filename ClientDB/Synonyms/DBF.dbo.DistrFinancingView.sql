@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.DistrFinancingView] FOR [DBF].[dbo].[DistrFinancingView];

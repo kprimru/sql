@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [ContractDB].[dbo.ContractType] FOR [ContractDB].[dbo].[ContractType];

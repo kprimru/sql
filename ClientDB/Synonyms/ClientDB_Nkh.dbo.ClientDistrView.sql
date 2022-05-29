@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [ClientDB?Nkh].[dbo.ClientDistrView] FOR [PC276-SQL\NKH].[ClientDB].[dbo].[ClientDistrView];

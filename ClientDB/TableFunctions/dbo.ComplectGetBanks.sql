@@ -199,76 +199,58 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------
 
 	------Удаляем подчиненные ИБ----
-	DELETE T FROM @t T WHERE T.InfoBankName = 'DOCS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ROS', 'RZB', 'RZR', 'LAW'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ROS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZB', 'RZR', 'LAW'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'RZB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZR', 'LAW'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'RZR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('LAW'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'DOF' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PAPB', 'PAP'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'PAPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PAP'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'RBAS020' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RLBR020', 'RLAW020'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'RLBR020' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RLAW020'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'EPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('EXPZ', 'EXP'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'EXPZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('EXP'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'PNPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PNPA'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'PRJB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PRJ'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'OTNZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('OTN'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ESUZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ESU'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'CJIB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('CJI'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'CMBB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('CMB'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'PBIB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PBI'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BRB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ARBB', 'ARB'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ARBB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ARB'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BCN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NCN', 'ACN', 'SCN'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NCN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ACN', 'SCN'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ACN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SCN'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BDV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NDV', 'ADV', 'SDV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NDV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ADV', 'SDV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ADV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SDV'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NMS', 'AMS', 'SMS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AMS', 'SMS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'AMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SMS'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BPV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NPV', 'APV', 'SPV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NPV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('APV', 'SPV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'APV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SPV'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BSK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NSK', 'ASK', 'SSK'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NSK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ASK', 'SSK'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ASK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SSK'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BSZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NSZ', 'ASZ', 'SSZ'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NSZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ASZ', 'SSZ'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'ASZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SSZ'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NUR', 'AUR', 'SUR'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AUR', 'SUR'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'AUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SUR'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NVS', 'AVS', 'SVS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AVS', 'SVS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'AVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SVS'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NVV', 'AVV', 'SVV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AVV', 'SVV'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'AVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SVV'));
-
-	DELETE T FROM @t T WHERE T.InfoBankName = 'BZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NZS', 'AZS', 'SZS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'NZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AZS', 'SZS'));
-	DELETE T FROM @t T WHERE T.InfoBankName = 'AZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SZS'));
+	--TODO: зависимости ИБ должны быть в настройках ИБ
+	DELETE T
+	FROM @t T
+	WHERE	(T.InfoBankName = 'DOCS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ROS', 'RZB', 'RZR', 'LAW')))
+		OR	(T.InfoBankName = 'ROS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZB', 'RZR', 'LAW')))
+		OR	(T.InfoBankName = 'RZB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RZR', 'LAW')))
+		OR	(T.InfoBankName = 'RZR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('LAW')))
+		OR	(T.InfoBankName = 'DOF' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PAPB', 'PAP')))
+		OR	(T.InfoBankName = 'PAPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PAP')))
+		OR	(T.InfoBankName = 'RBAS020' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RLBR020', 'RLAW020')))
+		OR	(T.InfoBankName = 'RLBR020' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('RLAW020')))
+		OR	(T.InfoBankName = 'EPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('EXPZ', 'EXP')))
+		OR	(T.InfoBankName = 'EXPZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('EXP')))
+		OR	(T.InfoBankName = 'PNPB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PNPA')))
+		OR	(T.InfoBankName = 'PRJB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PRJ')))
+		OR	(T.InfoBankName = 'OTNZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('OTN')))
+		OR	(T.InfoBankName = 'ESUZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ESU')))
+		OR	(T.InfoBankName = 'CJIB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('CJI')))
+		OR	(T.InfoBankName = 'CMBB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('CMB')))
+		OR	(T.InfoBankName = 'PBIB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('PBI')))
+		OR	(T.InfoBankName = 'BRB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ARBB', 'ARB')))
+		OR	(T.InfoBankName = 'ARBB' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ARB')))
+		OR	(T.InfoBankName = 'BCN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NCN', 'ACN', 'SCN')))
+		OR	(T.InfoBankName = 'NCN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ACN', 'SCN')))
+		OR	(T.InfoBankName = 'ACN' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SCN')))
+		OR	(T.InfoBankName = 'BDV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NDV', 'ADV', 'SDV')))
+		OR	(T.InfoBankName = 'NDV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ADV', 'SDV')))
+		OR	(T.InfoBankName = 'ADV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SDV')))
+		OR	(T.InfoBankName = 'BMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NMS', 'AMS', 'SMS')))
+		OR	(T.InfoBankName = 'NMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AMS', 'SMS')))
+		OR	(T.InfoBankName = 'AMS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SMS')))
+		OR	(T.InfoBankName = 'BPV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NPV', 'APV', 'SPV')))
+		OR	(T.InfoBankName = 'NPV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('APV', 'SPV')))
+		OR	(T.InfoBankName = 'APV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SPV')))
+		OR	(T.InfoBankName = 'BSK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NSK', 'ASK', 'SSK')))
+		OR	(T.InfoBankName = 'NSK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ASK', 'SSK')))
+		OR	(T.InfoBankName = 'ASK' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SSK')))
+		OR	(T.InfoBankName = 'BSZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NSZ', 'ASZ', 'SSZ')))
+		OR	(T.InfoBankName = 'NSZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('ASZ', 'SSZ')))
+		OR	(T.InfoBankName = 'ASZ' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SSZ')))
+		OR	(T.InfoBankName = 'BUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NUR', 'AUR', 'SUR')))
+		OR	(T.InfoBankName = 'NUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AUR', 'SUR')))
+		OR	(T.InfoBankName = 'AUR' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SUR')))
+		OR	(T.InfoBankName = 'BVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NVS', 'AVS', 'SVS')))
+		OR	(T.InfoBankName = 'NVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AVS', 'SVS')))
+		OR	(T.InfoBankName = 'AVS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SVS')))
+		OR	(T.InfoBankName = 'BVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NVV', 'AVV', 'SVV')))
+		OR	(T.InfoBankName = 'NVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AVV', 'SVV')))
+		OR	(T.InfoBankName = 'AVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SVV')))
+		OR	(T.InfoBankName = 'BZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NZS', 'AZS', 'SZS')))
+		OR	(T.InfoBankName = 'NZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AZS', 'SZS')))
+		OR	(T.InfoBankName = 'AZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SZS')));
 
 	RETURN
 END

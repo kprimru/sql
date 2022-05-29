@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DBFTODetailView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[DBFTODetailView]  AS SELECT 1')
 GO
+
 ALTER VIEW [dbo].[DBFTODetailView]
 AS
 	SELECT
@@ -22,37 +23,34 @@ AS
 		buh.TP_SURNAME AS BUH_SURNAME, buh.TP_NAME AS BUH_NAME, buh.TP_OTCH AS BUH_OTCH, buh.POS_NAME AS BUH_POS, buh.TP_PHONE AS BUH_PHONE,
 		res.TP_SURNAME AS RES_SURNAME, res.TP_NAME AS RES_NAME, res.TP_OTCH AS RES_OTCH, res.POS_NAME AS RES_POS, res.TP_PHONE AS RES_PHONE
 	FROM
-		DBF.dbo.TOTable
-		INNER JOIN DBF.dbo.ClientTable ON TO_ID_CLIENT = CL_ID
-		LEFT OUTER JOIN DBF.dbo.TOAddressTable ON TA_ID_TO = TO_ID
-		LEFT OUTER JOIN DBF.dbo.StreetTable a ON ST_ID = TA_ID_STREET
-		LEFT OUTER JOIN DBF.dbo.CityTable b ON CT_ID = ST_ID_CITY
-		LEFT OUTER JOIN DBF.dbo.ActivityTable ON AC_ID = CL_ID_ACTIVITY
+		[DBF].[dbo.TOTable]
+		INNER JOIN [DBF].[dbo.ClientTable] ON TO_ID_CLIENT = CL_ID
+		LEFT OUTER JOIN [DBF].[dbo.TOAddressTable] ON TA_ID_TO = TO_ID
+		LEFT OUTER JOIN [DBF].[dbo.StreetTable] a ON ST_ID = TA_ID_STREET
+		LEFT OUTER JOIN [DBF].[dbo.CityTable] b ON CT_ID = ST_ID_CITY
+		LEFT OUTER JOIN [DBF].[dbo.ActivityTable] ON AC_ID = CL_ID_ACTIVITY
 		CROSS APPLY
-			(
-				SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
-				FROM
-					DBF.dbo.TOPersonalTable
-					INNER JOIN DBF.dbo.PositionTable ON POS_ID = TP_ID_POS
-					INNER JOIN DBF.dbo.ReportPositionTable ON RP_ID = TP_ID_RP
-				WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'LEAD'
-			) AS dir
+		(
+			SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
+			FROM [DBF].[dbo.TOPersonalTable]
+			INNER JOIN [DBF].[dbo.PositionTable] ON POS_ID = TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] ON RP_ID = TP_ID_RP
+			WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'LEAD'
+		) AS dir
 		CROSS APPLY
-			(
-				SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
-				FROM
-					DBF.dbo.TOPersonalTable
-					INNER JOIN DBF.dbo.PositionTable ON POS_ID = TP_ID_POS
-					INNER JOIN DBF.dbo.ReportPositionTable ON RP_ID = TP_ID_RP
-				WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'BUH'
-			) AS buh
+		(
+			SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
+			FROM [DBF].[dbo.TOPersonalTable]
+			INNER JOIN [DBF].[dbo.PositionTable] ON POS_ID = TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] ON RP_ID = TP_ID_RP
+			WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'BUH'
+		) AS buh
 		CROSS APPLY
-			(
-				SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
-				FROM
-					DBF.dbo.TOPersonalTable
-					INNER JOIN DBF.dbo.PositionTable ON POS_ID = TP_ID_POS
-					INNER JOIN DBF.dbo.ReportPositionTable ON RP_ID = TP_ID_RP
-				WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'RES'
-			) AS res
+		(
+			SELECT TOP 1 TP_ID_TO, TP_SURNAME, TP_NAME, TP_OTCH, POS_NAME, TP_PHONE
+			FROM [DBF].[dbo.TOPersonalTable]
+			INNER JOIN [DBF].[dbo.PositionTable] ON POS_ID = TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] ON RP_ID = TP_ID_RP
+			WHERE TP_ID_TO = TO_ID AND RP_PSEDO = 'RES'
+		) AS res
 GO

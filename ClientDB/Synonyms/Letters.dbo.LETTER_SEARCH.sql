@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [Letters].[dbo.LETTER_SEARCH] FOR [Letters].[dbo].[LETTER_SEARCH];

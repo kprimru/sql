@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.ActivityTable] FOR [DBF].[dbo].[ActivityTable];

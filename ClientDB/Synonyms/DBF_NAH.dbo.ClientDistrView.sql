@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF_NAH].[dbo.ClientDistrView] FOR [DBF_NAH].[dbo].[ClientDistrView];

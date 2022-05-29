@@ -53,10 +53,9 @@ BEGIN
 				RNS_ID_OLD_SYS, RNS_ID_NEW_SYS,
 				RNS_ID_OLD_NET, RNS_ID_NEW_NET,
 				SH_LST_NAME, PR_DATE, RNS_COMMENT
-			FROM
-				DBF.Subhost.RegNodeSubhostTable
-				INNER JOIN DBF.dbo.SubhostTable ON RNS_ID_HOST = SH_ID
-				INNER JOIN DBF.dbo.PeriodTable ON RNS_ID_PERIOD = PR_ID
+			FROM [DBF].[Subhost.RegNodeSubhostTable]
+			INNER JOIN [DBF].[dbo.SubhostTable] ON RNS_ID_HOST = SH_ID
+			INNER JOIN [DBF].[dbo.PeriodTable] ON RNS_ID_PERIOD = PR_ID
 			WHERE SH_LST_NAME IN ('М', 'У1', 'Л1', 'Н1')
 				AND PR_DATE >= DATEADD(YEAR, -1, GETDATE())
 				AND PR_DATE <= GETDATE()
@@ -76,15 +75,14 @@ BEGIN
 					END [Сеть],
 					dbo.DistrString(NULL, REG_DISTR_NUM, REG_COMP_NUM) AS [Дистрибутив],
 					CASE SST_LST WHEN '' THEN 'КОМ' ELSE SST_LST END AS [Тип системы]
-				FROM
-					#regnode a
-					INNER JOIN DBF.dbo.SystemTypeTable ON SST_ID = REG_ID_TYPE
-					INNER JOIN DBF.dbo.SystemTable b ON b.SYS_ID = a.REG_ID_SYSTEM
-					INNER JOIN DBF.dbo.SystemNetTable c ON SN_ID = a.REG_ID_NET
-					LEFT OUTER JOIN DBF.dbo.SystemTable e ON e.SYS_ID = a.REG_ID_OLD_SYS
-					LEFT OUTER JOIN DBF.dbo.SystemTable f ON f.SYS_ID = a.REG_ID_NEW_SYS
-					LEFT OUTER JOIN DBF.dbo.SystemNetTable g ON g.SN_ID = a.REG_ID_OLD_NET
-					LEFT OUTER JOIN DBF.dbo.SystemNetTable h ON h.SN_ID = a.REG_ID_NEW_NET
+				FROM #regnode a
+				INNER JOIN [DBF].[dbo.SystemTypeTable] ON SST_ID = REG_ID_TYPE
+				INNER JOIN [DBF].[dbo.SystemTable] b ON b.SYS_ID = a.REG_ID_SYSTEM
+				INNER JOIN [DBF].[dbo.SystemNetTable] c ON SN_ID = a.REG_ID_NET
+				LEFT JOIN [DBF].[dbo.SystemTable] e ON e.SYS_ID = a.REG_ID_OLD_SYS
+				LEFT JOIN [DBF].[dbo.SystemTable] f ON f.SYS_ID = a.REG_ID_NEW_SYS
+				LEFT JOIN [DBF].[dbo.SystemNetTable] g ON g.SN_ID = a.REG_ID_OLD_NET
+				LEFT JOIN [DBF].[dbo.SystemNetTable] h ON h.SN_ID = a.REG_ID_NEW_NET
 		ORDER BY PR_DATE DESC, SH_LST_NAME, RNS_COMMENT
 
 

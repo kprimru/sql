@@ -258,28 +258,26 @@ BEGIN
 				) AS DISTR,
 				(
 					SELECT TOP 1 DIS_STR
-					FROM
-						DBF.dbo.DistrView z
-						INNER JOIN DBF.dbo.TODistrTable y ON z.DIS_ID = y.TD_ID_DISTR
-						INNER JOIN DBF.dbo.RegNodeTable ON SYS_REG_NAME = RN_SYS_NAME
-												AND DIS_NUM = RN_DISTR_NUM
-												AND DIS_COMP_NUM = RN_COMP_NUM
+					FROM [DBF].[dbo.DistrView] z
+					INNER JOIN [DBF].[dbo.TODistrTable] y ON z.DIS_ID = y.TD_ID_DISTR
+					INNER JOIN [DBF].[dbo.RegNodeTable] ON	SYS_REG_NAME = RN_SYS_NAME
+														AND DIS_NUM = RN_DISTR_NUM
+														AND DIS_COMP_NUM = RN_COMP_NUM
 					WHERE y.TD_ID_TO = o_O.TD_ID_TO AND RN_SERVICE = 0
 					ORDER BY SYS_ORDER
 				) AS DISTR_DBF
 			FROM
-				(
-					SELECT DISTINCT a.ClientID, e.TD_ID_TO
-					FROM
-						#client a
-						INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
-						INNER JOIN DBF.dbo.DistrView d ON d.SYS_REG_NAME = c.SystemBaseName
-																			AND d.DIS_NUM = c.DISTR
-																			AND d.DIS_COMP_NUM = c.COMP
-						INNER JOIN DBF.dbo.TODistrTable e ON e.TD_ID_DISTR = d.DIS_ID
-						INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON f.SystemBaseName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
-					WHERE f.Service = 0
-				) AS o_O
+			(
+				SELECT DISTINCT a.ClientID, e.TD_ID_TO
+				FROM #client a
+				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.ID_CLIENT = a.ClientID
+				INNER JOIN [DBF].[dbo.DistrView] d ON d.SYS_REG_NAME = c.SystemBaseName
+																	AND d.DIS_NUM = c.DISTR
+																	AND d.DIS_COMP_NUM = c.COMP
+				INNER JOIN [DBF].[dbo.TODistrTable] e ON e.TD_ID_DISTR = d.DIS_ID
+				INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON f.SystemBaseName = c.SystemBaseName AND f.DistrNumber = c.DISTR AND f.CompNumber = c.COMP
+				WHERE f.Service = 0
+			) AS o_O
 
 		SET @SQL = 'ALTER TABLE #client_dbf ADD CONSTRAINT [' + CONVERT(NVARCHAR(128), NEWID()) + '] PRIMARY KEY CLUSTERED
 			(
@@ -325,8 +323,8 @@ BEGIN
 			)
 
 		INSERT INTO #dbf(TO_ID)
-			SELECT DISTINCT TO_ID
-			FROM #client_dbf
+		SELECT DISTINCT TO_ID
+		FROM #client_dbf;
 
 		/*
 			заполнение данных адресов и сотрудников, которые выбраны
@@ -350,19 +348,20 @@ BEGIN
 				OUTER APPLY
 				(
 					SELECT TOP 1 ClientLast
-					FROM dbo.ClientPersonalDirLastView z
-					WHERE a.ClientID = z.ID_MASTER
+					FROM dbo.ClientTable C
+					INNER JOIN dbo.ClientPersonalDirView D WITH(NOEXPAND) ON CP_ID_CLIENT = ClientID
+					WHERE a.ClientID = C.ID_MASTER
 						AND
 						(
-							z.CP_SURNAME <> b.CP_SURNAME
+							D.CP_SURNAME <> b.CP_SURNAME
 							OR
-							z.CP_NAME <> b.CP_NAME
+							D.CP_NAME <> b.CP_NAME
 							OR
-							z.CP_PATRON <> b.CP_PATRON
+							D.CP_PATRON <> b.CP_PATRON
 							OR
-							z.CP_POS <> b.CP_POS
+							D.CP_POS <> b.CP_POS
 							OR
-							z.CP_PHONE <> b.CP_PHONE
+							D.CP_PHONE <> b.CP_PHONE
 						)
 					ORDER BY ClientLast DESC
 				) L
@@ -375,11 +374,10 @@ BEGIN
 				DIR_POS = POS_NAME,
 				DIR_PHONE = TP_PHONE,
 				DIR_LAST = TP_LAST
-			FROM
-				#dbf a
-				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOPersonalTable] b ON b.TP_ID_TO = a.TO_ID
+			INNER JOIN [DBF].[dbo.PositionTable] c ON c.POS_ID = b.TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'LEAD'
 
 			IF @DIR_PHONE = 1
 			BEGIN
@@ -411,19 +409,20 @@ BEGIN
 				OUTER APPLY
 				(
 					SELECT TOP 1 ClientLast
-					FROM dbo.ClientPersonalBuhLastView z
-					WHERE a.ClientID = z.ID_MASTER
+					FROM dbo.ClientTable C
+					INNER JOIN dbo.ClientPersonalBuhView D WITH(NOEXPAND) ON CP_ID_CLIENT = ClientID
+					WHERE a.ClientID = C.ID_MASTER
 						AND
 						(
-							z.CP_SURNAME <> b.CP_SURNAME
+							D.CP_SURNAME <> b.CP_SURNAME
 							OR
-							z.CP_NAME <> b.CP_NAME
+							D.CP_NAME <> b.CP_NAME
 							OR
-							z.CP_PATRON <> b.CP_PATRON
+							D.CP_PATRON <> b.CP_PATRON
 							OR
-							z.CP_POS <> b.CP_POS
+							D.CP_POS <> b.CP_POS
 							OR
-							z.CP_PHONE <> b.CP_PHONE
+							D.CP_PHONE <> b.CP_PHONE
 						)
 					ORDER BY ClientLast DESC
 				) L
@@ -436,11 +435,10 @@ BEGIN
 				BUH_POS = POS_NAME,
 				BUH_PHONE = TP_PHONE,
 				BUH_LAST = TP_LAST
-			FROM
-				#dbf a
-				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'BUH'
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOPersonalTable] b ON b.TP_ID_TO = a.TO_ID
+			INNER JOIN [DBF].[dbo.PositionTable] c ON c.POS_ID = b.TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'BUH'
 
 			IF @BUH_PHONE = 1
 			BEGIN
@@ -471,19 +469,20 @@ BEGIN
 				OUTER APPLY
 				(
 					SELECT TOP 1 ClientLast
-					FROM dbo.ClientPersonalResLastView z
-					WHERE a.ClientID = z.ID_MASTER
+					FROM dbo.ClientTable C
+					INNER JOIN dbo.ClientPersonalResView D WITH(NOEXPAND) ON CP_ID_CLIENT = ClientID
+					WHERE a.ClientID = C.ID_MASTER
 						AND
 						(
-							z.CP_SURNAME <> b.CP_SURNAME
+							D.CP_SURNAME <> b.CP_SURNAME
 							OR
-							z.CP_NAME <> b.CP_NAME
+							D.CP_NAME <> b.CP_NAME
 							OR
-							z.CP_PATRON <> b.CP_PATRON
+							D.CP_PATRON <> b.CP_PATRON
 							OR
-							z.CP_POS <> b.CP_POS
+							D.CP_POS <> b.CP_POS
 							OR
-							z.CP_PHONE <> b.CP_PHONE
+							D.CP_PHONE <> b.CP_PHONE
 						)
 					ORDER BY ClientLast DESC
 				) L
@@ -496,11 +495,10 @@ BEGIN
 				RES_POS = POS_NAME,
 				RES_PHONE = TP_PHONE,
 				RES_LAST = TP_LAST
-			FROM
-				#dbf a
-				INNER JOIN [DBF].dbo.TOPersonalTable b ON b.TP_ID_TO = a.TO_ID
-				INNER JOIN [DBF].dbo.PositionTable c ON c.POS_ID = b.TP_ID_POS
-				INNER JOIN DBF.dbo.ReportPositionTable g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'RES'
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOPersonalTable] b ON b.TP_ID_TO = a.TO_ID
+			INNER JOIN [DBF].[dbo.PositionTable] c ON c.POS_ID = b.TP_ID_POS
+			INNER JOIN [DBF].[dbo.ReportPositionTable] g ON g.RP_ID = b.TP_ID_RP AND g.RP_PSEDO = 'RES'
 
 			IF @RES_PHONE = 1
 			BEGIN
@@ -522,10 +520,9 @@ BEGIN
 
 			UPDATE a
 			SET SERVICE = COUR_NAME
-			FROM
-				#dbf a
-				INNER JOIN [DBF].dbo.TOTable b ON a.TO_ID = b.TO_ID
-				INNER JOIN [DBF].dbo.CourierTable c ON c.COUR_ID = b.TO_ID_COUR
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOTable] b ON a.TO_ID = b.TO_ID
+			INNER JOIN [DBF].[dbo.CourierTable] c ON c.COUR_ID = b.TO_ID_COUR
 		END
 
 		IF @ADDRESS = 1
@@ -557,12 +554,11 @@ BEGIN
 				STREET = g.ST_NAME,
 				HOME = f.TA_HOME,
 				ADDRESS_LAST = TO_LAST
-			FROM
-				#dbf a
-				INNER JOIN DBF.dbo.TOAddressTable f ON f.TA_ID_TO = a.TO_ID
-				INNER JOIN DBF.dbo.StreetTable g ON g.ST_ID = f.TA_ID_STREET
-				INNER JOIN DBF.dbo.CityTable h ON h.CT_ID = g.ST_ID_CITY
-				INNER JOIN DBF.dbo.TOTable n ON n.TO_ID = f.TA_ID_TO
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOAddressTable] f ON f.TA_ID_TO = a.TO_ID
+			INNER JOIN [DBF].[dbo.StreetTable] g ON g.ST_ID = f.TA_ID_STREET
+			INNER JOIN [DBF].[dbo.CityTable] h ON h.CT_ID = g.ST_ID_CITY
+			INNER JOIN [DBF].[dbo.TOTable] n ON n.TO_ID = f.TA_ID_TO
 		END
 
 		IF @INN = 1
@@ -575,9 +571,8 @@ BEGIN
 
 			UPDATE a
 			SET INN = TO_INN
-			FROM
-				#dbf a
-				INNER JOIN DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOTable] b ON a.TO_ID = b.TO_ID
 		END
 
 		IF @NAME = 1
@@ -590,9 +585,8 @@ BEGIN
 
 			UPDATE a
 			SET TO_NAME = b.TO_NAME
-			FROM
-				#dbf a
-				INNER JOIN DBF.dbo.TOTable b ON a.TO_ID = b.TO_ID
+			FROM #dbf a
+			INNER JOIN [DBF].[dbo.TOTable] b ON a.TO_ID = b.TO_ID
 		END
 
 		IF OBJECT_ID('tempdb..#result') IS NOT NULL

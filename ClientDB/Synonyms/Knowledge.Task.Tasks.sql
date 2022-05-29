@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [Knowledge].[Task.Tasks] FOR [Knowledge].[Task].[Tasks];

@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.PriceExportView] FOR [DBF].[dbo].[PriceExportView];

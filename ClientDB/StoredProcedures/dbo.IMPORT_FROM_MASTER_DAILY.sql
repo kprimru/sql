@@ -6,7 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[IMPORT_FROM_MASTER_DAILY]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[IMPORT_FROM_MASTER_DAILY]  AS SELECT 1')
 GO
-
 ALTER PROCEDURE [dbo].[IMPORT_FROM_MASTER_DAILY]
 AS
 BEGIN
@@ -306,6 +305,23 @@ BEGIN
 				WHERE S.DS_REG = D.DS_REG
 			);
 
+		-- типы документообророта договоров
+		UPDATE S SET
+			[Name]		= D.[Name]
+		FROM [Contract].[Contracts->Documents Flow Types] S
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Contract].[Contracts->Documents Flow Types] D ON S.[Code] = D.[Code]
+		WHERE S.[Name] != D.[Name];
+
+		INSERT INTO [Contract].[Contracts->Documents Flow Types]([Name], [Code])
+		SELECT D.[Name], D.[Code]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[Contract].[Contracts->Documents Flow Types] D
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [Contract].[Contracts->Documents Flow Types] S
+				WHERE S.[Code] = D.[Code]
+			);
+
 		-- Обновляем справочник правил категорий
 		INSERT INTO [dbo].[ClientTypeRules]([System_Id], [DistrType_Id], [ClientType_Id])
 		SELECT HS.[SystemID], HD.[DistrTypeID], HC.[ClientTypeID]
@@ -324,8 +340,8 @@ BEGIN
 		            AND H.[DistrType_Id] = HD.[DistrTypeID]
 			);
 
-		UPDATE H
-		SET [ClientType_Id]    = HC.[ClientTypeID]
+		UPDATE H SET
+			[ClientType_Id]    = HC.[ClientTypeID]
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientTypeRules] AS D
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS DS ON DS.[SystemID] = D.[System_Id]
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable] AS DD ON DD.[DistrTypeID] = D.[DistrType_Id]
@@ -333,8 +349,34 @@ BEGIN
 		INNER JOIN [dbo].[ClientTypeTable] AS HC ON HC.[ClientTypeName] = DC.[ClientTypeName]
 		INNER JOIN [dbo].[SystemTable] AS HS ON HS.[SystemBaseName] = DS.[SystemBaseName]
 		INNER JOIN [dbo].[DistrTypeTable] AS HD ON HD.[DistrTypeCode] = DD.[DistrTypeCode]
-		INNER JOIN [dbo].[ClientTypeRules] AS H ON D.[System_Id] = HS.[SystemID] AND D.[DistrType_Id] = HD.[DistrTypeID]
+		INNER JOIN [dbo].[ClientTypeRules] AS H ON H.[System_Id] = HS.[SystemID] AND H.[DistrType_Id] = HD.[DistrTypeID]
 		WHERE H.[ClientType_Id] != HC.[ClientTypeID];
+
+		-- справочник правил количества одновременных онлайн-доступов
+		INSERT INTO [dbo].[OnlineRules]([System_Id], [DistrType_Id], [Quantity])
+		SELECT HS.[SystemID], HD.[DistrTypeID], D.[Quantity]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[OnlineRules] AS D
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS DS ON DS.[SystemID] = D.[System_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable] AS DD ON DD.[DistrTypeID] = D.[DistrType_Id]
+		INNER JOIN [dbo].[SystemTable] AS HS ON HS.[SystemBaseName] = DS.[SystemBaseName]
+		INNER JOIN [dbo].[DistrTypeTable] AS HD ON HD.[DistrTypeCode] = DD.[DistrTypeCode]
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [dbo].[ClientTypeRules] AS H
+		        WHERE H.[System_Id] = HS.[SystemID]
+		            AND H.[DistrType_Id] = HD.[DistrTypeID]
+			);
+
+		UPDATE H SET
+			[Quantity]    = D.[Quantity]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[OnlineRules] AS D
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS DS ON DS.[SystemID] = D.[System_Id]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable] AS DD ON DD.[DistrTypeID] = D.[DistrType_Id]
+		INNER JOIN [dbo].[SystemTable] AS HS ON HS.[SystemBaseName] = DS.[SystemBaseName]
+		INNER JOIN [dbo].[DistrTypeTable] AS HD ON HD.[DistrTypeCode] = DD.[DistrTypeCode]
+		INNER JOIN [dbo].[OnlineRules] AS H ON D.[System_Id] = HS.[SystemID] AND D.[DistrType_Id] = HD.[DistrTypeID]
+		WHERE D.[Quantity] != H.[Quantity];
 
 		-- обновляем справочник типов соответствия USR
 
@@ -519,6 +561,31 @@ BEGIN
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS SS	ON SS.[SystemID] = P.[System_Id]
 		INNER JOIN [dbo].[SystemTable]								AS S	ON S.[SystemBaseName] = SS.[SystemBaseName];
 
+		INSERT INTO Price.SystemPrice(ID_SYSTEM, ID_MONTH, PRICE)
+		SELECT DISTINCT S.SystemID, P.ID, ASP.PRICE
+		FROM [PC275-SQL\ALPHA].[ClientDB].[Price].[SystemPrice] AS ASP
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS AST ON ASP.ID_SYSTEM = AST.SystemID
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON ASP.ID_MONTH = AP.ID
+		INNER JOIN dbo.SystemTable S ON S.SystemBaseName = AST.SystemBaseName
+		INNER JOIN Common.Period P ON P.START = AP.START AND P.TYPE = AP.TYPE
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM Price.SystemPrice SP
+				WHERE SP.ID_SYSTEM = S.SystemID
+					AND SP.ID_MONTH = P.ID
+			);
+
+	    UPDATE SP SET
+		    PRICE = ASP.PRICE
+		FROM Price.SystemPrice AS SP
+		INNER JOIN dbo.SystemTable S ON SP.ID_SYSTEM = S.SystemID
+		INNER JOIN Common.Period P ON SP.ID_MONTH = P.ID
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[SystemTable] AS AST ON S.SystemBaseName = AST.SystemBaseName
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS AP ON P.START = AP.START AND P.TYPE = AP.TYPE
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Price].[SystemPrice] AS ASP ON ASP.ID_SYSTEM = AST.SystemID AND ASP.ID_MONTH = AP.ID
+		WHERE SP.PRICE != ASP.PRICE
+
 		/*
 		INSERT INTO @NamedSets
 		SELECT
@@ -684,5 +751,4 @@ BEGIN
 		    )
 		OPTION(FORCE ORDER);
 END
-
 GO

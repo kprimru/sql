@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.SystemNetCountTable] FOR [DBF].[dbo].[SystemNetCountTable];
