@@ -8,7 +8,8 @@ ALTER PROCEDURE [dbo].[ACT_PRINT?UPD]
     @Act_Id			Int,
 	@StageGuid		VarChar(100)	= NULL,
 	@ProductGuid	VarChar(100)	= NULL,
-    @ActData		VarBinary(Max)	= NULL
+    @Grouping		SmallInt		= 1,
+	@ActData		VarBinary(Max)	= NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -94,10 +95,10 @@ BEGIN
                     SELECT
                         [КНД]               = '1115131',
                         [Функция]           = 'СЧФДОП',
-                        [ДатаИнфПр]         = Convert(VarChar(20), GetDate(), 104),
-                        [ВремИнфПр]         = Replace(Convert(VarChar(20), GetDate(), 108), ':', '.'),
                         [ПоФактХЖ]          = 'Документ об отгрузке товаров (выполнении работ), передаче имущественных прав (документ об оказании услуг)',
                         [НаимДокОпр]        = 'Документ об отгрузке товаров (выполнении работ), передаче имущественных прав (документ об оказании услуг)',
+						[ДатаИнфПр]         = Convert(VarChar(20), GetDate(), 104),
+                        [ВремИнфПр]         = Replace(Convert(VarChar(20), GetDate(), 108), ':', '.'),
                         [НаимЭконСубСост]   = O.ORG_FULL_NAME,
                         [СоглСтрДопИнф]     = '0000.0000.0000',
                         (
@@ -150,7 +151,16 @@ BEGIN
                                         )
                                     FOR XML RAW ('СвПрод'), TYPE
                                 ),
-                                (
+								(
+									SELECT
+										[НомерПРД]	= I.[INS_NUM],
+										[ДатаПРД]	= Convert(VarChar(20), I.[INS_DATE], 104),
+										[СуммаПРД]	= dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.')
+									FROM dbo.InvoiceRowTable AS R
+									WHERE R.[INR_ID_INVOICE] = I.[INS_ID]
+									FOR XML RAW ('СвПРД'), TYPE
+								),
+								(
                                     SELECT
                                         [ОКПО]          = CL.CL_OKPO,
                                         [КраткНазв]     = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
@@ -221,7 +231,14 @@ BEGIN
                                             FOR XML RAW('ИнфПродГосЗакКазн'), TYPE
                                         )
                                     FOR XML RAW('ДопСвФХЖ1'), TYPE
-                                )
+                                ),
+								(
+									SELECT
+										[НаимДокОтгр]	= 'Документ о приемке',
+										[НомДокОтгр]	= I.[INS_NUM],
+										[ДатаДокОтгр]	= Convert(VarChar(20), GetDate(), 104)
+									FOR XML RAW('ДокПодтвОтгр'), TYPE
+								)
                             FOR XML RAW('СвСчФакт'), TYPE
                         ),
                         (
@@ -235,13 +252,13 @@ BEGIN
                                         [ОКЕИ_Тов]      = ED.[ProductOKEICode],
                                         [КолТов]        = 1,
                                         -- ToDo хардкод 20%
-                                        --[ЦенаТов]       = CASE WHEN P.[Price] LIKE '%.' THEN P.[Price] + '00' ELSE P.[Price] END,
+                                        --[ЦенаТов]       = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
 										[ЦенаТов]       = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
-														  --dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
-                                        [СтТовБезНДС]   = --[dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
-														  dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+                                        --[СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
+										[СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                         [НалСт]         = '20%',
-                                        [СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+                                        --[СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+										[СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
                                         (
                                             SELECT
                                                 [БезАкциз] = 'без акциза'
@@ -301,7 +318,7 @@ BEGIN
                         (
                             SELECT
                                 (
-                                    SELECT
+                                    SELECT TOP (1)
                                         [СодОпер]   = 'Услуги оказаны в полном объеме',
                                         --ToDo оказание информационных услуг?
                                         [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
@@ -336,7 +353,7 @@ BEGIN
                                                 [NULL]      = NULL
                                             FOR XML RAW('ТранГруз'), TYPE
                                         )
-                                    FOR XML RAW('СвПер'), TYPE
+									FOR XML RAW('СвПер'), TYPE
                                 )
                             FOR XML RAW('СвПродПер'), TYPE
                         ),
@@ -405,10 +422,7 @@ BEGIN
                                     SELECT
                                         (
                                             SELECT
-                                                [ИдТРУ]         = CASE
-																	WHEN @Client_Id = 10826 THEN '1B725AAF13F64E84BF3460E269A20448'
-																	ELSE ED.[Product_GUId]
-																  END,
+                                                [ИдТРУ]         = ED.[Product_GUId],
                                                 [КодТов]        = ED.[ProductOKPD2Code],
                                                 [НаимТов]       = ED.[ProductName],
                                                 --[НаимТов]       = Max(INR_GOOD),
@@ -469,7 +483,25 @@ BEGIN
                                             WHERE R.INR_ID_INVOICE = I.INS_ID
                                             FOR XML RAW('СведДетал'), TYPE
                                         )
+									WHERE @Grouping = 0
                                     FOR XML RAW('ДеталТРУ'), TYPE
+                                ),
+								(
+                                    SELECT
+                                        [ИдТРУ]         = ED.[Product_GUId],
+										[ТехИдТРУ]		= ED.[ProductSid],
+                                        [НаимТовИсх]    = ED.[ProductName],
+										(
+											SELECT
+												[НомСтр]			= '1',
+												[ЦенаИзКонтСНДС]	= dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
+												[ПрУлучшХаракт]		= '1'
+											FROM dbo.InvoiceRowTable AS R
+											WHERE R.INR_ID_INVOICE = I.INS_ID
+											FOR XML RAW ('НеЛПСвед'), TYPE
+										)
+									WHERE @Grouping = 1
+                                    FOR XML RAW('НедеталТРУ'), TYPE
                                 )
                             FOR XML RAW('СведТРУ'), TYPE
                         )
