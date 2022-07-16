@@ -46,7 +46,8 @@ ALTER PROCEDURE [Client].[COMPANY_SELECT2]
     @DEPO       Bit                 = NULL,
     @DEPO_NUM   NVarChar(MAX)       = NULL,
     @RIVALV     NVarChar(MAX)       = NULL,
-    @ShowAll    Bit                 = 0
+    @ShowAll    Bit                 = 0,
+	@ROWCOUNT	Int					= 1000
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -658,7 +659,7 @@ BEGIN
 
             IF EXISTS (SELECT * FROM @UsedFilterTypes)
                 INSERT @company ([Id])
-                SELECT
+                SELECT TOP (@ROWCOUNT)
                     [Id] = D.[Id]
                 FROM
                 (
@@ -677,7 +678,7 @@ BEGIN
                 INNER JOIN @rlist P ON P.[ID] = D.[Id]
             ELSE
                 INSERT @company ([Id])
-                SELECT TOP (500) Id
+                SELECT TOP (@ROWCOUNT) Id
                 FROM @rlist;
         END;
 
