@@ -69,7 +69,9 @@ BEGIN
             (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_PASS') AS ONLINE_SERVICES_MAIL_PASS,
 
             (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PATH') AS ONLINE_PASSWORD_PATH,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PASS') AS ONLINE_PASSWORD_PASS
+            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PASS') AS ONLINE_PASSWORD_PASS,
+
+			Maintenance.GlobalRepositoryPath() AS REPOSITORY_PATH
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
