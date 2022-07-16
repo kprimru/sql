@@ -42,7 +42,13 @@ BEGIN
 		END
 
 
-		SELECT 
+		SELECT
+			[SortIndex] = CASE
+				WHEN RN_MIN = 1 THEN 2
+				WHEN RN_MAX = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
+				ELSE RN_MIN + 1
+			END,
+			[SortIndex2] = 1,
 			t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,
 			SYSTEM_NOTE, SYSTEM_NOTE_FULL, DOCS,
 			Common.MoneyFormat((
@@ -145,12 +151,117 @@ BEGIN
 					ISNULL(a.DOCS, a.NEW_DOCS),
 					a.OPER_STRING, a.OPER_UNDERLINE, a.FULL_STR
 			) AS t
-		ORDER BY
-			CASE
+
+		UNION ALL
+
+		SELECT
+			[SortIndex] = CASE
 				WHEN RN_MIN = 1 THEN 2
 				WHEN RN_MAX = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
 				ELSE RN_MIN + 1
-			END
+			END,
+			[SortIndex2] = 1,
+			'Подключение ' + t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,
+			SYSTEM_NOTE, SYSTEM_NOTE_FULL, DOCS,
+			Common.MoneyFormat((
+				SELECT CONNECT_PRICE
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 1
+					AND ID_OFFER = @ID
+			)) AS DELIVERY_1,
+			Common.MoneyFormat((
+				SELECT CONNECT_PRICE
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 2
+					AND ID_OFFER = @ID
+			)) AS DELIVERY_2,
+			Common.MoneyFormat(0) AS SUPPORT_1,
+			Common.MoneyFormat(0) AS SUPPORT_2,
+			(
+				SELECT DEL_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 1
+					AND ID_OFFER = @ID
+			) AS DEL_DISCOUNT_STR_1,
+			(
+				SELECT DEL_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 2
+					AND ID_OFFER = @ID
+			) AS DEL_DISCOUNT_STR_2,
+			(
+				SELECT SUP_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 1
+					AND ID_OFFER = @ID
+			) AS SUP_DISCOUNT_STR_1,
+			(
+				SELECT SUP_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 2
+					AND ID_OFFER = @ID
+			) AS SUP_DISCOUNT_STR_2,
+			(
+				SELECT FUR_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 1
+					AND ID_OFFER = @ID
+			) AS FUR_DISCOUNT_STR_1,
+			(
+				SELECT FUR_DISCOUNT_STR
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND VARIANT = 2
+					AND ID_OFFER = @ID
+			) AS FUR_DISCOUNT_STR_2,
+			OPER, OPER_UNDERLINE, NOTE
+		FROM
+			(
+				SELECT
+					MIN(RN) AS RN_MIN,
+					MAX(RN) AS RN_MAX,
+					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName) AS SYS_REG,
+					ISNULL(b.SystemOrder, d.SystemOrder) AS SYS_ORDER,
+					b.SystemOrder AS BORDER, c.SystemOrder AS CORDER,
+					ISNULL(f.NoteWTitle, e.NoteWTitle) AS SYSTEM_NOTE,
+					ISNULL(f.NOTE, e.NOTE) AS SYSTEM_NOTE_FULL,
+					ISNULL(a.DOCS, a.NEW_DOCS) AS DOCS,
+					a.OPER_STRING AS OPER, a.OPER_UNDERLINE, a.FULL_STR AS NOTE
+				FROM
+					Price.CommercialOfferView a
+					LEFT OUTER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
+					LEFT OUTER JOIN dbo.SystemTable c ON a.ID_OLD_SYSTEM = c.SystemID
+					LEFT OUTER JOIN dbo.SystemTable d ON a.ID_NEW_SYSTEM = d.SystemID
+					OUTER APPLY dbo.[System@Get?Note](IsNull(b.SystemID, c.SystemID), IsNull(a.ID_NET, a.ID_OLD_NET)) AS e
+			        OUTER APPLY dbo.[System@Get?Note](d.SystemID, a.ID_NEW_NET) AS f
+				WHERE a.ID_OFFER = @ID
+				GROUP BY
+					SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.SystemBaseName, d.SystemBaseName),
+					ISNULL(b.SystemOrder, d.SystemOrder),
+					b.SystemOrder, c.SystemOrder,
+					ISNULL(f.NoteWTitle, e.NoteWTitle),
+					ISNULL(f.NOTE, e.NOTE),
+					ISNULL(a.DOCS, a.NEW_DOCS),
+					a.OPER_STRING, a.OPER_UNDERLINE, a.FULL_STR
+			) AS t
+		WHERE EXISTS
+			(
+				SELECT *
+				FROM Price.CommercialOfferView z
+				WHERE t.SYS_STR = z.SYS_STR AND t.NET_STR = z.NET_STR
+					AND ID_OFFER = @ID
+					AND z.CONNECT_PRICE != 0
+					AND z.CONNECT_PRICE IS NOT NULL
+			)
+
+		ORDER BY [SortIndex], [SortIndex2] DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

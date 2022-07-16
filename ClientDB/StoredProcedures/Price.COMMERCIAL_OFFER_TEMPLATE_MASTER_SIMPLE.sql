@@ -144,12 +144,12 @@ BEGIN
 				WHERE z.ID_OFFER = a.ID
 			)) AS TOTAL_SUPPORT,
 			Common.MoneyFormat((
-				SELECT SUM(SUPPORT_PRICE + DELIVERY_PRICE)
+				SELECT SUM(SUPPORT_PRICE + DELIVERY_PRICE + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 			)) AS TOTAL_PRICE,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_PRICE)
+				SELECT SUM(DELIVERY_PRICE + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 			)) AS TOTAL_DELIVERY,
@@ -159,7 +159,7 @@ BEGIN
 				WHERE z.ID_OFFER = a.ID
 			)) AS TOTAL_FURTHER,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_ORIGIN)
+				SELECT SUM(DELIVERY_ORIGIN + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 			)) AS TOTAL_DELIVERY_ORIGIN,

@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[CommercialOfferView]', 'V ') IS NULL EXEC('CREATE VIEW [Price].[CommercialOfferView]  AS SELECT 1')
 GO
+
 ALTER VIEW [Price].[CommercialOfferView]
 AS
 	SELECT 
@@ -69,6 +70,7 @@ AS
 		Common.MonthString(a.ID_PERIOD, ISNULL(d.SUPPORT, a.MON_CNT)) AS MON_STRING,
 		OLD_SYSTEM_DISCOUNT, l.Docs, m.Docs AS OLD_DOCS, n.Docs AS NEW_DOCS,
 		FURTHER_RND,
+		CONNECT_PRICE,
 		ROW_NUMBER() OVER(PARTITION BY ID_OFFER ORDER BY f.SystemOrder, g.SystemOrder) AS RN
 	FROM
 		Price.CommercialOffer z

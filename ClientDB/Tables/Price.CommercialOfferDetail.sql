@@ -34,6 +34,7 @@ CREATE TABLE [Price].[CommercialOfferDetail]
         [SUPPORT_PRICE]         Money                     NULL,
         [SUPPORT_FURTHER]       Money                     NULL,
         [FURTHER_RND]           Bit                       NULL,
+        [CONNECT_PRICE]         Money                     NULL,
         CONSTRAINT [PK_Price.CommercialOfferDetail] PRIMARY KEY NONCLUSTERED ([ID]),
         CONSTRAINT [FK_Price.CommercialOfferDetail(ID_NEW_SYSTEM)_Price.SystemTable(SystemID)] FOREIGN KEY  ([ID_NEW_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
         CONSTRAINT [FK_Price.CommercialOfferDetail(ID_OLD_SYSTEM)_Price.SystemTable(SystemID)] FOREIGN KEY  ([ID_OLD_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),

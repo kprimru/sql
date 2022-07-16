@@ -25,6 +25,12 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
+			[SortIndex] = CASE
+				WHEN RN = 1 THEN 2
+				WHEN RN = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
+				ELSE RN
+			END,
+			[SortIndex2] = 1,
 			SYS_FULL_STR AS SYSTEM, NET_STR AS NET, ISNULL(b.SystemBaseName, d.SystemBaseName) AS SYS_REG,
 			ISNULL(b.SystemOrder, d.SystemOrder) AS SYS_ORDER,
 			Common.MoneyFormat(DELIVERY_ORIGIN) AS DELIVERY_ORIGIN,
@@ -44,12 +50,39 @@ BEGIN
 			OUTER APPLY dbo.[System@Get?Note](IsNull(b.SystemID, c.SystemID), IsNull(a.ID_NET, a.ID_OLD_NET)) AS e
 			OUTER APPLY dbo.[System@Get?Note](d.SystemID, a.ID_NEW_NET) AS f
 		WHERE ID_OFFER = @ID
-		ORDER BY
-			CASE
+
+		UNION ALL
+
+		SELECT
+			[SortIndex] = CASE
 				WHEN RN = 1 THEN 2
 				WHEN RN = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
 				ELSE RN
-			END
+			END,
+			[SortIndex2] = 1,
+			'Подключение ' + SYS_FULL_STR AS SYSTEM, NET_STR AS NET, ISNULL(b.SystemBaseName, d.SystemBaseName) AS SYS_REG,
+			ISNULL(b.SystemOrder, d.SystemOrder) AS SYS_ORDER,
+			Common.MoneyFormat(CONNECT_PRICE) AS DELIVERY_ORIGIN,
+			Common.MoneyFormat(CONNECT_PRICE) AS DELIVERY_PRICE,
+			Common.MoneyFormat(0) AS SUPPORT_PRICE,
+			Common.MoneyFormat(0) AS SUPPORT_FURTHER,
+			ISNULL(f.NoteWTitle, e.NoteWTitle) AS SYSTEM_NOTE,
+			ISNULL(f.NOTE, e.NOTE) AS SYSTEM_NOTE_FULL,
+			ISNULL(a.DOCS, a.NEW_DOCS) AS DOCS,
+			a.OPER_STRING AS OPER, a.OPER_UNDERLINE,
+			a.DEL_DISCOUNT_STR, a.SUP_DISCOUNT_STR, a.FUR_DISCOUNT_STR
+		FROM
+			Price.CommercialOfferView a
+			LEFT OUTER JOIN dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID
+			LEFT OUTER JOIN dbo.SystemTable c ON a.ID_OLD_SYSTEM = c.SystemID
+			LEFT OUTER JOIN dbo.SystemTable d ON a.ID_NEW_SYSTEM = d.SystemID
+			OUTER APPLY dbo.[System@Get?Note](IsNull(b.SystemID, c.SystemID), IsNull(a.ID_NET, a.ID_OLD_NET)) AS e
+			OUTER APPLY dbo.[System@Get?Note](d.SystemID, a.ID_NEW_NET) AS f
+		WHERE ID_OFFER = @ID
+			AND a.CONNECT_PRICE IS NOT NULL
+			AND a.CONNECT_PRICE != 0
+
+		ORDER BY [SortIndex], [SortIndex2] DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

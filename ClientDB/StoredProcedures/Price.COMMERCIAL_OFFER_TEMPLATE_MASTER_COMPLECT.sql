@@ -184,25 +184,25 @@ BEGIN
 					AND VARIANT = 2
 			)) AS SUPPORT_FURTHER_2,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_ORIGIN)
+				SELECT SUM(DELIVERY_ORIGIN + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 					AND VARIANT = 1
 			)) AS DELIVERY_ORIGIN_1,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_ORIGIN)
+				SELECT SUM(DELIVERY_ORIGIN + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 					AND VARIANT = 2
 			)) AS DELIVERY_ORIGIN_2,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_PRICE)
+				SELECT SUM(DELIVERY_PRICE + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 					AND VARIANT = 1
 			)) AS DELIVERY_TOTAL_1,
 			Common.MoneyFormat((
-				SELECT SUM(DELIVERY_PRICE)
+				SELECT SUM(DELIVERY_PRICE + IsNull(CONNECT_PRICE, 0))
 				FROM Price.CommercialOfferDetail z
 				WHERE z.ID_OFFER = a.ID
 					AND VARIANT = 2
