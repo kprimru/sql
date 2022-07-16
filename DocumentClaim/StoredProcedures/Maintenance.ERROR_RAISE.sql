@@ -1,0 +1,27 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [Maintenance].[ERROR_RAISE]
+	@SEV	INT,
+	@STATE	INT,
+	@NUM	INT,
+	@PROC	NVARCHAR(128),
+	@MSG	NVARCHAR(2048)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF (SELECT ERROR_LOG FROM Maintenance.Settings WHERE STATUS = 1) = 1
+		INSERT INTO Maintenance.ErrorLog(NUM, PROC_NAME, MESSAGE)
+			VALUES(@NUM, @PROC, @MSG)
+
+	DECLARE @TXT NVARCHAR(3000)
+
+	SET @TXT = 'Ошибка в процедуре "' + ISNULL(@PROC, '') + '". Текст ошибки: "' + ISNULL(@MSG, '') + '"'
+
+	RAISERROR(@TXT, @SEV, @STATE)
+END
+GO

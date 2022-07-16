@@ -1,0 +1,53 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [Maintenance].[TABLE_SIZE_SELECT]
+	@TOTAL_ROW		BIGINT		= NULL OUTPUT,
+	@TOTAL_RESERV	VARCHAR(50) = NULL OUTPUT,
+	@TOTAL_DATA		VARCHAR(50) = NULL OUTPUT,
+	@TOTAL_INDEX	VARCHAR(50) = NULL OUTPUT,
+	@TOTAL_UNUSED	VARCHAR(50) = NULL OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRY
+		EXEC Maintenance.START_PROC @@PROCID
+
+		SELECT
+			@TOTAL_ROW = SUM(row_count),
+			@TOTAL_RESERV = Common.ByteToStr(SUM(reserved)),
+			@TOTAL_DATA = Common.ByteToStr(SUM(data)),
+			@TOTAL_INDEX = Common.ByteToStr(SUM(index_size)),
+			@TOTAL_UNUSED = Common.ByteToStr(SUM(unused))
+		FROM Maintenance.DatabaseSize()
+
+		SELECT obj_name, row_count, reserved_str, data_str, index_str, unused_str
+		FROM Maintenance.DatabaseSize()
+		ORDER BY Reserved DESC
+
+		EXEC Maintenance.FINISH_PROC @@PROCID
+	END TRY
+	BEGIN CATCH
+		DECLARE	@SEV	INT
+		DECLARE	@STATE	INT
+		DECLARE	@NUM	INT
+		DECLARE	@PROC	NVARCHAR(128)
+		DECLARE	@MSG	NVARCHAR(2048)
+
+		SELECT
+			@SEV	=	ERROR_SEVERITY(),
+			@STATE	=	ERROR_STATE(),
+			@NUM	=	ERROR_NUMBER(),
+			@PROC	=	ERROR_PROCEDURE(),
+			@MSG	=	ERROR_MESSAGE()
+
+		EXEC Maintenance.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
+	END CATCH
+END
+GO
+GRANT EXECUTE ON [Maintenance].[TABLE_SIZE_SELECT] TO rl_maintenance_size;
+GO
