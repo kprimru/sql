@@ -28,6 +28,7 @@ AS
 		INNER JOIN dbo.DistrTypeTable t ON t.DistrTypeId = d.NT_ID_MASTER
 
 
+
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegNodeSearchView(ID)] ON [Reg].[RegNodeSearchView] ([ID] ASC);
 CREATE NONCLUSTERED INDEX [IX_Reg.RegNodeSearchView(Complect,DS_REG,DistrStr)+INCL] ON [Reg].[RegNodeSearchView] ([Complect] ASC, [DS_REG] ASC, [DistrStr] ASC) INCLUDE ([CompNumber], [DistrNumber], [HostID], [SystemBaseName], [RegisterDate], [SystemID], [DIstrTypeId], [DistrTypeName]);

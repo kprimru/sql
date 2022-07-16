@@ -107,7 +107,7 @@ BEGIN
 
 		IF @BEGIN IS NULL AND @END IS NULL BEGIN
 			INSERT INTO #distr(CL_ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP/*, LAST_PAY, BILL, INCOME*/)
-			SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
+			SELECT DISTINCT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
 			FROM
 			(
 				SELECT ClientID, IsNull(ChildClientID, a.ClientID) AS UnionClientID
@@ -120,11 +120,11 @@ BEGIN
 						AND b.STATUS = 1
 				) AS b
 			) AS C
-			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT
+			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT OR ClientID = ID_CLIENT
 			WHERE DS_REG = 0;
 		END ELSE BEGIN
 			INSERT INTO #distr(CL_ID, DisStr, SYS_REG, SYS_ORD, DISTR, COMP/*, LAST_PAY, BILL, INCOME*/)
-			SELECT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
+			SELECT DISTINCT ClientID, DistrStr, SystemBaseName, SystemOrder, DISTR, COMP
 			FROM
 			(
 				SELECT ClientID, IsNull(ChildClientID, a.ClientID) AS UnionClientID
@@ -137,7 +137,7 @@ BEGIN
 						AND b.STATUS = 1
 				) AS b
 			) AS C
-			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT;
+			INNER JOIN dbo.ClientDistrView WITH(NOEXPAND) ON UnionClientID = ID_CLIENT OR ClientID = ID_CLIENT;
 
 			DELETE
 			FROM #distr

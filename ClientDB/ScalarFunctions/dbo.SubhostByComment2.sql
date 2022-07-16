@@ -28,7 +28,7 @@ BEGIN
 
     SET @Host = '';
     SET @Temp = '';
-    SET @Comment = ISNULL(@Comment, '');
+    SET @Comment = ISNULL(Ltrim(Rtrim(@Comment)), '');
 
     -- для ДИУ
     IF @Distr = 20 OR @System = 'SKS' BEGIN
