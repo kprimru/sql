@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			b.name AS RL_NAME,
+			b.name AS RL_NAME, a.RoleStr,
 			CONVERT(BIT,
 				(
 					SELECT COUNT(*)
