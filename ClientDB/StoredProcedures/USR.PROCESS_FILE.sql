@@ -64,68 +64,74 @@ BEGIN
 
 		DECLARE @Usr TABLE
 		(
-			ClientID			Int					NULL,
-			FormatVersion		Int				NOT NULL,
-			Ric					Int				NOT NULL,
-			ResVersion			VarChar(50)		NOT NULL,
-			ConsExeVersion		VarChar(50) 		NULL,
-			KDVersion			VarChar(50) 		NULL,
-			ComplectType		VarChar(64) 		NULL,
-			ProcessorName		VarChar(100)		NULL,
-			ProcessorFrequency	VarChar(50) 		NULL,
-			ProcessorCores		VarChar(20) 		NULL,
-			RAM					VarChar(20)			NULL,
-			OSName				VarChar(100)	NOT NULL,
-			OSVersionMinor		VarChar(20) 	NOT NULL,
-			OSVersionMajor		VarChar(20) 	NOT NULL,
-			OSBuild				VarChar(20) 	NOT NULL,
-			OSPlatformID		VarChar(20) 	NOT NULL,
-			OSEdition			VarChar(50) 		NULL,
-			OSCapacity			VarChar(20) 		NULL,
-			OSLangID			VarChar(50) 		NULL,
-			OSCompatibility		VarChar(50) 		NULL,
-			BootDiskName		VarChar(10) 		NULL,
-			BootDiskFreeSpace	VarChar(20) 		NULL,
-			ConsTmpDir          VarChar(256)        NULL,
-			ConsTmpFree         VarCHar(20)         NULL,
-			Office				VarChar(100) 		NULL,
-			Browser				VarChar(100) 		NULL,
-			MailAgent			VarChar(100) 		NULL,
-			Rights				VarChar(50)			NULL,
-			DiskFreeSpace		VarChar(20) 	NOT NULL,
-			ODUsers 			VarChar(20) 	NOT NULL,
-			UDUsers 			VarChar(20) 	NOT NULL,
-			TSUsers 			VarChar(20) 	NOT NULL,
-			VMUsers 			VarChar(20)			NULL,
-			USRFileDate 		VarChar(20) 	NOT NULL,
-			USRFileTime 		VarChar(20) 	NOT NULL,
-			USRFileKind 		VarChar(20) 	NOT NULL,
-			USRFileUptime		VarChar(20) 		NULL,
-			InfoCodFileDate 	VarChar(20) 		NULL,
-			InfoCodFileTime 	VarChar(20) 		NULL,
-			InfoCfgFileDate 	VarChar(20) 		NULL,
-			InfoCfgFileTime 	VarChar(20) 		NULL,
-			ConsultTorFileDate 	VarChar(20) 		NULL,
-			ConsultTorFileTime 	VarChar(20) 		NULL,
-			FileSystem			VarChar(20) 		NULL,
-			ExpconsDate			VarChar(20) 		NULL,
-			ExpconsTime			VarChar(20) 		NULL,
-			ExpconsKind 		VarChar(20) 		NULL,
-			ExpusersDate		VarChar(20) 		NULL,
-			ExpusersTime		VarChar(20) 		NULL,
-			HotlineDate			VarChar(20) 		NULL,
-			HotlineTime 		VarChar(20) 		NULL,
-			HotlineKind 		VarChar(20) 		NULL,
-			HotlineUsersDate 	VarChar(20) 		NULL,
-			HotLineUsersTime 	VarChar(20) 		NULL,
-			UserList            VarChar(20)         NULL,
-			UserListOnline      VarChar(20)         NULL,
-			UserListUsersOnline VarChar(20)         NULL,
-			WineExists			VarChar(20) 		NULL,
-			WineVersion 		VarChar(50) 		NULL,
-			NowinName			VarChar(128) 		NULL,
-			NowinExtend 		VarChar(128) 		NULL,
-			NowinUnname 		VarChar(512) 		NULL
+			ClientID				Int					NULL,
+			FormatVersion			Int				NOT NULL,
+			Ric						Int				NOT NULL,
+			ResVersion				VarChar(50)		NOT NULL,
+			ConsExeVersion			VarChar(50) 		NULL,
+			KDVersion				VarChar(50) 		NULL,
+			ComplectType			VarChar(64) 		NULL,
+			ProcessorName			VarChar(100)		NULL,
+			ProcessorFrequency		VarChar(50) 		NULL,
+			ProcessorCores			VarChar(20) 		NULL,
+			RAM						VarChar(20)			NULL,
+			OSName					VarChar(100)	NOT NULL,
+			OSVersionMinor			VarChar(20) 	NOT NULL,
+			OSVersionMajor			VarChar(20) 	NOT NULL,
+			OSBuild					VarChar(20) 	NOT NULL,
+			OSPlatformID			VarChar(20) 	NOT NULL,
+			OSEdition				VarChar(50) 		NULL,
+			OSCapacity				VarChar(20) 		NULL,
+			OSLangID				VarChar(50) 		NULL,
+			OSCompatibility			VarChar(50) 		NULL,
+			BootDiskName			VarChar(10) 		NULL,
+			BootDiskFreeSpace		VarChar(20) 		NULL,
+			ConsTmpDir				VarChar(256)        NULL,
+			ConsTmpFree				VarCHar(20)         NULL,
+			Office					VarChar(100) 		NULL,
+			Browser					VarChar(100) 		NULL,
+			MailAgent				VarChar(100) 		NULL,
+			Rights					VarChar(50)			NULL,
+			DiskFreeSpace			VarChar(20) 	NOT NULL,
+			ODUsers 				VarChar(20) 	NOT NULL,
+			UDUsers 				VarChar(20) 	NOT NULL,
+			TSUsers 				VarChar(20) 	NOT NULL,
+			VMUsers 				VarChar(20)			NULL,
+			USRFileDate 			VarChar(20) 	NOT NULL,
+			USRFileTime 			VarChar(20) 	NOT NULL,
+			USRFileKind 			VarChar(20) 	NOT NULL,
+			USRFileUptime			VarChar(20) 		NULL,
+			InfoCodFileDate 		VarChar(20) 		NULL,
+			InfoCodFileTime 		VarChar(20) 		NULL,
+			InfoCfgFileDate 		VarChar(20) 		NULL,
+			InfoCfgFileTime 		VarChar(20) 		NULL,
+			ConsultTorFileDate 		VarChar(20) 		NULL,
+			ConsultTorFileTime 		VarChar(20) 		NULL,
+			FileSystem				VarChar(20) 		NULL,
+			ExpconsDate				VarChar(20) 		NULL,
+			ExpconsTime				VarChar(20) 		NULL,
+			ExpconsKind 			VarChar(20) 		NULL,
+			ExpusersDate			VarChar(20) 		NULL,
+			ExpusersTime			VarChar(20) 		NULL,
+			HotlineDate				VarChar(20) 		NULL,
+			HotlineTime 			VarChar(20) 		NULL,
+			HotlineKind 			VarChar(20) 		NULL,
+			HotlineUsersDate 		VarChar(20) 		NULL,
+			HotLineUsersTime 		VarChar(20) 		NULL,
+			UserList				VarChar(20)         NULL,
+			UserListOnline			VarChar(20)         NULL,
+			UserListUsersOnline		VarChar(20)         NULL,
+			StartKeyWorkFileDate	VarChar(20)			NULL,
+			StartKeyWorkFileTime	VarChar(20)			NULL,
+			StartKeyWorkFileContent	VarChar(Max)		NULL,
+			StartKeyConsFileDate	VarChar(20)			NULL,
+			StartKeyConsFileTime	VarChar(20)			NULL,
+			StartKeyConsFileContent	VarChar(Max)		NULL,
+			WineExists				VarChar(20) 		NULL,
+			WineVersion 			VarChar(50) 		NULL,
+			NowinName				VarChar(128) 		NULL,
+			NowinExtend 			VarChar(128) 		NULL,
+			NowinUnname 			VarChar(512) 		NULL
 		);
 
 		DECLARE @Package TABLE
@@ -372,6 +378,8 @@ BEGIN
 			ExpconsDate, ExpconsTime, ExpconsKind, ExpusersDate, ExpusersTime,
 			HotlineDate, HotlineTime, HotlineKind, HotlineUsersDate, HotlineUsersTime,
 			UserList, UserListOnline, UserListUsersOnline,
+			StartKeyWorkFileDate, StartKeyWorkFileTime, StartKeyWorkFileContent,
+			StartKeyConsFileDate, StartKeyConsFileTime, StartKeyConsFileContent,
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname
 		)
 		SELECT
@@ -423,14 +431,16 @@ BEGIN
 			c.value('(files[1]/INFO.COD[1]/@time)[1]', 				'VarChar(20)')
 			) AS InfoCodFileTime,
 
-			IsNull(
+			Coalesce(
 			c.value('(files[1]/info.cfg[1]/@date)[1]', 				'VarChar(20)'),
-			c.value('(files[1]/INFO.CFG[1]/@date)[1]', 				'VarChar(20)')
+			c.value('(files[1]/INFO.CFG[1]/@date)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO1.CFG[1]/@date)[1]', 			'VarChar(20)')
 			) AS InfoCodFileDate,
 
-			IsNull(
+			Coalesce(
 			c.value('(files[1]/info.cfg[1]/@time)[1]', 				'VarChar(20)'),
-			c.value('(files[1]/INFO.CFG[1]/@time)[1]', 				'VarChar(20)')
+			c.value('(files[1]/INFO.CFG[1]/@time)[1]', 				'VarChar(20)'),
+			c.value('(files[1]/INFO1.CFG[1]/@time)[1]', 			'VarChar(20)')
 			) AS InfoCodFileTime,
 
 			IsNull(
@@ -498,6 +508,14 @@ BEGIN
 			c.value('(files[1]/userlist[1]/@userlist)[1]', 		    'VarChar(20)') AS UserList,
 			c.value('(files[1]/userlist[1]/@online)[1]', 		    'VarChar(20)') AS UserListOnline,
 			c.value('(files[1]/userlist[1]/@usersonline)[1]', 		'VarChar(20)') AS UserListUsersOnline,
+
+			c.value('(files[1]/START.KEY_WORK[1]/@date)[1]',			'VarChar(20)') AS StartKeyWorkFileDate,
+			c.value('(files[1]/START.KEY_WORK[1]/@time)[1]',			'VarChar(20)') AS StartKeyWorkFileTime,
+			Replace(Replace(Replace(c.value('(files[1]/START.KEY_WORK[1])[1]',					'VarChar(Max)'), Char(10), ''), Char(13), ''), Char(9), '') AS StartKeyWorkContent,
+
+			c.value('(files[1]/START.KEY_CONS[1]/@date)[1]',			'VarChar(20)') AS StartKeyConsFileDate,
+			c.value('(files[1]/START.KEY_CONS[1]/@time)[1]',			'VarChar(20)') AS StartKeyConsFileTime,
+			Replace(Replace(Replace(c.value('(files[1]/START.KEY_CONS[1])[1]',					'VarChar(Max)'), Char(10), ''), Char(13), ''), Char(9), '') AS StartKeyConsContent,
 
 			c.value('(tech_info[1]/wine[1]/@exist)[1]',				'VarChar(20)')	AS WineExists,
 			c.value('(tech_info[1]/wine[1]/@version)[1]',			'VarChar(20)')	AS WineExists,
@@ -600,6 +618,24 @@ BEGIN
 		UPDATE @Usr
 		SET HotlineUsersTime = NULL
 		WHERE HotlineUsersTime = '0';
+
+		UPDATE @Usr
+		SET StartKeyWorkFileDate = NULL
+		WHERE StartKeyWorkFileDate = '0'
+			OR StartKeyWorkFileDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET StartKeyWorkFileTime = NULL
+		WHERE StartKeyWorkFileTime = '0';
+
+		UPDATE @Usr
+		SET StartKeyConsFileDate = NULL
+		WHERE StartKeyConsFileDate = '0'
+			OR StartKeyConsFileDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET StartKeyConsFileTime = NULL
+		WHERE StartKeyWorkFileTime = '0';
 
 		UPDATE @Usr
 		SET Ric = 999
@@ -997,6 +1033,8 @@ BEGIN
 						UF_INFO_COD, UF_INFO_CFG, UF_CONSULT_TOR, UF_FILE_SYSTEM, UF_EXPCONS,
 						UF_EXPCONS_KIND, UF_EXPUSERS, UF_HOTLINE, UF_HOTLINE_KIND, UF_HOTLINEUSERS,
 						UF_USERLIST, UF_USERLISTONLINE, UF_USERLISTUSERSONLINE,
+						UF_START_KEY_WORK_DATE, UF_START_KEY_WORK_CONTENT,
+						UF_START_KEY_CONS_DATE, UF_START_KEY_CONS_CONTENT,
 						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND,
 						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE, UF_TEMP_DIR, UF_TEMP_FREE)
 		SELECT
@@ -1062,6 +1100,18 @@ BEGIN
 				121
 			),
             Cast(UserList AS Bit), Cast(UserListOnline AS Bit), Cast(UserListUsersOnline AS SmallInt),
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, StartKeyWorkFileDate, 104), 121), 10) + ' ' +
+				SUBSTRING(StartKeyWorkFileTime, 1, 2) + ':' + SUBSTRING(StartKeyWorkFileTime, 4, 2) + ':00.000',
+				121
+			),
+			StartKeyWorkFileContent,
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, StartKeyConsFileDate, 104), 121), 10) + ' ' +
+				SUBSTRING(StartKeyConsFileTime, 1, 2) + ':' + SUBSTRING(StartKeyConsFileTime, 4, 2) + ':00.000',
+				121
+			),
+			StartKeyConsFileContent,
 			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType, ConsTmpDir, ConsTmpFree
 		FROM @Usr
 		INNER JOIN dbo.ResVersionTable		ON ResVersionNumber = ResVersion
