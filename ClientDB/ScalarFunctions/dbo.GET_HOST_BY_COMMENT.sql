@@ -6,15 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[GET_HOST_BY_COMMENT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_HOST_BY_COMMENT] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-
-
-
--- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 02.10.2008
--- Описание:	  Возвращает название подхоста
---                по комментарию из рег.узла
--- =============================================
 ALTER FUNCTION [dbo].[GET_HOST_BY_COMMENT]
 (
   @comment varchar(200)
@@ -44,7 +35,4 @@ BEGIN
 
   RETURN @temp
 END
-
-
-
 GO

@@ -6,9 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[IP].[ClientStatDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [IP].[ClientStatDetailView]  AS SELECT 1')
 GO
-
-
-
 ALTER VIEW [IP].[ClientStatDetailView]
 AS
 	SELECT

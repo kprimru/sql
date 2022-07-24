@@ -86,9 +86,10 @@ BEGIN
 							t.ID AS TAX_ID, t.NAME AS TAX_NAME, TAX_RATE, TOTAL_RATE,
 
 							DELIVERY, NOTE,
-
+							/*
 							CASE ISNULL(g.SystemPrefix, '') WHEN '' THEN '' ELSE g.SystemPrefix + ' ' END + g.SystemName +
-							CASE ISNULL(g.SystemPostfix, '') WHEN '' THEN '' ELSE ' ' + g.SystemPostfix END AS SystemFullName
+							CASE ISNULL(g.SystemPostfix, '') WHEN '' THEN '' ELSE ' ' + g.SystemPostfix END */
+							b.SystemFullName AS SystemFullName
 						FROM
 							(
 								SELECT
@@ -115,7 +116,7 @@ BEGIN
 								WHERE D.[System_Id] = SYS_ID
 							) AS D
 							LEFT OUTER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
-							LEFT OUTER JOIN dbo.SystemBuhView g ON g.SystemReg = b.SystemBaseName
+							--LEFT OUTER JOIN dbo.SystemBuhView g ON g.SystemReg = b.SystemBaseName
 							LEFT OUTER JOIN Common.Tax t ON t.ID = a.TAX_ID
 					) AS o_O
 				) AS o_O

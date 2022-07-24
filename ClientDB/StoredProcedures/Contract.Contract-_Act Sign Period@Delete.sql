@@ -6,7 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Contract].[Contract->Act Sign Period@Delete]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contract->Act Sign Period@Delete]  AS SELECT 1')
 GO
-
 ALTER PROCEDURE [Contract].[Contract->Act Sign Period@Delete]
 	@Id  SmallInt
 AS

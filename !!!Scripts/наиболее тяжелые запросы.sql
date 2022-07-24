@@ -27,6 +27,7 @@ from sys.dm_exec_query_stats  qs
 cross apply sys.dm_exec_sql_text(sql_handle) st
 OUTER APPLY sys.dm_exec_query_plan(qs.plan_handle) tp 
 where total_logical_reads > 0
-	AND execution_count > 5
+	AND db_name(st.dbid) NOT IN ('msdb')
+	--AND execution_count > 1000
 	--AND db_name(st.dbid) = 'ClientDB'
 order by AvgDur desc

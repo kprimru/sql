@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC2022-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC276-SQL\NKH].[ClientDB]';
+SET @Dst = '[PC276-SQL\USS].[ClientDB]';
 
 DECLARE @SrcSchemas Table
 (
@@ -28,6 +28,22 @@ DECLARE @DstTables Table
     [Schema]    SysName     NOT NULL,
     [Table]     SysName     NOT NULL,
     PRIMARY KEY CLUSTERED ([Schema], [Table])
+);
+
+DECLARE @SrcSynonyms Table
+(
+    [Schema]    SysName     NOT NULL,
+    [Name]		SysName     NOT NULL,
+	[Definition]	VarChar(Max)	NOT NULL,
+    PRIMARY KEY CLUSTERED ([Schema], [Name])
+);
+
+DECLARE @DstSynonyms Table
+(
+    [Schema]    SysName     NOT NULL,
+    [Name]		SysName     NOT NULL,
+	[Definition]	VarChar(Max)	NOT NULL,
+    PRIMARY KEY CLUSTERED ([Schema], [Name])
 );
 
 DECLARE @SrcColumns Table
@@ -174,6 +190,23 @@ DECLARE @DstRoles Table
     PRIMARY KEY CLUSTERED([Name])
 );
 
+DECLARE @SrcPermissions Table
+(
+	[Object]		SysName,
+	[Type]			SysName,
+	[State]			SysName,
+	[Role]			SysName,
+	PRIMARY KEY CLUSTERED ([Object], [Role], [Type])
+);
+
+DECLARE @DstPermissions Table
+(
+	[Object]		SysName,
+	[Type]			SysName,
+	[State]			SysName,
+	[Role]			SysName,
+	PRIMARY KEY CLUSTERED ([Object], [Role], [Type])
+);
 
 INSERT INTO @SrcSchemas
 EXEC ('SELECT [name] FROM ' + @Src + '.[sys].[schemas]');
@@ -189,6 +222,16 @@ INNER JOIN ' + @Src + '.[sys].[schemas]  S ON T.[schema_id] = S.[schema_id]');
 INSERT INTO @DstTables
 EXEC ('
 SELECT S.[name], T.[name] FROM ' + @Dst + '.[sys].[tables]         T
+INNER JOIN ' + @Dst + '.[sys].[schemas]  S ON T.[schema_id] = S.[schema_id]');
+
+INSERT INTO @SrcSynonyms
+EXEC ('
+SELECT S.[name], T.[name], T.[base_object_name] FROM ' + @Src + '.[sys].[synonyms]         T
+INNER JOIN ' + @Src + '.[sys].[schemas]  S ON T.[schema_id] = S.[schema_id]');
+
+INSERT INTO @DstSynonyms
+EXEC ('
+SELECT S.[name], T.[name], T.[base_object_name] FROM ' + @Dst + '.[sys].[synonyms]         T
 INNER JOIN ' + @Dst + '.[sys].[schemas]  S ON T.[schema_id] = S.[schema_id]');
 
 INSERT INTO @SrcColumns
@@ -467,6 +510,29 @@ FROM ' + @Dst + '.[sys].[default_constraints] DC
 INNER JOIN ' + @Dst + '.[sys].[tables] T ON DC.[parent_object_id] = T.[object_id]
 INNER JOIN ' + @Dst + '.[sys].[schemas] S ON S.[schema_id] = T.[schema_id]');
 
+INSERT INTO @SrcPermissions
+EXEC('SELECT
+	[Object]	= ''['' + S.[name] + ''].['' + O.[name] + '']'',
+	[Type]		= P.[permission_name],
+	[State]		= P.[state_desc],
+	[Role]		= R.[name]
+FROM ' + @Src + '.[sys].[database_permissions] AS P
+INNER JOIN ' + @Src + '.[sys].[objects] AS O ON O.[object_id] = P.[major_id]
+INNER JOIN ' + @Src + '.[sys].[database_principals] AS R ON R.[principal_id] = P.[grantee_principal_id]
+INNER JOIN ' + @Src + '.[sys].[schemas] AS S ON S.[schema_id] = O.[schema_id]');
+
+INSERT INTO @DstPermissions
+EXEC('SELECT
+	[Object]	= ''['' + S.[name] + ''].['' + O.[name] + '']'',
+	[Type]		= P.[permission_name],
+	[State]		= P.[state_desc],
+	[Role]		= R.[name]
+FROM ' + @Dst + '.[sys].[database_permissions] AS P
+INNER JOIN ' + @Dst + '.[sys].[objects] AS O ON O.[object_id] = P.[major_id]
+INNER JOIN ' + @Dst + '.[sys].[database_principals] AS R ON R.[principal_id] = P.[grantee_principal_id]
+INNER JOIN ' + @Dst + '.[sys].[schemas] AS S ON S.[schema_id] = O.[schema_id]');
+
+
 -- схемы
 --/*
 IF EXISTS(SELECT * FROM @SrcSchemas S FULL JOIN @DstSchemas D ON S.[Schema] = D.[Schema] WHERE S.[Schema] IS NULL OR D.[Schema] IS NULL)
@@ -480,6 +546,22 @@ FROM @SrcSchemas        S
 FULL JOIN @DstSchemas   D ON S.[Schema] = D.[Schema]
 WHERE S.[Schema] IS NULL OR D.[Schema] IS NULL
 ORDER BY IsNull(S.[Schema], D.[Schema]);
+--*/
+
+-- синонимы
+--/*
+IF EXISTS(SELECT * FROM @SrcSynonyms S FULL JOIN @DstSynonyms D ON S.[Schema] = D.[Schema] AND S.[Name] = D.[Name] AND S.[Definition] = D.[Definition] WHERE S.[Definition] IS NULL OR D.[Definition] IS NULL)
+SELECT
+    [Synonym] = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Name], D.[Name]) + ']',
+    [SQL]   =   CASE
+                    WHEN D.[Schema] IS NULL THEN 'IF Object_Id(''[' + S.[Schema] + '].[' + S.[Name] + ']'', ''SN'') IS NULL CREATE SYNONYM ' +  '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Name], D.[Name]) + '] FOR ' + S.[Definition] + ';'
+                    WHEN S.[Schema] IS NULL THEN 'IF Object_Id(''[' + D.[Schema] + '].[' + D.[Name] + ']'', ''SN'') IS NOT NULL DROP SYNONYM [' + D.[Schema] + '].[' + D.[Name] + '];'
+					WHEN Replace(']', '^]', REPLACE('[', '^[', D.[Definition])) NOT LIKE ('%' + Replace(']', '^]', REPLACE('[', '^[', S.[Definition]))) THEN 'DROP SYNONYM [' + D.[Schema] + '].[' + D.[Name] + ']; CREATE SYNONYM ' +  '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Name], D.[Name]) + '] FOR ' + S.[Definition] + ';'
+                END
+FROM @SrcSynonyms         S
+FULL JOIN @DstSynonyms    D ON S.[Schema] = D.[Schema] AND S.[Name] = D.[Name]
+WHERE S.[Name] IS NULL OR D.[Name] IS NULL OR Replace(']', '^]', REPLACE('[', '^[', D.[Definition])) NOT LIKE ('%' + Replace(']', '^]', REPLACE('[', '^[', S.[Definition])))
+ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Name], D.[Name]);
 --*/
 
 -- таблицы
@@ -774,8 +856,6 @@ ORDER BY
     IsNull(D.[IsPrimaryKey], S.[IsPrimaryKey]) DESC,
     IsNull(D.[IsClustered], S.[IsClustered]) DESC;
     
---IF EXISTS (SELECT * FROM )
-
 SELECT
 	[Object] = '[' + IsNull(S.[Schema], D.[Schema]) + '].[' + IsNull(S.[Table], D.[Table]) + '].[' + IsNull(S.[Columns], D.[Columns]) + ']',
 	[RefObject] = '[' + IsNull(S.[RefSchema], D.[RefSchema]) + '].[' + IsNull(S.[RefTable], D.[RefTable]) + '].[' + IsNull(S.[RefColumns], D.[RefColumns]) + ']',
@@ -812,3 +892,18 @@ FULL JOIN @DstDefaults D ON S.[Schema] = D.[Schema]
 							AND S.[Name] = D.[Name]
 WHERE S.[Name] IS NULL OR D.[Name] IS NULL
 ORDER BY IsNull(S.[Schema], D.[Schema]), IsNull(S.[Table], D.[Table]), IsNull(S.[Name], D.[Name])
+
+
+SELECT
+	[Object] = IsNull(S.[Object], D.[Object]),
+	[SQL] = CASE
+				WHEN S.[Object] IS NULL THEN 'REVOKE ' + D.[Type] + ' ON ' + D.[Object] + ' TO ' + D.[Role]
+				WHEN D.[Object] IS NULL THEN S.[State] + ' ' + S.[Type] + ' ON ' + S.[Object] + ' TO ' + S.[Role]
+			END
+FROM @SrcPermissions S
+FULL JOIN @DstPermissions D ON S.[Object] = D.[Object]
+							AND S.[State] = D.[State]
+							AND S.[Type] = D.[Type]
+							AND S.[Role] = D.[Role]
+WHERE S.[Object] IS NULL OR D.[Object] IS NULL
+ORDER BY IsNull(S.[Object], D.[Object]), IsNull(S.[Role], D.[Role]);
