@@ -61,10 +61,18 @@ BEGIN
 		ELSE
 			SELECT
 				TO_REPORT, TO_NUM, TO_NAME, TO_ID, COUR_NAME, TO_MAIN, TO_INN, CL_INN, TO_LAST, 0 AS TO_NAH, TO_PARENT,
-				ST_CITY_NAME + ', ' + TA_HOME AS TO_ADDRESS, TO_RANGE, TO_DELETED
+				ST_CITY_NAME + ', ' + TA_HOME AS TO_ADDRESS, TO_RANGE, TO_DELETED,
+				L.[ExpireDate] AS TO_LOCK_EXPIRE
 			FROM
 				dbo.TOView a
 				LEFT OUTER JOIN dbo.TOAddressView b ON a.TO_ID = b.TA_ID_TO
+				OUTER APPLY
+			(
+			    SELECT TOP (1) L.[ExpireDate]
+			    FROM [dbo].[TO:Locks] AS L
+			    WHERE A.TO_ID = L.TO_Id
+			        AND L.[DateTo] IS NULL
+			) AS L
 			WHERE TO_ID_CLIENT = @clientid
 				AND
 					(

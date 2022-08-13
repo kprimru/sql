@@ -196,10 +196,10 @@ BEGIN
 				), CL_ID_PAYER,
 				(
 						SELECT TOP 1 CO_IDENT
-						FROM
-							dbo.ContractTable
-						WHERE
-							CO_ID_CLIENT = CL_ID
+						FROM dbo.ContractTable
+						INNER JOIN dbo.ContractDistrTable ON COD_ID_CONTRACT = CO_ID
+						INNER JOIN dbo.IncomeDistrTable ON ID_ID_DISTR = COD_ID_DISTR AND ID_ID_INCOME = IN_ID
+						WHERE CO_ID_CLIENT = CL_ID
 						ORDER BY CO_ACTIVE DESC, CO_END_DATE DESC
 					) AS INS_IDENT
 			FROM 

@@ -26,8 +26,8 @@ BEGIN
                     SELECT
 						(
                             SELECT
-                                [ИдТРУ]         = @ProductGuid,
-								[ТехИдТРУ]		= @ProductSid,
+                                [ИдТРУ]         = R.[ИдТРУ],
+								[ТехИдТРУ]		= R.[ТехИдТРУ],
                                 [НаимТовИсх]    = R.[ProductName],
 								(
 									SELECT
@@ -43,12 +43,12 @@ BEGIN
 							SELECT
 								(
 									SELECT
-                                        [ИдТРУ]         = @ProductGuid,
-                                        [КодТов]        = @ProductOKPD2Code,
-                                        [НаимТов]       = @ProductNameForGrouping,
-                                        --[НаимТов]       = Max(INR_GOOD),
-                                        [КодЕдИзм]      = @ProductOKEICode,
-                                        [НаимЕдИзм]     = @ProductOKEIFullName,
+                                        [ИдТРУ],
+                                        [КодТов],
+                                        [НаимТов]       = [ProductName],
+                                        [КодЕдИзм],
+                                        [НаимЕдИзм],
+										[ТехИдТРУ],
                                         [ЦенаЕдИзм]     = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
                                         [КолТов]        = 1,
                                         [ПрТовРаб]      = 3,
@@ -93,16 +93,33 @@ BEGIN
 						SELECT
 							[ProductName],
 							[INR_SALL],
+							[ИдТРУ]         = [Product_GUId],
+							[ТехИдТРУ]		= [ProductSid],
+                            [КодТов]        = [ProductOKPD2Code],
+                            [КодЕдИзм]      = [ProductOKEICode],
+                            [НаимЕдИзм]     = [ProductOKEIFullName],
 							[RowNumber] = Row_Number() OVER(ORDER BY [ProductName])
 						FROM
 						(
 							SELECT
 								[ProductName]	= R.[INR_GOOD] + ' ' + R.[INR_NAME],
+								[INR_NAME],
 								[INR_SALL]		= Sum(R.INR_SALL)
 							FROM dbo.InvoiceRowTable AS R
 							WHERE R.INR_ID_INVOICE = @Invoice_Id
-							GROUP BY R.[INR_GOOD] + ' ' + R.[INR_NAME]
+							GROUP BY R.[INR_GOOD] + ' ' + R.[INR_NAME],
+								INR_NAME
 						) AS R
+						OUTER APPLY
+						(
+							SELECT TOP (1)
+								P.[Product_GUId],
+								P.[ProductSid],
+								P.[ProductOKPD2Code],
+								P.[ProductOKEICode],
+								P.[ProductOKEIFullName]
+							FROM [dbo].[EISData@ParseProducts](EIS_DATA, [INR_SALL], INR_NAME) AS P
+						) AS P
 						WHERE @Grouping = 0
 
 						UNION ALL
@@ -110,6 +127,11 @@ BEGIN
 						SELECT
 							[ProductName],
 							[INR_SALL],
+							[ИдТРУ]         = @ProductGuid,
+							[ТехИдТРУ]		= @ProductSid,
+                            [КодТов]        = @ProductOKPD2Code,
+                            [КодЕдИзм]      = @ProductOKEICode,
+                            [НаимЕдИзм]     = @ProductOKEIFullName,
 							[RowNumber] = Row_Number() OVER(ORDER BY [ProductName])
 						FROM
 						(
@@ -124,6 +146,9 @@ BEGIN
 
                     FOR XML RAW('СведТРУ'), TYPE
                 )
+			FROM dbo.InvoiceSaleTable
+			INNER JOIN dbo.ClientFinancing ON INS_ID_CLIENT = ID_CLIENT
+			WHERE INS_ID = @Invoice_Id
             FOR XML RAW('СведТов'), TYPE
 		)
 END

@@ -289,6 +289,8 @@ BEGIN
 						AND y.DIS_COMP_NUM = c.DIS_COMP_NUM
 						AND x.SYS_REG_NAME = d.SYS_REG_NAME
 				) AND b.CL_NUM > 0
+				-- TODO: ?
+				AND d.SYS_ID_SO = 1
 
 		UPDATE DBF.dbo.ClientDistrTable
 		SET CD_ID_CLIENT = c.CL_ID/*,

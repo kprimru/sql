@@ -23,5 +23,3 @@ CREATE TABLE [dbo].[ClientControl]
 GO
 CREATE CLUSTERED INDEX [IC_dbo.ClientControl(CC_ID_CLIENT,CC_REMOVE_DATE)] ON [dbo].[ClientControl] ([CC_ID_CLIENT] ASC, [CC_REMOVE_DATE] ASC);
 GO
-GRANT SELECT ON [dbo].[ClientControl] TO Чемерис;
-GO
