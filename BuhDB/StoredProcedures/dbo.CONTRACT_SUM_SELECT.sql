@@ -21,7 +21,7 @@ BEGIN
     SELECT
         SystemPrefix, SystemName, DistrTypeName, DistrTypeCoefficient, DistrTypeNet,
         PriceAbonement, DiscountRate, FixedSum, SystemServicePrice, MonthCount, BeginMonth,
-        SystemPriceModeName, SystemSet, MonthPrice, SysPrice, IsGenerated,
+        SystemPriceModeName, SystemSet, SP.MonthPrice, SysPrice, IsGenerated,
         ROUND(SysPrice * @TaxRate, 2) As SysPriceNDS, ROUND(SysPrice * @TaxRate, 2) + SysPrice AS SysPriceTotalNDS
     FROM dbo.TempCustomerSystemsTable a
     INNER JOIN dbo.DistrTypeTable d ON d.DistrTypeID = a.DistrTypeID
@@ -62,6 +62,16 @@ BEGIN
         SELECT 60, IsGenerated = Cast(1 AS Bit)
         WHERE d.GenerateRow = 1
     ) AS P
+	CROSS APPLY
+	(
+		SELECT
+			CASE MonthPriceMode
+				WHEN 'Discount' THEN Ceiling(MonthPrice * (1 + MonthPriceInflation / 100) * (100 - MonthPriceDiscount) / 100)
+				WHEN 'Fixed' THEN MonthPriceFixed
+				WHEN 'Price' THEN MonthPrice
+				ELSE MonthPrice
+			END AS MonthPrice
+	) AS SP
     WHERE CustomerID = @CUSTOMER
     ORDER BY IsGenerated DESC, SystemGroupOrder, SystemOrder
 
