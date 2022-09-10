@@ -46,6 +46,7 @@ ALTER PROCEDURE [dbo].[ORGANIZATION_EDIT]
 	@billmemo   VarChar(100),
 	@eiscode    VarChar(100),
 	@eiscommcode    VarChar(100),
+	@logo		VarBinary(Max),
 	@active     Bit = 1
 AS
 BEGIN
@@ -96,6 +97,7 @@ BEGIN
 			ORG_BILL_MEMO   = @billmemo,
 			EIS_CODE        = @eiscode,
 			EIS_COMM_CODE   = @eiscommcode,
+			ORG_LOGO		= @logo,
 			ORG_ACTIVE      = @active
 		WHERE ORG_ID = @id
 
