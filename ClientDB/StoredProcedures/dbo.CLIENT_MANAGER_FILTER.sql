@@ -30,18 +30,37 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			ClientID, ClientFullName, DATE, SENDER, SHORT,
+			ClientID, ClientFullName, Cast(DATE + TIME AS DateTime) AS Date, SENDER, SHORT,
 			CASE SHORT
 				WHEN '' THEN ''
 				ELSE SHORT + CHAR(10)
 			END + NOTE AS NOTE,
 			ServiceStatusIndex,
-			'' AS TP_NAME
-		FROM
-			Task.Tasks a
-			INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
-			INNER JOIN dbo.ClientTable c ON c.ClientID = a.ID_CLIENT
-			INNER JOIN dbo.ServiceStatusTable d ON c.StatusID = d.ServiceStatusID
+			'' AS TP_NAME,
+			z.UPD_DATE, z.UPD_USER
+		FROM Task.Tasks a
+		INNER JOIN Task.TaskStatus b ON a.ID_STATUS = b.ID
+		INNER JOIN dbo.ClientTable c ON c.ClientID = a.ID_CLIENT
+		INNER JOIN dbo.ServiceStatusTable d ON c.StatusID = d.ServiceStatusID
+		OUTER APPLY
+		(
+			SELECT TOP (1) UPD_DATE, UPD_USER
+			FROM
+			(
+				SELECT TOP 1 UPD_DATE, UPD_USER
+				FROM Task.Tasks z
+				WHERE z.ID_MASTER = a.ID
+				ORDER BY UPD_DATE
+    
+				UNION ALL
+    
+				SELECT TOP 1 UPD_DATE, UPD_USER
+				FROM Task.Tasks z
+				WHERE z.ID = a.ID
+				ORDER BY UPD_DATE
+			) AS z
+			ORDER BY UPD_DATE
+		) AS z
 		WHERE SENDER <> 'Автомат'
 			AND a.STATUS = 1
 			AND (a.DATE >= @BEGIN OR @BEGIN IS NULL)
@@ -53,15 +72,34 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			ClientID, ClientFullName, dbo.DateOf(DATE), PERSONAL, '',
+			ClientID, ClientFullName, DATE, PERSONAL AS SENDER, '' AS SHORT,
 			NOTE,
 			ServiceStatusIndex,
-			b.NAME
-		FROM
-			dbo.ClientContact a
-			INNER JOIN dbo.ClientTable c ON c.ClientID = a.ID_CLIENT
-			INNER JOIN dbo.ServiceStatusTable d ON c.StatusID = d.ServiceStatusID
-			INNER JOIN dbo.ClientContactType b ON a.ID_TYPE = b.ID
+			b.NAME AS TP_NAME,
+			z.UPD_DATE, z.UPD_USER
+		FROM dbo.ClientContact a
+		INNER JOIN dbo.ClientTable c ON c.ClientID = a.ID_CLIENT
+		INNER JOIN dbo.ServiceStatusTable d ON c.StatusID = d.ServiceStatusID
+		INNER JOIN dbo.ClientContactType b ON a.ID_TYPE = b.ID
+		OUTER APPLY
+		(
+			SELECT TOP (1) UPD_DATE, UPD_USER
+			FROM
+			(
+				SELECT TOP 1 UPD_DATE, UPD_USER
+				FROM dbo.ClientContact z
+				WHERE z.ID_MASTER = a.ID
+				ORDER BY UPD_DATE
+    
+				UNION ALL
+    
+				SELECT TOP 1 UPD_DATE, UPD_USER
+				FROM dbo.ClientContact z
+				WHERE z.ID = a.ID
+				ORDER BY UPD_DATE
+			) AS z
+			ORDER BY UPD_DATE
+		) AS z
 		WHERE a.STATUS = 1
 			AND (a.DATE >= @BEGIN OR @BEGIN IS NULL)
 			AND (a.DATE <= @END OR @END IS NULL)
