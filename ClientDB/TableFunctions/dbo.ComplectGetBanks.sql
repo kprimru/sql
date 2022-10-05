@@ -110,6 +110,7 @@ BEGIN
 									FROM dbo.InfoBankTable
 									WHERE InfoBankName IN ('QSOV', 'DOF')                           --НЕ ПРОВЕРЯТЬ НА НАЛИЧИЕ НЕОБЯЗАТЕЛЬНЫХ БАНКОВ КРОМЕ DOF И QSOV
 								)
+						AND s.SystemBaseName NOT LIKE 'SPK%'
 			)
 	GROUP BY InfoBankID, InfoBankName, InfoBankShortName
 
