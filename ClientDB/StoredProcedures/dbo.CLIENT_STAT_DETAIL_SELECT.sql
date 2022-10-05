@@ -37,7 +37,12 @@ BEGIN
 			[2Enter],
 			[3Enter],
 			SessionTimeSum = dbo.TimeMinToStr(SessionTimeSum),
-			SessionTimeAVG = dbo.TimeSecToStr(Floor(SessionTimeAVG * 60))
+			SessionTimeAVG = dbo.TimeSecToStr(Floor(SessionTimeAVG * 60)),
+			EnterDelta,
+			BusySessionCount,
+			FreeSpaceRate,
+			FreeSpaceRequired,
+			FreeSpaceAvailable
 		FROM dbo.ClientStatDetail D
 		INNER JOIN Common.Period P ON D.WeekId = P.Id
 		WHERE	HostId = @HOST

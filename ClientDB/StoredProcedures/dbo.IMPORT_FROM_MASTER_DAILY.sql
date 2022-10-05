@@ -725,8 +725,8 @@ BEGIN
 		    )
 		OPTION(FORCE ORDER);
 
-		INSERT INTO dbo.ClientStatDetail([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
-		SELECT CA.[UpDate], P.ID, H.HostId, CA.Distr, CA.Comp, CA.Net, CA.UserCount, CA.EnterSum, CA.[0Enter], CA.[1Enter], CA.[2Enter], CA.[3Enter], CA.SessionTimeSum, CA.SessionTimeAVG
+		INSERT INTO dbo.ClientStatDetail([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG, EnterDelta, BusySessionCount, FreeSpaceRate, FreeSpaceRequired, FreeSpaceAvailable)
+		SELECT CA.[UpDate], P.ID, H.HostId, CA.Distr, CA.Comp, CA.Net, CA.UserCount, CA.EnterSum, CA.[0Enter], CA.[1Enter], CA.[2Enter], CA.[3Enter], CA.SessionTimeSum, CA.SessionTimeAVG, CA.EnterDelta, CA.BusySessionCount, CA.FreeSpaceRate, CA.FreeSpaceRequired, CA.FreeSpaceAvailable
 		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[ClientStatDetail] AS CA
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period] AS PA ON PA.ID = CA.WeekID
 		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[Hosts] AS HA ON HA.HostID = CA.HostID

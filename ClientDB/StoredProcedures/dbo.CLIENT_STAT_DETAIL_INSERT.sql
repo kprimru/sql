@@ -18,7 +18,12 @@ ALTER PROCEDURE [dbo].[CLIENT_STAT_DETAIL_INSERT]
 	@THREE_ENTER	INT,
 	@SES_TIME_SUM	INT,
 	@SES_TIME_AVG	FLOAT,
-	@WEEK_ID		UniqueIdentifier
+	@WEEK_ID		UniqueIdentifier,
+	@ENTER_DELTA			VarChar(100),
+	@BUSY_SESSION_COUNT		VarChar(100),
+	@FREE_SPACE_RATE		VarChar(100),
+	@FREE_SPACE_REQUIRED	VarChar(100),
+	@FREE_SPACE_AVAILABLE	VarChar(100)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -35,22 +40,52 @@ BEGIN
 
 	BEGIN TRY
 
-		INSERT INTO dbo.ClientStatDetail ([UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG)
-		SELECT
-			GETDATE(),
-			@WEEK_ID,
-			1,
-			@DISTR,
-			@COMP,
-			@NET,
-			@USER_COUNT,
-			@ENTER_SUM,
-			@ZERO_ENTER,
-			@ONE_ENTER,
-			@TWO_ENTER,
-			@THREE_ENTER,
-			@SES_TIME_SUM,
-			@SES_TIME_AVG
+		UPDATE dbo.ClientStatDetail SET
+			Net					= @NET,
+			UserCount			= @USER_COUNT,
+			EnterSum			= @ENTER_SUM,
+			[0Enter]			= @ZERO_ENTER,
+			[1Enter]			= @ONE_ENTER,
+			[2Enter]			= @TWO_ENTER,
+			[3Enter]			= @THREE_ENTER,
+			SessionTimeSum		= @SES_TIME_SUM,
+			SessionTimeAVG		= @SES_TIME_AVG,
+			EnterDelta			= @ENTER_DELTA,
+			BusySessionCount	= @BUSY_SESSION_COUNT,
+			FreeSpaceRate		= @FREE_SPACE_RATE,
+			FreeSpaceRequired	= @FREE_SPACE_REQUIRED,
+			FreeSpaceAvailable	= @FREE_SPACE_AVAILABLE
+		WHERE WeekId = @WEEK_ID
+			AND HostId = 1
+			AND Distr = @DISTR
+			AND Comp = @COMP;
+
+
+		IF @@RowCount = 0
+			INSERT INTO dbo.ClientStatDetail (
+				[UpDate], WeekId, HostId, Distr, Comp, Net, UserCount, EnterSum, [0Enter], [1Enter], [2Enter], [3Enter], SessionTimeSum, SessionTimeAVG,
+				EnterDelta, BusySessionCount, FreeSpaceRate, FreeSpaceRequired, FreeSpaceAvailable
+				)
+			SELECT
+				GETDATE(),
+				@WEEK_ID,
+				1,
+				@DISTR,
+				@COMP,
+				@NET,
+				@USER_COUNT,
+				@ENTER_SUM,
+				@ZERO_ENTER,
+				@ONE_ENTER,
+				@TWO_ENTER,
+				@THREE_ENTER,
+				@SES_TIME_SUM,
+				@SES_TIME_AVG,
+				@ENTER_DELTA,
+				@BUSY_SESSION_COUNT,
+				@FREE_SPACE_RATE,
+				@FREE_SPACE_REQUIRED,
+				@FREE_SPACE_AVAILABLE;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
