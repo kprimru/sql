@@ -18,6 +18,7 @@ CREATE TABLE [Claim].[DocumentDetail]
         [ID_TYPE]          UniqueIdentifier          NULL,
         [ID_MONTH_BONUS]   UniqueIdentifier          NULL,
         [ID_CONDITIONS]    NVarChar(Max)             NULL,
+        [INFLATION]        decimal                   NULL,
         CONSTRAINT [PK_Claim.DocumentDetail] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Claim.DocumentDetail(ID_MONTH_BONUS)_Claim.MonthBonus(ID)] FOREIGN KEY  ([ID_MONTH_BONUS]) REFERENCES [Claim].[MonthBonus] ([ID]),
         CONSTRAINT [FK_Claim.DocumentDetail(ID_TYPE)_Claim.Type(ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Distr].[Type] ([ID])

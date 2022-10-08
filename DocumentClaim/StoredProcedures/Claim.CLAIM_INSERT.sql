@@ -42,7 +42,7 @@ BEGIN
 
 		SET @detail_xml = CAST(@DETAIL AS XML)
 
-		INSERT INTO Claim.DocumentDetail(ID_DOCUMENT, ID_SYSTEM, ID_NEW_SYSTEM, ID_NET, ID_NEW_NET, ID_TYPE, ID_ACTION, ID_MONTH_BONUS, ID_CONDITIONS, CNT, DISCOUNT)
+		INSERT INTO Claim.DocumentDetail(ID_DOCUMENT, ID_SYSTEM, ID_NEW_SYSTEM, ID_NET, ID_NEW_NET, ID_TYPE, ID_ACTION, ID_MONTH_BONUS, ID_CONDITIONS, CNT, DISCOUNT, INFLATION)
 			SELECT
 				@ID,
 				c.value('@id_system', 'UNIQUEIDENTIFIER'),
@@ -54,7 +54,8 @@ BEGIN
 				c.value('@id_month_bonus', 'UNIQUEIDENTIFIER'),
 				c.value('@id_conditions', 'NVARCHAR(MAX)'),
 				c.value('@cnt', 'INT'),
-				c.value('@discount', 'DECIMAL(8, 4)')
+				c.value('@discount', 'DECIMAL(8, 4)'),
+				c.value('@inflation', 'DECIMAL(8, 4)')
 			FROM @detail_xml.nodes('/root/item') AS a(c)
 
 		DECLARE @distr_xml XML
