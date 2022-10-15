@@ -46,6 +46,7 @@ ALTER PROCEDURE [Client].[COMPANY_SELECT2]
     @DEPO       Bit                 = NULL,
     @DEPO_NUM   NVarChar(MAX)       = NULL,
     @RIVALV     NVarChar(MAX)       = NULL,
+	@Inn		VarChar(100)		= NULL,
     @ShowAll    Bit                 = 0,
 	@ROWCOUNT	Int					= 1000
 AS
@@ -110,6 +111,7 @@ BEGIN
         @FilterType_BLACK_NOTE  TinyInt,
         @FilterType_DEPO        TinyInt,
         @FilterType_DEPO_NUM    TinyInt,
+		@FilterType_INN			TinyInt,
         @FilterType_HISTORY     TinyInt,
         @FilterType_SELECTION   TinyInt;
 
@@ -146,6 +148,7 @@ BEGIN
         SET @FilterType_DEPO_NUM    = 31;
         SET @FilterType_HISTORY     = 32;
         SET @FilterType_SELECTION   = 33;
+		SET @FilterType_INN			= 34;
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -636,6 +639,16 @@ BEGIN
 
                 INSERT INTO @UsedFilterTypes
                 VALUES(@FilterType_DEPO_NUM)
+            END;
+
+			IF @INN IS NOT NULL BEGIN
+                INSERT INTO @IdByFilterType
+                SELECT Company_Id, @FilterType_INN
+                FROM Client.CompanyInn
+                WHERE Inn LIKE @Inn;
+
+                INSERT INTO @UsedFilterTypes
+                VALUES(@FilterType_INN)
             END;
 
             IF @HISTORY = 1 BEGIN
