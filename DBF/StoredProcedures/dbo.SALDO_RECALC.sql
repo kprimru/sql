@@ -70,7 +70,7 @@ BEGIN
 				INNER JOIN dbo.IncomeTable ON IN_ID = ID_ID_INCOME
 				INNER JOIN dbo.DistrView WITH(NOEXPAND) ON DIS_ID = ID_ID_DISTR
 				INNER JOIN dbo.SaleObjectTable ON SO_ID = SYS_ID_SO
-				CROSS APPLY
+				OUTER APPLY
 				(
 					SELECT TOP 1 *
 					FROM dbo.TaxTable
