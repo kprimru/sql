@@ -41,35 +41,32 @@ BEGIN
 		SELECT Systems.SystemShortName, SystemTypes.SST_SHORT, NetTypes.NT_SHORT, W.Date, W.Weight
 		FROM
 		(
-			SELECT DISTINCT SystemShortName, SystemBaseName
+			SELECT DISTINCT SystemShortName, SystemBaseName, SystemID
 			FROM dbo.SystemTable S
-			INNER JOIN dbo.Weight W ON S.SystemBaseName = W.Sys
+			INNER JOIN dbo.Weight W ON S.SystemID = W.System_Id
 			WHERE @SYS IS NULL OR @SYS = SystemShortName
 		) AS Systems
 		CROSS JOIN
 		(
-			SELECT DISTINCT SST_SHORT, SST_REG
+			SELECT DISTINCT SST_SHORT, SST_REG, SST_ID
 			FROM Din.SystemType S
-			INNER JOIN dbo.Weight W ON S.SST_REG = W.SysType
+			INNER JOIN dbo.Weight W ON S.SST_ID = W.SystemType_Id
 			WHERE @SYS_TYPE IS NULL OR SST_SHORT = @SYS_TYPE
 		) AS SystemTypes
 		CROSS JOIN
 		(
-			SELECT DISTINCT NT_SHORT, NT_TECH, NT_NET, NT_ODON, NT_ODOFF
+			SELECT DISTINCT NT_SHORT, NT_TECH, NT_NET, NT_ODON, NT_ODOFF, NT_ID
 			FROM Din.NetType N
-			INNER JOIN dbo.Weight W ON N.NT_NET = W.NetCount AND N.NT_TECH = W.NetTech AND N.NT_ODON = W.NetOdon AND N.NT_ODOFF = W.NetOdoff
+			INNER JOIN dbo.Weight W ON N.NT_ID = W.NetType_Id
 			WHERE @NET_TYPE IS NULL OR NT_SHORT = @NET_TYPE
 		) AS NetTypes
 		CROSS APPLY
 		(
 			SELECT TOP 1 Date, Weight
 			FROM dbo.Weight W
-			WHERE W.Sys = Systems.SystemBaseName
-				AND W.SysType = SystemTypes.SST_REG
-				AND W.NetCount = NetTypes.NT_NET
-				AND W.NetTech = NetTypes.NT_TECH
-				AND W.NetOdon = NetTypes.NT_ODON
-				AND W.NetOdoff = NetTypes.NT_ODOFF
+			WHERE W.System_Id = Systems.SystemID
+				AND W.SystemType_Id = SystemTypes.SST_ID
+				AND W.NetType_Id = NetTypes.NT_ID
 				AND W.Date < ISNULL(@DATE, GETDATE())
 			ORDER BY Date DESC
 		) W;
@@ -86,7 +83,7 @@ BEGIN
 		SELECT DISTINCT
 			[SystemGroups]      = SWT.[SystemGroups],
 			[SystemTypesGroups] = SWT.[SystemTypesGroups],
-			[NetTypeGroups]     = 
+			[NetTypeGroups]     =
 						(
 							REVERSE(STUFF(REVERSE(
 								(
@@ -107,7 +104,7 @@ BEGIN
 		(
 			SELECT DISTINCT
 				[SystemGroups] = SW.[SystemGroups],
-				[SystemTypesGroups] = 
+				[SystemTypesGroups] =
 						(
 							REVERSE(STUFF(REVERSE(
 								(
@@ -177,7 +174,7 @@ BEGIN
 				SELECT TOP (1) R.[Id]
 				FROM @Result R
 				WHERE R.[Data] = D.[Types]
-					AND R.[Parent_Id] = 
+					AND R.[Parent_Id] =
 						(
 							SELECT TOP (1) [Id]
 							FROM @Result S
@@ -253,7 +250,7 @@ BEGIN
 				)
 			)
 		END
-		
+
 		IF @NET_TYPE IS NOT NULL
 		BEGIN
 			DELETE FROM @Result
@@ -267,9 +264,9 @@ BEGIN
 					FROM @Result
 					WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
 					)
-				
+
 				UNION ALL
-				
+
 				SELECT Parent_Id
 				FROM @Result
 				WHERE (Data LIKE '%,'+@NET_TYPE+',%')OR(Data LIKE '%,'+@NET_TYPE)OR(Data LIKE @NET_TYPE+',%')OR(Data LIKE @NET_TYPE)
@@ -285,7 +282,7 @@ BEGIN
 
 		SELECT *
 		FROM @Result
-		
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
