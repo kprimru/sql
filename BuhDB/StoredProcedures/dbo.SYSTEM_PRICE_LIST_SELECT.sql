@@ -45,6 +45,7 @@ BEGIN
 		OR d.DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'ONLINE3_CLIENT'
 		OR d.DistrTypePsedo = 'OVM_1' AND @PSEDO = 'OVM_1_CL'
 		OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'OVM_2_CL'
+		OR d.DistrTypePsedo = 'OVM_3' AND @PSEDO = 'OVM_3_CL'
 		OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'OVM_F12_CL'
 		OR d.DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'OVM_F10_CL'
 		OR d.DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'OVM_F01_CL'
@@ -64,6 +65,8 @@ BEGIN
 		OR d.DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1_CL'
 		OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2'
 		OR d.DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2_CL'
+		OR d.DistrTypePsedo = 'OVM_3' AND @PSEDO = 'DEPO_OVM_3'
+		OR d.DistrTypePsedo = 'OVM_3' AND @PSEDO = 'DEPO_OVM_3_CL'
 		OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12'
 		OR d.DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12_CL'
 		OR d.DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10'
@@ -144,11 +147,14 @@ BEGIN
 			WHEN 'OVM_1_CL' THEN SystemPeriodicityOnline
 			WHEN 'OVM_2' THEN SystemPeriodicityOnline
 			WHEN 'OVM_2_CL' THEN SystemPeriodicityOnline
+			WHEN 'OVM_3' THEN SystemPeriodicityOnline
+			WHEN 'OVM_3_CL' THEN SystemPeriodicityOnline
 			WHEN 'DEPO_ONLINE2' THEN SystemPeriodicityOnline
 			WHEN 'DEPO_ONLINE3' THEN SystemPeriodicityOnline
 			WHEN 'DEPO_ONLINE_EXP' THEN SystemPeriodicityOnline
 			WHEN 'DEPO_OVM_1' THEN SystemPeriodicityOnline
 			WHEN 'DEPO_OVM_2' THEN SystemPeriodicityOnline 
+			WHEN 'DEPO_OVM_3' THEN SystemPeriodicityOnline 
 			ELSE SystemPeriodicity
 		END AS SystemPeriodicity,
 		SystemMain, SystemPeriodicityOnline,
@@ -193,6 +199,7 @@ BEGIN
 					WHEN 'ONLINE3' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
 					WHEN 'OVM_1' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
 					WHEN 'OVM_2' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
+					WHEN 'OVM_3' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
 					ELSE
 						CASE
 							WHEN @PSEDO LIKE 'DEPO[_]%' THEN
@@ -315,6 +322,7 @@ BEGIN
 						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'ONLINE3_CLIENT'
 						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'OVM_1_CL'
 						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'OVM_2_CL'
+						OR DistrTypePsedo = 'OVM_3' AND @PSEDO = 'OVM_3_CL'
 						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'OVM_F12_CL'
 						OR DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'OVM_F10_CL'
 						OR DistrTypePsedo = 'OVM_F01' AND @PSEDO = 'OVM_F01_CL'
@@ -329,11 +337,13 @@ BEGIN
 						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3'
 						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1'
 						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2'
+						OR DistrTypePsedo = 'OVM_3' AND @PSEDO = 'DEPO_OVM_3'
 						OR DistrTypePsedo = 'ONLINE_EXP' AND @PSEDO = 'DEPO_ONLINE_EXP_CLIENT'
 						OR DistrTypePsedo = 'ONLINE2' AND @PSEDO = 'DEPO_ONLINE2_CLIENT'
 						OR DistrTypePsedo = 'ONLINE3' AND @PSEDO = 'DEPO_ONLINE3_CLIENT'
 						OR DistrTypePsedo = 'OVM_1' AND @PSEDO = 'DEPO_OVM_1_CL'
 						OR DistrTypePsedo = 'OVM_2' AND @PSEDO = 'DEPO_OVM_2_CL'
+						OR DistrTypePsedo = 'OVM_3' AND @PSEDO = 'DEPO_OVM_3_CL'
 						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12'
 						OR DistrTypePsedo = 'OVM_F12' AND @PSEDO = 'DEPO_OVM_F12_CL'
 						OR DistrTypePsedo = 'OVM_F10' AND @PSEDO = 'DEPO_OVM_F10'
