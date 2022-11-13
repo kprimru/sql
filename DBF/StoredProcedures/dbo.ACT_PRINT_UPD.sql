@@ -165,7 +165,7 @@ BEGIN
                                     SELECT
                                         [ОКПО]          = CL.CL_OKPO,
                                         [КраткНазв]     = F.EIS_DATA.value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
-                                        [ИнфДляУчаст]   = @IdentGUId,
+                                        [ИнфДляУчаст]   = '0',--@IdentGUId,
                                         (
                                             SELECT
                                                 [НаимОрг]   = F.EIS_DATA.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),--CL.CL_FULL_NAME,
@@ -251,7 +251,7 @@ BEGIN
                                         [ОКЕИ_Тов]      = ED.[ProductOKEICode],
                                         [КолТов]        = 1,
                                         -- ToDo хардкод 20%
-                                        [ЦенаТов]       = [dbo].[MoneyFormatForEIS](R.INR_SALL, R.TX_PERCENT),
+                                        [ЦенаТов]       = [dbo].[MoneyFormatForEIS](R.INR_SALL, R.TX_PERCENT, 0),
                                         [СтТовБезНДС]   = dbo.MoneyFormatCustom(R.INR_PRICE, '.'),
                                         [НалСт]         = '20%',
                                         --[СтТовУчНал]    = dbo.MoneyFormatCustom(Sum(R.INR_SALL), '.'),
@@ -304,7 +304,7 @@ BEGIN
                                 ),
                                 (
                                     SELECT
-                                        [СтТовБезНДСВсего]  = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
+                                        [СтТовБезНДСВсего]  = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT, 0),
 															  --dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
 										/*CASE
 																WHEN @Client_Id = 11011 THEN '41441.66666666667'
@@ -338,11 +338,12 @@ BEGIN
                                         [КолТов]        = 1,
                                         -- ToDo хардкод 20%
                                         --[ЦенаТов]       = [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT),
-										[ЦенаТов]       =	CASE
+										[ЦенаТов]       =	/*CASE
 																WHEN @Client_Id = 6560 THEN '36551.66666666666'
 																WHEN @Client_Id = 11011 THEN '41441.66666666666'
-																ELSE [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT)
-															END,
+																ELSE [dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT, 0)
+															END*/
+															[dbo].[MoneyFormatForEIS](Sum(R.INR_SALL), T.TX_PERCENT, 0),
                                         --[СтТовБезНДС]   = dbo.MoneyFormatCustom(Sum(R.INR_SUM * IsNull(R.INR_COUNT, 1)), '.'),
 										[СтТовБезНДС]   =	CASE
 																WHEN @Client_Id = 6560 THEN '36551.67'
@@ -643,7 +644,7 @@ BEGIN
                         (
                             SELECT
                                 [Место]             = IsNull(CA_INDEX + ', ' + CT_NAME + ', ' + ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
-                                [ИнфДляУчаст]       = @IdentGUId,
+                                [ИнфДляУчаст]       = '0',--@IdentGUId,
                                 [ИдМестаПоставки]   = @IdentGUId,
                                 (
                                     SELECT

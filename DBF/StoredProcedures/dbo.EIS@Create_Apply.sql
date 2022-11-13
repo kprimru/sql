@@ -77,7 +77,7 @@ BEGIN
                         (
                             SELECT
                                 [Место]             = IsNull(CA_INDEX + ', ' + CT_NAME + ', ' + ST_PREFIX + ' ' + ST_NAME + ', ' + CA_HOME, CA_FREE),
-                                [ИнфДляУчаст]       = @IdentGUId,
+                                [ИнфДляУчаст]       = '0',--@IdentGUId,
                                 [ИдМестаПоставки]   = @IdentGUId,
                                 (
                                     SELECT

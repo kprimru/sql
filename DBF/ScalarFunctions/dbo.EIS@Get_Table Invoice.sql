@@ -26,7 +26,7 @@ BEGIN
                         [НаимТов]       = R.[ProductName],
                         [ОКЕИ_Тов]      = @ProductOKEICode,
                         [КолТов]        = 1,
-                        [ЦенаТов]       = [dbo].[MoneyFormatForEIS](R.[Total], R.[Tax]),
+                        [ЦенаТов]       = [dbo].[MoneyFormatForEIS](R.[Total], R.[Tax], 0),
                         [СтТовБезНДС]   = [dbo].[MoneyFormatCustom](R.[Price], '.'),
                         [НалСт]         = Cast(Cast(R.[Tax] AS Int) AS VarChar(20)) + '%',
                         [СтТовУчНал]    = [dbo].[MoneyFormatCustom](R.[Total], '.'),

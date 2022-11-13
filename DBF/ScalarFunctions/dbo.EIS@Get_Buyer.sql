@@ -17,7 +17,7 @@ BEGIN
 			SELECT
                 [ОКПО]          = CL.[CL_OKPO],
                 [КраткНазв]     = F.[EIS_DATA].value('(/export/contract/customer/shortName)[1]', 'VarChar(512)'),
-                [ИнфДляУчаст]   = @IdentGUId,
+                [ИнфДляУчаст]   = '0',--@IdentGUId,
                 (
                     SELECT
                         [НаимОрг]   = F.[EIS_DATA].value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),
