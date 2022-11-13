@@ -25,7 +25,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT P.[NAME], C.[DistrTypeName], a.[Coef], a.[Round], a.[Date], c.[DistrTypeID]
+		SELECT P.[ID], P.[NAME], C.[DistrTypeName], a.[Coef], a.[Round], a.[Date], c.[DistrTypeID]
 		FROM [Price].[DistrType:Coef]		AS a
 		INNER JOIN [dbo].[DistrTypeTable]	AS c ON c.[DistrTypeID] = a.[DistrType_Id]
 		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
