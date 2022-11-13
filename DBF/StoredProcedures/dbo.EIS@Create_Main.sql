@@ -10,7 +10,8 @@ ALTER PROCEDURE [dbo].[EIS@Create?Main]
 	@IdentGUId      VarChar(100),
 	@StageGuid		VarChar(100)	= NULL,
 	@ProductGuid	VarChar(100)	= NULL,
-	@Grouping		Bit				= 1
+	@Grouping		Bit				= 1,
+	@Data			Xml				= NULL OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -189,6 +190,8 @@ BEGIN
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('Файл'), TYPE
         );
+
+		SELECT @Data = @MainContentXml;
 
 		SELECT [Data] = CAST(@MainContentXml AS VarChar(Max));
 

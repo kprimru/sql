@@ -11,7 +11,8 @@ ALTER PROCEDURE [dbo].[EIS@Create?Apply]
 	@StageGuid		VarChar(100)	= NULL,
 	@ProductGuid	VarChar(100)	= NULL,
 	@Grouping		Bit				= 1,
-	@Detail			Bit				= 0
+	@Detail			Bit				= 0,
+	@Data			Xml				= NULL OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -134,6 +135,8 @@ BEGIN
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлУПДПрод'), TYPE
         );
+
+		SELECT @Data = @ApplyContentXml;
 
 		SELECT [Data] = Cast(@ApplyContentXml AS VarChar(Max));
 

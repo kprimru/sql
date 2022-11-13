@@ -27,6 +27,9 @@ BEGIN
         SET @File_Id    = Cast(NewId() AS VarChar(100));
         SET @IdentGUId  = Replace(Cast(NewId() AS VarChar(100)), '-', '');
 
+		EXEC [dbo].[EIS@Check]
+			@Act_Id = @Act_id;
+
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
     BEGIN CATCH

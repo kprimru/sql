@@ -8,7 +8,8 @@ ALTER PROCEDURE [dbo].[EIS@Create?Document]
     @Act_Id			Int,
 	@File_Id        VarChar(100),
 	@MainContent    VarChar(Max),
-    @ApplyContent   VarChar(Max)
+    @ApplyContent   VarChar(Max),
+	@Data			Xml				= NULL OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -59,6 +60,8 @@ BEGIN
             WHERE ACT_ID = @Act_Id
             FOR XML RAW('ФайлПакет'), TYPE
         );
+
+		SELECT @Data = @DocumentXml;
 
 		SELECT [Data] = Cast(@DocumentXml AS VarChar(Max));
 

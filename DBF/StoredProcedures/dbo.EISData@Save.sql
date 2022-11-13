@@ -58,10 +58,17 @@ BEGIN
                 EIS_CONTRACT = @Contract,
                 EIS_LINK = @Url,
                 UPD_PRINT = 1
-            WHERE ID_CLIENT = @Client_Id;
+            WHERE ID_CLIENT IN
+                (
+                    SELECT CL_ID
+                    FROM dbo.ClientTable
+                    WHERE CL_INN = @Inn
+                );
 
             INSERT INTO dbo.ClientFinancingEIS(Client_Id, Date, Data, Contract, RegNum)
-            SELECT @Client_Id, GetDate(), @Data, @Contract, @RegNum;
+            SELECT CL_ID, GetDate(), @Data, @Contract, @RegNum
+			FROM dbo.ClientTable
+			WHERE CL_INN = @Inn;
         END;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
