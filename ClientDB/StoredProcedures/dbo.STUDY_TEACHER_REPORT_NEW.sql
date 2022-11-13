@@ -120,7 +120,14 @@ BEGIN
 				WHERE z.ID_TEACHER = a.TeacherID
 					AND z.DATE BETWEEN @pbegindate AND @penddate
 					AND z.STATUS = 1
-			 ) AS VISIT_SERVICE
+			 ) AS VISIT_SERVICE,
+			 (
+				SELECT COUNT(DISTINCT CRR_ID_MASTER)
+				FROM dbo.ClientRivalReaction z
+				WHERE z.CRR_CREATE_USER = a.TeacherLogin
+					AND z.CRR_DATE BETWEEN @pbegindate AND @penddate
+					AND z.CRR_ACTIVE = 1
+			 ) AS RivalCount
 	  FROM dbo.TeacherTable a
 	  WHERE (TeacherID IN (SELECT ID FROM dbo.TableIDFromXML(@TEACHER)) OR @TEACHER IS NULL)
 	  ORDER BY TeacherName
