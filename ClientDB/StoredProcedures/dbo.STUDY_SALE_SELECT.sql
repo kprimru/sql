@@ -42,7 +42,11 @@ BEGIN
 		            WHERE R.StudySale_Id = S.ID
 		            FOR XML PATH('')
 		        )
-		    ), 1, 1, '')) AS RIVAL_CLIENT
+		    ), 1, 1, '')) AS RIVAL_CLIENT,
+			Lprs,
+			Workers,
+			LprsStr = IsNull(Lprs, LPR),
+			WorkersStr = IsNull(Workers, FIO)
 		FROM dbo.StudySale AS S
 		WHERE ID_CLIENT = @CLIENT
 		ORDER BY DATE DESC

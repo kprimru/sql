@@ -10,12 +10,13 @@ ALTER PROCEDURE [dbo].[STUDY_SALE_SAVE]
 	@ID					UNIQUEIDENTIFIER,
 	@CLIENT				INT,
 	@DATE				SMALLDATETIME,
-	@FIO				NVARCHAR(256),
+	@FIO				VarChar(256),
 	@RivalType_IDs      VarChar(Max),
-	@LPR				NVARCHAR(256),
-	@USER_POST			NVARCHAR(100),
-	@NOTE				NVARCHAR(MAX)
-
+	@LPR				VarChar(256),
+	@USER_POST			VarChar(Max),
+	@NOTE				VarChar(MAX),
+	@Workers			VarChar(Max),
+	@Lprs				VarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -34,15 +35,17 @@ BEGIN
 		IF @ID IS NULL BEGIN
 		    SET @ID = NewId();
 
-			INSERT INTO dbo.StudySale(ID, ID_CLIENT, DATE, FIO, LPR, USER_POST, NOTE)
-			VALUES(@ID, @CLIENT, @DATE, @FIO, @LPR, @USER_POST, @NOTE)
+			INSERT INTO dbo.StudySale(ID, ID_CLIENT, DATE, FIO, LPR, USER_POST, NOTE, Lprs, Workers)
+			VALUES(@ID, @CLIENT, @DATE, @FIO, @LPR, @USER_POST, @NOTE, @Lprs, @Workers)
 		END ELSE BEGIN
 			UPDATE dbo.StudySale
 			SET DATE = @DATE,
 				FIO = @FIO,
 				LPR = @LPR,
 				USER_POST = @USER_POST,
-				NOTE = @NOTE
+				NOTE = @NOTE,
+				Lprs = @Lprs,
+				Workers = @Workers
 			WHERE ID = @ID;
 
 			DELETE

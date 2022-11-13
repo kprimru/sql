@@ -9,12 +9,14 @@ CREATE TABLE [dbo].[StudySale]
         [ID]                UniqueIdentifier      NOT NULL,
         [ID_CLIENT]         Int                   NOT NULL,
         [DATE]              SmallDateTime         NOT NULL,
-        [FIO]               NVarChar(512)         NOT NULL,
+        [FIO]               VarChar(256)          NOT NULL,
         [RIVAL_CLIENT_ID]   Int                       NULL,
-        [RIVAL_CLIENT]      NVarChar(100)             NULL,
-        [LPR]               NVarChar(512)             NULL,
-        [USER_POST]         NVarChar(200)             NULL,
-        [NOTE]              NVarChar(Max)         NOT NULL,
+        [RIVAL_CLIENT]      VarChar(50)               NULL,
+        [LPR]               VarChar(256)              NULL,
+        [USER_POST]         VarChar(Max)              NULL,
+        [NOTE]              VarChar(Max)              NULL,
+        [Lprs]              VarChar(Max)              NULL,
+        [Workers]           VarChar(Max)              NULL,
         CONSTRAINT [PK_dbo.StudySale] PRIMARY KEY CLUSTERED ([ID])
 );
 GO
