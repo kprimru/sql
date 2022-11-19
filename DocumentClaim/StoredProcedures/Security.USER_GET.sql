@@ -14,7 +14,10 @@ BEGIN
 		EXEC Maintenance.START_PROC @@PROCID
 
 		SELECT
-			CAPTION, NAME, ID_DEPARTMENT, HEAD,
+			CAPTION, ID_DEPARTMENT, HEAD,
+			CASE l.type WHEN 'U' THEN a.NAME ELSE NULL END AS NAME,
+			CASE l.type WHEN 'S' THEN a.NAME ELSE NULL END AS SQL_NAME,
+			Cast(CASE l.type WHEN 'S' THEN 0 WHEN 'U' THEN 1 ELSE NULL END AS Bit) AS WinUser,
 			ISNULL((
 				SELECT '{' + CONVERT(NVARCHAR(128), c.ID) + '}' AS "item/@id"
 				FROM
@@ -26,6 +29,7 @@ BEGIN
 				ORDER BY c.NAME FOR XML PATH(''), ROOT ('root')
 			), '') AS GROUPS
 		FROM Security.Users a
+		LEFT JOIN sys.server_principals AS l ON l.name = a.NAME
 		WHERE ID = @ID
 
 		EXEC Maintenance.FINISH_PROC @@PROCID
