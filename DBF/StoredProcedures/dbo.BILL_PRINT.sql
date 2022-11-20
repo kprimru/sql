@@ -126,67 +126,42 @@ BEGIN
 			c.CT_NAME AS BA_CITY, CO_ID, CO_NUM, CO_DATE, ISNULL(CK_HEADER, 'договору'),
 			ORG_BILL_SHORT, ORG_BILL_POS, ORG_BILL_MEMO
 		FROM
-			(
-				SELECT a.BL_ID, a.BL_ID_CLIENT, BL_ID_PERIOD, BL_ID_ORG, BL_PRICE, BL_ID_PAYER
-				FROM
-					dbo.BillTable a INNER JOIN
-					dbo.BillView b ON a.BL_ID = b.BL_ID
-			) AS t LEFT OUTER JOIN
-			dbo.PeriodTable ON PR_ID = BL_ID_PERIOD INNER JOIN
-			dbo.ClientTable ON CL_ID = ISNULL(BL_ID_PAYER, BL_ID_CLIENT) --INNER JOIN
-			INNER JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
-			/*#cour ON COUR_ID = CASE WHEN @COURID IS NULL THEN COUR_ID ELSE
-				(SELECT TOP 1 TO_ID_COUR FROM dbo.TOTable WHERE TO_ID_CLIENT = BL_ID_CLIENT ORDER BY TO_MAIN DESC) END LEFT OUTER JOIN*/
-				INNER JOIN
-				(
-					SELECT CL_ID AS CLIENT_ID
-					FROM dbo.ClientTable
-					WHERE @COURID IS NULL
-
-					UNION ALL
-
-					SELECT CL_ID
-					FROM
-						dbo.ClientCourView p
-						INNER JOIN #cour q ON p.COUR_ID = q.COUR_ID
-					WHERE @COURID IS NOT NULL
-				) AS p ON p.CLIENT_ID = CL_ID
-			LEFT OUTER JOIN dbo.ClientAddressTable ON CL_ID = CA_ID_CLIENT LEFT OUTER JOIN
-			dbo.AddressView d ON CA_ID_STREET = ST_ID LEFT OUTER JOIN
-
-			dbo.OrganizationTable ON ORG_ID = BL_ID_ORG LEFT OUTER JOIN
-			dbo.OrganizationCalc ON ORGC_ID = CL_ID_ORG_CALC LEFT OUTER JOIN
-			dbo.AddressView a ON a.ST_ID = ORG_ID_STREET LEFT OUTER JOIN
-			dbo.AddressView b ON b.ST_ID = ORG_S_ID_STREET LEFT OUTER JOIN
-			dbo.BankTable ON BA_ID = ISNULL(ORGC_ID_BANK, ORG_ID_BANK) LEFT OUTER JOIN
-
-			dbo.ContractTable ON CO_ID_CLIENT = BL_ID_CLIENT LEFT OUTER JOIN
-			dbo.ContractKind ON CK_ID = CO_ID_KIND LEFT OUTER JOIN
-			dbo.CityTable c ON c.CT_ID = BA_ID_CITY	INNER JOIN
-			-- 16.06.2009, для типа адреса
-			dbo.ClientAddressView Z ON ClientAddressTable.CA_ID=Z.CA_ID	INNER JOIN
-			dbo.FinancingAddressTypeTable Y ON Z.CA_ID_TYPE = Y.FAT_ID_ADDR_TYPE
-
-		WHERE
-			/*(
-        		BL_PRICE - ISNULL(
-            		(
-        				SELECT SUM(ID_PRICE)
-						FROM
-    		        		dbo.IncomeDistrTable INNER JOIN
-        					dbo.IncomeTable ON ID_ID_INCOME = IN_ID INNER JOIN
-            				dbo.BillDistrTable ON BD_ID_BILL = BL_ID
-            			WHERE ID_ID_DISTR = BD_ID_DISTR
-            				AND ID_ID_PERIOD = PR_ID
-							AND IN_ID_CLIENT = BL_ID_CLIENT
-    				), 0)
-			) > 0
-			-- 3.06.09 Денисов А.С. строчка ниже - на случай, если в договор не занесены дистрибутивы или нет адреса грузополучателя
-			AND*/ --16.06.2009
-				--ISNULL(Z.CA_ID_TYPE, 3) = 3
-				FAT_DOC='BILL'
-			AND (BILL_MASS_PRINT = 1 OR @clid IS NOT NULL)
-			--AND PR_DATE >= (SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @prid)
+		(
+			SELECT a.BL_ID, a.BL_ID_CLIENT, BL_ID_PERIOD, BL_ID_ORG, BL_PRICE, BL_ID_PAYER
+			FROM
+				dbo.BillTable a INNER JOIN
+				dbo.BillView b ON a.BL_ID = b.BL_ID
+		) AS t
+		INNER JOIN dbo.PeriodTable ON PR_ID = BL_ID_PERIOD
+		INNER JOIN dbo.ClientTable ON CL_ID = ISNULL(BL_ID_PAYER, BL_ID_CLIENT)
+		LEFT JOIN dbo.ClientFinancing ON CL_ID = ID_CLIENT
+		INNER JOIN
+		(
+			SELECT CL_ID AS CLIENT_ID
+			FROM dbo.ClientTable
+			WHERE @COURID IS NULL
+			---
+			UNION ALL
+			---
+			SELECT CL_ID
+			FROM dbo.ClientCourView p
+			INNER JOIN #cour q ON p.COUR_ID = q.COUR_ID
+			WHERE @COURID IS NOT NULL
+		) AS p ON p.CLIENT_ID = CL_ID
+		LEFT JOIN dbo.ClientAddressTable ON CL_ID = CA_ID_CLIENT
+		LEFT JOIN dbo.AddressView d ON CA_ID_STREET = ST_ID
+		LEFT JOIN dbo.OrganizationTable ON ORG_ID = BL_ID_ORG
+		LEFT JOIN dbo.OrganizationCalc ON ORGC_ID = CL_ID_ORG_CALC
+		LEFT JOIN dbo.AddressView a ON a.ST_ID = ORG_ID_STREET
+		LEFT JOIN dbo.AddressView b ON b.ST_ID = ORG_S_ID_STREET
+		LEFT JOIN dbo.BankTable ON BA_ID = ISNULL(ORGC_ID_BANK, ORG_ID_BANK)
+		LEFT JOIN dbo.ContractTable ON CO_ID_CLIENT = BL_ID_CLIENT
+		LEFT JOIN dbo.ContractKind ON CK_ID = CO_ID_KIND
+		LEFT JOIN dbo.CityTable c ON c.CT_ID = BA_ID_CITY
+		-- 16.06.2009, для типа адреса
+		LEFT JOIN dbo.ClientAddressView Z ON ClientAddressTable.CA_ID=Z.CA_ID
+		LEFT JOIN dbo.FinancingAddressTypeTable Y ON Z.CA_ID_TYPE = Y.FAT_ID_ADDR_TYPE AND FAT_DOC='BILL'
+		WHERE (BILL_MASS_PRINT = 1 OR @clid IS NOT NULL)
 			AND PR_ID = @prid
 			AND BL_ID_CLIENT = ISNULL(@clid, BL_ID_CLIENT)
 			AND ISNULL(CO_ACTIVE, 1) = 1
