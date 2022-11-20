@@ -131,7 +131,16 @@ BEGIN
 			WineVersion 			VarChar(50) 		NULL,
 			NowinName				VarChar(128) 		NULL,
 			NowinExtend 			VarChar(128) 		NULL,
-			NowinUnname 			VarChar(512) 		NULL
+			NowinUnname 			VarChar(512) 		NULL,
+			ResCacheUsrDate			VarChar(20) 		NULL,
+			ResCacheUsrTime 		VarChar(20) 		NULL,
+			ResCacheHostDate		VarChar(20) 		NULL,
+			ResCacheHostTime 		VarChar(20) 		NULL,
+			TimeoutCfgDate			VarChar(20) 		NULL,
+			TimeoutCfgTime 			VarChar(20) 		NULL,
+			ComplectCfgDate			VarChar(20) 		NULL,
+			ComplectCfgTime 		VarChar(20) 		NULL,
+			Rgt						Xml
 		);
 
 		DECLARE @Package TABLE
@@ -380,7 +389,10 @@ BEGIN
 			UserList, UserListOnline, UserListUsersOnline,
 			StartKeyWorkFileDate, StartKeyWorkFileTime, StartKeyWorkFileContent,
 			StartKeyConsFileDate, StartKeyConsFileTime, StartKeyConsFileContent,
-			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname
+			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname,
+			ResCacheUsrDate, ResCacheUsrTime, ResCacheHostDate, ResCacheHostTime,
+			TimeoutCfgDate, TimeoutCfgTime, ComplectCfgDate, ComplectCfgTime,
+			Rgt
 		)
 		SELECT
 			@Client_Id,
@@ -522,7 +534,21 @@ BEGIN
 
 			c.value('(tech_info[1]/nowin[1]/name)[1]',				'VarChar(128)')	AS NowinName,
 			c.value('(tech_info[1]/nowin[1]/extend)[1]',			'VarChar(128)')	AS NowinExtend,
-			c.value('(tech_info[1]/nowin[1]/uname)[1]',				'VarChar(512)')	AS NowinUnname
+			c.value('(tech_info[1]/nowin[1]/uname)[1]',				'VarChar(512)')	AS NowinUnname,
+
+			c.value('(files[1]/RESCACHE_USR_OFF[1]/@date)[1]', 		'VarChar(20)')	AS ResCacheUsrDate,
+			c.value('(files[1]/RESCACHE_USR_OFF[1]/@time)[1]', 		'VarChar(20)')	AS ResCacheUsrTime,
+
+			c.value('(files[1]/RESCACHE_HOST_ON[1]/@date)[1]', 		'VarChar(20)')	AS ResCacheHostDate,
+			c.value('(files[1]/RESCACHE_HOST_ON[1]/@time)[1]', 		'VarChar(20)')	AS ResCacheHostTime,
+
+			c.value('(files[1]/TIMEOUT.CFG[1]/@date)[1]', 			'VarChar(20)')	AS TimeoutCfgDate,
+			c.value('(files[1]/TIMEOUT.CFG[1]/@time)[1]', 			'VarChar(20)')	AS TimeoutCfgTime,
+
+			c.value('(files[1]/COMPLECT.CFG[1]/@date)[1]', 			'VarChar(20)')	AS ComplectCfgDate,
+			c.value('(files[1]/COMPLECT.CFG[1]/@time)[1]', 			'VarChar(20)')	AS ComplectCfgTime,
+
+			c.query('(files[1]/RGT[1])[1]') AS Rgt
 
 		FROM @Xml.nodes('user_info[1]') AS a(c);
 
@@ -636,6 +662,42 @@ BEGIN
 		UPDATE @Usr
 		SET StartKeyConsFileTime = NULL
 		WHERE StartKeyWorkFileTime = '0';
+
+		UPDATE @Usr
+		SET ResCacheUsrDate = NULL
+		WHERE ResCacheUsrDate = '0'
+			OR ResCacheUsrDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET ResCacheUsrTime = NULL
+		WHERE ResCacheUsrTime = '0';
+
+		UPDATE @Usr
+		SET ResCacheHostDate = NULL
+		WHERE ResCacheHostDate = '0'
+			OR ResCacheHostDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET ResCacheHostTime = NULL
+		WHERE ResCacheHostTime = '0';
+
+		UPDATE @Usr
+		SET TimeoutCfgDate = NULL
+		WHERE TimeoutCfgDate = '0'
+			OR TimeoutCfgDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET TimeoutCfgTime = NULL
+		WHERE TimeoutCfgTime = '0';
+
+		UPDATE @Usr
+		SET ComplectCfgDate = NULL
+		WHERE ComplectCfgDate = '0'
+			OR ComplectCfgDate = '00.00.0000';
+
+		UPDATE @Usr
+		SET ComplectCfgTime = NULL
+		WHERE ComplectCfgTime = '0';
 
 		UPDATE @Usr
 		SET Ric = 999
@@ -1036,7 +1098,11 @@ BEGIN
 						UF_START_KEY_WORK_DATE, UF_START_KEY_WORK_CONTENT,
 						UF_START_KEY_CONS_DATE, UF_START_KEY_CONS_CONTENT,
 						UF_WINE_EXISTS, UF_WINE_VERSION, UF_NOWIN_NAME, UF_NOWIN_EXTEND,
-						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE, UF_TEMP_DIR, UF_TEMP_FREE)
+						UF_NOWIN_UNNAME, UF_COMPLECT_TYPE, UF_TEMP_DIR, UF_TEMP_FREE,
+						UF_RESCACHE_USR_OFF_DATE, UF_RESCACHE_HOST_ON_DATE,
+						UF_TIMEOUT_CFG_DATE, UF_COMPLECT_CFG_DATE,
+						UF_RGT
+						)
 		SELECT
 			@Usr_Id, FormatVersion, Ric, ResVersionID, ConsExeVersionID, ID,
 			(
@@ -1087,7 +1153,6 @@ BEGIN
 				SUBSTRING(ExpusersTime, 1, 2) + ':' + SUBSTRING(ExpusersTime, 4, 2) + ':00.000',
 				121
 			),
-
 			CONVERT(DATETIME,
 				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, HotlineDate, 104), 121), 10) + ' ' +
 				SUBSTRING(HotlineTime, 1, 2) + ':' + SUBSTRING(HotlineTime, 4, 2) + ':00.000',
@@ -1112,7 +1177,28 @@ BEGIN
 				121
 			),
 			StartKeyConsFileContent,
-			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType, ConsTmpDir, ConsTmpFree
+			WineExists, WineVersion, NowinName, NowinExtend, NowinUnname, ComplectType, ConsTmpDir, ConsTmpFree,
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ResCacheUsrDate, 104), 121), 10) + ' ' +
+				SUBSTRING(ResCacheUsrTime, 1, 2) + ':' + SUBSTRING(ResCacheUsrTime, 4, 2) + ':00.000',
+				121
+			),
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ResCacheHostDate, 104), 121), 10) + ' ' +
+				SUBSTRING(ResCacheHostTime, 1, 2) + ':' + SUBSTRING(ResCacheHostTime, 4, 2) + ':00.000',
+				121
+			),
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, TimeoutCfgDate, 104), 121), 10) + ' ' +
+				SUBSTRING(TimeoutCfgTime, 1, 2) + ':' + SUBSTRING(TimeoutCfgTime, 4, 2) + ':00.000',
+				121
+			),
+			CONVERT(DATETIME,
+				LEFT(CONVERT(VARCHAR(50), CONVERT(DATETIME, ComplectCfgDate, 104), 121), 10) + ' ' +
+				SUBSTRING(ComplectCfgTime, 1, 2) + ':' + SUBSTRING(ComplectCfgTime, 4, 2) + ':00.000',
+				121
+			),
+			Rgt
 		FROM @Usr
 		INNER JOIN dbo.ResVersionTable		ON ResVersionNumber = ResVersion
 		INNER JOIN dbo.ConsExeVersionTable	ON ConsExeVersionName = ConsExeVersion
