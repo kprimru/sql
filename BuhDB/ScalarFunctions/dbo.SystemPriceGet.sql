@@ -70,6 +70,6 @@ BEGIN
 			WHERE SystemID = @SYSTEM AND DistrTypeID = @DISTR AND GroupPriceDate = @DATE
 	END
 
-	RETURN @RES
+	RETURN Round(@RES * [dbo].[PriceCoef@Get](), 2);
 END
 GO

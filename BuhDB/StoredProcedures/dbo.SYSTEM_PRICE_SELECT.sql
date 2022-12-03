@@ -15,6 +15,9 @@ BEGIN
 
 	DECLARE @DCOEF DECIMAL(8, 4)
 	DECLARE @DROUND SMALLINT
+	DECLARE @TotalCoef Numeric(12, 4);
+
+	SET @TotalCoef = [dbo].[PriceCoef@Get]();
 
 	SELECT @DCOEF = DistrTypeCoefficient, @DROUND = DistrTypeRound
 	FROM dbo.DistrTypeTable d
@@ -167,11 +170,11 @@ BEGIN
 	IF @DATE = ''
 	BEGIN
 		IF @DEPO = 0
-			SELECT ROUND(SystemServicePrice * @DCOEF, @DROUND) AS MONTH_PRICE
+			SELECT Round(@TotalCoef * ROUND(SystemServicePrice * @DCOEF, @DROUND), 2) AS MONTH_PRICE
 			FROM dbo.SystemTable
 			WHERE SystemName = @SYSTEM
 		ELSE IF @SYSTEM = 'КонсультантЮрист' AND GETDATE() >= '20170601' AND GETDATE() <= '20170630'
-			SELECT ROUND(4300 * DistrTypeCoefficient, DistrTypeRound) AS MONTH_PRICE
+			SELECT Round(@TotalCoef * ROUND(4300 * DistrTypeCoefficient, DistrTypeRound), 2) AS MONTH_PRICE
 			FROM dbo.DistrTypeTable
 			WHERE DistrTypeName = @DISTR
 		ELSE
@@ -200,12 +203,14 @@ BEGIN
 								)
 						ELSE
 						*/
+						Round(@TotalCoef *
 							ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF +
 								CASE
 									WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF, @DROUND) < ROUND(SystemServicePrice * @DCOEF, @DROUND) * 0.85 THEN 10
 									ELSE 0
 								END
 							, @DROUND)
+							, 2)
 				/*END */AS MONTH_PRICE
 			FROM dbo.SystemTable a
 			WHERE SystemName = @SYSTEM
@@ -226,22 +231,23 @@ BEGIN
 	ELSE
 	BEGIN
 		IF @DEPO = 0
-			SELECT ROUND(SystemServicePrice * @DCOEF, @DROUND) AS MONTH_PRICE
+			SELECT Round(@TotalCoef * ROUND(SystemServicePrice * @DCOEF, @DROUND), 2) AS MONTH_PRICE
 			FROM dbo.SystemHistoryTable
 			WHERE SystemName = @SYSTEM AND PriceDate = @DATE
 		ELSE IF @SYSTEM = 'КонсультантЮрист' AND @DATE >= '20170601' AND @DATE <= '20170630'
-			SELECT ROUND(4300 * DistrTypeCoefficient, DistrTypeRound) AS MONTH_PRICE
+			SELECT Round(@TotalCoef * ROUND(4300 * DistrTypeCoefficient, DistrTypeRound), 2) AS MONTH_PRICE
 			FROM dbo.DistrTypeTable
 			WHERE DistrTypeName = @DISTR
 		ELSE
 			SELECT
+				Round(@TotalCoef *
 				ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF +
 					CASE
 						WHEN ROUND(ROUND(CEILING(CEILING(SystemServicePrice * 0.85)/10.0) * 10, -1) * @DCOEF, @DROUND) < ROUND(SystemServicePrice * @DCOEF, @DROUND) * 0.85 THEN 10
 						ELSE 0
 					END
 							, @DROUND)
-				AS MONTH_PRICE
+				, 2) AS MONTH_PRICE
 			FROM dbo.SystemHistoryTable a
 			WHERE SystemName = @SYSTEM AND PriceDate = @DATE
 	END

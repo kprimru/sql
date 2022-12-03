@@ -59,7 +59,7 @@ BEGIN
 
         UNION ALL
 
-        SELECT 60, IsGenerated = Cast(1 AS Bit)
+        SELECT [dbo].[DefaultDeliveryPriceGet](), IsGenerated = Cast(1 AS Bit)
         WHERE d.GenerateRow = 1
     ) AS P
 	CROSS APPLY

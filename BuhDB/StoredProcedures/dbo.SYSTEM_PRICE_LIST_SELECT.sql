@@ -35,6 +35,9 @@ BEGIN
 	WHERE PriceDate <= @Date
 	ORDER BY PriceDate DESC;
 
+	DECLARE @TotalCoef Numeric(12, 4);
+
+	SET @TotalCoef = [dbo].[PriceCoef@Get]();
 
 	SET @DEPO = 0.85
 
@@ -176,6 +179,7 @@ BEGIN
 				LEN(SystemPostfix) AS BoldLength,
 				SystemGroupID, SystemGroupOrder, SystemName, SystemReg, SystemDocNumber, SystemVolume, SystemOrder,
 				SystemGroupName, SystemPeriodicity, SystemMain, SystemPeriodicityOnline,
+				Round(@TotalCoef *
 				CASE @PSEDO
 					WHEN 'MOBILE' THEN
 						CASE
@@ -273,13 +277,14 @@ BEGIN
 										ROUND(SystemServicePrice * @DCOEF, @DROUND)
 								END
 						END
-				END AS SystemPrice,
+				END, 2) AS SystemPrice,
+				Round(@TotalCoef *
 				CASE @PSEDO
 					WHEN 'MOBILE' THEN ROUND(SystemPriceMos * @DCOEF, @DROUND)
 					WHEN 'ONLINE2' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
 					WHEN 'ONLINE_EXP' THEN ROUND(SystemPriceOnline2 * @DCOEF, @DROUND)
-				END AS SystemPriceMos,
-				CONVERT(MONEY, 60) AS SystemOnlineDelivery
+				END, 2) AS SystemPriceMos,
+				[dbo].[DefaultDeliveryPriceGet]() AS SystemOnlineDelivery
 			FROM
 			(
 			    SELECT

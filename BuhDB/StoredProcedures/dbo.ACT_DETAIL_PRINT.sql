@@ -21,7 +21,7 @@ BEGIN
 	        SystemSet, SystemPrefix, SystemName, DistrTypeName, DistrNumber, NetVersion, DocCount,
 	        SystemPrice, TaxPrice, SystemPrice + TaxPrice AS TotalPrice, SystemNote, SystemOrder,
 	        SystemExpire, --IsGenerated
-	        IsGenerated = CASE WHEN SystemPrice = 60 THEN Row_Number() OVER(PARTITION BY SystemName, DistrNumber, SystemPrice ORDER BY SystemOrder) ELSE 0 END
+	        IsGenerated = CASE WHEN SystemPrice = [dbo].[DefaultDeliveryPriceGet]() THEN Row_Number() OVER(PARTITION BY SystemName, DistrNumber, SystemPrice ORDER BY SystemOrder) ELSE 0 END
 	    FROM ActSystemsTable WITH(NOLOCK)
 	    WHERE ActID = @ACT AND NOT (SystemName LIKE '%Yubikey%' OR SystemName LIKE '%флэш%')
 	) AS o_O
