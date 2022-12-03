@@ -35,7 +35,7 @@ BEGIN
 
         IF @Client_Id IS NULL AND @ExpectedClient_Id IS NOT NULL BEGIN
             UPDATE dbo.ClientFinancing SET
-                EIS_CODE = @Code,
+                EIS_CODE = Ltrim(Rtrim(@Code)),
                 EIS_DATA = @Data,
                 EIS_REG_NUM = @RegNum,
                 EIS_CONTRACT = @Contract,

@@ -48,12 +48,18 @@ RETURN
         SELECT
             [ExecutionPeriods]  = C.query('executionPeriod'),
             [BudgetFunds]       = C.query('finances/budgetFunds'),
-			[ExtraBudgetFunds]  = C.query('finances/extrabudgetFunds')
+			[ExtraBudgetFunds]  = C.query('finances/extrabudgetFunds'),
+			[FinancingPlan]		= C.query('finances/financingPlan')
     ) AS EP
 	OUTER APPLY
 	(
 		SELECT
-			[Stages] = CASE WHEN Cast([BudgetFunds] AS VarChar(Max)) = '' OR [BudgetFunds] IS NULL THEN [ExtraBudgetFunds] ELSE [BudgetFunds] END
+			[Stages] = CASE
+							WHEN Cast([BudgetFunds] AS VarChar(Max)) != '' AND [BudgetFunds] IS NOT NULL THEN [BudgetFunds]
+							WHEN Cast([ExtraBudgetFunds] AS VarChar(Max)) != '' AND [ExtraBudgetFunds] IS NOT NULL THEN [ExtraBudgetFunds]
+							WHEN Cast([FinancingPlan] AS VarChar(Max)) != '' AND [FinancingPlan] IS NOT NULL THEN [FinancingPlan]
+							ELSE NULL
+						END
 	) AS ST
     OUTER APPLY
     (

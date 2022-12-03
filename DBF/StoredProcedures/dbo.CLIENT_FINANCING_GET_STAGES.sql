@@ -38,7 +38,7 @@ BEGIN
 
 				--[ProductName] = c.value('(name)[1]', 'Varchar(50)'),
 				--[ProductPrice] = c.value('(price)[1]', 'Money')
-			FROM F.EIS_DATA.nodes('(/export/contract/finances/budgetFunds/stages),(/export/contract/finances/extrabudgetFunds/stages)') AS E(C)
+			FROM F.EIS_DATA.nodes('(/export/contract/finances/budgetFunds/stages),(/export/contract/finances/extrabudgetFunds/stages),(/export/contract/finances/financingPlan/stages)') AS E(C)
 		) AS V
 		WHERE ID_CLIENT = @ID
 		ORDER BY V.StartDate DESC
