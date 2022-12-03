@@ -69,6 +69,7 @@ BEGIN
 
 		SELECT 0 AS HasRole, ROLE_NAME, ROLE_NOTE
 		FROM dbo.RoleTable
+		INNER JOIN sys.database_principals ON name = ROLE_NAME
 		WHERE NOT EXISTS(SELECT * FROM #user WHERE GroupName = ROLE_NAME)
 			AND ROLE_NAME <> 'public'
 			AND ROLE_NAME <> 'db_accessadmin'
@@ -96,7 +97,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
 GRANT EXECUTE ON [dbo].[USER_ROLE_SELECT] TO rl_user;
 GO

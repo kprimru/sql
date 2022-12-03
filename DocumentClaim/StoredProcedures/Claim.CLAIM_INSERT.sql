@@ -116,7 +116,7 @@ BEGIN
 					Security.UserRoleView a
 					INNER JOIN Security.Users d ON d.NAME = a.US_NAME
 					INNER JOIN Security.Users z ON z.ID_DEPARTMENT = d.ID_DEPARTMENT AND z.HEAD = 1
-				WHERE  a.RL_NAME = 'rl_claim_notify_verify' AND z.NAME = ORIGINAL_LOGIN()
+				WHERE  a.RL_NAME = 'rl_claim_notify_verify' --AND z.NAME = ORIGINAL_LOGIN()
 
 			/*
 			INSERT INTO Notify.Message(ID_SENDER, ID_RECEIVER, TXT, MODULE, ID_EVENT)
