@@ -65,7 +65,7 @@ BEGIN
 		WHERE PR_DATE = @DATE;
 
 		UPDATE a SET
-			PRICE	= ROUND(ROUND(c.PRICE * dbo.DistrCoef(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE), dbo.DistrCoefRound(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE)) * @TaxRate, 2),
+			PRICE	= ROUND([dbo].[DistrPrice](c.PRICE, dbo.DistrCoef(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE), dbo.DistrCoefRound(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE)) * @TaxRate, 2),
 			NET		= NT_SHORT,
 			ID_NET	= NT_ID,
 			ID_TYPE = SST_ID

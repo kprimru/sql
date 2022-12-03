@@ -80,73 +80,76 @@ BEGIN
 			)
 
 		INSERT INTO #result
+		SELECT
+			CL_ID AS ID_CLIENT, CL_NUM AS NUM,
+			SystemID, SystemShortName, SystemOrder,
+			DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
+			DISCOUNT, INFLATION,
+			SystemTypeID, SystemTypeName,
+			DISTR, COMP,
+			@MON_CNT,
+			PRICE_TOTAL AS PRICE,
+			CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2) - PRICE_TOTAL) AS TAX_PRICE,
+			CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) AS TOTAL_PRICE,
+			CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) * @MON_CNT AS TOTAL_PERIOD
+		FROM
+		(
 			SELECT
-				CL_ID AS ID_CLIENT, CL_NUM AS NUM,
+				CL_ID, CL_NUM, DISTR, COMP,
 				SystemID, SystemShortName, SystemOrder,
 				DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
-				DISCOUNT, INFLATION,
 				SystemTypeID, SystemTypeName,
-				DISTR, COMP,
-				/*CONVERT(MONEY, ROUND(PRICE * DistrTypeCoef, 2)) AS PRICE_NET, */
-				@MON_CNT,
-				PRICE_TOTAL AS PRICE,
-				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2) - PRICE_TOTAL) AS TAX_PRICE,
-				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) AS TOTAL_PRICE,
-				CONVERT(MONEY, ROUND(PRICE_TOTAL * @TotalRate, 2)) * @MON_CNT AS TOTAL_PERIOD
-			FROM
-				(
-					SELECT
-						CL_ID, CL_NUM, DISTR, COMP,
-						SystemID, SystemShortName, SystemOrder,
-						DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
-						SystemTypeID, SystemTypeName,
-						DISCOUNT, INFLATION,
-						PRICE,
+				DISCOUNT, INFLATION,
+				PRICE,
 
-						CONVERT(MONEY,
-							ROUND(PRICE * DistrTypeCoef, DistrTypeRound) *
-							(100 - DISCOUNT) / 100 *
-							(1 + INFLATION / 100.0), 0) AS PRICE_TOTAL
-					FROM
-						(
-							SELECT
-								CL_ID, CL_NUM, DISTR, COMP,
-								b.SystemID, SystemShortName, b.SystemOrder,
-								DistrTypeID, DistrTypeName,
-								dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeCoef,
-								dbo.DistrCoefRound(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeRound,
-								DistrTypeOrder,
-								SystemTypeID, SystemTypeName,
-								DISCOUNT, INFLATION,
-								PRICE
-							FROM
-								(
-									SELECT
-										c.value('@client[1]', 'INT') AS CL_ID,
-										c.value('@num[1]', 'INT') AS CL_NUM,
-										c.value('@sys[1]', 'INT') AS SYS_ID,
-										c.value('@distr[1]', 'INT') AS DISTR,
-										c.value('@comp[1]', 'INT') AS COMP,
-										c.value('@net[1]', 'INT') AS NET_ID,
-										c.value('@type[1]', 'INT') AS TP_ID,
-										c.value('@discount[1]', 'INT') AS DISCOUNT,
-										c.value('@inflation[1]', 'DECIMAL(6, 2)') AS INFLATION
-										FROM @xml.nodes('/root[1]/item') AS a(c)
-									) AS a
-								INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
-								INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-								INNER JOIN Common.Period e ON e.ID = @MONTH
-								CROSS APPLY
-								(
-									SELECT TOP (1)
-										[Price]
-									FROM [Price].[Systems:Price@Get](e.[START]) AS D
-									WHERE D.[System_Id] = a.[SYS_ID]
-								) AS D
-								LEFT OUTER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
-						) AS o_O
-				) AS o_O
-			ORDER BY CL_NUM, SystemOrder, DistrTypeOrder
+				CONVERT(MONEY,
+					DP.[DistrPrice] *
+					(100 - DISCOUNT) / 100 *
+					(1 + INFLATION / 100.0), 0) AS PRICE_TOTAL
+			FROM
+			(
+				SELECT
+					CL_ID, CL_NUM, DISTR, COMP,
+					b.SystemID, SystemShortName, b.SystemOrder,
+					DistrTypeID, DistrTypeName,
+					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeCoef,
+					dbo.DistrCoefRound(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeRound,
+					DistrTypeOrder,
+					SystemTypeID, SystemTypeName,
+					DISCOUNT, INFLATION,
+					PRICE
+				FROM
+					(
+						SELECT
+							c.value('@client[1]', 'INT') AS CL_ID,
+							c.value('@num[1]', 'INT') AS CL_NUM,
+							c.value('@sys[1]', 'INT') AS SYS_ID,
+							c.value('@distr[1]', 'INT') AS DISTR,
+							c.value('@comp[1]', 'INT') AS COMP,
+							c.value('@net[1]', 'INT') AS NET_ID,
+							c.value('@type[1]', 'INT') AS TP_ID,
+							c.value('@discount[1]', 'INT') AS DISCOUNT,
+							c.value('@inflation[1]', 'DECIMAL(6, 2)') AS INFLATION
+							FROM @xml.nodes('/root[1]/item') AS a(c)
+						) AS a
+					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
+					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
+					INNER JOIN Common.Period e ON e.ID = @MONTH
+					CROSS APPLY
+					(
+						SELECT TOP (1)
+							[Price]
+						FROM [Price].[Systems:Price@Get](e.[START]) AS D
+						WHERE D.[System_Id] = a.[SYS_ID]
+					) AS D
+					LEFT JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
+			) AS o_O
+			OUTER APPLY
+			(
+				SELECT [DistrPrice] = [dbo].[DistrPrice](PRICE, DistrTypeCoef, DistrTypeRound)
+			) AS DP
+		) AS o_O
+		ORDER BY CL_NUM, SystemOrder, DistrTypeOrder
 
 		IF @KIND = 1
 		BEGIN

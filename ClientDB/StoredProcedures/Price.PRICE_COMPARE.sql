@@ -43,20 +43,36 @@ BEGIN
 			OLD_PRICE_NDS, NEW_PRICE_NDS, NEW_PRICE_NDS - OLD_PRICE_NDS AS PRICE_NDS_DELTA,
 			ROUND(100 * (NEW_PRICE - OLD_PRICE) / NULLIF(OLD_PRICE, 0), 2) AS INFLATION
 		FROM
-			(
-				SELECT
-					SystemShortName, SystemOrder,
-					ROUND(op.PRICE * dbo.DistrCoef(a.SystemID, @NET, '', @BEGIN_DATE), dbo.DistrCoefRound(a.SystemID, @NET, '', @BEGIN_DATE)) AS OLD_PRICE,
-					ROUND(ROUND(op.PRICE * dbo.DistrCoef(a.SystemID, @NET, '', @BEGIN_DATE), dbo.DistrCoefRound(a.SystemID, @NET, '', @BEGIN_DATE)) * b.TOTAL_RATE, 2) AS OLD_PRICE_NDS,
-					ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, @NET, '', @END_DATE), dbo.DistrCoefRound(a.SystemID, @NET, '', @END_DATE)) AS NEW_PRICE,
-					ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, @NET, '', @END_DATE), dbo.DistrCoefRound(a.SystemID, @NET, '', @END_DATE)) * e.TOTAL_RATE, 2) AS NEW_PRICE_NDS
-				FROM
-					dbo.SystemTable a
-					INNER JOIN [Price].[Systems:Price@Get](@BEGIN_DATE) AS op ON op.[System_Id] = a.[SystemID]
-					INNER JOIN [Price].[Systems:Price@Get](@END_DATE) AS np ON np.[System_Id] = a.[SystemID]
-					OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
-					OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e
-			) AS a
+		(
+			SELECT
+				SystemShortName, SystemOrder,
+				[dbo].[DistrPrice](op.PRICE, op.[DistrCoef], op.[DistrCoefRound]) AS OLD_PRICE,
+				ROUND([dbo].[DistrPrice](op.PRICE, op.[DistrCoef], op.[DistrCoefRound]) * b.TOTAL_RATE, 2) AS OLD_PRICE_NDS,
+				[dbo].[DistrPrice](np.PRICE, np.[DistrCoef], np.[DistrCoefRound]) AS NEW_PRICE,
+				ROUND([dbo].[DistrPrice](np.PRICE, np.[DistrCoef], np.[DistrCoefRound]) * e.TOTAL_RATE, 2) AS NEW_PRICE_NDS
+			FROM
+				dbo.SystemTable a
+				CROSS APPLY
+				(
+					SELECT
+						[Price]				= op.[Price],
+						[DistrCoef]			= dbo.DistrCoef(a.SystemID, @NET, '', @BEGIN_DATE),
+						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, @NET, '', @BEGIN_DATE)
+					FROM [Price].[Systems:Price@Get](@BEGIN_DATE) AS op
+					WHERE op.[System_Id] = a.[SystemID]
+				) AS op
+				CROSS APPLY
+				(
+					SELECT
+						[Price]				= np.[Price],
+						[DistrCoef]			= dbo.DistrCoef(a.SystemID, @NET, '', @END_DATE),
+						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, @NET, '', @END_DATE)
+					FROM [Price].[Systems:Price@Get](@END_DATE) AS np
+					WHERE np.[System_Id] = a.[SystemID]
+				) AS np
+				OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
+				OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e
+		) AS a
 		ORDER BY SystemOrder
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

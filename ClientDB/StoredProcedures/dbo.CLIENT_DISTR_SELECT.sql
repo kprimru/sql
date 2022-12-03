@@ -57,15 +57,15 @@ BEGIN
 			END AS DBF_STR,
 			CASE
 				WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN
-					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DF_FIXED_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% от прейскуранта'
+					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DF_FIXED_PRICE / NULLIF(DP.[DistrPrice], 0))) + '% от прейскуранта'
 				WHEN DF_ID_PRICE = 6 THEN
-					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DEPO_PRICE / NULLIF(ROUND(PRICE * COEF, RND), 0))) + '% от прейскуранта'
+					CONVERT(VARCHAR(20), CONVERT(DECIMAL(10, 2), 100 * DEPO_PRICE / NULLIF(DP.[DistrPrice], 0))) + '% от прейскуранта'
 				ELSE ''
 			END AS PRICE_STR,
 			CASE
 				WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
-					CONVERT(VARCHAR(20), CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)))
-				WHEN DF_ID_PRICE = 6 THEN CONVERT(VARCHAR(20), CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2)))
+					CONVERT(VARCHAR(20), CONVERT(DECIMAL(8, 2), ROUND((100 * (DP.[DistrPrice] - DF_FIXED_PRICE) / NULLIF(DP.[DistrPrice], 0)), 2)))
+				WHEN DF_ID_PRICE = 6 THEN CONVERT(VARCHAR(20), CONVERT(DECIMAL(8, 2), ROUND((100 * (DP.[DistrPrice] - DEPO_PRICE) / NULLIF(DP.[DistrPrice], 0)), 2)))
 				WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN CONVERT(VARCHAR(20), CONVERT(INT, DF_DISCOUNT))
 
 				ELSE CONVERT(VARCHAR(20), 0)
@@ -82,156 +82,160 @@ BEGIN
 			) AS Weight,
 			[OnlineQuantity] = [MainQuantity] + IsNull([AdditionalQuantity], 0)
 		FROM
+		(
+			SELECT
+				TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, HostID, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
+				o_O.DistrTypeName, DS_NAME, DistrType, o_O.DistrTypeID, DS_REG, DS_INDEX, SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE, o_O.STATUS,
+				TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE,
+				w.NOTE, w.STATUS AS DISCONNECT_STATUS,
+				c.PRICE,
+				dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS COEF,
+				dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
+				SST_ID,
+				NT_ID,
+				O.[MainQuantity], O.[AdditionalQuantity]
+			FROM
 			(
 				SELECT
-					TP, o_O.ID, SystemID, SystemBaseName, DISTR, COMP, HostID, SystemOrder, DistrStr, D_STR, SystemTypeID, SystemTypeName,
-					o_O.DistrTypeName, DS_NAME, DistrType, o_O.DistrTypeID, DS_REG, DS_INDEX, SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE, o_O.STATUS,
-					TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE,
-					w.NOTE, w.STATUS AS DISCONNECT_STATUS,
-					c.PRICE,
-					dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS COEF,
-					dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
-					SST_ID,
-					NT_ID,
-					O.[MainQuantity], O.[AdditionalQuantity]
-				FROM
+					'CLIENT' AS TP, a.ID, a.SystemID, a.SystemBaseName, DISTR, COMP, a.HostID,
+					a.SystemOrder, d.DistrType, a.DistrStr, dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
+					SystemTypeID, SystemTypeName, a.DistrTypeName, a.DS_NAME, a.DistrTypeID,
+					a.DS_REG, a.DS_INDEX,
 					(
-						SELECT
-							'CLIENT' AS TP, a.ID, a.SystemID, a.SystemBaseName, DISTR, COMP, a.HostID,
-							a.SystemOrder, d.DistrType, a.DistrStr, dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
-							SystemTypeID, SystemTypeName, a.DistrTypeName, a.DS_NAME, a.DistrTypeID,
-							a.DS_REG, a.DS_INDEX,
-							(
-								SELECT TOP 1 DATE
-								FROM Reg.RegConnectView z
-								WHERE z.RPR_ID_HOST = a.HostID
-									AND z.RPR_DISTR = a.DISTR
-									AND z.RPR_COMP = a.COMP
-								ORDER BY DATE DESC
-							) AS SystemBegin,
-							(
-								SELECT TOP 1 DATE
-								FROM Reg.RegDisconnectView z
-								WHERE z.RPR_ID_HOST = a.HostID
-									AND z.RPR_DISTR = a.DISTR
-									AND z.RPR_COMP = a.COMP
-								ORDER BY DATE DESC
-							) AS SystemEnd,
+						SELECT TOP 1 DATE
+						FROM Reg.RegConnectView z
+						WHERE z.RPR_ID_HOST = a.HostID
+							AND z.RPR_DISTR = a.DISTR
+							AND z.RPR_COMP = a.COMP
+						ORDER BY DATE DESC
+					) AS SystemBegin,
+					(
+						SELECT TOP 1 DATE
+						FROM Reg.RegDisconnectView z
+						WHERE z.RPR_ID_HOST = a.HostID
+							AND z.RPR_DISTR = a.DISTR
+							AND z.RPR_COMP = a.COMP
+						ORDER BY DATE DESC
+					) AS SystemEnd,
+					CASE
+						WHEN (@SH_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @SH_NAME) <> @SH_NAME) THEN 'Дистрибутив установлен у другого подхоста'
+						WHEN a.SystemReg = 0 THEN ''
+						WHEN b.ID IS NULL  THEN
 							CASE
-								WHEN (@SH_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @SH_NAME) <> @SH_NAME) THEN 'Дистрибутив установлен у другого подхоста'
-								WHEN a.SystemReg = 0 THEN ''
-								WHEN b.ID IS NULL  THEN
-									CASE
-										WHEN c.ID IS NULL THEN 'Система не найдена в РЦ'
-										ELSE 'Система заменена (' + c.SystemShortName + ')'
-									END
-								WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
-								WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
-								-- Внимание! Расчет на то, что при неоднозначности SST_ID_MASTER IS NULL
-								-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
-								WHEN
-									ISNULL((
-										SELECT ID_CLIENT
-										FROM
-											dbo.ClientDistrView z WITH(NOEXPAND)
-											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
-																			z.HostID = y.MainHostID
-																			AND z.DISTR = Cast(y.MainDistrNumber AS Int)
-																			AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
-										WHERE y.SystemBaseName = a.SystemBaseName
-											AND y.DistrNumber = a.DISTR
-											AND y.CompNumber = a.COMP
-											AND y.SubhostName = ''
-									), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
-										SELECT ClientFullName + ' (' + y.Complect + ')'
-										FROM
-											dbo.ClientDistrView z WITH(NOEXPAND)
-											INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
-																			z.HostID = y.MainHostID
-																			AND z.DISTR = Cast(y.MainDistrNumber AS Int)
-																			AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
-											INNER JOIN dbo.ClientTable x ON x.ClientID = z.ID_CLIENT
-										WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
-									)
-								ELSE ''
-							END AS REG_ERROR,
-							1 AS ERROR_TYPE,
-							1 AS STATUS,
-							b.TransferLeft,
-							a.SystemShortName,
-							b.SST_ID,
-							b.NT_ID,
-							[Complect] = CASE WHEN a.SystemBaseName = [Reg].[Complect@Extract?Params](b.Complect, 'SYSTEM') THEN b.Complect ELSE NULL END
-						FROM
-							dbo.ClientDistrView a WITH(NOEXPAND)
-							LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
-											AND b.DistrNumber = a.DISTR
-											AND b.CompNumber = a.COMP
-							LEFT OUTER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = a.HostID
-											AND c.DistrNumber = a.DISTR
-											AND c.CompNumber = a.COMP
-							LEFT OUTER JOIN dbo.RegNodeTable d ON d.ID = c.ID
-							LEFT JOIN Din.SystemType AS e ON b.SST_ID = e.SST_ID
-						WHERE  ID_CLIENT = @CLIENTID
+								WHEN c.ID IS NULL THEN 'Система не найдена в РЦ'
+								ELSE 'Система заменена (' + c.SystemShortName + ')'
+							END
+						WHEN a.DistrTypeID <> b.DistrTypeID THEN 'Не совпадает тип сети. В РЦ - ' + b.DistrTypeName
+						WHEN a.DS_ID <> b.DS_ID THEN 'Не совпадает статус системы. В РЦ - ' + b.DS_NAME
+						-- Внимание! Расчет на то, что при неоднозначности SST_ID_MASTER IS NULL
+						-- WHEN e.SST_ID_MASTER != a.SystemTypeID THEN 'Не совпадает тип системы. В РЦ - ' + b.SST_SHORT
+						WHEN
+							ISNULL((
+								SELECT ID_CLIENT
+								FROM
+									dbo.ClientDistrView z WITH(NOEXPAND)
+									INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
+																	z.HostID = y.MainHostID
+																	AND z.DISTR = Cast(y.MainDistrNumber AS Int)
+																	AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
+								WHERE y.SystemBaseName = a.SystemBaseName
+									AND y.DistrNumber = a.DISTR
+									AND y.CompNumber = a.COMP
+									AND y.SubhostName = ''
+							), a.ID_CLIENT) <> a.ID_CLIENT THEN 'Система зарегистрирована в комплекте клиента ' + (
+								SELECT ClientFullName + ' (' + y.Complect + ')'
+								FROM
+									dbo.ClientDistrView z WITH(NOEXPAND)
+									INNER JOIN dbo.RegNodeMainDistrView y WITH(NOEXPAND) ON
+																	z.HostID = y.MainHostID
+																	AND z.DISTR = Cast(y.MainDistrNumber AS Int)
+																	AND z.COMP = Cast(y.MainCompNumber AS TinyInt)
+									INNER JOIN dbo.ClientTable x ON x.ClientID = z.ID_CLIENT
+								WHERE y.SystemBaseName = a.SystemBaseName AND y.DistrNumber = a.DISTR AND y.CompNumber = a.COMP
+							)
+						ELSE ''
+					END AS REG_ERROR,
+					1 AS ERROR_TYPE,
+					1 AS STATUS,
+					b.TransferLeft,
+					a.SystemShortName,
+					b.SST_ID,
+					b.NT_ID,
+					[Complect] = CASE WHEN a.SystemBaseName = [Reg].[Complect@Extract?Params](b.Complect, 'SYSTEM') THEN b.Complect ELSE NULL END
+				FROM
+					dbo.ClientDistrView a WITH(NOEXPAND)
+					LEFT OUTER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+									AND b.DistrNumber = a.DISTR
+									AND b.CompNumber = a.COMP
+					LEFT OUTER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = a.HostID
+									AND c.DistrNumber = a.DISTR
+									AND c.CompNumber = a.COMP
+					LEFT OUTER JOIN dbo.RegNodeTable d ON d.ID = c.ID
+					LEFT JOIN Din.SystemType AS e ON b.SST_ID = e.SST_ID
+				WHERE  ID_CLIENT = @CLIENTID
 
 
-						UNION ALL
+				UNION ALL
 
-						SELECT
-							DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, c.HostID,
-							c.SystemOrder, c.DistrType, c.DistrStr, dbo.DistrString(NULL, c.DistrNumber, c.CompNumber) AS D_STR,
-							NULL, '', c.DistrTypeName, c.DS_NAME, c.DistrTypeID,
-							c.DS_REG, c.DS_INDEX,
-							c.RegisterDate,
-							NULL,
-							/* пишем тут тип ошибки*/
-							'Дистрибутив установлен в комплекте с системами клиента',
-							2 AS ERROR_TYPE,
-							1 AS STATUS,
-							c.TransferLeft,
-							c.SystemShortName,
-							c.SST_ID,
-							c.NT_ID,
-							NULL
-						FROM
-							dbo.ClientDistrView a WITH(NOEXPAND)
-							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
-											AND b.DistrNumber = a.DISTR
-											AND b.CompNumber = a.COMP
-							INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
-						WHERE  ID_CLIENT = @CLIENTID AND c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
-							AND c.SubhostName = Maintenance.GlobalSubhostName()
-							AND NOT EXISTS
-								(
-									SELECT *
-									FROM dbo.ClientDistrView z WITH(NOEXPAND)
-									WHERE /*z.ClientID = @CLIENTID
-										AND */z.HostID = c.HostID
-										AND z.DISTR = c.DistrNumber
-										AND z.COMP = c.CompNumber
-								)
+				SELECT
+					DISTINCT 'REG' AS TP, NULL AS ID, NULL, '', c.DistrNumber, c.CompNumber, c.HostID,
+					c.SystemOrder, c.DistrType, c.DistrStr, dbo.DistrString(NULL, c.DistrNumber, c.CompNumber) AS D_STR,
+					NULL, '', c.DistrTypeName, c.DS_NAME, c.DistrTypeID,
+					c.DS_REG, c.DS_INDEX,
+					c.RegisterDate,
+					NULL,
+					/* пишем тут тип ошибки*/
+					'Дистрибутив установлен в комплекте с системами клиента',
+					2 AS ERROR_TYPE,
+					1 AS STATUS,
+					c.TransferLeft,
+					c.SystemShortName,
+					c.SST_ID,
+					c.NT_ID,
+					NULL
+				FROM
+					dbo.ClientDistrView a WITH(NOEXPAND)
+					INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON b.SystemID = a.SystemID
+									AND b.DistrNumber = a.DISTR
+									AND b.CompNumber = a.COMP
+					INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
+				WHERE  ID_CLIENT = @CLIENTID AND c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
+					AND c.SubhostName = Maintenance.GlobalSubhostName()
+					AND NOT EXISTS
+						(
+							SELECT *
+							FROM dbo.ClientDistrView z WITH(NOEXPAND)
+							WHERE /*z.ClientID = @CLIENTID
+								AND */z.HostID = c.HostID
+								AND z.DISTR = c.DistrNumber
+								AND z.COMP = c.CompNumber
+						)
 
-						UNION ALL
+				UNION ALL
 
-						SELECT
-							'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP, HostID,
-							SystemOrder, NULL, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
-							SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
-							3 AS ERROR_TYPE,
-							STATUS, NULL, '', NULL AS SST_ID, NULL AS NT_ID, NULL
-						FROM
-							dbo.ClientDistr
-							INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
-							INNER JOIN dbo.DistrTypeTable ON DistrTypeID = ID_NET
-							INNER JOIN dbo.SystemTypeTable ON SystemTypeID = ID_TYPE
-						WHERE @HISTORY = 1 AND ID_CLIENT = @CLIENTID AND STATUS IN (3, 4)
-					) AS o_O
-					LEFT OUTER JOIN dbo.DBFDistrView ON SYS_REG_NAME = SystemBaseName AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-					LEFT JOIN [Price].[Systems:Price@Get](GetDate()) AS C ON C.[System_Id] = o_O.[SystemID]
-					LEFT OUTER JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
-					LEFT OUTER JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
-					OUTER APPLY [Reg].[Complect@Online Count]([Complect]) AS O
-			) AS ds
+				SELECT
+					'HIS' AS TP, ID, SystemID, SystemBaseName, DISTR, COMP, HostID,
+					SystemOrder, NULL, dbo.DistrString(SystemShortName, DISTR, COMP), dbo.DistrString(NULL, DISTR, COMP) AS D_STR,
+					SystemTypeID, SystemTypeName, DistrTypeName, '' AS DS_NAME, 0, 0 AS DS_REG, -1 AS DS_INDEX, ON_DATE, OFF_DATE, '',
+					3 AS ERROR_TYPE,
+					STATUS, NULL, '', NULL AS SST_ID, NULL AS NT_ID, NULL
+				FROM
+					dbo.ClientDistr
+					INNER JOIN dbo.SystemTable ON ID_SYSTEM = SystemID
+					INNER JOIN dbo.DistrTypeTable ON DistrTypeID = ID_NET
+					INNER JOIN dbo.SystemTypeTable ON SystemTypeID = ID_TYPE
+				WHERE @HISTORY = 1 AND ID_CLIENT = @CLIENTID AND STATUS IN (3, 4)
+			) AS o_O
+			LEFT JOIN dbo.DBFDistrView ON SYS_REG_NAME = SystemBaseName AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+			LEFT JOIN [Price].[Systems:Price@Get](GetDate()) AS C ON C.[System_Id] = o_O.[SystemID]
+			LEFT JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
+			LEFT JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
+			OUTER APPLY [Reg].[Complect@Online Count]([Complect]) AS O
+		) AS ds
+		OUTER APPLY
+		(
+			SELECT [DistrPrice] = [dbo].[DistrPrice](PRICE, COEF, RND)
+		) AS DP
 		ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

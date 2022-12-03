@@ -50,38 +50,52 @@ BEGIN
 			OLD_PRICE_NDS, NEW_PRICE_NDS, NEW_PRICE_NDS - OLD_PRICE_NDS AS PRICE_NDS_DELTA,
 			ROUND(100 * (NEW_PRICE - OLD_PRICE) / OLD_PRICE, 2) AS INFLATION
 		FROM
+		(
+			SELECT
+				DistrStr, DistrTypeName, SystemOrder, DISTR, COMP,
+				DF_DISCOUNT, DF_FIXED_PRICE,
+				NULLIF(OLD_PRICE, 0) AS OLD_PRICE, NULLIF(NEW_PRICE, 0) AS NEW_PRICE,
+				ROUND(OLD_PRICE * b.TOTAL_RATE, 2) AS OLD_PRICE_NDS,
+				ROUND(NEW_PRICE * b.TOTAL_RATE, 2) AS NEW_PRICE_NDS
+			FROM
 			(
 				SELECT
 					DistrStr, DistrTypeName, SystemOrder, DISTR, COMP,
 					DF_DISCOUNT, DF_FIXED_PRICE,
-					NULLIF(OLD_PRICE, 0) AS OLD_PRICE, NULLIF(NEW_PRICE, 0) AS NEW_PRICE,
-					ROUND(OLD_PRICE * b.TOTAL_RATE, 2) AS OLD_PRICE_NDS,
-					ROUND(NEW_PRICE * b.TOTAL_RATE, 2) AS NEW_PRICE_NDS
+					DSS_REPORT * CASE
+						WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
+						ELSE ROUND([dbo].[DistrPrice](op.PRICE, op.[DistrCoef], op.[DistrCoefRound]) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
+					END AS OLD_PRICE,
+					DSS_REPORT * CASE
+						WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
+						ELSE ROUND([dbo].[DistrPrice](np.PRICE, np.[DistrCoef], np.[DistrCoefRound]) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
+					END AS NEW_PRICE
 				FROM
-					(
-						SELECT
-							DistrStr, DistrTypeName, SystemOrder, DISTR, COMP,
-							DF_DISCOUNT, DF_FIXED_PRICE,
-							DSS_REPORT * CASE
-								WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
-								ELSE ROUND(ROUND(op.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE)) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
-							END AS OLD_PRICE,
-							DSS_REPORT * CASE
-								WHEN ISNULL(DF_FIXED_PRICE, 0) <> 0 THEN DF_FIXED_PRICE
-								ELSE ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)) * (100 - ISNULL(DF_DISCOUNT, 0)) / 100, 2)
-							END AS NEW_PRICE,
-							ROUND(ROUND(op.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE)) * 1.18, 2) AS OLD_PRICE_NDS,
-							ROUND(ROUND(np.PRICE * dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE), dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)) * 1.18, 2) AS NEW_PRICE_NDS
-						FROM
-							dbo.ClientDistrView a WITH(NOEXPAND)
-							INNER JOIN [Price].[Systems:Price@Get](@BEGIN_DATE) AS op ON op.[System_Id] = a.[SystemID]
-							INNER JOIN [Price].[Systems:Price@Get](@END_DATE) AS np ON np.[System_Id] = a.[SystemID]
-							LEFT OUTER JOIN dbo.DBFDistrView ON SystemBaseName = SYS_REG_NAME AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-						WHERE a.ID_CLIENT = @CLIENT AND DS_REG = 0
-					) AS a
-				OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
-				OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e
+				dbo.ClientDistrView a WITH(NOEXPAND)
+				CROSS APPLY
+				(
+					SELECT
+						[Price]				= op.[Price],
+						[DistrCoef]			= dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE),
+						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE)
+					FROM [Price].[Systems:Price@Get](@BEGIN_DATE) AS op
+					WHERE op.[System_Id] = a.[SystemID]
+				) AS op
+				CROSS APPLY
+				(
+					SELECT
+						[Price]				= np.[Price],
+						[DistrCoef]			= dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE),
+						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)
+					FROM [Price].[Systems:Price@Get](@END_DATE) AS np
+					WHERE np.[System_Id] = a.[SystemID]
+				) AS np
+				LEFT JOIN dbo.DBFDistrView ON SystemBaseName = SYS_REG_NAME AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
+				WHERE a.ID_CLIENT = @CLIENT AND DS_REG = 0
 			) AS a
+			OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
+			OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e
+		) AS a
 		ORDER BY SystemOrder, DISTR, COMP
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

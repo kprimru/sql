@@ -55,47 +55,51 @@ BEGIN
 			ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
 			DISCOUNT,	DF_FIXED_PRICE, REAL_DISCOUNT
 		FROM
+		(
+			SELECT
+				ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
+				CASE WHEN DSS_REPORT = 0 THEN NULL ELSE CONVERT(INT, DF_DISCOUNT) END AS DISCOUNT,
+				CASE WHEN DSS_REPORT = 0 THEN NULL ELSE DF_FIXED_PRICE END AS DF_FIXED_PRICE,
+				CASE
+					WHEN DSS_REPORT = 0 THEN 100
+					WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
+						CONVERT(DECIMAL(8, 2), ROUND((100 * (DP.[DistrPrice] - DF_FIXED_PRICE) / NULLIF(DP.[DistrPrice], 0)), 2))
+					WHEN DF_ID_PRICE = 6 THEN CONVERT(DECIMAL(8, 2), ROUND((100 * (DP.[DistrPrice] - DEPO_PRICE) / NULLIF(DP.[DistrPrice], 0)), 2))
+					WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN DF_DISCOUNT
+					ELSE 0
+				END AS REAL_DISCOUNT, SystemOrder, DISTR, COMP
+			FROM
 			(
 				SELECT
-					ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName,
-					CASE WHEN DSS_REPORT = 0 THEN NULL ELSE CONVERT(INT, DF_DISCOUNT) END AS DISCOUNT,
-					CASE WHEN DSS_REPORT = 0 THEN NULL ELSE DF_FIXED_PRICE END AS DF_FIXED_PRICE,
-					CASE
-						WHEN DSS_REPORT = 0 THEN 100
-						WHEN (ISNULL(DF_FIXED_PRICE, 0) <> 0) THEN
-							CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DF_FIXED_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2))
-						WHEN DF_ID_PRICE = 6 THEN CONVERT(DECIMAL(8, 2), ROUND((100 * (ROUND(PRICE * COEF, RND) - DEPO_PRICE) / NULLIF(ROUND(PRICE * COEF, RND), 0)), 2))
-						WHEN ISNULL(DF_DISCOUNT, 0) <> 0 THEN DF_DISCOUNT
-						ELSE 0
-					END AS REAL_DISCOUNT, SystemOrder, DISTR, COMP
+					ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
+					DF_ID_PRICE, DSS_REPORT,
+					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS COEF,
+					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS RND,
+					PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
 				FROM
-					(
-						SELECT
-							ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
-							DF_ID_PRICE, DSS_REPORT,
-							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS COEF,
-							dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS RND,
-							PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
-						FROM
-							dbo.ClientView a WITH(NOEXPAND)
-							INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
-							INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
-																		AND DIS_NUM = b.DISTR
-																		AND DIS_COMP_NUM = b.COMP
-							INNER JOIN [Price].[Systems:Price@Get](GetDate()) AS G ON G.[System_Id] = B.[SystemID]
-						WHERE b.DS_REG = 0
-							AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
-							AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
-							AND (b.SystemID = @SYSTEM OR @SYSTEM IS NULL)
-							AND (@DISCOUNT = 0 OR @DISCOUNT = 1 AND ISNULL(DF_DISCOUNT, 0) <> 0)
-							AND (@FIXED = 0 OR @FIXED = 1 AND ISNULL(DF_FIXED_PRICE, 0) <> 0)
-							AND (DF_DISCOUNT >= @DISC_START OR @DISC_START IS NULL)
-							AND (DF_DISCOUNT <= @DISC_END OR @DISC_END IS NULL)
-							AND (DF_FIXED_PRICE >= @FIX_START OR @FIX_START IS NULL)
-							AND (DF_FIXED_PRICE <= @FIX_END OR @FIX_END IS NULL)
-							AND (SystemTypeID = @TYPE OR @TYPE IS NULL)
-					) AS o_O
+					dbo.ClientView a WITH(NOEXPAND)
+					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
+					INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
+																AND DIS_NUM = b.DISTR
+																AND DIS_COMP_NUM = b.COMP
+					INNER JOIN [Price].[Systems:Price@Get](GetDate()) AS G ON G.[System_Id] = B.[SystemID]
+				WHERE b.DS_REG = 0
+					AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
+					AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)
+					AND (b.SystemID = @SYSTEM OR @SYSTEM IS NULL)
+					AND (@DISCOUNT = 0 OR @DISCOUNT = 1 AND ISNULL(DF_DISCOUNT, 0) <> 0)
+					AND (@FIXED = 0 OR @FIXED = 1 AND ISNULL(DF_FIXED_PRICE, 0) <> 0)
+					AND (DF_DISCOUNT >= @DISC_START OR @DISC_START IS NULL)
+					AND (DF_DISCOUNT <= @DISC_END OR @DISC_END IS NULL)
+					AND (DF_FIXED_PRICE >= @FIX_START OR @FIX_START IS NULL)
+					AND (DF_FIXED_PRICE <= @FIX_END OR @FIX_END IS NULL)
+					AND (SystemTypeID = @TYPE OR @TYPE IS NULL)
 			) AS o_O
+			OUTER APPLY
+			(
+				SELECT [DistrPrice] = [dbo].[DistrPrice](PRICE, COEF, RND)
+			) AS DP
+		) AS o_O
 		WHERE (REAL_DISCOUNT >= @REAL_START OR @REAL_START IS NULL)
 			AND (REAL_DISCOUNT <= @REAL_END OR @REAL_END IS NULL)
 		ORDER BY ManagerName, ServiceName, ClientFullName, SystemOrder, DISTR, COMP

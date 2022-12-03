@@ -1,0 +1,20 @@
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DistrPrice]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[DistrPrice] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+ALTER FUNCTION [dbo].[DistrPrice]
+(
+	@PRICE	MONEY,
+	@COEF	DECIMAL(8, 4),
+	@RND	INT
+)
+RETURNS MONEY
+AS
+BEGIN
+	RETURN Round(Round(@PRICE * @COEF, @RND) * [Maintenance].[GlobalPriceCoef](), 2);
+END
+GO
