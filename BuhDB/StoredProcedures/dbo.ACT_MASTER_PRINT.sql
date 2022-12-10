@@ -11,10 +11,14 @@ BEGIN
 	SET NOCOUNT ON;
 
 	SELECT
-		ProviderName, ProviderCity, ProviderDistributor, ActYear,
+		A.ProviderName, ProviderCity, A.ProviderDistributor, ActYear,
 		TaxName, TaxRate, TotalTaxPrice, TotalPrice, TotalPrice + TotalTaxPrice AS Total, TotalStr,
-		ProviderDirector, ProviderDirectorRod, ProviderFullName, CustomerName
-	FROM ActTable WITH(NOLOCK)
+		A.ProviderDirector, A.ProviderDirectorRod, IsNull(P.ProviderDirectorPosition, 'Директор') AS ProviderDirectorPosition,
+		IsNull(P.ProviderDirectorPositionRod, 'директора') AS ProviderDirectorPositionRod,
+		IsNull(P.ProviderPurpose, 'устава') AS ProviderPurpose,
+		A.ProviderFullName, CustomerName
+	FROM ActTable AS A WITH(NOLOCK)
+	LEFT JOIN ProviderTable AS P ON A.ProviderName = P.ProviderName
 	WHERE ActID = @ACT
 END
 GO
