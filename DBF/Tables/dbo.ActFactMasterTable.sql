@@ -49,6 +49,9 @@ CREATE TABLE [dbo].[ActFactMasterTable]
         [IsLongService]      Bit                                 NULL,
         [CK_CREATIVE]        VarChar(50)                         NULL,
         [CK_PREPOSITIONAL]   VarChar(50)                         NULL,
+        [ORG_DIR_POS]        VarChar(100)                        NULL,
+        [ORG_FOUNDATION]     VarChar(512)                        NULL,
+        [ORG_PROVIDE]        VarChar(100)                        NULL,
         CONSTRAINT [PK_dbo.ActFactMasterTable] PRIMARY KEY CLUSTERED ([AFM_ID])
 );
 GO

@@ -41,6 +41,8 @@ CREATE TABLE [dbo].[OrganizationTable]
         [ORG_EMAIL]         VarChar(250)                       NULL,
         [EIS_CODE]          VarChar(100)                       NULL,
         [EIS_COMM_CODE]     VarChar(100)                       NULL,
+        [ORG_FOUNDATION]    VarChar(512)                       NULL,
+        [ORG_PROVIDE]       VarChar(100)                       NULL,
         CONSTRAINT [PK_dbo.OrganizationTable] PRIMARY KEY CLUSTERED ([ORG_ID]),
         CONSTRAINT [FK_dbo.OrganizationTable(ORG_ID_BANK)_dbo.BankTable(BA_ID)] FOREIGN KEY  ([ORG_ID_BANK]) REFERENCES [dbo].[BankTable] ([BA_ID]),
         CONSTRAINT [FK_dbo.OrganizationTable(ORG_ID_STREET)_dbo.StreetTable(ST_ID)] FOREIGN KEY  ([ORG_ID_STREET]) REFERENCES [dbo].[StreetTable] ([ST_ID]),
