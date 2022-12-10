@@ -5,8 +5,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 /*
-Автор:		  Денисов Алексей
+Автор:		  Денисов Алексей (update: Проценко Сергей)
 Описание:
 */
 
@@ -28,10 +29,24 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT SH_ID, SH_FULL_NAME, SH_SHORT_NAME, SH_LST_NAME, SH_ORDER, SH_ACTIVE
-		FROM dbo.SubhostTable
-		WHERE SH_ACTIVE = ISNULL(@active, SH_ACTIVE)
-		ORDER BY SH_ORDER
+		SELECT	[SH_ID],
+				[SH_FULL_NAME],
+				[SH_SHORT_NAME],
+				[SH_LST_NAME],
+				[SH_ORDER],
+				[SH_ACTIVE],
+				[SH_ID_TYPE],
+				[ST_NAME] AS SUBHOST_TYPE_NAME
+		FROM [dbo].[SubhostTable] AS STable
+		LEFT JOIN [dbo].[SubhostType] AS SType ON [Stable].[SH_ID_TYPE] = [SType].[ST_ID]
+		WHERE [SH_ACTIVE] = ISNULL(@active, [SH_ACTIVE])
+		ORDER BY [SH_ORDER]
+
+
+		SELECT [SH_ID], [SH_FULL_NAME], [SH_SHORT_NAME], [SH_LST_NAME], [SH_ORDER], [SH_ACTIVE], [SH_ID_TYPE]
+		FROM [dbo].[SubhostTable]
+		WHERE [SH_ACTIVE] = ISNULL(@active, [SH_ACTIVE])
+		ORDER BY [SH_ORDER]
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

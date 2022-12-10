@@ -5,6 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
@@ -25,7 +26,8 @@ ALTER PROCEDURE [dbo].[SUBHOST_EDIT]
 	@calc DECIMAL(4, 2),
 	@penalty	DECIMAL(8, 4),
 	@periodicity	SMALLINT,
-	@active BIT
+	@active BIT,
+	@subhosttype TINYINT
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -54,7 +56,8 @@ BEGIN
 			SH_CALC	= @calc,
 			SH_PENALTY = @penalty,
 			SH_PERIODICITY = @periodicity,
-			SH_ACTIVE = @active
+			SH_ACTIVE = @active,
+			SH_ID_TYPE = @subhosttype
 		WHERE SH_ID = @subhostid
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
