@@ -40,6 +40,7 @@ BEGIN
 		DECLARE @Complect Table
 		(
 			UD_ID		Int,
+			Host_Id		Int,
 			CL_ID		Int,
 			UD_DISTR	Int,
 			UD_COMP		TinyInt,
@@ -47,8 +48,8 @@ BEGIN
 			Primary Key Clustered (UD_ID)
 		)
 
-		INSERT INTO @Complect(UD_ID, CL_ID, UD_DISTR, UD_COMP)
-		SELECT D.UD_ID, ClientID, D.UD_DISTR, D.UD_COMP
+		INSERT INTO @Complect(UD_ID, Host_Id, CL_ID, UD_DISTR, UD_COMP)
+		SELECT D.UD_ID, D.UD_ID_HOST, ClientID, D.UD_DISTR, D.UD_COMP
 		FROM
 		(
 			SELECT ClientID
@@ -106,7 +107,7 @@ BEGIN
 		) F;
 
 		SELECT
-			ClientID, CLientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, ServiceName, ManagerName,
+			ClientID, ClientFullName + ' (' + ServiceTypeShortName + ')' AS ClientFullName, UD_NAME, d.DistrTypeName, ServiceName, ManagerName,
 			(
 				SELECT TOP 1 UIU_DATE_S
 				FROM USR.USRIBDateView U WITH(NOEXPAND)
@@ -123,10 +124,10 @@ BEGIN
 					AND EventDate BETWEEN DATEADD(WEEK, -@WeekCount, @LAST_DATE) AND @LAST_DATE
 				ORDER BY EventDate FOR XML PATH('')
 			) AS EventComment
-		FROM
-			@Complect a
-			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON ClientID = CL_ID
-			INNER JOIN dbo.ServiceTypeTable c ON b.ServiceTypeID = c.ServiceTypeID
+		FROM @Complect a
+		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON ClientID = CL_ID
+		INNER JOIN dbo.ServiceTypeTable c ON b.ServiceTypeID = c.ServiceTypeID
+		LEFT JOIN dbo.ClientDistrView AS D ON D.HostID = a.Host_Id AND D.DISTR = A.UD_DISTR AND d.COMP = a.UD_COMP
 		WHERE UD_NAME IS NOT NULL
 		ORDER BY ManagerName, ServiceName, ClientFullName, UD_NAME
 
