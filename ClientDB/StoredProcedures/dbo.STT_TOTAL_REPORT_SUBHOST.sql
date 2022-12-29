@@ -195,7 +195,7 @@ BEGIN
 			FROM
 				(
 					SELECT
-						Service, Manager,
+						Subhost, Service, Manager,
 						(
 							SELECT COUNT(*)
 							FROM #cl b
@@ -249,7 +249,7 @@ BEGIN
 						) AS MAN_STT_TOTAL
 					FROM
 						(
-							SELECT DISTINCT Service, Manager
+							SELECT DISTINCT Subhost, Service, Manager
 							FROM #cl
 							WHERE Service IS NOT NULL AND Subhost like @SH
 						) AS a
