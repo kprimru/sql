@@ -11,7 +11,8 @@ ALTER PROCEDURE [dbo].[STT_REPORT_SUBHOST]
 	@START		SMALLDATETIME,
 	@FINISH		SMALLDATETIME,
 	@UNCOLLECT	BIT,
-	@SH		NVARCHAR(64) = NULL OUTPUT,
+	@SH			NVARCHAR(64) = NULL OUTPUT,
+	@SH_NAME	NVARCHAR(64) = NULL OUTPUT,
 	@PERCENT	FLOAT = NULL OUTPUT
 WITH EXECUTE AS OWNER
 AS
@@ -29,7 +30,10 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		SET @SH = [Maintenance].[GlobalSubhostName]()
+		SET @SH = Maintenance.GlobalSubhostName()
+
+		--Получаем полное название подхоста
+		SET @SH_NAME = (SELECT [SH_NAME] FROM [ClientDB].[dbo].[Subhost] WHERE [SH_REG] = @SH)
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
