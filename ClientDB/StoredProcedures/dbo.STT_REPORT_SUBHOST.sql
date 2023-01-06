@@ -149,5 +149,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [dbo].[STT_REPORT_SUBHOST] TO rl_stt_report_subhost;
+GRANT EXECUTE ON [dbo].[STT_REPORT_SUBHOST] TO rl_stt_report;
 GO
