@@ -39,42 +39,48 @@ BEGIN
 
     BEGIN TRY
 
-        EXEC [dbo].[EIS@Prepare]
-			@Act_Id		= @Act_Id,
-			@File_Id	= @File_Id OUTPUT,
-			@IdentGUId	= @IdentGUId OUTPUT;
+		EXEC [dbo].[EIS@Check]
+			@Act_Id = @Act_id;
 
-		INSERT INTO @Mock
-		EXEC [dbo].[EIS@Create?Main]
-			@Act_Id			= @Act_Id,
-			@File_Id		= @File_Id,
-			@IdentGUId		= @IdentGUId,
-			@StageGuid		= @StageGuid,
-			@ProductGuid	= @ProductGuid,
-			@Grouping		= @Grouping,
-			@Data			= @MainContent OUTPUT;
+		SELECT
+			@File_Id    = E.[File_Id],
+			@IdentGUId  = E.[IdentGUId]
+		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id) AS E;
 
-		INSERT INTO @Mock
-		EXEC [dbo].[EIS@Create?Apply]
-			@Act_Id			= @Act_Id,
-			@File_Id		= @File_Id,
-			@IdentGUId		= @IdentGUId,
-			@StageGuid		= @StageGuid,
-			@ProductGuid	= @ProductGuid,
-			@Grouping		= @Grouping,
-			@Detail			= @Detail,
-			@Data			= @ApplyContent OUTPUT;
+		SELECT @MainContent = M.[Data]
+		FROM [dbo].[EIS@Create?Main(Internal)]
+			(
+				@Act_Id,
+				@File_Id,
+				@IdentGUId,
+				@StageGuid,
+				@ProductGuid,
+				@Grouping
+			) AS M;
+
+		SELECT @ApplyContent = A.[Data]
+		FROM [dbo].[EIS@Create?Apply(Internal)]
+		(
+			    @Act_Id,
+				@File_Id,
+				@IdentGUId,
+				@StageGuid,
+				@ProductGuid,
+				@Grouping,
+				@Detail
+		) AS A;
 
 		SET @MainContentS	= Cast(@MainContent AS VarChar(Max));
 		SET @ApplyContentS	= Cast(@ApplyContent AS VarChar(Max));
 
-		INSERT INTO @Mock
-		EXEC [dbo].[EIS@Create?Document]
-			@Act_Id			= @Act_Id,
-			@MainContent	= @MainContentS,
-			@ApplyContent	= @ApplyContentS,
-			@File_Id		= @File_Id,
-			@Data			= @Document OUTPUT;
+		SELECT @Document = D.[Data]
+		FROM [dbo].[EIS@Create?Document(Internal)]
+		(
+			@Act_Id,
+			@File_Id,
+			@MainContentS,
+			@ApplyContentS
+		) AS D;
 
 		EXEC [dbo].[EIS@Create]
 			@Act_Id			= @Act_Id,

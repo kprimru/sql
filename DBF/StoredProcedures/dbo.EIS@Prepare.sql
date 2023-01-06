@@ -24,8 +24,10 @@ BEGIN
 
     BEGIN TRY
 
-        SET @File_Id    = Cast(NewId() AS VarChar(100));
-        SET @IdentGUId  = Replace(Cast(NewId() AS VarChar(100)), '-', '');
+		SELECT
+			@File_Id    = E.[File_Id],
+			@IdentGUId  = E.[IdentGUId]
+		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id) AS E;
 
 		EXEC [dbo].[EIS@Check]
 			@Act_Id = @Act_id;
