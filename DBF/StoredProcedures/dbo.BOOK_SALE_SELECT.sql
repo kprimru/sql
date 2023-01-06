@@ -10,7 +10,10 @@ ALTER PROCEDURE [dbo].[BOOK_SALE_SELECT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@ERROR		BIT,
-	@NAME		VARCHAR(100)
+	@NAME		VARCHAR(100),
+	@SUMM_BEGIN		MONEY,
+	@SUMM_END		MONEY
+
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -18,7 +21,8 @@ BEGIN
 	DECLARE
 		@DebugError		VarChar(512),
 		@DebugContext	Xml,
-		@Params			Xml;
+		@Params			Xml,
+		@param		smallmoney;
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -44,7 +48,7 @@ BEGIN
 					(
 						SELECT SUM(S_ALL)
 						FROM dbo.BookSaleDetail z
-						WHERE z.ID_SALE = a.ID
+						WHERE  (z.ID_SALE = a.ID)
 					) AS S_ALL,
 					CASE
 						WHEN ISNULL(INN, '') = '' THEN 'Не заполнено поле ИНН'
@@ -62,6 +66,8 @@ BEGIN
 					AND (NAME LIKE @NAME OR @NAME IS NULL)
 			) AS p
 		WHERE (ERR <> '' AND @ERROR = 1 OR @ERROR = 0 OR @ERROR IS NULL)
+		--Фильтрация суммы
+		 AND (p.S_ALL >= @SUMM_BEGIN OR @SUMM_BEGIN IS NULL) AND (p.S_ALL <= @SUMM_END OR @SUMM_END IS NULL)
 		ORDER BY DATE DESC, NUM DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
