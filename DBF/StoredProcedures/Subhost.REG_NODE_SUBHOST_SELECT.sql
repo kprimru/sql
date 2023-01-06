@@ -53,7 +53,7 @@ BEGIN
 					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(SN_NEW_NAME, '')
 			END AS OPER,
 			CONVERT(MONEY,
-			CASE WHEN PR_DATE >= '20220101' AND @SH_ID NOT IN (12) THEN Subhost.MinPrice(@SH_ID)
+			CASE WHEN PR_DATE >= '20220101' AND @SH_ID NOT IN (12, 18) THEN Subhost.MinPrice(@SH_ID)
 			ELSE
 			CASE
 				WHEN (
