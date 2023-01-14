@@ -134,6 +134,17 @@ BEGIN
 				WHERE [Id] = @Id
 			END
 		END;
+
+		INSERT INTO Client.CompanyInn(Company_Id, Inn, Note)
+		SELECT @Company_Id, @DepoInn, 'Загружено из списков Депо'
+		WHERE NOT EXISTS
+			(
+				SELECT *
+				FROM [Client].[CompanyInn] AS I
+				WHERE I.[Company_Id] = @Company_Id
+					AND I.[Inn] = @DepoInn
+			);
+
 	END TRY
 	BEGIN CATCH
 
