@@ -14,6 +14,7 @@ ALTER PROCEDURE [dbo].[SUBHOST_INSERT]
     @OddEmail       VarChar(256),
     @Client_Id      Int,
     @SeminarDefault Int,
+	@Active			Bit,
     @Id             UniqueIdentifier = NULL OUTPUT
 AS
 BEGIN
@@ -35,8 +36,8 @@ BEGIN
 
         SET @RegAdd = NullIf(@RegAdd, '');
 
-        INSERT INTO dbo.Subhost(SH_ID, SH_NAME, SH_REG, SH_REG_ADD, SH_EMAIL, SH_ODD_EMAIL, SH_ID_CLIENT, SH_SEMINAR_DEFAULT_COUNT)
-        VALUES(@Id, @Name, @Reg, @RegAdd, @Email, @OddEmail, @Client_Id, @SeminarDefault);
+        INSERT INTO dbo.Subhost(SH_ID, SH_NAME, SH_REG, SH_REG_ADD, SH_EMAIL, SH_ODD_EMAIL, SH_ID_CLIENT, SH_SEMINAR_DEFAULT_COUNT, SH_ACTIVE)
+        VALUES(@Id, @Name, @Reg, @RegAdd, @Email, @OddEmail, @Client_Id, @SeminarDefault, @Active);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -48,4 +49,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SUBHOST_INSERT] TO rl_subhost_i;
 GO

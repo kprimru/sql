@@ -30,6 +30,7 @@ BEGIN
         FROM dbo.Subhost                    AS S
         LEFT JOIN Seminar.ScheduleSubhosts  AS SS ON S.SH_ID = SS.Subhost_Id AND SS.Schedule_Id = @Id
         WHERE S.SH_REG != ''
+			AND (S.SH_ACTIVE = 1 OR SS.Schedule_Id IS NOT NULL)
         ORDER BY SH_NAME;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

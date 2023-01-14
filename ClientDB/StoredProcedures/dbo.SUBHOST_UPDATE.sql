@@ -14,7 +14,8 @@ ALTER PROCEDURE [dbo].[SUBHOST_UPDATE]
     @Email          VarChar(50),
     @OddEmail       VarChar(256),
     @Client_Id      Int,
-    @SeminarDefault Int
+    @SeminarDefault Int,
+	@Active			Bit
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,7 +41,8 @@ BEGIN
 		    SH_EMAIL                    = @Email,
 		    SH_ODD_EMAIL                = @OddEmail,
 		    SH_ID_CLIENT                = @Client_Id,
-		    SH_SEMINAR_DEFAULT_COUNT    = @SeminarDefault
+		    SH_SEMINAR_DEFAULT_COUNT    = @SeminarDefault,
+			SH_ACTIVE					= @Active
 		WHERE SH_ID = @Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
@@ -53,4 +55,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SUBHOST_UPDATE] TO rl_subhost_u;
 GO
