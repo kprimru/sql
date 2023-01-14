@@ -66,7 +66,7 @@ BEGIN
 	(
 		SELECT
 			CASE MonthPriceMode
-				WHEN 'Discount' THEN Ceiling(MonthPrice * (1 + MonthPriceInflation / 100) * (100 - MonthPriceDiscount) / 100)
+				WHEN 'Discount' THEN Cast(Ceiling(MonthPrice * (1 + MonthPriceInflation / 100) * (100 - MonthPriceDiscount) / 100) AS Money)
 				WHEN 'Fixed' THEN MonthPriceFixed
 				WHEN 'Price' THEN MonthPrice
 				ELSE MonthPrice
