@@ -321,8 +321,8 @@ BEGIN
                 C.ClientFullName,
                 C.ServiceName,
                 C.ManagerName
-            FROM [PC276-SQL\USS].[ClientDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
-            INNER JOIN [PC276-SQL\USS].[ClientDB].dbo.ClientView AS C WITH(NOEXPAND) ON CD.ID_CLIENT = C.ClientID
+            FROM [PC276-SQL\USS].[ClientUSSDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
+            INNER JOIN [PC276-SQL\USS].[ClientUSSDB].dbo.ClientView AS C WITH(NOEXPAND) ON CD.ID_CLIENT = C.ClientID
             WHERE CD.HostID = D.Host_Id
                 AND CD.DISTR = D.Distr
                 AND CD.COMP = D.Comp
@@ -330,7 +330,7 @@ BEGIN
         OUTER APPLY
         (
             SELECT TOP (1) R.DistrStr
-            FROM [PC276-SQL\USS].[ClientDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
+            FROM [PC276-SQL\USS].[ClientUSSDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
             INNER JOIN Reg.RegNodeSearchView AS R WITH(NOEXPAND) ON CD.HostID = R.HostID AND CD.DISTR = R.DistrNumber AND CD.COMP = R.CompNumber
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName = 'SKS'
@@ -353,8 +353,8 @@ BEGIN
                 C.ClientFullName,
                 C.ServiceName,
                 C.ManagerName
-            FROM [PC276-SQL\USS].[ClientDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
-            INNER JOIN [PC276-SQL\USS].[ClientDB].dbo.ClientView AS C WITH(NOEXPAND) ON CD.ID_CLIENT = C.ClientID
+            FROM [PC276-SQL\USS].[ClientUSSDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
+            INNER JOIN [PC276-SQL\USS].[ClientUSSDB].dbo.ClientView AS C WITH(NOEXPAND) ON CD.ID_CLIENT = C.ClientID
             WHERE CD.HostID = D.Host_Id
                 AND CD.DISTR = D.Distr
                 AND CD.COMP = D.Comp
@@ -362,7 +362,7 @@ BEGIN
         OUTER APPLY
         (
             SELECT TOP (1) R.DistrStr
-            FROM [PC276-SQL\USS].[ClientDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
+            FROM [PC276-SQL\USS].[ClientUSSDB].dbo.ClientDistrView AS CD WITH(NOEXPAND)
             INNER JOIN Reg.RegNodeSearchView AS R WITH(NOEXPAND) ON CD.HostID = R.HostID AND CD.DISTR = R.DistrNumber AND CD.COMP = R.CompNumber
             WHERE CD.ID_CLIENT = C.ID_CLIENT
                 AND R.SystemBaseName != 'SKS'

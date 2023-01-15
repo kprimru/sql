@@ -172,7 +172,7 @@ BEGIN
                 @SYS_REG        = @Reg,
                 @SYS_ORDER      = @Ord;
 
-			PRINT ('Обновлено в [FirstInstallNah].[Distr].[SystemDetail]')
+			PRINT ('Обновлено в [FirstInstallNah].[Distr].[SystemDetail]');
 		END;
 
         INSERT INTO [DBF].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
@@ -187,7 +187,7 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [DBF].[dbo].[HostTable]')
+            PRINT ('Добавлено в [DBF].[dbo].[HostTable]');
 
         INSERT INTO [DBF_NAH].[dbo].[HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
         SELECT HostShort, HostReg, HostReg, 1
@@ -201,7 +201,21 @@ BEGIN
             );
 
         IF @@RowCount > 0
-            PRINT ('Добавлено в [DBF_NAH].[dbo].[HostTable]')
+            PRINT ('Добавлено в [DBF_NAH].[dbo].[HostTable]');
+
+		INSERT INTO [DBF_USS].[dbo.HostTable](HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
+        SELECT HostShort, HostReg, HostReg, 1
+        FROM dbo.Hosts AS C
+        WHERE C.HostID = @Host_Id
+            AND NOT EXISTS
+            (
+                SELECT *
+                FROM [DBF_USS].[dbo.HostTable] AS D
+                WHERE D.HST_REG_FULL = C.HostReg
+            );
+
+        IF @@RowCount > 0
+            PRINT ('Добавлено в [DBF_USS].[dbo].[HostTable]');
 
         INSERT INTO [DBF].[dbo].[SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
         SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
@@ -260,7 +274,37 @@ BEGIN
 			INNER JOIN [DBF_NAH].[dbo].[HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
 			WHERE S.SystemId = @System_Id;
 
-			PRINT ('Обновлено в [DBF].[dbo].[SystemTable]');
+			PRINT ('Обновлено в [DBF_NAH].[dbo].[SystemTable]');
+		END;
+
+		INSERT INTO [DBF_USS].[dbo.SystemTable](SYS_PREFIX, SYS_NAME, SYS_SHORT_NAME, SYS_ID_HOST, SYS_REG_NAME, SYS_ID_SO, SYS_ORDER, SYS_REPORT, SYS_ACTIVE, SYS_1C_CODE)
+        SELECT '', S.SystemFullName, S.SystemShortName, DH.HST_ID, S.SystemBaseName, 1, S.SystemOrder, 0, 1, ''
+        FROM dbo.SystemTable AS S
+        INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
+        INNER JOIN [DBF_USS].[dbo.HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
+        WHERE S.SystemId = @System_Id
+            AND NOT EXISTS
+                (
+                    SELECT *
+                    FROM [DBF_USS].[dbo.SystemTable] AS Z
+                    WHERE Z.SYS_REG_NAME = S.SystemBaseName
+                );
+
+        IF @@RowCount > 0
+            PRINT ('Добавлено в [DBF_USS].[dbo].[SystemTable]')
+		ELSE BEGIN
+			UPDATE SS SET
+				SYS_NAME = S.SystemFullName,
+				SYS_SHORT_NAME = S.SystemShortName,
+				SYS_ID_HOST = DH.HST_ID,
+				SYS_ORDER = S.SystemOrder
+			FROM [DBF_USS].[dbo.SystemTable] AS SS
+			INNER JOIN dbo.SystemTable AS S ON SS.SYS_REG_NAME = S.SystemBaseName
+			INNER JOIN dbo.Hosts AS H ON S.HostID = H.HostID
+			INNER JOIN [DBF_USS].[dbo.HostTable] AS DH ON DH.HST_REG_FULL = H.HostReg
+			WHERE S.SystemId = @System_Id;
+
+			PRINT ('Обновлено в [DBF_USS].[dbo].[SystemTable]');
 		END;
 
         INSERT INTO [BuhDB].[dbo].[SystemTable](SystemName, SystemPrefix, SystemGroupID, SystemPeriodicity, SystemServicePrice, SystemOrder, SaleObjectID, SystemPrint, SystemPostfix, SystemReg, SystemMain, IsExpired)

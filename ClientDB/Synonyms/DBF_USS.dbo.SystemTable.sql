@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF_USS].[dbo.SystemTable] FOR [PC276-SQL\USS].[DBF].[dbo].[SystemTable];

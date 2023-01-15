@@ -1,1 +1,1 @@
-﻿CREATE SYNONYM [ClientDB?Uss].[USR.USRFile] FOR [PC276-SQL\USS].[ClientDB].[USR].[USRFile];
+﻿CREATE SYNONYM [ClientDB?Uss].[USR.USRFile] FOR [PC276-SQL\USS].[ClientUSSDB].[USR].[USRFile];

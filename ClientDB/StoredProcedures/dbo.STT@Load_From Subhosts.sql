@@ -37,7 +37,7 @@ BEGIN
 
         INSERT INTO [dbo].[ClientStat](FL_NAME, FL_SIZE, MD5, FL_DATA, FL_DATE, SYS_NUM, DISTR, COMP, OTHER)
         SELECT FL_NAME, FL_SIZE, MD5, FL_DATA, FL_DATE, SYS_NUM, DISTR, COMP, OTHER
-        FROM [PC276-SQL\USS].[ClientDB].[dbo].[ClientStat] AS R
+        FROM [PC276-SQL\USS].[ClientUSSDB].[dbo].[ClientStat] AS R
         WHERE NOT EXISTS
                 (
                     SELECT *

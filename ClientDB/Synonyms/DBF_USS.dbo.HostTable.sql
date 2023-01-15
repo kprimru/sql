@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF_USS].[dbo.HostTable] FOR [PC276-SQL\USS].[DBF].[dbo].[HostTable];

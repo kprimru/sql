@@ -83,8 +83,8 @@ BEGIN
 
 						SELECT UF_NAME, UF_CREATE, UF_DATA, UF_DATE
 						FROM
-							[PC276-SQL\USS].ClientDB.USR.USRFile a
-							INNER JOIN [PC276-SQL\USS].ClientDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
+							[PC276-SQL\USS].ClientUSSDB.USR.USRFile a
+							INNER JOIN [PC276-SQL\USS].ClientUSSDB.USR.USRFileData b ON a.UF_ID = b.UF_ID
 						WHERE UF_CREATE >= DATEADD(MONTH, -3, GETDATE())
 							AND NOT EXISTS
 								(
