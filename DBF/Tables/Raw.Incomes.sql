@@ -13,4 +13,5 @@ CREATE TABLE [Raw].[Incomes]
         [DateTime]          DateTime                       NOT NULL,
         [Organization_Id]   SmallInt                           NULL,
         CONSTRAINT [PK_Raw.Incomes] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

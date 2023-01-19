@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemBankGet]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[SystemBankGet] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-ALTER FUNCTION [dbo].[SystemBankGet]
+CREATE FUNCTION [dbo].[SystemBankGet]
 (
 	-- Id системы
 	@System		Int,

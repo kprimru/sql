@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[SystemComposite]
         [ID_SYSTEM]      Int                   NOT NULL,
         [ID_COMPOSITE]   Int                   NOT NULL,
         CONSTRAINT [PK_dbo.SystemComposite] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

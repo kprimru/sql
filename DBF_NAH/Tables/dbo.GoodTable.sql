@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[GoodTable]
         [GD_NAME]     VarChar(150)                   NOT NULL,
         [GD_ACTIVE]   Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.GoodTable] PRIMARY KEY CLUSTERED ([GD_ID])
-);GO
+);
+GO

@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[PriceType]
         [ID]     Int           Identity(1,1)   NOT NULL,
         [NAME]   VarChar(50)                   NOT NULL,
         CONSTRAINT [PK_dbo.PriceType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[PriceType] TO DBAdministrator;
 GRANT INSERT ON [dbo].[PriceType] TO DBAdministrator;
 GRANT SELECT ON [dbo].[PriceType] TO DBAdministrator;

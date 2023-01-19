@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[DateStrToBillStr]
+IF OBJECT_ID('[dbo].[DateStrToBillStr]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[DateStrToBillStr] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[DateStrToBillStr]
 (
 	@Value VarChar(100)
 )

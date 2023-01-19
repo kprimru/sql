@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[EIS@Prepare(Internal)]
+IF OBJECT_ID('[dbo].[EIS@Prepare(Internal)]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[EIS@Prepare(Internal)] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [dbo].[EIS@Prepare(Internal)]
 (
 	@Act_Id	Integer
 )

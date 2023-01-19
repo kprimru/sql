@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ComplectGetBanks]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[ComplectGetBanks] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-ALTER FUNCTION [dbo].[ComplectGetBanks]
+CREATE FUNCTION [dbo].[ComplectGetBanks]
 (
 	@COMPLECT		NVARCHAR(50),
 	@SYS_NET_XML	XML	= NULL

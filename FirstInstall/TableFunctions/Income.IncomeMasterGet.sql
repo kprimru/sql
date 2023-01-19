@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Income].[IncomeMasterGet]
+IF OBJECT_ID('[Income].[IncomeMasterGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [Income].[IncomeMasterGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Income].[IncomeMasterGet]
 (
 	@ID_ID	UNIQUEIDENTIFIER
 )

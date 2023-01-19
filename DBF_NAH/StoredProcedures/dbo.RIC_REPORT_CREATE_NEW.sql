@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[RIC_REPORT_CREATE_NEW]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW]  AS SELECT 1')
+GO
 -- ====================================================
 --	Автор:			Денисов Алексей
 --	Дата создания:	25.08.2008

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[IS_CITY_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_CITY_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 
 -- =============================================
@@ -14,7 +16,7 @@ GO
 --                (присутствует в справочнике).
 --                При этом префикс не учитывается
 -- =============================================
-ALTER FUNCTION [dbo].[IS_CITY_CORRECT]
+CREATE FUNCTION [dbo].[IS_CITY_CORRECT]
 (
 	@citystr varchar(100)
 )

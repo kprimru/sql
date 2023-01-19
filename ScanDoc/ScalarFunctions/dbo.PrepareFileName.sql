@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[PrepareFileName]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PrepareFileName] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [dbo].[PrepareFileName]
+CREATE FUNCTION [dbo].[PrepareFileName]
 (
 	@FileName	VarChar(4000)
 )

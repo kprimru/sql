@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Client].[CompanyWriteList]()
+IF OBJECT_ID('[Client].[CompanyWriteList]', 'TF') IS NULL EXEC('CREATE FUNCTION [Client].[CompanyWriteList] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Client].[CompanyWriteList]()
 RETURNS @TBL TABLE
 (
 	ID	UNIQUEIDENTIFIER

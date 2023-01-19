@@ -52,4 +52,5 @@ CREATE TABLE [dbo].[ric020]
         [2021-11]           NVarChar(510)          NULL,
         [дата начала]       NVarChar(510)          NULL,
         [дата окончания]    NVarChar(510)          NULL,
-);GO
+);
+GO

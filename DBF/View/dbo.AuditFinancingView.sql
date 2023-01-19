@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[AuditFinancingView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[AuditFinancingView]  AS SELECT 1')
+GO
 
 ALTER VIEW [dbo].[AuditFinancingView]
 AS

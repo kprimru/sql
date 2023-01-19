@@ -11,4 +11,5 @@ CREATE TABLE [Subhost].[SubhostCalcDates]
         [SCD_DATE]        SmallDateTime                   NOT NULL,
         CONSTRAINT [PK_Subhost.SubhostCalcDates] PRIMARY KEY CLUSTERED ([SCD_ID]),
         CONSTRAINT [FK_Subhost.SubhostCalcDates(SCD_ID_PERIOD)_Subhost.PeriodTable(PR_ID)] FOREIGN KEY  ([SCD_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

@@ -10,4 +10,5 @@ CREATE TABLE [Client].[Project]
         [NAME]   NVarChar(256)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Client.Project] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

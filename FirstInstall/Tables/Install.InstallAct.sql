@@ -9,4 +9,5 @@ CREATE TABLE [Install].[InstallAct]
         [IAMS_ID]     UniqueIdentifier      NOT NULL,
         [IAMS_LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Install.InstallAct] PRIMARY KEY CLUSTERED ([IAMS_ID])
-);GO
+);
+GO

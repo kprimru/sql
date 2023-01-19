@@ -12,4 +12,5 @@ CREATE TABLE [System].[SystemAll]
         [ID_CATEGORY]   UniqueIdentifier      NOT NULL,
         [LAST]          DateTime              NOT NULL,
         CONSTRAINT [PK_System.SystemAll] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

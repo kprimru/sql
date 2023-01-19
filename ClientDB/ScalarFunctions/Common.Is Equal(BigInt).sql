@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[Is Equal(BigInt)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Is Equal(BigInt)] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Common].[Is Equal(BigInt)]
+CREATE FUNCTION [Common].[Is Equal(BigInt)]
 (
 	@V1	BigInt,
 	@V2	BigInt

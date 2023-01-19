@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalControlDocumentPass]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalControlDocumentPass] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalControlDocumentPass]
+CREATE FUNCTION [Maintenance].[GlobalControlDocumentPass]
 ()
 RETURNS VARCHAR(500)
 AS

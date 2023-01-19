@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[PurposesForbiddenWords]
         [Mask]       VarChar(256)                   NOT NULL,
         [IsActive]   Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.PurposesForbiddenWords] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

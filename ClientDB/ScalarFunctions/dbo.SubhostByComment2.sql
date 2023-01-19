@@ -12,7 +12,7 @@ GO
 -- Описание:	  Возвращает название подхоста
 --                по комментарию из рег.узла
 -- =============================================
-ALTER FUNCTION [dbo].[SubhostByComment2]
+CREATE FUNCTION [dbo].[SubhostByComment2]
 (
     @Comment    VarChar(200),
     @Distr      Int,

@@ -13,4 +13,5 @@ CREATE TABLE [Subhost].[SubhostPayDetail]
         CONSTRAINT [PK_Subhost.SubhostPayDetail] PRIMARY KEY CLUSTERED ([SPD_ID]),
         CONSTRAINT [FK_Subhost.SubhostPayDetail(SPD_ID_PAY)_Subhost.SubhostPay(SHP_ID)] FOREIGN KEY  ([SPD_ID_PAY]) REFERENCES [Subhost].[SubhostPay] ([SHP_ID]),
         CONSTRAINT [FK_Subhost.SubhostPayDetail(SPD_ID_PERIOD)_Subhost.PeriodTable(PR_ID)] FOREIGN KEY  ([SPD_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

@@ -15,4 +15,5 @@ CREATE TABLE [Personal].[DepartmentDetail]
         [DP_REF]         TinyInt               NOT NULL,
         CONSTRAINT [PK_Personal.DepartmentDetail] PRIMARY KEY CLUSTERED ([DP_ID]),
         CONSTRAINT [FK_Personal.DepartmentDetail(DP_ID_MASTER)_Personal.Department(DPMS_ID)] FOREIGN KEY  ([DP_ID_MASTER]) REFERENCES [Personal].[Department] ([DPMS_ID])
-);GO
+);
+GO

@@ -19,4 +19,5 @@ CREATE TABLE [dbo].[CourierPaySettingsTable]
         [CPS_ACT]       Bit                            NULL,
         CONSTRAINT [PK_dbo.CourierPaySettingsTable] PRIMARY KEY CLUSTERED ([CPS_ID]),
         CONSTRAINT [FK_dbo.CourierPaySettingsTable(CPS_ID_TYPE)_dbo.ClientTypeTable(CLT_ID)] FOREIGN KEY  ([CPS_ID_TYPE]) REFERENCES [dbo].[ClientTypeTable] ([CLT_ID])
-);GO
+);
+GO

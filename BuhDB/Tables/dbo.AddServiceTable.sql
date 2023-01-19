@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[AddServiceTable]
         [PrintService]      Int                            NOT NULL,
         CONSTRAINT [PK_dbo.AddServiceTable] PRIMARY KEY CLUSTERED ([AddServiceID]),
         CONSTRAINT [FK_dbo.AddServiceTable(SaleObjectID)_dbo.SaleObjectTable(SaleObjectID)] FOREIGN KEY  ([SaleObjectID]) REFERENCES [dbo].[SaleObjectTable] ([SaleObjectID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[AddServiceTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[AddServiceTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[AddServiceTable] TO DBAdministrator;

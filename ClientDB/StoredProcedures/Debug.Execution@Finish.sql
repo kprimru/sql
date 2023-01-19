@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Debug].[Execution@Finish]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Execution@Finish]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Debug].[Execution@Finish]
+CREATE   PROCEDURE [Debug].[Execution@Finish]
 	@DebugContext	Xml,
 	@Error			VarChar(512)
 WITH EXECUTE AS OWNER

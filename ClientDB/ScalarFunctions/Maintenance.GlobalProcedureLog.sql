@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalProcedureLog]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalProcedureLog] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalProcedureLog]
+CREATE FUNCTION [Maintenance].[GlobalProcedureLog]
 ()
 RETURNS BIT
 AS

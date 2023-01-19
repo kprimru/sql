@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[TranslitString]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[TranslitString] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [dbo].[TranslitString]
+CREATE FUNCTION [dbo].[TranslitString]
 (
 	@SOURCE	VARCHAR(4000)
 )

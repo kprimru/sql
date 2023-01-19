@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[DISTR_EXCHANGE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTR_EXCHANGE]  AS SELECT 1')
+GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
 Дата создания:  

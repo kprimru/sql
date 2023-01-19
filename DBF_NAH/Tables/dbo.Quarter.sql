@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[Quarter]
         [QR_END]      SmallDateTime                   NOT NULL,
         [QR_ACTIVE]   Bit                             NOT NULL,
         CONSTRAINT [PK_dbo.Quarter] PRIMARY KEY CLUSTERED ([QR_ID])
-);GO
+);
+GO

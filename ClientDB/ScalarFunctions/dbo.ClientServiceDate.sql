@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientServiceDate]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientServiceDate] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [dbo].[ClientServiceDate]
+CREATE FUNCTION [dbo].[ClientServiceDate]
 (
 	@CLIENT	INT,
 	@DATE	SMALLDATETIME

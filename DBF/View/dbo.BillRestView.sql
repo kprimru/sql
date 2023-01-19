@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[BillRestView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[BillRestView]  AS SELECT 1')
+GO
 
 ALTER VIEW [dbo].[BillRestView]
 AS

@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[PriceGoodTable]
         [PGD_NAME]     VarChar(50)                   NOT NULL,
         [PGD_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.PriceGoodTable] PRIMARY KEY CLUSTERED ([PGD_ID])
-);GO
+);
+GO

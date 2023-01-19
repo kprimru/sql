@@ -20,4 +20,5 @@ CREATE TABLE [Document].[Document]
         [UPD_DATE]    DateTime              NOT NULL,
         [UPD_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Document.Document] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[PERIOD_PREV]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PERIOD_PREV] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
@@ -11,7 +13,7 @@ GO
 Описание:
 */
 
-ALTER FUNCTION [dbo].[PERIOD_PREV]
+CREATE FUNCTION [dbo].[PERIOD_PREV]
 (
 	-- Список параметров функции
 	@prid SMALLINT

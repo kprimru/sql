@@ -18,4 +18,5 @@ CREATE TABLE [Client].[CompanyWarning]
         [UPD_DATE]      DateTime              NOT NULL,
         [UPD_USER]      NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Client.CompanyWarning] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

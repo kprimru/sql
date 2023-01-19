@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[TaxDefaultSelect]
+IF OBJECT_ID('[dbo].[TaxDefaultSelect]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[TaxDefaultSelect] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [dbo].[TaxDefaultSelect]
 (
 	@Date SMALLDATETIME
 )

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[GET_SETTING]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_SETTING] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
@@ -11,7 +13,7 @@ GO
 Описание:
 */
 
-ALTER FUNCTION [dbo].[GET_SETTING]
+CREATE FUNCTION [dbo].[GET_SETTING]
 (
 	-- Список параметров функции
 	@sname VARCHAR(500)

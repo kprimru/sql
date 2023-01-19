@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Distr].[DistrTypeDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Distr].[DistrTypeDeleted]  AS SELECT 1')
+GO
 ALTER VIEW [Distr].[DistrTypeDeleted]
 --WITH SCHEMABINDING
 AS

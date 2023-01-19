@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Common].[StringSplit]
+IF OBJECT_ID('[Common].[StringSplit]', 'IF') IS NULL EXEC('CREATE FUNCTION [Common].[StringSplit] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [Common].[StringSplit]
 (
 	@STRING		VarChar(MAX),
 	@Delimiter	VarCHar(10)

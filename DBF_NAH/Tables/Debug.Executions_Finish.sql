@@ -10,4 +10,5 @@ CREATE TABLE [Debug].[Executions:Finish]
         [FinishDateTime]   DateTime          NOT NULL,
         [Error]            VarChar(512)          NULL,
         CONSTRAINT [PK_Debug.Executions:Finish] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[IS_STREET_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_STREET_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 
 -- =============================================
@@ -12,7 +14,7 @@ GO
 -- Описание:	  Возвращает 0, если название улицы
 --                корректно (присутствует в справочнике)
 -- =============================================
-ALTER FUNCTION [dbo].[IS_STREET_CORRECT]
+CREATE FUNCTION [dbo].[IS_STREET_CORRECT]
 (
 	-- Add the parameters for the function here
 	@street varchar(100)

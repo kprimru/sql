@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[ReturnCode]
         [RC_ERROR]     Bit                                NULL,
         [RC_WARNING]   Bit                                NULL,
         CONSTRAINT [PK_dbo.ReturnCode] PRIMARY KEY CLUSTERED ([RC_ID])
-);GO
+);
+GO

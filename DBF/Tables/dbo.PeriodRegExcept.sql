@@ -17,4 +17,5 @@ CREATE TABLE [dbo].[PeriodRegExcept]
         [PRE_ID_STATUS]   SmallInt                   NOT NULL,
         [PRE_ID_TECH]     SmallInt                       NULL,
         CONSTRAINT [PK_dbo.PeriodRegExcept] PRIMARY KEY CLUSTERED ([PRE_ID])
-);GO
+);
+GO

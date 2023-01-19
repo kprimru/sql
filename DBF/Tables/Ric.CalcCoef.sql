@@ -14,4 +14,5 @@ CREATE TABLE [Ric].[CalcCoef]
         [CC_PREPAY]          Money                          NULL,
         [CC_PREPAY_DISC]     decimal                        NULL,
         CONSTRAINT [PK_Ric.CalcCoef] PRIMARY KEY CLUSTERED ([CC_ID])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[INCOME_UNCONVEY_FULL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[INCOME_UNCONVEY_FULL]  AS SELECT 1')
+GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
 Дата создания:  

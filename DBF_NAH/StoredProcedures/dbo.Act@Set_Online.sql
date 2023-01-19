@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[Act@Set?Online]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[Act@Set?Online]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[Act@Set?Online]
     @Act_Id     Int
 AS

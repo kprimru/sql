@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[Provision]
         CONSTRAINT [PK_dbo.Provision] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.Provision(ID_CLIENT)_dbo.ClientTable(CL_ID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([CL_ID]),
         CONSTRAINT [FK_dbo.Provision(ID_ORG)_dbo.OrganizationTable(ORG_ID)] FOREIGN KEY  ([ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID])
-);GO
+);
+GO

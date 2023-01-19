@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[FinancingAddressTypeTable]
         [FAT_ACTIVE]         Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.FinancingAddressTypeTable] PRIMARY KEY CLUSTERED ([FAT_ID]),
         CONSTRAINT [FK_dbo.FinancingAddressTypeTable(FAT_ID_ADDR_TYPE)_dbo.AddressTypeTable(AT_ID)] FOREIGN KEY  ([FAT_ID_ADDR_TYPE]) REFERENCES [dbo].[AddressTypeTable] ([AT_ID])
-);GO
+);
+GO

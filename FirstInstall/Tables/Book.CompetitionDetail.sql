@@ -18,4 +18,5 @@ CREATE TABLE [Book].[CompetitionDetail]
         CONSTRAINT [PK_Book.CompetitionDetail] PRIMARY KEY CLUSTERED ([CP_ID]),
         CONSTRAINT [FK_Book.CompetitionDetail(CP_ID_MASTER)_Book.Competition(CPMS_ID)] FOREIGN KEY  ([CP_ID_MASTER]) REFERENCES [Book].[Competition] ([CPMS_ID]),
         CONSTRAINT [FK_Book.CompetitionDetail(CP_ID_HALF)_Book.Half(HLFMS_ID)] FOREIGN KEY  ([CP_ID_HALF]) REFERENCES [Common].[Half] ([HLFMS_ID])
-);GO
+);
+GO

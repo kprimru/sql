@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[CourierTypeTable]
         [COT_NAME]     VarChar(50)                   NOT NULL,
         [COT_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.CourierTypeTable] PRIMARY KEY CLUSTERED ([COT_ID])
-);GO
+);
+GO

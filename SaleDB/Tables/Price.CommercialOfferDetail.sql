@@ -38,4 +38,5 @@ CREATE TABLE [Price].[CommercialOfferDetail]
         CONSTRAINT [FK_Price.CommercialOfferDetail(ID_TAX)_Price.Tax(ID)] FOREIGN KEY  ([ID_TAX]) REFERENCES [Common].[Tax] ([ID]),
         CONSTRAINT [FK_Price.CommercialOfferDetail(ID_ACTION)_Price.Action(ID)] FOREIGN KEY  ([ID_ACTION]) REFERENCES [Price].[Action] ([ID]),
         CONSTRAINT [FK_Price.CommercialOfferDetail(ID_OFFER)_Price.CommercialOffer(ID)] FOREIGN KEY  ([ID_OFFER]) REFERENCES [Price].[CommercialOffer] ([ID])
-);GO
+);
+GO

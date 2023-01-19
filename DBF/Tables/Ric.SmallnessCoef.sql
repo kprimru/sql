@@ -11,4 +11,5 @@ CREATE TABLE [Ric].[SmallnessCoef]
         [SC_VALUE]        decimal                    NOT NULL,
         CONSTRAINT [PK_Ric.SmallnessCoef] PRIMARY KEY CLUSTERED ([SC_ID]),
         CONSTRAINT [FK_Ric.SmallnessCoef(SC_ID_QUARTER)_Ric.Quarter(QR_ID)] FOREIGN KEY  ([SC_ID_QUARTER]) REFERENCES [dbo].[Quarter] ([QR_ID])
-);GO
+);
+GO

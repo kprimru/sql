@@ -13,4 +13,5 @@ CREATE TABLE [Maintenance].[ExecutionLog]
         [EXEC_DATE]     DateTime              NOT NULL,
         [EXEC_USER]     NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Maintenance.ExecutionLog] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

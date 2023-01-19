@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[PasswordGenerate]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[PasswordGenerate] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Common].[PasswordGenerate]
+CREATE FUNCTION [Common].[PasswordGenerate]
 (
 	-- кол-во симоволов
 	@LN	SMALLINT

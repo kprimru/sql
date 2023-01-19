@@ -12,4 +12,5 @@ CREATE TABLE [Claim].[Claims]
         [CLM_NUM]       Int                   NOT NULL,
         CONSTRAINT [PK_Claim.Claims] PRIMARY KEY CLUSTERED ([CLM_ID]),
         CONSTRAINT [FK_Claim.Claims(CLM_ID_USER)_Claim.Users(USMS_ID)] FOREIGN KEY  ([CLM_ID_USER]) REFERENCES [Security].[Users] ([USMS_ID])
-);GO
+);
+GO

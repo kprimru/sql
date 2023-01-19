@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[SubhostWeightCorrection]
         CONSTRAINT [PK_dbo.SubhostWeightCorrection] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.SubhostWeightCorrection(ID_SUBHOST)_dbo.SubhostTable(SH_ID)] FOREIGN KEY  ([ID_SUBHOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_dbo.SubhostWeightCorrection(ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

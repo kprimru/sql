@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[Vendor]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Claim.Vendor] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

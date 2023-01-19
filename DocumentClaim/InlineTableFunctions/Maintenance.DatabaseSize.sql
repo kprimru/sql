@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Maintenance].[DatabaseSize]()
+IF OBJECT_ID('[Maintenance].[DatabaseSize]', 'IF') IS NULL EXEC('CREATE FUNCTION [Maintenance].[DatabaseSize] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [Maintenance].[DatabaseSize]()
 RETURNS TABLE
 AS
 RETURN

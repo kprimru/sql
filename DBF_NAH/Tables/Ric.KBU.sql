@@ -13,4 +13,5 @@ CREATE TABLE [Ric].[KBU]
         [RK_TOTAL]        decimal                    NOT NULL,
         CONSTRAINT [PK_Ric.KBU] PRIMARY KEY CLUSTERED ([RK_ID]),
         CONSTRAINT [FK_Ric.KBU(RK_ID_QUARTER)_Ric.Quarter(QR_ID)] FOREIGN KEY  ([RK_ID_QUARTER]) REFERENCES [dbo].[Quarter] ([QR_ID])
-);GO
+);
+GO

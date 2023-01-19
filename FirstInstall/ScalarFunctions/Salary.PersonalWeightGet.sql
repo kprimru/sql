@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Salary].[PersonalWeightGet]
+IF OBJECT_ID('[Salary].[PersonalWeightGet]', 'FN') IS NULL EXEC('CREATE FUNCTION [Salary].[PersonalWeightGet] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Salary].[PersonalWeightGet]
 (
 	@PER_ID	UNIQUEIDENTIFIER
 )

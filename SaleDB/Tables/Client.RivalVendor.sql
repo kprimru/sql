@@ -10,4 +10,5 @@ CREATE TABLE [Client].[RivalVendor]
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Client.RivalVendor] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

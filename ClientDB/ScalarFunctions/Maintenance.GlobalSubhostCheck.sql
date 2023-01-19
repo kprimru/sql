@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSubhostCheck]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalSubhostCheck] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalSubhostCheck]
+CREATE FUNCTION [Maintenance].[GlobalSubhostCheck]
 ()
 RETURNS VARCHAR(500)
 AS

@@ -13,4 +13,5 @@ CREATE TABLE [Ric].[HostAbonement]
         CONSTRAINT [PK_Ric.HostAbonement] PRIMARY KEY CLUSTERED ([HA_ID]),
         CONSTRAINT [FK_Ric.HostAbonement(HA_ID_HOST)_Ric.HostTable(HST_ID)] FOREIGN KEY  ([HA_ID_HOST]) REFERENCES [dbo].[HostTable] ([HST_ID]),
         CONSTRAINT [FK_Ric.HostAbonement(HA_ID_PERIOD)_Ric.PeriodTable(PR_ID)] FOREIGN KEY  ([HA_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

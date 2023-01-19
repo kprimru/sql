@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[ActionType]
         [ACTT_NAME]     VarChar(50)                   NOT NULL,
         [ACTT_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.ActionType] PRIMARY KEY CLUSTERED ([ACTT_ID])
-);GO
+);
+GO

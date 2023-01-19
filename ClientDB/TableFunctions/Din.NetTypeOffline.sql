@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Din].[NetTypeOffline]', 'TF') IS NULL EXEC('CREATE FUNCTION [Din].[NetTypeOffline] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-ALTER FUNCTION [Din].[NetTypeOffline]()
+CREATE FUNCTION [Din].[NetTypeOffline]()
 RETURNS @Result TABLE
 (
 	NT_ID SmallInt

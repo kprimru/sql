@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[Servers]
         [SRV_PATH]     NVarChar(1024)                   NOT NULL,
         [SRV_REPORT]   NVarChar(1024)                   NOT NULL,
         CONSTRAINT [PK_dbo.Servers] PRIMARY KEY CLUSTERED ([SRV_ID])
-);GO
+);
+GO

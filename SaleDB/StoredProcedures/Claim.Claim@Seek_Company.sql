@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Claim].[Claim@Seek?Company]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Claim].[Claim@Seek?Company]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Claim].[Claim@Seek?Company]
     @Id     Int
 AS

@@ -27,4 +27,5 @@ CREATE TABLE [Price].[CommercialOffer]
         [CREATE_USER]    NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Price.CommercialOffer] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Price.CommercialOffer(ID_MASTER)_Price.CommercialOffer(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Price].[CommercialOffer] ([ID])
-);GO
+);
+GO

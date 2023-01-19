@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[RN_GET_TECHNOL_TYPE_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 -- =============================================
 -- Автор:		  Денисов Алексей
@@ -11,7 +13,7 @@ GO
 -- Описание:	  Выделяет ID технологического
 --                признака из регузла
 -- =============================================
-ALTER FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
+CREATE FUNCTION [dbo].[RN_GET_TECHNOL_TYPE_ID]
 (
   @regdata INT
 )

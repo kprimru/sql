@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[DocumentService]
         [ID_SERVICE]    UniqueIdentifier      NOT NULL,
         [CNT]           SmallInt              NOT NULL,
         CONSTRAINT [PK_Claim.DocumentService] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

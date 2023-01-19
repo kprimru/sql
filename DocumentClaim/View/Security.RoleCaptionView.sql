@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Security].[RoleCaptionView]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[RoleCaptionView]  AS SELECT 1')
+GO
 ALTER VIEW [Security].[RoleCaptionView]
 AS
 	WITH CTE AS

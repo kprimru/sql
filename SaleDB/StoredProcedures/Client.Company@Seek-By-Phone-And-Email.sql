@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Client].[Company@Seek-By-Phone-And-Email]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[Company@Seek-By-Phone-And-Email]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Client].[Company@Seek-By-Phone-And-Email]
     @PHONE      VarChar(100),
     @EMAIL      VarChar(100)

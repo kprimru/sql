@@ -19,4 +19,5 @@ CREATE TABLE [dbo].[AddressTemplateTable]
         [ATL_HOME]          Bit                           NOT NULL,
         [ATL_ACTIVE]        Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.AddressTemplateTable] PRIMARY KEY CLUSTERED ([ATL_ID])
-);GO
+);
+GO

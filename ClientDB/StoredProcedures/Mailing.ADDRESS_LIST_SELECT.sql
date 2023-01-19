@@ -35,7 +35,8 @@ BEGIN
 				d.ClientID							,
 				CASE WHEN ClientFullName IS NULL THEN Comment ELSE ClientFullName END AS [Name],
 				d.ServiceTypeID						,
-				c.DS_INDEX							,
+				d.ServiceStatusIndex				,
+				Cast(c.DS_INDEX AS Int) AS DS_INDEX,
 				IsNull(d.ManagerName, c.SubhostName)AS [Manager],
 				d.ServiceName						,
 				a.Distr								,
@@ -46,11 +47,10 @@ BEGIN
 				Cast(CASE WHEN C.SubhostName != '' THEN 1 ELSE 0 END AS Bit) AS IsSubhost,
 				ConfirmDate
 
-		FROM	Mailing.Requests a
-				INNER JOIN			Reg.RegNodeSearchView c WITH(NOEXPAND)	ON a.Comp = c.CompNumber AND a.Distr = c.DistrNumber AND a.HostID = c.HostID
-				LEFT OUTER JOIN		dbo.ClientDistrView b	WITH(NOEXPAND)	ON a.Comp = b.COMP AND a.Distr = b.DISTR AND a.HostID = b.HostID
-				LEFT OUTER JOIN		dbo.ClientView d		WITH(NOEXPAND)	ON b.ID_CLIENT = d.ClientID
-
+		FROM Mailing.Requests				AS a
+		INNER JOIN Reg.RegNodeSearchView	AS c WITH(NOEXPAND)	ON a.Comp = c.CompNumber AND a.Distr = c.DistrNumber AND a.HostID = c.HostID
+		LEFT JOIN dbo.ClientDistrView		AS b WITH(NOEXPAND)	ON a.Comp = b.COMP AND a.Distr = b.DISTR AND a.HostID = b.HostID
+		LEFT JOIN dbo.ClientView			AS d WITH(NOEXPAND)	ON b.ID_CLIENT = d.ClientID
 		WHERE	(d.ClientFullName LIKE @NAME OR c.Comment LIKE @NAME OR @NAME IS NULL)
 			AND (d.ServiceTypeID = @STATUS OR @STATUS IS NULL)
 			AND (a.Distr = @DISTR OR @DISTR IS NULL)

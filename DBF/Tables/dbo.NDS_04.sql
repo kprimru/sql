@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[NDS_04]
         [P1S]      NVarChar(510)                       NULL,
         [P2S]      NVarChar(510)                       NULL,
         CONSTRAINT [PK_dbo.NDS_04] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

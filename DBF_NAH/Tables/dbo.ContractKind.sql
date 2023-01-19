@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[ContractKind]
         [CK_CREATIVE]        VarChar(50)                       NULL,
         [CK_PREPOSITIONAL]   VarChar(50)                       NULL,
         CONSTRAINT [PK_dbo.ContractKind] PRIMARY KEY CLUSTERED ([CK_ID])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[IS_INDEX_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_INDEX_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 
 
@@ -13,7 +15,7 @@ GO
 -- Описание:	  Возвращает 0, если индекс корректен
 --                (состоит из 6 цифр)
 -- =============================================
-ALTER FUNCTION [dbo].[IS_INDEX_CORRECT]
+CREATE FUNCTION [dbo].[IS_INDEX_CORRECT]
 (
 	@index varchar(50)
 )

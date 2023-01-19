@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalMessageDelayMax]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalMessageDelayMax] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalMessageDelayMax]
+CREATE FUNCTION [Maintenance].[GlobalMessageDelayMax]
 ()
 RETURNS INT
 AS

@@ -24,4 +24,5 @@ CREATE TABLE [Income].[IncomeBook]
         CONSTRAINT [FK_Income.IncomeBook(IB_ID_HALF)_Income.Half(HLFMS_ID)] FOREIGN KEY  ([IB_ID_HALF]) REFERENCES [Common].[Half] ([HLFMS_ID]),
         CONSTRAINT [FK_Income.IncomeBook(IB_ID_MASTER)_Income.IncomeBook(IB_ID)] FOREIGN KEY  ([IB_ID_MASTER]) REFERENCES [Income].[IncomeBook] ([IB_ID]),
         CONSTRAINT [FK_Income.IncomeBook(IB_ID_PERSONAL)_Income.Personals(PERMS_ID)] FOREIGN KEY  ([IB_ID_PERSONAL]) REFERENCES [Personal].[Personals] ([PERMS_ID])
-);GO
+);
+GO

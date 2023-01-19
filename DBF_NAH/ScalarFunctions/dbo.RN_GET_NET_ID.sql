@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[RN_GET_NET_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_NET_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 -- ================================================
 -- Автор:			коллектив авторов
@@ -11,7 +13,7 @@ GO
 -- Описание:		Выделяет ID количества сетевый станций
 --					из строки регузла
 -- ================================================
-ALTER FUNCTION [dbo].[RN_GET_NET_ID]
+CREATE FUNCTION [dbo].[RN_GET_NET_ID]
 (
   @netcount VARCHAR(50)
 )

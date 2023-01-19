@@ -5,7 +5,7 @@ DECLARE
     @Dst        NVarChar(256);
 
 SET @Src = '[PC2022-SQL\ALPHA].[ClientDB]';
-SET @Dst = '[PC276-SQL\USS].[ClientDB]';
+SET @Dst = '[PC276-SQL\ART].[ClientDB]';
 
 DECLARE @SrcSchemas Table
 (

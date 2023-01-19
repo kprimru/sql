@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[CLIENT_INVOICE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_INVOICE_SELECT]  AS SELECT 1')
+GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
 Дата создания:  24.03.2009

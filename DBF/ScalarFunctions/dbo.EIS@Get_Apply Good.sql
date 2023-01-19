@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[EIS@Get?Apply Good]
+IF OBJECT_ID('[dbo].[EIS@Get?Apply Good]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[EIS@Get?Apply Good] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[EIS@Get?Apply Good]
 (
 	@Invoice_Id		Int,
 	@Grouping		Bit,

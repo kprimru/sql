@@ -16,4 +16,5 @@ CREATE TABLE [Subhost].[SubhostSystem]
         [SYS_ORDER]        Int                  NULL,
         [SYS_KBU]          decimal              NULL,
         CONSTRAINT [PK_Subhost.SubhostSystem] PRIMARY KEY CLUSTERED ([SS_ID])
-);GO
+);
+GO

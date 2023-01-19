@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[UnitTable]
         [UN_OKEI]     VarChar(50)                    NOT NULL,
         [UN_ACTIVE]   Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.UnitTable] PRIMARY KEY CLUSTERED ([UN_ID])
-);GO
+);
+GO

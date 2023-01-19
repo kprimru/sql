@@ -15,4 +15,5 @@ CREATE TABLE [dbo].[Ric_Ussur]
         [TO_PRICE_4]   Money                 NULL,
         [TO_NUM_5]     VarChar(255)          NULL,
         [TO_PRICE_5]   Money                 NULL,
-);GO
+);
+GO

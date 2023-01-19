@@ -22,4 +22,5 @@ CREATE TABLE [Distr].[DistrIncome]
         [PROCESS_DATE]   DateTime                  NULL,
         [UPD_DATE]       DateTime                  NULL,
         CONSTRAINT [PK_Distr.DistrIncome] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[ReportFieldTable]
         [RF_CAPTION]   VarChar(100)                   NOT NULL,
         [RF_ORDER]     SmallInt                       NOT NULL,
         CONSTRAINT [PK_dbo.ReportFieldTable] PRIMARY KEY CLUSTERED ([RF_ID])
-);GO
+);
+GO

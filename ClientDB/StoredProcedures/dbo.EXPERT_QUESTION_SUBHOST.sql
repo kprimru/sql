@@ -38,7 +38,7 @@ BEGIN
 		(
 			SELECT
 				SH_ID		= SH_ID,
-				SH_EMAIL	= SH_EMAIL
+				SH_EMAIL	= CASE WHEN SH_REG = 'У1' THEN 'usplus@list.ru;nds@kprim.ru' ELSE SH_EMAIL END
 			FROM dbo.Subhost
 			WHERE SH_REG IN ('М', 'У1', 'Н1')
 		) AS SH

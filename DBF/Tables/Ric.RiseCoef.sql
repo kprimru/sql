@@ -11,4 +11,5 @@ CREATE TABLE [Ric].[RiseCoef]
         [RC_VALUE]       decimal                    NOT NULL,
         CONSTRAINT [PK_Ric.RiseCoef] PRIMARY KEY CLUSTERED ([RC_ID]),
         CONSTRAINT [FK_Ric.RiseCoef(RC_ID_PERIOD)_Ric.PeriodTable(PR_ID)] FOREIGN KEY  ([RC_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

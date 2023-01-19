@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[SystemDocCountView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[SystemDocCountView]  AS SELECT 1')
+GO
 ALTER VIEW dbo.SystemDocCountView
 AS
 SELECT     TOP (100) PERCENT dbo.PeriodTable.PR_DATE, dbo.PriceSystemHistoryTable.PSH_DOC_COUNT, dbo.SystemTable.SYS_SHORT_NAME

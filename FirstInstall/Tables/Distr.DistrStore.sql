@@ -13,4 +13,5 @@ CREATE TABLE [Distr].[DistrStore]
         [DS_LAST]      DateTime              NOT NULL,
         CONSTRAINT [PK_Distr.DistrStore] PRIMARY KEY CLUSTERED ([DS_ID]),
         CONSTRAINT [FK_Distr.DistrStore(DS_ID_HOST)_Distr.Hosts(HSTMS_ID)] FOREIGN KEY  ([DS_ID_HOST]) REFERENCES [Distr].[Hosts] ([HSTMS_ID])
-);GO
+);
+GO

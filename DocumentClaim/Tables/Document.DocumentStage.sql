@@ -13,4 +13,5 @@ CREATE TABLE [Document].[DocumentStage]
         [NOTE]          NVarChar(Max)         NOT NULL,
         [ID_AUTHOR]     UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Document.DocumentStage] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

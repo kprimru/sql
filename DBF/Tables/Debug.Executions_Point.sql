@@ -12,4 +12,5 @@ CREATE TABLE [Debug].[Executions:Point]
         [StartDateTime]   DateTime                       NOT NULL,
         [Name]            VarChar(128)                   NOT NULL,
         CONSTRAINT [PK_Debug.Executions:Point] PRIMARY KEY CLUSTERED ([Execution_Id],[Row:Index])
-);GO
+);
+GO

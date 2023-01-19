@@ -35,4 +35,5 @@ CREATE TABLE [Subhost].[SubhostCalcReport]
         CONSTRAINT [PK_Subhost.SubhostCalcReport] PRIMARY KEY CLUSTERED ([SCR_ID]),
         CONSTRAINT [FK_Subhost.SubhostCalcReport(SCR_ID_SUBHOST)_Subhost.SubhostTable(SH_ID)] FOREIGN KEY  ([SCR_ID_SUBHOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_Subhost.SubhostCalcReport(SCR_ID_PERIOD)_Subhost.PeriodTable(PR_ID)] FOREIGN KEY  ([SCR_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

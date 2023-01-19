@@ -10,4 +10,5 @@ CREATE TABLE [Ric].[WeightCorrection]
         [WC_ID_QUARTER]   SmallInt                   NOT NULL,
         [WC_VALUE]        decimal                    NOT NULL,
         CONSTRAINT [PK_Ric.WeightCorrection] PRIMARY KEY CLUSTERED ([WC_ID])
-);GO
+);
+GO

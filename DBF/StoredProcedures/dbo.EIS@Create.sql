@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[EIS@Create]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[EIS@Create]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[EIS@Create]
     @Act_Id			Int,
 	@MainContent    Xml,

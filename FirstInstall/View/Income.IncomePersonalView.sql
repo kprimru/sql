@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Income].[IncomePersonalView]', 'V ') IS NULL EXEC('CREATE VIEW [Income].[IncomePersonalView]  AS SELECT 1')
+GO
 ALTER VIEW [Income].[IncomePersonalView]
 WITH SCHEMABINDING
 AS

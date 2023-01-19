@@ -11,4 +11,5 @@ CREATE TABLE [Kladr].[Altnames]
         [KA_NEWCODE]   NVarChar(128)             NULL,
         [KA_LEVEL]     NVarChar(16)              NULL,
         CONSTRAINT [PK_Kladr.Altnames] PRIMARY KEY CLUSTERED ([KA_ID])
-);GO
+);
+GO

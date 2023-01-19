@@ -17,4 +17,5 @@ CREATE TABLE [Subhost].[SubhostSystemType]
         [SST_ORDER]         Int                           NOT NULL,
         [SST_COUNT]         SmallInt                      NOT NULL,
         CONSTRAINT [PK_Subhost.SubhostSystemType] PRIMARY KEY CLUSTERED ([SSST_ID])
-);GO
+);
+GO

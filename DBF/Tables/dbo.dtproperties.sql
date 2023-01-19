@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[dtproperties]
         [lvalue]     image                               NULL,
         [version]    Int                             NOT NULL,
         CONSTRAINT [pk_dtproperties] PRIMARY KEY CLUSTERED ([id],[property])
-);GO
+);
+GO

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalContractYear]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalContractYear] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalContractYear]
+CREATE FUNCTION [Maintenance].[GlobalContractYear]
 ()
 RETURNS UNIQUEIDENTIFIER
 AS

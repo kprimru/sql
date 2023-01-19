@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Raw].[Income_Detail@Set?Client]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Raw].[Income_Detail@Set?Client]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Raw].[Income_Detail@Set?Client]
     @Id                 BigInt,
     @Client_Id          Int

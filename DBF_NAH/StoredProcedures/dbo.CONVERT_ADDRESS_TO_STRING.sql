@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[CONVERT_ADDRESS_TO_STRING]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CONVERT_ADDRESS_TO_STRING]  AS SELECT 1')
+GO
 
 -- =============================================
 -- Автор:		  Денисов Алексей

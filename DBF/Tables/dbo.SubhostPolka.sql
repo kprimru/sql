@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[SubhostPolka]
         CONSTRAINT [PK_dbo.SubhostPolka] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.SubhostPolka(ID_SUBHOST)_dbo.SubhostTable(SH_ID)] FOREIGN KEY  ([ID_SUBHOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_dbo.SubhostPolka(ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

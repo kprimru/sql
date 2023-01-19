@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Raw].[Income@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Raw].[Income@Select]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Raw].[Income@Select]
     @Id                 Int,
     @OnlyUnloaded       Bit = 0,

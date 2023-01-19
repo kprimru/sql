@@ -15,4 +15,5 @@ CREATE TABLE [Distr].[NetAll]
         [TECH]        SmallInt              NOT NULL,
         [LAST]        DateTime              NOT NULL,
         CONSTRAINT [PK_Distr.NetAll] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

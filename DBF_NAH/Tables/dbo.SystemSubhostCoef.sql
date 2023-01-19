@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[SystemSubhostCoef]
         CONSTRAINT [PK_dbo.SystemSubhostCoef] PRIMARY KEY CLUSTERED ([SSC_ID]),
         CONSTRAINT [FK_dbo.SystemSubhostCoef(SSC_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([SSC_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),
         CONSTRAINT [FK_dbo.SystemSubhostCoef(SSC_ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([SSC_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID])
-);GO
+);
+GO

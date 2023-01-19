@@ -11,4 +11,5 @@ CREATE TABLE [Distr].[Subhost]
         [REG]    VarChar(50)           NOT NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Distr.Subhost] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

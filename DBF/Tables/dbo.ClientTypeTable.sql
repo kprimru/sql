@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[ClientTypeTable]
         [CLT_PSEDO]    VarChar(20)                    NOT NULL,
         [CLT_ACTIVE]   Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.ClientTypeTable] PRIMARY KEY CLUSTERED ([CLT_ID])
-);GO
+);
+GO

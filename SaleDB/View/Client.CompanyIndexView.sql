@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Client].[CompanyIndexView]', 'V ') IS NULL EXEC('CREATE VIEW [Client].[CompanyIndexView]  AS SELECT 1')
+GO
 ALTER VIEW [Client].[CompanyIndexView]
 AS
     SELECT

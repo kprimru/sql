@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[Condition]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Claim.Condition] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

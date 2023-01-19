@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[INN_CHECK]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[INN_CHECK] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 -- =============================================
 -- Автор:		  Денисов Алексей
@@ -11,7 +13,7 @@ GO
 -- Описание:	  Делает проверку ИНН по контрольной сумме
 -- =============================================
 
-ALTER FUNCTION [dbo].[INN_CHECK]
+CREATE FUNCTION [dbo].[INN_CHECK]
 (
 	@str varchar(15)
 )

@@ -12,4 +12,5 @@ CREATE TABLE [Price].[PriceSettings]
         [ID_NET_TYPE]   SmallInt              NOT NULL,
         [INDEXING]      Bit                   NOT NULL,
         CONSTRAINT [PK_Price.PriceSettings] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

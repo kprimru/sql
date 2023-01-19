@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[EIS@Get?Buyer]
+IF OBJECT_ID('[dbo].[EIS@Get?Buyer]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[EIS@Get?Buyer] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[EIS@Get?Buyer]
 (
 	@Client_Id		Int,
 	@IdentGUId      VarChar(100)

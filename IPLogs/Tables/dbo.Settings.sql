@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[Settings]
         [ST_NOTE]    NVarChar(1024)                   NOT NULL,
         [ST_VALUE]   NVarChar(1024)                   NOT NULL,
         CONSTRAINT [PK_dbo.Settings] PRIMARY KEY CLUSTERED ([ST_ID])
-);GO
+);
+GO

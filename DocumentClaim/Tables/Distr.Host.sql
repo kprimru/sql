@@ -13,4 +13,5 @@ CREATE TABLE [Distr].[Host]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Distr.Host] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

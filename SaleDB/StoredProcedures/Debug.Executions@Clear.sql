@@ -4,7 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
+IF OBJECT_ID('[Debug].[Executions@Clear]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Executions@Clear]  AS SELECT 1')
+GO
 CREATE   PROCEDURE [Debug].[Executions@Clear]
     @Mode       VarChar(100) = 'AUTO'
     -- AUTO
@@ -13,6 +14,11 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
     SET NOCOUNT ON;
+
+	DECLARE
+		@ErrorMessage	NVarChar(2048),
+		@ErrorSeverity	Int,
+		@ErrorState		Int;
 
     BEGIN TRY
         IF @Mode NOT IN ('AUTO', 'FULL')
@@ -58,7 +64,17 @@ BEGIN
             RaisError('Unknown @Mode', 16, 1);
     END TRY
     BEGIN CATCH
-        EXEC [Maintenance].[ReRaise Error];
+		SET @ErrorSeverity	= ERROR_SEVERITY();
+		SET @ErrorState		= ERROR_STATE();
+
+
+		SET @ErrorMessage =
+			'Ошибка в процедуре "'+ IsNull(ERROR_PROCEDURE(), '') + '". ' +
+								IsNull(ERROR_MESSAGE(), '') + ' (' +
+								IsNull('№ ошибки: ' + Cast(ERROR_NUMBER() AS NVarChar(10)), '') +
+								IsNull(' строка ' + Cast(ERROR_LINE() AS NVarChar(10)), '') + ')';
+
+        RaisError(@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
 GO

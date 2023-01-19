@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[DocumentTable]
         [DOC_PSEDO]    VarChar(50)                       NULL,
         [DOC_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.DocumentTable] PRIMARY KEY CLUSTERED ([DOC_ID])
-);GO
+);
+GO

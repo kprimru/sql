@@ -13,4 +13,5 @@ CREATE TABLE [Sale].[SalePersonal]
         CONSTRAINT [PK_Sale.SalePersonal] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Sale.SalePersonal(ID_SALE)_Sale.SaleCompany(ID)] FOREIGN KEY  ([ID_SALE]) REFERENCES [Sale].[SaleCompany] ([ID]),
         CONSTRAINT [FK_Sale.SalePersonal(ID_PERSONAL)_Sale.OfficePersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID])
-);GO
+);
+GO

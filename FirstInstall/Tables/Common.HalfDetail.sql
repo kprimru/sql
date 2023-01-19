@@ -16,4 +16,5 @@ CREATE TABLE [Common].[HalfDetail]
         [HLF_REF]          TinyInt               NOT NULL,
         CONSTRAINT [PK_Common.HalfDetail] PRIMARY KEY CLUSTERED ([HLF_ID]),
         CONSTRAINT [FK_Common.HalfDetail(HLF_ID_MASTER)_Common.Half(HLFMS_ID)] FOREIGN KEY  ([HLF_ID_MASTER]) REFERENCES [Common].[Half] ([HLFMS_ID])
-);GO
+);
+GO

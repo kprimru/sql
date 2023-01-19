@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[Is Equal(TinyInt)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Is Equal(TinyInt)] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Common].[Is Equal(TinyInt)]
+CREATE FUNCTION [Common].[Is Equal(TinyInt)]
 (
 	@V1	TinyInt,
 	@V2	TinyInt

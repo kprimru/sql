@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Common].[ModuleView]', 'V ') IS NULL EXEC('CREATE VIEW [Common].[ModuleView]  AS SELECT 1')
+GO
 ALTER VIEW [Common].[ModuleView]
 AS
 	/*

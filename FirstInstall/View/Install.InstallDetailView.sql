@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Install].[InstallDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [Install].[InstallDetailView]  AS SELECT 1')
+GO
 
 ALTER VIEW [Install].[InstallDetailView]
 WITH SCHEMABINDING

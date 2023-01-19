@@ -33,7 +33,8 @@ CREATE TABLE [dbo].[ProviderTable]
         CONSTRAINT [FK_dbo.ProviderTable(OwnerFormID)_dbo.OwnerFormTable(OwnerFormID)] FOREIGN KEY  ([OwnerFormID]) REFERENCES [dbo].[OwnerFormTable] ([OwnerFormID]),
         CONSTRAINT [FK_dbo.ProviderTable(BankID)_dbo.BankTable(BankID)] FOREIGN KEY  ([BankID]) REFERENCES [dbo].[BankTable] ([BankID]),
         CONSTRAINT [FK_dbo.ProviderTable(StreetID)_dbo.StreetTable(StreetID)] FOREIGN KEY  ([StreetID]) REFERENCES [dbo].[StreetTable] ([StreetID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[ProviderTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[ProviderTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[ProviderTable] TO DBAdministrator;

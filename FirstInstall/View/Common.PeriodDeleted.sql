@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Common].[PeriodDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Common].[PeriodDeleted]  AS SELECT 1')
+GO
 ALTER VIEW [Common].[PeriodDeleted]
 --WITH SCHEMABINDING
 AS

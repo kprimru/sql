@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Common].[TableStringFromXML]
+IF OBJECT_ID('[Common].[TableStringFromXML]', 'TF') IS NULL EXEC('CREATE FUNCTION [Common].[TableStringFromXML] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Common].[TableStringFromXML]
 	(
 		@SOURCE NVARCHAR(MAX)
 	)

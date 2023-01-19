@@ -24,4 +24,5 @@ CREATE TABLE [Sale].[SaleCompany]
         CONSTRAINT [FK_Sale.SaleCompany(ID_ASSIGNER)_Sale.OfficePersonal(ID)] FOREIGN KEY  ([ID_ASSIGNER]) REFERENCES [Personal].[OfficePersonal] ([ID]),
         CONSTRAINT [FK_Sale.SaleCompany(ID_OFFICE)_Sale.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
         CONSTRAINT [FK_Sale.SaleCompany(ID_RIVAL)_Sale.RivalSystem(ID)] FOREIGN KEY  ([ID_RIVAL]) REFERENCES [Client].[RivalSystem] ([ID])
-);GO
+);
+GO

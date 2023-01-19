@@ -26,4 +26,5 @@ CREATE TABLE [Memo].[ClientMemo]
         [LETTER_CANCEL]       Bit                       NULL,
         [SYSTEMS]             NVarChar(Max)             NULL,
         CONSTRAINT [PK_Memo.ClientMemo] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

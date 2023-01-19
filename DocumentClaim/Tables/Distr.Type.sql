@@ -11,4 +11,5 @@ CREATE TABLE [Distr].[Type]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Distr.Type] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

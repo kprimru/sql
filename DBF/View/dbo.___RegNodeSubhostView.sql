@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[___RegNodeSubhostView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[___RegNodeSubhostView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[RegNodeSubhostView]
 AS
 	SELECT

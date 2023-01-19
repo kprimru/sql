@@ -20,4 +20,5 @@ CREATE TABLE [Subhost].[SubhostNetType]
         [COEF_OLD]         decimal                           NULL,
         [COEF_NEW]         decimal                           NULL,
         CONSTRAINT [PK_Subhost.SubhostNetType] PRIMARY KEY CLUSTERED ([SNT_ID])
-);GO
+);
+GO

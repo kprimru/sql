@@ -12,4 +12,5 @@ CREATE TABLE [Maintenance].[Version]
         [UPD_DATE]   DateTime              NOT NULL,
         [UPD_USER]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Maintenance.Version] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

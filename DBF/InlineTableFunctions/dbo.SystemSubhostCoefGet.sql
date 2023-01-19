@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[SystemSubhostCoefGet]
+IF OBJECT_ID('[dbo].[SystemSubhostCoefGet]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[SystemSubhostCoefGet] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [dbo].[SystemSubhostCoefGet]
 (
 	@PR_DATE	SMALLDATETIME
 )

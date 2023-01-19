@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[StringSplit]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[StringSplit] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-ALTER FUNCTION [dbo].[StringSplit]
+CREATE FUNCTION [dbo].[StringSplit]
 (
 	@STRING		VarChar(MAX),
 	@Delimiter	VarCHar(10)

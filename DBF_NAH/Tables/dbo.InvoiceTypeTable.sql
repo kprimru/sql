@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[InvoiceTypeTable]
         [INT_BUY]      Bit                           NOT NULL,
         [INT_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.InvoiceTypeTable] PRIMARY KEY CLUSTERED ([INT_ID])
-);GO
+);
+GO

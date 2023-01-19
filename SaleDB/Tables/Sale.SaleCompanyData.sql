@@ -15,4 +15,5 @@ CREATE TABLE [Sale].[SaleCompanyData]
         [CONTRACT]   NVarChar(128)             NULL,
         CONSTRAINT [PK_Sale.SaleCompanyData] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Sale.SaleCompanyData(ID_SALE)_Sale.SaleCompany(ID)] FOREIGN KEY  ([ID_SALE]) REFERENCES [Sale].[SaleCompany] ([ID])
-);GO
+);
+GO

@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[SystemTypeSubhost]
         CONSTRAINT [FK_dbo.SystemTypeSubhost(STS_ID_TYPE)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([STS_ID_TYPE]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID]),
         CONSTRAINT [FK_dbo.SystemTypeSubhost(STS_ID_HOST)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([STS_ID_HOST]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID]),
         CONSTRAINT [FK_dbo.SystemTypeSubhost(STS_ID_DHOST)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([STS_ID_DHOST]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID])
-);GO
+);
+GO

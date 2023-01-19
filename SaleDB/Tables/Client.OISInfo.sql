@@ -22,4 +22,5 @@ CREATE TABLE [Client].[OISInfo]
         [SALE_DATE]        SmallDateTime             NULL,
         [SERVICE_DATE]     SmallDateTime             NULL,
         CONSTRAINT [PK_Client.OISInfo] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

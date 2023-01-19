@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[FileByteSizeToStr]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[FileByteSizeToStr] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [dbo].[FileByteSizeToStr]
+CREATE FUNCTION [dbo].[FileByteSizeToStr]
 (
 	@SIZE BIGINT
 )

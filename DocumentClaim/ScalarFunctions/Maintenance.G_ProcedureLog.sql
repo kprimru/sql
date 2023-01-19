@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Maintenance].[G_ProcedureLog]
+IF OBJECT_ID('[Maintenance].[G_ProcedureLog]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[G_ProcedureLog] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[G_ProcedureLog]
 ()
 RETURNS BIT
 AS

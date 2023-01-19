@@ -14,4 +14,5 @@ CREATE TABLE [Install].[InstallActDetail]
         [IA_END]         SmallDateTime             NULL,
         [IA_REF]         TinyInt               NOT NULL,
         CONSTRAINT [PK_Install.InstallActDetail] PRIMARY KEY CLUSTERED ([IA_ID])
-);GO
+);
+GO

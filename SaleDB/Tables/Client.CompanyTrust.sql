@@ -21,4 +21,5 @@ CREATE TABLE [Client].[CompanyTrust]
         CONSTRAINT [FK_Client.CompanyTrust(ID_COMPANY)_Client.Company(ID)] FOREIGN KEY  ([ID_COMPANY]) REFERENCES [Client].[Company] ([ID]),
         CONSTRAINT [FK_Client.CompanyTrust(ID_OFFICE)_Client.Office(ID)] FOREIGN KEY  ([ID_OFFICE]) REFERENCES [Client].[Office] ([ID]),
         CONSTRAINT [FK_Client.CompanyTrust(ID_MASTER)_Client.CompanyTrust(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Client].[CompanyTrust] ([ID])
-);GO
+);
+GO

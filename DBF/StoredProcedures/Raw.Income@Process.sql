@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Raw].[Income@Process]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Raw].[Income@Process]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Raw].[Income@Process]
     @Organization_Id    SmallInt,
     @InDate             SmallDateTime,

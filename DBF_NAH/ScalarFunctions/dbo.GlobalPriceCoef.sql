@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[GlobalPriceCoef]()
+IF OBJECT_ID('[dbo].[GlobalPriceCoef]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GlobalPriceCoef] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[GlobalPriceCoef]()
 RETURNS Numeric(12,4)
 AS
 BEGIN

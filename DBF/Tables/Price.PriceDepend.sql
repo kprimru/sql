@@ -15,4 +15,5 @@ CREATE TABLE [Price].[PriceDepend]
         [ID_NEW_NET]        SmallInt                   NOT NULL,
         [COEF]              decimal                    NOT NULL,
         CONSTRAINT [PK_Price.PriceDepend] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

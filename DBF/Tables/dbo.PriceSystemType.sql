@@ -20,4 +20,5 @@ CREATE TABLE [dbo].[PriceSystemType]
         CONSTRAINT [FK_dbo.PriceSystemType(PST_ID_PRICE)_dbo.PriceTypeTable(PT_ID)] FOREIGN KEY  ([PST_ID_PRICE]) REFERENCES [dbo].[PriceTypeTable] ([PT_ID]),
         CONSTRAINT [FK_dbo.PriceSystemType(PST_ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([PST_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID]),
         CONSTRAINT [FK_dbo.PriceSystemType(PST_ID_TYPE)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([PST_ID_TYPE]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID])
-);GO
+);
+GO

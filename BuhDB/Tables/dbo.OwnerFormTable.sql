@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[OwnerFormTable]
         [OwnerFormShortName]   VarChar(20)                    NOT NULL,
         [OwnerFormName]        VarChar(200)                   NOT NULL,
         CONSTRAINT [PK_dbo.OwnerFormTable] PRIMARY KEY CLUSTERED ([OwnerFormID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[OwnerFormTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[OwnerFormTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[OwnerFormTable] TO DBAdministrator;

@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[MoneyFormatForEIS]
+IF OBJECT_ID('[dbo].[MoneyFormatForEIS]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[MoneyFormatForEIS] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[MoneyFormatForEIS]
 (
     @Value      Money,
     @TaxPercent Decimal(8,4),

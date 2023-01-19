@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[ActionPeriod]
         [AP_ID_AC]       SmallInt                   NOT NULL,
         [AP_ID_PERIOD]   SmallInt                   NOT NULL,
         CONSTRAINT [PK_dbo.ActionPeriod] PRIMARY KEY CLUSTERED ([AP_ID])
-);GO
+);
+GO

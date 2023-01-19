@@ -12,4 +12,5 @@ CREATE TABLE [Security].[Protocol]
         [UPD_DATE]   DateTime              NOT NULL,
         [UPD_USER]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Security.Protocol] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

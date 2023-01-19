@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Ric].[DepthCoefValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[DepthCoefValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 /*
 	Коэффициент насыщенности
 */
-ALTER FUNCTION [Ric].[DepthCoefValue]
+CREATE FUNCTION [Ric].[DepthCoefValue]
 (
 	@PR_ID	SMALLINT
 )

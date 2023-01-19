@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalClientAutoClaim]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalClientAutoClaim] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalClientAutoClaim]
+CREATE FUNCTION [Maintenance].[GlobalClientAutoClaim]
 ()
 RETURNS BIT
 AS

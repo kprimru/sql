@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[ClientStat]
         [CS_ID_FILE]   Int                   NOT NULL,
         CONSTRAINT [PK_dbo.ClientStat] PRIMARY KEY CLUSTERED ([CS_ID]),
         CONSTRAINT [FK_dbo.ClientStat(CS_ID_FILE)_dbo.Files(FL_ID)] FOREIGN KEY  ([CS_ID_FILE]) REFERENCES [dbo].[Files] ([FL_ID])
-);GO
+);
+GO

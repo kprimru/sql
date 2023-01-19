@@ -15,4 +15,5 @@ CREATE TABLE [Sale].[SaleDistr]
         CONSTRAINT [FK_Sale.SaleDistr(ID_SALE)_Sale.SaleCompany(ID)] FOREIGN KEY  ([ID_SALE]) REFERENCES [Sale].[SaleCompany] ([ID]),
         CONSTRAINT [FK_Sale.SaleDistr(ID_NET)_Sale.Net(ID)] FOREIGN KEY  ([ID_NET]) REFERENCES [System].[Net] ([ID]),
         CONSTRAINT [FK_Sale.SaleDistr(ID_SYSTEM)_Sale.Systems(ID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [System].[Systems] ([ID])
-);GO
+);
+GO

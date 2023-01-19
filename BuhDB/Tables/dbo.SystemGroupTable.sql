@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[SystemGroupTable]
         [SystemGroupName]    VarChar(100)                   NOT NULL,
         [SystemGroupOrder]   Int                            NOT NULL,
         CONSTRAINT [PK_dbo.SystemGroupTable] PRIMARY KEY CLUSTERED ([SystemGroupID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[SystemGroupTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[SystemGroupTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[SystemGroupTable] TO DBAdministrator;

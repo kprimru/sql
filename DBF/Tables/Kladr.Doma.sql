@@ -16,4 +16,5 @@ CREATE TABLE [Kladr].[Doma]
         [KD_UNO]      NVarChar(32)              NULL,
         [KD_OCATD]    NVarChar(64)              NULL,
         CONSTRAINT [PK_Kladr.Doma] PRIMARY KEY CLUSTERED ([KD_ID])
-);GO
+);
+GO

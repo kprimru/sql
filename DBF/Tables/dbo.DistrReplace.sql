@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[DistrReplace]
         [DATE]        SmallDateTime             NULL,
         [PERIOD]      SmallInt                  NULL,
         CONSTRAINT [PK_dbo.DistrReplace] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

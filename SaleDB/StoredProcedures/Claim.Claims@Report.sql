@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Claim].[Claims@Report]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Claim].[Claims@Report]  AS SELECT 1')
+GO
 /*
     EXEC [Claim].[Claims@Report]
         @DateFrom = '20200101',
@@ -105,10 +107,20 @@ BEGIN
         INNER JOIN [Claim].[Claims] AS C ON I.[Id] = C.[Id]
         CROSS APPLY
         (
-            SELECT TOP (1) [SENDER_NOTE], [BDATE]
-            FROM [Client].[Company] AS CMP
-            WHERE CMP.[ID] = C.Company_Id OR CMP.[ID_MASTER] = C.[Company_Id]
-            ORDER BY CMP.[BDATE]
+			SELECT TOP (1) [SENDER_NOTE], [BDATE]
+			FROM
+			(
+				SELECT TOP (1) [SENDER_NOTE], [BDATE]
+				FROM [Claim].[Claims:Companies] AS CC
+				INNER JOIN [Client].[Company] AS CMP ON CC.[Company_Id] = CMP.[ID]
+				WHERE CC.[Claim_Id] = C.[Id]
+				UNION
+				SELECT TOP (1) [SENDER_NOTE], [BDATE]
+				FROM [Claim].[Claims:Companies] AS CC
+				INNER JOIN [Client].[Company] AS CMP ON CC.[Company_Id] = CMP.[ID_MASTER]
+				WHERE CC.[Claim_Id] = C.[Id]
+			) AS X
+            ORDER BY X.[BDATE]
         ) AS CMP
         CROSS APPLY
         (
@@ -119,7 +131,7 @@ BEGIN
                                 ELSE 'Существующая карточка'
                             END
         ) AS R
-        WHERE C.[Company_Id] IS NOT NULL
+       -- WHERE C.[Company_Id] IS NOT NULL
         GROUP BY R.[Result];
 
         SELECT *

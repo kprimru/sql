@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[__TechnolTypePeriod]
         CONSTRAINT [PK_dbo.__TechnolTypePeriod] PRIMARY KEY CLUSTERED ([TTP_ID]),
         CONSTRAINT [FK_dbo.__TechnolTypePeriod(TTP_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([TTP_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),
         CONSTRAINT [FK_dbo.__TechnolTypePeriod(TTP_ID_TECH)_dbo.TechnolTypeTable(TT_ID)] FOREIGN KEY  ([TTP_ID_TECH]) REFERENCES [dbo].[TechnolTypeTable] ([TT_ID])
-);GO
+);
+GO

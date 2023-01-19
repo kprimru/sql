@@ -21,4 +21,5 @@ CREATE TABLE [dbo].[Proverka]
         [JUN_15]    NVarChar(510)          NULL,
         [SEP_15]    NVarChar(510)          NULL,
         [MAR_16]    NVarChar(510)          NULL,
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[GET_CLIENT_DISTR]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_CLIENT_DISTR] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 
 -- ================================================
@@ -15,7 +17,7 @@ GO
 --					в отчет
 -- ================================================
 
-ALTER FUNCTION [dbo].[GET_CLIENT_DISTR]
+CREATE FUNCTION [dbo].[GET_CLIENT_DISTR]
 (
 	@toid int,
 	@prid smallint

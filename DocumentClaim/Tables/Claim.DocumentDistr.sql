@@ -13,4 +13,5 @@ CREATE TABLE [Claim].[DocumentDistr]
         [DISTR]         Int                       NULL,
         [COMP]          TinyInt                   NULL,
         CONSTRAINT [PK_Claim.DocumentDistr] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

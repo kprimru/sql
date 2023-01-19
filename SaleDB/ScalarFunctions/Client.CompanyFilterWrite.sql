@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Client].[CompanyFilterWrite]
+IF OBJECT_ID('[Client].[CompanyFilterWrite]', 'FN') IS NULL EXEC('CREATE FUNCTION [Client].[CompanyFilterWrite] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Client].[CompanyFilterWrite]
 (
 	@SRC	NVARCHAR(MAX)
 )

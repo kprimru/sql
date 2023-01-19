@@ -14,4 +14,5 @@ CREATE TABLE [Salary].[Service]
         CONSTRAINT [PK_Salary.Service] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Salary.Service(ID_COURIER)_Salary.CourierTable(COUR_ID)] FOREIGN KEY  ([ID_COURIER]) REFERENCES [dbo].[CourierTable] ([COUR_ID]),
         CONSTRAINT [FK_Salary.Service(ID_PERIOD)_Salary.PeriodTable(PR_ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

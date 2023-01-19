@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[QUARTER_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[QUARTER_ADD]  AS SELECT 1')
+GO
 /*
 Автор:		  Денисов Алексей
 Дата создания: 10.05.2012

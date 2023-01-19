@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[CLIENT_DISTR_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_DISTR_SELECT]  AS SELECT 1')
+GO
 /*
 Автор:         Денисов Алексей
 Описание:      Выбрать данные о всех дистрибутивах клиента

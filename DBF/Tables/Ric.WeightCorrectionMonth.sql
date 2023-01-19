@@ -10,4 +10,5 @@ CREATE TABLE [Ric].[WeightCorrectionMonth]
         [WC_ID_PERIOD]   SmallInt                   NOT NULL,
         [WC_VALUE]       decimal                    NOT NULL,
         CONSTRAINT [PK_Ric.WeightCorrectionMonth] PRIMARY KEY CLUSTERED ([WC_ID])
-);GO
+);
+GO

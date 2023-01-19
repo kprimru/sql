@@ -10,4 +10,5 @@ CREATE TABLE [Sale].[SaleType]
         [NAME]   NVarChar(512)         NOT NULL,
         [LAST]   DateTime              NOT NULL,
         CONSTRAINT [PK_Sale.SaleType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

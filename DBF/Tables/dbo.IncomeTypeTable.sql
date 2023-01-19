@@ -10,4 +10,5 @@ CREATE TABLE [dbo].[IncomeTypeTable]
         [IT_NAME]     VarChar(50)                   NOT NULL,
         [IT_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.IncomeTypeTable] PRIMARY KEY CLUSTERED ([IT_ID])
-);GO
+);
+GO

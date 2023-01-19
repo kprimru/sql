@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalBcpEx]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalBcpEx] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalBcpEx]
+CREATE FUNCTION [Maintenance].[GlobalBcpEx]
 ()
 RETURNS VARCHAR(500)
 AS

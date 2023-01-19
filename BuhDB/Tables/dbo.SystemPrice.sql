@@ -11,7 +11,8 @@ CREATE TABLE [dbo].[SystemPrice]
         [ID_PRICE]    Int                   NOT NULL,
         [ENABLED]     Bit                   NOT NULL,
         CONSTRAINT [PK_dbo.SystemPrice] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[SystemPrice] TO DBAdministrator;
 GRANT INSERT ON [dbo].[SystemPrice] TO DBAdministrator;
 GRANT SELECT ON [dbo].[SystemPrice] TO DBAdministrator;

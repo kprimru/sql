@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[BillDistrInsert]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[BillDistrInsert]  ON [dbo].[BillDistrTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
+GO
 
 /*
 Автор:		Денисов Алексей

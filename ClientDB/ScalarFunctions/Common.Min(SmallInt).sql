@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[Min(SmallInt)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Min(SmallInt)] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Common].[Min(SmallInt)]
+CREATE FUNCTION [Common].[Min(SmallInt)]
 (
 	@V1	SmallInt,
 	@V2	SmallInt

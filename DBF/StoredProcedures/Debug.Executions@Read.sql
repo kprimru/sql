@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Debug].[Executions@Read]
+IF OBJECT_ID('[Debug].[Executions@Read]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Executions@Read]  AS SELECT 1')
+GO
+CREATE   PROCEDURE [Debug].[Executions@Read]
     @MaxResultCount Int             = 20,
     @Object         NVarChar(512)   = NULL,
     @Exec_Id        BigInt          = NULL
@@ -12,6 +14,11 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
     SET NOCOUNT ON;
+
+	DECLARE
+		@ErrorMessage	NVarChar(2048),
+		@ErrorSeverity	Int,
+		@ErrorState		Int;
 
     DECLARE @Exec_Result Table
     (
@@ -97,7 +104,17 @@ BEGIN
         END;
     END TRY
     BEGIN CATCH
-        EXEC [Maintenance].[ReRaise Error];
+        SET @ErrorSeverity	= ERROR_SEVERITY();
+		SET @ErrorState		= ERROR_STATE();
+
+
+		SET @ErrorMessage =
+			'Ошибка в процедуре "'+ IsNull(ERROR_PROCEDURE(), '') + '". ' +
+								IsNull(ERROR_MESSAGE(), '') + ' (' +
+								IsNull('№ ошибки: ' + Cast(ERROR_NUMBER() AS NVarChar(10)), '') +
+								IsNull(' строка ' + Cast(ERROR_LINE() AS NVarChar(10)), '') + ')';
+
+        RaisError(@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
 GO

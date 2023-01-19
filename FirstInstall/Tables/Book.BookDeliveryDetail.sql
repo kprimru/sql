@@ -15,4 +15,5 @@ CREATE TABLE [Book].[BookDeliveryDetail]
         [BD_REF]         TinyInt                   NULL,
         CONSTRAINT [PK_Book.BookDeliveryDetail] PRIMARY KEY CLUSTERED ([BD_ID]),
         CONSTRAINT [FK_Book.BookDeliveryDetail(BD_ID_MASTER)_Book.BookDelivery(BDMS_ID)] FOREIGN KEY  ([BD_ID_MASTER]) REFERENCES [Book].[BookDelivery] ([BDMS_ID])
-);GO
+);
+GO

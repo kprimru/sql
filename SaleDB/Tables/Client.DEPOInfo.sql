@@ -21,4 +21,5 @@ CREATE TABLE [Client].[DEPOInfo]
         [Rival]            Int                       NULL,
         [COMPANY_NUMBER]   Int                       NULL,
         CONSTRAINT [PK_Client.DEPOInfo] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

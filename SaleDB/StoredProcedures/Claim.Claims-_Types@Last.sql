@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Claim].[Claims->Types@Last]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Claim].[Claims->Types@Last]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Claim].[Claims->Types@Last]
     @Last   DateTime OUTPUT
 AS

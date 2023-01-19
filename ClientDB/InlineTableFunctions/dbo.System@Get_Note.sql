@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[System@Get?Note]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[System@Get?Note] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-ALTER FUNCTION [dbo].[System@Get?Note]
+CREATE FUNCTION [dbo].[System@Get?Note]
 (
     @System_Id      SmallInt,
     @DistrType_Id   SmallInt

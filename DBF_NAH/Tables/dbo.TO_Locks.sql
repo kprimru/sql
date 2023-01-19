@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[TO:Locks]
         [FinishUserName]   NVarChar(256)          NULL,
         [FinishDateTime]   DateTime               NULL,
         CONSTRAINT [PK_dbo.TO:Locks] PRIMARY KEY CLUSTERED ([To_Id],[Row:Index])
-);GO
+);
+GO

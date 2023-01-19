@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[OrganizationCalc]
         [ORGC_ACCOUNT]   VarChar(64)                    NOT NULL,
         [ORGC_ACTIVE]    Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.OrganizationCalc] PRIMARY KEY CLUSTERED ([ORGC_ID])
-);GO
+);
+GO

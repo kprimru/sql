@@ -12,4 +12,5 @@ CREATE TABLE [Price].[CommercialOperation]
         [STRING]             NVarChar(1024)            NULL,
         [LAST]               DateTime              NOT NULL,
         CONSTRAINT [PK_Price.CommercialOperation] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

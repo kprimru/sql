@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Client].[DepoList@Select From File]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[DepoList@Select From File]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Client].[DepoList@Select From File]
 	@Data			Xml,
 	@HideUnchanged	Bit = 1

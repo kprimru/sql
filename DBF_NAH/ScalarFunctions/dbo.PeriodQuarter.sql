@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[PeriodQuarter]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PeriodQuarter] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 /*
 	По указанному периоду определяем квартал, к которому принадлежит период
 */
-ALTER FUNCTION [dbo].[PeriodQuarter]
+CREATE FUNCTION [dbo].[PeriodQuarter]
 (
 	@PR_ID	SMALLINT
 )

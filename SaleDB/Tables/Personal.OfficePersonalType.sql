@@ -14,4 +14,5 @@ CREATE TABLE [Personal].[OfficePersonalType]
         CONSTRAINT [PK_Personal.OfficePersonalType] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Personal.OfficePersonalType(ID_TYPE)_Personal.PersonalType(ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Personal].[PersonalType] ([ID]),
         CONSTRAINT [FK_Personal.OfficePersonalType(ID_PERSONAL)_Personal.OfficePersonal(ID)] FOREIGN KEY  ([ID_PERSONAL]) REFERENCES [Personal].[OfficePersonal] ([ID])
-);GO
+);
+GO

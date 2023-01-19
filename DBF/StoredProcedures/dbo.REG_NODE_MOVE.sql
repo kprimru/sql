@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[REG_NODE_MOVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REG_NODE_MOVE]  AS SELECT 1')
+GO
 /*
 Автор:			коллектив авторов
 Дата креации:	19.02.2009

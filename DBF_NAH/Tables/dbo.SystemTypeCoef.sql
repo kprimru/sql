@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[SystemTypeCoef]
         CONSTRAINT [PK_dbo.SystemTypeCoef] PRIMARY KEY CLUSTERED ([STC_ID]),
         CONSTRAINT [FK_dbo.SystemTypeCoef(STC_ID_TYPE)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([STC_ID_TYPE]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID]),
         CONSTRAINT [FK_dbo.SystemTypeCoef(STC_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([STC_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID])
-);GO
+);
+GO

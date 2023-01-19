@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Common].[IntTableFromList]
+IF OBJECT_ID('[Common].[IntTableFromList]', 'TF') IS NULL EXEC('CREATE FUNCTION [Common].[IntTableFromList] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Common].[IntTableFromList]
 (
 	@List		VARCHAR(MAX),
 	@Delimiter	VARCHAR(10) = ','

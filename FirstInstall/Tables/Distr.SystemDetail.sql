@@ -20,4 +20,5 @@ CREATE TABLE [Distr].[SystemDetail]
         CONSTRAINT [PK_Distr.SystemDetail] PRIMARY KEY CLUSTERED ([SYS_ID]),
         CONSTRAINT [FK_Distr.SystemDetail(SYS_ID_HOST)_Distr.Hosts(HSTMS_ID)] FOREIGN KEY  ([SYS_ID_HOST]) REFERENCES [Distr].[Hosts] ([HSTMS_ID]),
         CONSTRAINT [FK_Distr.SystemDetail(SYS_ID_MASTER)_Distr.Systems(SYSMS_ID)] FOREIGN KEY  ([SYS_ID_MASTER]) REFERENCES [Distr].[Systems] ([SYSMS_ID])
-);GO
+);
+GO

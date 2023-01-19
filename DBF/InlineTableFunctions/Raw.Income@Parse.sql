@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Raw].[Income@Parse]
+IF OBJECT_ID('[Raw].[Income@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [Raw].[Income@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [Raw].[Income@Parse]
 (
     @Data Xml
 )

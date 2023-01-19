@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[GET_PERIOD_BY_DATE]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_PERIOD_BY_DATE] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
@@ -11,7 +13,7 @@ GO
 Описание:
 */
 
-ALTER FUNCTION [dbo].[GET_PERIOD_BY_DATE]
+CREATE FUNCTION [dbo].[GET_PERIOD_BY_DATE]
 (
 	-- Список параметров функции
 	@date SMALLDATETIME

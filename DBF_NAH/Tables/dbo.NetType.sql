@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[NetType]
         [NT_VMI_GROUP]   VarChar(50)                    NOT NULL,
         [NT_ACTIVE]      Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.NetType] PRIMARY KEY CLUSTERED ([NT_ID])
-);GO
+);
+GO

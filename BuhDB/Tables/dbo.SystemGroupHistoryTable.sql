@@ -12,7 +12,8 @@ CREATE TABLE [dbo].[SystemGroupHistoryTable]
         [SystemGroupOrder]   Int                            NOT NULL,
         [GroupPriceDate]     VarChar(20)                    NOT NULL,
         CONSTRAINT [PK_dbo.SystemGroupHistoryTable] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[SystemGroupHistoryTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[SystemGroupHistoryTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[SystemGroupHistoryTable] TO DBAdministrator;

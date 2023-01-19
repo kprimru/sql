@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Personal].[PersonalSlaveGet]
+IF OBJECT_ID('[Personal].[PersonalSlaveGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [Personal].[PersonalSlaveGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Personal].[PersonalSlaveGet]
 (
 	@ID	UNIQUEIDENTIFIER
 )

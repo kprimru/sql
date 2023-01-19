@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[PriceCoef]
         [PC_ID_PERIOD]   SmallInt                   NOT NULL,
         [PC_COEF]        decimal                    NOT NULL,
         CONSTRAINT [PK_dbo.PriceCoef] PRIMARY KEY CLUSTERED ([PC_ID])
-);GO
+);
+GO

@@ -31,4 +31,5 @@ CREATE TABLE [dbo].[__RegNodeSubhostTable]
         CONSTRAINT [FK_dbo.__RegNodeSubhostTable(RNS_ID_OLD_SYS)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([RNS_ID_OLD_SYS]) REFERENCES [dbo].[SystemTable] ([SYS_ID]),
         CONSTRAINT [FK_dbo.__RegNodeSubhostTable(RNS_ID_TECH)_dbo.TechnolTypeTable(TT_ID)] FOREIGN KEY  ([RNS_ID_TECH]) REFERENCES [dbo].[TechnolTypeTable] ([TT_ID]),
         CONSTRAINT [FK_dbo.__RegNodeSubhostTable(RNS_ID_TYPE)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([RNS_ID_TYPE]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID])
-);GO
+);
+GO

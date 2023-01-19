@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Claim].[ClaimMasterView]', 'V ') IS NULL EXEC('CREATE VIEW [Claim].[ClaimMasterView]  AS SELECT 1')
+GO
 ALTER VIEW [Claim].[ClaimMasterView]
 --WITH SCHEMABINDING
 AS

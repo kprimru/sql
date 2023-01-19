@@ -15,4 +15,5 @@ CREATE TABLE [Stat].[Slice]
         [EDATE]      DateTime                  NULL,
         [UPD_USER]   NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Stat.Slice] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

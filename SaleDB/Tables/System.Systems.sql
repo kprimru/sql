@@ -14,4 +14,5 @@ CREATE TABLE [System].[Systems]
         [ORD]     SmallInt                  NULL,
         [LAST]    DateTime              NOT NULL,
         CONSTRAINT [PK_System.Systems] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

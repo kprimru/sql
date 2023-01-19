@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[PriceGroupTable]
         [PG_ORDER]    Int                               NULL,
         [PG_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.PriceGroupTable] PRIMARY KEY CLUSTERED ([PG_ID])
-);GO
+);
+GO

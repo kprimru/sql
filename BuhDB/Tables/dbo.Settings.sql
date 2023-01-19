@@ -9,4 +9,5 @@ CREATE TABLE [dbo].[Settings]
         [Name]    VarChar(100)      NOT NULL,
         [Value]   sql_variant           NULL,
         CONSTRAINT [PK_dbo.Settings] PRIMARY KEY CLUSTERED ([Name])
-);GO
+);
+GO

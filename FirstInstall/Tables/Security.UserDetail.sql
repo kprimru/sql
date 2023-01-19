@@ -16,4 +16,5 @@ CREATE TABLE [Security].[UserDetail]
         [US_REF]         TinyInt               NOT NULL,
         CONSTRAINT [PK_Security.UserDetail] PRIMARY KEY CLUSTERED ([US_ID]),
         CONSTRAINT [FK_Security.UserDetail(US_ID_MASTER)_Security.Users(USMS_ID)] FOREIGN KEY  ([US_ID_MASTER]) REFERENCES [Security].[Users] ([USMS_ID])
-);GO
+);
+GO

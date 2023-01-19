@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Ric].[GrowStandardValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[GrowStandardValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 /*
 	Показатель нормального роста
 */
-ALTER FUNCTION [Ric].[GrowStandardValue]
+CREATE FUNCTION [Ric].[GrowStandardValue]
 (
 	@PR_ID	SMALLINT
 )

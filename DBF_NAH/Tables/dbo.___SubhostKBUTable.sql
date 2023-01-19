@@ -16,4 +16,5 @@ CREATE TABLE [dbo].[___SubhostKBUTable]
         CONSTRAINT [FK_dbo.___SubhostKBUTable(SK_ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([SK_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),
         CONSTRAINT [FK_dbo.___SubhostKBUTable(SK_ID_HOST)_dbo.SubhostTable(SH_ID)] FOREIGN KEY  ([SK_ID_HOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_dbo.___SubhostKBUTable(SK_ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([SK_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[SubhostType]
         [ST_NAME]     VarChar(100)                       NULL,
         [ST_ACTIVE]   Bit                                NULL,
         CONSTRAINT [PK_SubhostType] PRIMARY KEY CLUSTERED ([ST_ID])
-);GO
+);
+GO

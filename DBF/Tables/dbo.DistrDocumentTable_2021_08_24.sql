@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[DistrDocumentTable_2021_08_24]
         [DD_ID_GOOD]    SmallInt                       NULL,
         [DD_ID_UNIT]    SmallInt                       NULL,
         [DD_PREFIX]     Bit                            NULL,
-);GO
+);
+GO

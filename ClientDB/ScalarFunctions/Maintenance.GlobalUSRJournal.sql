@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalUSRJournal]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalUSRJournal] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalUSRJournal]
+CREATE FUNCTION [Maintenance].[GlobalUSRJournal]
 ()
 RETURNS BIT
 AS

@@ -13,4 +13,5 @@ CREATE TABLE [Subhost].[SubhostCalcSettings]
         CONSTRAINT [PK_Subhost.SubhostCalcSettings] PRIMARY KEY CLUSTERED ([SCS_ID]),
         CONSTRAINT [FK_Subhost.SubhostCalcSettings(SCS_ID_ORG_SERVICE)_Subhost.OrganizationTable(ORG_ID)] FOREIGN KEY  ([SCS_ID_ORG_SERVICE]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID]),
         CONSTRAINT [FK_Subhost.SubhostCalcSettings(SCS_ID_ORG_STUDY)_Subhost.OrganizationTable(ORG_ID)] FOREIGN KEY  ([SCS_ID_ORG_STUDY]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID])
-);GO
+);
+GO

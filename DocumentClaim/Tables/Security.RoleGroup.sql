@@ -13,4 +13,5 @@ CREATE TABLE [Security].[RoleGroup]
         [STATUS]    TinyInt               NOT NULL,
         [LAST]      DateTime              NOT NULL,
         CONSTRAINT [PK_Security.RoleGroup] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

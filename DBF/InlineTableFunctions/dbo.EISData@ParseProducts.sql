@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[EISData@ParseProducts]
+IF OBJECT_ID('[dbo].[EISData@ParseProducts]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[EISData@ParseProducts] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [dbo].[EISData@ParseProducts]
 (
     @Data			Xml,
     @Price			Money,

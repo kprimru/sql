@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Ric].[GrowNetworkAvgValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[GrowNetworkAvgValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 /*
 	Показатель среднесетевого роста
 */
-ALTER FUNCTION [Ric].[GrowNetworkAvgValue]
+CREATE FUNCTION [Ric].[GrowNetworkAvgValue]
 (
 	@PR_ID	SMALLINT
 )

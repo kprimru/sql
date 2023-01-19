@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[EISData@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[EISData@Save]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[EISData@Save]
     @Client_Id          Int,
     @ExpectedClient_Id  Int,

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[Act@Recalc?Params]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[Act@Recalc?Params]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[Act@Recalc?Params]
     @Act_Id     Int
 AS

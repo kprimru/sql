@@ -12,4 +12,5 @@ CREATE TABLE [Claim].[Claims:Statuses]
         [Status_Id]     TinyInt               NOT NULL,
         [Personal_Id]   UniqueIdentifier          NULL,
         CONSTRAINT [PK_Claim.Claims:Statuses] PRIMARY KEY CLUSTERED ([Claim_Id],[Index])
-);GO
+);
+GO

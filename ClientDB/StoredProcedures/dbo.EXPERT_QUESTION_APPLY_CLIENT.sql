@@ -20,6 +20,7 @@ BEGIN
 		@CallDirection_Id UniqueIdentifier,
 		@Duty_Id		Int;
 
+	DECLARE @IDs Table(Id	UniqueIdentifier PRIMARY KEY CLUSTERED);
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -43,14 +44,8 @@ BEGIN
 				WHERE NAME = 'ВопросЭксперту'
 			);
 
-		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone,
-			DutyID,
-			ClientDutyQuest, EMAIL,
-			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
-		SELECT
-			IsNull(ID_CLIENT, SH_ID_CLIENT), a.DATE, a.FIO, a.PHONE,
-			@Duty_Id,
-			a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
+		INSERT INTO @IDs
+		SELECT a.ID
 		FROM dbo.ClientDutyQuestion a
 		OUTER APPLY
 		(
@@ -72,6 +67,37 @@ BEGIN
             --ToDo Л1 - вынести в свойство dbo.Subhost
 			AND (C.ID_CLIENT IS NOT NULL OR C.ID_CLIENT IS NULL AND s.SubhostName = 'Л1')
 			AND DATE >= '20170801'
+
+		INSERT INTO dbo.ClientDutyTable(ClientID, ClientDutyDateTime, ClientDutySurname, ClientDutyPhone,
+			DutyID,
+			ClientDutyQuest, EMAIL,
+			ClientDutyNPO, ClientDutyPos, ClientDutyComplete, ClientDutyComment, ID_DIRECTION)
+		SELECT
+			IsNull(ID_CLIENT, SH_ID_CLIENT), a.DATE, a.FIO, a.PHONE,
+			@Duty_Id,
+			a.QUEST, a.EMAIL, 0, '', 0, '', @CallDirection_Id
+		FROM dbo.ClientDutyQuestion a
+		INNER JOIN @IDs AS I ON a.ID = I.Id
+		OUTER APPLY
+		(
+			SELECT TOP (1) b.ID_CLIENT
+			FROM dbo.ClientDistrView b WITH(NOEXPAND)
+			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
+			WHERE a.DISTR = b.DISTR AND a.COMP = b.COMP
+		) AS C
+		OUTER APPLY
+		(
+			SELECT TOP (1) SubhostName, SH_ID_CLIENT
+			FROM Reg.RegNodeSearchView b WITH(NOEXPAND)
+			INNER JOIN dbo.SystemTable c ON b.HostID = c.HostID AND c.SystemNumber = a.SYS
+            LEFT JOIN dbo.Subhost s ON s.SH_REG = b.SubhostName
+			WHERE b.DistrNumber = a.DISTR
+				AND b.CompNumber = a.COMP
+		) AS S;
+
+		UPDATE dbo.ClientDutyQuestion SET
+			IMPORT = GetDate()
+		WHERE ID IN (SELECT I.ID FROM @IDs AS I);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

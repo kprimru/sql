@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[PayCoefTable]
         [PC_VALUE]    decimal                    NOT NULL,
         [PC_ACTIVE]   Bit                        NOT NULL,
         CONSTRAINT [PK_dbo.PayCoefTable] PRIMARY KEY CLUSTERED ([PC_ID])
-);GO
+);
+GO

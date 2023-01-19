@@ -12,4 +12,5 @@ CREATE TABLE [Kladr].[Socrbase]
         [KSB_SOCRNAME]   NVarChar(256)             NULL,
         [KSB_KOD]        NVarChar(16)              NULL,
         CONSTRAINT [PK_Kladr.Socrbase] PRIMARY KEY CLUSTERED ([KSB_ID])
-);GO
+);
+GO

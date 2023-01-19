@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[AddServicePriceTable]
         [SaleObjectID]           Int                            NOT NULL,,
         CONSTRAINT [FK_dbo.AddServicePriceTable(SaleObjectID)_dbo.SaleObjectTable(SaleObjectID)] FOREIGN KEY  ([SaleObjectID]) REFERENCES [dbo].[SaleObjectTable] ([SaleObjectID]),
         CONSTRAINT [FK_dbo.AddServicePriceTable(AddServiceID)_dbo.AddServiceTable(AddServiceID)] FOREIGN KEY  ([AddServiceID]) REFERENCES [dbo].[AddServiceTable] ([AddServiceID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[AddServicePriceTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[AddServicePriceTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[AddServicePriceTable] TO DBAdministrator;

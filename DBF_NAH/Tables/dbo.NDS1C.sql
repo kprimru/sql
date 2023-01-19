@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[NDS1C]
         CONSTRAINT [FK_dbo.NDS1C(ID_ORG)_dbo.OrganizationTable(ORG_ID)] FOREIGN KEY  ([ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID]),
         CONSTRAINT [FK_dbo.NDS1C(ID_PERIOD)_dbo.PeriodTable(PR_ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),
         CONSTRAINT [FK_dbo.NDS1C(ID_TAX)_dbo.TaxTable(TX_ID)] FOREIGN KEY  ([ID_TAX]) REFERENCES [dbo].[TaxTable] ([TX_ID])
-);GO
+);
+GO

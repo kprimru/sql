@@ -13,4 +13,5 @@ CREATE TABLE [Install].[Install]
         CONSTRAINT [PK_Install.Install] PRIMARY KEY CLUSTERED ([INS_ID]),
         CONSTRAINT [FK_Install.Install(INS_ID_CLIENT)_Install.Clients(CLMS_ID)] FOREIGN KEY  ([INS_ID_CLIENT]) REFERENCES [Clients].[Clients] ([CLMS_ID]),
         CONSTRAINT [FK_Install.Install(INS_ID_VENDOR)_Install.Vendors(VDMS_ID)] FOREIGN KEY  ([INS_ID_VENDOR]) REFERENCES [Clients].[Vendors] ([VDMS_ID])
-);GO
+);
+GO

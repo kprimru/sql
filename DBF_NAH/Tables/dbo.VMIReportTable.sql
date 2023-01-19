@@ -33,4 +33,5 @@ CREATE TABLE [dbo].[VMIReportTable]
         [VMR_DISTR]     VarChar(500)                       NULL,
         [VMR_COMMENT]   VarChar(250)                       NULL,
         CONSTRAINT [PK_dbo.VMIReportTable] PRIMARY KEY CLUSTERED ([VMR_ID])
-);GO
+);
+GO

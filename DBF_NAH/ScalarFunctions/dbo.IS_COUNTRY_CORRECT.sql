@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[IS_COUNTRY_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 -- =============================================
 -- Автор:		  Денисов Алексей
@@ -11,7 +13,7 @@ GO
 -- Описание:	  Возвращает 0, если название страны
 --                корректно (присутствует в справочнике)
 -- =============================================
-ALTER FUNCTION [dbo].[IS_COUNTRY_CORRECT]
+CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT]
 (
 	@country varchar(100)
 )

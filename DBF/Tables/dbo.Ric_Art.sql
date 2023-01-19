@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[Ric_Art]
         [TO_PRICE_5]   Money                  NULL,
         [COMMENTS]     NVarChar(510)          NULL,
         CONSTRAINT [PK_dbo.Ric_Art] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

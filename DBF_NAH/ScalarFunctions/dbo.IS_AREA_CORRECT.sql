@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[IS_AREA_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_AREA_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 -- =============================================
 -- Автор:		  Денисов Алексей
@@ -12,7 +14,7 @@ GO
 --                корректно, то есть присутствует
 --                в справочнике
 -- =============================================
-ALTER FUNCTION [dbo].[IS_AREA_CORRECT]
+CREATE FUNCTION [dbo].[IS_AREA_CORRECT]
 (
 	@area varchar(100)
 )

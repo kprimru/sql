@@ -17,4 +17,5 @@ CREATE TABLE [Distr].[WeightDetail]
         CONSTRAINT [PK_Distr.WeightDetail] PRIMARY KEY CLUSTERED ([WG_ID]),
         CONSTRAINT [FK_Distr.WeightDetail(WG_ID_SYSTEM)_Distr.Systems(SYSMS_ID)] FOREIGN KEY  ([WG_ID_SYSTEM]) REFERENCES [Distr].[Systems] ([SYSMS_ID]),
         CONSTRAINT [FK_Distr.WeightDetail(WG_ID_MASTER)_Distr.Weight(WGMS_ID)] FOREIGN KEY  ([WG_ID_MASTER]) REFERENCES [Distr].[Weight] ([WGMS_ID])
-);GO
+);
+GO

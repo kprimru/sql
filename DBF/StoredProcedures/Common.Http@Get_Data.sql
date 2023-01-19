@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Common].[Http@Get?Data]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Common].[Http@Get?Data]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Common].[Http@Get?Data]
     @Url        VarChar(2048),
     @Status     Int             = NULL OUT,

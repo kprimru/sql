@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[TimeMilliSecToStr]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[TimeMilliSecToStr] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [dbo].[TimeMilliSecToStr]
+CREATE FUNCTION [dbo].[TimeMilliSecToStr]
 (
 	@TIME BIGINT
 )

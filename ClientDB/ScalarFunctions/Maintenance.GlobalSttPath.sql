@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSttPath]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalSttPath] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalSttPath]
+CREATE FUNCTION [Maintenance].[GlobalSttPath]
 ()
 RETURNS VARCHAR(500)
 AS

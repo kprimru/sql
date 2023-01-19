@@ -13,4 +13,5 @@ CREATE TABLE [Claim].[ClientType]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Claim.ClientType] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -19,4 +19,5 @@ CREATE TABLE [Personal].[PersonalDetail]
         CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_DEP)_Personal.Department(DPMS_ID)] FOREIGN KEY  ([PER_ID_DEP]) REFERENCES [Personal].[Department] ([DPMS_ID]),
         CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_TYPE)_Personal.PersonalType(PTMS_ID)] FOREIGN KEY  ([PER_ID_TYPE]) REFERENCES [Personal].[PersonalType] ([PTMS_ID]),
         CONSTRAINT [FK_Personal.PersonalDetail(PER_ID_MASTER)_Personal.Personals(PERMS_ID)] FOREIGN KEY  ([PER_ID_MASTER]) REFERENCES [Personal].[Personals] ([PERMS_ID])
-);GO
+);
+GO

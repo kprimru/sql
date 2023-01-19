@@ -11,4 +11,5 @@ CREATE TABLE [Security].[Department]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Security.Department] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -18,7 +18,8 @@ CREATE TABLE [dbo].[TempActSystemsTable]
         [DistrNumber]           VarChar(150)                       NULL,,
         CONSTRAINT [FK_dbo.TempActSystemsTable(SystemID)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([SystemID]) REFERENCES [dbo].[SystemTable] ([SystemID]),
         CONSTRAINT [FK_dbo.TempActSystemsTable(DistrTypeID)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrTypeID]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID])
-);GO
+);
+GO
 GRANT DELETE ON [dbo].[TempActSystemsTable] TO DBAdministrator;
 GRANT INSERT ON [dbo].[TempActSystemsTable] TO DBAdministrator;
 GRANT SELECT ON [dbo].[TempActSystemsTable] TO DBAdministrator;

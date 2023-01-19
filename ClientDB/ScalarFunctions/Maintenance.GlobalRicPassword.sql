@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalRicPassword]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalRicPassword] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalRicPassword]
+CREATE FUNCTION [Maintenance].[GlobalRicPassword]
 ()
 RETURNS VARCHAR(500)
 AS

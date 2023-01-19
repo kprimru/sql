@@ -13,4 +13,5 @@ CREATE TABLE [dbo].[PriceTypeSystemTable]
         CONSTRAINT [PK_dbo.PriceTypeSystemTable] PRIMARY KEY CLUSTERED ([PTS_ID]),
         CONSTRAINT [FK_dbo.PriceTypeSystemTable(PTS_ID_PT)_dbo.PriceTypeTable(PT_ID)] FOREIGN KEY  ([PTS_ID_PT]) REFERENCES [dbo].[PriceTypeTable] ([PT_ID]),
         CONSTRAINT [FK_dbo.PriceTypeSystemTable(PTS_ID_ST)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([PTS_ID_ST]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID])
-);GO
+);
+GO

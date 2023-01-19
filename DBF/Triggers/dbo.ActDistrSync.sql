@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[ActDistrSync]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ActDistrSync]  ON [dbo].[ActDistrTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
+GO
 ALTER TRIGGER [dbo].[ActDistrSync]
    ON  [dbo].[ActDistrTable]
    AFTER INSERT, UPDATE, DELETE

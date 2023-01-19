@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[SystemTypeWeightTable]
         CONSTRAINT [PK_dbo.SystemTypeWeightTable] PRIMARY KEY CLUSTERED ([STW_ID]),
         CONSTRAINT [FK_dbo.SystemTypeWeightTable(STW_ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([STW_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID]),
         CONSTRAINT [FK_dbo.SystemTypeWeightTable(STW_ID_TYPE)_dbo.SystemTypeTable(SST_ID)] FOREIGN KEY  ([STW_ID_TYPE]) REFERENCES [dbo].[SystemTypeTable] ([SST_ID])
-);GO
+);
+GO

@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[InvoiceProtocolView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[InvoiceProtocolView]  AS SELECT 1')
+GO
 ALTER VIEW [dbo].[InvoiceProtocolView]
 AS
 	SELECT

@@ -15,4 +15,5 @@ CREATE TABLE [Personal].[PersonalTypeDetail]
         [PT_REF]         TinyInt               NOT NULL,
         CONSTRAINT [PK_Personal.PersonalTypeDetail] PRIMARY KEY CLUSTERED ([PT_ID]),
         CONSTRAINT [FK_Personal.PersonalTypeDetail(PT_ID_MASTER)_Personal.PersonalType(PTMS_ID)] FOREIGN KEY  ([PT_ID_MASTER]) REFERENCES [Personal].[PersonalType] ([PTMS_ID])
-);GO
+);
+GO

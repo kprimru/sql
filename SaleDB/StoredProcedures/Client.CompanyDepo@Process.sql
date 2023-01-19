@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Client].[CompanyDepo@Process]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[CompanyDepo@Process]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Client].[CompanyDepo@Process]
 	@GUIds		VarChar(Max),
 	@Data		Xml

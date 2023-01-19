@@ -14,4 +14,5 @@ CREATE TABLE [Price].[PriceType]
         [PT_ORDER]    Int                            NOT NULL,
         [PT_ACTIVE]   Bit                            NOT NULL,
         CONSTRAINT [PK_Price.PriceType] PRIMARY KEY CLUSTERED ([PT_ID])
-);GO
+);
+GO

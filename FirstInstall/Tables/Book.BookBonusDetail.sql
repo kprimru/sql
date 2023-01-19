@@ -16,4 +16,5 @@ CREATE TABLE [Book].[BookBonusDetail]
         CONSTRAINT [PK_Book.BookBonusDetail] PRIMARY KEY CLUSTERED ([BB_ID]),
         CONSTRAINT [FK_Book.BookBonusDetail(BB_ID_MASTER)_Book.BookBonus(BBMS_ID)] FOREIGN KEY  ([BB_ID_MASTER]) REFERENCES [Book].[BookBonus] ([BBMS_ID]),
         CONSTRAINT [FK_Book.BookBonusDetail(BB_ID_PT)_Book.PersonalType(PTMS_ID)] FOREIGN KEY  ([BB_ID_PT]) REFERENCES [Personal].[PersonalType] ([PTMS_ID])
-);GO
+);
+GO

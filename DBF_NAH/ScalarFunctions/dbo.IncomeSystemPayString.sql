@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[IncomeSystemPayString]
+IF OBJECT_ID('[dbo].[IncomeSystemPayString]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IncomeSystemPayString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[IncomeSystemPayString]
 (
 	@CL_ID	INT,
 	@SYS_ID	INT,

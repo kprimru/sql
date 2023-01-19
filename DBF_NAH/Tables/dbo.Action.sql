@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[Action]
         [ACTN_ACTIVE]    Bit                             NOT NULL,
         CONSTRAINT [PK_dbo.Action] PRIMARY KEY CLUSTERED ([ACTN_ID]),
         CONSTRAINT [FK_dbo.Action(ACTN_ID_TYPE)_dbo.ActionType(ACTT_ID)] FOREIGN KEY  ([ACTN_ID_TYPE]) REFERENCES [dbo].[ActionType] ([ACTT_ID])
-);GO
+);
+GO

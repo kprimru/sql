@@ -17,4 +17,5 @@ CREATE TABLE [dbo].[Ric]
         [TO_PRICE_5]   Money                 NULL,
         [COMMENT]      VarChar(255)          NULL,
         CONSTRAINT [PK_dbo.Ric] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

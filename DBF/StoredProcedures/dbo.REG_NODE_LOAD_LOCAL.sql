@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[REG_NODE_LOAD_LOCAL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL]  AS SELECT 1')
+GO
 /*
 Автор:		  Денисов Алексей
 Описание:	  Процедура создания копии рег.узла

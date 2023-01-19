@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[SEND_ADM_PK_KRAY_CITY_REPORT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SEND_ADM_PK_KRAY_CITY_REPORT]  AS SELECT 1')
+GO
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>

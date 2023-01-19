@@ -14,4 +14,5 @@ CREATE TABLE [Maintenance].[ErrorLog]
         [PROC_NAME]   NVarChar(256)             NULL,
         [MESSAGE]     NVarChar(4096)            NULL,
         CONSTRAINT [PK_Maintenance.ErrorLog] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

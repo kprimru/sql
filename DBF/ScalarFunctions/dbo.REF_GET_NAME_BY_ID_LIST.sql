@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[REF_GET_NAME_BY_ID_LIST]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
@@ -11,7 +13,7 @@ GO
 Описание:
 */
 
-ALTER FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
+CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
 (
 	-- Список параметров функции
 	@refname VARCHAR(100),

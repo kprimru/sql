@@ -25,4 +25,5 @@ CREATE TABLE [Salary].[BonusConditionDetail]
         [BC_REF]              TinyInt               NOT NULL,
         CONSTRAINT [PK_Salary.BonusConditionDetail] PRIMARY KEY CLUSTERED ([BC_ID]),
         CONSTRAINT [FK_Salary.BonusConditionDetail(BC_ID_MASTER)_Salary.BonusCondition(BCMS_ID)] FOREIGN KEY  ([BC_ID_MASTER]) REFERENCES [Salary].[BonusCondition] ([BCMS_ID])
-);GO
+);
+GO

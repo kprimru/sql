@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Income].[IncomeMonthString]
+IF OBJECT_ID('[Income].[IncomeMonthString]', 'FN') IS NULL EXEC('CREATE FUNCTION [Income].[IncomeMonthString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Income].[IncomeMonthString]
 (
 	@ID	UNIQUEIDENTIFIER
 )

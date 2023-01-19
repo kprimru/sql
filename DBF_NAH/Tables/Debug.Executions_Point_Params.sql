@@ -11,4 +11,5 @@ CREATE TABLE [Debug].[Executions:Point:Params]
         [Name]        VarChar(100)      NOT NULL,
         [Value]       VarChar(Max)      NOT NULL,
         CONSTRAINT [PK_Debug.Executions:Point:Params] PRIMARY KEY CLUSTERED ([Id],[Row:Index])
-);GO
+);
+GO

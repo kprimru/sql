@@ -12,4 +12,5 @@ CREATE TABLE [Meeting].[MeetingStatus]
         [VISIT]    Bit                   NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Meeting.MeetingStatus] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

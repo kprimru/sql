@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [Debug].[Execution@Point]
+IF OBJECT_ID('[Debug].[Execution@Point]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Execution@Point]  AS SELECT 1')
+GO
+CREATE   PROCEDURE [Debug].[Execution@Point]
     @DebugContext   Xml,
     @Name           VarChar(128),
     @Params         Xml             = NULL
@@ -43,5 +45,4 @@ BEGIN
         FROM [Debug].[Execution:Params@Parse](@Params) P;
     END;
 END;
-
 GO

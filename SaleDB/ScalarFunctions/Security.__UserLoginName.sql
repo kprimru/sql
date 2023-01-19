@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Security].[UserLoginName]
+IF OBJECT_ID('[Security].[__UserLoginName]', 'FN') IS NULL EXEC('CREATE FUNCTION [Security].[__UserLoginName] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Security].[UserLoginName]
 (
 )
 RETURNS NVARCHAR(128)

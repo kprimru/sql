@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Client].[DepoList@Parse]
+IF OBJECT_ID('[Client].[DepoList@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [Client].[DepoList@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [Client].[DepoList@Parse]
 (
 	@Data Xml
 )

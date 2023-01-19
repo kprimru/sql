@@ -18,4 +18,5 @@ CREATE TABLE [Salary].[PersonalSalaryBook]
         CONSTRAINT [PK_Salary.PersonalSalaryBook] PRIMARY KEY CLUSTERED ([PSB_ID]),
         CONSTRAINT [FK_Salary.PersonalSalaryBook(PSB_ID_MASTER)_Salary.PersonalSalary(PS_ID)] FOREIGN KEY  ([PSB_ID_MASTER]) REFERENCES [Salary].[PersonalSalary] ([PS_ID]),
         CONSTRAINT [FK_Salary.PersonalSalaryBook(PSB_ID_IB)_Salary.IncomeBook(IB_ID)] FOREIGN KEY  ([PSB_ID_IB]) REFERENCES [Income].[IncomeBook] ([IB_ID])
-);GO
+);
+GO

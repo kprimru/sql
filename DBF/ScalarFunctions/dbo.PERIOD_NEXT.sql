@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[PERIOD_NEXT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PERIOD_NEXT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 /*
 Автор:			Денисов Алексей/Богдан Владимир
@@ -11,7 +13,7 @@ GO
 Описание:
 */
 
-ALTER FUNCTION [dbo].[PERIOD_NEXT]
+CREATE FUNCTION [dbo].[PERIOD_NEXT]
 (
 	-- Список параметров функции
 	@prid SMALLINT

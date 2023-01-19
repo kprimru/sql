@@ -12,4 +12,5 @@ CREATE TABLE [dbo].[ContractPayTable]
         [COP_MONTH]    TinyInt                           NULL,
         [COP_ACTIVE]   Bit                           NOT NULL,
         CONSTRAINT [PK_dbo.ContractPayTable] PRIMARY KEY CLUSTERED ([COP_ID])
-);GO
+);
+GO

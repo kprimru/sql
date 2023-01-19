@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Client].[CompanyProcessSaleView]', 'V ') IS NULL EXEC('CREATE VIEW [Client].[CompanyProcessSaleView]  AS SELECT 1')
+GO
 ALTER VIEW [Client].[CompanyProcessSaleView]
 WITH SCHEMABINDING
 AS

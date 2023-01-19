@@ -10,4 +10,5 @@ CREATE TABLE [Price].[OtherService]
         [NAME]   NVarChar(256)         NOT NULL,
         [ORD]    Int                   NOT NULL,
         CONSTRAINT [PK_Price.OtherService] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

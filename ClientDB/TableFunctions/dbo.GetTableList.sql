@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[GetTableList]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[GetTableList] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-ALTER FUNCTION [dbo].[GetTableList] (@list varchar(max))
+CREATE FUNCTION [dbo].[GetTableList] (@list varchar(max))
       RETURNS @tbl TABLE (Item varchar(100)) AS
    BEGIN
       DECLARE @pos      int,

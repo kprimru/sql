@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[RN_GET_SYS_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_SYS_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
 
 
@@ -13,7 +15,7 @@ GO
 -- Описание:	  Выделяет ID системы из строки
 --                регузла
 -- =============================================
-ALTER FUNCTION [dbo].[RN_GET_SYS_ID]
+CREATE FUNCTION [dbo].[RN_GET_SYS_ID]
 (
   @regname VARCHAR(50)
 )

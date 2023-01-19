@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[TO-Lock@Create]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TO-Lock@Create]  AS SELECT 1')
+GO
 ALTER PROCEDURE [dbo].[TO-Lock@Create]
     @To_Id          Int,
     @ExpireDate     SmallDateTime

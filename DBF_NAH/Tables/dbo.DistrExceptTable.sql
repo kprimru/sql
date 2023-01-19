@@ -14,4 +14,5 @@ CREATE TABLE [dbo].[DistrExceptTable]
         [DE_ACTIVE]      Bit                            NOT NULL,
         CONSTRAINT [PK_dbo.DistrExceptTable] PRIMARY KEY CLUSTERED ([DE_ID]),
         CONSTRAINT [FK_dbo.DistrExceptTable(DE_ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([DE_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID])
-);GO
+);
+GO

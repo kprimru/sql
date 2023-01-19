@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[Claims->Types]
         [Name]      VarChar(100)      NOT NULL,
         [UpdDate]   DateTime          NOT NULL,
         CONSTRAINT [PK_Claim.Claims->Types] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

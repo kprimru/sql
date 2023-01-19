@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [Common].[StringDelimiterPartInt]
+IF OBJECT_ID('[Common].[StringDelimiterPartInt]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[StringDelimiterPartInt] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Common].[StringDelimiterPartInt]
 (
 	@STRING		NVARCHAR(MAX),
 	@DELIMITER	NVARCHAR(10),

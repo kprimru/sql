@@ -26,4 +26,5 @@ CREATE TABLE [Salary].[PersonalSalary]
         CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_COMPETITION)_Salary.Competition(CPMS_ID)] FOREIGN KEY  ([PS_ID_COMPETITION]) REFERENCES [Book].[Competition] ([CPMS_ID]),
         CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_VENDOR)_Salary.Vendors(VDMS_ID)] FOREIGN KEY  ([PS_ID_VENDOR]) REFERENCES [Clients].[Vendors] ([VDMS_ID]),
         CONSTRAINT [FK_Salary.PersonalSalary(PS_ID_PAY)_Salary.Period(PRMS_ID)] FOREIGN KEY  ([PS_ID_PAY]) REFERENCES [Common].[Period] ([PRMS_ID])
-);GO
+);
+GO

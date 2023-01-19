@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Raw].[Income_Detail@Set?Not For Import]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Raw].[Income_Detail@Set?Not For Import]  AS SELECT 1')
+GO
 ALTER PROCEDURE [Raw].[Income_Detail@Set?Not For Import]
     @Id                 BigInt,
     @Value              Bit

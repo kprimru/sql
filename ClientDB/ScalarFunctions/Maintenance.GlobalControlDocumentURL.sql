@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalControlDocumentURL]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalControlDocumentURL] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Maintenance].[GlobalControlDocumentURL]
+CREATE FUNCTION [Maintenance].[GlobalControlDocumentURL]
 ()
 RETURNS VARCHAR(500)
 AS

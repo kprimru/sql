@@ -17,4 +17,5 @@ CREATE TABLE [Security].[CompanyList]
         [V_PHONE]       Bit                   NOT NULL,
         [V_RIVAL]       Bit                   NOT NULL,
         CONSTRAINT [PK_Security.CompanyList] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

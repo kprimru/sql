@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[DefaultDeliveryPriceGet]()
+IF OBJECT_ID('[dbo].[DefaultDeliveryPriceGet]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[DefaultDeliveryPriceGet] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[DefaultDeliveryPriceGet]()
 RETURNS MONEY
 AS
 BEGIN

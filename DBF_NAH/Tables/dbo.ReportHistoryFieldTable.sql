@@ -11,4 +11,5 @@ CREATE TABLE [dbo].[ReportHistoryFieldTable]
         [RHF_CAPTION]   VarChar(100)                   NOT NULL,
         [RHF_ORDER]     SmallInt                       NOT NULL,
         CONSTRAINT [PK_dbo.ReportHistoryFieldTable] PRIMARY KEY CLUSTERED ([RHF_ID])
-);GO
+);
+GO

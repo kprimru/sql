@@ -4,6 +4,8 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[SystemView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[SystemView]  AS SELECT 1')
+GO
 ALTER VIEW dbo.SystemView
 AS
 SELECT     dbo.SystemTable.SYS_ID, dbo.SystemTable.SYS_PREFIX, dbo.SystemTable.SYS_NAME, dbo.SystemTable.SYS_SHORT_NAME,

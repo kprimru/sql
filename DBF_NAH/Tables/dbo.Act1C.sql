@@ -17,4 +17,5 @@ CREATE TABLE [dbo].[Act1C]
         CONSTRAINT [PK_dbo.Act1C] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.Act1C(ID_ORG)_dbo.OrganizationTable(ORG_ID)] FOREIGN KEY  ([ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID]),
         CONSTRAINT [FK_dbo.Act1C(ID_SYSTEM)_dbo.SystemTable(SYS_ID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID])
-);GO
+);
+GO

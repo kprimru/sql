@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[Numbers]
 (
         [ID]   bigint      NOT NULL,
         CONSTRAINT [PK_dbo.Numbers] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO
 GRANT SELECT ON [dbo].[Numbers] TO public;
 GO

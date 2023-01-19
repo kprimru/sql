@@ -15,4 +15,5 @@ CREATE TABLE [Subhost].[SubhostDistr]
         [TITLE]            VarChar(50)                        NULL,
         [SYS_COUNT]        SmallInt                           NULL,
         CONSTRAINT [PK_Subhost.SubhostDistr] PRIMARY KEY CLUSTERED ([SD_ID])
-);GO
+);
+GO

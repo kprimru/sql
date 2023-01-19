@@ -4,7 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER FUNCTION [dbo].[GetWeightProblemTmp]
+IF OBJECT_ID('[dbo].[GetWeightProblemTmp]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GetWeightProblemTmp] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[GetWeightProblemTmp]
 (
 	@SYS_ID VARCHAR(50),
 	@NT_ID	VARCHAR(50),

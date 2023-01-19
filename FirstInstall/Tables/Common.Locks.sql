@@ -17,4 +17,5 @@ CREATE TABLE [Common].[Locks]
         [LC_LOGIN_TIME]   DateTime              NOT NULL,
         [LC_NT_USER]      VarChar(150)          NOT NULL,
         CONSTRAINT [PK_Common.Locks] PRIMARY KEY CLUSTERED ([LC_ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[ServiceGroup]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Claim.ServiceGroup] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

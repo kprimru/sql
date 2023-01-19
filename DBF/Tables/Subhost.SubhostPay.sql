@@ -17,4 +17,5 @@ CREATE TABLE [Subhost].[SubhostPay]
         CONSTRAINT [FK_Subhost.SubhostPay(SHP_ID_SUBHOST)_Subhost.SubhostTable(SH_ID)] FOREIGN KEY  ([SHP_ID_SUBHOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_Subhost.SubhostPay(SHP_ID_PERIOD)_Subhost.PeriodTable(PR_ID)] FOREIGN KEY  ([SHP_ID_PERIOD]) REFERENCES [dbo].[PeriodTable] ([PR_ID]),
         CONSTRAINT [FK_Subhost.SubhostPay(SHP_ID_ORG)_Subhost.OrganizationTable(ORG_ID)] FOREIGN KEY  ([SHP_ID_ORG]) REFERENCES [dbo].[OrganizationTable] ([ORG_ID])
-);GO
+);
+GO

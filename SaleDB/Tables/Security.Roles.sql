@@ -14,4 +14,5 @@ CREATE TABLE [Security].[Roles]
         [LAST]      DateTime              NOT NULL,
         CONSTRAINT [PK_Security.Roles] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Security.Roles(MASTER)_Security.Roles(ID)] FOREIGN KEY  ([MASTER]) REFERENCES [Security].[Roles] ([ID])
-);GO
+);
+GO

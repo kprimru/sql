@@ -4,8 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[dbo].[EISData@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[EISData@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
 
-ALTER FUNCTION [dbo].[EISData@Parse]
+CREATE FUNCTION [dbo].[EISData@Parse]
 (
     @Data       Xml,
     @ActDate    SmallDateTime,

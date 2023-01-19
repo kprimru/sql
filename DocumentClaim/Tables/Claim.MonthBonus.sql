@@ -11,4 +11,5 @@ CREATE TABLE [Claim].[MonthBonus]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Claim.MonthBonus] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

@@ -17,4 +17,5 @@ CREATE TABLE [Subhost].[Diu]
         CONSTRAINT [PK_Subhost.Diu] PRIMARY KEY CLUSTERED ([DIU_ID]),
         CONSTRAINT [FK_Subhost.Diu(DIU_ID_SUBHOST)_Subhost.SubhostTable(SH_ID)] FOREIGN KEY  ([DIU_ID_SUBHOST]) REFERENCES [dbo].[SubhostTable] ([SH_ID]),
         CONSTRAINT [FK_Subhost.Diu(DIU_ID_SYSTEM)_Subhost.SystemTable(SYS_ID)] FOREIGN KEY  ([DIU_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SYS_ID])
-);GO
+);
+GO

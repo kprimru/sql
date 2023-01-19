@@ -4,8 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Salary].[SalarySumFromIncome]', 'FN') IS NULL EXEC('CREATE FUNCTION [Salary].[SalarySumFromIncome] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 
-ALTER FUNCTION [Salary].[SalarySumFromIncome]
+CREATE FUNCTION [Salary].[SalarySumFromIncome]
 (
 	@ID_ID	UNIQUEIDENTIFIER
 )

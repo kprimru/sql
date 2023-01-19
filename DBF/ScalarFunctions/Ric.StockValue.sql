@@ -4,10 +4,12 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+IF OBJECT_ID('[Ric].[StockValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[StockValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
 /*
 	Функция, возвращающая задел
 */
-ALTER FUNCTION [Ric].[StockValue]
+CREATE FUNCTION [Ric].[StockValue]
 (
 	@PR_ID	SMALLINT
 )

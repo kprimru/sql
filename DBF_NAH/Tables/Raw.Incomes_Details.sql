@@ -17,4 +17,5 @@ CREATE TABLE [Raw].[Incomes:Details]
         [Client_Id]      Int                                 NULL,
         [NotForImport]   Bit                             NOT NULL,
         CONSTRAINT [PK_Raw.Incomes:Details] PRIMARY KEY CLUSTERED ([Id])
-);GO
+);
+GO

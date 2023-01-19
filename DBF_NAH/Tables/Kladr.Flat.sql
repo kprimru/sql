@@ -14,4 +14,5 @@ CREATE TABLE [Kladr].[Flat]
         [KF_UNO]      NVarChar(32)              NULL,
         [KF_NP]       NVarChar(32)              NULL,
         CONSTRAINT [PK_Kladr.Flat] PRIMARY KEY CLUSTERED ([KF_ID])
-);GO
+);
+GO

@@ -11,4 +11,5 @@ CREATE TABLE [Document].[Type]
         [STATUS]   TinyInt               NOT NULL,
         [LAST]     DateTime              NOT NULL,
         CONSTRAINT [PK_Document.Type] PRIMARY KEY CLUSTERED ([ID])
-);GO
+);
+GO

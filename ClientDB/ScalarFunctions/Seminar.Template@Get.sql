@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Template@Get]', 'FN') IS NULL EXEC('CREATE FUNCTION [Seminar].[Template@Get] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-ALTER FUNCTION [Seminar].[Template@Get]
+CREATE FUNCTION [Seminar].[Template@Get]
 (
     @Id             UniqueIdentifier,   -- участник семинара
     @TemplateCode   VarChar(100)        -- шаблон
