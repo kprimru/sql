@@ -71,18 +71,18 @@ BEGIN
             FROM dbo.SubhostComplect AS SC
             WHERE SC.SC_ID_HOST = 1
                 AND SC.SC_DISTR = @DistrNumber
-                AND SC.SC_COMP = @CompNumber;
+                AND SC.SC_COMP = @CompNumber;
 
             IF @Subhost_Id IS NULL
                 SELECT @Subhost_Id = SH_ID
                 FROM dbo.Subhost
-                WHERE SH_REG = '';
+                WHERE SH_REG = '';
 
-            SELECT @EmailRecipients = SH_ODD_EMAIL
-            FROM dbo.Subhost
-            WHERE SH_ID = @Subhost_Id;
+            SELECT @EmailRecipients = E.[Email]
+            FROM [dbo].[SubhostEmail] AS E
+            WHERE E.[Subhost_Id] = @Subhost_Id
+				AND E.[Type_Id] = (SELECT T.[Id] FROM [dbo].[SubhostEmail_Type] AS T WHERE T.[Code] = 'ODD');
 
-            --SET @EmailRecipients    = 'urazova@bazis;nalunina@bazis';
             SET @EmailSubject       = @Login + ' ' + IsNull(@NetTypeShort, '') + ' - параметры доступа';
             SET @EmailBody          = '<table bgcolor="#ffffff">
     <tr>

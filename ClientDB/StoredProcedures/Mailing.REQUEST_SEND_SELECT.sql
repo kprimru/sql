@@ -28,14 +28,15 @@ BEGIN
 			[FromAddress]	= 'no-reply@kprim.ru',
 			[FromName]		= 'ООО Базис',
 			[Psedo]			= SH_NAME,
-			[Email]			= SH_EMAIL,
+			[Email]			= E.[Email],
 			[Subj]			= 'Клиент подписался на рассылку',
 			[Body]			= 'Клиент "' + RN.Comment + '" (' + RN.DistrStr + ') подал заявку на подписку на рассылку на адрес "' + IsNull(R.[OriginalEMail], '') + '"'
-		FROM Mailing.Requests R
-		INNER JOIN Reg.RegNodeSearchView RN WITH(NOEXPAND) ON RN.HostId = R.HostID AND RN.DistrNumber = R.Distr AND RN.CompNumber = R.Comp
-		INNER JOIN dbo.Subhost S ON RN.SubhostName = S.SH_REG
-		WHERE R.SendDate IS NULL
-			AND SH_EMAIL != ''
+		FROM [Mailing].[Requests]				AS R
+		INNER JOIN [Reg].[RegNodeSearchView]	AS RN WITH(NOEXPAND) ON RN.[HostId] = R.[HostID] AND RN.[DistrNumber] = R.[Distr] AND RN.[CompNumber] = R.[Comp]
+		INNER JOIN [dbo].[Subhost]				AS S ON RN.[SubhostName] = S.[SH_REG]
+		INNER JOIN [dbo].[SubhostEmail]			AS E ON E.[Subhost_Id] = S.[SH_ID] AND E.[Type_Id] = (SELECT T.[Id] FROM [dbo].[SubhostEmail_Type] AS T WHERE T.[Code] = 'MAILING')
+		WHERE R.[SendDate] IS NULL
+			AND IsNull(E.[Email] ,'') != ''
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

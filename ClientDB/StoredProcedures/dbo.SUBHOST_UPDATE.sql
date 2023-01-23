@@ -15,7 +15,8 @@ ALTER PROCEDURE [dbo].[SUBHOST_UPDATE]
     @OddEmail       VarChar(256),
     @Client_Id      Int,
     @SeminarDefault Int,
-	@Active			Bit
+	@Active			Bit,
+	@Emails			Xml
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -44,6 +45,20 @@ BEGIN
 		    SH_SEMINAR_DEFAULT_COUNT    = @SeminarDefault,
 			SH_ACTIVE					= @Active
 		WHERE SH_ID = @Id;
+
+		DELETE FROM [dbo].[SubhostEmail] WHERE [Subhost_Id] = @Id;
+
+		INSERT INTO [dbo].[SubhostEmail]([Subhost_Id], [Type_Id], [Email])
+		SELECT [Subhost_Id], [Type_Id], [Email]
+		FROM
+		(
+			SELECT
+				[Subhost_Id]	= @Id,
+				[Type_Id]		= c.value('@Id[1]',		'TinyInt'),
+				[Email]			= c.value('@Email[1]',	'VarChar(512)')
+			FROM @Emails.nodes('/root/item') a(c)
+		) AS N
+		WHERE N.[Email] != '';
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

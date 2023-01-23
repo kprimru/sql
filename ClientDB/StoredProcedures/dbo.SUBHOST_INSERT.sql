@@ -7,7 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[SUBHOST_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_INSERT]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[SUBHOST_INSERT]
-    @Name           VarChar(100),
+    @Id             UniqueIdentifier OUTPUT,
+	@Name           VarChar(100),
     @Reg            VarChar(20),
     @RegAdd         VarChar(20),
     @Email          VarChar(50),
@@ -15,7 +16,7 @@ ALTER PROCEDURE [dbo].[SUBHOST_INSERT]
     @Client_Id      Int,
     @SeminarDefault Int,
 	@Active			Bit,
-    @Id             UniqueIdentifier = NULL OUTPUT
+    @Emails			Xml
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -38,6 +39,20 @@ BEGIN
 
         INSERT INTO dbo.Subhost(SH_ID, SH_NAME, SH_REG, SH_REG_ADD, SH_EMAIL, SH_ODD_EMAIL, SH_ID_CLIENT, SH_SEMINAR_DEFAULT_COUNT, SH_ACTIVE)
         VALUES(@Id, @Name, @Reg, @RegAdd, @Email, @OddEmail, @Client_Id, @SeminarDefault, @Active);
+
+		DELETE FROM [dbo].[SubhostEmail] WHERE [Subhost_Id] = @Id;
+
+		INSERT INTO [dbo].[SubhostEmail]([Subhost_Id], [Type_Id], [Email])
+		SELECT [Subhost_Id], [Type_Id], [Email]
+		FROM
+		(
+			SELECT
+				[Subhost_Id]	= @Id,
+				[Type_Id]		= c.value('@Id[1]',		'TinyInt'),
+				[Email]			= c.value('@Email[1]',	'VarChar(512)')
+			FROM @Emails.nodes('/root/item') a(c)
+		) AS N
+		WHERE N.[Email] != '';
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -17,6 +17,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@EmailType_Id	TinyInt;
+
 	DECLARE @SubhostQuestions Table
 	(
 		Id			UniqueIdentifier	NOT NULL,
@@ -31,20 +34,23 @@ BEGIN
 
 	BEGIN TRY
 
+		SET @EmailType_Id = (SELECT [Id] FROM [dbo].[SubhostEmail_Type] WHERE [Code] = 'ZVE');
+
 		INSERT INTO @SubhostQuestions
 		SELECT
 			Q.Id, SH_EMAIL
 		FROM
 		(
 			SELECT
-				SH_ID		= SH_ID,
-				SH_EMAIL	= CASE WHEN SH_REG = 'У1' THEN 'usplus@list.ru;nds@kprim.ru' ELSE SH_EMAIL END
-			FROM dbo.Subhost
-			WHERE SH_REG IN ('М', 'У1', 'Н1')
+				[SH_ID]		= S.[SH_ID],
+				[SH_EMAIL]	= E.[Email]
+			FROM [dbo].[Subhost] AS S
+			INNER JOIN [dbo].[SubhostEmail] AS E ON E.[Subhost_Id] = S.[SH_ID] AND E.[Type_Id] = @EmailType_Id
+			WHERE [SH_REG] IN ('М', 'У1', 'Н1')
 		) AS SH
 		CROSS APPLY [dbo].[SubhostDistrs@Get](SH.SH_ID, NULL)	AS D
-		INNER JOIN dbo.SystemTable								AS S ON D.[HostId] = S.[HostID]
-		INNER JOIN dbo.ClientDutyQuestion						AS Q ON Q.SYS = S.SystemNumber AND Q.DISTR = D.DistrNumber AND D.CompNumber = Q.COMP
+		INNER JOIN [dbo].[SystemTable]							AS S ON D.[HostId] = S.[HostID]
+		INNER JOIN [dbo].[ClientDutyQuestion]					AS Q ON Q.SYS = S.SystemNumber AND Q.DISTR = D.DistrNumber AND D.CompNumber = Q.COMP
 		WHERE Q.SUBHOST IS NULL
 
 		SELECT
