@@ -696,52 +696,38 @@ BEGIN
 					WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
 				)
 			BEGIN
-				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-				BEGIN
-					DECLARE CL CURSOR LOCAL FOR
-						SELECT DISTINCT ID_CLIENT
-						FROM dbo.ClientDistrView WITH(NOEXPAND)
-						WHERE ID IN
-							(
-								SELECT a.ID
-								FROM
-									dbo.ClientDistrView a WITH(NOEXPAND)
-									INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
-																					AND a.DISTR = b.DistrNumber
-																					AND a.COMP = b.CompNumber
-									INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
-									INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
-								WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
-							)
+				DECLARE CL CURSOR LOCAL FOR
+				SELECT DISTINCT ID_CLIENT
+				FROM dbo.ClientDistrView WITH(NOEXPAND)
+				WHERE ID IN
+					(
+						SELECT a.ID
+						FROM
+							dbo.ClientDistrView a WITH(NOEXPAND)
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
+																			AND a.DISTR = b.DistrNumber
+																			AND a.COMP = b.CompNumber
+							INNER JOIN #reg c ON c.DISTR = b.DistrNumber AND c.COMP = b.CompNumber
+							INNER JOIN dbo.SystemTable d ON c.SYS_NAME = d.SystemBaseName AND d.HostID = b.HostID
+						WHERE c.SERVICE = 0 AND b.DS_REG <> 0 AND a.HostShort = 'К+'
+					);
 
-					OPEN CL
+				OPEN CL;
 
+				FETCH NEXT FROM CL INTO @CLIENT;
 
+				WHILE @@FETCH_STATUS = 0 BEGIN
+					EXEC [dbo].[ClientStudyClaim@Create?Auto]
+						@Client_Id		= @CLIENT,
+						@Reason			= 'Восстановление',
+						@CreateClaim	= 1,
+						@FillPersonal	= 1;
 
 					FETCH NEXT FROM CL INTO @CLIENT
-
-					WHILE @@FETCH_STATUS = 0
-					BEGIN
-						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Восстановление', 0, 'Автомат'
-							WHERE NOT EXISTS
-								(
-									SELECT *
-									FROM dbo.ClientStudyClaim a
-									WHERE ID_CLIENT = @CLIENT
-										AND ID_MASTER IS NULL
-										AND UPD_USER = 'Автомат'
-								)
-
-						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-
-						FETCH NEXT FROM CL INTO @CLIENT
-					END
-
-					CLOSE CL
-					DEALLOCATE CL
 				END
 
+				CLOSE CL
+				DEALLOCATE CL
 			END
 
 		    EXEC [Debug].[Execution@Point]
@@ -813,16 +799,16 @@ BEGIN
                 @Name           = 'UPDATE dbo.RegNodeTable';
 
 			INSERT INTO dbo.RegNodeTable(SystemName, DistrNumber, CompNumber, DistrType, TechnolType, NetCount, SubHost, TransferCount, TransferLeft, Service, RegisterDate, Comment, Complect, Offline, Yubikey, KrfNeed, KrfDop, AddParam, ODON, ODOFF, FirstReg)
-				SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, COMMENT, COMPLECT, OFFLINE, Yubikey, KRF, KRF1, AddParam, ODON, ODOFF, Convert(SmallDateTime, FIRST_REG, 104)
-				FROM #reg a
-				WHERE NOT EXISTS
-						(
-							SELECT *
-							FROM dbo.RegNodeTable b
-							WHERE SYS_NAME = SystemName
-								AND DISTR = DistrNumber
-								AND COMP = CompNumber
-						)
+			SELECT SYS_NAME, DISTR, COMP, DIS_TYPE, TECH_TYPE, NET, SUBHOST, TRANS_COUNT, TRANS_LEFT, SERVICE, REG_DATE, COMMENT, COMPLECT, OFFLINE, Yubikey, KRF, KRF1, AddParam, ODON, ODOFF, Convert(SmallDateTime, FIRST_REG, 104)
+			FROM #reg a
+			WHERE NOT EXISTS
+					(
+						SELECT *
+						FROM dbo.RegNodeTable b
+						WHERE SYS_NAME = SystemName
+							AND DISTR = DistrNumber
+							AND COMP = CompNumber
+					);
 
 			EXEC [Debug].[Execution@Point]
                 @DebugContext   = @DebugContext,
@@ -840,64 +826,53 @@ BEGIN
 				)
 			BEGIN
 				INSERT INTO dbo.ClientDistr(ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE, OFF_DATE, STATUS, BDATE, EDATE, UPD_USER)
-					SELECT ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE, OFF_DATE, 2, BDATE, GETDATE(), UPD_USER
-					FROM dbo.ClientDistr
-					WHERE ID IN
-						(
-							SELECT a.ID
-							FROM
-								dbo.ClientDistrView a WITH(NOEXPAND)
-								INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
-																				AND a.DISTR = b.DistrNumber
-																				AND a.COMP = b.CompNumber
-							WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
-						)
+				SELECT ID_CLIENT, ID_HOST, ID_SYSTEM, DISTR, COMP, ID_TYPE, ID_NET, ID_STATUS, ON_DATE, OFF_DATE, 2, BDATE, GETDATE(), UPD_USER
+				FROM dbo.ClientDistr
+				WHERE ID IN
+					(
+						SELECT a.ID
+						FROM
+							dbo.ClientDistrView a WITH(NOEXPAND)
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
+																			AND a.DISTR = b.DistrNumber
+																			AND a.COMP = b.CompNumber
+						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
+					)
 
 				EXEC [Debug].[Execution@Point]
                     @DebugContext   = @DebugContext,
                     @Name           = 'INSERT INTO dbo.ClientDistr';
 
-				IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-				BEGIN
-					DECLARE CL CURSOR LOCAL FOR
-						SELECT ID_CLIENT
-						FROM dbo.ClientDistrView WITH(NOEXPAND)
-						WHERE ID IN
-							(
-								SELECT a.ID
-								FROM
-									dbo.ClientDistrView a WITH(NOEXPAND)
-									INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
-																					AND a.DISTR = b.DistrNumber
-																					AND a.COMP = b.CompNumber
-								WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
-							)
+				DECLARE CL CURSOR LOCAL FOR
+				SELECT ID_CLIENT
+				FROM dbo.ClientDistrView WITH(NOEXPAND)
+				WHERE ID IN
+					(
+						SELECT a.ID
+						FROM
+							dbo.ClientDistrView a WITH(NOEXPAND)
+							INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.HostID = b.HostID
+																			AND a.DISTR = b.DistrNumber
+																			AND a.COMP = b.CompNumber
+						WHERE a.DistrTypeID <> b.DistrTypeID OR a.SystemID <> b.SystemID
+					);
 
-					OPEN CL
+				OPEN CL;
+
+				FETCH NEXT FROM CL INTO @CLIENT;
+
+				WHILE @@FETCH_STATUS = 0 BEGIN
+					EXEC [dbo].[ClientStudyClaim@Create?Auto]
+						@Client_Id		= @CLIENT,
+						@Reason			= 'Замена дистрибутива',
+						@CreateClaim	= 1,
+						@FillPersonal	= 1;
 
 					FETCH NEXT FROM CL INTO @CLIENT
+				END;
 
-					WHILE @@FETCH_STATUS = 0
-					BEGIN
-						INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-							SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Замена дистрибутива', 0, 'Автомат'
-							WHERE NOT EXISTS
-								(
-									SELECT *
-									FROM dbo.ClientStudyClaim a
-									WHERE ID_CLIENT = @CLIENT
-										AND ID_MASTER IS NULL
-										AND UPD_USER = 'Автомат'
-								)
-
-						EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-
-						FETCH NEXT FROM CL INTO @CLIENT
-					END
-
-					CLOSE CL
-					DEALLOCATE CL
-				END
+				CLOSE CL;
+				DEALLOCATE CL;
 
 				EXEC [Debug].[Execution@Point]
                     @DebugContext   = @DebugContext,

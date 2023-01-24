@@ -51,6 +51,7 @@ BEGIN
             Maintenance.GlobalRicLogin() AS RIC_LOGIN,
             Maintenance.GlobalRicPassword() AS RIC_PASSWORD,
             Maintenance.GlobalClientAutoClaim() AS CLIENT_AUTO_CLAIM,
+			[Maintenance].[GlobalClientAutoClaimTypes]() AS CLIENT_AUTO_CLAIM_TYPES,
 
             Maintenance.GlobalContractYear() AS CONTRACT_YEAR,
 

@@ -42,21 +42,13 @@ BEGIN
 
 		SELECT @ID = ID FROM @TBL
 
-		IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1 AND (SELECT SystemBaseName FROM dbo.SystemTable WHERE SystemID = @SYSTEM) != 'SKS'
-		BEGIN
-			INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-			SELECT @CLIENT, dbo.Dateof(GETDATE()), 'Новый дистрибутив', 0, 'Автомат'
-			WHERE NOT EXISTS
-				(
-					SELECT *
-					FROM dbo.ClientStudyClaim a
-					WHERE ID_CLIENT = @CLIENT
-						AND ID_MASTER IS NULL
-						AND UPD_USER = 'Автомат'
-				);
-
-			EXEC dbo.CLIENT_REINDEX_CURRENT @CLIENT
-		END
+		IF (SELECT SystemBaseName FROM dbo.SystemTable WHERE SystemID = @SYSTEM) != 'SKS' BEGIN
+			EXEC [dbo].[ClientStudyClaim@Create?Auto]
+				@Client_Id		= @CLIENT,
+				@Reason			= 'Новый дистрибутив',
+				@CreateClaim	= 1,
+				@FillPersonal	= 1;
+		END;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

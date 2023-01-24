@@ -91,13 +91,11 @@ BEGIN
 					INNER JOIN dbo.ManagerTable b ON a.ManagerID = b.ManagerID
 				WHERE ServiceID = @SERVICE
 
-			IF (SELECT Maintenance.GlobalClientAutoClaim()) = 1
-			BEGIN
-				INSERT INTO dbo.ClientStudyClaim(ID_CLIENT, DATE, NOTE, REPEAT, UPD_USER)
-					SELECT @ID, dbo.Dateof(GETDATE()), 'Новый клиент', 0, 'Автомат'
-			END
-
-			EXEC dbo.CLIENT_REINDEX @ID, NULL
+			EXEC [dbo].[ClientStudyClaim@Create?Auto]
+				@Client_Id		= @ID,
+				@Reason			= 'Новый клиент',
+				@CreateClaim	= 1,
+				@FillPersonal	= 0;
 		END
 		ELSE
 		BEGIN
