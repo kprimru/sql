@@ -12,21 +12,24 @@ GO
 Описание:
 */
 ALTER PROCEDURE [dbo].[CLIENT_DUTY_FILTER2]
-	@START		SMALLDATETIME 	= NULL,
-	@FINISH		SMALLDATETIME 	= NULL,
-	@CALL_TYPE	NVARCHAR(MAX)	= NULL,
-	@DUTY		NVARCHAR(MAX)	= NULL,
-	@STATUS		TINYINT			= NULL,
-	@COMMENT	NVARCHAR(512)	= NULL,
-	@SERVICE	INT				= NULL,
-	@SYSTEM		INT				= NULL,
-	@NPO		TINYINT			= NULL,
-	@DIRECTION	NVARCHAR(MAX)	= NULL,
-	@RESULT		TINYINT			= NULL,
-	@NOTIFY		TINYINT			= NULL,
-	@CATEGORY	TinyInt			= NULL,
-	@LINK		TINYINT			= NULL,
-	@ORI		TINYINT			= NULL
+	@START			SMALLDATETIME 	= NULL,
+	@FINISH			SMALLDATETIME 	= NULL,
+	@CALL_TYPE		NVARCHAR(MAX)	= NULL,
+	@DUTY			NVARCHAR(MAX)	= NULL,
+	@STATUS			TINYINT			= NULL,
+	@COMMENT		NVARCHAR(512)	= NULL,
+	@SERVICE		INT				= NULL,
+	@SYSTEM			INT				= NULL,
+	@NPO			TINYINT			= NULL,
+	@DIRECTION		NVARCHAR(MAX)	= NULL,
+	@RESULT			TINYINT			= NULL,
+	@NOTIFY			TINYINT			= NULL,
+	@CATEGORY		TinyInt			= NULL,
+	@LINK			TINYINT			= NULL,
+	@ORI			TINYINT			= NULL,
+	@DocFrom		SmallInt		= NULL,
+	@DocTo			SmallInt		= NULL,
+	@CommentExists	TinyInt			= NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -98,10 +101,13 @@ BEGIN
 			AND (a.DutyID IN (SELECT ID FROM dbo.TableIDFromXML(@DUTY)) OR @DUTY IS NULL)
 			AND (a.CallTypeID IN (SELECT ID FROM dbo.TableIDFromXML(@CALL_TYPE)) OR @CALL_TYPE IS NULL)
 			AND (ClientDutyComment LIKE @COMMENT OR ClientDutyQuest LIKE @COMMENT OR @COMMENT IS NULL)
+			AND (@CommentExists IS NULL OR @CommentExists = 0 OR @CommentExists = 1 AND a.ClientDutyComment != '' OR @CommentExists = 2 AND a.ClientDutyComment = '')
 			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
 			AND (ID_DIRECTION IN (SELECT ID FROM dbo.TableGUIDFromXML(@DIRECTION)) OR @DIRECTION IS NULL)
 			AND (@LINK IS NULL OR @LINK = 0 OR @LINK = 1 AND LINK = 1 OR @LINK = 2 AND LINK = 0)
 			AND (h.ClientTypeId = @CATEGORY OR @CATEGORY IS NULL)
+			AND (a.ClientDutyDocs >= @DocFrom OR @DocFrom IS NULL)
+			AND (a.ClientDutyDocs <= @DocTo OR @DocTo IS NULL)
 			AND	(
 					@SYSTEM IS NULL
 					OR
@@ -113,6 +119,7 @@ BEGIN
 						)
 				)
 			AND (@STATUS IS NULL OR @STATUS = 0 OR @STATUS = 1 AND ClientDutyComplete = 1 OR @STATUS = 2 AND ClientDutyComplete = 0)
+			AND (@NPO IS NULL OR @NPO = 0 OR @NPO = 1 AND ClientDutyNPO = 1 OR @NPO = 2 AND ClientDutyNPO = 0)
 			AND (@NPO IS NULL OR @NPO = 0 OR @NPO = 1 AND ClientDutyNPO = 1 OR @NPO = 2 AND ClientDutyNPO = 0)
 			AND (@ORI IS NULL OR @ORI = 0 OR @ORI = 1 AND ClientDutyGive IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ОРИ') OR @ORI = 2 AND ClientDutyGive NOT IN (SELECT [PersonalShortName] FROM dbo.PersonalTable WHERE DepartmentName = 'ОРИ'))
 			AND (
