@@ -10,6 +10,7 @@ ALTER PROCEDURE [Contract].[CLIENT_CONTRACT_GET]
 	@Id			UniqueIdentifier,
 	@Action		VarChar(100),
 	@Date		SmallDateTime
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -19,6 +20,13 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@ContractDeatilsExists	Bit,
+		@SignDate				SmallDateTime,
+		@DateFrom				SmallDateTime,
+		@ExpireDate				SmalLDateTime,
+		@PayType_Id				Int;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -26,19 +34,41 @@ BEGIN
 
 	BEGIN TRY
 
+		IF EXISTS (
+			SELECT TOP (1) *
+			FROM [Contract].[ClientContractsDetails] D
+			WHERE	D.[Contract_Id] = @Id
+				AND (D.[DATE] = @Date OR @Date IS NULL)
+			)
+			SET @ContractDeatilsExists = 1
+		ELSE
+			SET @ContractDeatilsExists = 0;
+
+		IF @ContractDeatilsExists = 0 BEGIN
+			SELECT TOP (1)
+				@ExpireDate	= C.[CO_END_DATE],
+				@SignDate	= C.[CO_DATE],
+				@DateFrom	= C.[CO_BEG_DATE],
+				@PayType_Id = CCP.ContractPayID
+			FROM [DBF].[dbo.ContractTable] AS C
+			INNER JOIN [DBF].[dbo.ContractPayTable] AS CP ON CP.[COP_ID] = C.[CO_ID_PAY]
+			INNER JOIN [dbo].[ContractPayTable] AS CCP ON CCP.[ContractPayDay] = CP.[COP_DAY] AND CCP.[ContractPayMonth] = CP.[COP_MONTH]
+			WHERE C.[CO_NUM] = (SELECT CC.[NUM_S] FROM [Contract].[Contract] AS CC WHERE CC.[ID] = @Id);
+		END;
+
 		SELECT
 			[NUM_S]					= C.[NUM_S],
 			[ID_VENDOR]				= C.[ID_VENDOR],
 
-			[DateFrom]				= C.[DateFrom],
-			[SignDate]				= C.[SignDate],
+			[DateFrom]				= IsNull(C.[DateFrom], @DateFrom),
+			[SignDate]				= IsNull(C.[SignDate], @SignDate),
 
 			[DateTo]				= C.[DateTo],
 
 			[DATE]					= D.[DATE],
-			[ExpireDate]			= D.[ExpireDate],
+			[ExpireDate]			= IsNull(D.[ExpireDate], @ExpireDate),
 			[Type_Id]				= D.[Type_Id],
-			[PayType_Id]			= D.[PayType_Id],
+			[PayType_Id]			= IsNull(D.[PayType_Id], @PayType_Id),
 			[Discount_Id]			= D.[Discount_Id],
 			[ContractPrice]			= D.[ContractPrice],
 			[Comments]				= D.[Comments],
