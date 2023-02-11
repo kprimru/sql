@@ -110,3 +110,5 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [dbo].[ClientStudyClaim@Create?Auto] TO rl_client_save;
+GO

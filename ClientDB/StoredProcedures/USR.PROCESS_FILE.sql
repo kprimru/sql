@@ -33,6 +33,9 @@ BEGIN
 
 	BEGIN TRY
 
+		SET @t = Replace(@t, 'cons020 (1).rgt date=', 'cons020.rgt date=');
+		SET @t = Replace(@t, 'CONS020(1).RGT date=', 'cons020.rgt date=');
+
 		DECLARE
 			@Xml				Xml,
 			@Complect_Id		Int,
