@@ -25,7 +25,8 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-				a.TO_NAME
+				a.TO_NAME,
+				b.CL_EMAIL
 			,	'''' + TO_INN AS CL_INN
 			,	(CT_PREFIX + ' ' + CT_NAME + ', ' + ISNULL(ST_PREFIX + ' ', '') + ST_NAME + ISNULL(' ' + ST_SUFFIX, '') + ', ' + TA_HOME) AS TO_ADDRESS
 			,
@@ -50,6 +51,7 @@ BEGIN
 			,	(res.TP_SURNAME + ' ' + res.TP_NAME + ' ' + res.TP_OTCH) AS RES_NAME
 			,	res.POS_NAME AS RES_POS
 			,	res.TP_PHONE AS RES_PHONE
+			,	P.PAY_INFO AS PAY_INFO
 		FROM
 			dbo.TOTable a INNER JOIN
 			dbo.ClientTable b ON a.TO_ID_CLIENT = b.CL_ID LEFT OUTER JOIN
@@ -60,6 +62,29 @@ BEGIN
 			dbo.TOPersonalView dir ON a.TO_ID = dir.TP_ID_TO AND dir.RP_PSEDO = 'LEAD' LEFT OUTER JOIN
 			dbo.TOPersonalView buh ON a.TO_ID = buh.TP_ID_TO AND buh.RP_PSEDO = 'BUH' LEFT OUTER JOIN
 			dbo.TOPersonalView res ON a.TO_ID = res.TP_ID_TO AND res.RP_PSEDO = 'RES'
+		OUTER APPLY
+		(
+			SELECT
+				MIN(BD.PR_DATE) AS MIN_DATE,
+				MAX(BD.PR_DATE) AS MAX_DATE
+			FROM dbo.TODistrTable AS TD
+			INNER JOIN dbo.BillDistrView AS BD ON TD_ID_DISTR = DIS_ID
+			WHERE TD.TD_ID_TO = a.TO_ID
+				AND BD_TOTAL_PRICE =
+					(
+						SELECT SUM(ID_PRICE)
+						FROM
+							dbo.IncomeTable INNER JOIN
+							dbo.IncomeDistrTable ON ID_ID_INCOME = IN_ID
+						WHERE IN_ID_CLIENT = BL_ID_CLIENT
+							AND ID_ID_PERIOD = PR_ID
+							AND ID_ID_DISTR = DIS_ID
+					)
+		) AS BP
+		OUTER APPLY
+		(
+			SELECT 'Оплачено ' + DATENAME(MONTH, MIN_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MIN_DATE)) + ' - ' + DATENAME(MONTH, MAX_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MAX_DATE)) AS PAY_INFO
+		) AS P
 		WHERE TO_ID = @TO_ID
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
