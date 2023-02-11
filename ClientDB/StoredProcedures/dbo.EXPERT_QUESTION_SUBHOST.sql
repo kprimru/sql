@@ -51,7 +51,7 @@ BEGIN
 		CROSS APPLY [dbo].[SubhostDistrs@Get](SH.SH_ID, NULL)	AS D
 		INNER JOIN [dbo].[SystemTable]							AS S ON D.[HostId] = S.[HostID]
 		INNER JOIN [dbo].[ClientDutyQuestion]					AS Q ON Q.SYS = S.SystemNumber AND Q.DISTR = D.DistrNumber AND D.CompNumber = Q.COMP
-		WHERE Q.SUBHOST IS NULL
+		WHERE Q.SUBHOST IS NULL;
 
 		SELECT
 			Q.ID, SYS, DISTR, COMP, DATE, FIO, EMAIL, PHONE, QUEST, SH_EMAIL,
@@ -67,9 +67,90 @@ BEGIN
 				FROM dbo.ClientDutyQuestion z
 				WHERE z.ID = Q.ID
 				FOR XML PATH('quest'), ROOT('root')
-			) AS QUEST_XML
+			) AS QUEST_XML,
+			'<span style=" font-family:''verdana''; font-size: 14pt; color: #514da1;">
+                <b>
+                    Вопрос клиента из оболочки КонсультантПлюс
+                    <br>
+                </b>
+            </span>
+			<table border=2 bordercolor="#5e67a8" bgcolor="#f1f2f7">
+                <tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>№ дистр. осн. системы</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + S.SystemShortName + ' ' + Convert(VarChar(20), Q.DISTR) + CASE Q.COMP WHEN 1 THEN '' ELSE '/' + Convert(VarChar(20), Q.COMP) END  + '
+                        </span>
+                    </td>
+                </tr>
+				<tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>Дата и время отправки вопроса</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + Convert(VarChar(20), DATE, 104) + ' ' + Convert(VarChar(20), DATE, 108) + '
+                        </span>
+                    </td>
+                </tr>
+				<tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>ФИО Клиента</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + FIO + '
+                        </span>
+                    </td>
+                </tr>
+				<tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>Электронный адрес</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + EMAIL + '
+                        </span>
+                    </td>
+                </tr>
+				<tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>Телефон</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + PHONE + '
+                        </span>
+                    </td>
+                </tr>
+				<tr>
+                    <td width=300>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            <b>Вопрос</b>
+                        </span>
+                    </td>
+					<td width=500>
+                        <span style=" font-family:''courier new''; font-size: 12pt;">
+                            ' + QUEST + '
+                        </span>
+                    </td>
+                </tr>
+            </table>' AS BODY_HTML
 		FROM @SubhostQuestions				AS SQ
-		INNER JOIN dbo.ClientDutyQuestion	AS Q	ON SQ.Id = Q.ID;
+		INNER JOIN dbo.ClientDutyQuestion	AS Q	ON SQ.Id = Q.ID
+		INNER JOIN dbo.SystemTable AS S ON S.SystemNumber = Q.SYS;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
