@@ -23,6 +23,7 @@ BEGIN
         @Xml_S          NVarChar(Max),
         @Inn            VarChar(100),
         @Name           VarChar(256),
+		@ContractNumber	VarChar(256),
         @Expected_Id    Int;
 
     EXEC [Debug].[Execution@Start]
@@ -58,7 +59,8 @@ BEGIN
 
         SELECT
             @Inn   = @Xml.value('(/export/contract/customer/inn)[1]', 'VarChar(100)'),
-            @Name  = @Xml.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)')
+            @Name  = @Xml.value('(/export/contract/customer/fullName)[1]', 'VarChar(512)'),
+			@ContractNumber = @Xml.value('(/export/contract/number)[1]', 'VarChar(512)');
 
         IF @Inn IS NOT NULL
             SELECT
@@ -77,7 +79,9 @@ BEGIN
             (
                 SELECT TOP(1) [Client_Id] = [CL_ID]
                 FROM dbo.ClientTable AS L
+				INNER JOIN dbo.ContractTable AS C ON CO_ID_CLIENT = CL_ID
                 WHERE L.[CL_INN] = @Inn
+					AND C.CO_NUM = @ContractNumber
                     --AND I.[ClientCountByInn] = 1
             ) AS L;
 

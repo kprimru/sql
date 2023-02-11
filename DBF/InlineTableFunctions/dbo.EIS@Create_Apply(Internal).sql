@@ -44,11 +44,19 @@ RETURN
                         ),
 						(
 							SELECT
-                                [ТипСчет]		= 'РСБ',
-								[НаимБанк]		= BA.BA_NAME,
-                                [БИК]			= O.ORG_BIK,
-                                [КорСчетБанк]   = O.ORG_LORO,
-								[РасчСчет]		= O.ORG_ACCOUNT
+							    [ТипСчет]			= 'РСБ',
+								[ИдПлатежнРеквКонт] = ED.[AccountGuid],
+								[БИК]				= O.ORG_BIK,
+								[НаимБанк]			= BA.BA_NAME,
+                                [КорСчетБанк]		= O.ORG_LORO,
+								[РасчСчет]			= O.ORG_ACCOUNT,
+								[КонтрагентНаим]	= O.[ORG_SHORT_NAME],
+								(
+									SELECT
+										[Код]	= '05701000',
+										[Наим]	= 'Муниципальные образования Приморского края / Городские округа Приморского края / Владивостокский'
+									FOR XML RAW('ОКТМО'), TYPE
+								)
                             FROM dbo.BankTable AS BA
                             WHERE BA_ID = ORG_ID_BANK
                             FOR XML RAW('БанкРекв'), TYPE

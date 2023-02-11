@@ -21,11 +21,6 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
-	DECLARE
-		@DocumentXml	Xml,
-		@MainBase64     VarChar(Max),
-        @ApplyBase64    VarChar(Max);
-
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
@@ -42,7 +37,7 @@ BEGIN
 			@ApplyContent
 		) AS D;
 
-		SELECT [Data] = Cast(@DocumentXml AS VarChar(Max));
+		SELECT [Data] = Cast(@Data AS VarChar(Max));
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

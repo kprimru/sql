@@ -34,6 +34,7 @@ BEGIN
 								(
 									SELECT
 										[НомСтр]			= R.[RowNumber],
+										[ЭАИдТРУ]			= Lower(Replace(Cast((SELECT [NewId] FROM [dbo].[NewIdView]) AS VarChar(100)), '-', '')),
 										[ЦенаИзКонтСНДС]	= dbo.MoneyFormatCustom(R.[INR_SALL], '.'),
 										[ПрУлучшХаракт]		= '1'
 									FOR XML RAW ('НеЛПСвед'), TYPE

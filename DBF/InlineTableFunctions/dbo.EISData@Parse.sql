@@ -34,7 +34,8 @@ RETURN
         R.[Number],
         S.[Stage_GUId],
         S.[StartDate],
-        S.[FinishDate]
+        S.[FinishDate],
+		A.[AccountGuid]
         --S.[StagePrice]
 
     FROM @Data.nodes('(/export/contract)') AS E(C)
@@ -133,5 +134,10 @@ RETURN
 			END,
             [Row_Number]
     ) AS PP
+	OUTER APPLY
+	(
+		SELECT
+			[AccountGuid] = C.value('(./suppliersInfo/supplierInfo/supplierAccountsDetails/supplierAccountDetails/guid)[1]', 'VarChar(100)')
+	) AS A
 )
 GO
