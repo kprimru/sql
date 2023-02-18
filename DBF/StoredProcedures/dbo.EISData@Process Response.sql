@@ -24,6 +24,8 @@ BEGIN
         @Inn            VarChar(100),
         @Name           VarChar(256),
 		@ContractNumber	VarChar(256),
+		@ClientIds		VarChar(Max),
+		@ClientPsedo	VarChar(100),
         @Expected_Id    Int;
 
     EXEC [Debug].[Execution@Start]
@@ -64,7 +66,9 @@ BEGIN
 
         IF @Inn IS NOT NULL
             SELECT
-                @Expected_Id = L.[Client_Id]
+                @Expected_Id = L.[Client_Id],
+				@ClientIds = PC.[ClientIds],
+				@ClientPsedo = L.[ClientPsedo]
             FROM
             (
                 SELECT [NULL] = NULL
@@ -75,9 +79,17 @@ BEGIN
                 FROM dbo.ClientTable
                 WHERE CL_INN = @INN
             ) AS I
+			OUTER APPLY
+			(
+				SELECT [ClientIds] = String_Agg(Cast(C.[CL_ID] AS VarChar(100)), ',')
+                FROM dbo.ClientTable AS C
+                WHERE C.CL_INN = @INN
+			) AS PC
             OUTER APPLY
             (
-                SELECT TOP(1) [Client_Id] = [CL_ID]
+                SELECT TOP(1)
+					[Client_Id] = [CL_ID],
+					[ClientPsedo] = [CL_PSEDO]
                 FROM dbo.ClientTable AS L
 				INNER JOIN dbo.ContractTable AS C ON CO_ID_CLIENT = CL_ID
                 WHERE L.[CL_INN] = @Inn
@@ -89,6 +101,8 @@ BEGIN
             [Inn]           = @Inn,
             [Name]          = @Name,
             [Expected_Id]   = @Expected_Id,
+			[ClientPsedo]	= @ClientPsedo,
+			[Client_IDs]	= @ClientIds,
             [ResponseText]  = Cast(@Xml AS NVarChar(Max));
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

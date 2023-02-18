@@ -35,7 +35,7 @@ BEGIN
 
         SET @Inn = (SELECT CL_INN FROM dbo.ClientTable WHERE CL_ID = @ExpectedClient_Id);
 
-        IF @Client_Id IS NULL AND @ExpectedClient_Id IS NOT NULL BEGIN
+        IF @ExpectedClient_Id IS NOT NULL BEGIN
             UPDATE dbo.ClientFinancing SET
                 EIS_CODE = Ltrim(Rtrim(@Code)),
                 EIS_DATA = @Data,
@@ -43,34 +43,23 @@ BEGIN
                 EIS_CONTRACT = @Contract,
                 EIS_LINK = @Url,
                 UPD_PRINT = 1
-            WHERE ID_CLIENT = @ExpectedClient_Id /*IN
-                (
-                    SELECT CL_ID
-                    FROM dbo.ClientTable
-                    WHERE CL_INN = @Inn
-                )*/;
-
-            SET @Client_Id = @ExpectedClient_Id;
+            WHERE ID_CLIENT = @ExpectedClient_Id;
         END;
 
-        IF @Client_Id IS NOT NULL BEGIN
+        IF @ExpectedClient_Id IS NOT NULL BEGIN
             UPDATE dbo.ClientFinancing SET
+				EIS_CODE = Ltrim(Rtrim(@Code)),
                 EIS_DATA = @Data,
                 EIS_REG_NUM = @RegNum,
                 EIS_CONTRACT = @Contract,
                 EIS_LINK = @Url,
                 UPD_PRINT = 1
-            WHERE ID_CLIENT = @Client_Id /*IN
-                (
-                    SELECT CL_ID
-                    FROM dbo.ClientTable
-                    WHERE CL_INN = @Inn
-                )*/;
+            WHERE ID_CLIENT = @ExpectedClient_Id;
 
             INSERT INTO dbo.ClientFinancingEIS(Client_Id, Date, Data, Contract, RegNum)
             SELECT CL_ID, GetDate(), @Data, @Contract, @RegNum
 			FROM dbo.ClientTable
-			WHERE CL_INN = @Client_Id--@Inn;
+			WHERE CL_ID = @ExpectedClient_Id;
         END;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

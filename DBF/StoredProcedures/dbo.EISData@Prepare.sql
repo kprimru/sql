@@ -205,6 +205,7 @@ BEGIN
             [Inn]                   = C.[Inn],
             [Name]                  = C.[Name],
             [ExpectedClient_Id]     = C.[ExpectedClient_Id],
+			[Client_IDs]			= Cast(C.[ExpectedClient_Id] AS VarChar(100)),
             [Checked]               = Cast(0 AS Bit)
         FROM @Customers AS C
         LEFT JOIN dbo.ClientTable AS CL ON C.Client_Id = CL.CL_ID;
