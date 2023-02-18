@@ -36,10 +36,10 @@ BEGIN
 		SET @RECEIVER =
 				CASE @SH
 					WHEN 'Н1' THEN 'f0ec56ff-5ae4-e211-bb69-000c2933b2fd'
-					WHEN 'У1' THEN 'f1ec56ff-5ae4-e211-bb69-000c2933b2fd'
+					--WHEN 'У1' THEN 'f1ec56ff-5ae4-e211-bb69-000c2933b2fd'
 					WHEN 'Л1' THEN 'a92b3b06-5be4-e211-bb69-000c2933b2fd'
 					WHEN 'М' THEN 'f2ec56ff-5ae4-e211-bb69-000c2933b2fd'
-					WHEN 'В' THEN '3e2c9f7e-a56f-ed11-8c9a-0007e92aafc5'
+					WHEN 'У1' THEN '3e2c9f7e-a56f-ed11-8c9a-0007e92aafc5'
 				END
 
 		EXEC [Letters].[dbo.LETTER_SEARCH] '8ebc1b48-59e4-e211-bb69-000c2933b2fd', @START, @FINISH, @NUM, @TEXT, @RC OUTPUT, @RECEIVER
