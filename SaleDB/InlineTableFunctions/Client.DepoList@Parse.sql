@@ -28,6 +28,7 @@ RETURN
 		[AlienInn]			= Node.value('@AlienInn[1]', 			'VarChar(50)'),
 		[DepoDate]			= Convert(SmallDateTime, Node.value('@DepoDate[1]', 			'VarChar(100)'), 3),
 		[DepoExpireDate]	= Convert(SmallDateTime, Node.value('@DepoExpireDate[1]',		'VarChar(100)'), 3),
+		[SerialADate]		= Convert(SmallDateTime, Node.value('@SerialADate[1]',			'VarChar(100)'), 3),
 		[Rival]				= Node.value('@Rival[1]',				'VarChar(50)')
 	FROM @Data.nodes('/DEPO/ITEM') Data(Node)
 )

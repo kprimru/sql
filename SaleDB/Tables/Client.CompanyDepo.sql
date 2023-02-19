@@ -30,6 +30,8 @@ CREATE TABLE [Client].[CompanyDepo]
         [UpdDate]             DateTime              NOT NULL,
         [UpdUser]             VarChar(256)          NOT NULL,
         [SortIndex]           Int                       NULL,
+        [SerialADate]         SmallDateTime             NULL,
+        [Depo:Status]         VarChar(256)              NULL,
         CONSTRAINT [PK_Client.CompanyDepo] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO

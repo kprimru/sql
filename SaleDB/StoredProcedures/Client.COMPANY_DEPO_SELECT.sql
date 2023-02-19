@@ -32,6 +32,7 @@ BEGIN
 			[DateTo],
 			[Number],
 			[ExpireDate],
+			[SerialADate],
 			S.[Name],
 			[Depo:Name],
 			[Depo:Inn],
@@ -44,7 +45,8 @@ BEGIN
 			[Depo:Person2Phone],
 			[Depo:Person3FIO],
 			[Depo:Person3Phone],
-			[Depo:Rival]
+			[Depo:Rival],
+			[Depo:Status]
 		FROM Client.CompanyDepo				AS D
 		INNER JOIN Client.[Depo->Statuses]	AS S ON D.[Status_Id] = S.[Id]
 		WHERE D.Company_Id = @ID

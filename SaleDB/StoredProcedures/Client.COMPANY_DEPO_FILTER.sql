@@ -69,6 +69,7 @@ BEGIN
 			[DateTo],
 			[Number],
 			[ExpireDate],
+			[SerialADate],
 			S.[Name],
 			[Depo:Name],
 			[Depo:Inn],
@@ -82,6 +83,7 @@ BEGIN
 			[Depo:Person3FIO],
 			[Depo:Person3Phone],
 			[Depo:Rival],
+			[Depo:Status],
 			--
 			[Depo:Stage] = Cast(CASE WHEN DS.[Id] IS NOT NULL THEN 1 ELSE 0 END AS Bit)
 		FROM Client.CompanyDepo				AS D

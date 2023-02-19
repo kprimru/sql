@@ -47,6 +47,7 @@ BEGIN
 		[AlienInn]				VarChar(50),
 		[DepoDate]				SmallDateTime,
 		[DepoExpireDate]		SmallDateTime,
+		[SerialADate]			SmallDateTime,
 		[Rival]					VarChar(50),
 		Primary Key Clustered([Code])
 	);
@@ -58,8 +59,39 @@ BEGIN
 	);
 
 	BEGIN TRY
-		INSERT INTO @DepoFile
-		SELECT *
+		INSERT INTO @DepoFile(
+			[Ric],
+			[Code],
+			[Priority],
+			[Name],
+			[Inn],
+			[RegionAndAddress],
+			[Person1FIO],
+			[Person1Phone],
+			[Result],
+			[Status],
+			[AlienInn],
+			[DepoDate],
+			[DepoExpireDate],
+			[SerialADate],
+			[Rival]
+		)
+		SELECT
+			[Ric],
+			[Code],
+			[Priority],
+			[Name],
+			[Inn],
+			[RegionAndAddress],
+			[Person1FIO],
+			[Person1Phone],
+			[Result],
+			[Status],
+			[AlienInn],
+			[DepoDate],
+			[DepoExpireDate],
+			[SerialADate],
+			[Rival]
 		FROM [Client].[DepoList@Parse](@Data);
 
 		INSERT INTO @IDs
@@ -80,12 +112,14 @@ BEGIN
 				[Master_Id], [Company_Id], [DateFrom], [DateTo], [Number], [ExpireDate], [Status_Id],
 				[Depo:Name], [Depo:Inn], [Depo:Region], [Depo:City], [Depo:Address],
 				[Depo:Person1FIO], [Depo:Person1Phone], [Depo:Person2FIO], [Depo:Person2Phone],
-				[Depo:Person3FIO], [Depo:Person3Phone], [Depo:Rival], [Status], [UpdDate], [UpdUser])
+				[Depo:Person3FIO], [Depo:Person3Phone], [Depo:Rival], [Status], [UpdDate], [UpdUser],
+				[SerialADate], [Depo:Status])
 		SELECT
 			D.[Id], D.[Company_Id], D.[DateFrom], D.[DateTo], D.[Number], D.[ExpireDate], D.[Status_Id],
 			D.[Depo:Name], D.[Depo:Inn], D.[Depo:Region], D.[Depo:City], D.[Depo:Address],
 			D.[Depo:Person1FIO], D.[Depo:Person1Phone], D.[Depo:Person2FIO], D.[Depo:Person2Phone],
-			D.[Depo:Person3FIO], D.[Depo:Person3Phone], D.[Depo:Rival], 2, GetDate(), Original_Login()
+			D.[Depo:Person3FIO], D.[Depo:Person3Phone], D.[Depo:Rival], 2, GetDate(), Original_Login(),
+			D.[SerialADate], D.[Depo:Status]
 		FROM @IDs						AS I
 		INNER JOIN Client.CompanyDepo	AS D ON I.[Id] = D.[Id];
 
@@ -96,13 +130,22 @@ BEGIN
 		-- если есть запись ДЕПО со статусом "Действует" и поменяласб дата планового истечения - то меняем
 		UPDATE D
 		SET [ExpireDate]	= F.[DepoExpireDate],
+			[SerialADate]	= F.[SerialADate],
+			[Depo:Status]	= F.[Status],
 			[UpdDate]		= GetDate(),
 			[UpdUser]		= Original_Login()
 		FROM Client.CompanyDepo 				AS D
 		INNER JOIN @IDs							AS I ON D.[Id] = I.[Id]
 		INNER JOIN @DepoFile					AS F ON F.[Code] = D.[Number]
 		WHERE	D.[Status] = 1
-		    AND D.[ExpireDate] != F.[DepoExpireDate]
+		    AND
+				(
+						D.[ExpireDate] != F.[DepoExpireDate]
+					OR
+						D.[SerialADate] != F.[SerialADate]
+					OR
+						D.[Depo:Status] != F.[Status]
+				)
 			AND D.[Status_Id] IN (@Status_Id_ACTIVE);
 
 		-- если есть запись ДЕПО со статусом "Новый" или "Ожидает акцепта" или "TAG", то делаем ее действующей и
@@ -110,6 +153,8 @@ BEGIN
 		SET [Status_Id] 	= @Status_Id_ACTIVE,
 			[DateFrom]		= F.[DepoDate],
 			[ExpireDate]	= F.[DepoExpireDate],
+			[SerialADate]	= F.[SerialADate],
+			[Depo:Status]	= F.[Status],
 			[UpdDate]		= GetDate(),
 			[UpdUser]		= Original_Login()
 		FROM Client.CompanyDepo 				AS D

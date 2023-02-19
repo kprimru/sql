@@ -38,6 +38,7 @@ BEGIN
 		[AlienInn]			VarChar(50),
 		[DepoDate]			SmallDateTime,
 		[DepoExpireDate]	SmallDateTime,
+		[SerialADate]		SmallDateTime,
 		[Rival]				VarChar(50),
 		Primary Key Clustered([Code])
 	);
@@ -45,8 +46,39 @@ BEGIN
 	INSERT INTO Client.CompanyDepoFile([Depo])
 	VALUES(@Data);
 
-	INSERT INTO @DepoFile
-	SELECT *
+	INSERT INTO @DepoFile(
+		[Ric],
+		[Code],
+		[Priority],
+		[Name],
+		[Inn],
+		[RegionAndAddress],
+		[Person1FIO],
+		[Person1Phone],
+		[Result],
+		[Status],
+		[AlienInn],
+		[DepoDate],
+		[DepoExpireDate],
+		[SerialADate],
+		[Rival]
+	)
+	SELECT
+		[Ric],
+		[Code],
+		[Priority],
+		[Name],
+		[Inn],
+		[RegionAndAddress],
+		[Person1FIO],
+		[Person1Phone],
+		[Result],
+		[Status],
+		[AlienInn],
+		[DepoDate],
+		[DepoExpireDate],
+		[SerialADate],
+		[Rival]
 	FROM [Client].[DepoList@Parse](@Data);
 
 	SELECT
@@ -68,6 +100,8 @@ BEGIN
 			[Name] = IsNull(F.[Name], D.[Depo:Name]),
 			F.[DepoDate],
 			F.[DepoExpireDate],
+			F.[SerialADate],
+			F.[Status],
 			[Number] = IsNull(F.[Code], D.[Number]),
 			D.[Id],
 			D.[Company_Id],

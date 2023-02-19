@@ -51,6 +51,7 @@ BEGIN
 			[Depo:Person3FIO],
 			[Depo:Person3Phone],
 			[Depo:Rival],
+			[Depo:Status],
 			[StatusName] = C.[Name]
 		FROM Client.CompanyDepo				AS D
 		OUTER APPLY
