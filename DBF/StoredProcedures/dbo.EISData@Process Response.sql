@@ -98,12 +98,13 @@ BEGIN
             ) AS L;
 
         SELECT
-            [Inn]           = @Inn,
-            [Name]          = @Name,
-            [Expected_Id]   = @Expected_Id,
-			[ClientPsedo]	= @ClientPsedo,
-			[Client_IDs]	= @ClientIds,
-            [ResponseText]  = Cast(@Xml AS NVarChar(Max));
+            [Inn]				= @Inn,
+            [Name]				= @Name,
+            [Expected_Id]		= @Expected_Id,
+			[ClientPsedo]		= @ClientPsedo,
+			[Client_IDs]		= @ClientIds,
+			[ContractNumber]	= @ContractNumber,
+            [ResponseText]		= Cast(@Xml AS NVarChar(Max));
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
