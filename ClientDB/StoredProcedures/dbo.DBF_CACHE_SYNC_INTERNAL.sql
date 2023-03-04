@@ -87,7 +87,7 @@ BEGIN
 
         INSERT INTO @Distr(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, UPD_DATE)
         SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, UPD_DATE
-        FROM [DBF].[Sync].[DistrFinancing];
+        FROM [DBF].[Sync.DistrFinancing];
 
         -- нет дистрибутивов - нет обработки
         IF @@ROWCOUNT = 0 BEGIN
@@ -163,7 +163,7 @@ BEGIN
         -----------------------------------
         --/*
         DELETE A
-        FROM dbo.DBFAct A
+        FROM [dbo].[DBFAct] A
         INNER JOIN @Distr D ON  D.SYS_REG_NAME  = A.SYS_REG_NAME
                             AND D.DIS_NUM       = A.DIS_NUM
                             AND D.DIS_COMP_NUM  = A.DIS_COMP_NUM
@@ -179,20 +179,20 @@ BEGIN
 
         UPDATE A
         SET AD_TOTAL_PRICE = Z.AD_TOTAL_PRICE
-        FROM dbo.DBFAct A
+        FROM [dbo].[DBFAct] A
         INNER JOIN @Act Z ON    Z.SYS_REG_NAME  = A.SYS_REG_NAME
                             AND Z.DIS_NUM       = A.DIS_NUM
                             AND Z.DIS_COMP_NUM  = A.DIS_COMP_NUM
                             AND Z.PR_DATE       = A.PR_DATE
         WHERE A.AD_TOTAL_PRICE != Z.AD_TOTAL_PRICE;
 
-        INSERT INTO dbo.DBFAct(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE)
+        INSERT INTO [dbo].[DBFAct](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE)
         SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, AD_TOTAL_PRICE
         FROM @Act A
         WHERE NOT EXISTS
             (
                 SELECT *
-                FROM dbo.DBFAct Z
+                FROM [dbo].[DBFAct] Z
                 WHERE   Z.SYS_REG_NAME  = A.SYS_REG_NAME
                     AND Z.DIS_NUM       = A.DIS_NUM
                     AND Z.DIS_COMP_NUM  = A.DIS_COMP_NUM
@@ -204,7 +204,7 @@ BEGIN
         -----------------------------------
 
         DELETE A
-        FROM dbo.DBFBill A
+        FROM [dbo].[DBFBill] A
         INNER JOIN @Distr D ON  D.SYS_REG_NAME  = A.SYS_REG_NAME
                             AND D.DIS_NUM       = A.DIS_NUM
                             AND D.DIS_COMP_NUM  = A.DIS_COMP_NUM
@@ -220,20 +220,20 @@ BEGIN
 
 		UPDATE A
 		SET BD_TOTAL_PRICE = Z.BD_TOTAL_PRICE
-		FROM dbo.DBFBill A
+		FROM [dbo].[DBFBill] A
 		INNER JOIN @Bill Z ON	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 							AND	Z.DIS_NUM		= A.DIS_NUM
 							AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
 							AND Z.PR_DATE		= A.PR_DATE
 		WHERE A.BD_TOTAL_PRICE != Z.BD_TOTAL_PRICE;
 
-		INSERT INTO dbo.DBFBill(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_TOTAL_PRICE)
+		INSERT INTO [dbo].[DBFBill](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_TOTAL_PRICE)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_TOTAL_PRICE
 		FROM @Bill A
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.DBFBill Z
+				FROM [dbo].[DBFBill] Z
 				WHERE	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 					AND	Z.DIS_NUM		= A.DIS_NUM
 					AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -245,7 +245,7 @@ BEGIN
 		-----------------------------------
 
 		DELETE A
-		FROM dbo.DBFIncome A
+		FROM [dbo].[DBFIncome] A
 		INNER JOIN @Distr D ON	D.SYS_REG_NAME	= A.SYS_REG_NAME
 							AND	D.DIS_NUM		= A.DIS_NUM
 							AND D.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -261,20 +261,20 @@ BEGIN
 
 		UPDATE A
 		SET ID_PRICE = Z.ID_PRICE
-		FROM dbo.DBFIncome A
+		FROM [dbo].[DBFIncome] A
 		INNER JOIN @Income Z ON	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 							AND	Z.DIS_NUM		= A.DIS_NUM
 							AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
 							AND Z.PR_DATE		= A.PR_DATE
 		WHERE IsNull(A.ID_PRICE, 0) != IsNull(Z.ID_PRICE, 0);
 
-		INSERT INTO dbo.DBFIncome(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE)
+		INSERT INTO [dbo].[DBFIncome](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, ID_PRICE
 		FROM @Income A
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.DBFIncome Z
+				FROM [dbo].[DBFIncome] Z
 				WHERE	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 					AND	Z.DIS_NUM		= A.DIS_NUM
 					AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -286,7 +286,7 @@ BEGIN
 		-----------------------------------
 
 		DELETE A
-		FROM dbo.DBFBillRest A
+		FROM [dbo].[DBFBillRest] A
 		INNER JOIN @Distr D ON	D.SYS_REG_NAME	= A.SYS_REG_NAME
 							AND	D.DIS_NUM		= A.DIS_NUM
 							AND D.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -302,20 +302,20 @@ BEGIN
 
 		UPDATE A
 		SET BD_REST = Z.BD_REST
-		FROM dbo.DBFBillRest A
+		FROM [dbo].[DBFBillRest] A
 		INNER JOIN @BillRest Z ON	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 								AND	Z.DIS_NUM		= A.DIS_NUM
 								AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
 								AND Z.PR_DATE		= A.PR_DATE
 		WHERE A.BD_REST != Z.BD_REST;
 
-		INSERT INTO dbo.DBFBillRest(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_REST)
+		INSERT INTO [dbo].[DBFBillRest](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_REST)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, BD_REST
 		FROM @BillRest A
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.DBFBillRest Z
+				FROM [dbo].[DBFBillRest] Z
 				WHERE	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 					AND	Z.DIS_NUM		= A.DIS_NUM
 					AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -327,7 +327,7 @@ BEGIN
 		-----------------------------------
 
 		DELETE A
-		FROM dbo.DBFIncomeDate A
+		FROM [dbo].[DBFIncomeDate] A
 		INNER JOIN @Distr D ON	D.SYS_REG_NAME	= A.SYS_REG_NAME
 							AND	D.DIS_NUM		= A.DIS_NUM
 							AND D.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -342,13 +342,13 @@ BEGIN
 					AND	Z.IN_DATE		= A.IN_DATE
 			);
 
-		INSERT INTO dbo.DBFIncomeDate(SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE)
+		INSERT INTO [dbo].[DBFIncomeDate](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE)
 		SELECT SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, PR_DATE, IN_DATE
 		FROM @IncomeDate A
 		WHERE NOT EXISTS
 			(
 				SELECT *
-				FROM dbo.DBFIncomeDate Z
+				FROM [dbo].[DBFIncomeDate] Z
 				WHERE	Z.SYS_REG_NAME	= A.SYS_REG_NAME
 					AND	Z.DIS_NUM		= A.DIS_NUM
 					AND Z.DIS_COMP_NUM	= A.DIS_COMP_NUM
@@ -360,7 +360,7 @@ BEGIN
 		-- удаляем из DBF дистрибутивы которые синхронизировали.
 		-- Если UPD_DATE не совпадает, значит были еще изменения и из синхронизации дистрибутив не удаляем
 		DELETE S
-		FROM [DBF].[Sync].[DistrFinancing] S
+		FROM [DBF].[Sync.DistrFinancing] S
 		INNER JOIN @Distr D ON	D.SYS_REG_NAME	= S.SYS_REG_NAME
 							AND	D.DIS_NUM		= S.DIS_NUM
 							AND D.DIS_COMP_NUM	= S.DIS_COMP_NUM

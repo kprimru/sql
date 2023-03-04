@@ -24,7 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE FROM [DBF].[Sync].[DistrFinancing];
+		DELETE FROM [DBF].[Sync.DistrFinancing];
 
 		TRUNCATE TABLE dbo.DBFAct;
 

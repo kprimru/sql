@@ -42,6 +42,7 @@ BEGIN
 		LEFT JOIN [dbo].[ClientDistrView] AS D WITH(NOEXPAND) ON D.[HostID] = R.[HostID] AND D.[DISTR] = R.[DistrNumber] AND D.[COMP] = R.[CompNumber]
 		LEFT JOIN [dbo].[ClientView] AS C WITH(NOEXPAND) ON C.[ClientID] = D.[ID_CLIENT]
 		WHERE R.[DIstrTypeId] IN (SELECT [NT_ID] FROM [Din].[NetTypeOffline]())
+			AND R.[DS_REG] = 0
 		ORDER BY
 			R.[SubhostName],
 			C.[ManagerName],

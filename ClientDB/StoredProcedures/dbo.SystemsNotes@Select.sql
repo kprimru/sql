@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[dbo].[SystemsNotes@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SystemsNotes@Select]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[SystemsNotes@Select]
-    @System_Id  SmallInt    =    NULL
+    @Filter  VarChar(256)    =    NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,12 +17,22 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Systems	Table(Id Int Primary Key Clustered);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+		INSERT INTO @Systems
+		SELECT [SystemID]
+		FROM [dbo].[SystemTable]
+		WHERE @Filter IS NULL
+			OR [SystemBaseName] LIKE @Filter
+			OR [SystemShortName] LIKE @Filter;
 
         SELECT
             [Id]                = Cast([SystemId] AS VarChar(10)),
@@ -35,7 +45,7 @@ BEGIN
             [Ord]               = S.[SystemOrder]
         FROM [dbo].[SystemTable]        AS S
         LEFT JOIN [dbo].[SystemNote]    AS N ON N.[ID_SYSTEM] = S.[SystemID]
-        WHERE S.[SystemID] = @System_Id OR @System_Id IS NULL
+        WHERE S.[SystemID] IN (SELECT F.[Id] FROM @Systems AS F)
 
         UNION ALL
 
@@ -50,7 +60,7 @@ BEGIN
             [Ord]               = D.[DistrTypeOrder]
         FROM [dbo].[SystemNote:DistrType]   AS SD
         INNER JOIN [dbo].[DistrTypeTable]   AS D ON SD.[DistrType_Id] = D.[DistrTypeID]
-        WHERE SD.[System_ID] = @System_Id OR @System_Id IS NULL
+        WHERE SD.[System_ID] IN (SELECT F.[Id] FROM @Systems AS F)
         ORDER BY [Ord];
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
