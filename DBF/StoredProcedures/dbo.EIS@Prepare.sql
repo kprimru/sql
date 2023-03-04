@@ -8,6 +8,7 @@ IF OBJECT_ID('[dbo].[EIS@Prepare]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[
 GO
 ALTER PROCEDURE [dbo].[EIS@Prepare]
     @Act_Id			Int,
+	@Invoice_Id		Int,
 	@File_Id        VarChar(100) OUTPUT,
 	@IdentGUId		VarChar(100) OUTPUT
 AS
@@ -29,10 +30,11 @@ BEGIN
 		SELECT
 			@File_Id    = E.[File_Id],
 			@IdentGUId  = E.[IdentGUId]
-		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id) AS E;
+		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id, @Invoice_Id) AS E;
 
 		EXEC [dbo].[EIS@Check]
-			@Act_Id = @Act_id;
+			@Act_Id		= @Act_id,
+			@Invoice_Id = @Invoice_Id;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY

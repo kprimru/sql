@@ -8,7 +8,8 @@ IF OBJECT_ID('[dbo].[EIS@Prepare(Internal)]', 'IF') IS NULL EXEC('CREATE FUNCTIO
 GO
 CREATE FUNCTION [dbo].[EIS@Prepare(Internal)]
 (
-	@Act_Id	Integer
+	@Act_Id		Int,
+	@Invoice_Id	Int
 )
 RETURNS TABLE
 AS

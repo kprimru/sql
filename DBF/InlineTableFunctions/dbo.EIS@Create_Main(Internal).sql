@@ -9,6 +9,7 @@ GO
 CREATE FUNCTION [dbo].[EIS@Create?Main(Internal)]
 (
     @Act_Id			Int,
+	@Invoice_Id		Int,
 	@File_Id        VarChar(100),
 	@IdentGUId      VarChar(100),
 	@StageGuid		VarChar(100)	= NULL,
@@ -50,20 +51,20 @@ RETURN
                         [СоглСтрДопИнф]     = '0000.0000.0000',
                         (
                             SELECT
-                                [НомерСчФ]  = I.[INS_NUM],
+                                [НомерСчФ]  = MD.[InvoiceNum],
                                 [ДатаСчФ]   = Convert(VarChar(20), GetDate(), 104),
                                 [КодОКВ]    = 643,
                                 [dbo].[EIS@Get?Seller](O.[ORG_ID]),
 								(
 									SELECT
-										[НомерПРД]	= I.[INS_NUM],
-										[ДатаПРД]	= Convert(VarChar(20), I.[INS_DATE], 104),
+										[НомерПРД]	= MD.[InvoiceNum],
+										[ДатаПРД]	= Convert(VarChar(20), MD.[InvoiceDate], 104),
 										[СуммаПРД]	= dbo.MoneyFormatCustom(Sum(R.[INR_SALL]), '.')
 									FROM [dbo].[InvoiceRowTable] AS R
-									WHERE R.[INR_ID_INVOICE] = I.[INS_ID]
+									WHERE R.[INR_ID_INVOICE] = MD.[Invoice_Id]
 									FOR XML RAW ('СвПРД'), TYPE
 								),
-								[dbo].[EIS@Get?Buyer](C.[Client_Id], @IdentGUId),
+								[dbo].[EIS@Get?Buyer](MD.[Client_Id], @IdentGUId),
                                 (
                                     SELECT
                                         [НаимОКВ] = 'Российский рубль',
@@ -72,10 +73,7 @@ RETURN
                                                 [ДатаГосКонт]   = Convert(VarChar(20), CO_DATE, 104),
                                                 [НомерГосКонт]  = CO_NUM
                                             FROM dbo.ContractTable AS CO
-                                            INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
-                                            INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
-                                            WHERE CO_ID_CLIENT = A.ACT_ID_CLIENT
-                                                AND CO_ACTIVE = 1
+											WHERE CO.[CO_ID] = MD.[Contract_Id]
                                             FOR XML RAW('ИнфПродГосЗакКазн'), TYPE
                                         )
                                     FOR XML RAW('ДопСвФХЖ1'), TYPE
@@ -83,22 +81,22 @@ RETURN
 								(
 									SELECT
 										[НаимДокОтгр]	= 'Документ о приемке',
-										[НомДокОтгр]	= I.[INS_NUM],
+										[НомДокОтгр]	= MD.[InvoiceNum],
 										[ДатаДокОтгр]	= Convert(VarChar(20), GetDate(), 104)
 									FOR XML RAW('ДокПодтвОтгр'), TYPE
 								)
                             FOR XML RAW('СвСчФакт'), TYPE
                         ),
-						[dbo].[EIS@Get?Table Invoice](I.[INS_ID], @Grouping, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code]),
+						[dbo].[EIS@Get?Table Invoice](MD.[Invoice_Id], @Grouping, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code]),
                         (
                             SELECT
                                 (
                                     SELECT TOP (1)
                                         [СодОпер]   = 'Услуги оказаны в полном объеме',
-                                        [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
-                                        [ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
+                                        [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, MD.[Date]) + ' ' + Cast(DatePart(Year, MD.[Date]) AS VarChar(100)) + ' г.',
+                                        [ДатаПер]   = Convert(VarChar(20), MD.[Date], 104),
                                         [ДатаНач]   = Convert(VarChar(20), CASE WHEN ED.[StartDate] > PR_DATE THEN ED.[StartDate] ELSE PR_DATE END, 104),
-                                        [ДатаОкон]  = Convert(VarChar(20), CASE WHEN ED.[FinishDate] <= A.[ACT_DATE] THEN ED.[FinishDate] ELSE A.[ACT_DATE] END, 104),
+                                        [ДатаОкон]  = Convert(VarChar(20), CASE WHEN ED.[FinishDate] <= MD.[Date] THEN ED.[FinishDate] ELSE MD.[Date] END, 104),
                                         (
                                             SELECT TOP (1)
                                                 [НаимОсн]   = CK.CK_NAME,
@@ -119,11 +117,8 @@ RETURN
 													FOR XML RAW('РабОргПрод'), TYPE
 												)
                                             FROM dbo.ContractTable AS CO
-                                            INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
-                                            INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
-                                            INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
-                                            WHERE CO_ID_CLIENT = A.ACT_ID_CLIENT
-                                                AND CO_ACTIVE = 1
+											INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
+											WHERE CO.[CO_ID] = MD.[Contract_Id]
                                             FOR XML RAW('ОснПер'), TYPE
                                         ),
                                         (
@@ -159,35 +154,96 @@ RETURN
                         )
                     FOR XML RAW('Документ'), TYPE
                 )
-            FROM [dbo].[ActTable]					AS A
-			CROSS APPLY
+            FROM
 			(
-				SELECT [Client_Id] = IsNull(A.[ACT_ID_PAYER], A.[ACT_ID_CLIENT])
-			) AS C
-            INNER JOIN [dbo].[OrganizationTable]	AS O ON A.[ACT_ID_ORG] = O.[ORG_ID]
-            INNER JOIN [dbo].[InvoiceSaleTable]		AS I ON A.[ACT_ID_INVOICE] = I.[INS_ID]
-            INNER JOIN [dbo].[PeriodTable]			AS P ON A.[ACT_DATE] BETWEEN P.[PR_DATE] AND P.[PR_END_DATE]
-			INNER JOIN [dbo].[ClientFinancing]		AS F ON F.[ID_CLIENT] = C.[Client_Id]
-			OUTER APPLY
-			(
-				SELECT [ACT_PRICE] = Sum(AD.[AD_TOTAL_PRICE])
-				FROM [dbo].[ActDistrTable] AS AD
-				WHERE AD.[AD_ID_ACT] = A.[ACT_ID]
-			) AS AD
+				SELECT
+					[Client_Id]			= C.[Client_Id],
+					[OriginalClient_Id]	= A.[ACT_ID_CLIENT],
+					[Organization_Id]	= A.[ACT_ID_ORG],
+					[Date]				= A.[ACT_DATE],
+					[TotalSum]			= AD.[ACT_PRICE],
+					[Invoice_Id]		= I.[INS_ID],
+					[InvoiceNum]		= I.[INS_NUM],
+					[InvoiceDate]		= I.[INS_DATE],
+					[Contract_Id]		= CO.[Contract_Id]
+				FROM [dbo].[ActTable]					AS A
+				CROSS APPLY
+				(
+					SELECT [Client_Id] = IsNull(A.[ACT_ID_PAYER], A.[ACT_ID_CLIENT])
+				) AS C
+				INNER JOIN [dbo].[InvoiceSaleTable]		AS I ON A.[ACT_ID_INVOICE] = I.[INS_ID]
+				OUTER APPLY
+				(
+					SELECT [ACT_PRICE] = Sum(AD.[AD_TOTAL_PRICE])
+					FROM [dbo].[ActDistrTable] AS AD
+					WHERE AD.[AD_ID_ACT] = A.[ACT_ID]
+				) AS AD
+				OUTER APPLY
+				(
+					SELECT TOP (1)
+                        [Contract_Id] = CO.[CO_ID]
+                    FROM dbo.ContractTable AS CO
+                    INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
+                    INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
+                    INNER JOIN dbo.ActDistrTable AS AD ON AD.AD_ID_ACT = A.ACT_ID AND AD.AD_ID_DISTR = CD.COD_ID_DISTR
+                    WHERE CO_ID_CLIENT = A.[ACT_ID_CLIENT]
+                        AND CO_ACTIVE = 1
+				) AS CO
+				WHERE ACT_ID = @Act_Id
+
+				UNION ALL
+
+				SELECT
+					[Client_Id]			= C.[Client_Id],
+					[OriginalClient_Id]	= I.[INS_ID_CLIENT],
+					[Organization_Id]	= I.[INS_ID_ORG],
+					[Date]				= I.[INS_DATE],
+					[TotalSum]			= AD.[ACT_PRICE],
+					[Invoice_Id]		= I.[INS_ID],
+					[InvoiceNum]		= I.[INS_NUM],
+					[InvoiceDate]		= I.[INS_DATE],
+					[Contract_Id]		= CO.[Contract_Id]
+				FROM [dbo].[InvoiceSaleTable]		AS I
+				CROSS APPLY
+				(
+					SELECT [Client_Id] = IsNull(I.[INS_ID_PAYER], I.[INS_ID_CLIENT])
+				) AS C
+				OUTER APPLY
+				(
+					SELECT [ACT_PRICE] = Sum(IR.[INR_SNDS])
+					FROM [dbo].[InvoiceRowTable] AS IR
+					WHERE IR.[INR_ID_INVOICE] = I.[INS_ID]
+				) AS AD
+				OUTER APPLY
+				(
+					SELECT TOP (1)
+                        [Contract_Id] = CO.[CO_ID]
+                    FROM dbo.ContractTable AS CO
+                    INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
+                    INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID
+                    INNER JOIN dbo.InvoiceRowTable AS AD ON AD.INR_ID_INVOICE = I.INS_ID AND AD.INR_ID_DISTR = CD.COD_ID_DISTR
+                    WHERE CO_ID_CLIENT = I.[INS_ID_CLIENT]
+                        AND CO_ACTIVE = 1
+				) AS CO
+				WHERE INS_ID = @Invoice_Id
+			) AS MD
+            INNER JOIN [dbo].[OrganizationTable]	AS O ON MD.[Organization_Id] = O.[ORG_ID]
+            INNER JOIN [dbo].[PeriodTable]			AS P ON MD.[Date] BETWEEN P.[PR_DATE] AND P.[PR_END_DATE]
+			INNER JOIN [dbo].[ClientFinancing]		AS F ON F.[ID_CLIENT] = MD.[Client_Id]
 			OUTER APPLY
 			(
 				SELECT TOP (1)
 					[IsActual] = 1
 				FROM [dbo].[InvoiceRowTable] AS R
-				WHERE R.[INR_ID_INVOICE] = I.[INS_ID]
+				WHERE R.[INR_ID_INVOICE] = MD.[Invoice_Id]
 					AND R.[INR_GOOD] LIKE '%Актуализац%'
 			) AS R
 			OUTER APPLY
 			(
 				SELECT [IsActual] = IsNull(R.[IsActual], 0)
 			) AS U
-            OUTER APPLY [dbo].[EISData@Parse](F.[EIS_DATA], A.[ACT_DATE], AD.[ACT_PRICE], U.[IsActual], @StageGuid, @ProductGuid) AS ED
-            WHERE ACT_ID = @Act_Id
+            OUTER APPLY [dbo].[EISData@Parse](F.[EIS_DATA], MD.[Date], MD.[TotalSum], U.[IsActual], @StageGuid, @ProductGuid) AS ED
+
             FOR XML RAW('Файл'), TYPE
         )
 )GO

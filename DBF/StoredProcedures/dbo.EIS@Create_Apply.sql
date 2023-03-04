@@ -8,6 +8,7 @@ IF OBJECT_ID('[dbo].[EIS@Create?Apply]', 'P ') IS NULL EXEC('CREATE PROCEDURE [d
 GO
 ALTER PROCEDURE [dbo].[EIS@Create?Apply]
     @Act_Id			Int,
+	@Invoice_Id		Int,
 	@File_Id        VarChar(100),
 	@IdentGUId      VarChar(100),
 	@StageGuid		VarChar(100)	= NULL,
@@ -35,6 +36,7 @@ BEGIN
 		FROM [dbo].[EIS@Create?Apply(Internal)]
 		(
 			    @Act_Id,
+				@Invoice_Id,
 				@File_Id,
 				@IdentGUId,
 				@StageGuid,

@@ -8,6 +8,7 @@ IF OBJECT_ID('[dbo].[EIS@Create?Document]', 'P ') IS NULL EXEC('CREATE PROCEDURE
 GO
 ALTER PROCEDURE [dbo].[EIS@Create?Document]
     @Act_Id			Int,
+	@Invoice_Id		Int,
 	@File_Id        VarChar(100),
 	@MainContent    VarChar(Max),
     @ApplyContent   VarChar(Max),
@@ -32,6 +33,7 @@ BEGIN
 		FROM [dbo].[EIS@Create?Document(Internal)]
 		(
 			@Act_Id,
+			@Invoice_Id,
 			@File_Id,
 			@MainContent,
 			@ApplyContent

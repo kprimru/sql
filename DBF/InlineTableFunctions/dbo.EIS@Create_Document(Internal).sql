@@ -9,6 +9,7 @@ GO
 CREATE FUNCTION [dbo].[EIS@Create?Document(Internal)]
 (
     @Act_Id			Int,
+	@Invoice_Id		Int,
 	@File_Id        VarChar(100),
 	@MainContent    VarChar(Max),
     @ApplyContent   VarChar(Max)
@@ -37,10 +38,21 @@ RETURN
 						[Контент] = B.[ApplyBase64]
 					FOR XML PATH('Прилож'), TYPE
 				)
-			FROM dbo.ActTable AS A
+			FROM
+			(
+				SELECT ACT_ID_ORG, ACT_ID_PAYER, ACT_ID_CLIENT
+				FROM dbo.ActTable AS A
+				WHERE ACT_ID = @Act_Id
+
+				UNION ALL
+
+				SELECT INS_ID_ORG, INS_ID_PAYER, INS_ID_CLIENT
+				FROM dbo.InvoiceSaleTable
+				WHERE INS_ID = @Invoice_Id
+			) AS A
 			INNER JOIN dbo.OrganizationTable AS O ON A.ACT_ID_ORG = O.ORG_ID
 			INNER JOIN dbo.ClientFinancing AS F ON F.ID_CLIENT = IsNull(ACT_ID_PAYER, ACT_ID_CLIENT)
-			WHERE ACT_ID = @Act_Id
+
 			FOR XML RAW('ФайлПакет'), TYPE
 		)
 	FROM

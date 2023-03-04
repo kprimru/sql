@@ -7,7 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[EIS@Check]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[EIS@Check]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[EIS@Check]
-    @Act_Id			Int
+    @Act_Id			Int,
+	@Invoice_Id		Int
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -28,12 +29,22 @@ BEGIN
 
     BEGIN TRY
 
-        SELECT
-			@Client_Id = [ACT_ID_CLIENT],
-			@ClientPsedo = C.[CL_PSEDO]
-		FROM [dbo].[ActTable] AS A
-		INNER JOIN [dbo].[ClientTable] AS C ON c.[CL_ID] = A.[ACT_ID_CLIENT]
-		WHERE [ACT_ID] = @Act_Id;
+		IF @Act_Id IS NOT NULL
+			SELECT
+				@Client_Id = [ACT_ID_CLIENT],
+				@ClientPsedo = C.[CL_PSEDO]
+			FROM [dbo].[ActTable] AS A
+			INNER JOIN [dbo].[ClientTable] AS C ON c.[CL_ID] = A.[ACT_ID_CLIENT]
+			WHERE [ACT_ID] = @Act_Id;
+
+		IF @Invoice_Id IS NOT NULL
+			SELECT
+				@Client_Id = [INS_ID_CLIENT],
+				@ClientPsedo = C.[CL_PSEDO]
+			FROM [dbo].[InvoiceSaleTable] AS A
+			INNER JOIN [dbo].[ClientTable] AS C ON c.[CL_ID] = A.[INS_ID_CLIENT]
+			WHERE [INS_ID] = @Invoice_Id;
+
 
 		IF NOT EXISTS
 		(
