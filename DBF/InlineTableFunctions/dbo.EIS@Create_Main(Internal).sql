@@ -104,7 +104,20 @@ RETURN
                                                 [НаимОсн]   = CK.CK_NAME,
                                                 [НомОсн]    = CO.CO_NUM,
                                                 [ДатаОсн]   = Convert(VarChar(20), CO.CO_DATE, 104),
-                                                [ДопСвОсн]  = 'Реестровый номер в реестре контрактов: ' + ED.[RegNum]
+                                                [ДопСвОсн]  = 'Реестровый номер в реестре контрактов: ' + ED.[RegNum],
+												(
+													SELECT
+														[Должность]	= ORG_DIR_POS,
+														[ОснПолн]	= 'Лицо, уполномоченное действовать без доверенности от имени юридического лица',
+														(
+															SELECT
+																[Фамилия]	= ORG_DIR_FAM,
+																[Имя]		= ORG_DIR_NAME,
+																[Отчество]	= ORG_DIR_OTCH
+															FOR XML RAW('ФИО'), TYPE
+														)
+													FOR XML RAW('РабОргПрод'), TYPE
+												)
                                             FROM dbo.ContractTable AS CO
                                             INNER JOIN dbo.ContractKind AS CK ON CO_ID_KIND = CK_ID
                                             INNER JOIN dbo.ContractDistrTable AS CD ON CD.COD_ID_CONTRACT = CO_ID

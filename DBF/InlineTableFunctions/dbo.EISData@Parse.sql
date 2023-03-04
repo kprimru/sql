@@ -66,30 +66,24 @@ RETURN
 	) AS ST
     OUTER APPLY
     (
-        SELECT TOP (1) /*[StagePrice], */[Stage_GUId], [StartDate], [FinishDate]
+        SELECT TOP (1) [Stage_GUId], [StartDate], [FinishDate]
         FROM
         (
             SELECT
-                /*
-                [StartDate]     = Convert(SmallDateTime, S.value('(./startDate)[1]', 'VarChar(100)'), 120),
-                [FinishDate]    = Convert(SmallDateTime, S.value('(./endDate)[1]', 'VarChar(100)'), 120),
-                [StagePrice]    = S.value('(./stagePrice)[1]', 'VarChar(100)'),
-                [Stage_GUId]    = S.value('(./guid)[1]', 'VarChar(100)')
-                */
                 [IsActualRow]   = CASE WHEN @IsActual = 1 AND S.value('(./payments/comment)[1]', 'VarChar(100)') LIKE '%Актуализ%' THEN 1 ELSE 0 END,
                 [StartDate]     = Convert(SmallDateTime, S.value('(./startDate)[1]', 'VarChar(100)'), 120),
                 [FinishDate]    = Convert(SmallDateTime, S.value('(./endDate)[1]', 'VarChar(100)'), 120),
-                --[StagePrice]    = S.value('(./payments/paymentSum)[1]', 'VarChar(100)'),
                 [StageComment]  = S.value('(./payments/comment)[1]', 'VarChar(100)'),
                 [Stage_GUId]    = S.value('(./guid)[1]', 'VarChar(100)')
-            --FROM EP.[ExecutionPeriods].nodes('*/stages') AS E(S)
             FROM ST.Stages.nodes('*/stages') AS E(S)
         ) AS SS
         WHERE
 			(@StageGuid IS NOT NULL AND SS.[Stage_GUId] = @StageGuid)
 			OR
 			(@StageGuid IS NULL AND @ActDate BETWEEN SS.[StartDate] AND SS.[FinishDate])
-        ORDER BY CASE WHEN [IsActualRow] = 1 THEN 0 ELSE 1 END
+        ORDER BY
+			CASE WHEN [IsActualRow] = 1 THEN 0 ELSE 1 END,
+			SS.[StartDate] DESC
     ) AS S
     OUTER APPLY
     (
