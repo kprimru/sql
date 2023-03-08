@@ -41,7 +41,7 @@ BEGIN
 		INNER JOIN [Reg].[RegNodeSearchView] AS R ON R.[DistrNumber] = U.[UD_DISTR] AND R.[CompNumber] = U.[UD_COMP] AND R.[HostID] = U.[UD_ID_HOST]
 		LEFT JOIN [dbo].[ClientDistrView] AS D WITH(NOEXPAND) ON D.[HostID] = R.[HostID] AND D.[DISTR] = R.[DistrNumber] AND D.[COMP] = R.[CompNumber]
 		LEFT JOIN [dbo].[ClientView] AS C WITH(NOEXPAND) ON C.[ClientID] = D.[ID_CLIENT]
-		WHERE R.[DIstrTypeId] IN (SELECT [NT_ID] FROM [Din].[NetTypeOffline]())
+		WHERE R.[NT_ID] IN (SELECT [NT_ID] FROM [Din].[NetTypeOffline]())
 			AND R.[DS_REG] = 0
 		ORDER BY
 			R.[SubhostName],
