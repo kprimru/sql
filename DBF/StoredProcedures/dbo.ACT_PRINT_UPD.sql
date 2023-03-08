@@ -49,7 +49,7 @@ BEGIN
 		SELECT
 			@File_Id    = E.[File_Id],
 			@IdentGUId  = E.[IdentGUId]
-		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id) AS E;
+		FROM [dbo].[EIS@Prepare(Internal)](@Act_Id, @Invoice_Id) AS E;
 
 		SELECT @MainContent = M.[Data]
 		FROM [dbo].[EIS@Create?Main(Internal)]
