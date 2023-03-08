@@ -1,0 +1,92 @@
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DBF_CACHE_COMPARE_AND_SYNC]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DBF_CACHE_COMPARE_AND_SYNC]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[DBF_CACHE_COMPARE_AND_SYNC]
+WITH EXECUTE AS OWNER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO [DBF].[Sync.DistrFinancing](SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, UPD_DATE)
+		SELECT D.[SystemReg], D.[Distr], D.[Comp], GetDate()
+		FROM
+		(
+			SELECT
+				[SystemReg] = IsNull(C.[SYS_REG_NAME], D.[SYS_REG_NAME]),
+				[Distr]		= IsNull(C.[DIS_NUM], D.[DIS_NUM]),
+				[Comp]		= IsNull(C.[DIS_COMP_NUM], D.[DIS_COMP_NUM])
+			FROM dbo.DBFAct AS C
+			FULL JOIN [DBF].[dbo.ActAllIXView] AS D WITH(NOEXPAND) ON D.SYS_REG_NAME = C.SYS_REG_NAME AND D.DIS_NUM = C.DIS_NUM AND D.DIS_COMP_NUM = C.DIS_COMP_NUM AND D.PR_DATE = C.PR_DATE AND D.AD_TOTAL_PRICE = C.AD_TOTAL_PRICE
+			WHERE C.ID IS NULL OR D.ID_CNT IS NULL
+			---
+			UNION
+			---
+			SELECT
+				[SystemReg] = IsNull(C.[SYS_REG_NAME], D.[SYS_REG_NAME]),
+				[Distr]		= IsNull(C.[DIS_NUM], D.[DIS_NUM]),
+				[Comp]		= IsNull(C.[DIS_COMP_NUM], D.[DIS_COMP_NUM])
+			FROM dbo.DBFBill AS C
+			FULL JOIN [DBF].[dbo.BillAllIXView] AS D WITH(NOEXPAND) ON D.SYS_REG_NAME = C.SYS_REG_NAME AND D.DIS_NUM = C.DIS_NUM AND D.DIS_COMP_NUM = C.DIS_COMP_NUM AND D.PR_DATE = C.PR_DATE AND D.BD_TOTAL_PRICE = C.BD_TOTAL_PRICE
+			WHERE C.ID IS NULL OR D.CNT IS NULL
+			---
+			UNION
+			---
+			SELECT
+				[SystemReg] = IsNull(C.[SYS_REG_NAME], D.[SYS_REG_NAME]),
+				[Distr]		= IsNull(C.[DIS_NUM], D.[DIS_NUM]),
+				[Comp]		= IsNull(C.[DIS_COMP_NUM], D.[DIS_COMP_NUM])
+			FROM dbo.DBFIncome AS C
+			FULL JOIN [DBF].[dbo.IncomeAllIXView] AS D WITH(NOEXPAND) ON D.SYS_REG_NAME = C.SYS_REG_NAME AND D.DIS_NUM = C.DIS_NUM AND D.DIS_COMP_NUM = C.DIS_COMP_NUM AND D.PR_DATE = C.PR_DATE AND D.ID_PRICE = C.ID_PRICE
+			WHERE C.ID IS NULL OR D.ID_CNT IS NULL
+			---
+			UNION
+			---
+			SELECT
+				[SystemReg] = IsNull(C.[SYS_REG_NAME], D.[SYS_REG_NAME]),
+				[Distr]		= IsNull(C.[DIS_NUM], D.[DIS_NUM]),
+				[Comp]		= IsNull(C.[DIS_COMP_NUM], D.[DIS_COMP_NUM])
+			FROM dbo.DBFIncomeDate AS C
+			FULL JOIN [DBF].[dbo.IncomeDateIXView] AS D WITH(NOEXPAND) ON D.SYS_REG_NAME = C.SYS_REG_NAME AND D.DIS_NUM = C.DIS_NUM AND D.DIS_COMP_NUM = C.DIS_COMP_NUM AND D.PR_DATE = C.PR_DATE AND D.IN_DATE = C.IN_DATE
+			WHERE C.ID IS NULL OR D.ID_CNT IS NULL
+			---
+			UNION
+			---
+			SELECT
+				[SystemReg] = IsNull(C.[SYS_REG_NAME], D.[SYS_REG_NAME]),
+				[Distr]		= IsNull(C.[DIS_NUM], D.[DIS_NUM]),
+				[Comp]		= IsNull(C.[DIS_COMP_NUM], D.[DIS_COMP_NUM])
+			FROM dbo.DBFBillRest AS C
+			FULL JOIN [DBF].[dbo.BillAllRestView] AS D ON D.SYS_REG_NAME = C.SYS_REG_NAME AND D.DIS_NUM = C.DIS_NUM AND D.DIS_COMP_NUM = C.DIS_COMP_NUM AND D.PR_DATE = C.PR_DATE AND D.BD_REST = C.BD_REST
+			WHERE C.ID IS NULL OR D.BD_REST IS NULL
+		) AS D;
+
+		EXEC [dbo].[DBF_CACHE_SYNC_INTERNAL];
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
+END
+GO
