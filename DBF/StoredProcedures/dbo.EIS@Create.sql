@@ -12,7 +12,8 @@ ALTER PROCEDURE [dbo].[EIS@Create]
 	@MainContent    Xml,
     @ApplyContent   Xml,
 	@Document		Xml,
-	@File_Id        VarChar(100)
+	@File_Id        VarChar(100),
+	@SubFolder		VarChar(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -32,7 +33,7 @@ BEGIN
         SET @File_Id    = Cast(NewId() AS VarChar(100));
 
         SELECT
-            [Folder]        = Replace(Replace(Replace(RTrim(Ltrim(C.CL_PSEDO)), '\', ''), ':', ''), '/', ''),
+            [Folder]        = Replace(Replace(Replace(RTrim(Ltrim(C.CL_PSEDO)), '\', ''), ':', ''), '/', '') + IsNull('\' + @SubFolder, ''),
             [FileName]      = IsNull(Replace(Replace(Replace(F.[FileName], '\', ''), ':', ''), '/', ''), Cast(NewId() AS VarChar(50))), -- ToDo костыль
             [Data]          = F.[Data]
         FROM

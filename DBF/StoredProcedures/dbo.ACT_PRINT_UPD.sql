@@ -30,10 +30,27 @@ BEGIN
 		@MainContentS   VarChar(Max),
         @ApplyContentS  VarChar(Max),
 		@Document		Xml,
-        @File_Id        VarChar(100);
+        @File_Id        VarChar(100),
+		@CurrentStage	VarChar(100),
+		@StageStart		SmallDateTime,
+		@StageFinish	SmallDateTime,
+		@SubFolder		VarChar(100);
 
-	DECLARE
-		@Mock			Table([XmlData] Xml);
+	DECLARE @Stages	Table
+	(
+		[StageGuid]		VarChar(100),
+		[StageStart]	SmallDateTime,
+		[StageFinish]	SmallDateTime,
+		Primary Key Clustered([StageGuid])
+	);
+
+	DECLARE @Upd Table
+    (
+        [Folder]        VarChar(256),
+        [FileName]      VarChar(256),
+        [Data]          Xml
+        --Primary Key Clustered ([FileName])
+    );
 
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
@@ -41,6 +58,10 @@ BEGIN
         @DebugContext   = @DebugContext OUT
 
     BEGIN TRY
+
+		INSERT INTO @Stages
+		SELECT [StageGuid], [StartDate], [FinishDate]
+		FROM [dbo].[EIS@Get Stages](@Act_Id, @Invoice_Id);
 
 		EXEC [dbo].[EIS@Check]
 			@Act_Id = @Act_id,
@@ -89,6 +110,7 @@ BEGIN
 			@ApplyContentS
 		) AS D;
 
+		INSERT INTO @Upd
 		EXEC [dbo].[EIS@Create]
 			@Act_Id			= @Act_Id,
 			@Invoice_Id		= @Invoice_Id,
@@ -96,6 +118,78 @@ BEGIN
 			@ApplyContent	= @ApplyContent,
 			@Document		= @Document,
 			@File_Id		= @File_Id;
+
+		IF (SELECT COUNT(*) FROM @Stages) > 1 BEGIN
+
+			SET @CurrentStage = '';
+
+			WHILE (1 = 1) BEGIN
+				SELECT TOP (1)
+					@CurrentStage	= S.[StageGuid],
+					@StageStart		= S.[StageStart],
+					@StageFinish	= S.[StageFinish]
+				FROM @Stages AS S
+				WHERE S.[StageGuid] > @CurrentStage
+				ORDER BY
+					S.[StageGuid];
+
+				IF @@RowCount < 1
+					BREAK;
+
+				SELECT @SubFolder = Convert(VarChar(20), @StageStart, 104) + '-' + Convert(VarChar(20), @StageFinish, 104) + '-' + @CurrentStage;
+
+				SELECT @MainContent = M.[Data]
+				FROM [dbo].[EIS@Create?Main(Internal)]
+					(
+						@Act_Id,
+						@Invoice_Id,
+						@File_Id,
+						@IdentGUId,
+						@CurrentStage,
+						@ProductGuid,
+						@Grouping
+					) AS M;
+
+				SELECT @ApplyContent = A.[Data]
+				FROM [dbo].[EIS@Create?Apply(Internal)]
+				(
+						@Act_Id,
+						@Invoice_Id,
+						@File_Id,
+						@IdentGUId,
+						@CurrentStage,
+						@ProductGuid,
+						@Grouping,
+						@Detail
+				) AS A;
+
+				SET @MainContentS	= Cast(@MainContent AS VarChar(Max));
+				SET @ApplyContentS	= Cast(@ApplyContent AS VarChar(Max));
+
+				SELECT @Document = D.[Data]
+				FROM [dbo].[EIS@Create?Document(Internal)]
+				(
+					@Act_Id,
+					@Invoice_Id,
+					@File_Id,
+					@MainContentS,
+					@ApplyContentS
+				) AS D;
+
+				INSERT INTO @Upd
+				EXEC [dbo].[EIS@Create]
+					@Act_Id			= @Act_Id,
+					@Invoice_Id		= @Invoice_Id,
+					@MainContent	= @MainContent,
+					@ApplyContent	= @ApplyContent,
+					@Document		= @Document,
+					@File_Id		= @File_Id,
+					@SubFolder		= @SubFolder;
+			END;
+		END;
+
+		SELECT *
+		FROM @Upd;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
