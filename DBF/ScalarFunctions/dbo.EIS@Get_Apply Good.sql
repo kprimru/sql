@@ -8,15 +8,16 @@ IF OBJECT_ID('[dbo].[EIS@Get?Apply Good]', 'FN') IS NULL EXEC('CREATE FUNCTION [
 GO
 CREATE FUNCTION [dbo].[EIS@Get?Apply Good]
 (
-	@Invoice_Id		Int,
-	@Grouping		Bit,
-	@Detail			Bit,
-	@ProductNameForGrouping		VarChar(Max),
-	@ProductOKEICode			VarChar(100),
-	@ProductOKEIFullName		VarChar(256),
-	@ProductOKPD2Code			VarChar(100),
-	@ProductGuid				VarChar(100),
-	@ProductSid					VarChar(100)
+	@Invoice_Id						Int,
+	@Grouping						Bit,
+	@Detail							Bit,
+	@ProductNameForGrouping			VarChar(Max),
+	@ProductOKEICode				VarChar(100),
+	@ProductOKEIFullName			VarChar(256),
+	@ProductOKPD2Code				VarChar(100),
+	@ProductGuid					VarChar(100),
+	@ProductSid						VarChar(100),
+	@ProductVolumeSpecifyingMethod	VarChar(100)
 )
 RETURNS XML
 AS
@@ -36,7 +37,8 @@ BEGIN
 										[НомСтр]			= R.[RowNumber],
 										[ЭАИдТРУ]			= Lower(Replace(Cast((SELECT [NewId] FROM [dbo].[NewIdView]) AS VarChar(100)), '-', '')),
 										[ЦенаИзКонтСНДС]	= dbo.MoneyFormatCustom(R.[INR_SALL], '.'),
-										[ПрУлучшХаракт]		= '1'
+										[ПрУлучшХаракт]		= '1',
+										[ОбРабУсл]			= CASE WHEN @ProductVolumeSpecifyingMethod = 'VTF' THEN 1 ELSE NULL END
 									FOR XML RAW ('НеЛПСвед'), TYPE
 								)
 							WHERE @Detail = 0

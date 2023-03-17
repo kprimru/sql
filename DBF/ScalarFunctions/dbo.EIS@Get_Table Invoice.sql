@@ -8,13 +8,13 @@ IF OBJECT_ID('[dbo].[EIS@Get?Table Invoice]', 'FN') IS NULL EXEC('CREATE FUNCTIO
 GO
 CREATE FUNCTION [dbo].[EIS@Get?Table Invoice]
 (
-	@Invoice_Id		Int,
-	@Grouping		Bit,
-	@ProductNameForGrouping		VarChar(Max),
-	@ProductOKEICode			VarChar(100),
-	@ProductOKEIFullName		VarChar(256),
-	@ProductOKPD2Code			VarChar(100)
-
+	@Invoice_Id						Int,
+	@Grouping						Bit,
+	@ProductNameForGrouping			VarChar(Max),
+	@ProductOKEICode				VarChar(100),
+	@ProductOKEIFullName			VarChar(256),
+	@ProductOKPD2Code				VarChar(100),
+	@ProductVolumeSpecifyingMethod	VarChar(100)
 )
 RETURNS XML
 AS
@@ -27,7 +27,7 @@ BEGIN
                         [НомСтр]        = R.[RowNumber],
                         [НаимТов]       = R.[ProductName],
                         [ОКЕИ_Тов]      = @ProductOKEICode,
-                        [КолТов]        = 1,
+                        [КолТов]        = CASE WHEN @ProductVolumeSpecifyingMethod = 'VTF' THEN NULL ELSE 1 END,
                         [ЦенаТов]       = [dbo].[MoneyFormatForEIS](R.[Total], R.[Tax], 0),
                         [СтТовБезНДС]   = [dbo].[MoneyFormatCustom](R.[Price], '.'),
                         [НалСт]         = Cast(Cast(R.[Tax] AS Int) AS VarChar(20)) + '%',

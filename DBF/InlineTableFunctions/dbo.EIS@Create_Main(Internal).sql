@@ -87,7 +87,7 @@ RETURN
 								)
                             FOR XML RAW('СвСчФакт'), TYPE
                         ),
-						[dbo].[EIS@Get?Table Invoice](MD.[Invoice_Id], @Grouping, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code]),
+						[dbo].[EIS@Get?Table Invoice](MD.[Invoice_Id], @Grouping, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code], ED.[ProductVolumeSpecifyingMethod]),
                         (
                             SELECT
                                 (

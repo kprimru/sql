@@ -21,7 +21,8 @@ RETURN
 		PP.[ProductSid],
         PP.[ProductOKPD2Code],
         PP.[ProductOKEICode],
-        PP.[ProductOKEIFullName]
+        PP.[ProductOKEIFullName],
+		PP.[ProductVolumeSpecifyingMethod]
     FROM @Data.nodes('(/export/contract)') AS E(C)
     OUTER APPLY
     (
@@ -37,21 +38,22 @@ RETURN
 			[ProductSid],
             [ProductOKPD2Code],
             [ProductOKEICode],
-            [ProductOKEIFullName]
+            [ProductOKEIFullName],
+			[ProductVolumeSpecifyingMethod]
         FROM
         (
             SELECT
-                [Row_Number]        = Row_Number() Over(ORDER BY (SELECT 0)),
-                [IsActualRow]       = CASE WHEN V.value('(./name)[1]', 'VarChar(Max)') LIKE '%Актуализ%' THEN 1 ELSE 0 END,
-                [Product_GUId]      = V.value('(./guid)[1]', 'VarChar(100)'),
-				[ProductSid]		= V.value('(./sid)[1]', 'VarChar(100)'),
-                --[ProductOKPD2Code]  = V.value('(./OKPD2/code)[1]', 'VarChar(100)'),
-				[ProductOKPD2Code]  = IsNull(V.value('(./OKPD2/code)[1]', 'VarChar(100)'), V.value('(./KTRU/code)[1]', 'VarChar(100)')),
-                [ProductOKEICode]   = V.value('(./OKEI/code)[1]', 'VarChar(100)'),
-                [ProductOKEIFullName]  = V.value('(./OKEI/fullName)[1]', 'VarChar(Max)'),
-                [ProductName]       = V.value('(./name)[1]', 'VarChar(Max)'),
-                [ProductSum]        = V.value('(./sum)[1]', 'VarChar(100)'),
-                [ProductPrice]      = V.value('(./price)[1]', 'VarChar(100)')
+                [Row_Number]						= Row_Number() Over(ORDER BY (SELECT 0)),
+                [IsActualRow]						= CASE WHEN V.value('(./name)[1]', 'VarChar(Max)') LIKE '%Актуализ%' THEN 1 ELSE 0 END,
+                [Product_GUId]						= V.value('(./guid)[1]', 'VarChar(100)'),
+				[ProductSid]						= V.value('(./sid)[1]', 'VarChar(100)'),
+				[ProductOKPD2Code]					= IsNull(V.value('(./OKPD2/code)[1]', 'VarChar(100)'), V.value('(./KTRU/code)[1]', 'VarChar(100)')),
+                [ProductOKEICode]					= V.value('(./OKEI/code)[1]', 'VarChar(100)'),
+                [ProductOKEIFullName]				= V.value('(./OKEI/fullName)[1]', 'VarChar(Max)'),
+                [ProductName]						= V.value('(./name)[1]', 'VarChar(Max)'),
+                [ProductSum]						= V.value('(./sum)[1]', 'VarChar(100)'),
+                [ProductPrice]						= V.value('(./price)[1]', 'VarChar(100)'),
+				[ProductVolumeSpecifyingMethod]		= V.value('(./volumeSpecifyingMethod)[1]', 'VarChar(100)')
             FROM P.[Products].nodes('/products/product') AS PR(V)
         ) AS PP
         WHERE (PP.[ProductName] LIKE '%' + @Name + '%' OR @Name LIKE '%'  + PP.[ProductName] + '%')

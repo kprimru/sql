@@ -69,7 +69,7 @@ RETURN
 						[КодСВР]	= F.EIS_DATA.value('(/export/contract/customer/consRegistryNum)[1]', 'VarChar(512)')
 					FOR XML RAW('СведЗаказчик'), TYPE
 				),
-                [dbo].[EIS@Get?Apply Good](MD.[Invoice_Id], @Grouping, @Detail, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code], ED.[Product_GUId], ED.[ProductSid]),
+                [dbo].[EIS@Get?Apply Good](MD.[Invoice_Id], @Grouping, @Detail, ED.[ProductName], ED.[ProductOKEICode], ED.[ProductOKEIFullName], ED.[ProductOKPD2Code], ED.[Product_GUId], ED.[ProductSid], ED.[ProductVolumeSpecifyingMethod]),
                 (
                     SELECT
                         (
