@@ -266,6 +266,7 @@ BEGIN
 				ClientID		INT,
 				ClientFullName	VARCHAR(512),
 				UD_NAME			VARCHAR(100),
+				DistrTypeName	VarChar(100),
 				ServiceName		VARCHAR(100),
 				ManagerName		VARCHAR(100),
 				LAST_UPDATE		DATETIME,
