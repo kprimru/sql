@@ -393,6 +393,21 @@ BEGIN
 			WHERE (UF_CONS_FREE < 2000 AND UF_COMPLECT_SIZE_MB < 4000) OR (UF_CONS_FREE < 4000 AND UF_COMPLECT_SIZE_MB >= 4000)
 			ORDER BY UD_NAME;
 
+
+		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
+			SELECT
+				UD_NAME, 'Дата start.key из рабочей папки', [Common].[DateTimeToStr](T.[UF_START_KEY_WORK_DATE]), 0
+			FROM #complect a
+			INNER JOIN USR.USRFileTech AS T ON t.UF_ID = a.UF_ID
+			ORDER BY UD_NAME
+
+		INSERT INTO #result(COMPLECT, PARAM_NAME, PARAM_VALUE, STAT)
+			SELECT
+				UD_NAME, 'Дата start.key из папки К+', [Common].[DateTimeToStr](T.[UF_START_KEY_CONS_DATE]), 0
+			FROM #complect a
+			INNER JOIN USR.USRFileTech AS T ON t.UF_ID = a.UF_ID
+			ORDER BY UD_NAME
+
 		SELECT *
 		FROM #result
 		WHERE PARAM_VALUE IS NOT NULL

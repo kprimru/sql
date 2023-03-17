@@ -18,6 +18,10 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@CheckDate		SmallDateTime = '20220607',
+		@MinDate		SmallDateTime = '20220101';
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -43,6 +47,14 @@ BEGIN
 		LEFT JOIN [dbo].[ClientView] AS C WITH(NOEXPAND) ON C.[ClientID] = D.[ID_CLIENT]
 		WHERE R.[NT_ID] IN (SELECT [NT_ID] FROM [Din].[NetTypeOffline]())
 			AND R.[DS_REG] = 0
+			--/*
+			AND
+			(
+					IsNull(T.[UF_START_KEY_CONS_DATE], @MinDate) < @CheckDate
+				AND
+					IsNull(T.[UF_START_KEY_WORK_DATE], @MinDate) < @CheckDate
+			)
+			--*/
 		ORDER BY
 			R.[SubhostName],
 			C.[ManagerName],
