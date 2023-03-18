@@ -42,6 +42,8 @@ CREATE TABLE [dbo].[Settings]
         [ST_DEBUG]                Bit                              NOT NULL,
         [ST_DATE]                 DateTime                         NOT NULL,
         [ST_EXCEL_LONG_STRINGS]   Bit                                  NULL,
+        [ST_FONT_SIZE]            TinyInt                              NULL,
+        [ST_CLOSE_QUERY]          Bit                                  NULL,
         CONSTRAINT [PK_dbo.Settings] PRIMARY KEY NONCLUSTERED ([ST_ID])
 );
 GO
