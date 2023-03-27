@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[ScanDocument]
         [DATE]             SmallDateTime                    NOT NULL,
         [DOC_NUM]          NVarChar(256)                        NULL,
         [DOC_DATE]         SmallDateTime                        NULL,
-        [RES]              DateTime                             NULL,
+        [RES]              VarChar(256)                         NULL,
         [STATUS]           SmallInt                         NOT NULL,
         [UPD_DATE]         DateTime                         NOT NULL,
         [UPD_USER]         NVarChar(256)                    NOT NULL,
