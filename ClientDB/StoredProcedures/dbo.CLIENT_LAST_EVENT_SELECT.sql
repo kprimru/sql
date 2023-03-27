@@ -67,19 +67,11 @@ BEGIN
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				INNER JOIN
-					(
-						SELECT ID
-						FROM dbo.TableIDFromXML(@TYPE)
-					) AS c ON a.ServiceTypeID = c.ID
-				INNER JOIN
-					(
-						SELECT ID
-						FROM dbo.TableIDFromXML(@CL_TYPE)
-					) AS d ON b.ClientKind_Id = d.ID
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
+				AND (@TYPE IS NULL OR b.ServiceTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+				AND (@CL_TYPE IS NULL OR b.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
 
 		ELSE
 			INSERT INTO #last_event(EventID, ClientTypeID)
@@ -95,19 +87,11 @@ BEGIN
 				dbo.ClientView a WITH(NOEXPAND)
 				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
 				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-				INNER JOIN
-					(
-						SELECT ID
-						FROM dbo.TableIDFromXML(@TYPE)
-					) AS c ON a.ServiceTypeID = c.ID
-				INNER JOIN
-					(
-						SELECT ID
-						FROM dbo.TableIDFromXML(@CL_TYPE)
-					) AS d ON b.ClientKind_Id = d.ID
 			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
 				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
 				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
+				AND (@TYPE IS NULL OR b.ServiceTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+				AND (@CL_TYPE IS NULL OR b.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
 
 
 		INSERT INTO #event(ClientID, EventDate, Author, EventText, ClientTypeID)

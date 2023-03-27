@@ -43,16 +43,13 @@ BEGIN
 		IF @SERVICE IS NOT NULL
 			SET @MANAGER = NULL
 
-		IF @SERVICE IS NULL AND @MANAGER IS NULL
-			SET @MANAGER = 0
-
 		IF OBJECT_ID('tempdb..#client') IS NOT NULL
 			DROP TABLE #client
 
 		CREATE TABLE #client
 		(
 				ClientID		INT,
-				ClientFullName	VARCHAR(500),
+				ClientFullName	VARCHAR(1024),
 				ServiceName		VARCHAR(150),
 				PayType			VARCHAR(150),
 				ContractPay		VARCHAR(150),
@@ -236,7 +233,7 @@ BEGIN
 		CREATE TABLE #result
 		(
 			ClientID		INT,
-			ClientFullName	VARCHAR(500),
+			ClientFullName	VARCHAR(1024),
 			ServiceName		VARCHAR(150),
 			PayType			VARCHAR(150),
 			ContractPay		VARCHAR(150),
