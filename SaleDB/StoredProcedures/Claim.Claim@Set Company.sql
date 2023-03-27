@@ -25,7 +25,7 @@ BEGIN
         @Email              VarChar(100),
         @FIO                VarChar(255),
         @Client             VarChar(255),
-        @Phone              VarCHar(100),
+        @Phone              VarChar(100),
         @Special            VarChar(1024),
         @WorkDate           SmallDateTime,
         @WorkNote           VarChar(Max),
