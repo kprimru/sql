@@ -7,7 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[CLIENT_CHECK_CODE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CHECK_CODE]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[CLIENT_CHECK_CODE]
-	@CODE INT
+	@CODE INT,
+	@Clientid int
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,6 +28,7 @@ BEGIN
 		SELECT CL_ID
 		FROM dbo.ClientTable
 		WHERE CL_NUM = @CODE
+			AND (CL_ID <> @Clientid OR @Clientid IS NULL)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

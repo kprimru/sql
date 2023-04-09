@@ -31,14 +31,10 @@ BEGIN
 
 	BEGIN TRY
 
-		IF @clientid IS NULL
-			SELECT CL_ID
-			FROM dbo.ClientTable
-			WHERE CL_PSEDO = @psedo
-		ELSE
-			SELECT CL_ID
-			FROM dbo.ClientTable
-			WHERE CL_PSEDO = @psedo AND CL_ID <> @clientid
+		SELECT CL_ID
+		FROM dbo.ClientTable
+		WHERE CL_PSEDO = @psedo AND
+			(CL_ID <> @clientid OR @clientid IS NULL)
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
