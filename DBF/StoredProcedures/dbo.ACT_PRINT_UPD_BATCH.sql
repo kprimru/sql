@@ -27,8 +27,8 @@ BEGIN
     (
         [Folder]        VarChar(256),
         [FileName]      VarChar(256),
-        [Data]          Xml,
-        Primary Key Clustered ([FileName])
+        [Data]          Xml
+        --Primary Key Clustered ([FileName])
     );
 
     DECLARE @Act_Id     Int;

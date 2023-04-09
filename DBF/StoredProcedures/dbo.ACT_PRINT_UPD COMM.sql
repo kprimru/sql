@@ -136,11 +136,30 @@ BEGIN
                                 (
                                     SELECT
                                         (
-                                            SELECT
-                                                [НаимОрг]   = CL.CL_FULL_NAME,
-                                                [ИННЮЛ]     = CL.CL_INN,
-                                                [КПП]       = CL.CL_KPP
-                                            FOR XML RAW('СвЮЛУч'), TYPE, ROOT('ИдСв')
+											SELECT
+												(
+													SELECT
+														[НаимОрг]   = CL.CL_FULL_NAME,
+														[ИННЮЛ]     = CL.CL_INN,
+														[КПП]       = CL.CL_KPP
+													WHERE Len(CL_INN) != 12
+													FOR XML RAW('СвЮЛУч'), TYPE
+												),
+												(
+													SELECT
+														(
+															SELECT
+																[Фамилия]   = CP.PER_FAM,
+																[Имя]		= CP.PER_NAME,
+																[Отчество]  = CP.PER_OTCH
+															FROM dbo.ClientPersonalTable AS CP
+															WHERE CP.PER_ID_CLIENT = CL.CL_ID
+															FOR XML RAW('ФИО'), TYPE
+														)
+													WHERE Len(CL_INN) = 12
+													FOR XML RAW('СвИП'), TYPE
+												)
+											FOR XML RAW('ИдСв'), TYPE
                                         ),
                                         (
                                             SELECT

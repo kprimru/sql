@@ -61,7 +61,8 @@ BEGIN
 
 		INSERT INTO @Stages
 		SELECT [StageGuid], [StartDate], [FinishDate]
-		FROM [dbo].[EIS@Get Stages](@Act_Id, @Invoice_Id);
+		FROM [dbo].[EIS@Get Stages](@Act_Id, @Invoice_Id)
+		WHERE [StageGuid] IS NOT NULL;
 
 		EXEC [dbo].[EIS@Check]
 			@Act_Id = @Act_id,
@@ -111,13 +112,17 @@ BEGIN
 		) AS D;
 
 		INSERT INTO @Upd
-		EXEC [dbo].[EIS@Create]
-			@Act_Id			= @Act_Id,
-			@Invoice_Id		= @Invoice_Id,
-			@MainContent	= @MainContent,
-			@ApplyContent	= @ApplyContent,
-			@Document		= @Document,
-			@File_Id		= @File_Id;
+		SELECT [Folder], [FileName], [Data]
+		FROM [dbo].[EIS@Create(Internal)]
+		(
+			@Act_Id,
+			@Invoice_Id,
+			@MainContent,
+			@ApplyContent,
+			@Document,
+			@File_Id,
+			NULL
+		);
 
 		IF (SELECT COUNT(*) FROM @Stages) > 1 BEGIN
 
@@ -177,14 +182,17 @@ BEGIN
 				) AS D;
 
 				INSERT INTO @Upd
-				EXEC [dbo].[EIS@Create]
-					@Act_Id			= @Act_Id,
-					@Invoice_Id		= @Invoice_Id,
-					@MainContent	= @MainContent,
-					@ApplyContent	= @ApplyContent,
-					@Document		= @Document,
-					@File_Id		= @File_Id,
-					@SubFolder		= @SubFolder;
+				SELECT [Folder], [FileName], [Data]
+				FROM [dbo].[EIS@Create(Internal)]
+				(
+					@Act_Id,
+					@Invoice_Id,
+					@MainContent,
+					@ApplyContent,
+					@Document,
+					@File_Id,
+					@SubFolder
+				);
 			END;
 		END;
 
