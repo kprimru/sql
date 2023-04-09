@@ -50,9 +50,11 @@ BEGIN
 			--/*
 			AND
 			(
-					IsNull(T.[UF_START_KEY_CONS_DATE], @MinDate) < @CheckDate
-				AND
-					IsNull(T.[UF_START_KEY_WORK_DATE], @MinDate) < @CheckDate
+				T.[UF_START_KEY_CONS_DATE] IS NULL AND T.[UF_START_KEY_WORK_DATE] IS NULL
+				OR
+				T.[UF_START_KEY_CONS_DATE] < @CheckDate
+				OR
+				T.[UF_START_KEY_WORK_DATE] < @CheckDate
 			)
 			--*/
 		ORDER BY

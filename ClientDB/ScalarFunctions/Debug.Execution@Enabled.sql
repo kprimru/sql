@@ -10,6 +10,6 @@ CREATE   FUNCTION [Debug].[Execution@Enabled]()
 RETURNS Bit
 AS
 BEGIN
-	RETURN 0;
+	RETURN 1;
 END
 GO

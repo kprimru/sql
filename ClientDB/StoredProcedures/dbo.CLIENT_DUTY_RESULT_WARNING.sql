@@ -40,7 +40,7 @@ BEGIN
 					WHERE z.ID_DUTY = a.ClientDutyID
 
 				)
-			AND ClientDutyDateTime >= '20200101'
+			AND ClientDutyDateTime >= '20230101'
 		ORDER BY ClientDutyDateTime DESC, ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
