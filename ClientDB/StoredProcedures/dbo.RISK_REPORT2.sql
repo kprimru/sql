@@ -43,6 +43,9 @@ BEGIN
 			[Complect_Id]			Int,
 			[Complect]				VarChar(128),
 			[ComplectReg]			VarChar(128),
+			[ComplectHost_Id]		SmallInt,
+			[ComplectDistr]			Int,
+			[ComplectComp]			TinyInt,
 			[DutyCount]				SmallInt,
 			[DutyQuestionCount]		SmallInt,
 			[DutyHotlineCount]		SmallInt,
@@ -87,18 +90,6 @@ BEGIN
 			[UF_CREATE]				SmallDateTime
 		);
 
-		DECLARE @OldEvents Table
-		(
-			[ClientId]			Int,
-			[ManagerName]		VarChar(256),
-			[ServiceName]		VarChar(256),
-			[ClientFullName]	VarChar(512),
-			[Category]			VarChar(10),
-			[MaxDate]			SmallDateTime,
-			[DIFF_DATA]			SmallInt,
-			[EventComment]		VarChar(Max)
-		);
-
 		DECLARE @CurPay Table
 		(
 			[RN]				Int,
@@ -125,29 +116,43 @@ BEGIN
 		FROM Common.Period
 		WHERE TYPE = 1 AND START BETWEEN @DateFrom AND @DateTo;
 
-		INSERT INTO @Clients([Client_Id], [Complect_Id], [Complect], [ComplectReg])
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Weeks';
+
+		INSERT INTO @Clients([Client_Id], [Complect_Id], [Complect], [ComplectReg], [ComplectHost_Id], [ComplectDistr], [ComplectComp])
 		SELECT
 			C.[ClientID],
 			U.[UD_ID],
-			U.[UD_COMPLECT],
-			U.[ComplectReg]
+			U.[DistrStr],
+			U.[Complect],
+			U.[HostId],
+			U.[DistrNumber],
+			U.[CompNumber]
 		FROM [dbo].[ClientView]						AS C WITH(NOEXPAND)
 		INNER JOIN [dbo].[ServiceStatusConnected]() AS S ON C.[ServiceStatusID] = S.[ServiceStatusId]
 		OUTER APPLY
 		(
-			SELECT DISTINCT
-				[UD_ID],
-				[UD_COMPLECT] = dbo.DistrString(S.[SystemShortName], D.[UD_DISTR], D.[UD_COMP]),
-				[ComplectReg] = R.[Complect]
-			FROM [USR].[USRData]				AS D
-			INNER JOIN [USR].[USRFile]			AS F ON F.[UF_ID_COMPLECT] = D.[UD_ID]
-			INNER JOIN [dbo].[SystemTable]		AS S ON S.[SystemID] = F.[UF_ID_SYSTEM]
-			LEFT JOIN [Reg].[RegNodeSearchView] AS R WITH(NOEXPAND) ON R.[DistrNumber] = D.[UD_DISTR] AND R.[CompNumber] = D.[UD_COMP] AND R.[HostID] = D.[UD_ID_HOST]
-			WHERE D.[UD_ID_CLIENT] = C.[ClientID]
-				AND D.[UD_ACTIVE] = 1
-				AND F.[UF_ACTIVE] = 1
-				AND F.[UF_DATE] BETWEEN @DateFrom AND @DateTo
+			SELECT
+				R.[DistrStr],
+				R.[HostID],
+				R.[DistrNumber],
+				R.[CompNumber],
+				R.[Complect],
+				U.[UD_ID]
+			FROM [dbo].[RegNodeComplectClientView] AS R
+			LEFT JOIN [USR].[USRActiveView] AS U ON U.[UD_ID_HOST] = R.[HostID] AND U.[UD_DISTR] = R.[DistrNumber] AND U.[UD_COMP] = R.[CompNumber]
+			WHERE R.[DS_REG] = 0
+				AND R.[ClientID] = C.[ClientID]
 		) AS U
+		OUTER APPLY
+		(
+			SELECT TOP (1) [SksComplect] = R.[Complect]
+			FROM [dbo].[RegNodeTable] AS R
+			WHERE R.[Comment] LIKE 'ОС' + Cast(U.[DistrNumber] AS VarChar(100)) + ' %'
+				AND R.[SystemName] = 'SKS'
+				AND R.[Service] = 0
+		) AS R
 		WHERE	(C.[ServiceID] = (SELECT ID FROM dbo.TableIDFromXML(@Services_IDs)) OR @Services_IDs IS NULL)
 			AND (C.[ManagerID] IN (SELECT ID FROM dbo.TableIDFromXML(@Managers_IDs)) OR @Managers_IDs IS NULL)
 			AND (C.[ClientKind_Id] IN (SELECT ID FROM dbo.TableIDFromXML(@ClientTypes_IDs)) OR @ClientTypes_IDs IS NULL)
@@ -155,7 +160,13 @@ BEGIN
 			AND (@Distr IS NULL OR EXISTS(SELECT * FROM [dbo].[ClientDistrView] AS D WHERE D.[ID_CLIENT] = C.[ClientID] AND Cast(D.[DISTR] AS VarChar(128)) LIKE @Distr))
 			AND (@NetTypes_IDs IS NULL OR EXISTS(SELECT * FROM [dbo].[ClientDistrView] AS D WHERE D.[ID_CLIENT] = C.[ClientID] AND D.[DistrTypeID] IN (SELECT ID FROM dbo.TableIDFromXML(@NetTypes_IDs))))
 			AND (@Systems_IDs IS NULL OR EXISTS(SELECT * FROM [dbo].[ClientDistrView] AS D WHERE D.[ID_CLIENT] = C.[ClientID] AND D.[SystemID] IN (SELECT ID FROM dbo.TableIDFromXML(@Systems_IDs))))
+			-- только комплекты для которых нет СКС (либо оффлайн, либо онлайн без СКС, либо сами СКС)
+			AND R.[SksComplect] IS NULL
 		OPTION(RECOMPILE);
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Clients';
 
 		UPDATE C SET
 			[DutyCount]				= D.[DutyCount],
@@ -178,6 +189,10 @@ BEGIN
 			GROUP BY ClientID
 		) AS D ON D.[ClientID] = C.[Client_Id];
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE DutyData';
+
 		UPDATE C SET
 			[RivalCount] = R.[RivalCount]
 		FROM @Clients AS C
@@ -191,6 +206,10 @@ BEGIN
 				AND CR_DATE BETWEEN @DateFrom AND @DateTo
 			GROUP BY CL_ID
 		) AS R ON R.[ClientID] = C.[Client_Id]
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE RivalData';
 
 		UPDATE C SET
 			[StudyCount] = S.[StudyCount]
@@ -207,6 +226,10 @@ BEGIN
 				AND S.[TEACHED] = 1
 			GROUP BY S.[ID_CLIENT]
 		) AS S ON S.[ClientID] = C.[Client_Id];
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE StudyData';
 
 		UPDATE C SET
 			[SeminarCount] = S.[SeminarCount]
@@ -225,6 +248,9 @@ BEGIN
 			GROUP BY P.[ID_CLIENT]
 		) AS S ON S.[ClientID] = C.[Client_Id];
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE SeminarData';
 
 		UPDATE C SET
 			[UpdatesCount] = U.[UpdatesCount]
@@ -244,6 +270,10 @@ BEGIN
 			) AS U
 		) AS U;
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE UpdatesData';
+
 		UPDATE C SET
 			[LostCount] = U.[LostCount]
 		FROM @Clients AS C
@@ -261,6 +291,10 @@ BEGIN
 						AND U.[UIU_DATE_S] BETWEEN W.[START] AND W.[FINISH]
 				)
 		) AS U;
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE LostData';
 
 		UPDATE C SET
 			[DownloadCount] = D.[DocumentsCount],
@@ -297,6 +331,9 @@ BEGIN
 			GROUP BY B.[ClientID]
 		) AS B ON B.[ClientID] = C.[Client_Id]
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE DownloadData';
 
 		UPDATE C SET
 			[OnlineActivityCount] = U.[ActivityCount]
@@ -308,13 +345,18 @@ BEGIN
 			FROM
 			(
 				SELECT DISTINCT W.[ID]
-				FROM [dbo].[ClientDistrView]		AS D
-				INNER JOIN [dbo].[OnlineActivity]	AS A ON A.[ID_HOST] = D.[HostID] AND A.[DISTR] = D.[DISTR] AND D.[COMP] = A.[COMP]
-				INNER JOIN @Weeks					AS W ON A.[ID_WEEK] = W.[ID]
-				WHERE D.[ID_CLIENT] = C.[Client_Id]
+				FROM [dbo].[OnlineActivity]	AS A
+				INNER JOIN @Weeks			AS W ON A.[ID_WEEK] = W.[ID]
+				WHERE A.[ID_HOST] = C.[ComplectHost_Id]
+					AND A.[DISTR] = C.[ComplectDistr]
+					AND A.[COMP] = C.[ComplectComp]
 					AND A.[ACTIVITY] = 1
 			) AS A
 		) AS U;
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE OnlineActivityData';
 
 		UPDATE C SET
 			[OfflineEnterCount] = U.[OfflineEnterCount]
@@ -326,25 +368,48 @@ BEGIN
 			FROM
 			(
 				SELECT DISTINCT W.[ID]
-				FROM [dbo].[ClientDistrView]		AS D
-				INNER JOIN [dbo].[ClientStatDetail]	AS A ON A.[HostId] = D.[HostID] AND A.[DISTR] = D.[DISTR] AND D.[COMP] = A.[COMP]
-				INNER JOIN @Weeks					AS W ON A.[WeekId] = W.[ID]
-				WHERE D.[ID_CLIENT] = C.[Client_Id]
+				FROM [dbo].[ClientStatDetail]	AS A
+				INNER JOIN @Weeks				AS W ON A.[WeekId] = W.[ID]
+				WHERE A.[HostId] = C.[ComplectHost_Id]
+					AND A.[DISTR] = C.[ComplectDistr]
+					AND A.[COMP] = C.[ComplectComp]
 					AND A.[EnterSum] > 0
 			) AS A
-		) AS U;
+		) AS U
+		WHERE C.[ComplectReg] NOT LIKE 'SKS%';
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE OfflineActivityData';
 
 		INSERT INTO @ResVersions
-		EXEC  [USR].[RES_VERSION_CHECK]
-			@MANAGER	= NULL,
-			@SERVICE	= NULL,
-			@DATE		= NULL,
-			@STATUS		= NULL,
-			@ACTUAL		= 1,
-			@CUSTOM		= NULL,
-			@RLIST		= NULL,
-			@CLIST		= NULL,
-			@KLIST		= NULL;
+		SELECT
+			[ClientID],
+			[ClientFullName],
+			[ManagerName],
+			[ServiceName],
+			[Complect],
+			[ResVersionNumber],
+			[ConsExeVersionName],
+			[KDVersionName],
+			[UF_DATE],
+			[UF_CREATE]
+		FROM [Usr].[ResVersion@Check]
+		(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			1,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @ResVersions';
 
 		UPDATE C SET
 			[OldRes] = R.[ResVersionNumber]
@@ -352,11 +417,19 @@ BEGIN
 		INNER JOIN @ResVersions AS R ON R.[ClientID] = C.[Client_Id] AND R.[Complect] = C.[ComplectReg]
 		WHERE R.[ResVersionNumber] != '';
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE ResVersionData';
+
 		UPDATE C SET
 			[OldConsExe] = R.[ConsExeVersionName]
 		FROM @Clients AS C
 		INNER JOIN @ResVersions AS R ON R.[ClientID] = C.[Client_Id] AND R.[Complect] = C.[ComplectReg]
 		WHERE R.[ConsExeVersionName] != '';
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE ConsExeVersionData';
 
 		SELECT @Compliance_Id_HOST = ComplianceTypeID
 		FROM dbo.ComplianceTypeTable
@@ -379,6 +452,10 @@ BEGIN
 			) AS IB
 		) AS U;
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE ComlianceData';
+
 		UPDATE C SET
 			[DeliveryCount] = S.[DeliveryCount]
 		FROM @Clients AS C
@@ -388,49 +465,77 @@ BEGIN
 				[ClientID]		= S.[ID_CLIENT],
 				[DeliveryCount]	= Count(*)
 			FROM [dbo].[ClientDelivery] AS S
-			WHERE S.[FINISH] IS NOT NULL
+			WHERE S.[FINISH] IS NULL
 			GROUP BY S.[ID_CLIENT]
 		) AS S ON S.[ClientID] = C.[Client_Id];
 
-
-
-		INSERT INTO @OldEvents
-		EXEC [dbo].[CLIENT_LAST_EVENT_SELECT]
-			@MON_COUNT		= 6,
-			@MANAGER		= NULL,
-			@SERVICE		= NULL,
-			@TYPE			= NULL,--@ClientTypes_IDs,
-			@MON_EQUAL		= 0,
-			@SERVICE_EVENT	= 0,
-			@CL_TYPE		= NULL,
-			@CATEGORY		= NULL;
-
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE DeliveryData';
 
 		UPDATE C SET
-			[OldEvent] = E.[MaxDate]
+			[OldEvent] = E.[EventDate]
 		FROM @Clients AS C
-		INNER JOIN @OldEvents AS E ON E.[ClientID] = C.[Client_Id];
+		OUTER APPLY
+		(
+			SELECT TOP (1) E.[EventDate]
+			FROM [dbo].[EventTable] AS E
+			WHERE E.[ClientID] = C.[Client_Id]
+				AND E.[EventDate] <= @DateTo
+				AND E.[EventActive] = 1
+			ORDER BY E.[EventDate] DESC
+		) AS E
+		WHERE E.[EventDate] < @DateFrom OR E.[EventDate] IS NULL;
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE OldEventData';
 
 		SELECT @CurMonth = [Common].[PeriodCurrent](2);
 
-
 		INSERT INTO @CurPay
-		EXEC [dbo].[SERVICE_PAY_REPORT]
-			@MANAGER		= NULL,
-			@SERVICE		= NULL,
-			@MONTH			= @CurMonth,
-			@BEGIN			= NULL,
-			@END			= NULL,
-			@SORT			= 1,
-			@DAY			= 0,
-			@HIDE			= 0;
+		SELECT
+			RN,
+			ClientID,
+			ClientFullName,
+			ServiceName,
+			PayType,
+			ContractPay,
+			PayDate,
+			PAY,
+			PRC,
+			LAST_PAY,
+			PAY_DATES,
+			PAY_DELTA,
+			PAY_ERROR,
+			DistrStr,
+			PAY_DATE_ERROR,
+			LAST_MON,
+			LAST_ACT
+		FROM [dbo].[ServicePay@Report]
+		(
+			NULL,
+			NULL,
+			@CurMonth,
+			NULL,
+			NULL,
+			1,
+			0,
+			0
+		);
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @CurPay';
 
 		UPDATE C SET
 			[LastPay] = P.[PAY]
 		FROM @Clients AS C
 		INNER JOIN @CurPay P ON P.[ClientID] = C.[Client_Id];
 
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE LastPayData';
 /*
 Вопросы:
 1. Олайн-активность - количество недель с активностью
