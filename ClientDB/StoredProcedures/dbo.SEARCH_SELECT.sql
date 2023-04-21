@@ -47,6 +47,7 @@ BEGIN
 			AND SearchDateTime <= @END
 			AND SearchUser = @USER
 			AND SearchHost = @HOST
+			AND SearchCategory = @CATEGORY -- Добавил строчку
 		GROUP BY SearchCategory, SearchText
 		ORDER BY SearchDateTime DESC
 
