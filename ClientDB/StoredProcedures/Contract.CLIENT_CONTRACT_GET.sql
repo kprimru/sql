@@ -53,7 +53,8 @@ BEGIN
 			FROM [DBF].[dbo.ContractTable] AS C
 			INNER JOIN [DBF].[dbo.ContractPayTable] AS CP ON CP.[COP_ID] = C.[CO_ID_PAY]
 			INNER JOIN [dbo].[ContractPayTable] AS CCP ON CCP.[ContractPayDay] = CP.[COP_DAY] AND CCP.[ContractPayMonth] = CP.[COP_MONTH]
-			WHERE C.[CO_NUM] = (SELECT CC.[NUM_S] FROM [Contract].[Contract] AS CC WHERE CC.[ID] = @Id);
+			WHERE C.[CO_NUM] = (SELECT CC.[NUM_S] FROM [Contract].[Contract] AS CC WHERE CC.[ID] = @Id)
+			ORDER BY C.[CO_ID] DESC;
 		END;
 
 		SELECT

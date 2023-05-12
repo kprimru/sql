@@ -521,9 +521,9 @@ BEGIN
 			c.value('(files[1]/HOTLINEUSERS.CFG[1]/@time)[1]', 		'VarChar(20)')
 			) AS HotlineUsersTime,
 
-			c.value('(files[1]/userlist[1]/@userlist)[1]', 		    'VarChar(20)') AS UserList,
-			c.value('(files[1]/userlist[1]/@online)[1]', 		    'VarChar(20)') AS UserListOnline,
-			c.value('(files[1]/userlist[1]/@usersonline)[1]', 		'VarChar(20)') AS UserListUsersOnline,
+			c.value('(userlist[1]/@userlist)[1]', 					'VarChar(20)') AS UserList,
+			c.value('(userlist[1]/@online)[1]', 					'VarChar(20)') AS UserListOnline,
+			c.value('(userlist[1]/@usersonline)[1]', 				'VarChar(20)') AS UserListUsersOnline,
 
 			c.value('(files[1]/START.KEY_WORK[1]/@date)[1]',			'VarChar(20)') AS StartKeyWorkFileDate,
 			c.value('(files[1]/START.KEY_WORK[1]/@time)[1]',			'VarChar(20)') AS StartKeyWorkFileTime,

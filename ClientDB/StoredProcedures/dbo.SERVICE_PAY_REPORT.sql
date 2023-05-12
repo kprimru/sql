@@ -153,7 +153,8 @@ BEGIN
 			LAST_MON,
 			LAST_ACT
 		FROM @Result
-		ORDER BY RN;
+		ORDER BY ServiceName, ClientFullName
+		--ORDER BY RN;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
