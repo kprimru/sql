@@ -324,8 +324,8 @@ BEGIN
         );
 
         SELECT
-            [Folder]        = RTrim(Ltrim(C.CL_PSEDO)),
-            [FileName]      = IsNull(F.[FileName], Cast(NewId() AS VarChar(50))), -- ToDo костыль
+            [Folder]        = Replace(Replace(Replace(RTrim(Ltrim(C.CL_PSEDO)), '\', ''), ':', ''), '/', ''),
+            [FileName]      = IsNull(Replace(Replace(Replace(F.[FileName], '\', ''), ':', ''), '/', ''), Cast((SELECT [NewId] FROM [dbo].[NewIdView]) AS VarChar(100))), -- ToDo костыль
             [Data]          = F.[Data]
         FROM dbo.ActTable           AS A
         INNER JOIN dbo.ClientTable  AS C ON A.ACT_ID_CLIENT = C.CL_ID
