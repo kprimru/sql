@@ -30,6 +30,7 @@ BEGIN
 	(
 		[Id]				Integer			Identity(1,1),
 		[CompanyName]		VarChar(256),
+		[LegalForm]			VarChar(32),
 		[Inn]				VarChar(20),
 		[Address]			VarChar(256),
 		[Surname]			VarChar(256),
@@ -47,6 +48,7 @@ BEGIN
 
 		SELECT
 			[CompanyName],
+			[LegalForm],
 			[Inn],
 			[Address],
 			[Surname],
@@ -66,6 +68,7 @@ BEGIN
 			SELECT N.[Company_Id]
 			FROM [Client].[CompanyInn] AS N
 			WHERE N.[Inn] = I.[Inn]
+				AND I.[Inn] != ''
 			---
 			UNION
 			---
@@ -77,6 +80,12 @@ BEGIN
 					SELECT V.[value]
 					FROM String_Split(I.[Phones], ',') AS V
 					WHERE Replace(Replace(Replace(Replace(V.[value], '(', ''), ')', ''),  '-', ''),  ' ', '') = P.[PHONE_S]
+						OR
+						(
+							Len(Replace(Replace(Replace(Replace(V.[value], '(', ''), ')', ''),  '-', ''),  ' ', '')) > 7
+							AND Len(P.[PHONE_S]) > 7
+							AND Right(Replace(Replace(Replace(Replace(V.[value], '(', ''), ')', ''),  '-', ''),  ' ', ''), 7) = Right(P.[PHONE_S], 7)
+						)
 				)
 				AND P.[STATUS] = 1
 				AND C.[STATUS] = 1
@@ -86,9 +95,14 @@ BEGIN
 			SELECT C.[ID]
 			FROM [Client].[Company] AS C
 			WHERE C.[STATUS] = 1
-				AND C.[NAME] LIKE Replace(Replace(Replace(Replace(I.[CompanyName], 'ООО', ''), 'ИП', ''), '"', ''), ' ', '%')
+				AND (
+						C.[NAME] LIKE '%' + Replace(Replace(Replace(Replace(I.[CompanyName], 'ООО', ''), 'ИП', ''), '"', ''), ' ', '%') + '%'
+						--OR
+						--Replace(Replace(Replace(Replace(I.[CompanyName], 'ООО', ''), 'ИП', ''), '"', ''), ' ', '%') LIKE '%' + C.[NAME] + '%'
+					)
 		) AS C
 		LEFT JOIN [Client].[Company] AS CC ON CC.[ID] = C.[Company_Id]
+		WHERE I.[CompanyName] != ''
 		ORDER BY I.[Id], CC.[NUMBER];
 
 

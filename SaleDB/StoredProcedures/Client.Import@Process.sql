@@ -8,6 +8,7 @@ IF OBJECT_ID('[Client].[Import@Process]', 'P ') IS NULL EXEC('CREATE PROCEDURE [
 GO
 ALTER PROCEDURE [Client].[Import@Process]
 	@CompanyName			VarChar(256),
+	@LegalForm				VarChar(32),
 	@Inn					VarChar(256),
 	@Address				VarChar(256),
 	@Surname				VarChar(256),
@@ -49,8 +50,11 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN;
 
+		SET @Phones = Replace(@Phones, '+7', '8');
+
 		IF @CheckedForCreate = 1 BEGIN
-			-- TODO: подготовить CompanyName в нормальный вид
+			SET @CompanyName = Rtrim(Ltrim(Replace(@CompanyName, @LegalForm, ''))) + CASE WHEN @LegalForm = '' THEN '' ELSE ', ' + @LegalForm END;
+
 			EXEC [Client].[COMPANY_NUMBER_GET]
 				@NUM = @Number OUT;
 
@@ -150,7 +154,7 @@ BEGIN
 						@ID			= NULL;
 			END;
 
-			IF NOT EXISTS (SELECT * FROM [Client].[CompanyInn] AS P WHERE P.[Company_Id] = @Company_Id AND P.[Inn] = @Inn)
+			IF (NOT EXISTS (SELECT * FROM [Client].[CompanyInn] AS P WHERE P.[Company_Id] = @Company_Id AND P.[Inn] = @Inn) AND @Inn != '' AND @Inn IS NOT NULL)
 				EXEC [Client].[COMPANY_INN_INSERT]
 					@COMPANY		= @Company_Id,
 					@INN			= @Inn,

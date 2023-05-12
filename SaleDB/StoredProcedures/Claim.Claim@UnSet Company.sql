@@ -52,8 +52,7 @@ BEGIN
 				WHERE CP.[ID_COMPANY] IN (SELECT [Company_Id] FROM [Claim].[Claims:Companies] WHERE [Claim_Id] = @Id)
 					AND [NAME] = @FIO
 					AND IsNull([NOTE], '') = @Special
-			)
-			AND [PHONE] = @Phone;
+			);
 
 		DELETE
 		FROM [Client].[CompanyPersonal]
