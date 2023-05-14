@@ -80,7 +80,8 @@ BEGIN
 					AND W.[NetType_Id] = ds.[NT_ID]
 				ORDER BY Date DESC
 			) AS Weight,
-			[OnlineQuantity] = [MainQuantity] + IsNull([AdditionalQuantity], 0)
+			[OnlineQuantity] = [MainQuantity] + IsNull([AdditionalQuantity], 0),
+			[Email], DISTR, COMP, HostID
 		FROM
 		(
 			SELECT
@@ -93,7 +94,7 @@ BEGIN
 				dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
 				SST_ID,
 				NT_ID,
-				O.[MainQuantity], O.[AdditionalQuantity]
+				O.[MainQuantity], O.[AdditionalQuantity], DE.[Email]
 			FROM
 			(
 				SELECT
@@ -231,6 +232,15 @@ BEGIN
 			LEFT JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
 			LEFT JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
 			OUTER APPLY [Reg].[Complect@Online Count]([Complect]) AS O
+			OUTER APPLY
+			(
+				SELECT TOP (1) DE.[Email]
+				FROM [dbo].[DistrEmail] AS DE
+				WHERE DE.[HostId] = o_O.[HostID]
+					AND DE.[Distr] = o_O.[DISTR]
+					AND DE.[Comp] = o_O.[COMP]
+				ORDER BY DE.[Date] DESC
+			) AS DE
 		) AS ds
 		OUTER APPLY
 		(

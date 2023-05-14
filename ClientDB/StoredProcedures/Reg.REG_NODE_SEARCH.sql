@@ -253,7 +253,8 @@ BEGIN
             ServiceName, ManagerName,
             Weight = W.WEIGHT,
             D.[DisconnectDate],
-            C.[ComplectDate]
+            C.[ComplectDate],
+			DE.[Email]
         FROM #temp z
         INNER JOIN Reg.RegNodeSearchView a WITH(NOEXPAND) ON z.HST = a.HostID AND z.DISTR = a.DistrNumber AND z.COMP = a.CompNumber
         LEFT JOIN dbo.SubhostComplect ON SC_ID_HOST = HostID AND SC_DISTR = DistrNumber AND SC_COMP = CompNumber
@@ -287,6 +288,15 @@ BEGIN
             WHERE C.Complect = A.Complect
             ORDER BY Convert(SmallDateTime, C.[RegisterDate], 104) DESC
         ) AS C
+		OUTER APPLY
+		(
+			SELECT TOP (1) DE.[Email]
+			FROM [dbo].[DistrEmail] AS DE
+			WHERE DE.[HostId] = a.[HostID]
+				AND DE.[Distr] = a.[DistrNumber]
+				AND DE.[Comp] = a.[CompNumber]
+			ORDER BY DE.[Date] DESC
+		) AS DE
         ORDER BY a.SystemOrder, DistrNumber, CompNumber;
 
         SELECT @RC = @@ROWCOUNT
