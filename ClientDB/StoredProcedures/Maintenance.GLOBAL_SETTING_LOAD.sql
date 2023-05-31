@@ -72,7 +72,9 @@ BEGIN
             (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PATH') AS ONLINE_PASSWORD_PATH,
             (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PASS') AS ONLINE_PASSWORD_PASS,
 
-			Maintenance.GlobalRepositoryPath() AS REPOSITORY_PATH
+			Maintenance.GlobalRepositoryPath() AS REPOSITORY_PATH,
+
+			Convert(smalldatetime, (SELECT G.[GS_VALUE] FROM [Maintenance].[GlobalSettings] AS G WHERE G.[GS_NAME] = 'CLIENT_DUTY_DATE'), 104) AS CLIENT_DUTY_DATE
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
