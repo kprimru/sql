@@ -154,6 +154,8 @@ BEGIN
 		IF OBJECT_ID('tempdb..#ptl') IS NOT NULL
 			DROP TABLE #ptl
 
+		EXEC [dbo].[DISTR_EMAIL_LOAD_FROM_PROTOCOL];
+
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
