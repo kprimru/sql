@@ -25,7 +25,9 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.DATE, b.NAME AS SUBJECT, ID_CLIENT, ClientFullName, SURNAME, c.NAME, PATRON, POSITION,
+			a.DATE,
+			[Subject] = [Seminar].[SubjectNameView](b.NAME, T.Name),
+			ID_CLIENT, ClientFullName, SURNAME, c.NAME, PATRON, POSITION,
 			CONVERT(BIT,
 				CASE c.STUDY
 					WHEN 1 THEN 0
@@ -37,12 +39,12 @@ BEGIN
 				END
 			) AS CHECKED,
 			c.ID
-		FROM
-			Seminar.Schedule a
-			INNER JOIN Seminar.Subject b ON a.ID_SUBJECT = b.ID
-			INNER JOIN Seminar.Personal c ON a.ID = c.ID_SCHEDULE
-			INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
-			INNER JOIN Seminar.Status d ON d.ID = c.ID_STATUS
+		FROM Seminar.Schedule a
+		INNER JOIN Seminar.Subject b ON a.ID_SUBJECT = b.ID
+		INNER JOIN Seminar.Personal c ON a.ID = c.ID_SCHEDULE
+		INNER JOIN dbo.ClientTable ON ClientID = ID_CLIENT
+		INNER JOIN Seminar.Status d ON d.ID = c.ID_STATUS
+		LEFT JOIN Seminar.[Schedules->Types] AS T ON T.[Id] = A.[Type_Id]
 		WHERE a.ID = @ID AND c.STATUS = 1
 		ORDER BY CHECKED DESC, ClientFullName, SURNAME, NAME, PATRON
 

@@ -30,24 +30,24 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.ID, DATE, LIMIT,
-			ID_SUBJECT, b.NAME, b.NOTE, b.READER,
+			a.[ID], [DATE], [LIMIT],
+			[ID_SUBJECT], [Name] = [Seminar].[SubjectNameView](b.[NAME], T.[Name]), b.[NOTE], b.[READER],
 			(
 				SELECT COUNT(*)
-				FROM Seminar.PersonalView z WITH(NOEXPAND)
-				WHERE z.ID_SCHEDULE = a.ID
-					AND z.INDX = 1
+				FROM [Seminar].[PersonalView] z WITH(NOEXPAND)
+				WHERE z.[ID_SCHEDULE] = a.[ID]
+					AND z.[INDX] = 1
 			) AS PER_COUNT,
-			CONVERT(VARCHAR(20), DATE, 104) + ' ' + b.NAME AS TSC_LOOKUP,
+			CONVERT(VARCHAR(20), [DATE], 104) + ' ' + b.[NAME] AS TSC_LOOKUP,
 			[TypeName] = T.[Name],
 			[StatusColor] = S.[Color]
-		FROM Seminar.Schedule                       AS a
-		INNER JOIN Seminar.Subject                  AS b    ON a.ID_SUBJECT = b.ID
+		FROM [Seminar].[Schedule]                   AS a
+		INNER JOIN [Seminar].[Subject]              AS b    ON a.[ID_SUBJECT] = b.[ID]
 		LEFT JOIN [Seminar].[Schedules->Statuses]   AS S    ON S.[Id] = a.[Status_Id]
 		LEFT JOIN [Seminar].[Schedules->Types]      AS T    ON T.[Id] = a.[Type_Id]
-		WHERE (a.DATE >= @BEGIN OR @BEGIN IS NULL)
-			AND (a.DATE <= @END OR @END IS NULL)
-			AND (a.ID_SUBJECT = @SUBJECT OR @SUBJECT IS NULL)
+		WHERE (a.[DATE] >= @BEGIN OR @BEGIN IS NULL)
+			AND (a.[DATE] <= @END OR @END IS NULL)
+			AND (a.[ID_SUBJECT] = @SUBJECT OR @SUBJECT IS NULL)
 			AND
 				(
 					@CLIENT IS NULL
@@ -55,9 +55,9 @@ BEGIN
 					EXISTS
 						(
 							SELECT *
-							FROM Seminar.PersonalView z WITH(NOEXPAND)
-							WHERE z.ID_SCHEDULE = a.ID
-								AND z.ClientFullName LIKE @CLIENT
+							FROM [Seminar].[PersonalView] z WITH(NOEXPAND)
+							WHERE z.[ID_SCHEDULE] = a.ID
+								AND z.[ClientFullName] LIKE @CLIENT
 						)
 				)
 			AND
@@ -67,9 +67,9 @@ BEGIN
 					EXISTS
 						(
 							SELECT *
-							FROM Seminar.PersonalView z WITH(NOEXPAND)
-							WHERE z.ID_SCHEDULE = a.ID
-								AND z.FIO LIKE @PERSONAL
+							FROM [Seminar].[PersonalView] z WITH(NOEXPAND)
+							WHERE z.[ID_SCHEDULE] = a.[ID]
+								AND z.[FIO] LIKE @PERSONAL
 						)
 				)
 			AND
@@ -79,12 +79,12 @@ BEGIN
 					EXISTS
 						(
 							SELECT *
-							FROM Seminar.PersonalView z WITH(NOEXPAND)
-							WHERE z.ID_SCHEDULE = a.ID
-								AND z.ServiceID = @SERVICE
+							FROM [Seminar].[PersonalView] z WITH(NOEXPAND)
+							WHERE z.[ID_SCHEDULE] = a.[ID]
+								AND z.[ServiceID] = @SERVICE
 						)
 				)
-		ORDER BY DATE DESC, TIME DESC
+		ORDER BY [DATE] DESC, [TIME] DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

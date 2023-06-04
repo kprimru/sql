@@ -24,17 +24,18 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT SC.DATE, S.NAME, CNT = COUNT(*)
-		FROM Seminar.Schedule		AS SC
-		INNER JOIN Seminar.Subject	AS S	ON S.ID = SC.ID_SUBJECT
-		INNER JOIN Seminar.Personal	AS P	ON P.ID_SCHEDULE = SC.ID
-		INNER JOIN Seminar.Status	AS SS	ON SS.ID = P.ID_STATUS
-		WHERE	P.STATUS = 1
-			AND	SS.INDX = 1
-			AND SC.DATE <= dbo.DateOf(GetDate())
-			AND P.ID_CLIENT = @CLIENT
-		GROUP BY SC.DATE, S.NAME
-		ORDER BY DATE DESC
+		SELECT SC.DATE, [Name] = [Seminar].[SubjectNameView](S.[NAME], ST.[Name]), CNT = COUNT(*)
+		FROM [Seminar].[Schedule]				AS SC
+		INNER JOIN [Seminar].[Subject]			AS S	ON S.[ID] = SC.[ID_SUBJECT]
+		INNER JOIN [Seminar].[Personal]			AS P	ON P.[ID_SCHEDULE] = SC.[ID]
+		INNER JOIN [Seminar].[Status]			AS SS	ON SS.[ID] = P.[ID_STATUS]
+		LEFT JOIN [Seminar].[Schedules->Types]	AS ST	ON ST.[Id] = SC.[Type_Id]
+		WHERE	P.[STATUS] = 1
+			AND	SS.[INDX] = 1
+			AND SC.[DATE] <= [dbo].[DateOf](GetDate())
+			AND P.[ID_CLIENT] = @CLIENT
+		GROUP BY SC.[DATE], S.[NAME], ST.[Name]
+		ORDER BY [DATE] DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

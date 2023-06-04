@@ -28,9 +28,10 @@ BEGIN
 
         SET @Text = '';
         SELECT @Text = @Text +
-                'Семинар "' + J.NAME + '" ' + Convert(VarChar(20), S.Date, 104) + ' не имеет ссылку, необходимо настроить до того, как необходимо будет отправлять письма клиентам' + Char(10) + Char(13)
+                IsNull(T.[Name] + ' ', '') + '"' + J.NAME + '" ' + Convert(VarChar(20), S.Date, 104) + ' не имеет ссылку, необходимо настроить до того, как необходимо будет отправлять письма клиентам' + Char(10) + Char(13)
         FROM [Seminar].[Schedule] AS S
         INNER JOIN [Seminar].[Subject] AS J ON S.ID_SUBJECT = J.ID
+		LEFT JOIN [Seminar].[Schedules->Types] AS T ON T.[Id] = S.[Type_Id]
         WHERE IsNull(Link, '') = ''
             AND DATE > DateAdd(Day, 7, GetDate())
             AND EXISTS
@@ -44,7 +45,7 @@ BEGIN
 		IF @Text != '' BEGIN
 			EXEC [Common].[MAIL_SEND]
                 @Recipients     = 'denisov@bazis;bateneva@bazis',
-                @Subject        = 'Запись на семинар. Предупреждения',
+                @Subject        = 'Запись на семинар/вебинар. Предупреждения',
                 @Body_Format    = 'TEXT',
                 @Body           = @Text;
 		END;
