@@ -753,9 +753,9 @@ BEGIN
 
 		/*DELETE FROM #ib WHERE DirectoryName IN ('CMT', 'RLAW104', 'RLAW947', 'RLAW968')*/
 
-		DELETE FROM @Ib WHERE DirectoryName IN ('SVR017', 'SVBA072');
+		DELETE FROM @Ib WHERE DirectoryName IN ('SVR017', 'SVBA072', 'SVR902');
 
-		DELETE FROM @Package WHERE PackageName IN ('SVR017_112', 'SVBA072_102');
+		DELETE FROM @Package WHERE PackageName IN ('SVR017_112', 'SVBA072_102', 'SVR902_112');
 
 		INSERT INTO @Update(DirectoryName, UpdateName, UpdateDate, UpdateTime, UpdateSysDate, UpdateDocs, UpdateKind)
 		SELECT DISTINCT

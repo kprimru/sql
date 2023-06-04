@@ -47,6 +47,7 @@ BEGIN
 		LEFT JOIN [dbo].[ClientView] AS C WITH(NOEXPAND) ON C.[ClientID] = D.[ID_CLIENT]
 		WHERE R.[NT_ID] IN (SELECT [NT_ID] FROM [Din].[NetTypeOffline]())
 			AND R.[DS_REG] = 0
+			AND U.[UD_ACTIVE] = 1
 			--/*
 			AND
 			(
