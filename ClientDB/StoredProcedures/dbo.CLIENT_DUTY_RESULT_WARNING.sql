@@ -40,7 +40,7 @@ BEGIN
 					WHERE z.ID_DUTY = a.ClientDutyID
 
 				)
-			AND ClientDutyDateTime >= '20230101'
+			AND ClientDutyDateTime >= (SELECT Convert(smalldatetime, (SELECT G.[GS_VALUE] FROM [Maintenance].[GlobalSettings] AS G WHERE G.[GS_NAME] = 'CLIENT_DUTY_DATE'), 104))
 		ORDER BY ClientDutyDateTime DESC, ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
