@@ -31,7 +31,7 @@ BEGIN
 
 		--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 		--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2022-sql\ptl\consreg_client.ptl'
+		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2023-sql\ptl\consreg_client.ptl'
 
 		EXEC xp_cmdshell @cmd, no_output
 
@@ -53,8 +53,8 @@ BEGIN
 
 		EXEC('
 		BULK INSERT #ptl
-		FROM ''\\PC2022-SQL\ptl\consreg_client.ptl''
-		WITH (FIRSTROW = 2, FORMATFILE = ''\\PC2022-SQL\ptl\ProtoFormat.fmt'');');
+		FROM ''\\PC2023-SQL\ptl\consreg_client.ptl''
+		WITH (FIRSTROW = 2, FORMATFILE = ''\\PC2023-SQL\ptl\ProtoFormat.fmt'');');
 
 		UPDATE #ptl
 		SET PTL_OPER = ISNULL(PTL_OPER, ''),
