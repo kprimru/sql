@@ -7,7 +7,8 @@ GO
 IF OBJECT_ID('[IP].[CLIENT_COMPLECT_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [IP].[CLIENT_COMPLECT_SELECT]  AS SELECT 1')
 GO
 ALTER PROCEDURE [IP].[CLIENT_COMPLECT_SELECT]
-	@CLIENT	INT
+	@CLIENT	INT,
+	@ACTIVE BIT = 0
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -24,6 +25,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+		--Инвертируем значение, так как активный статус обозначется как 0
+		SET @ACTIVE = CASE WHEN @ACTIVE = 1 THEN 0 ELSE 1 END
 
 		SELECT COMP_NAME, CSD_SYS, CSD_DISTR, CSD_COMP, SystemOrder, DS_REG, CSD_DATE
 		FROM
@@ -41,7 +44,9 @@ BEGIN
 				WHERE a.ID_CLIENT = @CLIENT
 				GROUP BY b.SystemShortName, c.CSD_SYS, c.CSD_DISTR, c.CSD_COMP, b.SystemOrder, a.DS_REG, a.DISTR, a.COMP
 			) AS o_O
-		ORDER BY CSD_DATE DESC, DS_REG, SystemOrder, CSD_DISTR, CSD_COMP
+		WHERE	(@ACTIVE = 1 AND DS_REG = 0)
+				OR (@ACTIVE = 0 AND DS_REG IN (0, 1, 2))
+		ORDER BY DS_REG, CSD_DATE DESC, SystemOrder, CSD_DISTR, CSD_COMP
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
