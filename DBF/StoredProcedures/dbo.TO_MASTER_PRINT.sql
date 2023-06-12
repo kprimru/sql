@@ -83,7 +83,7 @@ BEGIN
 		) AS BP
 		OUTER APPLY
 		(
-			SELECT 'Оплачено ' + DATENAME(MONTH, MIN_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MIN_DATE)) + ' - ' + DATENAME(MONTH, MAX_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MAX_DATE)) AS PAY_INFO
+			SELECT 'Оплачено ' + [dbo].[MonthDateName](MIN_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MIN_DATE)) + ' - ' + [dbo].[MonthDateName](MAX_DATE) + ' ' + CONVERT(VarChar(20), DatePart(Year, MAX_DATE)) AS PAY_INFO
 		) AS P
 		WHERE TO_ID = @TO_ID
 

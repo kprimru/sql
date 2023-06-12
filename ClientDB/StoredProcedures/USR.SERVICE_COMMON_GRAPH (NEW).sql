@@ -189,7 +189,7 @@ BEGIN
 							dbo.ResVersionTable ON ResVersionID = ResVersion
 						WHERE z.ClientID = a.ClientID
 						FOR XML PATH(''))
-					), 1, 2, '')) 
+					), 1, 2, ''))
 				),
 				(
 					REVERSE(STUFF(REVERSE((
@@ -199,7 +199,7 @@ BEGIN
 							dbo.ConsExeVersionTable ON ConsExeVersionID = ConsExeVersion
 						WHERE z.ClientID = a.ClientID
 						FOR XML PATH(''))
-					), 1, 2, '')) 
+					), 1, 2, ''))
 				),
 				CASE
 					WHEN NOT EXISTS
@@ -687,7 +687,6 @@ BEGIN
 					ID, a.ClientID, CLientFullName, SystemList, ClientTypeName, ServiceType, ServiceDay, DayOrder, DayTime,
 					ClientEvent, LastSTT,
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' +
-						/*DATENAME(WEEKDAY, UpdateDateTime) + ' ' + */
 						WD + ' ' +
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 108), 5) AS UpdateDayTime,
 					DATEPART(WEEKDAY, UpdateDateTime) AS UpdateDay,
@@ -726,7 +725,7 @@ BEGIN
 								FROM #compl z
 								WHERE z.ClientID = a.ClientID
 									AND Comp IS NOT NULL
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + Comp + CHAR(10), '')
@@ -786,7 +785,7 @@ BEGIN
 								SELECT *
 								FROM #skip z
 								WHERE z.ClientID = a.ClientID
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + CHAR(10), '')
@@ -817,7 +816,7 @@ BEGIN
 								FROM #lost z
 								WHERE z.ClientID = a.ClientID
 									AND LostList IS NOT NULL
-							) THEN '' + 
+							) THEN '' +
 								(
 									SELECT
 										ISNULL('с ' + CONVERT(VARCHAR(20), WBEGIN, 104) + ' по ' + CONVERT(VARCHAR(20), WEND, 104) + ': ' + LostList + CHAR(10), '')

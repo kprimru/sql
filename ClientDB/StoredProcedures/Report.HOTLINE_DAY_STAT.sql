@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + DATENAME(WEEKDAY, DATE_S) + ')' AS [День],
+			CONVERT(NVARCHAR(32), DATE_S, 104) + ' (' + [dbo].[WeekDateName](DATE_S) + ')' AS [День],
 			(
 				SELECT COUNT(*)
 				FROM

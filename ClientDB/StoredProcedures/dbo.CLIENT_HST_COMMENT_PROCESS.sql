@@ -48,7 +48,7 @@ BEGIN
 								AND z.SearchMonthDate >= DATEADD(MONTH, -2, @DATE)
 						) THEN 'Последний поиск за ' +
 							(
-								SELECT DATENAME(MONTH, MAX(SearchMonth))
+								SELECT [dbo].[MonthDateName](MAX(SearchMonth))
 								FROM dbo.ClientSearchTable z
 								WHERE z.ClientID = a.ClientID
 							)

@@ -134,7 +134,7 @@ BEGIN
 						AS ORG_DIR_SHORT, ORG_DIR_POS, ORG_FOUNDATION, ORG_PROVIDE,
 					BA_NAME,
 					(
-						SELECT TOP 1 DATENAME(MM, PR_DATE)
+						SELECT TOP 1 [dbo].[MonthDateName](PR_DATE)
 						FROM dbo.PeriodTable
 						WHERE PR_ID IN
 							(
@@ -274,7 +274,7 @@ BEGIN
 					), A.ACT_ID,
 					AD_ID_PERIOD, I.PR_DATE,
 					(
-						SELECT TOP 1 DATENAME(MM, PR_DATE)
+						SELECT TOP 1 [dbo].[MonthDateName](PR_DATE)
 						FROM dbo.PeriodTable
 						WHERE PR_ID IN
 							(

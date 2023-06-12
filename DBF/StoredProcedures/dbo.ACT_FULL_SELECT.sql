@@ -71,7 +71,7 @@ BEGIN
 			ORG_DIR_OTCH,
 			(ORG_DIR_FAM + ' ' + LEFT(ORG_DIR_NAME, 1) + '.' + LEFT(ORG_DIR_OTCH, 1) + '.') AS ORG_DIR_SHORT,
 			BA_NAME,
-			(SELECT DATENAME(MM, PR_DATE) FROM dbo.PeriodTable WHERE PR_ID=@periodid) AS PR_MONTH,
+			(SELECT [dbo].[MonthDateName](PR_DATE) FROM dbo.PeriodTable WHERE PR_ID=@periodid) AS PR_MONTH,
 			--(SELECT PR_END_DATE FROM dbo.PeriodTable WHERE PR_ID=@periodid) AS PR_END_DATE
 			ACT_DATE
 			--(SELECT PR_DATE FROM dbo.PeriodTable WHERE PR_ID=@periodid) AS PR_MONTH
@@ -99,7 +99,7 @@ BEGIN
 			AFM_ID AS AFD_ID_AFM,
 			PR_ID,
 			C.PR_DATE,
-			DATENAME(MM, C.PR_DATE) AS PR_MONTH,
+			[dbo].[MonthDateName](C.PR_DATE) AS PR_MONTH,
 			C.PR_END_DATE,
 			D.DIS_ID,
 			DIS_NUM,

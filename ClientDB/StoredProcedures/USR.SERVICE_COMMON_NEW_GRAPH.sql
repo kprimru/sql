@@ -651,7 +651,6 @@ BEGIN
 					END AS LastSTT,
 					LastUpdate,
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 104) ,5) + ' ' +
-						/*DATENAME(WEEKDAY, UpdateDateTime) + ' ' + */
 						WD + ' ' +
 						LEFT(CONVERT(VARCHAR(20), UpdateDateTime, 108), 5) AS UpdateDayTime,
 					DATEPART(WEEKDAY, UpdateDateTime) AS UpdateDay,

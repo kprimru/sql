@@ -217,7 +217,7 @@ BEGIN
 				WHERE dbo.DateOf(a.UpdateDateStart) = dbo.DateOf(b.UpdateDateStart)
 					AND DATEPART(HOUR, a.UpdateDateStart) = DATEPART(HOUR, b.UpdateDateStart)
 			) AS HR_COUNT,
-			CONVERT(NVARCHAR(64), UpdateDateStart, 104) + '   ' + DATENAME(WEEKDAY, UpdateDateStart) AS DATE_STR,
+			CONVERT(NVARCHAR(64), UpdateDateStart, 104) + '   ' + [dbo].[WeekDateName](UpdateDateStart) AS DATE_STR,
 			CONVERT(NVARCHAR(64), DATEPART(HOUR, UpdateDateStart)) + '-' + CONVERT(NVARCHAR(64), DATEPART(HOUR, UpdateDateStart) + 1) AS HR_STR
 		FROM #res a
 		ORDER BY ID

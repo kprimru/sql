@@ -35,7 +35,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT	'Отчет РИЦ ' + (SELECT dbo.GET_SETTING('REPORT_RIC_NUM')) +
-				' по клиентам КонсультантПлюс за ' + CONVERT(VARCHAR, DATENAME(mm, PR_DATE)) + ' ' + CONVERT(VARCHAR, DATENAME(yyyy, PR_DATE)) +
+				' по клиентам КонсультантПлюс за ' + [dbo].[MonthDateName](PR_DATE) + ' ' + CONVERT(VARCHAR(100), DatePart(Year, PR_DATE)) +
 			   ' года, ответственный ' + (SELECT dbo.GET_SETTING('REPORT_NAME')) AS RPT_HEADER
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @prid

@@ -37,7 +37,7 @@ BEGIN
 			END AS LastStudy,
 			CASE
 				WHEN LastDuty IS NULL THEN 'Не обращался'
-				ELSE DATENAME(MONTH, LastDuty) + ' ' + CONVERT(VARCHAR(20), DATEPART(YEAR, LastDuty))
+				ELSE [dbo].[MonthDateName](LastDuty) + ' ' + CONVERT(VARCHAR(20), DATEPART(YEAR, LastDuty))
 			END AS LastDuty,
 			DutyCount
 		FROM

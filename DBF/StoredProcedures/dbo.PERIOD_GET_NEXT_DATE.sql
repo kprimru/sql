@@ -9,7 +9,7 @@ GO
 
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 
@@ -31,7 +31,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT CONVERT(VARCHAR, DATEPART(d, PR_DATE)) + ' ' + DATENAME(mm, PR_DATE) + ' ' + DATENAME(yyyy, PR_DATE) + ' года' AS PR_STR
+		SELECT CONVERT(VARCHAR, DATEPART(d, PR_DATE)) + ' ' + [dbo].[MonthDateName](PR_DATE) + ' ' + Cast(DatePart(Year, PR_DATE) AS VarChar(100)) + ' года' AS PR_STR
 		FROM dbo.PeriodTable
 		WHERE PR_ID = @periodid
 

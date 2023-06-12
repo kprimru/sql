@@ -10,7 +10,7 @@ GO
 
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 
@@ -48,7 +48,7 @@ BEGIN
 			)
 		BEGIN
 			SET @res = 1
-			SELECT @txt = @txt + 'Отсутствует прейскурант за ' + DATENAME(MONTH, PR_DATE) + ' ' + DATENAME(YEAR, PR_DATE) + ' года' + CHAR(13)
+			SELECT @txt = @txt + 'Отсутствует прейскурант за ' + [dbo].[MonthDateName](PR_DATE) + ' ' + Cast(DatePart(YEAR, PR_DATE) AS VarChar(100)) + ' года' + CHAR(13)
 			FROM dbo.PeriodTable
 			WHERE PR_ID = @periodid
 		END

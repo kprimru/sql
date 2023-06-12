@@ -15,6 +15,6 @@ AS
 BEGIN
 	DECLARE @Date Date = Convert(Date, @Value, 112);
 
-	RETURN Cast(DatePart(Day, @Date) AS VarChar(100)) + ' ' + DateName(Month, @Date) + ', ' + Cast(DatePart(Year, @Date) AS VarChar(100));
+	RETURN Cast(DatePart(Day, @Date) AS VarChar(100)) + ' ' + [dbo].[MonthNameRus](@Date) + ', ' + Cast(DatePart(Year, @Date) AS VarChar(100));
 END
 GO

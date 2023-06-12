@@ -51,11 +51,11 @@ BEGIN
 
 		IF (SELECT Count(*) FROM @TStatuses) = 1 BEGIN
 			IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_NEW)
-				SET @FileName = 'Список NEW РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = 'Список NEW РИЦ 020 за ' + [Common].[MonthDateName](GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TAG)
-				SET @FileName = 'Список TAG РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = 'Список TAG РИЦ 020 за ' + [Common].[MonthDateName](GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE IF EXISTS(SELECT * FROM @TStatuses WHERE [Id] = @Status_TERMINATION)
-				SET @FileName = 'Список OUT РИЦ 020 за ' + DateName(MONTH, GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
+				SET @FileName = 'Список OUT РИЦ 020 за ' + [Common].[MonthDateName](GetDate()) + ' ' + Cast(DatePart(Year, GetDate()) AS VarChar(10))
 			ELSE
 				SET @FileName = ''
 		END

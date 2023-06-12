@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[ACT_PRINT?UPD_OLD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [
 GO
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_PRINT?UPD_OLD]
@@ -207,7 +207,7 @@ BEGIN
                                     SELECT
                                         [СодОпер]   = 'Услуги оказаны в полном объеме',
                                         --ToDo оказание информационных услуг?
-                                        [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
+                                        [ВидОпер]   = 'Оказание информационных услуг за ' + [dbo].[MonthDateName](ACT_DATE) + ' ' + Cast(DatePart(Year, ACT_DATE) AS VarChar(100)) + ' г.',
                                         [ДатаПер]   = Convert(VarChar(20), ACT_DATE, 104),
                                         [ДатаНач]   = Convert(VarChar(20), PR_DATE, 104),
                                         [ДатаОкон]  = Convert(VarChar(20), PR_END_DATE, 104),

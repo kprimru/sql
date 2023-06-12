@@ -36,7 +36,7 @@ BEGIN
 			PSEDO,
 			[SEMINAR] = [Seminar].[SubjectNameView](c.Name, T.name),
 			--CONVERT(NVARCHAR(64), b.DATE, 104) AS DATE,
-			CONVERT(NVARCHAR(8), DATEPART(DAY, b.DATE)) + ' ' + DATENAME(MONTH, b.DATE) + ' ' + CONVERT(VARCHAR(8), DATEPART(YEAR, b.DATE)) + ' (' + DATENAME(WEEKDAY, b.DATE) + ')' AS DATE,
+			CONVERT(NVARCHAR(8), DATEPART(DAY, b.DATE)) + ' ' + [dbo].[MonthDateName](b.DATE) + ' ' + CONVERT(VARCHAR(8), DATEPART(YEAR, b.DATE)) + ' (' + [dbo].[WeekDateName](b.DATE) + ')' AS DATE,
 			LEFT(CONVERT(NVARCHAR(64), b.TIME, 108), 5) AS START,
 			INVITE_NUM,
 			READER AS LECTOR,

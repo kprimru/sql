@@ -43,7 +43,7 @@ BEGIN
 
 		SELECT
 			a.ID, DATE,
-			CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
+			CONVERT(VARCHAR(20), DATE, 104) + ' (' + [dbo].[WeekDateName](DATE) + ')' AS DATE_STR,
 			LEFT(CONVERT(VARCHAR(20), TIME, 108), 5) AS TIME_STR, TIME,
 
 			ISNULL('до ' + CONVERT(VARCHAR(20), EXPIRE, 104) + CHAR(10), '') +
@@ -79,7 +79,7 @@ BEGIN
 								)
 						)
 
-					OR 
+					OR
 
 					@CLIENT = 1
 					AND ID_CLIENT IN
@@ -95,7 +95,7 @@ BEGIN
 
 				SELECT
 					a.ID, dbo.DateOf(a.DATE),
-					CONVERT(VARCHAR(20), DATE, 104) + ' (' + DATENAME(WEEKDAY, DATE) + ')' AS DATE_STR,
+					CONVERT(VARCHAR(20), DATE, 104) + ' (' + [dbo].[WeekDateName](DATE) + ')' AS DATE_STR,
 					LEFT(CONVERT(VARCHAR(20), DATE, 108), 5) AS TIME_STR, DATE,
 
 					'Контакт' + CHAR(10) + ISNULL(ClientFullName + CHAR(10), '') + a.NOTE  + CHAR(10) + a.UPD_USER AS NOTE,

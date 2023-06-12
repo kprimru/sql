@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[ACT_PRINT_BY_INVOICE]', 'P ') IS NULL EXEC('CREATE PROCEDUR
 GO
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[ACT_PRINT_BY_INVOICE]
@@ -93,7 +93,7 @@ BEGIN
 						AS ORG_DIR_SHORT,
 					BA_NAME,
 					(
-						SELECT TOP 1 DATENAME(MM, PR_DATE)
+						SELECT TOP 1 [dbo].[MonthDateName](PR_DATE)
 						FROM dbo.PeriodTable
 						WHERE PR_ID = @actperiod
 						ORDER BY PR_DATE DESC
@@ -161,7 +161,7 @@ BEGIN
 			)
 
 		INSERT INTO #detail (
-				AFD_ID_AFM, 
+				AFD_ID_AFM,
 				DIS_ID, DIS_NUM, SYS_NAME, SYS_ORDER,
 				AD_PRICE, AD_TAX_PRICE, AD_TOTAL_PRICE,
 				TX_PERCENT, TX_NAME,

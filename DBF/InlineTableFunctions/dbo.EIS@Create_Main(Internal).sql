@@ -93,7 +93,7 @@ RETURN
                                 (
                                     SELECT TOP (1)
                                         [СодОпер]   = 'Услуги оказаны в полном объеме',
-                                        [ВидОпер]   = 'Оказание информационных услуг за ' + DateName(MONTH, MD.[Date]) + ' ' + Cast(DatePart(Year, MD.[Date]) AS VarChar(100)) + ' г.',
+                                        [ВидОпер]   = 'Оказание информационных услуг за ' + [dbo].[MonthDateName](MD.[Date]) + ' ' + Cast(DatePart(Year, MD.[Date]) AS VarChar(100)) + ' г.',
                                         [ДатаПер]   = Convert(VarChar(20), MD.[Date], 104),
                                         [ДатаНач]   = Convert(VarChar(20), CASE WHEN ED.[StartDate] > PR_DATE THEN ED.[StartDate] ELSE PR_DATE END, 104),
                                         [ДатаОкон]  = Convert(VarChar(20), CASE WHEN ED.[FinishDate] <= MD.[Date] THEN ED.[FinishDate] ELSE MD.[Date] END, 104),
@@ -250,4 +250,5 @@ RETURN
 
             FOR XML RAW('Файл'), TYPE
         )
-)GO
+)
+GO
