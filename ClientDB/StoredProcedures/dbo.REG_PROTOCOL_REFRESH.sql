@@ -31,7 +31,7 @@ BEGIN
 
 		--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 		--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2023-SQL\ALPHA\ptl\consreg_client.ptl'
+		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2023-sql\ptl\consreg_client.ptl'
 
 		EXEC xp_cmdshell @cmd, no_output
 

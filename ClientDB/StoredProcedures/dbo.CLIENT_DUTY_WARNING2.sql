@@ -31,7 +31,7 @@ BEGIN
 		FROM dbo.ClientDutyTable a
 		-- ToDo. Почему оптимизатор настойчиво не хочет LOOP сам делать? Есть подозрение, что проблема в STATUS = 1
 		INNER LOOP JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-		WHERE ClientDutyComplete = 0 AND a.STATUS = 1
+		WHERE ClientDutyComplete = 0 AND a.STATUS = 1 AND ClientDutyDateTime > '20221231'
 		ORDER BY ClientDutyDateTime DESC, ClientFullName
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

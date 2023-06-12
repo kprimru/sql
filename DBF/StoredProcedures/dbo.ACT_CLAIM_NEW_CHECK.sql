@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 
 		SELECT COUNT(*) AS CNT
-		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
+		FROM ClientDB.dbo.ActCalc
 		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
 			AND
 				(
@@ -37,7 +37,7 @@ BEGIN
 			AND (@DT IS NULL OR CONVERT(DATETIME, CONVERT(NVARCHAR(128), DATE, 120), 120) > @DT)
 
 		SELECT @DT = MAX(DATE)
-		FROM [PC275-SQL\ALPHA].ClientDB.dbo.ActCalc
+		FROM ClientDB.dbo.ActCalc
 		WHERE ISNULL(CALC_STATUS, '') <> 'Расчитан полностью'
 			AND
 				(

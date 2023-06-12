@@ -10,5 +10,6 @@ CREATE TABLE [Sync].[DistrFinancingLog]
         [DIS_NUM]        Int              NOT NULL,
         [DIS_COMP_NUM]   TinyInt          NOT NULL,
         [UPD_DATE]       DateTime         NOT NULL,
+        [Action]         char(1)              NULL,
 );
 GO

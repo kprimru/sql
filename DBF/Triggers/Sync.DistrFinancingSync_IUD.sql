@@ -19,6 +19,10 @@ BEGIN
 	SET NOCOUNT ON;
 
     INSERT INTO Sync.DistrFinancingLog
-	SELECT * FROM inserted
+	SELECT *, 'I'
+	FROM inserted
+	UNION ALL
+	SELECT *, 'D'
+	FROM deleted
 END
 GO
