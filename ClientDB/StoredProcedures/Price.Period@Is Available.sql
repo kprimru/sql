@@ -4,11 +4,11 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF OBJECT_ID('[Price].[SYSTEM_TYPE_COEF_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[SYSTEM_TYPE_COEF_SELECT]  AS SELECT 1')
+IF OBJECT_ID('[Price].[Period@Is Available]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[Period@Is Available]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Price].[SYSTEM_TYPE_COEF_SELECT]
-	@TYPE		Int,
-	@PERIOD		UniqueIdentifier = NULL
+ALTER PROCEDURE [Price].[Period@Is Available]
+	@Period_Id		UniqueIdentifier,
+	@IsAvailable	Bit OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,11 +25,14 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT P.[NAME], A.[SystemType_Id], a.[Coef], a.[Round], a.[Date], [Period_Id] = P.[ID]
-		FROM [Price].[SystemType:Coef]		AS a
-		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
-		WHERE (a.[SystemType_Id] = @TYPE OR @TYPE IS NULL)
-		ORDER BY a.[Date] DESC
+		SET @IsAvailable = NULL;
+
+		SELECT @IsAvailable = [IsAvailable]
+		FROM [Price].[Periods=Available]
+		WHERE [Period_Id] = @Period_Id;
+
+		IF @IsAvailable IS NULL
+			SET @IsAvailable = 0;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -41,7 +44,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
-
 GO
-GRANT EXECUTE ON [Price].[SYSTEM_TYPE_COEF_SELECT] TO rl_price_r;
+GRANT EXECUTE ON [Price].[Period@Is Available] TO rl_price_r;
 GO
