@@ -751,11 +751,31 @@ BEGIN
 
 		DELETE FROM @Ib WHERE DistrNumber IS NULL;
 
-		/*DELETE FROM #ib WHERE DirectoryName IN ('CMT', 'RLAW104', 'RLAW947', 'RLAW968')*/
+		--DELETE FROM @Ib WHERE DirectoryName IN ('SVR017', 'SVBA072', 'SVR902');
 
-		DELETE FROM @Ib WHERE DirectoryName IN ('SVR017', 'SVBA072', 'SVR902');
+		--DELETE FROM @Package WHERE PackageName IN ('SVR017_112', 'SVBA072_102', 'SVR902_112');
 
-		DELETE FROM @Package WHERE PackageName IN ('SVR017_112', 'SVBA072_102', 'SVR902_112');
+		DELETE FROM @Ib WHERE DirectoryName IN
+			(
+				SELECT InfoBankName
+				FROM dbo.InfoBankTable
+				WHERE InfoBankID IN
+				(
+					SELECT Cast(SetItem AS SmallInt)
+					FROM dbo.NamedSetItemsSelect('dbo.InfoBankTable', 'Не загружать из USR')
+				)
+			);
+
+		DELETE FROM @Package WHERE PackageName IN
+			(
+				SELECT SystemBaseName + '_' + Cast(SystemNumber AS VarChar(20))
+				FROM dbo.SystemTable
+				WHERE SystemId IN
+				(
+					SELECT Cast(SetItem AS SmallInt)
+					FROM dbo.NamedSetItemsSelect('dbo.SystemTable', 'Не загружать из USR')
+				)
+			);
 
 		INSERT INTO @Update(DirectoryName, UpdateName, UpdateDate, UpdateTime, UpdateSysDate, UpdateDocs, UpdateKind)
 		SELECT DISTINCT
