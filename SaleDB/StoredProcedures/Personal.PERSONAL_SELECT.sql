@@ -1,37 +1,49 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Personal].[PERSONAL_SELECT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Personal].[PERSONAL_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Personal].[PERSONAL_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Personal].[PERSONAL_SELECT]
 	@FILTER		NVARCHAR(256),
 	@DISMISS	BIT,
 	@RC		INT	= NULL OUTPUT
 WITH EXECUTE AS OWNER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		SELECT
-			a.ID, 
+			a.ID,
 			ISNULL(a.SURNAME + ' ', '') + ISNULL(a.NAME + ' ', '') + ISNULL(a.PATRON + ' ', '') AS FULL_NAME,
 			a.SHORT, a.SURNAME, a.NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT b.SHORT + ', '
-					FROM 
+					FROM
 						Personal.PersonalType b
 						INNER JOIN Personal.OfficePersonalType d ON d.ID_TYPE = b.ID
 					WHERE d.ID_PERSONAL = a.ID AND d.EDATE IS NULL
 					ORDER BY b.NAME FOR XML PATH('')
-				)), 1, 2, '')) AS TP_NAME, 
+				)), 1, 2, '')) AS TP_NAME,
 			c.SHORT AS MAN_NAME,
 			a.START_DATE, a.END_DATE,
 			e.principal_id AS US_ID, f.principal_id AS LG_ID
-		FROM	
-			Personal.OfficePersonal a			
+		FROM
+			Personal.OfficePersonal a
 			LEFT OUTER JOIN Personal.OfficePersonal c ON a.MANAGER = c.ID
 			LEFT OUTER JOIN sys.database_principals e ON e.name = a.login AND e.type IN ('U', 'S')
 			LEFT OUTER JOIN sys.server_principals f ON f.name = a.login AND f.type IN ('U', 'S')
@@ -48,23 +60,23 @@ BEGIN
 		UNION ALL
 
 		SELECT
-			a.ID, 
+			a.ID,
 			ISNULL(a.SURNAME + ' ', '') + ISNULL(a.NAME + ' ', '') + ISNULL(a.PATRON + ' ', '') AS FULL_NAME,
 			a.SHORT, a.SURNAME, a.NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT b.NAME + ', '
-					FROM 
+					FROM
 						Personal.PersonalType b
 						INNER JOIN Personal.OfficePersonalType d ON d.ID_TYPE = b.ID
 					WHERE d.ID_PERSONAL = a.ID AND d.EDATE IS NULL
 					ORDER BY b.NAME FOR XML PATH('')
-				)), 1, 2, '')) AS TP_NAME, 
+				)), 1, 2, '')) AS TP_NAME,
 			c.SHORT AS MAN_NAME,
 			a.START_DATE, a.END_DATE,
 			e.principal_id AS US_ID, f.principal_id AS LG_ID
-		FROM	
-			Personal.OfficePersonal a			
+		FROM
+			Personal.OfficePersonal a
 			LEFT OUTER JOIN Personal.OfficePersonal c ON a.MANAGER = c.ID
 			LEFT OUTER JOIN sys.database_principals e ON e.name = a.login AND e.type IN ('U', 'S')
 			LEFT OUTER JOIN sys.server_principals f ON f.name = a.login AND f.type IN ('U', 'S')
@@ -80,21 +92,17 @@ BEGIN
 		ORDER BY a.SHORT
 
 		SET @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Personal].[PERSONAL_SELECT] TO rl_personal_r;
+GO

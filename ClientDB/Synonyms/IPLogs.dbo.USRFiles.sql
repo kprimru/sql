@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [IPLogs].[dbo.USRFiles] FOR [IPLogs].[dbo].[USRFiles];

@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[IS_INDEX_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_INDEX_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если индекс корректен 
---                (состоит из 6 цифр)
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РёРЅРґРµРєСЃ РєРѕСЂСЂРµРєС‚РµРЅ
+--                (СЃРѕСЃС‚РѕРёС‚ РёР· 6 С†РёС„СЂ)
 -- =============================================
 CREATE FUNCTION [dbo].[IS_INDEX_CORRECT]
 (
@@ -20,20 +22,21 @@ CREATE FUNCTION [dbo].[IS_INDEX_CORRECT]
 RETURNS int
 AS
 BEGIN
-	IF LEN(@index) <> 6 
+	IF LEN(@index) <> 6
       RETURN 1
 
-    WHILE LEN(@index) > 0 
+    WHILE LEN(@index) > 0
       BEGIN
         IF NOT(SUBSTRING(@index, 1, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'))
           RETURN 1
 
         SET @index = RIGHT(@index, LEN(@index) - 1)
       END
-	
+
 	RETURN 0
 
 END
 
 
 
+GO

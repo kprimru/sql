@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientServiceView]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ClientServiceView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientServiceView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ClientServiceView]
 AS
 	SELECT ID_CLIENT, ID_SERVICE, DATE AS START, DATEADD(YEAR, 10, dbo.DateOf(GETDATE())) AS FINISH
 	FROM dbo.ClientService
@@ -12,8 +14,8 @@ AS
 
 	UNION
 
-	SELECT 
-		ID_CLIENT, ID_SERVICE, 
+	SELECT
+		ID_CLIENT, ID_SERVICE,
 			DATE AS START,
 			(
 				SELECT TOP 1 DATEADD(DAY, -1, DATE)
@@ -30,4 +32,4 @@ AS
 				FROM dbo.ClientService b
 				WHERE a.ID_CLIENT = b.ID_CLIENT
 					AND b.UPD_DATE > a.UPD_DATE
-			)
+			)GO

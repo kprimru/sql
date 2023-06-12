@@ -1,41 +1,66 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:			Денисов Алексей 
-Дата создания:	3 July 2009
-Описание:		Возвращает 0, если тип адреса в фин. документе 
-				с указанным кодом можно удалить из 
-				справочника, 
-				-1 в противном случае
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[FINANCING_ADDRESS_TYPE_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_TRY_DELETE]  AS SELECT 1')
+GO
+/*
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	3 July 2009
+РћРїРёСЃР°РЅРёРµ:		Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё С‚РёРї Р°РґСЂРµСЃР° РІ С„РёРЅ. РґРѕРєСѓРјРµРЅС‚Рµ
+				СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РёР·
+				СЃРїСЂР°РІРѕС‡РЅРёРєР°,
+				-1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
-CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_TRY_DELETE]
 	@fatid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-/*
-	IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_FIN = @financingid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Данный тип финансирования указан у одного или нескольких клиентов. ' + 
-						  'Удаление невозможно, пока выбранный тип финансирования будет указан хотя ' +
-						  'бы у одного клиента.'
-	  END 
-*/
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+	/*
+		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_FIN = @financingid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ С‚РёРї С„РёРЅР°РЅСЃРёСЂРѕРІР°РЅРёСЏ СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… РєР»РёРµРЅС‚РѕРІ. ' +
+							  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ С‚РёРї С„РёРЅР°РЅСЃРёСЂРѕРІР°РЅРёСЏ Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+							  'Р±С‹ Сѓ РѕРґРЅРѕРіРѕ РєР»РёРµРЅС‚Р°.'
+		  END
+	*/
+
+		SELECT @res AS RES, @txt AS TXT
 
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[FINANCING_ADDRESS_TYPE_TRY_DELETE] TO rl_financing_address_type_d;
+GO

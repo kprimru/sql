@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Security].[UserDeleted] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[UserDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[UserDeleted]  AS SELECT 1')
+GO
+ALTER VIEW [Security].[UserDeleted]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		US_ID_MASTER, US_ID, US_NAME, 
+	SELECT
+		US_ID_MASTER, US_ID, US_NAME,
 		US_LOGIN, US_NOTE, US_DATE, US_END
-	FROM 
+	FROM
 		Security.UserAll a
-	WHERE US_REF = 3
+	WHERE US_REF = 3GO

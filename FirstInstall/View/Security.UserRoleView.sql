@@ -1,16 +1,18 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Security].[UserRoleView] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[UserRoleView]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[UserRoleView]  AS SELECT 1')
+GO
+ALTER VIEW [Security].[UserRoleView]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		RL_ID, RL_ROLE, US_ID_MASTER, US_NAME, US_LOGIN,
 		Security.UserRoleStatus(US_LOGIN, RL_ID) AS UR_STATUS
-	FROM 
+	FROM
 		Security.Roles CROSS JOIN
 		Security.UserLast
-	WHERE US_REF = 1
+	WHERE US_REF = 1GO

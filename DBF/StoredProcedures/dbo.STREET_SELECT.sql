@@ -1,30 +1,52 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[STREET_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[STREET_SELECT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[STREET_SELECT]  
+ALTER PROCEDURE [dbo].[STREET_SELECT]
     @active BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT ST_NAME, ST_PREFIX, ST_ID, CT_ID, CT_NAME, ISNULL(CT_NAME, '') + ', ' + ISNULL(ST_NAME, '') AS ST_CITY_NAME
-	FROM 
-		dbo.StreetTable st LEFT OUTER JOIN
-		dbo.CityTable ct ON ct.CT_ID = st.ST_ID_CITY
-	WHERE ST_ACTIVE = ISNULL(@active, ST_ACTIVE)
-	ORDER BY ST_NAME, CT_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ST_NAME, ST_PREFIX, ST_ID, CT_ID, CT_NAME, ISNULL(CT_NAME, '') + ', ' + ISNULL(ST_NAME, '') AS ST_CITY_NAME
+		FROM
+			dbo.StreetTable st LEFT OUTER JOIN
+			dbo.CityTable ct ON ct.CT_ID = st.ST_ID_CITY
+		WHERE ST_ACTIVE = ISNULL(@active, ST_ACTIVE)
+		ORDER BY ST_NAME, CT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[STREET_SELECT] TO rl_street_r;
+GO

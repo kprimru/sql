@@ -1,25 +1,27 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Client].[CompanySearchView]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[CompanySearchView]', 'V ') IS NULL EXEC('CREATE VIEW [Client].[CompanySearchView]  AS SELECT 1')
+GO
+ALTER VIEW [Client].[CompanySearchView]
 AS
-	SELECT 
-		a.ID, 
+	SELECT
+		a.ID,
 		ISNULL(a.SHORT, '') + ' ' +
 		ISNULL(a.NAME, '') + ' ' +
 		ISNULL(CONVERT(VARCHAR(20), a.NUMBER), '') + ' ' +
 		ISNULL(
 			(
-				SELECT 
+				SELECT
 					ISNULL(b.NAME, '') + ' ' +
 					ISNULL(b.SHORT, '') + ' ' +
 					ISNULL(d.NAME, '') + ' ' +
 					ISNULL(e.NAME, '') + ' ' +
 					ISNULL(f.NAME, '') + ' ' +
-					ISNULL(c.HOME, '') + ' ' + 
+					ISNULL(c.HOME, '') + ' ' +
 					ISNULL(c.ROOM, '') + ' '
 				FROM
 					Client.Office b
@@ -29,25 +31,25 @@ AS
 					LEFT OUTER JOIN Address.Area f ON f.ID = c.ID_AREA
 				WHERE b.ID_COMPANY = a.ID AND b.STATUS = 1
 				FOR XML PATH('')
-			), '') + ' ' + 
+			), '') + ' ' +
 		ISNULL(
 			(
-				SELECT 
-					ISNULL(PHONE, '') + ' ' + 
+				SELECT
+					ISNULL(PHONE, '') + ' ' +
 					ISNULL(PHONE_S, '') + ' '
 				FROM Client.CompanyPhone b
 				WHERE b.ID_COMPANY = a.ID
 				FOR XML PATH('')
 			)
-			, '') + ' ' + 
+			, '') + ' ' +
 		ISNULL(
 			(
-				SELECT 
-					ISNULL(FIO, '') + ' ' + 
+				SELECT
+					ISNULL(FIO, '') + ' ' +
 					ISNULL(
 						(
-							SELECT 
-								ISNULL(PHONE, '') + ' ' + 
+							SELECT
+								ISNULL(PHONE, '') + ' ' +
 								ISNULL(PHONE_S, '') + ' '
 							FROM Client.CompanyPersonalPhone c
 							WHERE b.ID = c.ID_PERSONAL
@@ -59,5 +61,6 @@ AS
 				FOR XML PATH('')
 			)
 			, '') AS DATA
-	FROM Client.Company a	
+	FROM Client.Company a
 	WHERE a.STATUS = 1
+GO

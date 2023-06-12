@@ -1,94 +1,119 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[ONLINE_ACTIVITY2]
-	@PARAMS	NVARCHAR(MAX) = NULL
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[ONLINE_ACTIVITY2]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[ONLINE_ACTIVITY2]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[ONLINE_ACTIVITY2]
+	@PARAM	NVARCHAR(MAX) = NULL
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SQL NVARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @SQL = 'SELECT 
-		ISNULL(ServiceName, SubhostName) AS [—Ë/ÔÓ‰ıÓÒÚ], ISNULL(ClientFullName, Comment) AS [ ÎËÂÌÚ], a.DistrStr AS [ƒËÒÚË·ÛÚË‚], 
-		LGN AS [ÀÓ„ËÌ],
-		CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [ƒ‡Ú‡ Â„ËÒÚ‡ˆËË],
-		SST_SHORT AS [“ËÔ ÒËÒÚÂÏ˚], NT_SHORT AS [—ÂÚ¸],'
-		
-	SELECT @SQL = @SQL + N'
-		CASE
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @SQL NVARCHAR(MAX)
+
+		SET @SQL = 'SELECT
+			ISNULL(ServiceName, SubhostName) AS [–°–∏/–ø–æ–¥—Ö–æ—Å—Ç], ISNULL(ClientFullName, Comment) AS [–ö–ª–∏–µ–Ω—Ç], a.DistrStr AS [–î–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤],
+			LGN AS [–õ–æ–≥–∏–Ω],
+			CONVERT(SMALLDATETIME, a.RegisterDate, 104) AS [–î–∞—Ç–∞ —Ä–µ–≥–∏—Å—Ç—Ä–∞—Ü–∏–∏],
+			SST_SHORT AS [–¢–∏–ø —Å–∏—Å—Ç–µ–º—ã], NT_SHORT AS [–°–µ—Ç—å],'
+
+		SELECT @SQL = @SQL + N'
+			CASE
+				(
+					SELECT MAX(CONVERT(INT, ACTIVITY))
+					FROM
+						dbo.OnlineActivity z
+					WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
+						AND z.ID_HOST = a.HostID
+						AND z.DISTR = a.DistrNumber
+						AND z.COMP = a.CompNumber
+				) WHEN 1 THEN ''+''
+				ELSE ''''
+			END AS [' + CONVERT(NVARCHAR(128), NAME) + '|–ê–∫—Ç–∏–≤–Ω–æ—Å—Ç—å],
 			(
-				SELECT MAX(CONVERT(INT, ACTIVITY))
-				FROM 
-					dbo.OnlineActivity z
+				SELECT SUM(LOGIN_CNT)
+				FROM dbo.OnlineActivity z
 				WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
 					AND z.ID_HOST = a.HostID
 					AND z.DISTR = a.DistrNumber
-					AND z.COMP = a.CompNumber					
-			) WHEN 1 THEN ''+''
-			ELSE ''''
-		END AS [' + CONVERT(NVARCHAR(128), NAME) + '|¿ÍÚË‚ÌÓÒÚ¸],
-		(
-			SELECT SUM(LOGIN_CNT)
-			FROM dbo.OnlineActivity z
-			WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
-				AND z.ID_HOST = a.HostID
-				AND z.DISTR = a.DistrNumber
-				AND z.COMP = a.CompNumber	
-		) AS [' + CONVERT(NVARCHAR(128), NAME) + '| ÓÎ-‚Ó ‚ıÓ‰Ó‚],
-		(
-			SELECT dbo.TimeMinToStr(SUM(SESSION_TIME))
-			FROM dbo.OnlineActivity z
-			WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
-				AND z.ID_HOST = a.HostID
-				AND z.DISTR = a.DistrNumber
-				AND z.COMP = a.CompNumber	
-		) AS [' + CONVERT(NVARCHAR(128), NAME) + '|¬ÂÏˇ ÒÂÒÒËÈ],'
-	FROM Common.Period
-	WHERE TYPE = 1
-		AND START >= DATEADD(MONTH, -3, GETDATE())
-		AND START <= DATEADD(WEEK, -1, GETDATE())
-
-	SET @SQL = @SQL +
-	'
-		(
-			SELECT COUNT(*)
-			FROM 
-				(
-					SELECT DISTINCT ID_WEEK, ID_HOST, DISTR, COMP
-					FROM
-						dbo.OnlineActivity z
-						INNER JOIN Common.Period y ON z.ID_WEEK = y.ID				
-					WHERE z.ID_HOST = a.HostID
-						AND z.DISTR = a.DistrNumber
-						AND z.COMP = a.CompNumber
-						AND DATEADD(MONTH, 3, START) >= GETDATE()
-						AND ACTIVITY = 1				
-				) AS o_O
-		) AS [ ÓÎ-‚Ó ÌÂ‰ÂÎ¸ Ò ‡ÍÚË‚ÌÓÒÚ¸˛]
-	FROM 	
-		Reg.RegNodeSearchView a WITH(NOEXPAND)
-		CROSS APPLY
+					AND z.COMP = a.CompNumber
+			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|–ö–æ–ª-–≤–æ –≤—Ö–æ–¥–æ–≤],
 			(
-				SELECT DISTINCT LGN
-				FROM 
-					dbo.OnlineActivity q
-					INNER JOIN Common.Period p ON q.ID_WEEK = p.ID
-				WHERE DATEADD(MONTH, 3, START) >= GETDATE()
-					AND q.ID_HOST = a.HostID
-					AND q.DISTR = a.DistrNumber
-					AND q.COMP = a.CompNumber
-			) AS t
-		LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
-		LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
-	WHERE SST_SHORT NOT IN (''Œƒƒ'', ''ƒ—œ'') AND NT_SHORT IN (''Œ¬œ'', ''Œ¬œ»'', ''Œ¬ '', ''Œ¬Ã1'', ''Œ¬Ã2'', ''Œ¬ -‘'', ''Œ¬Ã-‘ (0;1)'', ''Œ¬Ã-‘ (1;0)'', ''Œ¬Ã-‘ (1;2)'')
-	ORDER BY CASE SubhostName WHEN '''' THEN 1 ELSE 2 END, SubhostName, ServiceName, ClientFullName, a.DistrStr'
+				SELECT dbo.TimeMinToStr(SUM(SESSION_TIME))
+				FROM dbo.OnlineActivity z
+				WHERE ID_WEEK = ''' + CONVERT(NVARCHAR(64), ID) + '''
+					AND z.ID_HOST = a.HostID
+					AND z.DISTR = a.DistrNumber
+					AND z.COMP = a.CompNumber
+			) AS [' + CONVERT(NVARCHAR(128), NAME) + '|–í—Ä–µ–º—è —Å–µ—Å—Å–∏–π],'
+		FROM Common.Period
+		WHERE TYPE = 1
+			AND START >= DATEADD(MONTH, -3, GETDATE())
+			AND START <= DATEADD(WEEK, -1, GETDATE())
 
-	--PRINT (@SQL)
+		SET @SQL = @SQL +
+		'
+			(
+				SELECT COUNT(*)
+				FROM
+					(
+						SELECT DISTINCT ID_WEEK, ID_HOST, DISTR, COMP
+						FROM
+							dbo.OnlineActivity z
+							INNER JOIN Common.Period y ON z.ID_WEEK = y.ID
+						WHERE z.ID_HOST = a.HostID
+							AND z.DISTR = a.DistrNumber
+							AND z.COMP = a.CompNumber
+							AND DATEADD(MONTH, 3, START) >= GETDATE()
+							AND ACTIVITY = 1
+					) AS o_O
+			) AS [–ö–æ–ª-–≤–æ –Ω–µ–¥–µ–ª—å —Å –∞–∫—Ç–∏–≤–Ω–æ—Å—Ç—å—é]
+		FROM 
+			Reg.RegNodeSearchView a WITH(NOEXPAND)
+			CROSS APPLY
+				(
+					SELECT DISTINCT LGN
+					FROM
+						dbo.OnlineActivity q
+						INNER JOIN Common.Period p ON q.ID_WEEK = p.ID
+					WHERE DATEADD(MONTH, 3, START) >= GETDATE()
+						AND q.ID_HOST = a.HostID
+						AND q.DISTR = a.DistrNumber
+						AND q.COMP = a.CompNumber
+				) AS t
+			LEFT OUTER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DistrNumber = b.DISTR AND a.CompNumber = b.COMP
+			LEFT OUTER JOIN dbo.ClientView c WITH(NOEXPAND) ON b.ID_CLIENT = c.ClientID
+		WHERE SST_SHORT NOT IN (''–û–î–î'', ''–î–°–ü'') AND NT_SHORT IN (''–û–í–ü'', ''–û–í–ü–ò'', ''–û–í–ö'', ''–û–í–ú1'', ''–û–í–ú2'', ''–û–í–ö-–§'', ''–û–í–ú-–§ (0;1)'', ''–û–í–ú-–§ (1;0)'', ''–û–í–ú-–§ (1;2)'')
+		ORDER BY CASE SubhostName WHEN '''' THEN 1 ELSE 2 END, SubhostName, ServiceName, ClientFullName, a.DistrStr'
 
-	EXEC (@SQL)
+		--PRINT (@SQL)
+
+		EXEC (@SQL)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

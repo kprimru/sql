@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[POSITION_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[POSITION_EDIT]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Изменить данные о должности с указанным кодом
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ РґРѕР»Р¶РЅРѕСЃС‚Рё СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј
 */
 
-CREATE PROCEDURE [dbo].[POSITION_EDIT] 
+ALTER PROCEDURE [dbo].[POSITION_EDIT]
 	@positionid INT,
 	@positionname VARCHAR(150),
 	@positionactive BIT
@@ -20,10 +22,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.PositionTable 
-	SET POS_NAME = @positionname ,
-		POS_ACTIVE = @positionactive
-	WHERE POS_ID = @positionid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.PositionTable
+		SET POS_NAME = @positionname ,
+			POS_ACTIVE = @positionactive
+		WHERE POS_ID = @positionid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[POSITION_EDIT] TO rl_position_w;
+GO

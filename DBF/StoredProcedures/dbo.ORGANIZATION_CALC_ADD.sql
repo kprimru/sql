@@ -1,10 +1,12 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[ORGANIZATION_CALC_ADD] 
+﻿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ORGANIZATION_CALC_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ORGANIZATION_CALC_ADD]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[ORGANIZATION_CALC_ADD]
 	@name	varchar(128),
 	@org	smallint,
 	@bank SMALLINT,
@@ -15,17 +17,40 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.OrganizationCalc
-		(
-			ORGC_NAME, ORGC_ID_ORG, ORGC_ID_BANK, ORGC_ACCOUNT, ORGC_ACTIVE
-		) 
-	VALUES 
-		(
-			@name, @org, @bank, @acc, @active
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.OrganizationCalc
+			(
+				ORGC_NAME, ORGC_ID_ORG, ORGC_ID_BANK, ORGC_ACCOUNT, ORGC_ACTIVE
+			)
+		VALUES
+			(
+				@name, @org, @bank, @acc, @active
+			)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[ORGANIZATION_CALC_ADD] TO rl_organization_calc_w;
+GO

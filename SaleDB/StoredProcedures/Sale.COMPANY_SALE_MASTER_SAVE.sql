@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Sale].[COMPANY_SALE_MASTER_SAVE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Sale].[COMPANY_SALE_MASTER_SAVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Sale].[COMPANY_SALE_MASTER_SAVE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Sale].[COMPANY_SALE_MASTER_SAVE]
 	@ID			UNIQUEIDENTIFIER OUTPUT,
 	@COMPANY	UNIQUEIDENTIFIER,
 	@OFFICE		UNIQUEIDENTIFIER,
@@ -18,21 +20,31 @@ USE [SaleDB]
 	@RIVAL		UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 		DECLARE @NEW UNIQUEIDENTIFIER
-		
+
 		IF @ID IS NULL
-		BEGIN			
+		BEGIN
 			INSERT INTO Sale.SaleCompany(ID_COMPANY, ID_OFFICE, DATE, ID_ASSIGNER, ID_RIVAL)
 				OUTPUT inserted.ID INTO @TBL
 				VALUES(@COMPANY, @OFFICE, @DATE, @ASSIGN, @RIVAL)
-				
+
 			SELECT @ID = ID
 			FROM @TBL
-			
+
 			INSERT INTO Sale.SaleCompanyData(ID_SALE, INN, STREET, HOME, ROOM)
 				VALUES(@ID, @INN, @STREET, @HOME, @ROOM)
 		END
@@ -43,54 +55,50 @@ BEGIN
 				SELECT ID, ID_COMPANY, ID_OFFICE, DATE, CONFIRMED, ID_ASSIGNER, ID_RIVAL, 2, BDATE, EDATE, UPD_USER
 				FROM Sale.SaleCompany
 				WHERE ID = @ID
-						
+
 			SELECT @NEW = ID FROM @TBL
-		
+
 			INSERT INTO Sale.SaleCompanyData(ID_SALE, INN, STREET, HOME, ROOM, CONTRACT)
 				SELECT @NEW, INN, STREET, HOME, ROOM, CONTRACT
 				FROM Sale.SaleCompanyData
-				WHERE ID_SALE = @ID			
-		
+				WHERE ID_SALE = @ID
+
 			UPDATE Sale.SaleDistr
 			SET ID_SALE = @NEW
 			WHERE ID_SALE = @ID
-		
+
 			UPDATE Sale.SalePersonal
 			SET ID_SALE = @NEW
 			WHERE ID_SALE = @ID
-			
+
 			UPDATE Sale.SaleCompany
 			SET ID_OFFICE	=	@OFFICE,
-				DATE		=	@DATE, 
+				DATE		=	@DATE,
 				ID_ASSIGNER	=	@ASSIGN,
 				ID_RIVAL	=	@RIVAL,
-				BDATE		=	GETDATE(), 				
+				BDATE		=	GETDATE(), 
 				UPD_USER	=	ORIGINAL_LOGIN()
 			WHERE ID = @ID
-			
+
 			UPDATE Sale.SaleCompanyData
-			SET INN			=	@INN, 
-				STREET		=	@STREET, 
-				HOME		=	@HOME, 
-				ROOM		=	@ROOM, 
+			SET INN			=	@INN,
+				STREET		=	@STREET,
+				HOME		=	@HOME,
+				ROOM		=	@ROOM,
 				CONTRACT	=	@CONTRACT
 			WHERE ID_SALE = @ID
-		END		
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
+		END
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Sale].[COMPANY_SALE_MASTER_SAVE] TO rl_sale_w;
+GO

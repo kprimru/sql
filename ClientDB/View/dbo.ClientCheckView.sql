@@ -1,13 +1,15 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientCheckView]
-AS	
-	SELECT ClientID, ClientFullName, 'STATUS' AS TP, 'Неверный статус клиента (указано "пополняется", но нет сопровождаемых на РЦ систем)' AS ER
-	FROM 
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ClientCheckView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientCheckView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ClientCheckView]
+AS
+	SELECT ClientID, ClientFullName, 'STATUS' AS TP, 'РќРµРІРµСЂРЅС‹Р№ СЃС‚Р°С‚СѓСЃ РєР»РёРµРЅС‚Р° (СѓРєР°Р·Р°РЅРѕ "РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ", РЅРѕ РЅРµС‚ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹С… РЅР° Р Р¦ СЃРёСЃС‚РµРј)' AS ER
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable ON ServiceStatusID = StatusID
 	WHERE ServiceStatusReg = 0
@@ -15,18 +17,18 @@ AS
 		AND NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ClientDistrView b WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeTable d ON d.SystemName = b.SystemBaseName
+					INNER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON d.SystemBaseName = b.SystemBaseName
 												AND b.DISTR = d.DistrNumber
 												AND b.COMP = d.CompNumber
-				WHERE b.ID_CLIENT = a.ClientID AND DS_REG = 0
-			)			
+				WHERE b.ID_CLIENT = a.ClientID AND b.DS_REG = 0
+			)
 
 	UNION ALL
-	
-	SELECT ClientID, ClientFullName, 'STATUS', 'Неверный статус клиента (не указано "пополняется", но есть сопровождаемые на РЦ системы)'
-	FROM 
+
+	SELECT ClientID, ClientFullName, 'STATUS', 'РќРµРІРµСЂРЅС‹Р№ СЃС‚Р°С‚СѓСЃ РєР»РёРµРЅС‚Р° (РЅРµ СѓРєР°Р·Р°РЅРѕ "РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ", РЅРѕ РµСЃС‚СЊ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹Рµ РЅР° Р Р¦ СЃРёСЃС‚РµРјС‹)'
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable ON ServiceStatusID = StatusID
 	WHERE ServiceStatusReg <> 0
@@ -34,74 +36,91 @@ AS
 		AND EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ClientDistrView b WITH(NOEXPAND)
-					INNER JOIN dbo.RegNodeTable d ON d.SystemName = b.SystemBaseName
+					INNER JOIN Reg.RegNodeSearchView d WITH(NOEXPAND) ON d.SystemBaseName = b.SystemBaseName
 												AND b.DISTR = d.DistrNumber
 												AND b.COMP = d.CompNumber
-				WHERE b.ID_CLIENT = a.ClientID AND DS_REG = 0
+				WHERE b.ID_CLIENT = a.ClientID AND d.DS_REG = 0
 			)
-			
+
 	UNION ALL
-	
-	SELECT ClientID, ClientFullName, 'INN', 'Неверный ИНН'
-	FROM 
+
+	SELECT ClientID, ClientFullName, 'INN', 'РќРµРІРµСЂРЅС‹Р№ РРќРќ'
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable b ON a.StatusID = b.ServiceStatusID
 	WHERE ServiceStatusReg = 0 AND dbo.CheckINN(ClientINN) = 0 AND STATUS = 1
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'SERVICE_TYPE', 'Неверный тип сопровождения (указан "' + 
-									ServiceTypeShortName + '", предположительно "' + 
+	SELECT ClientID, ClientFullName, 'SERVICE_TYPE', 'РќРµРІРµСЂРЅС‹Р№ С‚РёРї СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ (СѓРєР°Р·Р°РЅ "' +
+									ServiceTypeShortName + '", РїСЂРµРґРїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕ "' +
 									CASE UF_PATH
-										WHEN 0 THEN 'СИ'
-										WHEN 1 THEN 'РОБОТ'
-										WHEN 2 THEN 'ИП'
-										ELSE 'СИ'
+										WHEN 0 THEN 'РЎР'
+										WHEN 1 THEN 'Р РћР‘РћРў'
+										WHEN 2 THEN 'РРџ'
+										ELSE 'РЎР'
 									END + '")'
-	FROM 
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable b ON a.StatusID = b.ServiceStatusID
 		INNER JOIN dbo.ServiceTypeTable c ON c.ServiceTypeID = a.ServiceTypeID
-		INNER JOIN 
+		INNER JOIN
 			(
 				SELECT UD_ID_CLIENT, MAX(UF_PATH) AS UF_PATH
 				FROM USR.ClientUSRPathView
 				GROUP BY UD_ID_CLIENT
 			) AS z ON UD_ID_CLIENT = ClientID
-	WHERE ServiceStatusReg = 0 
+	WHERE ServiceStatusReg = 0
 		AND STATUS = 1
-		AND 
-			CASE 
-				WHEN ServiceTypeShortName IN ('СИ', 'ДИСК', 'МОДЕМ') THEN 0
-				WHEN ServiceTypeShortName = 'РОБОТ' THEN 1
-				WHEN ServiceTypeShortName = 'ИП' THEN 2
+		AND
+			CASE
+				WHEN ServiceTypeShortName IN ('РЎР', 'Р”РРЎРљ', 'РњРћР”Р•Рњ') THEN 0
+				WHEN ServiceTypeShortName = 'Р РћР‘РћРў' THEN 1
+				WHEN ServiceTypeShortName = 'РРџ' THEN 2
 				ELSE -1
 			END <> UF_PATH
-		AND ServiceTypeShortName <> 'ОНЛАЙН'
+		AND ServiceTypeShortName <> 'РћРќР›РђР™Рќ'
 
 	UNION ALL
 
-	SELECT a.ClientID, ClientFullName, 'ACTIVITY', 'Не указан вид деятельности'
-	FROM 
+	SELECT a.ClientID, ClientFullName, 'ACTIVITY', 'РќРµ СѓРєР°Р·Р°РЅ РІРёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё'
+	FROM
 		dbo.ClientTable a
-		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID		
+		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
 	WHERE ServiceStatusReg = 0 AND RTRIM(LTRIM(ISNULL(ClientActivity, ''))) = '' AND STATUS = 1
 
 	UNION ALL
 
-	SELECT a.ClientID, ClientFullName, 'PAPPER', 'Неверное количество газет. Указано: ' + CONVERT(VARCHAR(20), ClientNewsPaper) + ', должно быть не меньше ' + CONVERT(VARCHAR(20), ClientTypePapper)
-	FROM 
+	SELECT a.ClientID, ClientFullName, 'PAPPER', 'РќРµРІРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РіР°Р·РµС‚. РЈРєР°Р·Р°РЅРѕ: ' + CONVERT(VARCHAR(20), ClientNewsPaper) + ', РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ РјРµРЅСЊС€Рµ ' + CONVERT(VARCHAR(20), ClientTypePapper)
+	FROM
 		dbo.ClientTable a
 		INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
-		INNER JOIN dbo.ClientTypeAllView d ON d.ClientID = a.ClientID
-		INNER JOIN dbo.ClientTypeTable b ON d.CATEGORY = b.ClientTypeName
+		INNER JOIN dbo.ClientTypeTable b ON a.ClientTypeID = b.ClientTypeId
 	WHERE ServiceStatusReg = 0 AND ClientNewsPaper < ClientTypePapper AND STATUS = 1
 
 	UNION ALL
 
-	SELECT ClientID, ClientFullName, 'GRAPH', 'Нарушение графика. ' + GR_ERROR
-	FROM 
+	SELECT ClientID, ClientFullName, 'GRAPH', 'РќР°СЂСѓС€РµРЅРёРµ РіСЂР°С„РёРєР°. ' + GR_ERROR
+	FROM
 		dbo.ClientGraphView
 	WHERE GR_ERROR IS NOT NULL
+
+	UNION ALL
+
+	SELECT ClientID, ClientFullName, 'WORK_TIME', 'РќРµ СѓРєР°Р·Р°РЅРѕ РІСЂРµРјСЏ СЂР°Р±РѕС‚С‹. ' + 'РЎ ' + IsNull(a.ClientDayBegin, '') + ' РїРѕ ' + IsNull(a.ClientDayEnd, '')
+	FROM dbo.ClientTable a
+	INNER JOIN dbo.ServiceStatusTable c ON ServiceStatusID = StatusID
+	WHERE ServiceStatusReg = 0 AND STATUS = 1
+	    AND
+	        (
+	                ClientDayBegin IS NULL
+	            OR
+	                ClientDayBegin = '  :  '
+	            OR
+	                ClientDayEnd IS NULL
+	            OR
+	                ClientDayEnd = '  :  '
+	        )
+GO

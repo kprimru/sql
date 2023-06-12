@@ -1,11 +1,14 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[WORK_STATE_INSERT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[WORK_STATE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[WORK_STATE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[WORK_STATE_INSERT]
 	@NAME	NVARCHAR(256),
+	@GR     NVARCHAR(256),
 	@SALE	BIT,
 	@PHONE	BIT,
 	@ARCH	BIT,
@@ -14,32 +17,38 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	DECLARE @TBL TABLE
 		(
 			ID	UNIQUEIDENTIFIER
 		)
 
 	BEGIN TRY
-		INSERT INTO Client.WorkState(NAME, SALE_AUTO, PHONE_AUTO, ARCHIVE_AUTO)
+		INSERT INTO Client.WorkState(NAME, GR, SALE_AUTO, PHONE_AUTO, ARCHIVE_AUTO)
 			OUTPUT inserted.ID INTO @TBL(ID)
-			VALUES(@NAME, @SALE, @PHONE, @ARCH)
+			VALUES(@NAME, @GR, @SALE, @PHONE, @ARCH)
 
 		SELECT @ID = ID FROM @TBL
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[WORK_STATE_INSERT] TO rl_work_state_w;
+GO

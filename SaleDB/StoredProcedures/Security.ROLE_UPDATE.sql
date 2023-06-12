@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ROLE_UPDATE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ROLE_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ROLE_UPDATE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ROLE_UPDATE]
 	@ID			UNIQUEIDENTIFIER,
 	@MASTER		UNIQUEIDENTIFIER,
 	@NAME		NVARCHAR(128),
@@ -14,7 +16,17 @@ WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		BEGIN TRAN role_update
 
@@ -36,7 +48,7 @@ BEGIN
 		BEGIN
 			EXEC ('ALTER ROLE [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
 		END
-		
+
 		UPDATE Security.Roles
 		SET MASTER = @MASTER,
 			NAME = @NAME,
@@ -44,7 +56,7 @@ BEGIN
 			NOTE = @NOTE,
 			LAST = GETDATE()
 		WHERE ID = @ID
-		
+
 		COMMIT TRAN role_update
 	END TRY
 	BEGIN CATCH
@@ -56,7 +68,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -66,3 +78,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[ROLE_UPDATE] TO rl_role_w;
+GO

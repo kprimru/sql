@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	Показатель нормального роста
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Ric].[GrowStandardValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[GrowStandardValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	РџРѕРєР°Р·Р°С‚РµР»СЊ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ СЂРѕСЃС‚Р°
 */
-CREATE FUNCTION [Ric].[GrowStandard]
+CREATE FUNCTION [Ric].[GrowStandardValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +22,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

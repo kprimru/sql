@@ -1,118 +1,145 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_CALENDAR_STATISTIC]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_CALENDAR_STATISTIC]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CALENDAR_STATISTIC]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CLIENT_CALENDAR_STATISTIC]
 	@ID	INT,
 	@CLIENTID INT,
 	@QR INT = 3
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#report') IS NOT NULL
-		DROP TABLE #report
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #report
-		(
-			ID	INT IDENTITY(1, 1) PRIMARY KEY,
-			MASTER_ID	INT,
-			VALUE_NAME	VARCHAR(50),		
-			QUERY_COUNT INT,
-			DAYS		INT,
-			QUERY_NUM	INT,
-			SMALLER		INT,
-			BIGGER		INT,
-			COLOR		TINYINT
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	/*
-		Öâåòà: 
-			1 - ÷åðíûé (îáû÷íûé)
-			2 - Çåëåíûé
-			3 - Æåëòûé
-			4 - Êðàñíûé
-	*/
-	
-	INSERT INTO #report 
-			(MASTER_ID, VALUE_NAME, QUERY_COUNT, DAYS, QUERY_NUM, SMALLER, BIGGER, COLOR)
-		SELECT
-			NULL, CAL_NAME, NULL, 
-			(
-				SELECT COUNT(DISTINCT SearchDay)
-				FROM 
-					dbo.ClientSearchTable a 
-				WHERE ClientID = @CLIENTID					
-					AND SearchMonth = CAL_NAME
-			),
-			(
-				SELECT COUNT(*)
-				FROM dbo.ClientSearchTable
-				WHERE ClientID = @CLIENTID
-					AND SearchMonth = CAL_NAME
-			),
-			(
-				SELECT COUNT(DISTINCT SearchDay)
-				FROM dbo.ClientSearchTable z
-				WHERE ClientID = @CLIENTID					
-					AND SearchMonth = CAL_NAME
-					AND @QR > 
-						(
-							SELECT COUNT(*)
-							FROM dbo.ClientSearchTable y
-							WHERE z.SearchDay = y.SearchDay
-								AND y.ClientID = z.ClientID
-						)
-			),
-			(
-				SELECT COUNT(DISTINCT SearchDay)
-				FROM dbo.ClientSearchTable z
-				WHERE ClientID = @CLIENTID					
-					AND SearchMonth = CAL_NAME
-					AND @QR <= 
-						(
-							SELECT COUNT(*)
-							FROM dbo.ClientSearchTable y
-							WHERE z.SearchDay = y.SearchDay
-								AND y.ClientID = z.ClientID
-						)
-			),
-			NULL
-		FROM
-			(
-				SELECT DISTINCT SearchMonth AS CAL_NAME, DATEPART(YEAR, SearchDay) CAL_YEAR, DATEPART(MONTH, SearchDay) CAL_MONTH
-				FROM dbo.ClientSearchTable
-				WHERE ClientID = @ClientID
-			) AS o_O
-		ORDER BY CAL_YEAR DESC, CAL_MONTH DESC		
-	
+	BEGIN TRY
 
-		INSERT INTO #report 
+		IF OBJECT_ID('tempdb..#report') IS NOT NULL
+			DROP TABLE #report
+
+		CREATE TABLE #report
+			(
+				ID	INT IDENTITY(1, 1) PRIMARY KEY,
+				MASTER_ID	INT,
+				VALUE_NAME	VARCHAR(50),
+				QUERY_COUNT INT,
+				DAYS		INT,
+				QUERY_NUM	INT,
+				SMALLER		INT,
+				BIGGER		INT,
+				COLOR		TINYINT
+			)
+
+		/*
+			Ð¦Ð²ÐµÑ‚Ð°:
+				1 - Ñ‡ÐµÑ€Ð½Ñ‹Ð¹ (Ð¾Ð±Ñ‹Ñ‡Ð½Ñ‹Ð¹)
+				2 - Ð—ÐµÐ»ÐµÐ½Ñ‹Ð¹
+				3 - Ð–ÐµÐ»Ñ‚Ñ‹Ð¹
+				4 - ÐšÑ€Ð°ÑÐ½Ñ‹Ð¹
+		*/
+
+		INSERT INTO #report
 				(MASTER_ID, VALUE_NAME, QUERY_COUNT, DAYS, QUERY_NUM, SMALLER, BIGGER, COLOR)
-			SELECT 
+			SELECT
+				NULL, CAL_NAME, NULL,
 				(
-					SELECT ID
-					FROM #report
-					WHERE VALUE_NAME = SearchMonth
+					SELECT COUNT(DISTINCT SearchDay)
+					FROM
+						dbo.ClientSearchTable a
+					WHERE ClientID = @CLIENTID
+						AND SearchMonth = CAL_NAME
 				),
-				CONVERT(VARCHAR(20), SearchDay, 104), QueryCount, NULL, NULL, NULL, NULL, 4
-			FROM 
 				(
-					SELECT SearchDay, SearchMonth, COUNT(*) AS QueryCount
+					SELECT COUNT(*)
 					FROM dbo.ClientSearchTable
 					WHERE ClientID = @CLIENTID
-					GROUP BY SearchDay, SearchMonth
+						AND SearchMonth = CAL_NAME
+				),
+				(
+					SELECT COUNT(DISTINCT SearchDay)
+					FROM dbo.ClientSearchTable z
+					WHERE ClientID = @CLIENTID
+						AND SearchMonth = CAL_NAME
+						AND @QR >
+							(
+								SELECT COUNT(*)
+								FROM dbo.ClientSearchTable y
+								WHERE z.SearchDay = y.SearchDay
+									AND y.ClientID = z.ClientID
+							)
+				),
+				(
+					SELECT COUNT(DISTINCT SearchDay)
+					FROM dbo.ClientSearchTable z
+					WHERE ClientID = @CLIENTID
+						AND SearchMonth = CAL_NAME
+						AND @QR <=
+							(
+								SELECT COUNT(*)
+								FROM dbo.ClientSearchTable y
+								WHERE z.SearchDay = y.SearchDay
+									AND y.ClientID = z.ClientID
+							)
+				),
+				NULL
+			FROM
+				(
+					SELECT DISTINCT SearchMonth AS CAL_NAME, DATEPART(YEAR, SearchDay) CAL_YEAR, DATEPART(MONTH, SearchDay) CAL_MONTH
+					FROM dbo.ClientSearchTable
+					WHERE ClientID = @ClientID
 				) AS o_O
-			ORDER BY SearchDay DESC
+			ORDER BY CAL_YEAR DESC, CAL_MONTH DESC
 
-	SELECT *
-	FROM #report
-	ORDER BY ID
-	
 
-	IF OBJECT_ID('tempdb..#report') IS NOT NULL
-		DROP TABLE #report
+			INSERT INTO #report
+					(MASTER_ID, VALUE_NAME, QUERY_COUNT, DAYS, QUERY_NUM, SMALLER, BIGGER, COLOR)
+				SELECT
+					(
+						SELECT ID
+						FROM #report
+						WHERE VALUE_NAME = SearchMonth
+					),
+					CONVERT(VARCHAR(20), SearchDay, 104), QueryCount, NULL, NULL, NULL, NULL, 4
+				FROM
+					(
+						SELECT SearchDay, SearchMonth, COUNT(*) AS QueryCount
+						FROM dbo.ClientSearchTable
+						WHERE ClientID = @CLIENTID
+						GROUP BY SearchDay, SearchMonth
+					) AS o_O
+				ORDER BY SearchDay DESC
+
+		SELECT *
+		FROM #report
+		ORDER BY ID
+
+
+		IF OBJECT_ID('tempdb..#report') IS NOT NULL
+			DROP TABLE #report
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_CALENDAR_STATISTIC] TO rl_search_history;
+GO

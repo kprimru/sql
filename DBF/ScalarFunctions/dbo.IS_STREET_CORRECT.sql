@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[IS_STREET_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_STREET_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если название улицы 
---                корректно (присутствует в справочнике)
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РЅР°Р·РІР°РЅРёРµ СѓР»РёС†С‹
+--                РєРѕСЂСЂРµРєС‚РЅРѕ (РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ)
 -- =============================================
 CREATE FUNCTION [dbo].[IS_STREET_CORRECT]
 (
@@ -28,21 +30,21 @@ BEGIN
 
   SET @street = LTRIM(RTRIM(@street))
 
-  IF CHARINDEX('.', @street) <> 0 
+  IF CHARINDEX('.', @street) <> 0
     BEGIN
-        -- есть точка, значит скорее всего есть префикс. До точки включительно - префикс
+        -- РµСЃС‚СЊ С‚РѕС‡РєР°, Р·РЅР°С‡РёС‚ СЃРєРѕСЂРµРµ РІСЃРµРіРѕ РµСЃС‚СЊ РїСЂРµС„РёРєСЃ. Р”Рѕ С‚РѕС‡РєРё РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ - РїСЂРµС„РёРєСЃ
       SET @prefix = LEFT(@street, CHARINDEX('.', @street))
-      SET @street = RIGHT(@street, LEN(@street) - CHARINDEX('.', @street))        
-       
+      SET @street = RIGHT(@street, LEN(@street) - CHARINDEX('.', @street))
+
       SET @street = LTRIM(RTRIM(@street))
       SET @name = @street
       END
     ELSE
       BEGIN
         SET @name = @street
-        SET @prefix = '' 
+        SET @prefix = ''
       END
-	
+
     IF EXISTS(SELECT * FROM StreetTable WHERE ST_NAME = @name)
       RETURN 0
     ELSE
@@ -53,3 +55,4 @@ BEGIN
 END
 
 
+GO

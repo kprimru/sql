@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[Sync.DistrFinancing] FOR [DBF].[Sync].[DistrFinancing];

@@ -1,23 +1,25 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_TEMPLATE_SAVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей
-Дата создания:	20.10.2008
-Описание:		Сохранить отчет. Если отчет с 
-					указанным именем уже существует, 
-					он будет перезаписан
-Дата изменения:	03.03.2009
-Описание:		Строка текста заменена на
-					списки идентификаторов
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	20.10.2008
+РћРїРёСЃР°РЅРёРµ:		РЎРѕС…СЂР°РЅРёС‚СЊ РѕС‚С‡РµС‚. Р•СЃР»Рё РѕС‚С‡РµС‚ СЃ
+					СѓРєР°Р·Р°РЅРЅС‹Рј РёРјРµРЅРµРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚,
+					РѕРЅ Р±СѓРґРµС‚ РїРµСЂРµР·Р°РїРёСЃР°РЅ
+Р”Р°С‚Р° РёР·РјРµРЅРµРЅРёСЏ:	03.03.2009
+РћРїРёСЃР°РЅРёРµ:		РЎС‚СЂРѕРєР° С‚РµРєСЃС‚Р° Р·Р°РјРµРЅРµРЅР° РЅР°
+					СЃРїРёСЃРєРё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРІ
 */
 
-CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
+ALTER PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
 	@reporttemplatename VARCHAR(150),
 	--  @reporttemplatetext VARCHAR(1000),
 	@reporttype SMALLINT,
@@ -33,59 +35,73 @@ CREATE PROCEDURE [dbo].[REPORT_TEMPLATE_SAVE]
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
-	DECLARE @reporttemplateid SMALLINT
 
-	SET @reporttemplateid = NULL
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @reporttemplateid = RT_ID 
-	FROM dbo.ReportTemplateTable
-	WHERE RT_NAME = @reporttemplatename
-    
-	IF @reporttemplateid IS NULL
-		BEGIN
-			INSERT INTO dbo.ReportTemplateTable (
-						RT_NAME, RT_ID_REPORT_TYPE,
-						RT_LIST_STATUS, RT_LIST_SUBHOST, RT_LIST_SYSTEM,
-						RT_LIST_SYSTYPE, RT_LIST_NETTYPE, RT_LIST_PERIOD,
-						RT_LIST_TECHTYPE,
-						RT_TOTALRIC,
-						RT_TOTALCOUNT
-						)
-			VALUES		(
-						@reporttemplatename, @reporttype,			--@reporttemplatetext
-						@statuslist, @subhostlist, @systemlist,
-						@systypelist, @nettypelist, @periodlist,
-						@techtypelist,
-						@totalric,
-						@totalcount
-						)
-		END
-	ELSE
-		BEGIN
-			UPDATE		dbo.ReportTemplateTable
-			SET			RT_NAME = @reporttemplatename,		--RT_TEXT = @reporttemplatetext
-						RT_ID_REPORT_TYPE = @reporttype,
-						RT_LIST_STATUS = @statuslist,
-						RT_LIST_SUBHOST = @subhostlist,
-						RT_LIST_SYSTEM = @systemlist,
-						RT_LIST_SYSTYPE = @systypelist,
-						RT_LIST_NETTYPE = @nettypelist,
-						RT_LIST_PERIOD = @periodlist,
-						RT_LIST_TECHTYPE = @techtypelist,
-						RT_TOTALRIC=@totalric,
-						RT_TOTALCOUNT=@totalcount
-			WHERE RT_ID = @reporttemplateid
-		END
- 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @reporttemplateid SMALLINT
+
+		SET @reporttemplateid = NULL
+
+		SELECT @reporttemplateid = RT_ID
+		FROM dbo.ReportTemplateTable
+		WHERE RT_NAME = @reporttemplatename
+
+		IF @reporttemplateid IS NULL
+			BEGIN
+				INSERT INTO dbo.ReportTemplateTable (
+							RT_NAME, RT_ID_REPORT_TYPE,
+							RT_LIST_STATUS, RT_LIST_SUBHOST, RT_LIST_SYSTEM,
+							RT_LIST_SYSTYPE, RT_LIST_NETTYPE, RT_LIST_PERIOD,
+							RT_LIST_TECHTYPE,
+							RT_TOTALRIC,
+							RT_TOTALCOUNT
+							)
+				VALUES		(
+							@reporttemplatename, @reporttype,			--@reporttemplatetext
+							@statuslist, @subhostlist, @systemlist,
+							@systypelist, @nettypelist, @periodlist,
+							@techtypelist,
+							@totalric,
+							@totalcount
+							)
+			END
+		ELSE
+			BEGIN
+				UPDATE		dbo.ReportTemplateTable
+				SET			RT_NAME = @reporttemplatename,		--RT_TEXT = @reporttemplatetext
+							RT_ID_REPORT_TYPE = @reporttype,
+							RT_LIST_STATUS = @statuslist,
+							RT_LIST_SUBHOST = @subhostlist,
+							RT_LIST_SYSTEM = @systemlist,
+							RT_LIST_SYSTYPE = @systypelist,
+							RT_LIST_NETTYPE = @nettypelist,
+							RT_LIST_PERIOD = @periodlist,
+							RT_LIST_TECHTYPE = @techtypelist,
+							RT_TOTALRIC=@totalric,
+							RT_TOTALCOUNT=@totalcount
+				WHERE RT_ID = @reporttemplateid
+			END
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[REPORT_TEMPLATE_SAVE] TO rl_report_w;
+GO

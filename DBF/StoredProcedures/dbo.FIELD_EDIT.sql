@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[FIELD_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[FIELD_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Изменить данные о поле в справочнике полей
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ РїРѕР»Рµ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ РїРѕР»РµР№
 */
 
-CREATE PROCEDURE [dbo].[FIELD_EDIT] 
+ALTER PROCEDURE [dbo].[FIELD_EDIT]
 	@fieldid INT,
 	@fieldname VARCHAR(50),
 	@fieldwidth INT,
@@ -20,11 +22,32 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.FieldTable 
-	SET FL_NAME = @fieldname, 
-		FL_WIDTH = @fieldwidth, 
-		FL_CAPTION = @fieldcaption 
-	WHERE FL_ID = @fieldid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.FieldTable
+		SET FL_NAME = @fieldname,
+			FL_WIDTH = @fieldwidth,
+			FL_CAPTION = @fieldcaption
+		WHERE FL_ID = @fieldid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

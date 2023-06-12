@@ -1,33 +1,58 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_NET_COEF_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 19.11.2008
-Описание:	  Возвращает 0, если подхост можно 
-                удалить из справочника (ни в 
-               одной таблице он не указан), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 19.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РїРѕРґС…РѕСЃС‚ РјРѕР¶РЅРѕ
+                СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° (РЅРё РІ
+               РѕРґРЅРѕР№ С‚Р°Р±Р»РёС†Рµ РѕРЅ РЅРµ СѓРєР°Р·Р°РЅ),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COEF_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COEF_TRY_DELETE]
 	@swid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
 
 
-	SELECT @res AS RES, @txt AS TXT
+		SELECT @res AS RES, @txt AS TXT
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COEF_TRY_DELETE] TO rl_system_net_w;
+GO

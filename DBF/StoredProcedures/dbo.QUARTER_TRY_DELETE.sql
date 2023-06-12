@@ -1,35 +1,60 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[QUARTER_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[QUARTER_TRY_DELETE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если период можно 
-               удалить из справочника (на него 
-               не ссылается ни одна запись 
-               из других таблиц), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РїРµСЂРёРѕРґ РјРѕР¶РЅРѕ
+               СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° (РЅР° РЅРµРіРѕ
+               РЅРµ СЃСЃС‹Р»Р°РµС‚СЃСЏ РЅРё РѕРґРЅР° Р·Р°РїРёСЃСЊ
+               РёР· РґСЂСѓРіРёС… С‚Р°Р±Р»РёС†),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[QUARTER_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[QUARTER_TRY_DELETE]
 	@periodid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	
-	SELECT @res AS RES, @txt AS TXT
+	BEGIN TRY
 
-	SET NOCOUNT OFF
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[QUARTER_TRY_DELETE] TO rl_quarter_d;
+GO

@@ -1,21 +1,33 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [System].[SYSTEM_DELETE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[System].[SYSTEM_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [System].[SYSTEM_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [System].[SYSTEM_DELETE]
 	@ID		UNIQUEIDENTIFIER,
 	@NEW_ID	UNIQUEIDENTIFIER = NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		DECLARE @RN	BIGINT
 
 		SELECT @RN = RN
-		FROM 
+		FROM
 			(
 				SELECT ID, ROW_NUMBER() OVER(ORDER BY NAME) AS RN
 				FROM System.Systems
@@ -23,13 +35,13 @@ BEGIN
 		WHERE ID = @ID
 
 		SELECT TOP 1 @NEW_ID = ID
-		FROM	
+		FROM
 			(
 				SELECT ID, ROW_NUMBER() OVER(ORDER BY NAME) AS RN
 				FROM System.Systems
 			) AS o_O
-		WHERE ID <> @ID 
-			AND RN IN 
+		WHERE ID <> @ID
+			AND RN IN
 				(
 					SELECT @RN + 1
 					UNION ALL
@@ -39,21 +51,17 @@ BEGIN
 		DELETE
 		FROM	System.Systems
 		WHERE	ID		=	@ID
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [System].[SYSTEM_DELETE] TO rl_system_d;
+GO

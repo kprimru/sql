@@ -1,15 +1,27 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Meeting].[MEETING_RESULT_INSERT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Meeting].[MEETING_RESULT_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Meeting].[MEETING_RESULT_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Meeting].[MEETING_RESULT_INSERT]
 	@NAME	NVARCHAR(256),
 	@ID		UNIQUEIDENTIFIER = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	DECLARE @TBL TABLE
 		(
@@ -22,21 +34,17 @@ BEGIN
 			VALUES(@NAME)
 
 		SELECT @ID = ID FROM @TBL
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Meeting].[MEETING_RESULT_INSERT] TO rl_meeting_result_w;
+GO

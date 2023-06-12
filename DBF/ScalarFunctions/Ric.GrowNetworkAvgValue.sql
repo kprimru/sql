@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	Показатель среднесетевого роста
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Ric].[GrowNetworkAvgValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[GrowNetworkAvgValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	РџРѕРєР°Р·Р°С‚РµР»СЊ СЃСЂРµРґРЅРµСЃРµС‚РµРІРѕРіРѕ СЂРѕСЃС‚Р°
 */
-CREATE FUNCTION [Ric].[GrowNetworkAvg]
+CREATE FUNCTION [Ric].[GrowNetworkAvgValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +22,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

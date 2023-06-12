@@ -1,21 +1,48 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:			
-Дата создания:  	
-Описание:		
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[INVOICE_YEAR_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[INVOICE_YEAR_SELECT]  AS SELECT 1')
+GO
+/*
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[INVOICE_YEAR_SELECT]	
+ALTER PROCEDURE [dbo].[INVOICE_YEAR_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DISTINCT INS_NUM_YEAR
-	FROM dbo.InvoiceSaleTable
-	ORDER BY INS_NUM_YEAR
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DISTINCT INS_NUM_YEAR
+		FROM dbo.InvoiceSaleTable
+		ORDER BY INS_NUM_YEAR
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[INVOICE_YEAR_SELECT] TO rl_invoice_r;
+GO

@@ -1,51 +1,75 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DISTRS_CONTRACT_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_ADD]  AS SELECT 1')
+GO
+
 /*
-Автор:			%authorname%
-Дата создания:	03.02.2009
-Описание:		Добавить (сопоставить)
-				дистрибутив в договор
-				(договору) из уже имеющихся
-				дистрибутивов для данной ТО
+РђРІС‚РѕСЂ:			%authorname%
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	03.02.2009
+РћРїРёСЃР°РЅРёРµ:		Р”РѕР±Р°РІРёС‚СЊ (СЃРѕРїРѕСЃС‚Р°РІРёС‚СЊ)
+				РґРёСЃС‚СЂРёР±СѓС‚РёРІ РІ РґРѕРіРѕРІРѕСЂ
+				(РґРѕРіРѕРІРѕСЂСѓ) РёР· СѓР¶Рµ РёРјРµСЋС‰РёС…СЃСЏ
+				РґРёСЃС‚СЂРёР±СѓС‚РёРІРѕРІ РґР»СЏ РґР°РЅРЅРѕР№ РўРћ
 */
 
-CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_ADD]
+ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_ADD]
 	@co_id INT,
 	@distrs VARCHAR(1000)
 AS
 BEGIN
 	SET NOCOUNT ON
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF OBJECT_ID('tempdb..#distrstmp') IS NOT NULL
-		DROP TABLE #distrstmp
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	  CREATE TABLE #distrstmp
-		(
-		  distr	INT
-		)
+	BEGIN TRY
 
-	IF @distrs IS NOT NULL
-		BEGIN
-		  --парсить строчку и выбирать нужные значения
-		  INSERT INTO #distrstmp
-			SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@distrs, ',')
-		  END
+		IF OBJECT_ID('tempdb..#distrstmp') IS NOT NULL
+			DROP TABLE #distrstmp
 
-	INSERT INTO dbo.ContractDistrTable SELECT @co_id , distr FROM #distrstmp
+		  CREATE TABLE #distrstmp
+			(
+			  distr	INT
+			)
+
+		IF @distrs IS NOT NULL
+			BEGIN
+			  --РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+			  INSERT INTO #distrstmp
+				SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@distrs, ',')
+			  END
+
+		INSERT INTO dbo.ContractDistrTable SELECT @co_id , distr FROM #distrstmp
 
 
-	/*IF @returnvalue = 1
-	  SELECT SCOPE_IDENTITY() AS NEW_IDEN
-	*/
+		/*IF @returnvalue = 1
+		  SELECT SCOPE_IDENTITY() AS NEW_IDEN
+		*/
 
-	IF OBJECT_ID('tempdb..#distrstmp') IS NOT NULL
-		DROP TABLE #distrstmp
+		IF OBJECT_ID('tempdb..#distrstmp') IS NOT NULL
+			DROP TABLE #distrstmp
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[DISTRS_CONTRACT_ADD] TO rl_client_contract_w;
+GO

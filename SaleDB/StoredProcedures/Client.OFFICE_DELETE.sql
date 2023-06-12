@@ -1,14 +1,26 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[OFFICE_DELETE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[OFFICE_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[OFFICE_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[OFFICE_DELETE]
 	@ID			UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		BEGIN TRAN Office
@@ -26,7 +38,7 @@ BEGIN
 			SELECT ID, ID_COMPANY, SHORT, NAME, MAIN, BDATE, EDATE, 2, UPD_USER
 			FROM Client.Office
 			WHERE ID = @ID
-		
+
 		DECLARE @NEW_ID UNIQUEIDENTIFIER
 
 		SELECT @NEW_ID = ID
@@ -56,7 +68,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -66,3 +78,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[OFFICE_DELETE] TO rl_office_d;
+GO

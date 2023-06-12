@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.StreetTable] FOR [DBF].[dbo].[StreetTable];

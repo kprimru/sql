@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Common].[DateDiffString]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[DateDiffString]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[DateDiffString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Common].[DateDiffString]
 (
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
@@ -23,30 +25,31 @@ BEGIN
 	SET @YEAR = DATEDIFF(MONTH, @BEGIN, @END) / 12
 
 	IF @YEAR > 0
-		SET @RES = @RES + CONVERT(NVARCHAR(64), @YEAR) + ' ' + CASE WHEN @YEAR = 1 THEN 'ãîä' WHEN @YEAR > 1 AND @YEAR <= 4 THEN 'ãîäà' ELSE 'ëåò' END + ' '
+		SET @RES = @RES + CONVERT(NVARCHAR(64), @YEAR) + ' ' + CASE WHEN @YEAR = 1 THEN 'Ð³Ð¾Ð´' WHEN @YEAR > 1 AND @YEAR <= 4 THEN 'Ð³Ð¾Ð´Ð°' ELSE 'Ð»ÐµÑ‚' END + ' '
 
 	SET @END = DATEADD(YEAR, -@YEAR, @END)
 
 	SET @MONTH = DATEDIFF(MONTH, @BEGIN, @END) + SIGN(1+SIGN(DAY(@END)-DAY(@BEGIN)))-1;
 
 	IF @MONTH > 0
-		SET @RES = @RES + CONVERT(NVARCHAR(64), @MONTH) + ' ' + CASE WHEN @MONTH = 1 THEN 'ìåñÿö' WHEN @MONTH > 1 AND @MONTH <= 4 THEN 'ìåñÿöà' ELSE 'ìåñÿöåâ' END + ' '
+		SET @RES = @RES + CONVERT(NVARCHAR(64), @MONTH) + ' ' + CASE WHEN @MONTH = 1 THEN 'Ð¼ÐµÑÑÑ†' WHEN @MONTH > 1 AND @MONTH <= 4 THEN 'Ð¼ÐµÑÑÑ†Ð°' ELSE 'Ð¼ÐµÑÑÑ†ÐµÐ²' END + ' '
 
 	SET @END = DATEADD(MONTH, -@MONTH, @END)
 
 	SET @DAY = DATEDIFF(DAY, @BEGIN, @END)
 
 	IF @DAY > 0
-		SET @RES = @RES + CONVERT(NVARCHAR(64), @DAY) + ' ' + CASE WHEN @DAY = 1 THEN 'äåíü' WHEN @DAY > 1 AND @DAY <= 4 THEN 'äíÿ' ELSE 'äíåé' END + ' '
-			
+		SET @RES = @RES + CONVERT(NVARCHAR(64), @DAY) + ' ' + CASE WHEN @DAY = 1 THEN 'Ð´ÐµÐ½ÑŒ' WHEN @DAY > 1 AND @DAY <= 4 THEN 'Ð´Ð½Ñ' ELSE 'Ð´Ð½ÐµÐ¹' END + ' '
+
 	SET @RES = RTRIM(@RES)
 
 	IF @RES = N''
-		SET @RES = N'Ñåãîäíÿ'
-	ELSE IF @RES = N'1 äåíü'
-		SET @RES = N'Â÷åðà'
+		SET @RES = N'Ð¡ÐµÐ³Ð¾Ð´Ð½Ñ'
+	ELSE IF @RES = N'1 Ð´ÐµÐ½ÑŒ'
+		SET @RES = N'Ð’Ñ‡ÐµÑ€Ð°'
 	ELSE
-		SET @RES = @RES + ' íàçàä'
+		SET @RES = @RES + ' Ð½Ð°Ð·Ð°Ð´'
 
 	RETURN @RES
 END
+GO

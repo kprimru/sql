@@ -1,18 +1,34 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Price].[COMMERCIAL_OPERATION_SELECT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Price].[COMMERCIAL_OPERATION_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[COMMERCIAL_OPERATION_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Price].[COMMERCIAL_OPERATION_SELECT]
 	@FILTER VARCHAR(100) = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	SELECT ID, NAME
 	FROM Price.CommercialOperation
 	WHERE @FILTER IS NULL
-		OR NAME LIKE @FILTER		
+		OR NAME LIKE @FILTER
 	ORDER BY NAME
 END
+
+GO
+GRANT EXECUTE ON [Price].[COMMERCIAL_OPERATION_SELECT] TO rl_offer_r;
+GO

@@ -1,28 +1,40 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Personal].[PERSONAL_DISMISS]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Personal].[PERSONAL_DISMISS]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Personal].[PERSONAL_DISMISS]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Personal].[PERSONAL_DISMISS]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME,
 	@NEW_ID	UNIQUEIDENTIFIER = NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		DECLARE @LG	NVARCHAR(128)
-	
+
 		SELECT @LG = LOGIN
 		FROM Personal.OfficePersonal
 		WHERE ID = @ID
-	
+
 		DECLARE @RN	BIGINT
 
 		SELECT @RN = RN
-		FROM 
+		FROM
 			(
 				SELECT ID, ROW_NUMBER() OVER(ORDER BY NAME) AS RN
 				FROM Personal.OfficePersonal
@@ -30,13 +42,13 @@ BEGIN
 		WHERE ID = @ID
 
 		SELECT TOP 1 @NEW_ID = ID
-		FROM	
+		FROM
 			(
 				SELECT ID, ROW_NUMBER() OVER(ORDER BY NAME) AS RN
 				FROM Personal.OfficePersonal
 			) AS o_O
-		WHERE ID <> @ID 
-			AND RN IN 
+		WHERE ID <> @ID
+			AND RN IN
 				(
 					SELECT @RN + 1
 					UNION ALL
@@ -46,9 +58,9 @@ BEGIN
 		UPDATE	Personal.OfficePersonal
 		SET		END_DATE	=	@DATE
 		WHERE	ID			=	@ID
-		
+
 		DECLARE @COMPANY NVARCHAR(MAX)
-		
+
 		SELECT @COMPANY =
 			(
 				SELECT ID AS 'item/@id'
@@ -56,9 +68,9 @@ BEGIN
 				WHERE ID_PERSONAL = @ID
 				FOR XML PATH('root')
 			)
-			
+
 		EXEC Client.COMPANY_PROCESS_SALE_RETURN @COMPANY
-		
+
 		SELECT @COMPANY =
 			(
 				SELECT ID AS 'item/@id'
@@ -66,9 +78,9 @@ BEGIN
 				WHERE ID_PERSONAL = @ID
 				FOR XML PATH('root')
 			)
-			
+
 		EXEC Client.COMPANY_PROCESS_PHONE_RETURN @COMPANY
-		
+
 		SELECT @COMPANY =
 			(
 				SELECT ID AS 'item/@id'
@@ -76,25 +88,21 @@ BEGIN
 				WHERE ID_PERSONAL = @ID
 				FOR XML PATH('root')
 			)
-			
+
 		EXEC Client.COMPANY_PROCESS_MANAGER_RETURN @COMPANY
-		
+
 		EXEC Security.USER_DELETE @LG
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Personal].[PERSONAL_DISMISS] TO rl_personal_w;
+GO

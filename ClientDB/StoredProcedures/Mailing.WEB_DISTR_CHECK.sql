@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Mailing].[WEB_DISTR_CHECK]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Mailing].[WEB_DISTR_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Mailing].[WEB_DISTR_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Mailing].[WEB_DISTR_CHECK]
 	@STR	NVARCHAR(64),
 	@MSG	NVARCHAR(256) OUTPUT,
 	@STATUS	SMALLINT OUTPUT,
@@ -15,68 +17,92 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @DISTR_S	NVARCHAR(64)
-	DECLARE @COMP_S		NVARCHAR(64)
-	
-	SET @STR = LTRIM(RTRIM(@STR))
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF CHARINDEX('/', @STR) <> 0
-	BEGIN
-		SET @DISTR_S = LEFT(@STR, CHARINDEX('/', @STR) - 1)
-		SET @COMP_S = RIGHT(@STR, LEN(@STR) - CHARINDEX('/', @STR))
-	END
-	ELSE
-	BEGIN
-		SET @DISTR_S = @STR
-		SET @COMP_S = '1'
-	END
-	
-	DECLARE @ERROR	BIT
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	
-	SET @ERROR = 0
-	
 	BEGIN TRY
-		SET @DISTR = CONVERT(INT, @DISTR_S)
-		SET @COMP = CONVERT(INT, @COMP_S)
+
+		DECLARE @DISTR_S	NVARCHAR(64)
+		DECLARE @COMP_S		NVARCHAR(64)
+
+		SET @STR = LTRIM(RTRIM(@STR))
+
+		IF CHARINDEX('/', @STR) <> 0
+		BEGIN
+			SET @DISTR_S = LEFT(@STR, CHARINDEX('/', @STR) - 1)
+			SET @COMP_S = RIGHT(@STR, LEN(@STR) - CHARINDEX('/', @STR))
+		END
+		ELSE
+		BEGIN
+			SET @DISTR_S = @STR
+			SET @COMP_S = '1'
+		END
+
+		DECLARE @ERROR	BIT
+
+
+		SET @ERROR = 0
+
+		BEGIN TRY
+			SET @DISTR = CONVERT(INT, @DISTR_S)
+			SET @COMP = CONVERT(INT, @COMP_S)
+		END TRY
+		BEGIN CATCH
+			SET @ERROR = 1
+		END CATCH
+
+		IF @ERROR = 1
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'РќРµРІРµСЂРЅРѕ СѓРєР°Р·Р°РЅ РЅРѕРјРµСЂ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°. РћРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ Р»РёР±Рѕ РІ РІРёРґРµ С‡РёСЃР»Р°, Р»РёР±Рѕ РІ РІРёРґРµ РїР°СЂС‹ С‡РёСЃРµР», СЂР°Р·РґРµР»РµРЅРЅС‹С… СЃРёРјРІРѕР»РѕРј "/"'
+
+			RETURN
+		END
+
+		SET @HOST = NULL;
+
+		SELECT @HOST = MainHostID
+		FROM dbo.RegNodeMainDistrView WITH(NOEXPAND)
+		WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
+
+		IF @HOST IS NULL
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'Р’С‹ РЅРµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹ РІ Р РР¦ РєР°Рє РєР»РёРµРЅС‚'
+
+			RETURN
+		END
+
+
+
+		IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0
+		BEGIN
+			SET @STATUS = 1
+			SET @MSG = 'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РѕС‚РєР»СЋС‡РµРЅ РѕС‚ СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ. Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЋ, РѕР±СЂР°С‚РёС‚РµСЃСЊ Рє РЅР°Рј.'
+
+			RETURN
+		END
+
+
+		SET @STATUS = 0
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
 	BEGIN CATCH
-		SET @ERROR = 1
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
-	
-	IF @ERROR = 1
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Неверно указан номер дистрибутива. Он должен быть указан либо в виде числа, либо в виде пары чисел, разделенных символом "/"'
-		
-		RETURN
-	END
-
-	IF NOT EXISTS
-		(
-			SELECT *
-			FROM dbo.RegNodeMainSystemView
-			WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-		)
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Вы не зарегистрированы в РИЦ как клиент'
-		
-		RETURN
-	END
-	
-	SELECT @HOST = MainHostID
-	FROM dbo.RegNodeMainSystemView
-	WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-	
-	IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Дистрибутив отключен от сопровождения. Для того, чтобы подключиться к сопровождению, обратитесь к нам.'
-		
-		RETURN
-	END
-
-	
-	SET @STATUS = 0
 END
+GO
+GRANT EXECUTE ON [Mailing].[WEB_DISTR_CHECK] TO rl_mailing_web;
+GO

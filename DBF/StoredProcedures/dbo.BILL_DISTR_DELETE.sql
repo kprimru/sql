@@ -1,46 +1,70 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[BILL_DISTR_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[BILL_DISTR_DELETE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[BILL_DISTR_DELETE]
+ALTER PROCEDURE [dbo].[BILL_DISTR_DELETE]
 	@blid VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#bill') IS NOT NULL
-		DROP TABLE #bill
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #bill
-		(
-			billid INT
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @blid IS NOT NULL
-		BEGIN
-			--парсить строчку и выбирать нужные значения
-			INSERT INTO #bill
-				SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@blid, ',')
-		END
+	BEGIN TRY
 
-	DELETE FROM dbo.SaldoTable
-	WHERE SL_ID_BILL_DIS IN	(SELECT billid FROM #bill)
+		IF OBJECT_ID('tempdb..#bill') IS NOT NULL
+			DROP TABLE #bill
 
-	DELETE FROM dbo.BillDistrTable
-	WHERE BD_ID IN (SELECT billid FROM #bill)
+		CREATE TABLE #bill
+			(
+				billid INT
+			)
 
-	IF OBJECT_ID('tempdb..#bill') IS NOT NULL
-		DROP TABLE #bill
+		IF @blid IS NOT NULL
+			BEGIN
+				--РїР°СЂСЃРёС‚СЊ СЃС‚СЂРѕС‡РєСѓ Рё РІС‹Р±РёСЂР°С‚СЊ РЅСѓР¶РЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+				INSERT INTO #bill
+					SELECT DISTINCT * FROM dbo.GET_TABLE_FROM_LIST(@blid, ',')
+			END
+
+		DELETE FROM dbo.SaldoTable
+		WHERE SL_ID_BILL_DIS IN	(SELECT billid FROM #bill)
+
+		DELETE FROM dbo.BillDistrTable
+		WHERE BD_ID IN (SELECT billid FROM #bill)
+
+		IF OBJECT_ID('tempdb..#bill') IS NOT NULL
+			DROP TABLE #bill
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
 
@@ -48,3 +72,6 @@ END
 
 
 
+GO
+GRANT EXECUTE ON [dbo].[BILL_DISTR_DELETE] TO rl_bill_d;
+GO

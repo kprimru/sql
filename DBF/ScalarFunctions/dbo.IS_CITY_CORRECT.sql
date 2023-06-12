@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[IS_CITY_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_CITY_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если название 
---                населенного пункта корректно 
---                (присутствует в справочнике). 
---                При этом префикс не учитывается
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РЅР°Р·РІР°РЅРёРµ
+--                РЅР°СЃРµР»РµРЅРЅРѕРіРѕ РїСѓРЅРєС‚Р° РєРѕСЂСЂРµРєС‚РЅРѕ
+--                (РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ).
+--                РџСЂРё СЌС‚РѕРј РїСЂРµС„РёРєСЃ РЅРµ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ
 -- =============================================
 CREATE FUNCTION [dbo].[IS_CITY_CORRECT]
 (
@@ -21,7 +23,7 @@ CREATE FUNCTION [dbo].[IS_CITY_CORRECT]
 RETURNS int
 AS
 BEGIN
-	
+
 	DECLARE @prefix varchar(50)
     DECLARE @name varchar(100)
 
@@ -30,21 +32,21 @@ BEGIN
 
     SET @citystr = LTRIM(RTRIM(@citystr))
 
-	IF CHARINDEX('.', @citystr) <> 0 
+	IF CHARINDEX('.', @citystr) <> 0
       BEGIN
-        -- есть точка, значит скорее всего есть г. До точки включительно - префикс
+        -- РµСЃС‚СЊ С‚РѕС‡РєР°, Р·РЅР°С‡РёС‚ СЃРєРѕСЂРµРµ РІСЃРµРіРѕ РµСЃС‚СЊ Рі. Р”Рѕ С‚РѕС‡РєРё РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ - РїСЂРµС„РёРєСЃ
         SET @prefix = LEFT(@citystr, CHARINDEX('.', @citystr))
-        SET @citystr = RIGHT(@citystr, LEN(@citystr) - CHARINDEX('.', @citystr))        
-       
+        SET @citystr = RIGHT(@citystr, LEN(@citystr) - CHARINDEX('.', @citystr))
+
         SET @citystr = LTRIM(RTRIM(@citystr))
         SET @name = @citystr
       END
     ELSE
       BEGIN
         SET @name = @citystr
-        SET @prefix = '' 
+        SET @prefix = ''
       END
-	
+
     IF EXISTS(SELECT * FROM CityTable WHERE CT_NAME = @name)
       RETURN 0
     ELSE
@@ -55,3 +57,4 @@ BEGIN
 END
 
 
+GO

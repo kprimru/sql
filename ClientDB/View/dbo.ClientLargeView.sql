@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientLargeView]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ClientLargeView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientLargeView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ClientLargeView]
 AS
 	SELECT ClientID
 	FROM dbo.ClientView a WITH(NOEXPAND)
@@ -16,17 +18,18 @@ AS
 				INNER JOIN Din.NetType y ON z.DistrTypeId = y.NT_ID_MASTER
 				WHERE z.ID_CLIENT = a.ClientID
 					AND DS_REG = 0
-					AND SystemTypeName IN ('Ñåðèÿ À', 'êîììåð÷åñêàÿ', 'Ñåðèÿ Ê')
-					AND 
+					AND SystemTypeName IN ('Ð¡ÐµÑ€Ð¸Ñ Ð', 'ÐºÐ¾Ð¼Ð¼ÐµÑ€Ñ‡ÐµÑÐºÐ°Ñ', 'Ð¡ÐµÑ€Ð¸Ñ Ðš')
+					AND
 						(
 							z.HostID = 1
-							AND 
+							AND
 							y.NT_NET > 1
-									
+
 							OR
-										
+
 							y.NT_NET = 1
 							AND
 							z.SystemBaseName IN ('LAW', 'BVP', 'BUDP', 'JURP')
 						)
 			)
+GO

@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Client].[CompanyFilterWrite]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[CompanyFilterWrite]', 'FN') IS NULL EXEC('CREATE FUNCTION [Client].[CompanyFilterWrite] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Client].[CompanyFilterWrite]
 (
 	@SRC	NVARCHAR(MAX)
 )
@@ -16,7 +18,7 @@ BEGIN
 	SET @XML = CAST(@SRC AS XML)
 
 	DECLARE @RESULT NVARCHAR(MAX)
-	SET @RESULT = 
+	SET @RESULT =
 		(
 			SELECT a.ID AS 'item/@id'
 			FROM
@@ -28,6 +30,7 @@ BEGIN
 					) AS b ON a.ID = b.ID
 			FOR XML PATH('root')
 		)
-		
+
 	RETURN @RESULT
 END
+GO

@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_LAST_EVENT_SELECT]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_LAST_EVENT_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_LAST_EVENT_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CLIENT_LAST_EVENT_SELECT]
 	@MON_COUNT	TINYINT,
 	@MANAGER	VARCHAR(MAX)	=	NULL,
 	@SERVICE	INT	=	NULL,
@@ -17,113 +19,119 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#event') IS NOT NULL
-		DROP TABLE #event
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #event 
-		(
-			ClientID	INT PRIMARY KEY,
-			EventDate	SMALLDATETIME,
-			Author		NVARCHAR(128),
-			EventText	VARCHAR(MAX),
-			CATEGORY	NVARCHAR(8)
-		)
-	
-	IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
-		DROP TABLE #last_event
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	CREATE TABLE #last_event
-		(
-			EventID		INT,
-			CATEGORY	NVARCHAR(8)
-		)
+	BEGIN TRY
 
-	IF @SERVICE_EVENT = 1	
-		INSERT INTO #last_event(EventID, CATEGORY)
-			SELECT
-				(
-					SELECT TOP 1 EventID
-					FROM 
-						dbo.EventTable b INNER JOIN
-						dbo.ServiceTable ON EventCreateUser = ServiceLogin
-					WHERE a.ClientID = b.ClientID AND EventActive = 1
-					ORDER BY EventDate DESC, EventID DESC
-				), CATEGORY
-		FROM 
-			dbo.ClientView a WITH(NOEXPAND)  
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-			INNER JOIN 
-				(
-					SELECT ID 
-					FROM dbo.TableIDFromXML(@TYPE)
-				) AS c ON a.ServiceTypeID = c.ID
-			INNER JOIN 
-				(
-					SELECT ID 
-					FROM dbo.TableIDFromXML(@CL_TYPE)
-				) AS d ON b.ClientContractTypeID = d.ID
-			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.CLientID = a.ClientID
-			LEFT OUTER JOIN dbo.ClientTypeTable f ON f.ClientTypeName = CATEGORY
-		WHERE ServiceStatusID = 2 
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
-			AND (@CATEGORY IS NULL OR f.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
-			
-	ELSE
-		INSERT INTO #last_event(EventID, CATEGORY)
-			SELECT
-				(
-					SELECT TOP 1 EventID
-					FROM 
-						dbo.EventTable b 
-					WHERE a.ClientID = b.ClientID AND EventActive = 1
-					ORDER BY EventDate DESC, EventID DESC
-				), CATEGORY
-		FROM 
-			dbo.ClientView a WITH(NOEXPAND)  
-			INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
-			INNER JOIN 
-				(
-					SELECT ID 
-					FROM dbo.TableIDFromXML(@TYPE)
-				) AS c ON a.ServiceTypeID = c.ID
-			INNER JOIN 
-				(
-					SELECT ID 
-					FROM dbo.TableIDFromXML(@CL_TYPE)
-				) AS d ON b.ClientContractTypeID = d.ID
-			LEFT OUTER JOIN dbo.ClientTypeAllView e ON e.CLientID = a.ClientID
-			LEFT OUTER JOIN dbo.ClientTypeTable f ON f.ClientTypeName = CATEGORY
-		WHERE ServiceStatusID = 2 
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
-			AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
-			AND (@CATEGORY IS NULL OR f.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
-		
-	
-	INSERT INTO #event(ClientID, EventDate, Author, EventText, CATEGORY)
-		SELECT ClientID, EventDate, EventCreateUser, EventComment, CATEGORY
-		FROM 
-			#last_event a
-			INNER JOIN dbo.EventTable b ON a.EventID = b.EventID
-			
+		IF OBJECT_ID('tempdb..#event') IS NOT NULL
+			DROP TABLE #event
 
-    SELECT 
-		a.ClientID,
-		ManagerName, ServiceName, ClientFullName, CATEGORY,
-		EventDate AS MaxDate,
-		DATEDIFF(MONTH, EventDate, GETDATE()) AS DIFF_DATA,
-		ISNULL(Author, '') + ' / ' + CONVERT(VARCHAR(20), EventDate, 104) + CHAR(10) + ISNULL(EventText, '') AS EventComment
-	FROM 
-		dbo.ClientView a WITH(NOEXPAND)
-		INNER JOIN	#event t ON t.ClientID = a.ClientID
-	WHERE 
-		(@MON_EQUAL = 0 AND DATEADD(MONTH, @MON_COUNT, EventDate) < GETDATE())
-		OR (@MON_EQUAL = 1 AND dbo.MonthOf(DATEADD(MONTH, @MON_COUNT, EventDate)) = dbo.MonthOf(GETDATE()))
-	ORDER BY ManagerName, ServiceName, ClientFullName
+		CREATE TABLE #event
+			(
+				ClientID	INT PRIMARY KEY,
+				EventDate	SMALLDATETIME,
+				Author		NVARCHAR(128),
+				EventText	VARCHAR(MAX),
+				ClientTypeID	TinyInt
+			)
 
-	IF OBJECT_ID('tempdb..#event') IS NOT NULL
-		DROP TABLE #event
+		IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
+			DROP TABLE #last_event
 
-	IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
-		DROP TABLE #last_event
+		CREATE TABLE #last_event
+			(
+				EventID		INT,
+				ClientTypeID	TinyInt
+			)
+
+		IF @SERVICE_EVENT = 1
+			INSERT INTO #last_event(EventID, ClientTypeID)
+				SELECT
+					(
+						SELECT TOP 1 EventID
+						FROM
+							dbo.EventTable b INNER JOIN
+							dbo.ServiceTable ON EventCreateUser = ServiceLogin
+						WHERE a.ClientID = b.ClientID AND EventActive = 1
+						ORDER BY EventDate DESC, EventID DESC
+					), b.ClientTypeID
+			FROM
+				dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
+				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
+				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
+				AND (@TYPE IS NULL OR b.ServiceTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+				AND (@CL_TYPE IS NULL OR b.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+
+		ELSE
+			INSERT INTO #last_event(EventID, ClientTypeID)
+				SELECT
+					(
+						SELECT TOP 1 EventID
+						FROM
+							dbo.EventTable b
+						WHERE a.ClientID = b.ClientID AND EventActive = 1
+						ORDER BY EventDate DESC, EventID DESC
+					), a.ClientTypeID
+			FROM
+				dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN [dbo].[ServiceStatusConnected]() s ON a.ServiceStatusId = s.ServiceStatusId
+				INNER JOIN dbo.ClientTable b ON a.ClientID = b.ClientID
+			WHERE	(ServiceID = @SERVICE OR @SERVICE IS NULL)
+				AND (ManagerID IN (SELECT ID FROM dbo.TableIDFromXml(@MANAGER)) OR @MANAGER IS NULL)
+				AND (@CATEGORY IS NULL OR b.ClientTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@CATEGORY)))
+				AND (@TYPE IS NULL OR b.ServiceTypeID IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+				AND (@CL_TYPE IS NULL OR b.ClientKind_Id IN (SELECT ID FROM dbo.TableIDFromXml(@TYPE)))
+
+
+		INSERT INTO #event(ClientID, EventDate, Author, EventText, ClientTypeID)
+			SELECT ClientID, EventDate, EventCreateUser, EventComment, ClientTypeID
+			FROM
+				#last_event a
+				INNER JOIN dbo.EventTable b ON a.EventID = b.EventID
+
+
+		SELECT
+			a.ClientID,
+			ManagerName, ServiceName, ClientFullName, CATEGORY = c.ClientTypeName,
+			EventDate AS MaxDate,
+			DATEDIFF(MONTH, EventDate, GETDATE()) AS DIFF_DATA,
+			ISNULL(Author, '') + ' / ' + CONVERT(VARCHAR(20), EventDate, 104) + CHAR(10) + ISNULL(EventText, '') AS EventComment
+		FROM
+			dbo.ClientView a WITH(NOEXPAND)
+			INNER JOIN	#event t ON t.ClientID = a.ClientID
+			LEFT JOIN dbo.ClientTypeTable c ON c.ClientTypeID = t.ClientTypeID
+		WHERE
+			(@MON_EQUAL = 0 AND DATEADD(MONTH, @MON_COUNT, EventDate) < GETDATE())
+			OR (@MON_EQUAL = 1 AND dbo.MonthOf(DATEADD(MONTH, @MON_COUNT, EventDate)) = dbo.MonthOf(GETDATE()))
+		ORDER BY ManagerName, ServiceName, ClientFullName
+
+		IF OBJECT_ID('tempdb..#event') IS NOT NULL
+			DROP TABLE #event
+
+		IF OBJECT_ID('tempdb..#last_event') IS NOT NULL
+			DROP TABLE #last_event
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_LAST_EVENT_SELECT] TO rl_event_audit;
+GO

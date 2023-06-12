@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[INCOME_CONVEY_DISTR]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[INCOME_CONVEY_DISTR]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[INCOME_CONVEY_DISTR]
+ALTER PROCEDURE [dbo].[INCOME_CONVEY_DISTR]
 	@incomeid INT,
 	@distrid INT,
 	@incomedate SMALLDATETIME,
@@ -24,14 +26,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.IncomeDistrTable(ID_ID_INCOME, ID_ID_DISTR, ID_PRICE, ID_DATE, ID_ID_PERIOD, ID_PREPAY, ID_ACTION)
-		SELECT @incomeid, @distrid, @price, @incomedate, @periodid, @prepay, @action
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.IncomeDistrTable(ID_ID_INCOME, ID_ID_DISTR, ID_PRICE, ID_DATE, ID_ID_PERIOD, ID_PREPAY, ID_ACTION)
+			SELECT @incomeid, @distrid, @price, @incomedate, @periodid, @prepay, @action
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[INCOME_CONVEY_DISTR] TO rl_income_w;
+GO

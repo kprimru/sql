@@ -1,79 +1,98 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если систему можно 
-               удалить из справочника (ни у 
-               одного клиента нет аткой системы), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё СЃРёСЃС‚РµРјСѓ РјРѕР¶РЅРѕ
+               СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° (РЅРё Сѓ
+               РѕРґРЅРѕРіРѕ РєР»РёРµРЅС‚Р° РЅРµС‚ Р°С‚РєРѕР№ СЃРёСЃС‚РµРјС‹),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_TRY_DELETE]
 	@systemid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.DistrTable WHERE DIS_ID_SYSTEM = @systemid)
-		BEGIN
+	BEGIN TRY
+
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.DistrTable WHERE DIS_ID_SYSTEM = @systemid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								+ 'РґРёСЃС‚СЂРёР±СѓС‚РёРІС‹ СЌС‚РѕР№ СЃРёСЃС‚РµРјС‹.' + CHAR(13)
+			END
+
+		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_SYSTEM = @systemid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє '
+								+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё РІ РёСЃС‚РѕСЂРёРё СЂРµРі.СѓР·Р»Р° СЃ РґР°РЅРЅРѕР№ СЃРёСЃС‚РµРјРѕР№.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_SYSTEM = @systemid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє '
+						+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё Рѕ СЂРµРіРёСЃС‚СЂР°С†РёРё РЅРѕРІС‹С… СЃРёСЃС‚РµРј СЃ РґР°РЅРЅРѕР№ СЃРёСЃС‚РµРјРѕР№.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_SYSTEM = @systemid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє '
+						+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё РІ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Рµ Рѕ РґР°РЅРЅРѕР№ СЃРёСЃС‚РµРјРµ.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PriceSystemHistoryTable WHERE PSH_ID_SYSTEM = @systemid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє '
+						+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё РІ РёСЃС‚РѕСЂРёРё С†РµРЅ РґР°РЅРЅРѕР№ СЃРёСЃС‚РµРјС‹.' + CHAR(13)
+			END
+
+		IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_SYSTEM = @systemid)
+		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить систему, так как существуют ' +
-							+ 'дистрибутивы этой системы.' + CHAR(13)
-		END
+			SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРёСЃС‚РµРјСѓ, С‚Р°Рє РєР°Рє РѕРЅР° Р±С‹Р» Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅР°.'
+		  END
 
-	IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_SYSTEM = @systemid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить систему, так как '
-							+ 'имеются записи в истории рег.узла с данной системой.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_SYSTEM = @systemid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить систему, так как '
-					+ 'имеются записи о регистрации новых систем с данной системой.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_SYSTEM = @systemid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить систему, так как '
-					+ 'имеются записи в прейскуранте о данной системе.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PriceSystemHistoryTable WHERE PSH_ID_SYSTEM = @systemid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить систему, так как '
-					+ 'имеются записи в истории цен данной системы.' + CHAR(13)
-		END
+		--
 
-	IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_SYSTEM = @systemid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Невозможно удалить систему, так как она был зарегистрирована.'
-	  END
+		SELECT @res AS RES, @txt AS TXT
 
-	--
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-	SELECT @res AS RES, @txt AS TXT
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-	SET NOCOUNT OFF
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_TRY_DELETE] TO rl_system_d;
+GO

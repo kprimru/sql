@@ -1,24 +1,51 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT] 
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[GET_INFOBANKS_FOR_COMPLECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[GET_INFOBANKS_FOR_COMPLECT]
 	@SYSID INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankPath
-	FROM dbo.InfoBankTable
-	WHERE
-		InfoBankID IN
-			(
-				SELECT InfoBankID
-				FROM dbo.SystemBankTable 
-				--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --ДОФ будем добавлять программно
-                WHERE  (SystemID = @SYSID) AND (Required =1)  
-			)
-		AND InfoBankActive = 1
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankPath
+		FROM dbo.InfoBankTable
+		WHERE
+			InfoBankID IN
+				(
+					SELECT InfoBankID
+					FROM dbo.SystemBankTable
+					--WHERE  (SystemID = @SYSID) AND (Required IN (1, 2)) --Р”РћР¤ Р±СѓРґРµРј РґРѕР±Р°РІР»СЏС‚СЊ РїСЂРѕРіСЂР°РјРјРЅРѕ
+					WHERE  (SystemID = @SYSID) AND  (Required IN (1, 2) )
+				)
+			AND InfoBankActive = 1
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[GET_INFOBANKS_FOR_COMPLECT] TO public;
+GO

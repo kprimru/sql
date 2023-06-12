@@ -1,128 +1,190 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Seminar].[WEB_DISTR_CHECK]
-	@ID		UNIQUEIDENTIFIER,
-	@STR	NVARCHAR(64),
-	@MSG	NVARCHAR(256) OUTPUT,
-	@STATUS	SMALLINT OUTPUT,
-	@HOST	INT = NULL OUTPUT,
-	@DISTR	INT = NULL OUTPUT,
-	@COMP	TINYINT = NULL OUTPUT
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Seminar].[WEB_DISTR_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[WEB_DISTR_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Seminar].[WEB_DISTR_CHECK]
+    @ID             UniqueIdentifier,
+    @STR            NVarChar(64),
+    @MSG            NVarChar(256) OUTPUT,
+    @STATUS         SmallInt OUTPUT,
+    @HOST           Int = NULL OUTPUT,
+    @DISTR          Int = NULL OUTPUT,
+    @COMP           TinyInt = NULL OUTPUT,
+    @CLIENT         Int = NULL OUTPUT,
+    @SubhostName    VarChar(20) = NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	DECLARE @DISTR_S	NVARCHAR(64)
-	DECLARE @COMP_S		NVARCHAR(64)
-	
-	SET @STR = LTRIM(RTRIM(@STR))
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
 
-	IF CHARINDEX('/', @STR) <> 0
-	BEGIN
-		SET @DISTR_S = LEFT(@STR, CHARINDEX('/', @STR) - 1)
-		SET @COMP_S = RIGHT(@STR, LEN(@STR) - CHARINDEX('/', @STR))
-	END
-	ELSE
-	BEGIN
-		SET @DISTR_S = @STR
-		SET @COMP_S = '1'
-	END
-	
-	DECLARE @ERROR	BIT
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
-	
-	SET @ERROR = 0
-	
-	BEGIN TRY
-		SET @DISTR = CONVERT(INT, @DISTR_S)
-		SET @COMP = CONVERT(INT, @COMP_S)
-	END TRY
-	BEGIN CATCH
-		SET @ERROR = 1
-	END CATCH
-	
-	IF @ERROR = 1
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Неверно указан номер дистрибутива. Он должен быть указан либо в виде числа, либо в виде пары чисел, разделенных символом "/"'
-		
-		RETURN
-	END
+    BEGIN TRY
 
-	IF NOT EXISTS
-		(
-			SELECT *
-			FROM dbo.RegNodeMainSystemView
-			WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-		)
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Вы не являетесь клиентом компании "Базис". Запись на семинар недоступна'
-		
-		RETURN
-	END
-	
-	SELECT @HOST = MainHostID
-	FROM dbo.RegNodeMainSystemView
-	WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP
-	
-	IF (SELECT DS_REG FROM Reg.RegNodeSearchView WITH(NOEXPAND) WHERE HostID = @HOST AND DistrNumber = @DISTR AND CompNumber = @COMP) <> 0
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Вы не являетесь сопровождаемым клиентом компании "Базис". Для того, чтобы подключиться к сопровождению, обратитесь к нам.'
-		
-		RETURN
-	END
+        DECLARE
+            @DS_REG         SmallInt,
+            @Subhost_Id     UniqueIdentifier,
+            @ERROR          Bit,
+            @DISTR_S        NVarChar(64),
+            @COMP_S         NVarChar(64);
 
-	DECLARE @CLIENT INT
-	
-	SELECT @CLIENT = ID_CLIENT
-	FROM dbo.ClientDistrView WITH(NOEXPAND)
-	WHERE HostID = @HOST AND DISTR = @DISTR AND COMP = @COMP
+        SET @STR = LTRIM(RTRIM(@STR));
 
-	IF @CLIENT IS NULL
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Вы не являетесь клиентом компании "Базис". Запись на семинар недоступна'
-		
-		RETURN
-	END
+        IF CHARINDEX('/', @STR) <> 0
+        BEGIN
+            SET @DISTR_S    = LEFT(@STR, CHARINDEX('/', @STR) - 1);
+            SET @COMP_S     = RIGHT(@STR, LEN(@STR) - CHARINDEX('/', @STR));
+        END
+        ELSE
+        BEGIN
+            SET @DISTR_S = @STR;
+            SET @COMP_S = '1';
+        END;
 
-	IF (SELECT IsNull(IsDebtor, 0) FROM dbo.ClientTable WHERE ClientId = @CLIENT) = 1
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'На текущий момент Ваша компания имеет задолженность за сопровождение системы КонсультантПлюс. В связи с этим запись на семинар не предоставляется.'
-		
-		RETURN
-	END
+        SET @ERROR = 0;
 
-	IF 
-		(
-			SELECT COUNT(*)
-			FROM Seminar.Personal
-			WHERE ID_SCHEDULE = @ID
-				AND ID_CLIENT = @CLIENT
-				AND STATUS = 1
-		) >=
-		(
-			SELECT COUNT(*)
-			FROM dbo.ClientDistrView WITH(NOEXPAND)
-			WHERE ID_CLIENT = @CLIENT
-				AND HostID = 1
-				AND DS_REG = 0
-		)
-	BEGIN
-		SET @STATUS = 1
-		SET @MSG = 'Ваш сотрудник уже записан на семинар. Запись невозможна'
-		
-		RETURN
-	END
-	ELSE
-	BEGIN
-		SET @STATUS = 0
-	END
+        BEGIN TRY
+            SET @DISTR = CONVERT(INT, @DISTR_S)
+            SET @COMP = CONVERT(INT, @COMP_S)
+        END TRY
+        BEGIN CATCH
+            SET @ERROR = 1;
+        END CATCH;
+
+        IF @ERROR = 1
+        BEGIN
+            SET @STATUS = 1;
+            SET @MSG = 'РќРµРІРµСЂРЅРѕ СѓРєР°Р·Р°РЅ РЅРѕРјРµСЂ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°. РћРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ Р»РёР±Рѕ РІ РІРёРґРµ С‡РёСЃР»Р°, Р»РёР±Рѕ РІ РІРёРґРµ РїР°СЂС‹ С‡РёСЃРµР», СЂР°Р·РґРµР»РµРЅРЅС‹С… СЃРёРјРІРѕР»РѕРј "/"';
+
+            RETURN;
+        END;
+
+        SET @HOST = (SELECT TOP (1) MainHostID FROM dbo.RegNodeMainDistrView WITH(NOEXPAND) WHERE MainDistrNumber = @DISTR AND MainCompNumber = @COMP ORDER BY MainHostID);
+
+        IF @HOST IS NULL
+        BEGIN
+            SET @STATUS = 1;
+            SET @MSG = 'Р’С‹ РЅРµ СЏРІР»СЏРµС‚РµСЃСЊ РєР»РёРµРЅС‚РѕРј РєРѕРјРїР°РЅРёРё "Р‘Р°Р·РёСЃ". Р—Р°РїРёСЃСЊ РЅР° СЃРµРјРёРЅР°СЂ РЅРµРґРѕСЃС‚СѓРїРЅР°';
+
+            RETURN;
+        END;
+
+        SELECT
+            @DS_REG         = R.DS_REG,
+            @SubhostName    = R.SubhostName,
+            @Subhost_Id     = S.SH_ID,
+            @CLIENT         = S.SH_ID_CLIENT
+        FROM Reg.RegNodeSearchView  AS R WITH(NOEXPAND)
+        LEFT JOIN dbo.Subhost       AS S ON R.SubhostName = S.SH_REG
+        WHERE   R.HostID = @HOST
+            AND R.DistrNumber = @DISTR
+            AND R.CompNumber = @COMP;
+
+        -- РєР»РёРµРЅС‚ Р‘Р°Р·РёСЃР°
+        IF @SubhostName = '' BEGIN
+            IF @DS_REG <> 0 BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'Р’С‹ РЅРµ СЏРІР»СЏРµС‚РµСЃСЊ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹Рј РєР»РёРµРЅС‚РѕРј РєРѕРјРїР°РЅРёРё "Р‘Р°Р·РёСЃ". Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЋ, РѕР±СЂР°С‚РёС‚РµСЃСЊ Рє РЅР°Рј.';
+
+                RETURN;
+            END;
+
+            SET @CLIENT = (SELECT TOP (1) ID_CLIENT FROM dbo.ClientDistrView WITH(NOEXPAND) WHERE HostID = @HOST AND DISTR = @DISTR AND COMP = @COMP);
+
+            IF @CLIENT IS NULL BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'Р’С‹ РЅРµ СЏРІР»СЏРµС‚РµСЃСЊ РєР»РёРµРЅС‚РѕРј РєРѕРјРїР°РЅРёРё "Р‘Р°Р·РёСЃ". Р—Р°РїРёСЃСЊ РЅР° СЃРµРјРёРЅР°СЂ РЅРµРґРѕСЃС‚СѓРїРЅР°';
+
+                RETURN;
+            END;
+
+            IF (SELECT IsNull(IsDebtor, 0) FROM dbo.ClientTable WHERE ClientId = @CLIENT) = 1 BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'РќР° С‚РµРєСѓС‰РёР№ РјРѕРјРµРЅС‚ Р’Р°С€Р° РєРѕРјРїР°РЅРёСЏ РёРјРµРµС‚ Р·Р°РґРѕР»Р¶РµРЅРЅРѕСЃС‚СЊ Р·Р° СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ СЃРёСЃС‚РµРјС‹ РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ. Р’ СЃРІСЏР·Рё СЃ СЌС‚РёРј Р·Р°РїРёСЃСЊ РЅР° СЃРµРјРёРЅР°СЂ РЅРµ РїСЂРµРґРѕСЃС‚Р°РІР»СЏРµС‚СЃСЏ.';
+
+                RETURN;
+            END;
+
+            IF
+                (
+                    SELECT COUNT(*)
+                    FROM Seminar.Personal
+                    WHERE ID_SCHEDULE = @ID
+                        AND ID_CLIENT = @CLIENT
+                        AND STATUS = 1
+                ) >=
+                (
+                    SELECT COUNT(*)
+                    FROM dbo.ClientDistrView WITH(NOEXPAND)
+                    WHERE ID_CLIENT = @CLIENT
+                        -- ToDo Р·Р»РѕСЃС‚РЅС‹Р№ С…Р°СЂРґРєРѕРґ
+                        AND HostID = 1
+                        AND DS_REG = 0
+                )
+            BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'Р’Р°С€ СЃРѕС‚СЂСѓРґРЅРёРє СѓР¶Рµ Р·Р°РїРёСЃР°РЅ РЅР° СЃРµРјРёРЅР°СЂ. Р—Р°РїРёСЃСЊ РЅРµРІРѕР·РјРѕР¶РЅР°';
+
+                RETURN;
+            END
+            ELSE
+            BEGIN
+                SET @STATUS = 0;
+            END;
+        END ELSE BEGIN
+            -- РєР»РёРµРЅС‚ РїРѕРґС…РѕСЃС‚Р°
+
+            IF @DS_REG <> 0 BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'Р’С‹ РЅРµ СЏРІР»СЏРµС‚РµСЃСЊ СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјС‹Рј РєР»РёРµРЅС‚РѕРј. Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЋ, РѕР±СЂР°С‚РёС‚РµСЃСЊ Рє РЅР°Рј.';
+
+                RETURN;
+            END;
+
+            IF EXISTS
+                (
+                    SELECT *
+                    FROM Seminar.Personal
+                    WHERE ID_SCHEDULE = @ID
+                        AND ID_CLIENT = @CLIENT
+                        AND [Host_Id] = @HOST
+                        AND Distr = @DISTR
+                        AND Comp = @COMP
+                        AND STATUS = 1
+                )
+            BEGIN
+                SET @STATUS = 1;
+                SET @MSG = 'Р’Р°С€ СЃРѕС‚СЂСѓРґРЅРёРє СѓР¶Рµ Р·Р°РїРёСЃР°РЅ РЅР° СЃРµРјРёРЅР°СЂ. Р—Р°РїРёСЃСЊ РЅРµРІРѕР·РјРѕР¶РЅР°';
+
+                RETURN;
+            END
+            ELSE
+            BEGIN
+                SET @STATUS = 0;
+            END
+        END
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Seminar].[WEB_DISTR_CHECK] TO rl_seminar_web;
+GO

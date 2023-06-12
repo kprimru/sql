@@ -1,53 +1,75 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_NET_COUNT_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 23.09.2008
-Описание:	  Возвращает 0, если кол-во станций 
-               с указанным кодом моджно удалить. 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 23.09.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РєРѕР»-РІРѕ СЃС‚Р°РЅС†РёР№
+               СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј РјРѕРґР¶РЅРѕ СѓРґР°Р»РёС‚СЊ.
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_TRY_DELETE]
 	@systemnetcountid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_NET = @systemnetcountid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить количество сетевых станций, так как с ним был зарегистрирован дистрибутив. '
-		END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_NET = @systemnetcountid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить количество станций, так как '
-							+ 'имеются записи в истории рег.узла с данным количеством.' + CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_NET = @systemnetcountid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить количество станций, так как '
-					+ 'имеются записи о регистрации новых систем с данным количеством.'
-		END
-	--
-	SELECT @res AS RES, @txt AS TXT
+	BEGIN TRY
 
-	SET NOCOUNT OFF
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.RegNodeFullTable WHERE RN_ID_NET = @systemnetcountid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРµС‚РµРІС‹С… СЃС‚Р°РЅС†РёР№, С‚Р°Рє РєР°Рє СЃ РЅРёРј Р±С‹Р» Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. '
+			END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_NET = @systemnetcountid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚Р°РЅС†РёР№, С‚Р°Рє РєР°Рє '
+								+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё РІ РёСЃС‚РѕСЂРёРё СЂРµРі.СѓР·Р»Р° СЃ РґР°РЅРЅС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј.' + CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_NET = @systemnetcountid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚Р°РЅС†РёР№, С‚Р°Рє РєР°Рє '
+						+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё Рѕ СЂРµРіРёСЃС‚СЂР°С†РёРё РЅРѕРІС‹С… СЃРёСЃС‚РµРј СЃ РґР°РЅРЅС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј.'
+			END
+		--
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_TRY_DELETE] TO rl_system_net_count_d;
+GO

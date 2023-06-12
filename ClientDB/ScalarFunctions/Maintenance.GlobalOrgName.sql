@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Maintenance].[GlobalOrgName]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[GlobalOrgName]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalOrgName] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[GlobalOrgName]
 ()
 RETURNS VARCHAR(500)
 AS
@@ -14,6 +16,7 @@ BEGIN
 	SELECT @RES = GS_VALUE
 	FROM Maintenance.GlobalSettings
 	WHERE GS_NAME = 'ORG_NAME'
-		
+
 	RETURN @RES
 END
+GO

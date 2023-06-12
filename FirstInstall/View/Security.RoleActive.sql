@@ -1,16 +1,18 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Security].[RolesActive]
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[RoleActive]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[RoleActive]  AS SELECT 1')
+GO
+ALTER VIEW [Security].[RolesActive]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		RL_ID, RL_ID_MASTER, RL_NAME, RL_ROLE, ROLE_CREATE
-	FROM 
+	FROM
 		Security.Roles LEFT OUTER JOIN
 		Security.DBRoles ON ROLE_NAME = RL_ROLE
-	
-		
+
+		GO

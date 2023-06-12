@@ -1,19 +1,31 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [System].[PRICE_IMPORT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[System].[PRICE_IMPORT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [System].[PRICE_IMPORT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [System].[PRICE_IMPORT]
 	@DATA	NVARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		DECLARE @XML XML
 		DECLARE @HDOC INT
-	
+
 		IF OBJECT_ID('tempdb..#price') IS NOT NULL
 			DROP TABLE #price
 
@@ -23,21 +35,21 @@ BEGIN
 				DATE	SMALLDATETIME,
 				PRICE	MONEY
 			)
-			
+
 		SET @XML = CAST(@DATA AS XML)
 
 		EXEC sp_xml_preparedocument @HDOC OUTPUT, @XML
 
 		INSERT INTO #price(SYS, DATE, PRICE)
-			SELECT 
+			SELECT
 				c.value('@SYS', 'NVARCHAR(64)'),
 				c.value('@DATE', 'SMALLDATETIME'),
-				c.value('@PRICE', 'MONEY')			
+				c.value('@PRICE', 'MONEY')
 			FROM @XML.nodes('/ROOT/*') AS a(c)
-	
+
 		INSERT INTO System.Price(ID_MONTH, ID_SYSTEM, PRICE)
 			SELECT c.ID, b.ID, a.PRICE
-			FROM 
+			FROM
 				#price a
 				INNER JOIN System.Systems b ON a.SYS = b.REG
 				INNER JOIN Common.Month c ON c.DATE = a.DATE
@@ -47,26 +59,22 @@ BEGIN
 				FROM System.Price
 				WHERE ID_MONTH = c.ID AND ID_SYSTEM = b.ID
 			)
-	
+
 		EXEC sp_xml_removedocument @hdoc
 
 		IF OBJECT_ID('tempdb..#price') IS NOT NULL
 			DROP TABLE #price
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [System].[PRICE_IMPORT] TO rl_price_import;
+GO

@@ -1,23 +1,50 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[AUDIT_REFERENCE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]  AS SELECT 1')
+GO
+
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]	
+ALTER PROCEDURE [dbo].[AUDIT_REFERENCE_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT REF_NAME, REF_ERROR
-	FROM dbo.AuditReferenceView
-	ORDER BY REF_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT REF_NAME, REF_ERROR
+		FROM dbo.AuditReferenceView
+		ORDER BY REF_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
 
+GO
+GRANT EXECUTE ON [dbo].[AUDIT_REFERENCE_SELECT] TO rl_audit_ref;
+GO

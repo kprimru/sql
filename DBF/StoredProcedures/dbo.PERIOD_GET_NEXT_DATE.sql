@@ -1,24 +1,50 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PERIOD_GET_NEXT_DATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PERIOD_GET_NEXT_DATE]  AS SELECT 1')
+GO
+
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_GET_NEXT_DATE]
+ALTER PROCEDURE [dbo].[PERIOD_GET_NEXT_DATE]
 	@periodid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT CONVERT(VARCHAR, DATEPART(d, PR_DATE)) + ' ' + DATENAME(mm, PR_DATE) + ' ' + DATENAME(yyyy, PR_DATE) + ' года' AS PR_STR
-	FROM dbo.PeriodTable
-	WHERE PR_ID = @periodid
-END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT CONVERT(VARCHAR, DATEPART(d, PR_DATE)) + ' ' + DATENAME(mm, PR_DATE) + ' ' + DATENAME(yyyy, PR_DATE) + ' РіРѕРґР°' AS PR_STR
+		FROM dbo.PeriodTable
+		WHERE PR_ID = @periodid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
+END
+GO
+GRANT EXECUTE ON [dbo].[PERIOD_GET_NEXT_DATE] TO rl_all_r;
+GO

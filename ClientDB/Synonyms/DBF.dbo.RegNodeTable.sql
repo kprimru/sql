@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.RegNodeTable] FOR [DBF].[dbo].[RegNodeTable];

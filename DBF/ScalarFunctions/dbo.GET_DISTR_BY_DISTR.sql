@@ -1,60 +1,62 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[GET_DISTR_BY_DISTR]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_DISTR_BY_DISTR] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 CREATE FUNCTION [dbo].[GET_DISTR_BY_DISTR]
 (
-	-- Список параметров функции
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
 	@distrnum INT,
 	@sys VARCHAR(10)
 )
--- Тип, который возвращает
+-- РўРёРї, РєРѕС‚РѕСЂС‹Р№ РІРѕР·РІСЂР°С‰Р°РµС‚
 RETURNS INT
 AS
 BEGIN
-	-- переменная в которой будет храниться результат работы функции
+	-- РїРµСЂРµРјРµРЅРЅР°СЏ РІ РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЊСЃСЏ СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	DECLARE @result INT
 
 	SET @result = NULL
 
-	-- Тело функции
-	
+	-- РўРµР»Рѕ С„СѓРЅРєС†РёРё
+
 	SELECT @result = DIS_ID
 	FROM dbo.DistrTable INNER JOIN
 		dbo.SystemTable ON DIS_ID_SYSTEM = SYS_ID
-	WHERE SYS_ID_HOST IN	
+	WHERE SYS_ID_HOST IN
 			(
-				SELECT HST_ID 
-				FROM dbo.HostTable g INNER JOIN 
+				SELECT HST_ID
+				FROM dbo.HostTable g INNER JOIN
 					dbo.SystemTable h ON g.HST_ID = h.SYS_ID_HOST
 				WHERE h.SYS_PSEDO = @sys
 			) AND DIS_NUM = @distrnum
-		AND DIS_COMP_NUM = 
+		AND DIS_COMP_NUM =
 			(
-				SELECT MAX(DIS_COMP_NUM) 
+				SELECT MAX(DIS_COMP_NUM)
 				FROM dbo.DistrTable INNER JOIN
 					dbo.SystemTable ON DIS_ID_SYSTEM = SYS_ID
-				WHERE SYS_ID_HOST IN	
+				WHERE SYS_ID_HOST IN
 			(
-				SELECT HST_ID 
-				FROM dbo.HostTable g INNER JOIN 
+				SELECT HST_ID
+				FROM dbo.HostTable g INNER JOIN
 					dbo.SystemTable h ON g.HST_ID = h.SYS_ID_HOST
 				WHERE h.SYS_PSEDO = @sys
 			) AND DIS_NUM = @distrnum
-			)	
-	
+			)
+
 
 	RETURN @result
 
@@ -62,3 +64,4 @@ END
 
 
 
+GO

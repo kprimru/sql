@@ -1,20 +1,32 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Meeting].[CLIENT_MEETING_DELETE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Meeting].[CLIENT_MEETING_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Meeting].[CLIENT_MEETING_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Meeting].[CLIENT_MEETING_DELETE]
 	@ID				UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
 		DECLARE @COMPANY UNIQUEIDENTIFIER
 
 		SELECT @COMPANY = b.ID_COMPANY
-		FROM 
+		FROM
 			Meeting.ClientMeeting a
 			INNER JOIN Meeting.AssignedMeeting b ON a.ID_ASSIGNED = b.ID
 		WHERE a.ID = @ID
@@ -22,7 +34,7 @@ BEGIN
 		DELETE
 		FROM Meeting.ClientMeeting
 		WHERE ID = @ID
-		
+
 		EXEC Client.COMPANY_REINDEX @COMPANY, NULL
 	END TRY
 	BEGIN CATCH
@@ -34,7 +46,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -44,3 +56,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [Meeting].[CLIENT_MEETING_DELETE] TO rl_meeting_d;
+GO

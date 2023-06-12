@@ -1,34 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_NET_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_NET_SELECT]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_SELECT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SN_NAME, SN_FULL_NAME, SN_COEF, SN_ID 
-	FROM dbo.SystemNetTable 
-	WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
-	ORDER BY SN_ORDER
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SN_NAME, SN_FULL_NAME, SN_COEF, SN_ID
+		FROM dbo.SystemNetTable
+		WHERE SN_ACTIVE = ISNULL(@active, SN_ACTIVE)
+		ORDER BY SN_ORDER
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_SELECT] TO rl_system_net_r;
+GO

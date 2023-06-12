@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Maintenance].[TABLE_INDEX_REBUILD]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[TABLE_INDEX_REBUILD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Maintenance].[TABLE_INDEX_REBUILD]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Maintenance].[TABLE_INDEX_REBUILD]
 	@TBL	NVARCHAR(128),
 	@IX		NVARCHAR(128),
 	@MODE	NVARCHAR(128)
@@ -13,9 +15,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @SQL	NVARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @SQL = N'ALTER INDEX [' + @IX + N'] ON ' + @TBL + N' ' + @MODE
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	EXEC (@SQL)
+	BEGIN TRY
+
+		DECLARE @SQL	NVARCHAR(MAX)
+
+		SET @SQL = N'ALTER INDEX [' + @IX + N'] ON ' + @TBL + N' ' + @MODE
+
+		EXEC (@SQL)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Maintenance].[TABLE_INDEX_REBUILD] TO rl_maintenance;
+GO

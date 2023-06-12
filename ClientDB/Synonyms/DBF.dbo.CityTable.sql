@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.CityTable] FOR [DBF].[dbo].[CityTable];

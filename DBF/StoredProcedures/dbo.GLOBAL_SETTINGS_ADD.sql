@@ -1,41 +1,62 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[GLOBAL_SETTINGS_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
-	-- Список параметров процедуры
+ALTER PROCEDURE [dbo].[GLOBAL_SETTINGS_ADD]
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РїСЂРѕС†РµРґСѓСЂС‹
 	@gsname VARCHAR(50),
 	@gsvalue VARCHAR(50),
 	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
 BEGIN
-	-- SET NOCOUNT ON обязателен для использования в хранимых процедурах.
-	-- Позволяет избежать лишней информации и сетевого траффика.
-
 	SET NOCOUNT ON;
 
-	-- Текст процедуры ниже
-	INSERT INTO dbo.GlobalSettingsTable 
-							(
-								GS_NAME, GS_VALUE, GS_ACTIVE
-							)
-	VALUES
-							(
-								@gsname, @gsvalue, @active
-							)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.GlobalSettingsTable
+								(
+									GS_NAME, GS_VALUE, GS_ACTIVE
+								)
+		VALUES
+								(
+									@gsname, @gsvalue, @active
+								)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO
+GRANT EXECUTE ON [dbo].[GLOBAL_SETTINGS_ADD] TO rl_global_settings_w;
+GO

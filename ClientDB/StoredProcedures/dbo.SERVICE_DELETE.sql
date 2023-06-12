@@ -1,20 +1,47 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[SERVICE_DELETE]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SERVICE_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SERVICE_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[SERVICE_DELETE]
 	@ID	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DELETE
-	FROM dbo.ServiceCity
-	WHERE ID_SERVICE = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DELETE
-	FROM dbo.ServiceTable
-	WHERE ServiceID = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE
+		FROM dbo.ServiceCity
+		WHERE ID_SERVICE = @ID
+
+		DELETE
+		FROM dbo.ServiceTable
+		WHERE ServiceID = @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SERVICE_DELETE] TO rl_personal_service_d;
+GO

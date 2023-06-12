@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_DELIVERY_FILTER]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_DELIVERY_FILTER]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_DELIVERY_FILTER]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_DELIVERY_FILTER]
 	@START			SMALLDATETIME,
 	@FINISH			SMALLDATETIME,
 	@PLAN_START		SMALLDATETIME,
@@ -15,10 +17,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	SELECT
 		b.ID, b.NAME, b.NUMBER, a.PERSONAL AS SHORT, a.FIO, a.POS, a.EMAIL, a.DATE, a.PLAN_DATE, a.OFFER,
-		CASE a.STATE WHEN 1 THEN 'Подписан' WHEN 2 THEN 'Снят с подписки' ELSE '???' END AS STATE_STR
-	FROM 
+		CASE a.STATE WHEN 1 THEN 'РџРѕРґРїРёСЃР°РЅ' WHEN 2 THEN 'РЎРЅСЏС‚ СЃ РїРѕРґРїРёСЃРєРё' ELSE '???' END AS STATE_STR
+	FROM
 		Client.CompanyDelivery a
 		INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
 	WHERE (@STATE IS NULL OR @STATE = 0 OR STATE = @STATE)
@@ -29,3 +41,7 @@ BEGIN
 		AND (a.PERSONAL = @PERSONAL OR @PERSONAL IS NULL)
 	ORDER BY b.NAME
 END
+
+GO
+GRANT EXECUTE ON [Client].[COMPANY_DELIVERY_FILTER] TO rl_delivery_filter;
+GO

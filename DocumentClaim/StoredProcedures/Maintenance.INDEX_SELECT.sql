@@ -1,0 +1,81 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[INDEX_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Maintenance].[INDEX_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Maintenance].[INDEX_SELECT]
+WITH EXECUTE AS OWNER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRY
+		EXEC Maintenance.START_PROC @@PROCID
+
+		IF OBJECT_ID('tempdb..#index') IS NOT NULL
+			DROP TABLE #index
+
+		CREATE TABLE #index
+			(
+				ID			INT IDENTITY(1, 1) PRIMARY KEY,
+				ID_PARENT	INT,
+				ID_OBJECT	INT,
+				NAME		NVARCHAR(128),
+				LEVEL		TINYINT
+			)
+
+		INSERT INTO #index(ID_OBJECT, NAME, LEVEL)
+			SELECT object_id, '[' + OBJECT_SCHEMA_NAME(a.object_id) + '].[' + OBJECT_NAME(a.object_id) + ']', 1
+			FROM
+				(
+					SELECT object_id
+					FROM sys.tables
+
+					UNION ALL
+
+					SELECT object_id
+					FROM sys.views
+				) AS a
+
+		INSERT INTO #index(ID_PARENT, NAME, LEVEL)
+			SELECT a.ID, b.NAME, 2
+			FROM
+				#index a
+				INNER JOIN sys.indexes b ON a.ID_OBJECT = b.object_id
+			WHERE b.NAME IS NOT NULL
+
+		SELECT ID, ID_PARENT, NAME
+		FROM #index
+		ORDER BY LEVEL, OBJECT_SCHEMA_NAME(ID_OBJECT), OBJECT_ID(ID_OBJECT), NAME
+
+		IF OBJECT_ID('tempdb..#index') IS NOT NULL
+			DROP TABLE #index
+
+		EXEC Maintenance.FINISH_PROC @@PROCID
+	END TRY
+	BEGIN CATCH
+		IF OBJECT_ID('tempdb..#index') IS NOT NULL
+			DROP TABLE #index
+
+		DECLARE	@SEV	INT
+		DECLARE	@STATE	INT
+		DECLARE	@NUM	INT
+		DECLARE	@PROC	NVARCHAR(128)
+		DECLARE	@MSG	NVARCHAR(2048)
+
+		SELECT
+			@SEV	=	ERROR_SEVERITY(),
+			@STATE	=	ERROR_STATE(),
+			@NUM	=	ERROR_NUMBER(),
+			@PROC	=	ERROR_PROCEDURE(),
+			@MSG	=	ERROR_MESSAGE()
+
+		EXEC Maintenance.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
+	END CATCH
+END
+GO
+GRANT EXECUTE ON [Maintenance].[INDEX_SELECT] TO rl_maintenance_index;
+GO

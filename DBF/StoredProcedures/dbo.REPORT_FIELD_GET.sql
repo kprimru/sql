@@ -1,27 +1,48 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_FIELD_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_FIELD_GET]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_GET]  
+ALTER PROCEDURE [dbo].[REPORT_FIELD_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
-	SELECT RF_ID, RF_NAME, RF_CAPTION, RF_ORDER 
-	FROM dbo.ReportFieldTable
-	ORDER BY RF_ORDER
-	
-	SET NOCOUNT OFF    
+
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT RF_ID, RF_NAME, RF_CAPTION, RF_ORDER
+		FROM dbo.ReportFieldTable
+		ORDER BY RF_ORDER
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[REPORT_FIELD_GET] TO rl_all_r;
+GO

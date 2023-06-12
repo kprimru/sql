@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.TOAddressTable] FOR [DBF].[dbo].[TOAddressTable];

@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Maintenance].[GlobalSubhostCheck]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[GlobalSubhostCheck]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalSubhostCheck] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[GlobalSubhostCheck]
 ()
 RETURNS VARCHAR(500)
 AS
@@ -21,6 +23,7 @@ BEGIN
 		SET @RES = CAST(1 AS BIT)
 	ELSE
 		SET @RES = CAST(0 AS BIT)
-		
+
 	RETURN @RES
 END
+GO

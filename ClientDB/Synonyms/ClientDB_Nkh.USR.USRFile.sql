@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [ClientDB?Nkh].[USR.USRFile] FOR [PC276-SQL\NKH].[ClientDB].[USR].[USRFile];

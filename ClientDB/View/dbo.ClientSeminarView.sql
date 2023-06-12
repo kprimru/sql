@@ -1,16 +1,21 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientSeminarView]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ClientSeminarView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientSeminarView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ClientSeminarView]
 WITH SCHEMABINDING
 AS
-	SELECT 
-		b.ID AS StudyPeopleID, a.ID_CLIENT AS ClientID, a.DATE AS StudyDate, 
+	SELECT
+		b.ID AS StudyPeopleID, a.ID_CLIENT AS ClientID, a.DATE AS StudyDate,
 		b.SURNAME AS StudentFam, b.NAME AS StudentName, b.PATRON AS StudentOtch
-	FROM 
+	FROM
 		dbo.ClientStudy a
 		INNER JOIN dbo.ClientStudyPeople b ON a.ID = b.ID_STUDY
 	WHERE ID_PLACE = 3 AND STATUS = 1
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientSeminarView(StudyPeopleID)] ON [dbo].[ClientSeminarView] ([StudyPeopleID] ASC);
+GO

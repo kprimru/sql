@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Install].[InstallActDeleted] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Install].[InstallActDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Install].[InstallActDeleted]  AS SELECT 1')
+GO
+ALTER VIEW [Install].[InstallActDeleted]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		IA_ID_MASTER, IA_ID, IA_NAME, 
+	SELECT
+		IA_ID_MASTER, IA_ID, IA_NAME,
 		IA_NORM, IA_DATE, IA_END
-	FROM 
+	FROM
 		Install.InstallActAll a
-	WHERE IA_REF = 3
+	WHERE IA_REF = 3GO

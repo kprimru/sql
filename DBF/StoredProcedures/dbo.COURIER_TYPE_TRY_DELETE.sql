@@ -1,49 +1,72 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[COURIER_TYPE_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[COURIER_TYPE_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[COURIER_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[COURIER_TYPE_TRY_DELETE]
 	@id SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
-	
-	-- изменено 30.04.2009, В.Богдан
-	
-	/*IF EXISTS(SELECT * FROM dbo.CLientTable WHERE CL_ID_COUR = @courierid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Данный сервис-инженер указан у одного или нескольких ТО. ' + 
-						  'Удаление невозможно, пока выбранный сервис-инженер будет указан хотя ' +
-						  'бы у одной ТО.'
-	  END
-	*/
-	-- заменено на:
-	IF EXISTS(SELECT * FROM dbo.CourierTable WHERE COUR_ID_TYPE = @id)
-		BEGIN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		-- РёР·РјРµРЅРµРЅРѕ 30.04.2009, Р’.Р‘РѕРіРґР°РЅ
+
+		/*IF EXISTS(SELECT * FROM dbo.CLientTable WHERE CL_ID_COUR = @courierid)
+		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Данный тип указан у одного или нескольких сервис-инженеров. ' + 
-							  'Удаление невозможно, пока выбранный тип будет указан хотя ' +
-							  'бы у одного сервис-инженера.'
-		END
-	--
+			SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… РўРћ. ' +
+							  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂ Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+							  'Р±С‹ Сѓ РѕРґРЅРѕР№ РўРћ.'
+		  END
+		*/
+		-- Р·Р°РјРµРЅРµРЅРѕ РЅР°:
+		IF EXISTS(SELECT * FROM dbo.CourierTable WHERE COUR_ID_TYPE = @id)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ С‚РёРї СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂРѕРІ. ' +
+								  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ С‚РёРї Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+								  'Р±С‹ Сѓ РѕРґРЅРѕРіРѕ СЃРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂР°.'
+			END
+		--
 
-	SELECT @res AS RES, @txt AS TXT
+		SELECT @res AS RES, @txt AS TXT
 
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

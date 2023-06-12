@@ -1,16 +1,18 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Salary].[SalaryConditionActive] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Salary].[SalaryConditionActive]', 'V ') IS NULL EXEC('CREATE VIEW [Salary].[SalaryConditionActive]  AS SELECT 1')
+GO
+ALTER VIEW [Salary].[SalaryConditionActive]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		SC_ID_MASTER, SC_ID, 		
+	SELECT
+		SC_ID_MASTER, SC_ID, 
 		SC_WEIGHT, SC_VALUE, SC_DATE, SC_END,
 		PT_ID, PT_ID_MASTER, PT_NAME
-	FROM 
+	FROM
 		Salary.SalaryConditionAll
-	WHERE SC_REF = 1
+	WHERE SC_REF = 1GO

@@ -1,17 +1,29 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Meeting].[ASSIGNED_MEETING_GET]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Meeting].[ASSIGNED_MEETING_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Meeting].[ASSIGNED_MEETING_GET]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Meeting].[ASSIGNED_MEETING_GET]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		SELECT 
+		SELECT
 			a.ID_COMPANY, ID_OFFICE, ID_ASSIGNER, ID_PERSONAL, COMPANY_PERSONAL, EXPECTED_DATE, a.NOTE,
 			ID_AREA, ID_STREET, HOME, ROOM, b.NOTE AS ADDR_NOTE, INCOMING, SPECIFY,
 			(
@@ -21,26 +33,22 @@ BEGIN
 				FOR XML PATH('item'), ROOT('root')
 			) AS PERSONAL_LIST,
 			c.DATE AS NEXT_DATE
-		FROM 
+		FROM
 			Meeting.AssignedMeeting a
 			INNER JOIN Meeting.MeetingAddress b ON a.ID = b.ID_MEETING
 			LEFT OUTER JOIN Client.CallDate c ON c.ID_COMPANY = a.ID_COMPANY
 		WHERE a.ID = @ID
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Meeting].[ASSIGNED_MEETING_GET] TO rl_meeting_r;
+GO

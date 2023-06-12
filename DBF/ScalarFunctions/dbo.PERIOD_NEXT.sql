@@ -1,40 +1,43 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PERIOD_NEXT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PERIOD_NEXT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 CREATE FUNCTION [dbo].[PERIOD_NEXT]
 (
-	-- Список параметров функции
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
 	@prid SMALLINT
 )
--- Тип, который возвращает
+-- РўРёРї, РєРѕС‚РѕСЂС‹Р№ РІРѕР·РІСЂР°С‰Р°РµС‚
 RETURNS SMALLINT
 AS
 BEGIN
-	-- переменная в которой будет храниться результат работы функции
+	-- РїРµСЂРµРјРµРЅРЅР°СЏ РІ РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЊСЃСЏ СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	DECLARE @result SMALLINT
 
-	-- Тело функции
-	SELECT @result = PR_ID 
+	-- РўРµР»Рѕ С„СѓРЅРєС†РёРё
+	SELECT @result = PR_ID
 	FROM dbo.PeriodTable
-	WHERE PR_DATE = 
+	WHERE PR_DATE =
 			(
 				SELECT DATEADD(MONTH, 1, PR_DATE)
-				FROM dbo.PeriodTable 
+				FROM dbo.PeriodTable
 				WHERE PR_ID = @prid
 			)
 
 
-	-- Возвращение результата работы функции
+	-- Р’РѕР·РІСЂР°С‰РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	RETURN @result
 
 END
+GO

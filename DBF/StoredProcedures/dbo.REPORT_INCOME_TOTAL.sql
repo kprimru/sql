@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_INCOME_TOTAL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_INCOME_TOTAL]  AS SELECT 1')
+GO
+
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[REPORT_INCOME_TOTAL]
+ALTER PROCEDURE [dbo].[REPORT_INCOME_TOTAL]
 	@begin	SMALLDATETIME,
 	@end	SMALLDATETIME,
 	@org	SMALLINT
@@ -19,10 +21,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT IN_DATE, SUM(IN_SUM) AS IN_SUM
-	FROM dbo.IncomeTable
-	WHERE IN_DATE BETWEEN @BEGIN AND @END
-		AND IN_ID_ORG = @org
-	GROUP BY IN_DATE
-	ORDER BY IN_DATE
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT IN_DATE, SUM(IN_SUM) AS IN_SUM
+		FROM dbo.IncomeTable
+		WHERE IN_DATE BETWEEN @BEGIN AND @END
+			AND IN_ID_ORG = @org
+		GROUP BY IN_DATE
+		ORDER BY IN_DATE
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[REPORT_INCOME_TOTAL] TO rl_report_income_r;
+GO

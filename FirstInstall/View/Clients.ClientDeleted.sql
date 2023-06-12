@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Clients].[ClientDeleted] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Clients].[ClientDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Clients].[ClientDeleted]  AS SELECT 1')
+GO
+ALTER VIEW [Clients].[ClientDeleted]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		CL_ID_MASTER, CL_ID, CL_NAME, CL_DATE, CL_END
-	FROM 
+	FROM
 		Clients.ClientAll a
 	WHERE CL_REF = 3
-		
+		GO

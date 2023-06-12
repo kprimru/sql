@@ -1,15 +1,17 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RN_GET_STATUS_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_STATUS_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 -- ================================================
--- Автор:			коллектив авторов
--- Дата создания:	19.02.2009
--- Описание:		Выделяет ID статуса дистрибутива
---					из строки регузла
+-- РђРІС‚РѕСЂ:			РєРѕР»Р»РµРєС‚РёРІ Р°РІС‚РѕСЂРѕРІ
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	19.02.2009
+-- РћРїРёСЃР°РЅРёРµ:		Р’С‹РґРµР»СЏРµС‚ ID СЃС‚Р°С‚СѓСЃР° РґРёСЃС‚СЂРёР±СѓС‚РёРІР°
+--					РёР· СЃС‚СЂРѕРєРё СЂРµРіСѓР·Р»Р°
 -- ================================================
 CREATE FUNCTION [dbo].[RN_GET_STATUS_ID]
 (
@@ -21,11 +23,11 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	SET @result = NULL
-  
+
 	SELECT	@result = DS_ID
 	FROM	dbo.DistrStatusTable
 	WHERE	DS_REG = @status
-  
+
 	RETURN @result
 
 END
@@ -34,3 +36,4 @@ END
 
 
 
+GO

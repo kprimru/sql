@@ -1,45 +1,70 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ACT_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ACT_DELETE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ACT_DELETE]
+ALTER PROCEDURE [dbo].[ACT_DELETE]
 	@actid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @CLIENT	INT
-	DECLARE @TXT	VARCHAR(MAX)
-	
-	EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'Удаление акта', @TXT, @CLIENT, @actid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE 
-	FROM dbo.SaldoTable
-	WHERE SL_ID_ACT_DIS IN 
-			(
-				SELECT AD_ID 
-				FROM dbo.ActDistrTable 
-				WHERE AD_ID_ACT = @actid
-			)
+	BEGIN TRY
 
-	DELETE 
-	FROM dbo.ActDistrTable
-	WHERE AD_ID_ACT = @actid
+		DECLARE @CLIENT	INT
+		DECLARE @TXT	VARCHAR(MAX)
 
-	DELETE 
-	FROM dbo.ActTable
-	WHERE ACT_ID = @actid
+		EXEC dbo.ACT_PROTOCOL @actid, @CLIENT OUTPUT, @TXT OUTPUT
+
+		EXEC dbo.FINANCING_PROTOCOL_ADD 'ACT', 'РЈРґР°Р»РµРЅРёРµ Р°РєС‚Р°', @TXT, @CLIENT, @actid
+
+		DELETE
+		FROM dbo.SaldoTable
+		WHERE SL_ID_ACT_DIS IN
+				(
+					SELECT AD_ID
+					FROM dbo.ActDistrTable
+					WHERE AD_ID_ACT = @actid
+				)
+
+		DELETE
+		FROM dbo.ActDistrTable
+		WHERE AD_ID_ACT = @actid
+
+		DELETE
+		FROM dbo.ActTable
+		WHERE ACT_ID = @actid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO
+GRANT EXECUTE ON [dbo].[ACT_DELETE] TO rl_act_d;
+GO

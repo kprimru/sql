@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Personal].[PERSONAL_WORK_REPORT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Personal].[PERSONAL_WORK_REPORT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Personal].[PERSONAL_WORK_REPORT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Personal].[PERSONAL_WORK_REPORT]
 	@PERSONAL	UNIQUEIDENTIFIER,
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
@@ -13,10 +15,20 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY
-		SET @END = DATEADD(DAY, 1, @END)		
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
 
-		SELECT 
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
+		SET @END = DATEADD(DAY, 1, @END)
+
+		SELECT
 			ID, SHORT,
 			(
 				SELECT COUNT(DISTINCT ID_COMPANY)
@@ -59,7 +71,7 @@ BEGIN
 			) AS MEETING_ASSIGN,
 			(
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					Meeting.AssignedMeeting b
 					INNER JOIN Meeting.AssignedMeetingPersonal c ON b.ID = c.ID_MEETING
 				WHERE b.STATUS = 1
@@ -82,27 +94,27 @@ BEGIN
 			) AS SALE_COUNT,
 			ISNULL((
 				SELECT SUM(e.VALUE * c.CNT * d.WEIGHT * g.VALUE / g.TOTAL_VALUE)
-				FROM 
+				FROM
 					Sale.SaleCompany b
-					INNER JOIN Sale.SaleDistr c ON b.ID = c.ID_SALE					
+					INNER JOIN Sale.SaleDistr c ON b.ID = c.ID_SALE
 					INNER JOIN System.Net d ON d.ID = c.ID_NET
 					INNER JOIN
 						(
 							SELECT ID_SYSTEM, DATE, DATEADD(MONTH, 1, DATE) AS END_DATE, VALUE
-							FROM 
-								System.Weight e 
+							FROM
+								System.Weight e
 								INNER JOIN Common.Month f ON f.ID = e.ID_MONTH
 							WHERE DATE >= DATEADD(MONTH, -1, @BEGIN) AND DATE < @END
-						) AS e ON b.DATE > e.DATE AND b.DATE < e.END_DATE AND e.ID_SYSTEM = c.ID_SYSTEM 
-					INNER JOIN 
+						) AS e ON b.DATE > e.DATE AND b.DATE < e.END_DATE AND e.ID_SYSTEM = c.ID_SYSTEM
+					INNER JOIN
 						(
-							SELECT ID_SALE, VALUE, 
+							SELECT ID_SALE, VALUE,
 								(
 									SELECT SUM(VALUE)
 									FROM Sale.SalePersonal y
 									WHERE y.ID_SALE = z.ID_SALE
 								) AS TOTAL_VALUE
-							FROM 
+							FROM
 								Sale.SalePersonal z
 							WHERE ID_PERSONAL = a.ID
 						) g ON g.ID_SALE = b.ID
@@ -118,21 +130,17 @@ BEGIN
 		ORDER BY SHORT
 
 		SELECT @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Personal].[PERSONAL_WORK_REPORT] TO rl_personal_report;
+GO

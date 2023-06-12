@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.PeriodTable] FOR [DBF].[dbo].[PeriodTable];

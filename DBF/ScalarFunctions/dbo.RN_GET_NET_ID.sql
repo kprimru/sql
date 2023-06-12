@@ -1,15 +1,17 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RN_GET_NET_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_NET_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 -- ================================================
--- Автор:			коллектив авторов
--- Дата создания:	19.02.2009
--- Описание:		Выделяет ID количества сетевый станций
---					из строки регузла
+-- РђРІС‚РѕСЂ:			РєРѕР»Р»РµРєС‚РёРІ Р°РІС‚РѕСЂРѕРІ
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	19.02.2009
+-- РћРїРёСЃР°РЅРёРµ:		Р’С‹РґРµР»СЏРµС‚ ID РєРѕР»РёС‡РµСЃС‚РІР° СЃРµС‚РµРІС‹Р№ СЃС‚Р°РЅС†РёР№
+--					РёР· СЃС‚СЂРѕРєРё СЂРµРіСѓР·Р»Р°
 -- ================================================
 CREATE FUNCTION [dbo].[RN_GET_NET_ID]
 (
@@ -21,11 +23,11 @@ BEGIN
 	DECLARE @result SMALLINT
 
 	SET @result = NULL
-  
-	SELECT	@result = SNC_ID 
+
+	SELECT	@result = SNC_ID
 	FROM	dbo.SystemNetCountTable
 	WHERE	SNC_NET_COUNT = @netcount
-  
+
 	RETURN @result
 
 END
@@ -33,3 +35,4 @@ END
 
 
 
+GO

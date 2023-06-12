@@ -1,11 +1,13 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	По указанному периоду определяем квартал, к которому принадлежит период
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PeriodQuarter]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PeriodQuarter] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	РџРѕ СѓРєР°Р·Р°РЅРЅРѕРјСѓ РїРµСЂРёРѕРґСѓ РѕРїСЂРµРґРµР»СЏРµРј РєРІР°СЂС‚Р°Р», Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РїРµСЂРёРѕРґ
 */
 CREATE FUNCTION [dbo].[PeriodQuarter]
 (
@@ -26,6 +28,7 @@ BEGIN
 	SELECT @RES = QR_ID
 	FROM dbo.Quarter
 	WHERE QR_BEGIN <= @PR_BEGIN AND QR_END >= @PR_END
-	
+
 	RETURN @RES
 END
+GO

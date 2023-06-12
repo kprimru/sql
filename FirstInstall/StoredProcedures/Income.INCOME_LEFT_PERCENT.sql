@@ -1,27 +1,29 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Income].[INCOME_LEFT_PERCENT]	
+ÔªøUSE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[INCOME_LEFT_PERCENT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Income].[INCOME_LEFT_PERCENT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Income].[INCOME_LEFT_PERCENT]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
+	SELECT
 		ID_ID, IN_DATE, CL_NAME, VD_NAME, SYS_SHORT, SYS_ORDER, DT_NAME, NT_NAME, TT_NAME, ID_COUNT, ID_MON_CNT, ID_COMMENT,
 		ID_MAX_PERCENT, ID_PERCENT, ID_PERSONAL, IP_PERCENT, IP_ID,
-		CASE 
-			WHEN ID_PERCENT > ID_MAX_PERCENT THEN '¬ÌËÏ‡ÌËÂ! œÓˆÂÌÚ ÔÓ‰‡ÊË ·ÓÎ¸¯Â Ï‡ÍÒËÏ‡Î¸ÌÓÈ ÒÚ‡‚ÍË!'
-			ELSE 'œÓˆÂÌÚ ÔÓ‰‡ÊË ÏÂÌ¸¯Â Ï‡ÍÒËÏ‡Î¸ÌÓÈ ÒÚ‡‚ÍË'
+		CASE
+			WHEN ID_PERCENT > ID_MAX_PERCENT THEN '–í–Ω–∏–º–∞–Ω–∏–µ! –ü—Ä–æ—Ü–µ–Ω—Ç –ø—Ä–æ–¥–∞–∂–∏ –±–æ–ª—å—à–µ –º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–π —Å—Ç–∞–≤–∫–∏!'
+			ELSE '–ü—Ä–æ—Ü–µ–Ω—Ç –ø—Ä–æ–¥–∞–∂–∏ –º–µ–Ω—å—à–µ –º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–π —Å—Ç–∞–≤–∫–∏'
 		END AS ID_PER_COMMENT
-			
+
 	FROM
 		(
-			SELECT 
-				ID_ID, IN_DATE, CL_NAME, VD_NAME, 
-				SYS_SHORT, SYS_ORDER, DT_NAME, NT_NAME, TT_NAME, 
+			SELECT
+				ID_ID, IN_DATE, CL_NAME, VD_NAME,
+				SYS_SHORT, SYS_ORDER, DT_NAME, NT_NAME, TT_NAME,
 				ID_COUNT, ID_MAX_PERCENT, ID_COMMENT, ID_MON_CNT, ID_PERSONAL,
 				IP_PERCENT, IP_ID,
 					(
@@ -33,5 +35,8 @@ BEGIN
 				Income.IncomePersonal ON IP_ID_INCOME = ID_ID
 		) AS o_O
 	WHERE ID_PERCENT <> ID_MAX_PERCENT
-	ORDER BY IN_DATE DESC, CL_NAME, SYS_ORDER		
+	ORDER BY IN_DATE DESC, CL_NAME, SYS_ORDER
 END
+GO
+GRANT EXECUTE ON [Income].[INCOME_LEFT_PERCENT] TO rl_income_r;
+GO

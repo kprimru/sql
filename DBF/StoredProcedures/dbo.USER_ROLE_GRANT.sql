@@ -1,99 +1,122 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[USER_ROLE_GRANT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[USER_ROLE_GRANT]  AS SELECT 1')
+GO
+
 
 
 
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[USER_ROLE_GRANT]
+ALTER PROCEDURE [dbo].[USER_ROLE_GRANT]
 	@user VARCHAR(100),
 	@role VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#role') IS NOT NULL
-		DROP TABLE #role
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #role
-		(
-			ROLE_NAME VARCHAR(100)
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO #role
-		SELECT * FROM dbo.GET_STRING_TABLE_FROM_LIST(@role, ',')
+	BEGIN TRY
 
-	IF OBJECT_ID('tempdb..#user') IS NOT NULL
-				DROP TABLE #user
+		IF OBJECT_ID('tempdb..#role') IS NOT NULL
+			DROP TABLE #role
 
-	CREATE TABLE #user
-		(
-			UserName VARCHAR(100),
-			GroupName VARCHAR(100),
-			LoginName VARCHAR(100),
-			DefDBName VARCHAR(100),
-			DefSchemaName VARCHAR(100),
-			UserID INT,
-			SID VARBINARY(1000)
-		)
+		CREATE TABLE #role
+			(
+				ROLE_NAME VARCHAR(100)
+			)
 
-	INSERT INTO #user 
-			EXEC sp_helpuser @user
+		INSERT INTO #role
+			SELECT * FROM dbo.GET_STRING_TABLE_FROM_LIST(@role, ',')
 
-	DECLARE @loginname VARCHAR(100)
-	SELECT DISTINCT @loginname = LoginName FROM #user
-	
-	IF OBJECT_ID('tempdb..#user') IS NOT NULL
-		DROP TABLE #user
+		IF OBJECT_ID('tempdb..#user') IS NOT NULL
+					DROP TABLE #user
 
-	DECLARE R CURSOR LOCAL FOR 
-		SELECT a.ROLE_NAME 
-		FROM 
-			#role a INNER JOIN 
-			dbo.RoleTable b ON a.ROLE_NAME = b.ROLE_NAME
+		CREATE TABLE #user
+			(
+				UserName VARCHAR(100),
+				GroupName VARCHAR(100),
+				LoginName VARCHAR(100),
+				DefDBName VARCHAR(100),
+				DefSchemaName VARCHAR(100),
+				UserID INT,
+				SID VARBINARY(1000)
+			)
 
-	DECLARE @rolename VARCHAR(100)
+		INSERT INTO #user
+				EXEC sp_helpuser @user
 
-	OPEN R
+		DECLARE @loginname VARCHAR(100)
+		SELECT DISTINCT @loginname = LoginName FROM #user
 
-	FETCH NEXT FROM R INTO @rolename
-	
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		EXEC sp_addrolemember @rolename, @user
+		IF OBJECT_ID('tempdb..#user') IS NOT NULL
+			DROP TABLE #user
 
-		IF UPPER(@rolename) = 'RL_BULK'
-		BEGIN
-			EXEC sp_addsrvrolemember @loginname, 'bulkadmin'			
-		END
-		ELSE IF UPPER(@rolename) = 'RL_USER'
-		BEGIN
-			EXEC sp_addrolemember 'db_accessadmin', @user
-			EXEC sp_addrolemember 'db_securityadmin', @user
-						
-			EXEC sp_addsrvrolemember @loginname, 'securityadmin'
-		END
+		DECLARE R CURSOR LOCAL FOR
+			SELECT a.ROLE_NAME
+			FROM
+				#role a INNER JOIN
+				dbo.RoleTable b ON a.ROLE_NAME = b.ROLE_NAME
+
+		DECLARE @rolename VARCHAR(100)
+
+		OPEN R
 
 		FETCH NEXT FROM R INTO @rolename
-	END
 
-	CLOSE R
-	DEALLOCATE R
-	
-	IF OBJECT_ID('tempdb..#role') IS NOT NULL
-		DROP TABLE #role
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			EXEC sp_addrolemember @rolename, @user
 
+			IF UPPER(@rolename) = 'RL_BULK'
+			BEGIN
+				EXEC sp_addsrvrolemember @loginname, 'bulkadmin'
+			END
+			ELSE IF UPPER(@rolename) = 'RL_USER'
+			BEGIN
+				EXEC sp_addrolemember 'db_accessadmin', @user
+				EXEC sp_addrolemember 'db_securityadmin', @user
+
+				EXEC sp_addsrvrolemember @loginname, 'securityadmin'
+			END
+
+			FETCH NEXT FROM R INTO @rolename
+		END
+
+		CLOSE R
+		DEALLOCATE R
+
+		IF OBJECT_ID('tempdb..#role') IS NOT NULL
+			DROP TABLE #role
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[USER_ROLE_GRANT] TO rl_user;
+GO

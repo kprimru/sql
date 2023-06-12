@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.WeightRules] FOR [DBF].[dbo].[WeightRules];

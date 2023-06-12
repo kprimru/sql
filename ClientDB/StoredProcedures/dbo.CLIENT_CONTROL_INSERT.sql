@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_CONTROL_INSERT]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_CONTROL_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CONTROL_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CLIENT_CONTROL_INSERT]
 	@CLIENT	INT,
 	@TEXT	VARCHAR(MAX),
 	@BEGIN	SMALLDATETIME = NULL
@@ -12,28 +14,57 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE	@TYPE	SMALLINT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @TYPE = NULL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF IS_MEMBER('rl_client_control_duty_set') = 1
-		SET @TYPE = 3
-	IF IS_MEMBER('rl_client_control_manager_set') = 1
-		SET @TYPE = 2
-	IF IS_MEMBER('rl_client_control_quality_set') = 1
-		SET @TYPE = 1
-	IF IS_MEMBER('rl_client_control_chief_set') = 1 OR IS_SRVROLEMEMBER('sysadmin') = 1
-		SET @TYPE = 4
-	IF IS_MEMBER('rl_client_control_lawyer_set') = 1
-		SET @TYPE = 5
-	
-	IF @TYPE IS NULL
-	BEGIN
-		RAISERROR ('Вам запрещено ставить клиента на контроль', 16, 1)
+	BEGIN TRY
 
-		RETURN
-	END
+		DECLARE	@TYPE	SMALLINT
 
-	INSERT INTO dbo.ClientControl(CC_ID_CLIENT, CC_BEGIN, CC_TEXT, CC_TYPE)
-		SELECT @CLIENT, @BEGIN, @TEXT, @TYPE
+		SET @TYPE = NULL
+
+		IF IS_MEMBER('rl_client_control_duty_set') = 1
+			SET @TYPE = 3
+		IF IS_MEMBER('rl_client_control_manager_set') = 1
+			SET @TYPE = 2
+		IF IS_MEMBER('rl_client_control_quality_set') = 1
+			SET @TYPE = 1
+		IF IS_MEMBER('rl_client_control_chief_set') = 1 OR IS_SRVROLEMEMBER('sysadmin') = 1
+			SET @TYPE = 4
+		IF IS_MEMBER('rl_client_control_lawyer_set') = 1
+			SET @TYPE = 5
+
+		IF @TYPE IS NULL
+		BEGIN
+			RAISERROR ('Р’Р°Рј Р·Р°РїСЂРµС‰РµРЅРѕ СЃС‚Р°РІРёС‚СЊ РєР»РёРµРЅС‚Р° РЅР° РєРѕРЅС‚СЂРѕР»СЊ', 16, 1)
+
+			RETURN
+		END
+
+		INSERT INTO dbo.ClientControl(CC_ID_CLIENT, CC_BEGIN, CC_TEXT, CC_TYPE)
+			SELECT @CLIENT, @BEGIN, @TEXT, @TYPE
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_INSERT] TO rl_client_control_chief_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_INSERT] TO rl_client_control_duty_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_INSERT] TO rl_client_control_lawyer_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_INSERT] TO rl_client_control_manager_set;
+GRANT EXECUTE ON [dbo].[CLIENT_CONTROL_INSERT] TO rl_client_control_quality_set;
+GO

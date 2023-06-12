@@ -1,35 +1,58 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	-- Выборка всех систем клиента
-
-CREATE PROCEDURE [dbo].[BL_GET_CLIENT_SYSTEMS_ALL]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[BL_GET_CLIENT_SYSTEMS_ALL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[BL_GET_CLIENT_SYSTEMS_ALL]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[BL_GET_CLIENT_SYSTEMS_ALL]
      @clientid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT 
-		f.ID, 
-		SystemShortName, a.ID_SYSTEM AS SystemID, b.SystemBaseName,
-        DISTR AS SystemDistrNumber, COMP AS CompNumber,
-		SystemTypeName,	
-        DistrTypeName, 
-		DS_NAME AS ServiceStatusName,
-        f.Complect
-	FROM
-		dbo.ClientDistr a INNER JOIN	
-		dbo.SystemTable b ON a.ID_SYSTEM = b.SystemID INNER JOIN
-		dbo.SystemTypeTable c ON c.SystemTypeID = a.ID_TYPE INNER JOIN
-		dbo.DistrTypeTable d ON d.DistrTypeID = a.ID_NET INNER JOIN
-		--ServiceStatusTable e ON e.ServiceStatusID = a.SystemStatusID LEFT OUTER JOIN
-		dbo.DistrStatus ON DS_ID = ID_STATUS LEFT OUTER JOIN
-		dbo.RegNodeTable f ON f.SystemName = b.SystemBaseName 
-						AND f.DistrNumber = a.DISTR
-						AND f.CompNumber = a.COMP
-	WHERE  ID_CLIENT = @clientid AND a.STATUS = 1
-	ORDER BY DS_INDEX, SystemOrder
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			f.ID,
+			a.SystemShortName, a.SystemID, a.SystemBaseName,
+			DISTR AS SystemDistrNumber, COMP AS CompNumber,
+			SystemTypeName,
+			a.DistrTypeName,
+			a.DS_NAME AS ServiceStatusName,
+			f.Complect
+		FROM dbo.ClientDistrView a WITH(NOEXPAND)
+		INNER JOIN Reg.RegNodeSearchView f WITH(NOEXPAND) ON	f.SystemBaseName = a.SystemBaseName
+															AND f.DistrNumber = a.DISTR
+															AND f.CompNumber = a.COMP
+		WHERE  ID_CLIENT = @clientid
+		ORDER BY a.DS_INDEX, a.SystemOrder
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[BL_GET_CLIENT_SYSTEMS_ALL] TO BL_ADMIN;
+GRANT EXECUTE ON [dbo].[BL_GET_CLIENT_SYSTEMS_ALL] TO BL_EDITOR;
+GRANT EXECUTE ON [dbo].[BL_GET_CLIENT_SYSTEMS_ALL] TO BL_PARAM;
+GRANT EXECUTE ON [dbo].[BL_GET_CLIENT_SYSTEMS_ALL] TO BL_READER;
+GRANT EXECUTE ON [dbo].[BL_GET_CLIENT_SYSTEMS_ALL] TO BL_RGT;
+GO

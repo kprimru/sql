@@ -1,0 +1,45 @@
+﻿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TO-Lock@Clear]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TO-Lock@Clear]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[TO-Lock@Clear]
+    @To_Id      Int
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+    BEGIN TRY
+        UPDATE [dbo].[TO:Locks] SET
+            [DateTO]            = GetDate(),
+            [FinishUserName]    = Original_Login(),
+            [FinishDateTime]    = GetDate()
+        WHERE [TO_Id] = @TO_Id
+            AND [DateTo] IS NULL;
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
+END
+GO
+GRANT EXECUTE ON [dbo].[TO-Lock@Clear] TO rl_to_locks;
+GO

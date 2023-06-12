@@ -1,13 +1,16 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE VIEW [dbo].[AddressView]
+﻿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[AddressView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[AddressView]  AS SELECT 1')
+GO
+
+ALTER VIEW [dbo].[AddressView]
 AS
 	SELECT ST_ID, CT_ID, ST_PREFIX, ST_NAME, ST_SUFFIX, CT_PREFIX, CT_NAME
-	FROM         
+	FROM
 		dbo.StreetTable LEFT OUTER JOIN
         dbo.CityTable ON CT_ID = ST_ID_CITY
+GO

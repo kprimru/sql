@@ -1,60 +1,83 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[STREET_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[STREET_TRY_DELETE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если улицу с указанным 
-               кодом можно удалить из справочника 
-               (на нее не ссылается ни один адрес), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё СѓР»РёС†Сѓ СЃ СѓРєР°Р·Р°РЅРЅС‹Рј
+               РєРѕРґРѕРј РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР°
+               (РЅР° РЅРµРµ РЅРµ СЃСЃС‹Р»Р°РµС‚СЃСЏ РЅРё РѕРґРёРЅ Р°РґСЂРµСЃ),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[STREET_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[STREET_TRY_DELETE]
 	@streetid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''	
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_STREET = @streetid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Невозможно удалить улицу, так как она указана в адресах клиентов. '
-	  END
+	BEGIN TRY
 
-	IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_ID_STREET = @streetid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Невозможно удалить улицу, так как она указана в адресах обслуживающих организаций.'
-	  END
-	IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_S_ID_STREET	 = @streetid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Невозможно удалить улицу, так как она указана в адресах обслуживающих организаций.'
-	  END
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	IF EXISTS(SELECT * FROM dbo.TOAddressTable WHERE TA_ID_STREET	 = @streetid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Невозможно удалить улицу, так как она указана в адресах точек обслуживания.'
-	  END
-	--
+		SET @res = 0
+		SET @txt = ''
 
-	SELECT @res AS RES, @txt AS TXT
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.ClientAddressTable WHERE CA_ID_STREET = @streetid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СѓР»РёС†Сѓ, С‚Р°Рє РєР°Рє РѕРЅР° СѓРєР°Р·Р°РЅР° РІ Р°РґСЂРµСЃР°С… РєР»РёРµРЅС‚РѕРІ. '
+		  END
 
-	SET NOCOUNT OFF
+		IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_ID_STREET = @streetid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СѓР»РёС†Сѓ, С‚Р°Рє РєР°Рє РѕРЅР° СѓРєР°Р·Р°РЅР° РІ Р°РґСЂРµСЃР°С… РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёС… РѕСЂРіР°РЅРёР·Р°С†РёР№.'
+		  END
+		IF EXISTS(SELECT * FROM dbo.OrganizationTable WHERE ORG_S_ID_STREET	 = @streetid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СѓР»РёС†Сѓ, С‚Р°Рє РєР°Рє РѕРЅР° СѓРєР°Р·Р°РЅР° РІ Р°РґСЂРµСЃР°С… РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёС… РѕСЂРіР°РЅРёР·Р°С†РёР№.'
+		  END
+
+		IF EXISTS(SELECT * FROM dbo.TOAddressTable WHERE TA_ID_STREET	 = @streetid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СѓР»РёС†Сѓ, С‚Р°Рє РєР°Рє РѕРЅР° СѓРєР°Р·Р°РЅР° РІ Р°РґСЂРµСЃР°С… С‚РѕС‡РµРє РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ.'
+		  END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO
+GRANT EXECUTE ON [dbo].[STREET_TRY_DELETE] TO rl_street_d;
+GO

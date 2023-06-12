@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.DistrPriceView] FOR [DBF].[dbo].[DistrPriceView];

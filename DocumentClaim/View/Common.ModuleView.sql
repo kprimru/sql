@@ -1,0 +1,23 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[ModuleView]', 'V ') IS NULL EXEC('CREATE VIEW [Common].[ModuleView]  AS SELECT 1')
+GO
+ALTER VIEW [Common].[ModuleView]
+AS
+	/*
+		CLAIM
+		NOTIFY
+		MAINTENANCE
+		SECURITY
+	*/
+	SELECT N'CLAIM' AS NAME, 'Журнал заказов' AS CAPTION
+	UNION ALL
+	SELECT N'NOTIFY' AS NAME, 'Журнал уведомлений' AS CAPTION
+	UNION ALL
+	SELECT N'MAINTENANCE' AS NAME, 'Обслуживание БД' AS CAPTION
+	UNION ALL
+	SELECT N'SECURITY' AS NAME, 'Пользователи и права доступа' AS CAPTIONGO

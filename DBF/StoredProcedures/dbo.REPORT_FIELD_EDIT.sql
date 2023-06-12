@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_FIELD_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_FIELD_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Изменить данные о поле в таблице отчета
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ РїРѕР»Рµ РІ С‚Р°Р±Р»РёС†Рµ РѕС‚С‡РµС‚Р°
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_EDIT]
+ALTER PROCEDURE [dbo].[REPORT_FIELD_EDIT]
 	@fieldid SMALLINT,
 	@fieldname VARCHAR(50),
 	@fieldcaption VARCHAR(100),
@@ -20,9 +22,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    UPDATE dbo.ReportFieldTable 
-        SET RF_NAME = @fieldname, RF_CAPTION = @fieldcaption, RF_ORDER = @order 
-    WHERE RF_ID = @fieldid                     
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.ReportFieldTable
+			SET RF_NAME = @fieldname, RF_CAPTION = @fieldcaption, RF_ORDER = @order
+		WHERE RF_ID = @fieldid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO

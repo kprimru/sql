@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ERROR_RAISE]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ERROR_RAISE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ERROR_RAISE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ERROR_RAISE]
 	@SEV	INT,
 	@STATE	INT,
 	@NUM	INT,
@@ -19,7 +21,8 @@ BEGIN
 
 	DECLARE @TXT NVARCHAR(3000)
 
-	SET @TXT = 'Ошибка в процедуре "' + ISNULL(@PROC, '') + '". Текст ошибки: "' + ISNULL(@MSG, '') + '"'
+	SET @TXT = 'РћС€РёР±РєР° РІ РїСЂРѕС†РµРґСѓСЂРµ "' + ISNULL(@PROC, '') + '". РўРµРєСЃС‚ РѕС€РёР±РєРё: "' + ISNULL(@MSG, '') + '"'
 
 	RAISERROR(@TXT, @SEV, @STATE)
 END
+GO

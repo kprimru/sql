@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_NET_COUNT_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 23.08.2008
-Описание:	  Изменить данные о типе сети с 
-               указанным кодом
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 23.08.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ С‚РёРїРµ СЃРµС‚Рё СЃ
+               СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_EDIT]
 	@systemnetcountid SMALLINT,
 	@systemnetid SMALLINT,
 	@netcount INT,
@@ -25,15 +27,38 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.SystemNetCountTable 
-	SET SNC_ID_SN = @systemnetid, 
-		SNC_NET_COUNT = @netcount,
-		SNC_TECH = @tech,
-		SNC_ODON = @ODON,
-		SNC_ODOFF = @ODOFF,
-		SNC_SHORT = @SHORT,
-		SNC_ACTIVE = @active
-	WHERE SNC_ID = @systemnetcountid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.SystemNetCountTable
+		SET SNC_ID_SN = @systemnetid,
+			SNC_NET_COUNT = @netcount,
+			SNC_TECH = @tech,
+			SNC_ODON = @ODON,
+			SNC_ODOFF = @ODOFF,
+			SNC_SHORT = @SHORT,
+			SNC_ACTIVE = @active
+		WHERE SNC_ID = @systemnetcountid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_EDIT] TO rl_system_net_count_w;
+GO

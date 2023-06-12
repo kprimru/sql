@@ -1,16 +1,20 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Personal].[PersonalActive] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Personal].[PersonalActive]', 'V ') IS NULL EXEC('CREATE VIEW [Personal].[PersonalActive]  AS SELECT 1')
+GO
+
+ALTER VIEW [Personal].[PersonalActive]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		PER_ID_MASTER, PER_ID, PER_NAME, 
+	SELECT
+		PER_ID_MASTER, PER_ID, PER_NAME, PER_EMAIL,
 		PER_ID_DEP, PER_ID_TYPE,
 		PER_DATE, PER_END
-	FROM 
+	FROM
 		Personal.PersonalAll
 	WHERE PER_REF = 1
+GO

@@ -1,35 +1,52 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DISTR_STATUS_CHECK_REG]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTR_STATUS_CHECK_REG]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:	4.05.2009
-Описание:		Проверка на наличие статуса дистрибутива с заданным именем
-				(выбор данных по имени)
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	4.05.2009
+РћРїРёСЃР°РЅРёРµ:		РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ СЃС‚Р°С‚СѓСЃР° РґРёСЃС‚СЂРёР±СѓС‚РёРІР° СЃ Р·Р°РґР°РЅРЅС‹Рј РёРјРµРЅРµРј
+				(РІС‹Р±РѕСЂ РґР°РЅРЅС‹С… РїРѕ РёРјРµРЅРё)
 */
 
-CREATE PROCEDURE [dbo].[DISTR_STATUS_CHECK_REG] 
-	@dsname VARCHAR(100)  
+ALTER PROCEDURE [dbo].[DISTR_STATUS_CHECK_REG]
+	@dsname VARCHAR(100)
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT DS_ID
-	FROM dbo.DistrStatusTable
-	WHERE DS_REG = @dsname 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DS_ID
+		FROM dbo.DistrStatusTable
+		WHERE DS_REG = @dsname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[DISTR_STATUS_CHECK_REG] TO rl_distr_status_w;
+GO

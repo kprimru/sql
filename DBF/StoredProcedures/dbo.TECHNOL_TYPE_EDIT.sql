@@ -1,21 +1,23 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+ï»¿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TECHNOL_TYPE_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TECHNOL_TYPE_EDIT]  AS SELECT 1')
+GO
+
 /*
-Àâòîð:		  Äåíèñîâ Àëåêñåé
-Äàòà ñîçäàíèÿ: 18.12.2008
-Îïèñàíèå:	  Èçìåíèòü äàííûå î òåõíîëîãè÷åñêîì 
-               ïðèçíàêå ñ óêàçàííûì êîäîì
+ÐÐ²Ñ‚Ð¾Ñ€:		  Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹
+Ð”Ð°Ñ‚Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ: 18.12.2008
+ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:	  Ð˜Ð·Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¾ Ñ‚ÐµÑ…Ð½Ð¾Ð»Ð¾Ð³Ð¸Ñ‡ÐµÑÐºÐ¾Ð¼
+               Ð¿Ñ€Ð¸Ð·Ð½Ð°ÐºÐµ Ñ ÑƒÐºÐ°Ð·Ð°Ð½Ð½Ñ‹Ð¼ ÐºÐ¾Ð´Ð¾Ð¼
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_EDIT]
 	@id SMALLINT,
-	@name VARCHAR(20),  
-	@reg SMALLINT,  
+	@name VARCHAR(20),
+	@reg SMALLINT,
 	@coef DECIMAL(10, 4),
 	@calc DECIMAL(4, 2),
 	@active BIT = 1
@@ -23,21 +25,43 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.TechnolTypeTable
-	SET TT_NAME = @name,   
-		TT_REG = @reg,    
-		TT_COEF = @coef,
-		TT_CALC = @calc,
-		TT_ACTIVE = @active
-	WHERE TT_ID = @id	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE t
-	SET TTP_COEF = @coef
-	FROM 
-		dbo.TechnolTypePeriod t
-		INNER JOIN dbo.PeriodTable ON TTP_ID_PERIOD = PR_ID
-	WHERE TTP_ID_TECH = @id AND PR_DATE > GETDATE()
-	
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.TechnolTypeTable
+		SET TT_NAME = @name,
+			TT_REG = @reg,
+			TT_COEF = @coef,
+			TT_CALC = @calc,
+			TT_ACTIVE = @active
+		WHERE TT_ID = @id
+
+		UPDATE t
+		SET TTP_COEF = @coef
+		FROM
+			dbo.TechnolTypePeriod t
+			INNER JOIN dbo.PeriodTable ON TTP_ID_PERIOD = PR_ID
+		WHERE TTP_ID_TECH = @id AND PR_DATE > GETDATE()
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_EDIT] TO rl_technol_type_w;
+GO

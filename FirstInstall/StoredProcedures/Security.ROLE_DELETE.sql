@@ -1,10 +1,12 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ROLE_DELETE]
+п»їUSE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ROLE_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ROLE_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ROLE_DELETE]
 	@ID	UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -12,9 +14,9 @@ BEGIN
 
 	IF EXISTS(SELECT * FROM Security.Roles WHERE RL_ID_MASTER = @ID)
 	BEGIN
-		--Есть подчиненные роли
+		--Р•СЃС‚СЊ РїРѕРґС‡РёРЅРµРЅРЅС‹Рµ СЂРѕР»Рё
 		DECLARE LIST CURSOR LOCAL FOR
-			SELECT RL_ID 
+			SELECT RL_ID
 			FROM Security.Roles
 			WHERE RL_ID_MASTER = @ID
 
@@ -36,7 +38,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		-- нет подчиненных ролей
+		-- РЅРµС‚ РїРѕРґС‡РёРЅРµРЅРЅС‹С… СЂРѕР»РµР№
 		DECLARE @ROLE VARCHAR(100)
 
 		SELECT @ROLE = RL_ROLE
@@ -49,3 +51,4 @@ BEGIN
 			EXEC ('DROP ROLE [' + @ROLE + ']')
 	END
 END
+GO

@@ -1,28 +1,30 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[GET_DECIMAL_TABLE_FROM_LIST](@List VARCHAR(MAX), @Delimiter VARCHAR(10)=',')  
+﻿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[GET_DECIMAL_TABLE_FROM_LIST]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_DECIMAL_TABLE_FROM_LIST] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [dbo].[GET_DECIMAL_TABLE_FROM_LIST](@List VARCHAR(MAX), @Delimiter VARCHAR(10)=',')
 RETURNS @tbl TABLE (Item DECIMAL(10, 4) NOT NULL) AS
 BEGIN
   IF ISNULL(@List, '') = ''
     RETURN
   DECLARE
-    @idxb int, @idxe int, 
+    @idxb int, @idxe int,
     @item VARCHAR(MAX),
     @lend int, @lenl int, @i int
   SET @lend = DATALENGTH(@Delimiter)
-  SET @lenl = DATALENGTH(@List) 
+  SET @lenl = DATALENGTH(@List)
   SET @idxb = 1
-  WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1 
+  WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1
     SET @idxb = @idxb + @lend
 
   SET @idxe = @idxb
   WHILE @idxb <= @lenl AND @idxe <= @lenl
   BEGIN
-    IF SUBSTRING(@List, @idxe + 1, @lend) = @Delimiter 
+    IF SUBSTRING(@List, @idxe + 1, @lend) = @Delimiter
     BEGIN
       SET @item = SUBSTRING(@List, @idxb, @idxe - @idxb + 1)
 	  /*IF NOT EXISTS
@@ -33,15 +35,15 @@ BEGIN
 		)*/
 		INSERT INTO @tbl (Item) VALUES (@item)
       SET @idxb = @idxe + @lend + 1
-      WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1 
+      WHILE SUBSTRING(@List, @idxb, @lend) = @Delimiter AND @idxb < @lenl - @lend + 1
         SET @idxb = @idxb + @lend
       SET @idxe = @idxb
     END
     ELSE IF @idxe = @lenl
     BEGIN
       SET @item = SUBSTRING(@List, @idxb, @idxe - @idxb + 1)
-      IF @item <> @Delimiter 
-		BEGIN 
+      IF @item <> @Delimiter
+		BEGIN
 		/*IF NOT EXISTS
 		(
 			SELECT *
@@ -55,10 +57,11 @@ BEGIN
     ELSE
     BEGIN
       SET @idxe = @idxe + 1
-    END 
+    END
   END
   RETURN
 END
 
 
 
+GO

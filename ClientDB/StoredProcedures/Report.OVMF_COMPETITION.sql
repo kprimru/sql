@@ -1,34 +1,59 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[OVMF_COMPETITION]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[OVMF_COMPETITION]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[OVMF_COMPETITION]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[OVMF_COMPETITION]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT
-		[¹ â ãðóïïå] = Row_Number() OVER(PARTITION BY IsNull(C.ServiceName, R.SubhostName) ORDER BY IsNull(C.ClientFullName, R.Comment)),
-		[Êëèåíò] = IsNull(C.ClientFullName, R.Comment),
-		[ÑÈ/Ïîäõîñò] = IsNull(C.ServiceName, R.SubhostName),
-		[Äèñòðèáóòèâ] = R.DistrStr,
-		[Äàòà ðåãèñòðàöèè] = P.RPR_DATE
-	FROM
-	(
-		SELECT DISTINCT RPR_ID_HOST, RPR_DISTR, RPR_COMP, MAX(RPR_DATE_S) AS RPR_DATE
-		FROM dbo.RegProtocol
-		WHERE RPR_DATE >= '20180701'
-			AND RPR_DATE < '20181001'
-			AND RPR_TEXT = 'Òåõ. òèï. Ñòàðîå çíà÷åíèå:0. Íîâîå:11'
-			--AND RPR_DISTR = 32957
-			AND RPR_ID_HOST = 1
-		GROUP BY RPR_ID_HOST, RPR_DISTR, RPR_COMP
-	) AS P
-	INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON P.RPR_ID_HOST = R.HostId AND RPR_DISTR = R.DistrNumber AND p.RPR_COMP = R.CompNumber
-	LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON D.HostId = R.HostId AND D.DISTR = R.DistrNumber AND D.COMP = R.CompNumber
-	LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON C.ClientID = D.ID_CLIENT
-	ORDER BY C.ServiceName, IsNull(C.ServiceName, R.SubhostName), IsNull(C.ClientFullName, R.Comment)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			[â„– Ð² Ð³Ñ€ÑƒÐ¿Ð¿Ðµ] = Row_Number() OVER(PARTITION BY IsNull(C.ServiceName, R.SubhostName) ORDER BY IsNull(C.ClientFullName, R.Comment)),
+			[ÐšÐ»Ð¸ÐµÐ½Ñ‚] = IsNull(C.ClientFullName, R.Comment),
+			[Ð¡Ð˜/ÐŸÐ¾Ð´Ñ…Ð¾ÑÑ‚] = IsNull(C.ServiceName, R.SubhostName),
+			[Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²] = R.DistrStr,
+			[Ð”Ð°Ñ‚Ð° Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð°Ñ†Ð¸Ð¸] = P.RPR_DATE
+		FROM
+		(
+			SELECT DISTINCT RPR_ID_HOST, RPR_DISTR, RPR_COMP, MAX(RPR_DATE_S) AS RPR_DATE
+			FROM dbo.RegProtocol
+			WHERE RPR_DATE >= '20180701'
+				AND RPR_DATE < '20181001'
+				AND RPR_TEXT = 'Ð¢ÐµÑ…. Ñ‚Ð¸Ð¿. Ð¡Ñ‚Ð°Ñ€Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ:0. ÐÐ¾Ð²Ð¾Ðµ:11'
+				--AND RPR_DISTR = 32957
+				AND RPR_ID_HOST = 1
+			GROUP BY RPR_ID_HOST, RPR_DISTR, RPR_COMP
+		) AS P
+		INNER JOIN Reg.RegNodeSearchView R WITH(NOEXPAND) ON P.RPR_ID_HOST = R.HostId AND RPR_DISTR = R.DistrNumber AND p.RPR_COMP = R.CompNumber
+		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON D.HostId = R.HostId AND D.DISTR = R.DistrNumber AND D.COMP = R.CompNumber
+		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON C.ClientID = D.ID_CLIENT
+		ORDER BY C.ServiceName, IsNull(C.ServiceName, R.SubhostName), IsNull(C.ClientFullName, R.Comment)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

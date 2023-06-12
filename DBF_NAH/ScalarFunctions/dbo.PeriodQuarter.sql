@@ -1,0 +1,35 @@
+﻿USE [DBF_NAH]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PeriodQuarter]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[PeriodQuarter] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	По указанному периоду определяем квартал, к которому принадлежит период
+*/
+CREATE FUNCTION [dbo].[PeriodQuarter]
+(
+	@PR_ID	SMALLINT
+)
+RETURNS SMALLINT
+AS
+BEGIN
+	DECLARE @RES SMALLINT
+
+	DECLARE @PR_BEGIN	SMALLDATETIME
+	DECLARE @PR_END		SMALLDATETIME
+
+	SELECT @PR_BEGIN = PR_DATE, @PR_END = PR_END_DATE
+	FROM dbo.PeriodTable
+	WHERE PR_ID = @PR_ID
+
+	SELECT @RES = QR_ID
+	FROM dbo.Quarter
+	WHERE QR_BEGIN <= @PR_BEGIN AND QR_END >= @PR_END
+
+	RETURN @RES
+END
+
+GO

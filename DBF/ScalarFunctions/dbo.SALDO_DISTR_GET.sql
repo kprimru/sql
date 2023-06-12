@@ -1,40 +1,43 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SALDO_DISTR_GET]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[SALDO_DISTR_GET] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 CREATE FUNCTION [dbo].[SALDO_DISTR_GET]
 (
-	-- Список параметров функции
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
 	@clientid INT,
 	@distrid INT
 )
--- Тип, который возвращает
+-- РўРёРї, РєРѕС‚РѕСЂС‹Р№ РІРѕР·РІСЂР°С‰Р°РµС‚
 RETURNS MONEY
 AS
 BEGIN
-	-- переменная в которой будет храниться результат работы функции
+	-- РїРµСЂРµРјРµРЅРЅР°СЏ РІ РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЊСЃСЏ СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	DECLARE @result MONEY
 
-	-- Тело функции
-	
+	-- РўРµР»Рѕ С„СѓРЅРєС†РёРё
+
 	SELECT TOP 1 @result = SL_REST
 	FROM dbo.SaldoTable
-	WHERE SL_ID_DISTR = @distrid 
+	WHERE SL_ID_DISTR = @distrid
 		AND SL_ID_CLIENT = @clientid
 	ORDER BY SL_DATE DESC, SL_ID DESC
 
-	-- Возвращение результата работы функции
+	-- Р’РѕР·РІСЂР°С‰РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	RETURN @result
 
 END
 
+GO

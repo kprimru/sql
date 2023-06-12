@@ -1,24 +1,51 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[EXPERT_QUESTION_LIST]
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[EXPERT_QUESTION_LIST]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[EXPERT_QUESTION_LIST]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[EXPERT_QUESTION_LIST]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		a.DATE AS [ƒ‡Ú‡], ISNULL(e.ClientFullName, c.Comment) AS [ ÎËÂÌÚ], c.DistrStr AS [ƒËÒÚË·ÛÚË‚], 
-		ISNULL(e.ManagerName, c.SubhostName) AS [–√], e.ServiceName AS [—»], a.FIO AS [‘»Œ], 
-		a.QUEST AS [¬ÓÔÓÒ], a.EMAIL, a.PHONE AS [“ÂÎÂÙÓÌ]
-	FROM 
-		dbo.ClientDutyQuestion a
-		INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
-		INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
-		LEFT OUTER JOIN dbo.ClientDistrView d WITH(NOEXPAND) ON a.DISTR = d.DISTR AND a.COMP = d.COMP AND b.HostID = d.HostID
-		LEFT OUTER JOIN dbo.ClientView e WITH(NOEXPAND) ON e.ClientID = d.ID_CLIENT
-	ORDER BY a.DATE DESC	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			a.DATE AS [–î–∞—Ç–∞], ISNULL(e.ClientFullName, c.Comment) AS [–ö–ª–∏–µ–Ω—Ç], c.DistrStr AS [–î–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤],
+			ISNULL(e.ManagerName, c.SubhostName) AS [–†–ì], e.ServiceName AS [–°–ò], a.FIO AS [–§–ò–û],
+			a.QUEST AS [–í–æ–ø—Ä–æ—Å], a.EMAIL, a.PHONE AS [–¢–µ–ª–µ—Ñ–æ–Ω]
+		FROM
+			dbo.ClientDutyQuestion a
+			INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
+			INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND c.DistrNumber = a.DISTR AND c.CompNumber = a.COMP
+			LEFT OUTER JOIN dbo.ClientDistrView d WITH(NOEXPAND) ON a.DISTR = d.DISTR AND a.COMP = d.COMP AND b.HostID = d.HostID
+			LEFT OUTER JOIN dbo.ClientView e WITH(NOEXPAND) ON e.ClientID = d.ID_CLIENT
+		ORDER BY a.DATE DESC
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[EXPERT_QUESTION_LIST] TO rl_report;
+GO

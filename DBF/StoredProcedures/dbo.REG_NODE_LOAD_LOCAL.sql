@@ -1,100 +1,123 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Àâòîð:		  Äåíèñîâ Àëåêñåé
-Îïèñàíèå:	  Ïðîöåäóðà ñîçäàíèÿ êîïèè ðåã.óçëà
+ï»¿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REG_NODE_LOAD_LOCAL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL]  AS SELECT 1')
+GO
+/*
+ÐÐ²Ñ‚Ð¾Ñ€:		  Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹
+ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:	  ÐŸÑ€Ð¾Ñ†ÐµÐ´ÑƒÑ€Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ ÐºÐ¾Ð¿Ð¸Ð¸ Ñ€ÐµÐ³.ÑƒÐ·Ð»Ð°
 */
-CREATE PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 	
+ALTER PROCEDURE [dbo].[REG_NODE_LOAD_LOCAL] 
 	@filename VARCHAR(MAX)
 WITH EXECUTE AS OWNER
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-  
-	--Øàã 1. Âûãðóçèòü èç ÐÖ äàííûå ñ êëþ÷îì /outcsv
-	DECLARE @bcppath VARCHAR(MAX)
-	
-	SET @bcppath = dbo.GET_SETTING('BCP_PATH')
-	
-	--Øàã 2. Çàêèíóòü äàííûå âî âðåìåííóþ òàáëèöó
 
-	DECLARE @sql NVARCHAR(4000)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF OBJECT_ID('tempdb..#reg') IS NOT NULL
-		DROP TABLE #reg
-	
-	CREATE TABLE #reg
-	(
-		[RN_SYS_NAME] [varchar](20) NULL,
-		[RN_DISTR_NUM] [int] NULL,
-		[RN_COMP_NUM] [tinyint] NULL,
-		[RN_DISTR_TYPE] [varchar](20) NULL,
-		[RN_TECH_TYPE] [varchar](20) NULL,
-		[RN_NET_COUNT] [smallint] NULL,
-		[RN_SUBHOST] [smallint] NULL,
-		[RN_TRANSFER_COUNT] [smallint] NULL,
-		[RN_TRANSFER_LEFT] [smallint] NULL,
-		[RN_SERVICE] [smallint] NULL,
-		[RN_REG_DATE] [smalldatetime] NULL,
-		[RN_FIRST_REG] [smalldatetime] NULL,
-		[RN_COMMENT] [varchar](255) NULL,
-		[RN_COMPLECT] [varchar](50) NULL,
-		[RN_REPORT_CODE] [varchar](10) NULL,
-		[RN_REPORT_VALUE] [varchar](50) NULL,
-		[RN_SHORT] [varchar](10) NULL,
-		[RN_MAIN] [tinyint] NULL,
-		[RN_SUB] [tinyint] NULL,
-		[RN_OFFLINE] [varchar](50) NULL,
-		[RN_YUBIKEY] [varchar](50) NULL,
-		[RN_KRF] [varchar](50) NULL,
-		[RN_KRF1] [varchar](50) NULL,
-		REG_PARAM	VARCHAR(50),
-		REG_ODON	VARCHAR(50),
-		REG_ODOFF	VARCHAR(50),
-	)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	--TRUNCATE TABLE dbo.RegNodeTable
+	BEGIN TRY
 
-	SET @sql = '
-	BULK INSERT #reg
-	FROM ''' + @filename + '''
-	WITH
+		--Ð¨Ð°Ð³ 1. Ð’Ñ‹Ð³Ñ€ÑƒÐ·Ð¸Ñ‚ÑŒ Ð¸Ð· Ð Ð¦ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ñ ÐºÐ»ÑŽÑ‡Ð¾Ð¼ /outcsv
+		DECLARE @bcppath VARCHAR(MAX)
+
+		SET @bcppath = dbo.GET_SETTING('BCP_PATH')
+
+		--Ð¨Ð°Ð³ 2. Ð—Ð°ÐºÐ¸Ð½ÑƒÑ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ð¾ Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½ÑƒÑŽ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ
+
+		DECLARE @sql NVARCHAR(4000)
+
+		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
+			DROP TABLE #reg
+
+		CREATE TABLE #reg
 		(
-		FORMATFILE = ''' + @bcppath + ''',
-		FIRSTROW = 2
-		)'
-	--SELECT 1 AS ER_MSG, @sql
-	EXEC sp_executesql @sql
-	--Øàã 1. Âûãðóçèòü èç ÐÖ äàííûå ñ êëþ÷îì /outcsv
+			[RN_SYS_NAME] [varchar](20) NULL,
+			[RN_DISTR_NUM] [int] NULL,
+			[RN_COMP_NUM] [tinyint] NULL,
+			[RN_DISTR_TYPE] [varchar](20) NULL,
+			[RN_TECH_TYPE] [varchar](20) NULL,
+			[RN_NET_COUNT] [smallint] NULL,
+			[RN_SUBHOST] [smallint] NULL,
+			[RN_TRANSFER_COUNT] [smallint] NULL,
+			[RN_TRANSFER_LEFT] [smallint] NULL,
+			[RN_SERVICE] [smallint] NULL,
+			--[RN_REG_DATE] [smalldatetime] NULL,
+			--[RN_FIRST_REG] [smalldatetime] NULL,
+			[RN_REG_DATE] VarChar(100) NULL,
+			[RN_FIRST_REG] VarChar(100) NULL,
+			[RN_COMMENT] [varchar](255) NULL,
+			[RN_COMPLECT] [varchar](50) NULL,
+			[RN_REPORT_CODE] [varchar](10) NULL,
+			[RN_REPORT_VALUE] [varchar](50) NULL,
+			[RN_SHORT] [varchar](10) NULL,
+			[RN_MAIN] [tinyint] NULL,
+			[RN_SUB] [tinyint] NULL,
+			[RN_OFFLINE] [varchar](50) NULL,
+			[RN_YUBIKEY] [varchar](50) NULL,
+			[RN_KRF] [varchar](50) NULL,
+			[RN_KRF1] [varchar](50) NULL,
+			REG_PARAM	VARCHAR(50),
+			REG_ODON	VARCHAR(50),
+			REG_ODOFF	VARCHAR(50),
+		)
 
-	UPDATE #reg
-	SET RN_COMMENT = REPLACE(LEFT(RIGHT(RN_COMMENT, LEN(RN_COMMENT) - 1), LEN(RN_COMMENT) - 2), '""', '"')
-	WHERE SUBSTRING(RN_COMMENT, 1, 1) = '"' AND SUBSTRING(RN_COMMENT, LEN(RN_COMMENT), 1) = '"'
+		--TRUNCATE TABLE dbo.RegNodeTable
 
-	UPDATE #reg
-	SET REG_ODON = 0 
-	WHERE REG_ODON IS NULL
+		SET @sql = '
+		BULK INSERT #reg
+		FROM ''' + @filename + '''
+		WITH
+			(
+			FORMATFILE = ''' + @bcppath + ''',
+			FIRSTROW = 2
+			)'
+		--SELECT 1 AS ER_MSG, @sql
+		EXEC sp_executesql @sql
+		--Ð¨Ð°Ð³ 1. Ð’Ñ‹Ð³Ñ€ÑƒÐ·Ð¸Ñ‚ÑŒ Ð¸Ð· Ð Ð¦ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ñ ÐºÐ»ÑŽÑ‡Ð¾Ð¼ /outcsv
 
-	UPDATE #reg
-	SET REG_ODOFF = 0 
-	WHERE REG_ODOFF IS NULL
+		UPDATE #reg
+		SET RN_COMMENT = CASE WHEN SUBSTRING(RN_COMMENT, 1, 1) = '"' AND SUBSTRING(RN_COMMENT, LEN(RN_COMMENT), 1) = '"' THEN REPLACE(LEFT(RIGHT(RN_COMMENT, LEN(RN_COMMENT) - 1), LEN(RN_COMMENT) - 2), '""', '"') ELSE RN_COMMENT END,
+			REG_ODON = CASE WHEN REG_ODON IS NULL THEN 0 ELSE REG_ODON END,
+			REG_ODOFF = CASE WHEN REG_ODOFF IS NULL THEN 0 ELSE REG_ODOFF END;
 
-	IF (SELECT COUNT(*) FROM #reg) > 0
-	BEGIN
-		TRUNCATE TABLE dbo.RegNodeTable
-		
-		INSERT INTO dbo.RegNodeTable
-		SELECT * FROM #reg
+		IF (SELECT COUNT(*) FROM #reg) > 0
+		BEGIN
+			TRUNCATE TABLE dbo.RegNodeTable
 
-		SELECT @@ROWCOUNT AS ROW_COUNT 	
+			INSERT INTO dbo.RegNodeTable
+			SELECT [RN_SYS_NAME], [RN_DISTR_NUM], [RN_COMP_NUM], [RN_DISTR_TYPE], [RN_TECH_TYPE], [RN_NET_COUNT], [RN_SUBHOST], [RN_TRANSFER_COUNT], [RN_TRANSFER_LEFT], [RN_SERVICE], Convert(SmallDateTime, [RN_REG_DATE], 104), Convert(SmallDateTime, [RN_FIRST_REG], 104), [RN_COMMENT], [RN_COMPLECT], [RN_REPORT_CODE], [RN_REPORT_VALUE], [RN_SHORT], [RN_MAIN], [RN_SUB], [RN_OFFLINE], [RN_YUBIKEY], [RN_KRF], [RN_KRF1], [REG_PARAM], [REG_ODON], [REG_ODOFF]
+			FROM #reg
 
-		EXEC [dbo].[DISTR_BUH_CHANGE]
-	END
-	
-	IF OBJECT_ID('tempdb..#reg') IS NOT NULL
-		DROP TABLE #reg
+			SELECT @@ROWCOUNT AS ROW_COUNT 
+
+			EXEC [dbo].[DISTR_BUH_CHANGE]
+		END
+
+		IF OBJECT_ID('tempdb..#reg') IS NOT NULL
+			DROP TABLE #reg
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[REG_NODE_LOAD_LOCAL] TO rl_reg_node_w;
+GO

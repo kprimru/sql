@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [FirstInstall].[Distr.SystemActive] FOR [FirstInstall].[Distr].[SystemActive];

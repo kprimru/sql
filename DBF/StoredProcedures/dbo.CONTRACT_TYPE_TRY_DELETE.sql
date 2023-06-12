@@ -1,41 +1,65 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CONTRACT_TYPE_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CONTRACT_TYPE_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  Возвращает 0, если тип договора с 
-                указанным кодом можно удалить 
-                (на нее не ссылается ни один 
-                договор клиента), 
-                -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё С‚РёРї РґРѕРіРѕРІРѕСЂР° СЃ
+                СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ
+                (РЅР° РЅРµРµ РЅРµ СЃСЃС‹Р»Р°РµС‚СЃСЏ РЅРё РѕРґРёРЅ
+                РґРѕРіРѕРІРѕСЂ РєР»РёРµРЅС‚Р°),
+                -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[CONTRACT_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CONTRACT_TYPE_TRY_DELETE]
 	@contracttypeid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ContractTable WHERE CO_ID_TYPE = @contracttypeid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + 'Данный тип указан у одного или нескольких договоров. ' + 
-						  'Удаление невозможно, пока выбранный тип будет указан хотя ' +
-						  'бы в одном договоре.'
-	  END
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
+		SET @res = 0
+		SET @txt = ''
 
-	SET NOCOUNT OFF
+		IF EXISTS(SELECT * FROM dbo.ContractTable WHERE CO_ID_TYPE = @contracttypeid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ С‚РёРї СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… РґРѕРіРѕРІРѕСЂРѕРІ. ' +
+							  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ С‚РёРї Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+							  'Р±С‹ РІ РѕРґРЅРѕРј РґРѕРіРѕРІРѕСЂРµ.'
+		  END
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CONTRACT_TYPE_TRY_DELETE] TO rl_contract_type_d;
+GO

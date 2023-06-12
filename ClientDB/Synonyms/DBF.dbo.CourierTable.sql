@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.CourierTable] FOR [DBF].[dbo].[CourierTable];

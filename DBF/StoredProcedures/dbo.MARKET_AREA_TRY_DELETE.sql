@@ -1,41 +1,66 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[MARKET_AREA_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 05.11.2008
-Описание:	  Возвращает 0, в случае если 
-               сбытовую территорию можно удалить 
-               (она не связани ни с однимподхостом), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 05.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё
+               СЃР±С‹С‚РѕРІСѓСЋ С‚РµСЂСЂРёС‚РѕСЂРёСЋ РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ
+               (РѕРЅР° РЅРµ СЃРІСЏР·Р°РЅРё РЅРё СЃ РѕРґРЅРёРјРїРѕРґС…РѕСЃС‚РѕРј),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_TRY_DELETE]
 	@marketareaid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @res AS RES, @txt AS TXT
+	BEGIN TRY
 
-	-- добавлено 30.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.SubhostCityTable WHERE SC_ID_MARKET_AREA = @marketareaid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt	+	'Невозможно удалить сбытовую территорию, так как она связана ' +
-								'с одним или несколькими подхостами. '
-		END
-	--
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		SELECT @res AS RES, @txt AS TXT
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 30.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.SubhostCityTable WHERE SC_ID_MARKET_AREA = @marketareaid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt	+	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃР±С‹С‚РѕРІСѓСЋ С‚РµСЂСЂРёС‚РѕСЂРёСЋ, С‚Р°Рє РєР°Рє РѕРЅР° СЃРІСЏР·Р°РЅР° ' +
+									'СЃ РѕРґРЅРёРј РёР»Рё РЅРµСЃРєРѕР»СЊРєРёРјРё РїРѕРґС…РѕСЃС‚Р°РјРё. '
+			END
+		--
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[MARKET_AREA_TRY_DELETE] TO rl_market_area_d;
+GO

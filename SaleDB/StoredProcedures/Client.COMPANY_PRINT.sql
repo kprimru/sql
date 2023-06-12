@@ -1,41 +1,53 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PRINT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PRINT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PRINT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PRINT]
 	@ID		UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		SELECT	
-			a.NAME AS CO_NAME, a.NUMBER, 
+		SELECT
+			a.NAME AS CO_NAME, a.NUMBER,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT l.NAME + ', '
-					FROM 
+					FROM
 						Client.CompanyActivity t
 						INNER JOIN Client.Activity l ON t.ID_ACTIVITY = l.ID
 					WHERE t.ID_COMPANY = a.ID
 				)
-			), 1, 2, '')) AS AC_NAME, 
+			), 1, 2, '')) AS AC_NAME,
 			ACTIVITY_NOTE, a.WORK_DATE,
 			e.NAME AS WORK_STATUS, f.NAME AS WORK_STATE, g.NAME AS REMOTENAME, h.NAME AS AVAILABILITY,
 			j.NAME AS CHAR_NAME, i.NAME AS MONTH_NAME, k.NAME AS PAY_CAT_NAME, b.NAME AS SEN_NAME, a.SENDER_NOTE,
-			c.NAME AS POT_NAME, 
+			c.NAME AS POT_NAME,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT l.NAME + ', '
-					FROM 
+					FROM
 						Client.CompanyTaxing t
 						INNER JOIN Client.Taxing l ON t.ID_TAXING = l.ID
 					WHERE t.ID_COMPANY = a.ID
 				)
 			), 1, 2, '')) AS TX_NAME
-		FROM	
+		FROM
 			Client.Company a
 			LEFT OUTER JOIN Client.Activity d ON a.ID_ACTIVITY = d.ID
 			LEFT OUTER JOIN Client.WorkStatus e ON a.ID_WORK_STATUS = e.ID
@@ -49,21 +61,17 @@ BEGIN
 			LEFT OUTER JOIN Client.Potential c ON c.ID = a.ID_POTENTIAL
 			--LEFT OUTER JOIN Client.Taxing l ON l.ID = a.ID_TAXING
 		WHERE a.STATUS = 1 AND a.ID = @ID
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PRINT] TO rl_company_p;
+GO

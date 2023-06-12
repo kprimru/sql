@@ -1,28 +1,30 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REF_GET_NAME_BY_ID_LIST]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
 CREATE FUNCTION [dbo].[REF_GET_NAME_BY_ID_LIST]
 (
-	-- Список параметров функции
+	-- РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
 	@refname VARCHAR(100),
 	@idlist VARCHAR(MAX)
 )
--- Тип, который возвращает
+-- РўРёРї, РєРѕС‚РѕСЂС‹Р№ РІРѕР·РІСЂР°С‰Р°РµС‚
 RETURNS VARCHAR(MAX)
 AS
 BEGIN
 
-	-- переменная, в которой будет храниться результат работы функции
+	-- РїРµСЂРµРјРµРЅРЅР°СЏ, РІ РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЊСЃСЏ СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
 	DECLARE @result VARCHAR(MAX)
 
 	IF @idlist IS NULL
@@ -31,12 +33,12 @@ BEGIN
 	BEGIN
 
 
-	-- Текст процедуры ниже
+	-- РўРµРєСЃС‚ РїСЂРѕС†РµРґСѓСЂС‹ РЅРёР¶Рµ
 	DECLARE @temp TABLE (ID INT)
 
-	
-	DECLARE @tmp TABLE	(DATA_ID INT, DATA_NAME VARCHAR(100))	
-	
+
+	DECLARE @tmp TABLE	(DATA_ID INT, DATA_NAME VARCHAR(100))
+
 	IF @refname = 'SYSTEM'
 		INSERT INTO @tmp
 		SELECT SYS_ID, SYS_SHORT_NAME
@@ -71,8 +73,8 @@ BEGIN
 	ELSE IF @refname = 'DISTR_STATUS'
 		INSERT INTO @tmp
 		SELECT DS_ID, DS_NAME
-		FROM dbo.DistrStatusTable		
-	
+		FROM dbo.DistrStatusTable
+
 	--SELECT * FROM #temp
 
 	--SELECT * FROM #tmp
@@ -83,20 +85,21 @@ BEGIN
 		INSERT INTO @temp SELECT DATA_ID FROM @tmp
 	ELSE
 	*/
-	
+
 	INSERT INTO @temp
 		SELECT * FROM dbo.GET_TABLE_FROM_LIST(@idlist, ',')
 
 	SET @result = ''
 
-	SELECT @result = @result + ISNULL(DATA_NAME, '') + ', ' 
-	FROM @tmp INNER JOIN 
+	SELECT @result = @result + ISNULL(DATA_NAME, '') + ', '
+	FROM @tmp INNER JOIN
 		@temp ON DATA_ID = ID
 
 	IF LEN(@result) > 2
-		SET @result = LEFT(@result, LEN(@result) - 1)	
-			
+		SET @result = LEFT(@result, LEN(@result) - 1)
+
 	END
-	-- Возвращение результата работы функции
-	RETURN @result	
+	-- Р’РѕР·РІСЂР°С‰РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЂР°Р±РѕС‚С‹ С„СѓРЅРєС†РёРё
+	RETURN @result
 END
+GO

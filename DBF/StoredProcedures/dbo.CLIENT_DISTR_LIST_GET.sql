@@ -1,54 +1,70 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+ï»¿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_DISTR_LIST_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_DISTR_LIST_GET]  AS SELECT 1')
+GO
+
 /*
-Àâòîð:         Äåíèñîâ Àëåêñåé
-Îïèñàíèå:      Âûáðàòü äàííûå î äèñòðèáóòèâå êëèåíòà ñ óêàçàííûì êîäîì
+ÐÐ²Ñ‚Ð¾Ñ€:         Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹
+ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:      Ð’Ñ‹Ð±Ñ€Ð°Ñ‚ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¾ Ð´Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð° Ñ ÑƒÐºÐ°Ð·Ð°Ð½Ð½Ñ‹Ð¼ ÐºÐ¾Ð´Ð¾Ð¼
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_DISTR_LIST_GET]
+ALTER PROCEDURE [dbo].[CLIENT_DISTR_LIST_GET]
 	@cdid VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @cd TABLE
-		(
-			CD_ID INT
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @cd 
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@cdid, ',')
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DECLARE @dislist VARCHAR(MAX)
-	SET @dislist = ''
+	BEGIN TRY
 
-	SELECT @dislist = @dislist + DIS_STR + ','
-	FROM dbo.ClientDistrView
-	WHERE CD_ID IN
-		(
-			SELECT CD_ID
-			FROM @cd
-		)
+		DECLARE @cd TABLE
+			(
+				CD_ID INT
+			)
 
-	IF LEN(@dislist) > 0
-		SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
-	
-	SELECT @dislist AS DIS_STR
+		INSERT INTO @cd
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@cdid, ',')
 
-	SET NOCOUNT OFF
+		DECLARE @dislist VARCHAR(MAX)
+		SET @dislist = ''
+
+		SELECT @dislist = @dislist + DIS_STR + ','
+		FROM dbo.ClientDistrView
+		WHERE CD_ID IN
+			(
+				SELECT CD_ID
+				FROM @cd
+			)
+
+		IF LEN(@dislist) > 0
+			SET @dislist = LEFT(@dislist, LEN(@dislist) - 1)
+
+		SELECT @dislist AS DIS_STR
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_DISTR_LIST_GET] TO rl_client_distr_r;
+GO

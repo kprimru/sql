@@ -1,0 +1,22 @@
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[GlobalControlDocumentUser]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalControlDocumentUser] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[GlobalControlDocumentUser]
+()
+RETURNS VARCHAR(500)
+AS
+BEGIN
+	DECLARE @RES VARCHAR(500)
+
+	SELECT @RES = GS_VALUE
+	FROM Maintenance.GlobalSettings
+	WHERE GS_NAME = 'CONTROL_DOCUMENT_USER'
+
+	RETURN @RES
+END
+GO

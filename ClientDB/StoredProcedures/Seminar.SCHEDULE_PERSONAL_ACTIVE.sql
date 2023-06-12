@@ -1,44 +1,71 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Seminar].[SCHEDULE_PERSONAL_ACTIVE]
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Seminar].[SCHEDULE_PERSONAL_ACTIVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[SCHEDULE_PERSONAL_ACTIVE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Seminar].[SCHEDULE_PERSONAL_ACTIVE]
 	@ID			UNIQUEIDENTIFIER,
 	@SCHEDULE	UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF (
-			SELECT COUNT(*) 
-			FROM 
-				Seminar.PersonalView WITH(NOEXPAND)
-			WHERE ID_SCHEDULE = @SCHEDULE AND INDX = 1
-		) >= 
-		(
-			SELECT LIMIT
-			FROM Seminar.Schedule
-			WHERE ID = @SCHEDULE
-		)
-	BEGIN
-		RAISERROR ('”ÊÂ Á‡ÔËÒ‡ÌÓ Ï‡ÍÒËÏ‡Î¸ÌÓÂ ÍÓÎË˜ÂÒÚ‚Ó Û˜‡ÒÚÌËÍÓ‚. ÃÓÊÌÓ Á‡ÔËÒ‡Ú¸ ÚÓÎ¸ÍÓ ‚ ÂÁÂ‚.', 16, 1)
-		RETURN
-	END
-	
-	IF (SELECT INDX FROM Seminar.PersonalView WITH(NOEXPAND) WHERE ID = @ID) = 1
-	BEGIN
-		RAISERROR ('—ÓÚÛ‰ÌËÍ Ë Ú‡Í Ì‡ıÓ‰ËÚÒˇ ‚ ‡ÍÚË‚ÌÓÏ ÒÔËÒÍÂ', 16, 1)
-		RETURN
-	END
-	
-	EXEC Seminar.SCHEDULE_PERSONAL_ARCH @ID
-	
-	UPDATE Seminar.Personal
-	SET ID_SCHEDULE	=	@SCHEDULE,
-		ID_STATUS	=	(SELECT ID FROM Seminar.Status WHERE INDX = 1),
-		UPD_DATE	=	GETDATE(),
-		UPD_USER	=	ORIGINAL_LOGIN()
-	WHERE ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		IF (
+				SELECT COUNT(*)
+				FROM
+					Seminar.PersonalView WITH(NOEXPAND)
+				WHERE ID_SCHEDULE = @SCHEDULE AND INDX = 1
+			) >=
+			(
+				SELECT LIMIT
+				FROM Seminar.Schedule
+				WHERE ID = @SCHEDULE
+			)
+		BEGIN
+			RAISERROR ('–£–∂–µ –∑–∞–ø–∏—Å–∞–Ω–æ –º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–µ –∫–æ–ª–∏—á–µ—Å—Ç–≤–æ —É—á–∞—Å—Ç–Ω–∏–∫–æ–≤. –ú–æ–∂–Ω–æ –∑–∞–ø–∏—Å–∞—Ç—å —Ç–æ–ª—å–∫–æ –≤ —Ä–µ–∑–µ—Ä–≤.', 16, 1)
+			RETURN
+		END
+
+		IF (SELECT INDX FROM Seminar.PersonalView WITH(NOEXPAND) WHERE ID = @ID) = 1
+		BEGIN
+			RAISERROR ('–°–æ—Ç—Ä—É–¥–Ω–∏–∫ –∏ —Ç–∞–∫ –Ω–∞—Ö–æ–¥–∏—Ç—Å—è –≤ –∞–∫—Ç–∏–≤–Ω–æ–º —Å–ø–∏—Å–∫–µ', 16, 1)
+			RETURN
+		END
+
+		EXEC Seminar.SCHEDULE_PERSONAL_ARCH @ID
+
+		UPDATE Seminar.Personal
+		SET ID_SCHEDULE	=	@SCHEDULE,
+			ID_STATUS	=	(SELECT ID FROM Seminar.Status WHERE INDX = 1),
+			UPD_DATE	=	GETDATE(),
+			UPD_USER	=	ORIGINAL_LOGIN()
+		WHERE ID = @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Seminar].[SCHEDULE_PERSONAL_ACTIVE] TO rl_seminar_active;
+GO

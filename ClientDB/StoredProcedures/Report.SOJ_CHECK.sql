@@ -1,78 +1,77 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[SOJ_CHECK]
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[SOJ_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[SOJ_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[SOJ_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
-		DROP TABLE #usr
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	CREATE TABLE #usr(UF_ID UNIQUEIDENTIFIER PRIMARY KEY)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO #usr(UF_ID)
-		SELECT UF_ID
-		FROM USR.USRActiveView
-		WHERE UF_DATE >= '20171001'
+	BEGIN TRY
 
-	SELECT 
-		ISNULL(ManagerName, SubhostName) AS [–ÛÍ-Î¸/œÓ‰ıÓÒÚ], ServiceName AS [—»], 
-		ISNULL(ClientFullName, Comment) AS [ ÎËÂÌÚ], t.DistrStr AS [ƒËÒÚË·ÛÚË‚], 
-		NT_SHORT AS [—ÂÚ¸], SST_SHORT AS [“ËÔ], 
-		OLD_SOJ_EXISTS AS [—Ú‡˚È »¡ —Œﬁ], NEW_SOJ_EXISTS AS [ÕÓ‚˚Â »¡ —Œﬁ],
-		CASE 
-			WHEN OLD_SOJ_EXISTS = 0 AND NEW_SOJ_EXISTS = 0 THEN '»¡ —Œﬁ ÓÚÒÛÚÒÚ‚Û˛Ú'
-			WHEN OLD_SOJ_EXISTS = 1 AND NEW_SOJ_EXISTS = 0 THEN '“ÓÎ¸ÍÓ ÒÚ‡˚È »¡ —Œﬁ'
-			WHEN OLD_SOJ_EXISTS = 0 AND NEW_SOJ_EXISTS = 1 THEN '“ÓÎ¸ÍÓ ÌÓ‚˚È »¡ —Œﬁ'
-			WHEN OLD_SOJ_EXISTS = 1 AND NEW_SOJ_EXISTS = 1 THEN '”ÒÚ‡ÌÓ‚ÎÂÌ˚ Ó·‡ »¡ —Œﬁ'
-		END AS [«‡ÍÎ˛˜ÂÌËÂ]
-	FROM
+		DECLARE @LastUSR Table
 		(
-			SELECT 
-				SubhostName, HostID, DistrNumber, CompNumber, Comment, DistrStr, NT_SHORT, SST_SHORT,
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM 
-								#usr z
-								INNER JOIN USR.USRIB y ON z.UF_ID = y.UI_ID_USR
-								INNER JOIN dbo.InfoBankTable x ON x.InfoBankID = y.UI_ID_BASE
-							WHERE x.InfoBankName = 'SOJ'
-								AND y.UI_DISTR = a.DistrNumber
-								AND y.UI_COMP = a.CompNumber
-						) THEN 1
-						ELSE 0
-				END AS OLD_SOJ_EXISTS,
-				CASE
-					WHEN EXISTS
-						(
-							SELECT *
-							FROM 
-								#usr z
-								INNER JOIN USR.USRIB y ON z.UF_ID = y.UI_ID_USR
-								INNER JOIN dbo.InfoBankTable x ON x.InfoBankID = y.UI_ID_BASE
-							WHERE x.InfoBankName IN ('SOUR', 'SOUG', 'SOSZ', 'SOSK', 'SOSB', 'SOPV', 'SODV', 'SOCN')
-								AND y.UI_DISTR = a.DistrNumber
-								AND y.UI_COMP = a.CompNumber
-						) THEN 1
-						ELSE 0
-				END AS NEW_SOJ_EXISTS
-			FROM Reg.RegNodeSearchView a WITH(NOEXPAND)
-			WHERE SystemBaseName = 'SOJ'
-				AND DS_REG = 0
-				AND NT_SHORT NOT IN ('Œ¬ ', 'Œ¬œ', 'Œ¬œ»', 'Œ¬Ã1', 'Œ¬Ã2')
-		) AS t
-		LEFT OUTER JOIN dbo.ClientDistrView p WITH(NOEXPAND) ON t.DistrNumber = p.DISTR AND t.CompNumber= p.COMP AND t.HostID = p.HostID
-		LEFT OUTER JOIN dbo.ClientView q WITH(NOEXPAND) ON q.ClientID = p.ID_CLIENT
-	ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 0 END, SubhostName, ManagerName, ServiceName, ClientFullName, Comment, SystemOrder, DistrNumber
+			UF_ID		Int,
+			UF_DATE		DateTime,
+			Primary Key Clustered (UF_ID)
+		);
 
+		INSERT INTO @LastUSR
+		SELECT UF_ID, UF_DATE
+		FROM USR.USRActiveView;
+		--WHERE UF_DATE >= '20200101';
 
-	IF OBJECT_ID('tempdb..#usr') IS NOT NULL
-		DROP TABLE #usr
+		SELECT
+			[–†—É–∫-–ª—å/–ü–æ–¥—Ö–æ—Å—Ç]	= ISNULL(ManagerName, SubhostName),
+			[–°–ò]				= ServiceName,
+			[–ö–ª–∏–µ–Ω—Ç]			= ISNULL(ClientFullName, Comment),
+			[–î–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤]		= D.DistrStr,
+			[–°–µ—Ç—å]				= NT_SHORT,
+			[–¢–∏–ø]				= SST_SHORT,
+			[–ü–æ—Å–ª.–ø–æ–ø–æ–ª–Ω–µ–Ω–∏–µ]	=
+				(
+					SELECT TOP (1) U.UF_DATE
+					FROM @LastUSR				U
+					INNER JOIN USR.USRPackage	P ON U.UF_ID = P.UP_ID_USR
+					WHERE P.UP_ID_SYSTEM = R.SystemID
+						AND P.UP_DISTR = R.DistrNumber
+						AND P.UP_COMP = R.CompNumber
+					ORDER BY U.UF_DATE DESC
+				)
+		FROM Reg.RegNodeSearchView R WITH(NOEXPAND)
+		INNER JOIN Din.NetTypeOffline() N ON R.NT_ID = N.NT_ID
+		LEFT JOIN dbo.ClientDistrView D WITH(NOEXPAND) ON R.DistrNumber = D.DISTR AND R.CompNumber = D.COMP AND R.HostID = D.HostID
+		LEFT JOIN dbo.ClientView C WITH(NOEXPAND) ON C.ClientID = D.ID_CLIENT
+		WHERE R.SystemBaseName = 'SOJ'
+			AND R.DS_REG = 0
+		ORDER BY CASE WHEN ManagerName IS NULL THEN 1 ELSE 0 END, SubhostName, ManagerName, ServiceName, ClientFullName, Comment, R.SystemOrder, DistrNumber
+		OPTION (RECOMPILE)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[SOJ_CHECK] TO rl_report;
+GO

@@ -1,30 +1,55 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PRICE_GOOD_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PRICE_GOOD_ADD]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 20.11.2008
-Описание:	  Добавить тип прейскуранта в 
-               справочник
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 20.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р”РѕР±Р°РІРёС‚СЊ С‚РёРї РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р° РІ
+               СЃРїСЂР°РІРѕС‡РЅРёРє
 */
 
-CREATE PROCEDURE [dbo].[PRICE_GOOD_ADD] 
-	@name VARCHAR(50),	
-	@active BIT = 1,  
-	@returnvalue BIT = 1  
+ALTER PROCEDURE [dbo].[PRICE_GOOD_ADD]
+	@name VARCHAR(50),
+	@active BIT = 1,
+	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.PriceGoodTable(PGD_NAME, PGD_ACTIVE) 
-	VALUES (@name, @active)
-	
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.PriceGoodTable(PGD_NAME, PGD_ACTIVE)
+		VALUES (@name, @active)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[PRICE_GOOD_ADD] TO rl_price_good_w;
+GO

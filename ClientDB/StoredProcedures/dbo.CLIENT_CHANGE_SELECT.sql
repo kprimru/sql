@@ -1,14 +1,16 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_CHANGE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CLIENT_CHANGE_SELECT]
 	@BEGIN DATETIME,
 	@END DATETIME,
-	@MANAGER INT = NULL,	
-	@SERVICE INT = NULL,	
+	@MANAGER INT = NULL,
+	@SERVICE INT = NULL,
 	@NAME BIT = 1,
 	@ADDRESS BIT = 1,
 	@INN BIT = 1,
@@ -26,656 +28,681 @@ USE [ClientDB]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
-	SET @BEGIN = CONVERT(DATETIME, CONVERT(VARCHAR(20), @BEGIN, 112), 112)
-	SET @END = CONVERT(DATETIME, CONVERT(VARCHAR(20), @END, 112), 112)
 
-	SET @END = DATEADD(DAY, 1, @END)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	DECLARE @LIST TABLE (ClientID INT PRIMARY KEY)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	INSERT INTO @LIST(ClientID) 
-		SELECT DISTINCT a.ClientID
-		FROM 
-			dbo.ClientChangeTable a
-			INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
-		WHERE ChangeDate > @BEGIN
-			AND ChangeDate < @end
-			AND (a.ClientID = @CLIENT OR @CLIENT IS NULL)
-			AND (ServiceID = @SERVICE OR @SERVICE IS NULL) 
-			AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+	BEGIN TRY
 
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
+		SET @BEGIN = CONVERT(DATETIME, CONVERT(VARCHAR(20), @BEGIN, 112), 112)
+		SET @END = CONVERT(DATETIME, CONVERT(VARCHAR(20), @END, 112), 112)
 
-	CREATE TABLE #temp
-		(
-			ClientID INT, 
-			FLName VARCHAR(100), 
-			OldVal VARCHAR(500), 
-			NewVal VARCHAR(500),
-			DT DATETIME,
-			USR VARCHAR(50)
-		)
+		SET @END = DATEADD(DAY, 1, @END)
 
-	IF @NAME = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Íàçâàíèå' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Íàçâàíèå' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL					
-				FROM
-					@LIST AS a
+		DECLARE @LIST TABLE (ClientID INT PRIMARY KEY)
 
-	IF @ADDRESS = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Àäðåñ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Àäðåñ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
+		INSERT INTO @LIST(ClientID)
+			SELECT DISTINCT a.ClientID
+			FROM
+				dbo.ClientChangeTable a
+				INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
+			WHERE ChangeDate > @BEGIN
+				AND ChangeDate < @end
+				AND (a.ClientID = @CLIENT OR @CLIENT IS NULL)
+				AND (ServiceID = @SERVICE OR @SERVICE IS NULL)
+				AND (ManagerID = @MANAGER OR @MANAGER IS NULL)
+
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
+
+		CREATE TABLE #temp
+			(
+				ClientID INT,
+				FLName VARCHAR(100),
+				OldVal VARCHAR(500),
+				NewVal VARCHAR(500),
+				DT DATETIME,
+				USR VARCHAR(50)
+			)
+
+		IF @NAME = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
 								) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@NAME[1]', 'VARCHAR(250)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @ADDRESS = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'ÐÐ´Ñ€ÐµÑ' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'ÐÐ´Ñ€ÐµÑ' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+									) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@ADDRESS[1]', 'VARCHAR(250)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+
+		IF @INN = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð˜ÐÐ' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð˜ÐÐ' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @DIR = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð”Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð”Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @DIR_PHONE = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€Ð°' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¾Ñ€Ð°' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @BUH = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð“Ð».Ð±ÑƒÑ…' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð“Ð».Ð±ÑƒÑ…' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @BUH_PHONE = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð³Ð».Ð±ÑƒÑ…' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð³Ð».Ð±ÑƒÑ…' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @RES = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'ÐžÑ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ñ‹Ð¹' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'ÐžÑ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ñ‹Ð¹' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @RES_PHONE = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð².' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð¢ÐµÐ».Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð².' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @RES_POS = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð”Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ.Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð².' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð”Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ.Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð².' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @STATUS = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð¡Ñ‚Ð°Ñ‚ÑƒÑ' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð¡Ñ‚Ð°Ñ‚ÑƒÑ' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+		IF @SCHANGE = 1
+			IF @DETAIL = 1
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
+					SELECT
+						ClientID, 'Ð¡Ð¼ÐµÐ½Ð° Ð¡Ð˜' AS FlName,
+						old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
+					FROM
+						dbo.ClientChangeTable a CROSS APPLY
+						(
+							SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM OldValue.nodes('/VALUES') x(z)
+						) AS old CROSS APPLY
+						(
+							SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
+							FROM NewValue.nodes('/VALUES') x(z)
+						) AS new
+					WHERE ChangeDate > @BEGIN
+						AND ChangeDate < @end
+						AND (ClientID = @CLIENT OR @CLIENT IS NULL)
+			ELSE
+				INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
+					SELECT
+						ClientID, 'Ð¡Ð¼ÐµÐ½Ð° Ð¡Ð˜' AS FlName,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM OldValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate >= @BEGIN
+							ORDER BY ChangeDate
+						) AS OldVal,
+						(
+							SELECT TOP 1 CL_NAME
+							FROM
+								dbo.ClientChangeTable e CROSS APPLY
+								(
+									SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
+									FROM NewValue.nodes('/VALUES') x(z)
+								) AS o_O
+							WHERE e.ClientID = a.ClientID
+								AND ChangeDate <= @END
+							ORDER BY ChangeDate DESC
+						) AS NewVal, NULL
+					FROM
+						@LIST AS a
+
+
+		SELECT
+			ClientFullName, ManagerName, ServiceName,
+			(
+				SELECT TOP 1
+					DistrStr
 				FROM
-					@LIST AS a
+					dbo.ClientDistrView e WITH(NOEXPAND)
+				WHERE e.ID_CLIENT = a.ClientID
+				ORDER BY DS_INDEX, SystemOrder
+			) AS DisStr, FLName, OldVal, NewVal, dt AS ChangeDate, USR AS ChangeUser
+		FROM
+			#temp AS a INNER JOIN
+			dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID
+		WHERE OldVal <> NewVal
+		ORDER BY ClientFullName
 
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
 
-	IF @INN = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'ÈÍÍ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'ÈÍÍ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@INN[1]', 'VARCHAR(50)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-	IF @DIR = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Äèðåêòîð' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Äèðåêòîð' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@DIR[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-	IF @DIR_PHONE = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Òåë.äèðåêòîðà' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Òåë.äèðåêòîðà' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@DIR_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @BUH = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Ãë.áóõ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Ãë.áóõ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@BUH[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @BUH_PHONE = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Òåë.ãë.áóõ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Òåë.ãë.áóõ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@BUH_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @RES = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Îòâåòñòâåííûé' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Îòâåòñòâåííûé' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@RES[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @RES_PHONE = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Òåë.îòâåòñòâ.' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Òåë.îòâåòñòâ.' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@RES_PHONE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @RES_POS = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Äîëæíîñòü.îòâåòñòâ.' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Äîëæíîñòü.îòâåòñòâ.' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@RES_POS[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-	
-	IF @STATUS = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Ñòàòóñ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Ñòàòóñ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@STATUS[1]', 'VARCHAR(50)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-
-	IF @SCHANGE = 1
-		IF @DETAIL = 1
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT, USR)
-				SELECT 
-					ClientID, 'Ñìåíà ÑÈ' AS FlName,
-					old.CL_NAME, new.CL_NAME, ChangeDate, ChangeUser
-				FROM 
-					dbo.ClientChangeTable a CROSS APPLY
-					(
-						SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM OldValue.nodes('/VALUES') x(z)
-					) AS old CROSS APPLY
-					(
-						SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
-						FROM NewValue.nodes('/VALUES') x(z)
-					) AS new
-				WHERE ChangeDate > @BEGIN
-					AND ChangeDate < @end
-					AND (ClientID = @CLIENT OR @CLIENT IS NULL)
-		ELSE
-			INSERT INTO #temp(ClientID, FLName, OldVal, NewVal, DT)
-				SELECT 
-					ClientID, 'Ñìåíà ÑÈ' AS FlName,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(
-								SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM OldValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate >= @BEGIN
-						ORDER BY ChangeDate
-					) AS OldVal,
-					(
-						SELECT TOP 1 CL_NAME
-						FROM 
-							dbo.ClientChangeTable e CROSS APPLY
-							(	
-								SELECT z.value('@SERVICE[1]', 'VARCHAR(150)') AS CL_NAME
-								FROM NewValue.nodes('/VALUES') x(z)
-							) AS o_O
-						WHERE e.ClientID = a.ClientID
-							AND ChangeDate <= @END
-						ORDER BY ChangeDate DESC
-					) AS NewVal, NULL
-				FROM
-					@LIST AS a
-	
-
-	SELECT
-		ClientFullName, ManagerName, ServiceName, 
-		(
-			SELECT TOP 1 
-				DistrStr
-			FROM 
-				dbo.ClientDistrView e WITH(NOEXPAND)
-			WHERE e.ID_CLIENT = a.ClientID
-			ORDER BY DS_INDEX, SystemOrder
-		) AS DisStr, FLName, OldVal, NewVal, dt AS ChangeDate, USR AS ChangeUser
-	FROM	
-		#temp AS a INNER JOIN
-		dbo.ClientView b WITH(NOEXPAND) ON a.ClientID = b.ClientID 
-	WHERE OldVal <> NewVal
-	ORDER BY ClientFullName
-
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_CHANGE_SELECT] TO rl_report_change;
+GO

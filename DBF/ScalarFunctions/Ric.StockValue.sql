@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	Функция, возвращающая задел
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Ric].[StockValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[StockValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	Р¤СѓРЅРєС†РёСЏ, РІРѕР·РІСЂР°С‰Р°СЋС‰Р°СЏ Р·Р°РґРµР»
 */
-CREATE FUNCTION [Ric].[Stock]
+CREATE FUNCTION [Ric].[StockValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -33,3 +35,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

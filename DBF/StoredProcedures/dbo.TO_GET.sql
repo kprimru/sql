@@ -1,28 +1,54 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TO_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TO_GET]  AS SELECT 1')
+GO
+
 /*
-Автор:			Денисов Алексей
-Описание:		Выбор всех точек обслуживания указанного клиента
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:		Р’С‹Р±РѕСЂ РІСЃРµС… С‚РѕС‡РµРє РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ РєР»РёРµРЅС‚Р°
 */
 
-CREATE PROCEDURE [dbo].[TO_GET]	
-	@toid INT   
+ALTER PROCEDURE [dbo].[TO_GET]
+	@toid INT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		TO_NAME, TO_ID, TO_NUM, TO_REPORT, COUR_ID, TO_VMI_COMMENT, TO_MAIN,
-		COUR_NAME, TA_INDEX, TA_HOME, ST_ID, ST_NAME, ST_CITY_NAME, CL_INN, TO_INN, TO_PARENT
-	FROM 
-		dbo.TOView a LEFT OUTER JOIN
-		dbo.TOAddressView b ON a.TO_ID = b.TA_ID_TO
-	WHERE TO_ID = @toid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF		
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			TO_NAME, TO_ID, TO_NUM, TO_REPORT, COUR_ID, TO_VMI_COMMENT, TO_MAIN,
+			COUR_NAME, TA_INDEX, TA_HOME, ST_ID, ST_NAME, ST_CITY_NAME, CL_INN, TO_INN, TO_PARENT, TO_RANGE
+		FROM
+			dbo.TOView a LEFT OUTER JOIN
+			dbo.TOAddressView b ON a.TO_ID = b.TA_ID_TO
+		WHERE TO_ID = @toid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TO_GET] TO rl_client_r;
+GRANT EXECUTE ON [dbo].[TO_GET] TO rl_to_r;
+GO

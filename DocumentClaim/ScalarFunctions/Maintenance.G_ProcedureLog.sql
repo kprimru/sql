@@ -1,0 +1,22 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[G_ProcedureLog]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[G_ProcedureLog] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[G_ProcedureLog]
+()
+RETURNS BIT
+AS
+BEGIN
+	DECLARE @RES BIT
+
+	SELECT @RES = PROCEDURE_LOG
+	FROM Maintenance.Settings
+	WHERE STATUS = 1
+
+	RETURN @RES
+END
+GO

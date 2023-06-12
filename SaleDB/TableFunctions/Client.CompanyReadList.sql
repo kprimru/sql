@@ -1,11 +1,13 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Client].[CompanyReadList]()
-RETURNS @TBL TABLE 
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[CompanyReadList]', 'TF') IS NULL EXEC('CREATE FUNCTION [Client].[CompanyReadList] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Client].[CompanyReadList]()
+RETURNS @TBL TABLE
 (
 	ID	UNIQUEIDENTIFIER
 )
@@ -19,7 +21,7 @@ BEGIN
 	DECLARE @PHONE		BIT
 	DECLARE @RIVAL		BIT
 
-	SELECT 
+	SELECT
 		@ALL		=	V_ALL,
 		@SALE_MAN	=	V_SALE_MAN,
 		@SALE		=	V_SALE,
@@ -28,12 +30,12 @@ BEGIN
 		@PHONE		=	V_PHONE,
 		@RIVAL		=	V_RIVAL
 	FROM Security.CompanyList
-	WHERE TYPE = 'READ' 
+	WHERE TYPE = 'READ'
 		AND USER_NAME = ORIGINAL_LOGIN()
 
 	IF @ALL IS NULL OR @SALE_MAN IS NULL OR @SALE IS NULL OR @PHONE_MAN IS NULL OR @PHONE IS NULL
 	BEGIN
-		SELECT 
+		SELECT
 			@ALL		= CONVERT(BIT, MAX(CONVERT(INT, V_ALL))),
 			@SALE_MAN	= CONVERT(BIT, MAX(CONVERT(INT, V_SALE_MAN))),
 			@SALE_ALL	= CONVERT(BIT, MAX(CONVERT(INT, V_SALE_ALL))),
@@ -41,7 +43,7 @@ BEGIN
 			@PHONE_MAN	= CONVERT(BIT, MAX(CONVERT(INT, V_PHONE_MAN))),
 			@PHONE		= CONVERT(BIT, MAX(CONVERT(INT, V_PHONE))),
 			@RIVAL		= CONVERT(BIT, MAX(CONVERT(INT, V_RIVAL)))
-		FROM 
+		FROM
 			Security.CompanyList t
 			INNER JOIN Security.RoleGroup z ON z.NAME = USER_NAME
 			INNER JOIN sys.database_principals a ON a.name = z.NAME
@@ -69,43 +71,44 @@ BEGIN
 	BEGIN
 		INSERT INTO @TBL
 			SELECT a.ID
-			FROM 
+			FROM
 				Client.CompanyProcessSaleView a WITH(NOEXPAND)
 				INNER JOIN Personal.PersonalSlaveGet(@PER_ID) b ON a.ID_PERSONAL = b.ID
-			WHERE @SALE_MAN = 1 			
-	
-			UNION 
-			
+			WHERE @SALE_MAN = 1 
+
+			UNION
+
 			SELECT a.ID
-			FROM Client.CompanyProcessManagerView a WITH(NOEXPAND)				
+			FROM Client.CompanyProcessManagerView a WITH(NOEXPAND)
 			WHERE @SALE_ALL = 1
-			
+
 			UNION
 
 			SELECT a.ID
-			FROM Client.CompanyProcessSaleView a WITH(NOEXPAND)			
+			FROM Client.CompanyProcessSaleView a WITH(NOEXPAND)
 			WHERE @SALE = 1 AND ID_PERSONAL = @PER_ID
-		
+
 			UNION
 
 			SELECT a.ID
-			FROM 
+			FROM
 				Client.CompanyProcessPhoneView a WITH(NOEXPAND)
 				INNER JOIN Personal.PersonalSlaveGet(@PER_ID) b ON a.ID_PERSONAL = b.ID
-			WHERE @PHONE_MAN = 1			
-		
+			WHERE @PHONE_MAN = 1
+
 			UNION
 
 			SELECT a.ID
-			FROM Client.CompanyProcessPhoneView a WITH(NOEXPAND)			
+			FROM Client.CompanyProcessPhoneView a WITH(NOEXPAND)
 			WHERE @PHONE = 1 AND ID_PERSONAL = @PER_ID
-			
+
 			UNION
 
 			SELECT a.ID
-			FROM Client.CompanyProcessRivalView a WITH(NOEXPAND)			
+			FROM Client.CompanyProcessRivalView a WITH(NOEXPAND)
 			WHERE @RIVAL = 1 AND ID_PERSONAL = @PER_ID
 	END
 
 	RETURN
 END
+GO

@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	Получение кризисного коэффициента
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Ric].[CrisisCoefValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[CrisisCoefValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	РџРѕР»СѓС‡РµРЅРёРµ РєСЂРёР·РёСЃРЅРѕРіРѕ РєРѕСЌС„С„РёС†РёРµРЅС‚Р°
 */
-CREATE FUNCTION [Ric].[CrisisCoef]
+CREATE FUNCTION [Ric].[CrisisCoefValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +22,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

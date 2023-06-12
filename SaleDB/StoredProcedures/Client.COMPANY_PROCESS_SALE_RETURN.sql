@@ -1,28 +1,62 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PROCESS_SALE_RETURN]
-	@COMPANY	NVARCHAR(MAX)
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PROCESS_SALE_RETURN]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PROCESS_SALE_RETURN]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_SALE_RETURN]
+	@COMPANY	NVARCHAR(MAX),
+	@COMPANYW   NVARCHAR(MAX)       = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    DECLARE @DATE SMALLDATETIME
+    SET @DATE = Common.DateOf(GETDATE())
+    DECLARE @Companies Table (ID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY CLUSTERED);
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		DECLARE @DATE SMALLDATETIME
-		SET @DATE = Common.DateOf(GETDATE())
-		
-		SET @COMPANY = Client.CompanyFilterWrite(@COMPANY)
-		
+
+		IF @COMPANYW IS NOT NULL
+		    SET @COMPANY = @COMPANYW
+		ELSE
+		    SET @COMPANY = Client.CompanyFilterWrite(@COMPANY);
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'SET @COMPANY = Client.CompanyFilterWrite(@COMPANY)';
+
+		INSERT INTO @Companies
+        SELECT ID
+        FROM Common.TableGUIDFromXML(@COMPANY);
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Companies';
+
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'Изменение торгового представителя - Возврат'
-			FROM 
+			SELECT a.ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’РѕР·РІСЂР°С‚'
+			FROM
 				Client.Company a
-				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID
+				INNER JOIN @Companies b ON a.ID = b.ID
 				INNER JOIN Client.CompanyProcessSaleView c WITH(NOEXPAND) ON c.ID = a.ID
-				
+
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO Client.CompanyProcessJournal';
+
 		UPDATE Client.CompanyProcess
 		SET EDATE = @DATE,
 			RETURN_DATE = GETDATE(),
@@ -32,10 +66,14 @@ BEGIN
 			AND ID_COMPANY IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
-		DECLARE @WS UNIQUEIDENTIFIER		
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE Client.CompanyProcess';
+
+		DECLARE @WS UNIQUEIDENTIFIER
 
 		SELECT @WS = ID
 		FROM Client.WorkState
@@ -47,25 +85,29 @@ BEGIN
 			WHERE ID IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'UPDATE Client.Company SET ID_WORK_STATE';
+
 		EXEC Client.COMPANY_REINDEX NULL, @COMPANY
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'EXEC Client.COMPANY_REINDEX';
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_SALE_RETURN] TO rl_company_process_return_sale;
+GO

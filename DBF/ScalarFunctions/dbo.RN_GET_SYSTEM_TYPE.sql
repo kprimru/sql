@@ -1,15 +1,17 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RN_GET_SYSTEM_TYPE]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_SYSTEM_TYPE] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 29.10.2008
--- Описание:	  Выделяет ID типа системы
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 29.10.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’С‹РґРµР»СЏРµС‚ ID С‚РёРїР° СЃРёСЃС‚РµРјС‹
 -- =============================================
 CREATE FUNCTION [dbo].[RN_GET_SYSTEM_TYPE]
 (
@@ -30,3 +32,4 @@ END
 
 
 
+GO

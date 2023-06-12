@@ -1,14 +1,16 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Clients].[VendorActive] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Clients].[VendorActive]', 'V ') IS NULL EXEC('CREATE VIEW [Clients].[VendorActive]  AS SELECT 1')
+GO
+ALTER VIEW [Clients].[VendorActive]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		VD_ID_MASTER, VD_ID, VD_NAME, VD_DATE, VD_END
-	FROM 
+	FROM
 		Clients.VendorAll
-	WHERE VD_REF = 1
+	WHERE VD_REF = 1GO

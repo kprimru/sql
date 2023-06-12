@@ -1,54 +1,61 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]  AS SELECT 1')
+GO
+
 /*
-Автор:			
-Дата создания:	17.02.2009
-Описание:		Процедура получения отчёта ВМИ
-					из истории отчётов (по периоду)
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	17.02.2009
+РћРїРёСЃР°РЅРёРµ:		РџСЂРѕС†РµРґСѓСЂР° РїРѕР»СѓС‡РµРЅРёСЏ РѕС‚С‡С‘С‚Р° Р’РњР
+					РёР· РёСЃС‚РѕСЂРёРё РѕС‚С‡С‘С‚РѕРІ (РїРѕ РїРµСЂРёРѕРґСѓ)
 */
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]
+ALTER PROCEDURE [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET]
 	@periodid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		--PR_NAME,
-		VRH_RIC_NUM, VRH_TO_NUM, VRH_TO_NAME,
-		VRH_INN, VRH_REGION, VRH_CITY, VRH_ADDR,
-		VRH_FIO_1, VRH_JOB_1, VRH_TELS_1,
-		VRH_FIO_2, VRH_JOB_2, VRH_TELS_2,
-		VRH_FIO_3, VRH_JOB_3, VRH_TELS_3,
-		VRH_FIO_4, VRH_JOB_4, VRH_TELS_4,
-		VRH_FIO_5, VRH_JOB_5, VRH_TELS_5,
-		VRH_SERV, VRH_DISTR, VRH_COMMENT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	FROM	dbo.VRHView
-	WHERE	PR_ID=@periodid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			--PR_NAME,
+			VRH_RIC_NUM, VRH_TO_NUM, VRH_TO_NAME,
+			VRH_INN, VRH_REGION, VRH_CITY, VRH_ADDR,
+			VRH_FIO_1, VRH_JOB_1, VRH_TELS_1,
+			VRH_FIO_2, VRH_JOB_2, VRH_TELS_2,
+			VRH_FIO_3, VRH_JOB_3, VRH_TELS_3,
+			VRH_FIO_4, VRH_JOB_4, VRH_TELS_4,
+			VRH_FIO_5, VRH_JOB_5, VRH_TELS_5,
+			VRH_SERV, VRH_DISTR, VRH_COMMENT
+
+		FROM	dbo.VRHView
+		WHERE	PR_ID=@periodid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[RIC_REPORT_HISTORY_BY_PERIOD_GET] TO rl_vmi_history_r;
+GO

@@ -1,44 +1,79 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Seminar].[WEB_MAIL_INVITE_SELECT]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Seminar].[WEB_MAIL_INVITE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[WEB_MAIL_INVITE_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Seminar].[WEB_MAIL_INVITE_SELECT]
 	@ID	UNIQUEIDENTIFIER = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		a.ID, a.PSEDO, 
-		a.EMAIL,
-		--'denisov@bazis' AS EMAIL, 
-		d.NAME, b.DATE, b.TIME,
-		'Çàïèñü íà ñåìèíàð' AS SUBJ, 
-		'no-reply@kprim.ru' AS FROM_ADDRESS, 
-		'ÎÎÎ Áàçèñ' AS FROM_NAME, 
-		'Çäðàâñòâóéòå, ' + a.PSEDO + '! Âû ïîëó÷èëè ýòî ïèñüìî, ïîòîìó ÷òî çàïèñàëèñü íà ñåìèíàð "' + d.NAME + '", êîòîðûé ïðîéäåò ' + CONVERT(NVARCHAR(MAX), b.DATE, 104) + ' â ' + LEFT(CONVERT(NVARCHAR(MAX), b.TIME, 108), 5) + ' â îôèñå ÎÎÎ "Áàçèñ"' AS MAIL_BODY
-	FROM 
-		Seminar.Personal a
-		INNER JOIN Seminar.Schedule b ON a.ID_SCHEDULE = b.ID
-		INNER JOIN Seminar.Status c ON c.ID = a.ID_STATUS
-		INNER JOIN Seminar.Subject d ON b.ID_SUBJECT = d.ID
-	WHERE b.WEB = 1 AND a.PSEDO IS NOT NULL AND a.EMAIL IS NOT NULL		
-		AND c.INDX = 1
-		AND a.STATUS = 1		
-		AND
-			(
-				a.ID = @ID 
-				OR 
-				@ID IS NULL 
-				AND GETDATE() > b.INVITE_DATE
-				AND a.CONFIRM_STATUS = 1
-				AND NOT EXISTS
-					(
-						SELECT *
-						FROM Seminar.Invite z
-						WHERE z.ID_PERSONAL = a.ID
-					)
-			)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+        DECLARE
+			@Status_Id	UniqueIdentifier;
+
+		SET @Status_Id = (SELECT TOP (1) ID FROM Seminar.Status WHERE INDX = 1);
+
+        SELECT
+			P.[ID], P.[PSEDO],
+			P.[EMAIL],
+			'Ð—Ð°Ð¿Ð¸ÑÑŒ Ð½Ð° ' + T.[Name] AS SUBJ,
+			'no-reply@kprim.ru' AS FROM_ADDRESS,
+			'ÐžÐžÐž Ð‘Ð°Ð·Ð¸Ñ' AS FROM_NAME,
+			[Seminar].[Template@Get](P.[ID], 'INVITE') AS MAIL_BODY
+		FROM [Seminar].[Personal]               AS P
+		INNER JOIN [Seminar].[Schedule]         AS S ON S.[ID] = P.[ID_SCHEDULE]
+		INNER JOIN [Seminar].[Schedules->Types] AS T ON T.[ID] = S.[Type_Id]
+		WHERE S.[WEB] = 1
+		    AND P.[PSEDO] IS NOT NULL
+		    AND P.[EMAIL] IS NOT NULL
+			AND P.[ID_STATUS] = @Status_Id
+			AND P.[STATUS] = 1
+			AND T.[Code] = 'SEMINAR' -- ToDo Ð´Ð¾Ð»Ð¶Ð½Ð¾ Ð½Ð°ÑÑ‚Ñ€Ð°Ð¸Ð²Ð°Ñ‚ÑŒÑÑ
+			AND
+				(
+					P.ID = @ID
+					OR
+					@ID IS NULL
+					AND GETDATE() > S.[INVITE_DATE]
+					-- Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð½Ðµ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð»ÑÑ‚ÑŒ ÑƒÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ Ð¿Ð¾ ÑƒÐ¶Ðµ Ð¿Ñ€Ð¾ÑˆÐµÐ´ÑˆÐ¸Ð¼ ÑÐµÐ¼Ð¸Ð½Ð°Ñ€Ð°Ð¼
+					AND S.[DATE] > GETDATE()
+					AND P.[CONFIRM_STATUS] = 1
+					AND NOT EXISTS
+						(
+							SELECT *
+							FROM Seminar.Invite z
+							WHERE z.ID_PERSONAL = P.ID
+						)
+				);
+
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+
+GO
+GRANT EXECUTE ON [Seminar].[WEB_MAIL_INVITE_SELECT] TO rl_seminar_web;
+GO

@@ -1,38 +1,62 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SALE_OBJECT_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SALE_OBJECT_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[SALE_OBJECT_TRY_DELETE]
+ALTER PROCEDURE [dbo].[SALE_OBJECT_TRY_DELETE]
 	@soid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''	
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.SystemTable WHERE SYS_ID_SO = @soid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить объект продажи, так как существуют относящиеся к нему системы. '
-		END
-	--
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.SystemTable WHERE SYS_ID_SO = @soid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚ РїСЂРѕРґР°Р¶Рё, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ РѕС‚РЅРѕСЃСЏС‰РёРµСЃСЏ Рє РЅРµРјСѓ СЃРёСЃС‚РµРјС‹. '
+			END
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[SALE_OBJECT_TRY_DELETE] TO rl_sale_object_d;
+GO

@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [ClientDB?Art].[USR.USRFileData] FOR [PC276-SQL\ART].[ClientDB].[USR].[USRFileData];

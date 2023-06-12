@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_ADD]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_RIVAL_REACTION_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_ADD]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CLIENT_RIVAL_REACTION_ADD]
 	@CR_ID	INT,
 	@DATE	SMALLDATETIME,
 	@COMM	VARCHAR(MAX),
@@ -17,20 +19,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ID INT
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO dbo.ClientRivalReaction(CRR_ID_RIVAL, CRR_DATE, CRR_COMMENT, CRR_COMPARE, CRR_CLAIM, CRR_REJECT, CRR_PARTNER)
-		VALUES(@CR_ID, @DATE, @COMM, @COMPARE, @CLAIM, @REJECT, @PARTNER)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @ID = SCOPE_IDENTITY()
+	BEGIN TRY
 
-	UPDATE dbo.ClientRivalReaction
-	SET CRR_ID_MASTER = @ID
-	WHERE CRR_ID = @ID
+		DECLARE @ID INT
 
-	IF @COMPLETE = 1
-		UPDATE dbo.ClientRival
-		SET CR_COMPLETE = 1,
-			CR_CONTROL = 0
-		WHERE CR_ID = @CR_ID
+		INSERT INTO dbo.ClientRivalReaction(CRR_ID_RIVAL, CRR_DATE, CRR_COMMENT, CRR_COMPARE, CRR_CLAIM, CRR_REJECT, CRR_PARTNER)
+			VALUES(@CR_ID, @DATE, @COMM, @COMPARE, @CLAIM, @REJECT, @PARTNER)
+
+		SELECT @ID = SCOPE_IDENTITY()
+
+		UPDATE dbo.ClientRivalReaction
+		SET CRR_ID_MASTER = @ID
+		WHERE CRR_ID = @ID
+
+		IF @COMPLETE = 1
+			UPDATE dbo.ClientRival
+			SET CR_COMPLETE = 1,
+				CR_CONTROL = 0
+			WHERE CR_ID = @CR_ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_RIVAL_REACTION_ADD] TO rl_client_rival_reaction_i;
+GO

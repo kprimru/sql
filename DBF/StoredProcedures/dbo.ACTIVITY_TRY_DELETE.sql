@@ -1,42 +1,61 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ACTIVITY_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ACTIVITY_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ACTIVITY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTIVITY_TRY_DELETE]
 	@activityid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_ACTIVITY = @activityid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный вид деятельности указан у одного или нескольких клиентов. ' + 
-							  'Удаление невозможно, пока выбранный вид дейтельности будет указан хотя ' +
-							  'бы у одного клиента.'
-		END
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.ClientTable WHERE CL_ID_ACTIVITY = @activityid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ РІРёРґ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… РєР»РёРµРЅС‚РѕРІ. ' +
+								  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РІРёРґ РґРµР№С‚РµР»СЊРЅРѕСЃС‚Рё Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+								  'Р±С‹ Сѓ РѕРґРЅРѕРіРѕ РєР»РёРµРЅС‚Р°.'
+			END
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[ACTIVITY_TRY_DELETE] TO rl_activity_d;
+GO

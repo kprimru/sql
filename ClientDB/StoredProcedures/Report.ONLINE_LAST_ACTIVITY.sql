@@ -1,71 +1,98 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[ONLINE_LAST_ACTIVITY]
-	@PARAMS	NVARCHAR(MAX) = NULL
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[ONLINE_LAST_ACTIVITY]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[ONLINE_LAST_ACTIVITY]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[ONLINE_LAST_ACTIVITY]
+	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		ISNULL(ManagerName, SubhostName) AS [Рук-ль/подхост],
-		ServiceName AS [Си], ISNULL(ClientFullName, Comment) AS [Клиент], b.DistrStr AS [Дистрибутив], 
-		b.RegisterDate AS [Дата регистрации], SST_SHORT AS [Тип системы], NT_SHORT AS [Сеть],		
-		LAST_ACTIVITY AS [Последняя неделя активности], 
-		e.LOGIN_CNT AS [Кол-во входов на последней неделе],
-		e.SESSION_TIME AS [Время сессий на последней неделе],
-		DATEDIFF(WEEK, 
-					CASE 
-						WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
-						ELSE LAST_ACTIVITY
-					END, GETDATE()) AS [Кол-во недель без активность],
-		DATEDIFF(MONTH, 
-					CASE 
-						WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
-						ELSE LAST_ACTIVITY
-					END, GETDATE()) AS [Кол-во месяцев без активности]
-	FROM
-		(
-			SELECT ID_HOST, DISTR, COMP, MAX(FINISH) AS LAST_ACTIVITY
-			FROM 
-				dbo.OnlineActivity a
-				INNER JOIN Common.Period b ON a.ID_WEEK = b.ID
-			WHERE ACTIVITY = 1
-			GROUP BY ID_HOST, DISTR, COMP
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-			UNION ALL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-			SELECT ID_HOST, DISTR, COMP, NULL
-			FROM 
-				dbo.OnlineActivity a
-			WHERE NOT EXISTS
-				(
-					SELECT *
-					FROM dbo.OnlineActivity z
-					WHERE a.ID_HOST = z.ID_HOST
-						AND a.DISTR = z.DISTR
-						AND a.COMP = z.COMP
-						AND z.ACTIVITY = 1
-				)
-			GROUP BY ID_HOST, DISTR, COMP
-		) AS a
-		INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.ID_HOST = b.HostID
-															AND a.DISTR = b.DistrNumber
-															AND a.COMP = b.CompNumber		
-		LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON b.HostID = c.HostID AND b.DistrNumber = c.DISTR AND b.CompNumber = c.COMP
-		LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON c.ID_CLIENT = d.ClientID
-		OUTER APPLY
-		(
-			SELECT LOGIN_CNT, dbo.TimeMinToStr(SESSION_TIME) AS SESSION_TIME
-			FROM dbo.OnlineActivity z
-			INNER JOIN Common.Period y ON z.ID_WEEK = y.ID
-			WHERE z.ID_HOST = a.ID_HOST AND z.DISTR = a.DISTR AND z.COMP = a.COMP
-				AND a.LAST_ACTIVITY = y.FINISH
-				AND y.TYPE = 1
-		) AS e
-	WHERE b.DS_REG = 0 AND SST_SHORT NOT IN ('ОДД', 'ДСП') AND NT_SHORT IN ('ОВП', 'ОВПИ', 'ОВК', 'ОВМ1', 'ОВМ2', 'ОВК-Ф', 'ОВМ-Ф (0;1)', 'ОВМ-Ф (1;0)', 'ОВМ-Ф (1;2)')
-	ORDER BY CASE SubhostName WHEN '' THEN 1 ELSE 2 END, SubhostName, ManagerName, ServiceName, ClientFullName, b.DistrStr
+	BEGIN TRY
+
+		SELECT
+			ISNULL(ManagerName, SubhostName) AS [Р СѓРє-Р»СЊ/РїРѕРґС…РѕСЃС‚],
+			ServiceName AS [РЎРё], ISNULL(ClientFullName, Comment) AS [РљР»РёРµРЅС‚], b.DistrStr AS [Р”РёСЃС‚СЂРёР±СѓС‚РёРІ],
+			b.RegisterDate AS [Р”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё], SST_SHORT AS [РўРёРї СЃРёСЃС‚РµРјС‹], NT_SHORT AS [РЎРµС‚СЊ],
+			LAST_ACTIVITY AS [РџРѕСЃР»РµРґРЅСЏСЏ РЅРµРґРµР»СЏ Р°РєС‚РёРІРЅРѕСЃС‚Рё],
+			e.LOGIN_CNT AS [РљРѕР»-РІРѕ РІС…РѕРґРѕРІ РЅР° РїРѕСЃР»РµРґРЅРµР№ РЅРµРґРµР»Рµ],
+			e.SESSION_TIME AS [Р’СЂРµРјСЏ СЃРµСЃСЃРёР№ РЅР° РїРѕСЃР»РµРґРЅРµР№ РЅРµРґРµР»Рµ],
+			DATEDIFF(WEEK,
+						CASE
+							WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
+							ELSE LAST_ACTIVITY
+						END, GETDATE()) AS [РљРѕР»-РІРѕ РЅРµРґРµР»СЊ Р±РµР· Р°РєС‚РёРІРЅРѕСЃС‚СЊ],
+			DATEDIFF(MONTH,
+						CASE
+							WHEN LAST_ACTIVITY IS NULL OR LAST_ACTIVITY < CONVERT(SMALLDATETIME, b.RegisterDate, 104) THEN CONVERT(SMALLDATETIME, b.RegisterDate, 104)
+							ELSE LAST_ACTIVITY
+						END, GETDATE()) AS [РљРѕР»-РІРѕ РјРµСЃСЏС†РµРІ Р±РµР· Р°РєС‚РёРІРЅРѕСЃС‚Рё]
+		FROM
+			(
+				SELECT ID_HOST, DISTR, COMP, MAX(FINISH) AS LAST_ACTIVITY
+				FROM
+					dbo.OnlineActivity a
+					INNER JOIN Common.Period b ON a.ID_WEEK = b.ID
+				WHERE ACTIVITY = 1
+				GROUP BY ID_HOST, DISTR, COMP
+
+				UNION ALL
+
+				SELECT ID_HOST, DISTR, COMP, NULL
+				FROM
+					dbo.OnlineActivity a
+				WHERE NOT EXISTS
+					(
+						SELECT *
+						FROM dbo.OnlineActivity z
+						WHERE a.ID_HOST = z.ID_HOST
+							AND a.DISTR = z.DISTR
+							AND a.COMP = z.COMP
+							AND z.ACTIVITY = 1
+					)
+				GROUP BY ID_HOST, DISTR, COMP
+			) AS a
+			INNER JOIN Reg.RegNodeSearchView b WITH(NOEXPAND) ON a.ID_HOST = b.HostID
+																AND a.DISTR = b.DistrNumber
+																AND a.COMP = b.CompNumber
+			LEFT OUTER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON b.HostID = c.HostID AND b.DistrNumber = c.DISTR AND b.CompNumber = c.COMP
+			LEFT OUTER JOIN dbo.ClientView d WITH(NOEXPAND) ON c.ID_CLIENT = d.ClientID
+			OUTER APPLY
+			(
+				SELECT LOGIN_CNT, dbo.TimeMinToStr(SESSION_TIME) AS SESSION_TIME
+				FROM dbo.OnlineActivity z
+				INNER JOIN Common.Period y ON z.ID_WEEK = y.ID
+				WHERE z.ID_HOST = a.ID_HOST AND z.DISTR = a.DISTR AND z.COMP = a.COMP
+					AND a.LAST_ACTIVITY = y.FINISH
+					AND y.TYPE = 1
+			) AS e
+		WHERE b.DS_REG = 0 AND SST_SHORT NOT IN ('РћР”Р”', 'Р”РЎРџ') AND NT_SHORT IN ('РћР’Рџ', 'РћР’РџР', 'РћР’Рљ', 'РћР’Рњ1', 'РћР’Рњ2', 'РћР’Рљ-Р¤', 'РћР’Рњ-Р¤ (0;1)', 'РћР’Рњ-Р¤ (1;0)', 'РћР’Рњ-Р¤ (1;2)')
+		ORDER BY CASE SubhostName WHEN '' THEN 1 ELSE 2 END, SubhostName, ManagerName, ServiceName, ClientFullName, b.DistrStr
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[ONLINE_LAST_ACTIVITY] TO rl_report;
+GO

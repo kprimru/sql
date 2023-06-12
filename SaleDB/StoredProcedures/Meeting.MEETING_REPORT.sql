@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Meeting].[MEETING_REPORT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Meeting].[MEETING_REPORT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Meeting].[MEETING_REPORT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Meeting].[MEETING_REPORT]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@PERSONAL	UNIQUEIDENTIFIER,
@@ -19,22 +21,32 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		SET @END = DATEADD(DAY, 1, @END)
 
-		SELECT 
+		SELECT
 			b.ID AS ID,
 			b.NAME AS CO_NAME, b.NUMBER, EXPECTED_DATE, COMPANY_PERSONAL, a.NOTE AS MET_NOTE, SUCCESS_RATE,
-			d.NAME AS AR_NAME, 
-			CASE DISPLAY 
+			d.NAME AS AR_NAME,
+			CASE DISPLAY
 				WHEN 0 THEN f.PREFIX + f.NAME + ', '
 				ELSE ''
 			END + e.PREFIX + ' ' + e.NAME + ' ' + e.SUFFIX + ', ' + HOME + ' ' + ROOM AS MET_ADDR,
-			g.NAME AS MET_RESULT, j.NAME AS STAT_NAME, h.SHORT AS PER_SHORT, 
+			g.NAME AS MET_RESULT, j.NAME AS STAT_NAME, h.SHORT AS PER_SHORT,
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT y.SHORT + ', '
-					FROM 
+					FROM
 						Meeting.AssignedMeetingPersonal z
 						INNER JOIN Personal.OfficePersonal y ON z.ID_PERSONAL = y.ID
 					WHERE z.ID_MEETING = a.ID
@@ -51,7 +63,7 @@ BEGIN
 			REVERSE(STUFF(REVERSE(
 				(
 					SELECT y.SHORT + ', '
-					FROM 
+					FROM
 						Meeting.AssignedPersonal z
 						INNER JOIN Office.Personal y ON z.ID_PERSONAL = y.ID
 					WHERE z.ID_MEETING = a.ID
@@ -74,7 +86,7 @@ BEGIN
 			AND (SUCCESS_RATE >= @RATE_BEGIN OR @RATE_BEGIN IS NULL)
 			AND (SUCCESS_RATE <= @RATE_END OR @RATE_END IS NULL)
 			AND (ID_RESULT IN (SELECT ID FROM Common.TableGUIDFromXML(@RESULT)) OR @RESULT IS NULL)
-			AND 
+			AND
 				(
 					@PERSONAL IS NULL
 					OR
@@ -93,10 +105,10 @@ BEGIN
 						(
 							SELECT *
 							FROM Meeting.AssignedMeetingPersonal z
-							WHERE z.ID_MEETING = a.ID 
-								AND z.ID_PERSONAL IN 
+							WHERE z.ID_MEETING = a.ID
+								AND z.ID_PERSONAL IN
 									(
-										SELECT ID 
+										SELECT ID
 										FROM Personal.PersonalSlaveGet(@MANAGER)
 									)
 						)
@@ -108,21 +120,17 @@ BEGIN
 		ORDER BY EXPECTED_DATE, PER_SHORT
 
 		SELECT @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Meeting].[MEETING_REPORT] TO rl_meeting_report;
+GO

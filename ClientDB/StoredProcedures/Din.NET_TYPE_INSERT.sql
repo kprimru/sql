@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Din].[NET_TYPE_INSERT]	
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Din].[NET_TYPE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[NET_TYPE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Din].[NET_TYPE_INSERT]
 	@NAME	VARCHAR(100),
 	@NOTE	VARCHAR(50),
 	@NET	SMALLINT,
@@ -15,13 +17,43 @@ USE [ClientDB]
 	@ODOFF	SMALLINT,
 	@ODON	SMALLINT,
 	@TECH_USR	VarChar(20),
+	@Synonyms   VarChar(Max),
 	@ID		INT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO Din.NetType(NT_NAME, NT_NOTE, NT_NET, NT_TECH, NT_SHORT, NT_ID_MASTER, NT_VMI_SHORT, NT_ODOFF, NT_ODON, NT_TECH_USR)
-		VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO Din.NetType(NT_NAME, NT_NOTE, NT_NET, NT_TECH, NT_SHORT, NT_ID_MASTER, NT_VMI_SHORT, NT_ODOFF, NT_ODON, NT_TECH_USR)
+			VALUES(@NAME, @NOTE, @NET, @TECH, @SHORT, @MASTER, @VMI_SHORT, @ODOFF, @ODON, @TECH_USR)
+
+		SELECT @ID = SCOPE_IDENTITY()
+
+		EXEC [Din].[NetType:Synonyms@Save]
+		    @Net_Id = @ID,
+		    @Synonyms = @Synonyms;
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Din].[NET_TYPE_INSERT] TO rl_din_net_type_i;
+GO

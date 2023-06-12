@@ -1,67 +1,93 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[DZ_ACTION_CHECK]
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[DZ_ACTION_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[DZ_ACTION_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[DZ_ACTION_CHECK]
 	@PARAM	NVARCHAR(MAX) = NULL
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		CL_PSEDO AS [œÒÂ‚‰ÓÌËÏ], CL_FULL_NAME AS [ ÎËÂÌÚ],
-		(
-			SELECT 
-				dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' + 
-				CASE RN_TECH_TYPE 
-					WHEN 0 THEN
-						CASE RN_NET_COUNT
-							WHEN 0 THEN 'ÎÓÍ'
-							WHEN 1 THEN '1/Ò'
-							WHEN 5 THEN 'Ï/Ò'
-							ELSE 'ÒÂÚ¸'
-						END
-					WHEN 1 THEN 'ÙÎ˝¯'
-					WHEN 7 THEN 'Œ¬ '
-					WHEN 3 THEN 'Œ¬œ'
-					WHEN 6 THEN 'Œ¬œ»'
-					WHEN 9 THEN 'Œ¬Ã'
-					WHEN 10 THEN 'Œ¬ -‘'
-					ELSE 'ÕÂËÁ‚ÂÒÚÌÓ'
-				END
-				 + '), '
-			FROM 
-				[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeView b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
-			WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
-			ORDER BY RN_TECH_TYPE, SYS_ORDER, DIS_NUM FOR XML PATH('')
-		) AS [ƒËÒÚË·ÛÚË‚˚],
-		(
-			SELECT COUR_NAME
-			FROM [PC275-SQL\DELTA].DBF.dbo.ClientCourVIew t
-			WHERE t.CL_ID = z.CL_ID
-		) AS [—»]
-	FROM [PC275-SQL\DELTA].DBF.dbo.ClientTable z
-	WHERE EXISTS
-		(
-			SELECT *
-			FROM 
-				[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
-			WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
-				AND b.RN_TECH_TYPE IN (1, 7)
-		) 
-		AND EXISTS
-		(
-			SELECT *
-			FROM 
-				[PC275-SQL\DELTA].DBF.dbo.ClientDistrView a
-				INNER JOIN [PC275-SQL\DELTA].DBF.dbo.RegNodeTable b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
-			WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
-				AND b.RN_DISTR_TYPE = 'UZ2'
-		) 
-		--AND CL_ID_ORG = 1
-	ORDER BY 4, 1
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			CL_PSEDO AS [–ü—Å–µ–≤–¥–æ–Ω–∏–º], CL_FULL_NAME AS [–ö–ª–∏–µ–Ω—Ç],
+			(
+				SELECT
+					dbo.DistrString(SYS_SHORT_NAME, DIS_NUM, DIS_COMP_NUM) + ' (' +
+					-- ToDo - —Å–¥–µ–ª–∞—Ç—å —á–µ—Ä–µ–∑ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫
+					CASE RN_TECH_TYPE
+						WHEN 0 THEN
+							CASE RN_NET_COUNT
+								WHEN 0 THEN '–ª–æ–∫'
+								WHEN 1 THEN '1/—Å'
+								WHEN 5 THEN '–º/—Å'
+								ELSE '—Å–µ—Ç—å'
+							END
+						WHEN 1 THEN '—Ñ–ª—ç—à'
+						WHEN 7 THEN '–û–í–ö'
+						WHEN 3 THEN '–û–í–ü'
+						WHEN 6 THEN '–û–í–ü–ò'
+						WHEN 9 THEN '–û–í–ú'
+						WHEN 10 THEN '–û–í–ö-–§'
+						ELSE '–ù–µ–∏–∑–≤–µ—Å—Ç–Ω–æ'
+					END
+					 + '), '
+				FROM [DBF].[dbo.ClientDistrView] a
+				INNER JOIN [DBF].[dbo.RegNodeView] b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
+				ORDER BY RN_TECH_TYPE, SYS_ORDER, DIS_NUM FOR XML PATH('')
+			) AS [–î–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤—ã],
+			(
+				SELECT COUR_NAME
+				FROM [DBF].[dbo.ClientCourView] t
+				WHERE t.CL_ID = z.CL_ID
+			) AS [–°–ò]
+		FROM [DBF].[dbo.ClientTable] z
+		WHERE EXISTS
+			(
+				SELECT *
+				FROM [DBF].[dbo.ClientDistrView] a
+				INNER JOIN [DBF].[dbo.RegNodeTable] b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
+					AND b.RN_TECH_TYPE IN (1, 7)
+			)
+			AND EXISTS
+			(
+				SELECT *
+				FROM [DBF].[dbo.ClientDistrView] a
+				INNER JOIN [DBF].[dbo.RegNodeTable] b ON a.SYS_REG_NAME = b.RN_SYS_NAME AND a.DIS_NUM = b.RN_DISTR_NUM AND a.DIS_COMP_NUM = b.RN_COMP_NUM
+				WHERE a.CD_ID_CLIENT = z.CL_ID AND b.RN_SERVICE = 0
+					AND b.RN_DISTR_TYPE = 'UZ2'
+			)
+			--AND CL_ID_ORG = 1
+		ORDER BY 4, 1
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[DZ_ACTION_CHECK] TO rl_report;
+GO

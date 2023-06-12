@@ -1,24 +1,49 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ACTION_TYPE_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ACTION_TYPE_GET]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ACTION_TYPE_GET] 
-	@ID SMALLINT  
+ALTER PROCEDURE [dbo].[ACTION_TYPE_GET]
+	@ID SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT ACTT_ID, ACTT_NAME, ACTT_ACTIVE
-	FROM dbo.ActionType 
-	WHERE ACTT_ID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ACTT_ID, ACTT_NAME, ACTT_ACTIVE
+		FROM dbo.ActionType
+		WHERE ACTT_ID = @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[ACTION_TYPE_GET] TO rl_action_type_r;
+GO

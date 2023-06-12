@@ -1,38 +1,74 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TO_DISTR_DELIVERY]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TO_DISTR_DELIVERY]  AS SELECT 1')
+GO
+
 /*
-Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№/Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[TO_DISTR_DELIVERY]
+ALTER PROCEDURE [dbo].[TO_DISTR_DELIVERY]
 	@tdid VARCHAR(MAX),
 	@toid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @list TABLE
-		(
-			TD_ID INT
-		)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO @list
-		SELECT *
-		FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
-	
-	UPDATE dbo.TODistrTable
-	SET							
-		TD_ID_TO = @toid
-	WHERE TD_ID IN
-		(
-			SELECT TD_ID
-			FROM @list
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+        IF EXISTS
+            (
+                SELECT TOP (1) 1
+                FROM dbo.TOTable
+                WHERE TO_ID = @toid
+                    AND TO_DELETED = 1
+            )
+            RaisError('РўРћ РёСЃРєР»СЋС‡РµРЅР° РёР· РѕС‚С‡РµС‚Р°, РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРµСЂРµРЅРµСЃС‚Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІ', 16, 2);
+
+		DECLARE @list TABLE
+			(
+				TD_ID INT
+			)
+
+		INSERT INTO @list
+			SELECT *
+			FROM dbo.GET_TABLE_FROM_LIST(@tdid, ',')
+
+		UPDATE dbo.TODistrTable
+		SET
+			TD_ID_TO = @toid
+		WHERE TD_ID IN
+			(
+				SELECT TD_ID
+				FROM @list
+			)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TO_DISTR_DELIVERY] TO rl_to_distr_w;
+GO

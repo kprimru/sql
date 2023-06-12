@@ -1,0 +1,25 @@
+﻿USE [ScanDoc]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CategoryView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[CategoryView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[CategoryView]
+AS
+	WITH tree AS
+		(
+			SELECT ID, ID_MASTER, NAME, CONVERT(NVARCHAR(256), NAME) AS FULL_NAME
+			FROM dbo.Category
+			WHERE ID_MASTER IS NULL
+
+			UNION ALL
+
+			SELECT b.ID, b.ID_MASTER, b.NAME, CONVERT(NVARCHAR(256), a.FULL_NAME + ' - ' + b.NAME) AS FULL_NAME
+			FROM
+				tree a
+				INNER JOIN dbo.Category b ON a.ID = b.ID_MASTER
+		)
+		SELECT ID, ID_MASTER, NAME, FULL_NAME
+		FROM treeGO

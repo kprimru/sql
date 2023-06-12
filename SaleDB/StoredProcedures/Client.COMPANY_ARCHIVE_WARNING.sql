@@ -1,42 +1,51 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_ARCHIVE_WARNING]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_ARCHIVE_WARNING]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_ARCHIVE_WARNING]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_ARCHIVE_WARNING]
 	@RC	INT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		DECLARE @CURDATE SMALLDATETIME
-				
+
 		SELECT b.ID, b.NAME, b.NUMBER
-		FROM 
+		FROM
 			Client.CompanyArchiveView a WITH(NOEXPAND)
 			INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
 			INNER JOIN Client.CompanyWriteList() d ON d.ID = b.ID
-		WHERE b.STATUS = 1 			
+		WHERE b.STATUS = 1 
 		ORDER BY b.NAME
-				
+
 		SELECT @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+
+GO
+GRANT EXECUTE ON [Client].[COMPANY_ARCHIVE_WARNING] TO rl_warning_archive;
+GO

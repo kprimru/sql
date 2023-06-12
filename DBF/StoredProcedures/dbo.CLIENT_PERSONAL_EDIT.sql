@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_PERSONAL_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_PERSONAL_EDIT] 
+ALTER PROCEDURE [dbo].[CLIENT_PERSONAL_EDIT]
 	@personalid INT,
 	@surname VARCHAR(100),
 	@name VARCHAR(100),
@@ -22,12 +24,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.ClientPersonalTable 
-	SET	PER_FAM = @surname, PER_NAME = @name, PER_OTCH = @otch,
-		PER_ID_POS = @positionid, PER_ID_REPORT_POS = @reportpositionid
-	--, PER_PHONE = @phone
-	WHERE PER_ID = @personalid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.ClientPersonalTable
+		SET	PER_FAM = @surname, PER_NAME = @name, PER_OTCH = @otch,
+			PER_ID_POS = @positionid, PER_ID_REPORT_POS = @reportpositionid
+		--, PER_PHONE = @phone
+		WHERE PER_ID = @personalid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_EDIT] TO rl_client_personal_w;
+GRANT EXECUTE ON [dbo].[CLIENT_PERSONAL_EDIT] TO rl_client_w;
+GO

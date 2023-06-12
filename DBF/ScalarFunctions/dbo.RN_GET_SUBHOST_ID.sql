@@ -1,14 +1,16 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RN_GET_SUBHOST_ID]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[RN_GET_SUBHOST_ID] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 29.10.2008
--- Описание:	  Выделяет ID подхоста
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 29.10.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’С‹РґРµР»СЏРµС‚ ID РїРѕРґС…РѕСЃС‚Р°
 -- =============================================
 CREATE FUNCTION [dbo].[RN_GET_SUBHOST_ID]
 (
@@ -24,8 +26,8 @@ BEGIN
 
   DECLARE @subhoststr VARCHAR(150)
 
-  --IF @subsign = 1 
-    --BEGIN      
+  --IF @subsign = 1
+    --BEGIN
       SET @comment = dbo.GET_HOST_BY_COMMENT(@comment)
       SELECT @result = SH_ID FROM dbo.SubhostTable WHERE SH_LST_NAME = @comment AND SH_REG = 1
     --END
@@ -41,3 +43,4 @@ END
 
 
 
+GO

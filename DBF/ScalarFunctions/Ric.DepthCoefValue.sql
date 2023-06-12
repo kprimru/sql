@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-	Коэффициент насыщенности
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Ric].[DepthCoefValue]', 'FN') IS NULL EXEC('CREATE FUNCTION [Ric].[DepthCoefValue] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+/*
+	РљРѕСЌС„С„РёС†РёРµРЅС‚ РЅР°СЃС‹С‰РµРЅРЅРѕСЃС‚Рё
 */
-CREATE FUNCTION [Ric].[DepthCoef]
+CREATE FUNCTION [Ric].[DepthCoefValue]
 (
 	@PR_ID	SMALLINT
 )
@@ -20,3 +22,4 @@ BEGIN
 
 	RETURN @RES
 END
+GO

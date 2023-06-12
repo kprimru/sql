@@ -1,14 +1,16 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Security].[UserAll] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[UserAll]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[UserAll]  AS SELECT 1')
+GO
+ALTER VIEW [Security].[UserAll]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		US_ID_MASTER, US_ID, US_NAME, 
+	SELECT
+		US_ID_MASTER, US_ID, US_NAME,
 		US_LOGIN, US_NOTE, US_DATE, US_END, US_REF
-	FROM 
-		Security.UserDetail
+	FROM
+		Security.UserDetailGO

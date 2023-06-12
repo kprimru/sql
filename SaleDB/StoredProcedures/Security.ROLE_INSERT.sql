@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ROLE_INSERT]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ROLE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ROLE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ROLE_INSERT]
 	@MASTER		UNIQUEIDENTIFIER,
 	@NAME		NVARCHAR(128),
 	@CAPTION	NVARCHAR(256),
@@ -15,20 +17,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TXT NVARCHAR(3000)	
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	DECLARE @TXT NVARCHAR(3000)
 
 	IF EXISTS
 		(
 			SELECT * FROM sys.database_principals WHERE name = @NAME
 		)
 	BEGIN
-		SET @TXT = 'Роль или пользователь "' + @NAME + '" уже существует. Выберите другое название.'
+		SET @TXT = 'Р РѕР»СЊ РёР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @NAME + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РЅР°Р·РІР°РЅРёРµ.'
 
 		RAISERROR(@TXT, 16, 1)
 
 		RETURN
 	END
-	
+
 	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
 
 	BEGIN TRY
@@ -54,7 +66,7 @@ BEGIN
 		DECLARE	@PROC	NVARCHAR(128)
 		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
+		SELECT
 			@SEV	=	ERROR_SEVERITY(),
 			@STATE	=	ERROR_STATE(),
 			@NUM	=	ERROR_NUMBER(),
@@ -64,3 +76,6 @@ BEGIN
 		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[ROLE_INSERT] TO rl_role_w;
+GO

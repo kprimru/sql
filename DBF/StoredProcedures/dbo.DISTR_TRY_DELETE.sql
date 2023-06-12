@@ -1,98 +1,123 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DISTR_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTR_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 18.11.2008
-Описание:	  Возвращает 0, если дистрибутив с 
-               указанным кодом можно удалить со 
-               склада, -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 18.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РґРёСЃС‚СЂРёР±СѓС‚РёРІ СЃ
+               СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СЃРѕ
+               СЃРєР»Р°РґР°, -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[DISTR_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[DISTR_TRY_DELETE]
 	@distrid INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный дистрибутив у какого-то клиента. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив распределен клиенту.'
-							+ CHAR(13)
-		END
+	BEGIN TRY
 
-	-- добавлено 30.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.BillDistrTable WHERE BD_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется счет, в котором указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в счете.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.ContractDistrTable WHERE COD_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется договор, в котором указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в договоре.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.ActDistrTable WHERE AD_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется акт, в котором указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в акте.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.IncomeDistrTable WHERE ID_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется платеж, в котором указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в платеже.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.InvoiceRowTable WHERE INR_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется счет-фактура, в которой указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в счет-фактуре.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.PrimaryPayTable WHERE PRP_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Имеется первичная оплата, в которой указан данный дистрибутив. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив указан в первичной оплате.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.TODistrTable WHERE TD_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный дистрибутив указан у какой-то ТО. Удаление невозможно,'
-							+ 'пока выбранный дистрибутив распределен ТО.'
-							+ CHAR(13)
-		END
-	IF EXISTS(SELECT * FROM dbo.SaldoTable WHERE SL_ID_DISTR = @distrid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Удаление невозможно, так как данный дистрибутив указан в записи о сальдо.'
-		END
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	--
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.ClientDistrTable WHERE CD_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ Сѓ РєР°РєРѕРіРѕ-С‚Рѕ РєР»РёРµРЅС‚Р°. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СЂР°СЃРїСЂРµРґРµР»РµРЅ РєР»РёРµРЅС‚Сѓ.'
+								+ CHAR(13)
+			END
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 30.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.BillDistrTable WHERE BD_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ СЃС‡РµС‚, РІ РєРѕС‚РѕСЂРѕРј СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ СЃС‡РµС‚Рµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.ContractDistrTable WHERE COD_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ РґРѕРіРѕРІРѕСЂ, РІ РєРѕС‚РѕСЂРѕРј СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ РґРѕРіРѕРІРѕСЂРµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.ActDistrTable WHERE AD_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ Р°РєС‚, РІ РєРѕС‚РѕСЂРѕРј СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ Р°РєС‚Рµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.IncomeDistrTable WHERE ID_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ РїР»Р°С‚РµР¶, РІ РєРѕС‚РѕСЂРѕРј СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ РїР»Р°С‚РµР¶Рµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.InvoiceRowTable WHERE INR_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ СЃС‡РµС‚-С„Р°РєС‚СѓСЂР°, РІ РєРѕС‚РѕСЂРѕР№ СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ СЃС‡РµС‚-С„Р°РєС‚СѓСЂРµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.PrimaryPayTable WHERE PRP_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РРјРµРµС‚СЃСЏ РїРµСЂРІРёС‡РЅР°СЏ РѕРїР»Р°С‚Р°, РІ РєРѕС‚РѕСЂРѕР№ СѓРєР°Р·Р°РЅ РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ РїРµСЂРІРёС‡РЅРѕР№ РѕРїР»Р°С‚Рµ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.TODistrTable WHERE TD_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ Сѓ РєР°РєРѕР№-С‚Рѕ РўРћ. РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ,'
+								+ 'РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СЂР°СЃРїСЂРµРґРµР»РµРЅ РўРћ.'
+								+ CHAR(13)
+			END
+		IF EXISTS(SELECT * FROM dbo.SaldoTable WHERE SL_ID_DISTR = @distrid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, С‚Р°Рє РєР°Рє РґР°РЅРЅС‹Р№ РґРёСЃС‚СЂРёР±СѓС‚РёРІ СѓРєР°Р·Р°РЅ РІ Р·Р°РїРёСЃРё Рѕ СЃР°Р»СЊРґРѕ.'
+			END
+
+		--
 
 
-	SELECT @res AS RES, @txt AS TXT
+		SELECT @res AS RES, @txt AS TXT
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[DISTR_TRY_DELETE] TO rl_distr_d;
+GO

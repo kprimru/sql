@@ -1,43 +1,69 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[INFO_COD]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[INFO_COD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[INFO_COD]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[INFO_COD]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		DistrStr AS [Îñí. äèñòðèáóòèâ], 
-		Client AS [Êëèåíòà], Manager AS [Ðóê-ëü / ïîäõîñò], 
-		ServiceName AS [ÑÈ], 
-		UF_CREATE AS [USR ïîëó÷åí], UF_INFO_COD AS [Äàòà ôàéëà info.cod]		
-	FROM
-		(
-			SELECT DISTINCT 	
-				CASE 
-					WHEN ServiceName IS NULL THEN 0 
-					ELSE 1 
-				END AS TP, 
-				T.UF_INFO_COD, g.DistrStr, UD_DISTR, UD_COMP,
-				ISNULL(ClientFullName, h.Comment) AS Client, ServiceName, 
-				ISNULL(ManagerName, SubhostName) AS Manager, d.SystemOrder, a.UF_CREATE
-			FROM 
-				USR.USRActiveView a
-				INNER JOIN USR.USRFile b ON a.UF_ID = b.UF_ID
-				INNER JOIN USR.USRFileTech t ON t.UF_ID = b.UF_ID
-				INNER JOIN dbo.SystemTable d ON a.UF_ID_SYSTEM = d.SystemID
-				LEFT OUTER JOIN dbo.ClientDistrView e WITH(NOEXPAND) ON d.SystemID = e.SystemID AND DISTR = UD_DISTR AND COMP = UD_COMP
-				LEFT OUTER JOIN dbo.ClientView f WITH(NOEXPAND) ON ClientID = ID_CLIENT
-				LEFT OUTER JOIN dbo.RegNodeCurrentView g WITH(NOEXPAND) ON g.SystemID = d.SYstemID AND UD_DISTR = DistrNumber AND UD_COMP = CompNumber
-				LEFT OUTER JOIN dbo.RegNodeTable h ON h.ID = g.ID
-			WHERE b.UF_CREATE >= DATEADD(MONTH, -2, GETDATE())
-				AND t.UF_INFO_COD IS NOT NULL
-				AND h.ID IS NOT NULL
-		) AS o_O
-	ORDER BY 
-		TP, Manager, ServiceName, Client, SystemOrder, UD_DISTR, UD_COMP
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			DistrStr AS [ÐžÑÐ½. Ð´Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²],
+			Client AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚Ð°], Manager AS [Ð ÑƒÐº-Ð»ÑŒ / Ð¿Ð¾Ð´Ñ…Ð¾ÑÑ‚],
+			ServiceName AS [Ð¡Ð˜],
+			UF_CREATE AS [USR Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½], UF_INFO_COD AS [Ð”Ð°Ñ‚Ð° Ñ„Ð°Ð¹Ð»Ð° info.cod]
+		FROM
+			(
+				SELECT DISTINCT 
+					CASE
+						WHEN ServiceName IS NULL THEN 0
+						ELSE 1
+					END AS TP,
+					T.UF_INFO_COD, g.DistrStr, UD_DISTR, UD_COMP,
+					ISNULL(ClientFullName, g.Comment) AS Client, ServiceName,
+					ISNULL(ManagerName, SubhostName) AS Manager, d.SystemOrder, a.UF_CREATE
+				FROM
+					USR.USRActiveView a
+					INNER JOIN USR.USRFile b ON a.UF_ID = b.UF_ID
+					INNER JOIN USR.USRFileTech t ON t.UF_ID = b.UF_ID
+					INNER JOIN dbo.SystemTable d ON a.UF_ID_SYSTEM = d.SystemID
+					LEFT OUTER JOIN dbo.ClientDistrView e WITH(NOEXPAND) ON d.SystemID = e.SystemID AND DISTR = UD_DISTR AND COMP = UD_COMP
+					LEFT OUTER JOIN dbo.ClientView f WITH(NOEXPAND) ON ClientID = ID_CLIENT
+					LEFT OUTER JOIN Reg.RegNodeSearchView g WITH(NOEXPAND) ON g.SystemID = d.SYstemID AND UD_DISTR = DistrNumber AND UD_COMP = CompNumber
+				WHERE b.UF_CREATE >= DATEADD(MONTH, -2, GETDATE())
+					AND t.UF_INFO_COD IS NOT NULL
+					AND g.ID IS NOT NULL
+			) AS o_O
+		ORDER BY
+			TP, Manager, ServiceName, Client, SystemOrder, UD_DISTR, UD_COMP
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[INFO_COD] TO rl_report;
+GO

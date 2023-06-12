@@ -1,26 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TECHNOL_TYPE_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TECHNOL_TYPE_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 24.09.2008
-Описание:	  Удалить тип системы с указанным 
-               кодом из справочника
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 24.09.2008
+РћРїРёСЃР°РЅРёРµ:	  РЈРґР°Р»РёС‚СЊ С‚РёРї СЃРёСЃС‚РµРјС‹ СЃ СѓРєР°Р·Р°РЅРЅС‹Рј
+               РєРѕРґРѕРј РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР°
 */
 
-CREATE PROCEDURE [dbo].[TECHNOL_TYPE_DELETE] 
+ALTER PROCEDURE [dbo].[TECHNOL_TYPE_DELETE]
 	@technoltypeid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DELETE 
-	FROM dbo.TechnolTypeTable 
-	WHERE TT_ID = @technoltypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		DELETE
+		FROM dbo.TechnolTypeTable
+		WHERE TT_ID = @technoltypeid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[TECHNOL_TYPE_DELETE] TO rl_technol_type_d;
+GO

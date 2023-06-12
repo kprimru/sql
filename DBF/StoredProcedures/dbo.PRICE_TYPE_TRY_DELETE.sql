@@ -1,50 +1,74 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PRICE_TYPE_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PRICE_TYPE_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 20.11.2008
-Описание:	  Возвращает 0, если тип прейскуранта 
-               можно удалить из справочника, 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 20.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё С‚РёРї РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°
+               РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР°,
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[PRICE_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_TRY_DELETE]
 	@pricetypeid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.PriceTable WHERE PP_ID_TYPE = @pricetypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить тип прейскуранта, так как имеются прейскуранты этого типа.'
-		END
+	BEGIN TRY
 
-	-- связь PriceType <-> PriceSystem <-> System
-	
-	IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_TYPE = @pricetypeid)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить тип прейскуранта, так как существует' +
-							+ 'запись о стоимости систем по этому типу прейскуранта.' + CHAR(13)
-		END
-	
-	--
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SELECT @res AS RES, @txt AS TXT
-	  
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.PriceTable WHERE PP_ID_TYPE = @pricetypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ С‚РёРї РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°, С‚Р°Рє РєР°Рє РёРјРµСЋС‚СЃСЏ РїСЂРµР№СЃРєСѓСЂР°РЅС‚С‹ СЌС‚РѕРіРѕ С‚РёРїР°.'
+			END
+
+		-- СЃРІСЏР·СЊ PriceType <-> PriceSystem <-> System
+
+		IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_TYPE = @pricetypeid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ С‚РёРї РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓРµС‚' +
+								+ 'Р·Р°РїРёСЃСЊ Рѕ СЃС‚РѕРёРјРѕСЃС‚Рё СЃРёСЃС‚РµРј РїРѕ СЌС‚РѕРјСѓ С‚РёРїСѓ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°.' + CHAR(13)
+			END
+
+		--
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
+GO
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_TRY_DELETE] TO rl_price_type_d;
+GO

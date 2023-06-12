@@ -1,47 +1,74 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[ZVE_USR]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[ZVE_USR]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[ZVE_USR]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[ZVE_USR]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT DISTINCT
-		ManagerName AS [Ðóê-ëü], ServiceName AS [ÑÈ], ClientFullName AS [Êëèåíò], 
-		b.DistrStr AS [Äèñòðèáóòèâ], b.DistrTypeName AS [Ñåòü], 
-		T.UF_EXPCONS AS [Äàòà-âðåìÿ ôàéëà â êîìïëåêòå êëèåíòà], 
-		SET_DATE AS [Äàòà-âðåìÿ ïîäêëþ÷åíèÿ êëèåíòà â êíîïêå ÇÂÝ],
-		dbo.DateOf(
-			(
-				SELECT MAX(DATE)
-				FROM 
-					dbo.ClientDutyQuestion z
-					INNER JOIN dbo.SystemTable y ON z.SYS = y.SystemNumber
-				WHERE z.DISTR = b.DISTR AND z.COMP = b.COMP AND y.HostID = b.HostID
-			)
-		) AS [Äàòà ïîñëåäíåãî âîïðîñà]
-	FROM 
-		USR.USRComplectNumberView a WITH(NOEXPAND)
-		INNER JOIN USR.USRData c ON a.UD_ID = c.UD_ID
-		INNER JOIN dbo.SystemTable d ON d.SystemNumber = a.UD_SYS
-		INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON d.HostID = b.HostID AND a.UD_DISTR = b.DISTR AND a.UD_COMP = b.COMP
-		INNER JOIN Din.NetType n ON n.NT_ID_MASTER = b.DistrTypeID
-		INNER JOIN dbo.ClientView e WITH(NOEXPAND) ON e.ClientID = c.UD_ID_CLIENT
-		INNER JOIN USR.USRActiveView f ON f.UD_ID = c.UD_ID
-		INNER JOIN USR.USRFile g ON g.UF_ID = f.UF_ID
-		INNER JOIN USR.USRFileTech t ON t.UF_ID = g.UF_ID
-		INNER JOIN dbo.ExpDistr h ON h.ID_HOST = b.HostID AND h.DISTR = b.DISTR AND h.COMP = b.COMP
-	WHERE c.UD_ACTIVE = 1 AND h.UNSET_DATE IS NULL 
-		AND n.NT_TECH IN (0, 1)
-		AND 
-			(
-				T.UF_EXPCONS IS NULL AND T.UF_FORMAT >= 11
-				OR
-				T.UF_EXPCONS_KIND IN ('N')
-			)	
-	ORDER BY ManagerName, ServiceName, ClientFullname
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT DISTINCT
+			ManagerName AS [Ð ÑƒÐº-Ð»ÑŒ], ServiceName AS [Ð¡Ð˜], ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚],
+			b.DistrStr AS [Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²], b.DistrTypeName AS [Ð¡ÐµÑ‚ÑŒ],
+			T.UF_EXPCONS AS [Ð”Ð°Ñ‚Ð°-Ð²Ñ€ÐµÐ¼Ñ Ñ„Ð°Ð¹Ð»Ð° Ð² ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ðµ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°],
+			SET_DATE AS [Ð”Ð°Ñ‚Ð°-Ð²Ñ€ÐµÐ¼Ñ Ð¿Ð¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð° Ð² ÐºÐ½Ð¾Ð¿ÐºÐµ Ð—Ð’Ð­],
+			dbo.DateOf(
+				(
+					SELECT MAX(DATE)
+					FROM
+						dbo.ClientDutyQuestion z
+						INNER JOIN dbo.SystemTable y ON z.SYS = y.SystemNumber
+					WHERE z.DISTR = b.DISTR AND z.COMP = b.COMP AND y.HostID = b.HostID
+				)
+			) AS [Ð”Ð°Ñ‚Ð° Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÐµÐ³Ð¾ Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ°]
+		FROM
+			USR.USRComplectNumberView a WITH(NOEXPAND)
+			INNER JOIN USR.USRData c ON a.UD_ID = c.UD_ID
+			INNER JOIN dbo.SystemTable d ON d.SystemNumber = a.UD_SYS
+			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON d.HostID = b.HostID AND a.UD_DISTR = b.DISTR AND a.UD_COMP = b.COMP
+			INNER JOIN Din.NetType n ON n.NT_ID_MASTER = b.DistrTypeID
+			INNER JOIN dbo.ClientView e WITH(NOEXPAND) ON e.ClientID = c.UD_ID_CLIENT
+			INNER JOIN USR.USRActiveView f ON f.UD_ID = c.UD_ID
+			INNER JOIN USR.USRFile g ON g.UF_ID = f.UF_ID
+			INNER JOIN USR.USRFileTech t ON t.UF_ID = g.UF_ID
+			INNER JOIN dbo.ExpertDistr h ON h.ID_HOST = b.HostID AND h.DISTR = b.DISTR AND h.COMP = b.COMP
+		WHERE c.UD_ACTIVE = 1 AND h.UNSET_DATE IS NULL
+			AND n.NT_TECH IN (0, 1)
+			AND
+				(
+					T.UF_EXPCONS IS NULL AND T.UF_FORMAT >= 11
+					OR
+					T.UF_EXPCONS_KIND IN ('N')
+				)
+		ORDER BY ManagerName, ServiceName, ClientFullname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[ZVE_USR] TO rl_report;
+GO

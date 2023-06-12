@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[POSITION_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[POSITION_ADD]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Добавить должность в справочник
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р”РѕР±Р°РІРёС‚СЊ РґРѕР»Р¶РЅРѕСЃС‚СЊ РІ СЃРїСЂР°РІРѕС‡РЅРёРє
 */
 
-CREATE PROCEDURE [dbo].[POSITION_ADD] 
+ALTER PROCEDURE [dbo].[POSITION_ADD]
 	@positionname VARCHAR(150),
 	@active BIT = 1,
 	@returnvalue BIT = 1
@@ -20,11 +22,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.PositionTable(POS_NAME, POS_ACTIVE) 
-	VALUES (@positionname, @active)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-	  SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.PositionTable(POS_NAME, POS_ACTIVE)
+		VALUES (@positionname, @active)
+
+		IF @returnvalue = 1
+		  SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[POSITION_ADD] TO rl_position_w;
+GO

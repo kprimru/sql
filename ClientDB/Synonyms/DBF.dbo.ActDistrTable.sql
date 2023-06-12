@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.ActDistrTable] FOR [DBF].[dbo].[ActDistrTable];

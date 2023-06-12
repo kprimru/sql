@@ -1,26 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CONSIGNMENT_FACT_ALL_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CONSIGNMENT_FACT_ALL_GET]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			
-Дата создания:  	
-Описание:		
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[CONSIGNMENT_FACT_ALL_GET]	
+ALTER PROCEDURE [dbo].[CONSIGNMENT_FACT_ALL_GET]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT CFM_FACT_DATE, COUNT(*) AS CFM_COUNT
-	FROM dbo.ConsignmentFactMasterTable
-	GROUP BY CFM_FACT_DATE
-	ORDER BY CFM_FACT_DATE DESC
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT CFM_FACT_DATE, COUNT(*) AS CFM_COUNT
+		FROM dbo.ConsignmentFactMasterTable
+		GROUP BY CFM_FACT_DATE
+		ORDER BY CFM_FACT_DATE DESC
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO
+GRANT EXECUTE ON [dbo].[CONSIGNMENT_FACT_ALL_GET] TO rl_consignment_p;
+GO

@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_FILES_SELECT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_FILES_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_FILES_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_FILES_SELECT]
 	@ID		UNIQUEIDENTIFIER,
 	@DEL	BIT,
 	@RC		INT = NULL OUTPUT
@@ -12,43 +14,53 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
-		SELECT 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
+		SELECT
 			a.ID, a.[FILE_NAME], a.FILE_NOTE,
 			a.STATUS,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), BDATE, 104) + ' ' + CONVERT(VARCHAR(20), BDATE, 108) + '/' + UPD_USER
-				FROM 
+				FROM
 					(
 						SELECT BDATE, UPD_USER
 						FROM Client.CompanyFiles z
 						WHERE z.ID_MASTER = a.ID
 							AND z.STATUS = 2
-	
+
 						UNION ALL
 
 						SELECT BDATE, UPD_USER
 						FROM Client.CompanyFiles z
 						WHERE z.ID = a.ID
-							AND z.STATUS = 1						
+							AND z.STATUS = 1
 					) AS o_O
 				ORDER BY BDATE
 			) AS CREATE_DATA,
 			(
 				SELECT TOP 1 CONVERT(VARCHAR(20), BDATE, 104) + ' ' + CONVERT(VARCHAR(20), BDATE, 108) + '/' + UPD_USER
-				FROM 
+				FROM
 					(
 						SELECT BDATE, UPD_USER
 						FROM Client.CompanyFiles z
 						WHERE z.ID_MASTER = a.ID
 							AND z.STATUS = 2
-	
+
 						UNION ALL
 
 						SELECT BDATE, UPD_USER
 						FROM Client.CompanyFiles z
 						WHERE z.ID = a.ID
-							AND z.STATUS = 1						
+							AND z.STATUS = 1
 					) AS o_O
 				ORDER BY BDATE DESC
 			) AS UPDATE_DATA,
@@ -56,28 +68,25 @@ BEGIN
 				WHEN 3 THEN CONVERT(VARCHAR(20), a.EDATE, 104) + ' ' + CONVERT(VARCHAR(20), a.EDATE, 108) + '/' + a.UPD_USER
 				ELSE ''
 			END AS DELETE_DATA
-		FROM 
-			Client.CompanyFiles a			
+		FROM
+			Client.CompanyFiles a
 		WHERE a.ID_COMPANY = @ID
 			AND (a.STATUS = 1 OR a.STATUS = 3 AND @DEL = 1)
 		ORDER BY BDATE DESC
 
 		SELECT @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+
+GO
+GRANT EXECUTE ON [Client].[COMPANY_FILES_SELECT] TO rl_company_files_r;
+GO

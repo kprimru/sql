@@ -1,98 +1,120 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PERIOD_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PERIOD_TRY_DELETE]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Возвращает 0, если период можно 
-               удалить из справочника (на него 
-               не ссылается ни одна запись 
-               из других таблиц), 
-               -1 в противном случае
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РїРµСЂРёРѕРґ РјРѕР¶РЅРѕ
+               СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° (РЅР° РЅРµРіРѕ
+               РЅРµ СЃСЃС‹Р»Р°РµС‚СЃСЏ РЅРё РѕРґРЅР° Р·Р°РїРёСЃСЊ
+               РёР· РґСЂСѓРіРёС… С‚Р°Р±Р»РёС†),
+               -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 */
 
-CREATE PROCEDURE [dbo].[PERIOD_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[PERIOD_TRY_DELETE]
 	@periodid SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_PERIOD = @periodid) 
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + '--'
-	  END
-	IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt + CHAR(13) + '--'
-	  END
-	 
-	-- добавлено 29.04.2009, В.Богдан
-	IF EXISTS(SELECT * FROM dbo.ActDistrTable WHERE AD_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt	+	'Невозможно удалить период, так как существуют ' +
-							'выписанные на этот период акты.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.BillTable WHERE BL_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существуют ' +
-							'выписанные на этот период счета.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.InvoiceRowTable WHERE INR_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существуют ' +
-							'выписанные на этот период счета-фактуры.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.IncomeDistrTable WHERE ID_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существуют ' +
-							'платежи по дистрибутивам за этот период.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существуют ' +
-							'прейскуранты по дистрибутивам за этот период.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.VMIReportHistoryTable WHERE VRH_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существует ' +
-							'отчет ВМИ за этот период.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.ClientHistoryTable WHERE CH_ID_PERIOD = @periodid)
-	  BEGIN
-		SET @res = 1
-		SET @txt = @txt +	'Невозможно удалить период, так как существует ' +
-							'записи в истории клиента с этим периодом.' + CHAR(13)
-	  END
-	IF EXISTS(SELECT * FROM dbo.PriceSystemHistoryTable WHERE PSH_ID_PERIOD = @periodid)
-		BEGIN
+	BEGIN TRY
+
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.PeriodRegTable WHERE REG_ID_PERIOD = @periodid)
+		  BEGIN
 			SET @res = 1
-			SET @txt = @txt + 'Невозможно удалить период, так как '
-					+ 'имеются записи в истории цен за данный период.'
-		END
+			SET @txt = @txt + '--'
+		  END
+		IF EXISTS(SELECT * FROM dbo.PeriodRegNewTable WHERE RNN_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt + CHAR(13) + '--'
+		  END
 
-	SELECT @res AS RES, @txt AS TXT
+		-- РґРѕР±Р°РІР»РµРЅРѕ 29.04.2009, Р’.Р‘РѕРіРґР°РЅ
+		IF EXISTS(SELECT * FROM dbo.ActDistrTable WHERE AD_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt	+	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								'РІС‹РїРёСЃР°РЅРЅС‹Рµ РЅР° СЌС‚РѕС‚ РїРµСЂРёРѕРґ Р°РєС‚С‹.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.BillTable WHERE BL_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								'РІС‹РїРёСЃР°РЅРЅС‹Рµ РЅР° СЌС‚РѕС‚ РїРµСЂРёРѕРґ СЃС‡РµС‚Р°.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.InvoiceRowTable WHERE INR_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								'РІС‹РїРёСЃР°РЅРЅС‹Рµ РЅР° СЌС‚РѕС‚ РїРµСЂРёРѕРґ СЃС‡РµС‚Р°-С„Р°РєС‚СѓСЂС‹.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.IncomeDistrTable WHERE ID_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								'РїР»Р°С‚РµР¶Рё РїРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°Рј Р·Р° СЌС‚РѕС‚ РїРµСЂРёРѕРґ.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.PriceSystemTable WHERE PS_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓСЋС‚ ' +
+								'РїСЂРµР№СЃРєСѓСЂР°РЅС‚С‹ РїРѕ РґРёСЃС‚СЂРёР±СѓС‚РёРІР°Рј Р·Р° СЌС‚РѕС‚ РїРµСЂРёРѕРґ.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.VMIReportHistoryTable WHERE VRH_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓРµС‚ ' +
+								'РѕС‚С‡РµС‚ Р’РњР Р·Р° СЌС‚РѕС‚ РїРµСЂРёРѕРґ.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.ClientHistoryTable WHERE CH_ID_PERIOD = @periodid)
+		  BEGIN
+			SET @res = 1
+			SET @txt = @txt +	'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє СЃСѓС‰РµСЃС‚РІСѓРµС‚ ' +
+								'Р·Р°РїРёСЃРё РІ РёСЃС‚РѕСЂРёРё РєР»РёРµРЅС‚Р° СЃ СЌС‚РёРј РїРµСЂРёРѕРґРѕРј.' + CHAR(13)
+		  END
+		IF EXISTS(SELECT * FROM dbo.PriceSystemHistoryTable WHERE PSH_ID_PERIOD = @periodid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РќРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РїРµСЂРёРѕРґ, С‚Р°Рє РєР°Рє '
+						+ 'РёРјРµСЋС‚СЃСЏ Р·Р°РїРёСЃРё РІ РёСЃС‚РѕСЂРёРё С†РµРЅ Р·Р° РґР°РЅРЅС‹Р№ РїРµСЂРёРѕРґ.'
+			END
 
-	SET NOCOUNT OFF
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[PERIOD_TRY_DELETE] TO rl_period_d;
+GO

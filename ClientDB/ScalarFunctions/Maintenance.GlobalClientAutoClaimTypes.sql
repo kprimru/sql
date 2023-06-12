@@ -1,0 +1,22 @@
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[GlobalClientAutoClaimTypes]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalClientAutoClaimTypes] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[GlobalClientAutoClaimTypes]
+()
+RETURNS VarChar(512)
+AS
+BEGIN
+	DECLARE @RES VarChar(512)
+
+	SELECT @RES = GS_VALUE
+	FROM Maintenance.GlobalSettings
+	WHERE GS_NAME = 'CLIENT_AUTO_CLAIM_TYPES';
+
+	RETURN @RES
+END
+GO

@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SUBHOST_CITY_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_CITY_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CITY_EDIT] 
+ALTER PROCEDURE [dbo].[SUBHOST_CITY_EDIT]
 	@subhostcityid INT,
 	@subhostid SMALLINT,
 	@cityid SMALLINT,
@@ -20,20 +22,36 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.SubhostCityTable
-	SET 
-		SC_ID_SUBHOST = @subhostid,
-		SC_ID_CITY = @cityid, 
-	    SC_ID_MARKET_AREA = @marketareaid,
-		SC_ACTIVE = @active
-	WHERE SC_ID = @subhostcityid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.SubhostCityTable
+		SET
+			SC_ID_SUBHOST = @subhostid,
+			SC_ID_CITY = @cityid,
+			SC_ID_MARKET_AREA = @marketareaid,
+			SC_ACTIVE = @active
+		WHERE SC_ID = @subhostcityid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[SUBHOST_CITY_EDIT] TO rl_subhost_city_w;
+GO

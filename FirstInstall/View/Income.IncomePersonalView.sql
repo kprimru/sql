@@ -1,18 +1,24 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Income].[IncomePersonalView]
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[IncomePersonalView]', 'V ') IS NULL EXEC('CREATE VIEW [Income].[IncomePersonalView]  AS SELECT 1')
+GO
+ALTER VIEW [Income].[IncomePersonalView]
 WITH SCHEMABINDING
-AS 
-	SELECT 
-		IP_ID, IP_ID_INCOME AS ID_ID, 
+AS
+	SELECT
+		IP_ID, IP_ID_INCOME AS ID_ID,
 		PER_ID, PER_ID_MASTER, PER_NAME,
 		IP_PERCENT, IP_PERCENT2, PER_ID_TYPE, PER_ID_DEP
 	FROM
 		Income.IncomePersonal INNER JOIN
 		Personal.PersonalDetail ON PER_ID_MASTER = IP_ID_PERSONAL
 	WHERE PER_REF IN (1, 3)
-		
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_Income.IncomePersonalView(IP_ID)] ON [Income].[IncomePersonalView] ([IP_ID] ASC);
+CREATE NONCLUSTERED INDEX [IX_Income.IncomePersonalView(ID_ID,PER_NAME)+(IP_PERCENT,IP_PERCENT2)] ON [Income].[IncomePersonalView] ([ID_ID] ASC, [PER_NAME] ASC) INCLUDE ([IP_PERCENT], [IP_PERCENT2]);
+GO

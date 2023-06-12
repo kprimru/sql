@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[TranslitString]
+ο»ΏUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[TranslitString]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[TranslitString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[TranslitString]
 (
 	@SOURCE	VARCHAR(4000)
 )
@@ -23,8 +25,8 @@ BEGIN
 	DECLARE @lat2 VARCHAR(100)
 	DECLARE	@lat3 VARCHAR(100)
 
-	SET @rus =  'ΰαβγδεΈζηθικλμνξοπρςστυφχψωϊϋόύώÿ'
-	SET @lat1 = 'abvgdejzzijklmnoprstufkccss"y''ejj' 
+	SET @rus =  'Π°Π±Π²Π³Π΄ΠµΡ‘Π¶Π·ΠΈΠΉΠΊΠ»ΠΌΠ½ΠΎΠΏΡ€ΡΡ‚ΡƒΡ„Ρ…Ρ†Ρ‡ΡΡ‰ΡΡ‹ΡΡΡΡ'
+	SET @lat1 = 'abvgdejzzijklmnoprstufkccss"y''ejj'
 	SET @lat2 = '      oh  j           h hhh   hua'
 	SET @lat3 = '                          h      '
 
@@ -55,5 +57,6 @@ BEGIN
 	SET @RES = @str_lat
 
 
-	RETURN @RES		
+	RETURN @RES
 END
+GO

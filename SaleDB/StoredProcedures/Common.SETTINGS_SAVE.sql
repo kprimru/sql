@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Common].[SETTINGS_SAVE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[SETTINGS_SAVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Common].[SETTINGS_SAVE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Common].[SETTINGS_SAVE]
 	@ID_USER		UNIQUEIDENTIFIER,
 	@DEFAULT_RUS	BIT,
 	@SEARCH_EXT		BIT,
@@ -14,7 +16,17 @@ USE [SaleDB]
 	@OFFER_PATH		NVARCHAR(512) = NULL
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		IF @ID_USER IS NOT NULL
@@ -33,21 +45,17 @@ BEGIN
 				INSERT INTO Common.Settings(ID_USER, DEFAULT_RUS, SEARCH_EXT, WARNING_TIME, FONT_SIZE, OFFER_PATH)
 					VALUES(@ID_USER, @DEFAULT_RUS, @SEARCH_EXT, @WARNING_TIME, @FONT_SIZE, @OFFER_PATH)
 		END
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Common].[SETTINGS_SAVE] TO public;
+GO

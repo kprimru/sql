@@ -1,26 +1,51 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[BL_USER_DELETE]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[BL_USER_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[BL_USER_DELETE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[BL_USER_DELETE]
 	@USER varchar(128)
-WITH EXECUTE AS OWNER  
+WITH EXECUTE AS OWNER
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
-    DECLARE @ERROR VARCHAR(MAX)	
-	IF (CHARINDEX('''', @USER) <> 0) 
-	BEGIN
-		SET @ERROR = 'Имя пользователя или роль содержат недоспустимые символы (кавычка)'
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-		RAISERROR (@ERROR, 16, 1)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		RETURN
-	END
-    EXEC('DROP USER [' + @USER +']')
+	BEGIN TRY
 
-    SET NOCOUNT OFF
+		DECLARE @ERROR VARCHAR(MAX)
+		IF (CHARINDEX('''', @USER) <> 0)
+		BEGIN
+			SET @ERROR = 'РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё СЂРѕР»СЊ СЃРѕРґРµСЂР¶Р°С‚ РЅРµРґРѕСЃРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ (РєР°РІС‹С‡РєР°)'
+
+			RAISERROR (@ERROR, 16, 1)
+
+			RETURN
+		END
+		EXEC('DROP USER [' + @USER +']')
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[BL_USER_DELETE] TO BL_ADMIN;
+GO

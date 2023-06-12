@@ -1,51 +1,59 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PROCESS_SELECT]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PROCESS_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PROCESS_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_SELECT]
 	@ID		UNIQUEIDENTIFIER,
 	@RC		INT				=	NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
-		SELECT 
-			a.ID, b.SHORT, PROCESS_TYPE, 
-			CASE PROCESS_TYPE 
-				WHEN N'PHONE' THEN N'ТА'
-				WHEN N'SALE' THEN N'ТП'
-				WHEN N'MANAGER' THEN N'Менеджер'
-				WHEN N'RIVAL' THEN 'Конкурентный менеджер'
-				ELSE N'???' 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
+		SELECT
+			a.ID, b.SHORT, PROCESS_TYPE,
+			CASE PROCESS_TYPE
+				WHEN N'PHONE' THEN N'РўРђ'
+				WHEN N'SALE' THEN N'РўРџ'
+				WHEN N'MANAGER' THEN N'РњРµРЅРµРґР¶РµСЂ'
+				WHEN N'RIVAL' THEN 'РљРѕРЅРєСѓСЂРµРЅС‚РЅС‹Р№ РјРµРЅРµРґР¶РµСЂ'
+				ELSE N'???'
 			END AS PROCESS_TYPE_CAPT,
 			BDATE, EDATE,
-			CONVERT(NVARCHAR(32), ASSIGN_DATE, 104) + ' ' + 
+			CONVERT(NVARCHAR(32), ASSIGN_DATE, 104) + ' ' +
 				CONVERT(NVARCHAR(32), ASSIGN_DATE, 108) + ' ' + ASSIGN_USER AS ASSIGN_DATA
-		FROM 
+		FROM
 			Client.CompanyProcess a
 			INNER JOIN Personal.OfficePersonal b ON a.ID_PERSONAL = b.ID
 		WHERE ID_COMPANY = @ID
 		ORDER BY ASSIGN_DATE DESC
 
 		SELECT @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_SELECT] TO rl_company_process_r;
+GO

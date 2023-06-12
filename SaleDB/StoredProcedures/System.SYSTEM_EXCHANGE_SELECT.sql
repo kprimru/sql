@@ -1,14 +1,26 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [System].[SYSTEM_EXCHANGE_SELECT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[System].[SYSTEM_EXCHANGE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [System].[SYSTEM_EXCHANGE_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [System].[SYSTEM_EXCHANGE_SELECT]
 	@FILTER	VARCHAR(100) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	SELECT ID, SHORT, HOST
 	FROM System.Systems a
@@ -21,3 +33,7 @@ BEGIN
 		)
 	ORDER BY ORD
 END
+
+GO
+GRANT EXECUTE ON [System].[SYSTEM_EXCHANGE_SELECT] TO rl_system_r;
+GO

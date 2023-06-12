@@ -1,32 +1,48 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[CLIENT_LIST]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[CLIENT_LIST]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[CLIENT_LIST]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[CLIENT_LIST]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		b.ManagerName AS [Ðóê-ëü], b.ServiceName AS [ÑÈ], a.ClientFullName AS [Êëèåíò], 
-		USR_CHECK AS [Ôàéëû USR], STT_CHECK AS [Ôàéëû STT], HST_CHECK AS [Ôàéëû HST], INET_CHECK AS [Íåò Èíòåðíåòà]
-	FROM 
-		dbo.ClientTable a
-		INNER JOIN dbo.ClientView b ON a.ClientID = b.ClientID
-	WHERE STATUS = 1
-		AND StatusID = 2
-		AND
-			(
-				HST_CHECK = 0
-				OR 
-				STT_CHECK = 0
-				OR
-				USR_CHECK = 0
-				OR
-				INET_CHECK = 1
-			)
-	ORDER BY ManagerName, ServiceName, b.ClientFullName
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			b.ManagerName AS [Ð ÑƒÐº-Ð»ÑŒ], b.ServiceName AS [Ð¡Ð˜], b.ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚],
+			T.Name AS [Ð¢Ð¸Ð¿ Ð¾Ð³Ñ€Ð°Ð½Ð¸Ñ‡ÐµÐ½Ð¸Ñ], R.[Comment] AS [ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ]
+		FROM dbo.ClientView b WITH(NOEXPAND)
+		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+		INNER JOIN [dbo].[Clients:Restrictions] AS r ON r.Client_Id = b.ClientID
+		INNER JOIN [dbo].[Clients:Restrictions->Types] AS T ON t.Id = R.[Type_Id]
+		ORDER BY ManagerName, ServiceName, b.ClientFullName
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[CLIENT_LIST] TO rl_report;
+GO

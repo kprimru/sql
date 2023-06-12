@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.RegNodeView] FOR [DBF].[dbo].[RegNodeView];

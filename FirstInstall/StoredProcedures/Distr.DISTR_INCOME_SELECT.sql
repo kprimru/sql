@@ -1,56 +1,58 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Distr].[DISTR_INCOME_SELECT]
-	-- íà÷àëüíàÿ è îêîí÷àòåëüíàÿ äàòà ôèëüòðà, êîãäà áûëè ïîëó÷åíû äèñòðèáóòèâû
+ï»¿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Distr].[DISTR_INCOME_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Distr].[DISTR_INCOME_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Distr].[DISTR_INCOME_SELECT]
+	-- Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½Ð°Ñ Ð¸ Ð¾ÐºÐ¾Ð½Ñ‡Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð°Ñ Ð´Ð°Ñ‚Ð° Ñ„Ð¸Ð»ÑŒÑ‚Ñ€Ð°, ÐºÐ¾Ð³Ð´Ð° Ð±Ñ‹Ð»Ð¸ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ñ‹ Ð´Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²Ñ‹
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
-	-- 0 - âñå, 1 - òîëüêî ñâîáîäíûå, 2 - óæå âûäàííûå
+	-- 0 - Ð²ÑÐµ, 1 - Ñ‚Ð¾Ð»ÑŒÐºÐ¾ ÑÐ²Ð¾Ð±Ð¾Ð´Ð½Ñ‹Ðµ, 2 - ÑƒÐ¶Ðµ Ð²Ñ‹Ð´Ð°Ð½Ð½Ñ‹Ðµ
 	@STATUS		TINYINT,
-	-- ôèëüòð ïî äàòå âûäà÷è
+	-- Ñ„Ð¸Ð»ÑŒÑ‚Ñ€ Ð¿Ð¾ Ð´Ð°Ñ‚Ðµ Ð²Ñ‹Ð´Ð°Ñ‡Ð¸
 	@DEL_BEGIN	SMALLDATETIME,
 	@DEL_END	SMALLDATETIME,
-	-- ïî íîìåðó äèñòð
+	-- Ð¿Ð¾ Ð½Ð¾Ð¼ÐµÑ€Ñƒ Ð´Ð¸ÑÑ‚Ñ€
 	@DISTR		INT,
-	-- ïî ñèñòåìå
+	-- Ð¿Ð¾ ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ
 	@SYSTEM		UNIQUEIDENTIFIER,
-	-- ñåòü
+	-- ÑÐµÑ‚ÑŒ
 	@NET		UNIQUEIDENTIFIER,
-	-- òèï
+	-- Ñ‚Ð¸Ð¿
 	@TYPE		UNIQUEIDENTIFIER,
-	-- 0 - âñå, 1 - íîâûå, 2 - ìîäóëè çàìåíû
+	-- 0 - Ð²ÑÐµ, 1 - Ð½Ð¾Ð²Ñ‹Ðµ, 2 - Ð¼Ð¾Ð´ÑƒÐ»Ð¸ Ð·Ð°Ð¼ÐµÐ½Ñ‹
 	@EXCHANGE	TINYINT,
-	-- ïîäõîñò
+	-- Ð¿Ð¾Ð´Ñ…Ð¾ÑÑ‚
 	@SUBHOST	UNIQUEIDENTIFIER,
-	-- ïðèìå÷àíèå (èç ÐÖ?)
+	-- Ð¿Ñ€Ð¸Ð¼ÐµÑ‡Ð°Ð½Ð¸Ðµ (Ð¸Ð· Ð Ð¦?)
 	@COMMENT	NVARCHAR(150),
 	@RC			INT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT	
+	SELECT
 		a.ID, DT_SHORT, CONVERT(VARCHAR(20), NUM) + CASE COMP WHEN 1 THEN '' ELSE '/' + CONVERT(VARCHAR(20), COMP) END AS DIS_STR,
-		CONVERT(BIT, CASE 
+		CONVERT(BIT, CASE
 			WHEN ID_SYSTEM IS NULL OR ID_NET IS NULL THEN 1
 			ELSE 0
 		END) AS EXCHANGE,
-		CASE 
-			WHEN ID_SYSTEM IS NULL THEN 'ñ ' + e.SYS_SHORT + ' íà ' + f.SYS_SHORT
+		CASE
+			WHEN ID_SYSTEM IS NULL THEN 'Ñ ' + e.SYS_SHORT + ' Ð½Ð° ' + f.SYS_SHORT
 			ELSE d.SYS_SHORT
 		END AS SYS_STR,
-		CASE 
-			WHEN ID_NET IS NULL THEN 'ñ ' + h.SHORT + ' íà ' + k.SHORT
+		CASE
+			WHEN ID_NET IS NULL THEN 'Ñ ' + h.SHORT + ' Ð½Ð° ' + k.SHORT
 			ELSE g.SHORT
 		END AS NET_STR,
-		REPLICATE('0', 5 - LEN(CONVERT(VARCHAR(20), d.SYS_ORDER))) + CONVERT(VARCHAR(20), d.SYS_ORDER) + ' ' + 
+		REPLICATE('0', 5 - LEN(CONVERT(VARCHAR(20), d.SYS_ORDER))) + CONVERT(VARCHAR(20), d.SYS_ORDER) + ' ' +
 		CONVERT(VARCHAR(20), CONVERT(INT, ROUND(g.COEF * 100, 0))) + ' -- ' +
 		d.SYS_SHORT + '/' + g.SHORT AS FREE_SHORT,
 		INCOME_DATE, COMMENT, PROCESS_DATE, l.NAME
-	FROM 
+	FROM
 		Distr.DistrIncome a
 		INNER JOIN Distr.DistrTypeActive b ON a.ID_TYPE = b.DT_ID_MASTER
 		--INNER JOIN Distr.HostActive c ON c.HST_ID_MASTER = a.ID_HOST
@@ -61,11 +63,11 @@ BEGIN
 		LEFT OUTER JOIN Distr.NetAll h ON h.ID = a.ID_OLD_NET
 		LEFT OUTER JOIN Distr.NetAll k ON k.ID = a.ID_NEW_NET
 		LEFT OUTER JOIN Distr.Subhost l ON l.ID = a.ID_SUBHOST
-	WHERE (INCOME_DATE >= @BEGIN OR @STATUS = 1 OR @BEGIN IS NULL) 
-		AND (INCOME_DATE <= @END OR @STATUS = 1 OR @END IS NULL)
+	WHERE (INCOME_DATE >= @BEGIN /*OR @STATUS = 1 */OR @BEGIN IS NULL)
+		AND (INCOME_DATE <= @END /*OR @STATUS = 1 */OR @END IS NULL)
 		AND (
-				@STATUS IS NULL 
-				OR @STATUS = 0 
+				@STATUS IS NULL
+				OR @STATUS = 0
 				OR @STATUS = 1 AND PROCESS_DATE IS NULL AND ID_SYSTEM IS NOT NULL AND ID_NET IS NOT NULL
 				OR @STATUS = 2 AND PROCESS_DATE IS NOT NULL
 			)
@@ -78,11 +80,14 @@ BEGIN
 		AND (@EXCHANGE IS NULL OR @EXCHANGE = 0 OR @EXCHANGE = 1 AND ID_SYSTEM IS NOT NULL AND ID_NET IS NOT NULL OR @EXCHANGE = 2 AND (ID_SYSTEM IS NULL OR ID_NET IS NULL))
 		AND (ID_SUBHOST = @SUBHOST OR @SUBHOST IS NULL)
 		AND (COMMENT LIKE @COMMENT OR @COMMENT IS NULL)
-	ORDER BY 
-		CASE @STATUS 
+	ORDER BY
+		CASE @STATUS
 			WHEN 1 THEN NULL
 			ELSE INCOME_DATE
 		END, d.SYS_ORDER, f.SYS_ORDER, g.TECH, g.COEF, k.TECH, k.COEF, NUM, COMP
-	
+
 	SELECT @RC = @@ROWCOUNT
 END
+GO
+GRANT EXECUTE ON [Distr].[DISTR_INCOME_SELECT] TO rl_distr_income_r;
+GO

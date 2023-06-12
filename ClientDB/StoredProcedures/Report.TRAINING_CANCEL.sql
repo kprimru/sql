@@ -1,39 +1,66 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[TRAINING_CANCEL]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[TRAINING_CANCEL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[TRAINING_CANCEL]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[TRAINING_CANCEL]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	/*
-	SELECT ClientFullName AS [Êëèåíò], ManagerName AS [Ðóê-ëü], ServiceName AS [ÑÈ], COUNT(DISTINCT SP_ID) AS [Ñêîëüêî ðàç], MAX(TSC_DATE) AS [Ïîñëåäíèé ðàç]
-	FROM 
-		Training.TrainingSchedule
-		INNER JOIN Training.SeminarSign ON SP_ID_SEMINAR = TSC_ID
-		INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
-		INNER JOIN dbo.ClientView WITH(NOEXPAND) ON SP_ID_CLIENT = ClientID
-	WHERE SSP_CANCEL = 1
-	GROUP BY ClientFullname, ManagerName, ServiceName
-	HAVING COUNT(DISTINCT SP_ID) > 2
-	ORDER BY [Ñêîëüêî ðàç] DESC, ManagerName, ServiceName, ClientFullName
-	*/
-	
-	--Ýòîò îò÷åò ïî íîâîé ñòðóêòóðå çàïèñè íà ñåìèíàð. Åñòü ìíåíèå, ÷òî â íîâóþ ñòðóêòóðó ïîïàëè íå âñå èñòîðè÷åñêèå äàííûå, òàê ÷òî ïîêà ìåíÿòü îò÷åò ðàíî
-	
-	SELECT ClientFullName AS [Êëèåíò], ManagerName AS [Ðóê-ëü], ServiceName AS [ÑÈ], COUNT(DISTINCT ID_SCHEDULE) AS [Ñêîëüêî ðàç], MAX(c.DATE) AS [Ïîñëåäíèé ðàç]
-	FROM 
-		Seminar.Personal a
-		INNER JOIN Seminar.Status b ON a.ID_STATUS = b.ID
-		INNER JOIN Seminar.Schedule c ON c.ID = a.ID_SCHEDULE
-		INNER JOIN dbo.ClientView WITH(NOEXPAND) ON a.ID_CLIENT = ClientID
-	WHERE b.INDX = 5 AND a.STATUS = 1
-	GROUP BY ClientFullname, ManagerName, ServiceName
-	HAVING COUNT(DISTINCT ID_SCHEDULE) > 2
-	ORDER BY [Ñêîëüêî ðàç] DESC, ManagerName, ServiceName, ClientFullName	
-	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		/*
+		SELECT ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚], ManagerName AS [Ð ÑƒÐº-Ð»ÑŒ], ServiceName AS [Ð¡Ð˜], COUNT(DISTINCT SP_ID) AS [Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ€Ð°Ð·], MAX(TSC_DATE) AS [ÐŸÐ¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ Ñ€Ð°Ð·]
+		FROM
+			Training.TrainingSchedule
+			INNER JOIN Training.SeminarSign ON SP_ID_SEMINAR = TSC_ID
+			INNER JOIN Training.SeminarSignPersonal ON SSP_ID_SIGN = SP_ID
+			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON SP_ID_CLIENT = ClientID
+		WHERE SSP_CANCEL = 1
+		GROUP BY ClientFullname, ManagerName, ServiceName
+		HAVING COUNT(DISTINCT SP_ID) > 2
+		ORDER BY [Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ€Ð°Ð·] DESC, ManagerName, ServiceName, ClientFullName
+		*/
+
+		--Ð­Ñ‚Ð¾Ñ‚ Ð¾Ñ‚Ñ‡ÐµÑ‚ Ð¿Ð¾ Ð½Ð¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð½Ð° ÑÐµÐ¼Ð¸Ð½Ð°Ñ€. Ð•ÑÑ‚ÑŒ Ð¼Ð½ÐµÐ½Ð¸Ðµ, Ñ‡Ñ‚Ð¾ Ð² Ð½Ð¾Ð²ÑƒÑŽ ÑÑ‚Ñ€ÑƒÐºÑ‚ÑƒÑ€Ñƒ Ð¿Ð¾Ð¿Ð°Ð»Ð¸ Ð½Ðµ Ð²ÑÐµ Ð¸ÑÑ‚Ð¾Ñ€Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ, Ñ‚Ð°Ðº Ñ‡Ñ‚Ð¾ Ð¿Ð¾ÐºÐ° Ð¼ÐµÐ½ÑÑ‚ÑŒ Ð¾Ñ‚Ñ‡ÐµÑ‚ Ñ€Ð°Ð½Ð¾
+
+		SELECT ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚], ManagerName AS [Ð ÑƒÐº-Ð»ÑŒ], ServiceName AS [Ð¡Ð˜], COUNT(DISTINCT ID_SCHEDULE) AS [Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ€Ð°Ð·], MAX(c.DATE) AS [ÐŸÐ¾ÑÐ»ÐµÐ´Ð½Ð¸Ð¹ Ñ€Ð°Ð·]
+		FROM
+			Seminar.Personal a
+			INNER JOIN Seminar.Status b ON a.ID_STATUS = b.ID
+			INNER JOIN Seminar.Schedule c ON c.ID = a.ID_SCHEDULE
+			INNER JOIN dbo.ClientView WITH(NOEXPAND) ON a.ID_CLIENT = ClientID
+		WHERE b.INDX = 5 AND a.STATUS = 1
+		GROUP BY ClientFullname, ManagerName, ServiceName
+		HAVING COUNT(DISTINCT ID_SCHEDULE) > 2
+		ORDER BY [Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ Ñ€Ð°Ð·] DESC, ManagerName, ServiceName, ClientFullName
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
+
 END
+GO
+GRANT EXECUTE ON [Report].[TRAINING_CANCEL] TO rl_report;
+GO

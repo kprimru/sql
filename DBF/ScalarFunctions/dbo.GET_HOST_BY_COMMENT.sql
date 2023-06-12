@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[GET_HOST_BY_COMMENT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[GET_HOST_BY_COMMENT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 
 
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 02.10.2008
--- Описание:	  Возвращает название подхоста 
---                по комментарию из рег.узла
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 02.10.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ РЅР°Р·РІР°РЅРёРµ РїРѕРґС…РѕСЃС‚Р°
+--                РїРѕ РєРѕРјРјРµРЅС‚Р°СЂРёСЋ РёР· СЂРµРі.СѓР·Р»Р°
 -- =============================================
 CREATE FUNCTION [dbo].[GET_HOST_BY_COMMENT]
 (
@@ -21,17 +23,17 @@ RETURNS varchar(10)
 AS
 BEGIN
   DECLARE @res varchar(10)
- 
+
   SET @res = ''
- 
+
   DECLARE @temp varchar(200)
 
   SET @comment = ISNULL(@comment, '')
 
-  IF CHARINDEX('(', @comment) <> 1 
+  IF CHARINDEX('(', @comment) <> 1
     RETURN @res
 
-  SET @temp = SUBSTRING(@comment, CHARINDEX('(', @comment) + 1, 
+  SET @temp = SUBSTRING(@comment, CHARINDEX('(', @comment) + 1,
                         LEN(@comment) - CHARINDEX('(', @comment))
 
   IF CHARINDEX(')', @temp) < 2
@@ -44,3 +46,4 @@ END
 
 
 
+GO

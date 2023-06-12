@@ -1,57 +1,81 @@
-USE [IPLogs]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[FILE_PROCESS]
+п»їUSE [IPLogs]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[FILE_PROCESS]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[FILE_PROCESS]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[FILE_PROCESS]
 	@SERVER		INT,
 	@FILENAME	NVARCHAR(512),
 	@FILESIZE	BIGINT,
 	@FILETYPE	TINYINT,
 	@FILEID		INT = NULL OUTPUT,
 	/*
-		Результат выполнения:
-		0. Файл уже существует, замена не требуется
-		1. Файл уже существует, требуется обновить
-		2. Файла не существует, необходимо создать новый
+		Р РµР·СѓР»СЊС‚Р°С‚ РІС‹РїРѕР»РЅРµРЅРёСЏ:
+		0. Р¤Р°Р№Р» СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р·Р°РјРµРЅР° РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ
+		1. Р¤Р°Р№Р» СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, С‚СЂРµР±СѓРµС‚СЃСЏ РѕР±РЅРѕРІРёС‚СЊ
+		2. Р¤Р°Р№Р»Р° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РЅРµРѕР±С…РѕРґРёРјРѕ СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№
 	*/
 	@RESULT		TINYINT = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @EXSIZE BIGINT
+    DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT	@FILEID = FL_ID, @EXSIZE = FL_SIZE
-	FROM	dbo.Files
-	WHERE	FL_NAME = @FILENAME AND FL_ID_SERVER = @SERVER
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF @FILEID IS NOT NULL
-	BEGIN
-		IF @EXSIZE = @FILESIZE
-		BEGIN
-			SET @RESULT =	0
-			SET @FILEID = NULL
-			RETURN
-		END
-		ELSE
-		BEGIN
-			UPDATE	dbo.Files
-			SET		FL_SIZE = @FILESIZE,
-					FL_DATE = GETDATE()
-			WHERE	FL_ID = @FILEID
+	BEGIN TRY
 
-			SET @RESULT = 1
-		END
-	END
-	ELSE
-	BEGIN
-		INSERT INTO dbo.Files(FL_ID_SERVER, FL_NAME, FL_SIZE, FL_DATE, FL_TYPE)
-		VALUES (@SERVER, @FILENAME, @FILESIZE, GETDATE(), @FILETYPE)
-			
-		SELECT @FILEID = SCOPE_IDENTITY()
+	    DECLARE @EXSIZE BIGINT
 
-		SET @RESULT = 2
-	END
+	    SELECT	@FILEID = FL_ID, @EXSIZE = FL_SIZE
+	    FROM	dbo.Files
+	    WHERE	FL_NAME = @FILENAME AND FL_ID_SERVER = @SERVER
+
+	    IF @FILEID IS NOT NULL
+	    BEGIN
+		    IF @EXSIZE <> @FILESIZE
+		    BEGIN
+				UPDATE	dbo.Files
+			    SET		FL_SIZE = @FILESIZE,
+					    FL_DATE = GETDATE()
+			    WHERE	FL_ID = @FILEID
+
+			    SET @RESULT = 1
+		    END
+		    ELSE
+		    BEGIN
+			    SET @RESULT =	0
+			    SET @FILEID = NULL
+		    END
+	    END
+	    ELSE
+	    BEGIN
+		    INSERT INTO dbo.Files(FL_ID_SERVER, FL_NAME, FL_SIZE, FL_DATE, FL_TYPE)
+		    VALUES (@SERVER, @FILENAME, @FILESIZE, GETDATE(), @FILETYPE)
+    
+		    SELECT @FILEID = SCOPE_IDENTITY()
+
+		    SET @RESULT = 2
+	    END
+
+	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO

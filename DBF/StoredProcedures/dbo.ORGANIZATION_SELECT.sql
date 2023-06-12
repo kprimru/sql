@@ -1,30 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ORGANIZATION_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ORGANIZATION_SELECT]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ORGANIZATION_SELECT] 
+ALTER PROCEDURE [dbo].[ORGANIZATION_SELECT]
     @active BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT ORG_FULL_NAME, ORG_SHORT_NAME, ORG_ID , ORG_PSEDO
-	FROM dbo.OrganizationTable 
-	WHERE ORG_ACTIVE = ISNULL(@active, ORG_ACTIVE)
-	ORDER BY ORG_FULL_NAME, ORG_SHORT_NAME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT ORG_FULL_NAME, ORG_SHORT_NAME, ORG_ID , ORG_PSEDO
+		FROM dbo.OrganizationTable
+		WHERE ORG_ACTIVE = ISNULL(@active, ORG_ACTIVE)
+		ORDER BY ORG_FULL_NAME, ORG_SHORT_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[ORGANIZATION_SELECT] TO rl_organization_r;
+GO

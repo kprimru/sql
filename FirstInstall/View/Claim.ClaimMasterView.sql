@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Claim].[ClaimMasterView] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Claim].[ClaimMasterView]', 'V ') IS NULL EXEC('CREATE VIEW [Claim].[ClaimMasterView]  AS SELECT 1')
+GO
+ALTER VIEW [Claim].[ClaimMasterView]
 --WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		CLM_ID, CLM_DATE, CLM_NUM,
 		US_ID, US_ID_MASTER, US_NAME
-	FROM 
+	FROM
 		Claim.Claims INNER JOIN
-		Security.UserLast ON US_ID_MASTER = CLM_ID_USER	
+		Security.UserLast ON US_ID_MASTER = CLM_ID_USER	GO

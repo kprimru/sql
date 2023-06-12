@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[COUNTRY_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[COUNTRY_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[COUNTRY_EDIT] 
+ALTER PROCEDURE [dbo].[COUNTRY_EDIT]
 	@countryid SMALLINT,
 	@countryname VARCHAR(100),
 	@active BIT = 1
@@ -18,10 +20,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.CountryTable 
-	SET CNT_NAME = @countryname, 
-		CNT_ACTIVE = @active
-	WHERE CNT_ID = @countryid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.CountryTable
+		SET CNT_NAME = @countryname,
+			CNT_ACTIVE = @active
+		WHERE CNT_ID = @countryid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[COUNTRY_EDIT] TO rl_country_w;
+GO

@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Training].[TRAINING_SCHEDULE_INSERT]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Training].[TRAINING_SCHEDULE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Training].[TRAINING_SCHEDULE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Training].[TRAINING_SCHEDULE_INSERT]
 	@SUBJECT	UNIQUEIDENTIFIER,
 	@DATE		SMALLDATETIME,
 	@LIMIT		SMALLINT,
@@ -13,12 +15,37 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	INSERT INTO Training.TrainingSchedule(TSC_ID_TS, TSC_DATE, TSC_LIMIT)
-		OUTPUT INSERTED.TSC_ID INTO @TBL
-		VALUES(@SUBJECT, @DATE, @LIMIT)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT @ID = ID 
-	FROM @TBL
+	BEGIN TRY
+
+		DECLARE @TBL TABLE (ID UNIQUEIDENTIFIER)
+
+		INSERT INTO Training.TrainingSchedule(TSC_ID_TS, TSC_DATE, TSC_LIMIT)
+			OUTPUT INSERTED.TSC_ID INTO @TBL
+			VALUES(@SUBJECT, @DATE, @LIMIT)
+
+		SELECT @ID = ID
+		FROM @TBL
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Training].[TRAINING_SCHEDULE_INSERT] TO rl_training_i;
+GO

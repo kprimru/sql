@@ -1,37 +1,39 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Common].[MonthString]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[MonthString]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[MonthString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Common].[MonthString]
 (
 	@MONTH	UNIQUEIDENTIFIER,
 	@DELTA	INT
 )
 RETURNS NVARCHAR(128)
 AS
-BEGIN	
+BEGIN
 	DECLARE @RES VARCHAR(128)
-	DECLARE @PR_DATE SMALLDATETIME	
+	DECLARE @PR_DATE SMALLDATETIME
 
-	SELECT 
-		@RES = 
+	SELECT
+		@RES =
 			CASE DATEPART(MONTH, DATE)
-				WHEN 1 THEN 'январь'
-				WHEN 2 THEN 'февраль'
-				WHEN 3 THEN 'март'
-				WHEN 4 THEN 'апрель'
-				WHEN 5 THEN 'май'
-				WHEN 6 THEN 'июнь'
-				WHEN 7 THEN 'июль'
-				WHEN 8 THEN 'август'
-				WHEN 9 THEN 'сентябрь'
-				WHEN 10 THEN 'октябрь'
-				WHEN 11 THEN 'ноябрь'
-				WHEN 12 THEN 'декабрь'
+				WHEN 1 THEN 'СЏРЅРІР°СЂСЊ'
+				WHEN 2 THEN 'С„РµРІСЂР°Р»СЊ'
+				WHEN 3 THEN 'РјР°СЂС‚'
+				WHEN 4 THEN 'Р°РїСЂРµР»СЊ'
+				WHEN 5 THEN 'РјР°Р№'
+				WHEN 6 THEN 'РёСЋРЅСЊ'
+				WHEN 7 THEN 'РёСЋР»СЊ'
+				WHEN 8 THEN 'Р°РІРіСѓСЃС‚'
+				WHEN 9 THEN 'СЃРµРЅС‚СЏР±СЂСЊ'
+				WHEN 10 THEN 'РѕРєС‚СЏР±СЂСЊ'
+				WHEN 11 THEN 'РЅРѕСЏР±СЂСЊ'
+				WHEN 12 THEN 'РґРµРєР°Р±СЂСЊ'
 				ELSE '-'
-			END, 
+			END,
 		@PR_DATE = DATE
 	FROM Common.Month
 	WHERE ID = @MONTH
@@ -44,21 +46,22 @@ BEGIN
 			SET @PR_DATE = DATEADD(MONTH, 1, @PR_DATE)
 		END
 		SET @RES = @RES + '-' + CASE DATEPART(MONTH, @PR_DATE)
-				WHEN 1 THEN 'январь'
-				WHEN 2 THEN 'февраль'
-				WHEN 3 THEN 'март'
-				WHEN 4 THEN 'апрель'
-				WHEN 5 THEN 'май'
-				WHEN 6 THEN 'июнь'
-				WHEN 7 THEN 'июль'
-				WHEN 8 THEN 'август'
-				WHEN 9 THEN 'сентябрь'
-				WHEN 10 THEN 'октябрь'
-				WHEN 11 THEN 'ноябрь'
-				WHEN 12 THEN 'декабрь'
+				WHEN 1 THEN 'СЏРЅРІР°СЂСЊ'
+				WHEN 2 THEN 'С„РµРІСЂР°Р»СЊ'
+				WHEN 3 THEN 'РјР°СЂС‚'
+				WHEN 4 THEN 'Р°РїСЂРµР»СЊ'
+				WHEN 5 THEN 'РјР°Р№'
+				WHEN 6 THEN 'РёСЋРЅСЊ'
+				WHEN 7 THEN 'РёСЋР»СЊ'
+				WHEN 8 THEN 'Р°РІРіСѓСЃС‚'
+				WHEN 9 THEN 'СЃРµРЅС‚СЏР±СЂСЊ'
+				WHEN 10 THEN 'РѕРєС‚СЏР±СЂСЊ'
+				WHEN 11 THEN 'РЅРѕСЏР±СЂСЊ'
+				WHEN 12 THEN 'РґРµРєР°Р±СЂСЊ'
 				ELSE '-'
 			END
-	END	
+	END
 
 	RETURN @RES
 END
+GO

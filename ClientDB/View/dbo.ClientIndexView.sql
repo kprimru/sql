@@ -1,17 +1,18 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ClientIndexView]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ClientIndexView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientIndexView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ClientIndexView]
 AS
-	SELECT 
+	SELECT
 		a.ClientID,
 		CONVERT(VARCHAR(20), ClientID) + ' ' +
-		ClientFullName + ' ' + 
-		ClientShortName + ' ' +
-		ISNULL(ClientOfficial, '') + ' ' + 
+		ClientFullName + ' ' +
+		ISNULL(ClientOfficial, '') + ' ' +
 		ISNULL(
 			(
 				SELECT NAME + ','
@@ -34,9 +35,9 @@ AS
 			WHERE a.ClientID = b.ID_CLIENT
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + ' ' +
-		ISNULL(ContractTypeName, '') + ' ' +
+		ISNULL(e.Name, '') + ' ' +
 		ISNULL(ServiceTypeName, '') + ' ' +
-		ISNULL(ServiceTypeShortName, '') + ' ' + 
+		ISNULL(ServiceTypeShortName, '') + ' ' +
 		ISNULL(ClientActivity, '') + ' ' +
 		ClientINN + ' ' +
 		ISNULL(REVERSE(STUFF(REVERSE((
@@ -46,26 +47,26 @@ AS
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + ' ' +
 		ISNULL(REVERSE(STUFF(REVERSE((
-			SELECT 
+			SELECT
 				ISNULL(g.CP_SURNAME, '') + ' ' +
 				ISNULL(g.CP_NAME, '') + ' ' +
 				ISNULL(g.CP_PATRON, '') + ' ' +
 				ISNULL(g.CP_POS, '') + ' ' +
 				ISNULL(g.CP_PHONE, '') + ' ' +
-				ISNULL(g.CP_PHONE_S, '') + ' ' + 
-				ISNULL(g.CP_NOTE, '') + ' '	+		
+				ISNULL(g.CP_PHONE_S, '') + ' ' +
+				ISNULL(g.CP_NOTE, '') + ' '	+
 				ISNULL(g.CP_EMAIL, '') + ' '
-			FROM dbo.ClientPersonal g 
+			FROM dbo.ClientPersonal g
 			WHERE a.ClientID = g.CP_ID_CLIENT
 			/*ORDER BY SystemOrder */FOR XML PATH('')
 		)), 1, 2, '')), '') + '' +
 		ISNULL(REVERSE(STUFF(REVERSE((
-			SELECT 
+			SELECT
 				ISNULL(i.SURNAME, '') + ' ' +
 				ISNULL(i.NAME, '') + '' +
 				ISNULL(i.PATRON, '') + ' ' +
 				ISNULL(i.POS, '') + ' ' +
-				ISNULL(i.PHONE, '') + ' '	
+				ISNULL(i.PHONE, '') + ' '
 			FROM dbo.ClientPersonalOtherView i
 			WHERE a.ClientID = i.ClientID
 			/*ORDER BY SystemOrder */FOR XML PATH('')
@@ -75,4 +76,5 @@ AS
 		INNER JOIN dbo.ServiceTable c ON c.ServiceID = a.ClientServiceID
 		INNER JOIN dbo.ManagerTable d ON d.ManagerID = c.ManagerID
 		INNER JOIN dbo.ServiceTypeTable f ON f.ServiceTypeID = a.ServiceTypeID
-		LEFT OUTER JOIN dbo.ContractTypeTable e ON e.ContractTypeID = a.ClientContractTypeID
+		LEFT OUTER JOIN dbo.ClientKind e ON e.Id = a.ClientKind_Id
+GO

@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ROLE_GROUP_INSERT]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ROLE_GROUP_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ROLE_GROUP_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ROLE_GROUP_INSERT]
 	@NAME		NVARCHAR(256),
 	@CAPTION	NVARCHAR(256),
 	@NOTE		NVARCHAR(MAX),
@@ -12,7 +14,17 @@ USE [SaleDB]
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		DECLARE @TXT NVARCHAR(MAX)
 
@@ -21,8 +33,8 @@ BEGIN
 			SELECT * FROM sys.database_principals WHERE name = @NAME
 		)
 		BEGIN
-			SET @TXT = 'Роль или пользователь "' + @NAME + '" уже существует. Выберите другое название.'
-	
+			SET @TXT = 'Р РѕР»СЊ РёР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @NAME + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РЅР°Р·РІР°РЅРёРµ.'
+
 			RAISERROR(@TXT, 16, 1)
 
 			RETURN
@@ -39,21 +51,17 @@ BEGIN
 
 		IF ISNULL(@NAME, N'') <> N''
 			EXEC ('CREATE ROLE [' + @NAME + ']')
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[ROLE_GROUP_INSERT] TO rl_role_group_w;
+GO

@@ -1,36 +1,63 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[PERSONAL_FULL_SELECT]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PERSONAL_FULL_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PERSONAL_FULL_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[PERSONAL_FULL_SELECT]
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-	
-	SELECT PersonalShortName, DepartmentName
-	FROM dbo.PersonalTable
 
-	UNION ALL
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT ManagerName, 'Руководители сервисной службы'
-	FROM dbo.ManagerTable
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	UNION ALL
+	BEGIN TRY
 
-	SELECT ServiceName, 'Сервис-инженеры'
-	FROM dbo.ServiceTable
+		SELECT PersonalShortName, DepartmentName
+		FROM dbo.PersonalTable
 
-	UNION ALL
+		UNION ALL
 
-	SELECT TeacherName, 'Преподаватели'
-	FROM dbo.TeacherTable
+		SELECT ManagerName, 'Р СѓРєРѕРІРѕРґРёС‚РµР»Рё СЃРµСЂРІРёСЃРЅРѕР№ СЃР»СѓР¶Р±С‹'
+		FROM dbo.ManagerTable
 
-	UNION ALL
+		UNION ALL
 
-	SELECT DutyName, 'Дежурная служба'
-	FROM dbo.DutyTable
+		SELECT ServiceName, 'РЎРµСЂРІРёСЃ-РёРЅР¶РµРЅРµСЂС‹'
+		FROM dbo.ServiceTable
 
-	ORDER BY PersonalShortName
+		UNION ALL
+
+		SELECT TeacherName, 'РџСЂРµРїРѕРґР°РІР°С‚РµР»Рё'
+		FROM dbo.TeacherTable
+
+		UNION ALL
+
+		SELECT DutyName, 'Р”РµР¶СѓСЂРЅР°СЏ СЃР»СѓР¶Р±Р°'
+		FROM dbo.DutyTable
+
+		ORDER BY PersonalShortName
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[PERSONAL_FULL_SELECT] TO rl_personal_other_r;
+GO

@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_INSERT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PERSONAL_PHONE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_INSERT]
 	@PERSONAL	UNIQUEIDENTIFIER,
 	@TYPE		UNIQUEIDENTIFIER,
 	@PHONE		NVARCHAR(128),
@@ -14,24 +16,30 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		INSERT INTO Client.CompanyPersonalPhone(ID_PERSONAL, ID_TYPE, PHONE, PHONE_S, NOTE)
-			VALUES(@PERSONAL, @TYPE, @PHONE, @PHONE_S, @NOTE)
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
+		INSERT INTO Client.CompanyPersonalPhone(ID_PERSONAL, ID_TYPE, PHONE, PHONE_S, NOTE, STATUS, UPD_DATE, UPD_USER)
+			VALUES(@PERSONAL, @TYPE, @PHONE, @PHONE_S, @NOTE, 1, GETDATE(), ORIGINAL_LOGIN())
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PERSONAL_PHONE_INSERT] TO rl_company_personal_w;
+GO

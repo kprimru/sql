@@ -1,20 +1,22 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE VIEW [dbo].[AuditDistrView]
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[AuditDistrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[AuditDistrView]  AS SELECT 1')
+GO
+
+ALTER VIEW [dbo].[AuditDistrView]
 AS
-	SELECT 
-		DIS_ID, DIS_STR, 
-		NULL AS TO_ID, NULL AS CL_ID, 
-		'Дистрибутив не распределен клиенту' AS DIS_ER
-	FROM dbo.DistrView
+	SELECT
+		DIS_ID, DIS_STR,
+		NULL AS TO_ID, NULL AS CL_ID,
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СЂР°СЃРїСЂРµРґРµР»РµРЅ РєР»РёРµРЅС‚Сѓ' AS DIS_ER
+	FROM dbo.DistrView WITH(NOEXPAND)
 	WHERE NOT EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.ClientDistrTable
 			WHERE CD_ID_DISTR = DIS_ID
 		)
@@ -22,21 +24,21 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		NULL AS TO_ID, CD_ID_CLIENT AS CL_ID, 
-		'Дистрибутив не распределен в ТО' AS DIS_ER
-	FROM dbo.DistrView a INNER JOIN
+	SELECT
+		DIS_ID, DIS_STR,
+		NULL AS TO_ID, CD_ID_CLIENT AS CL_ID,
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СЂР°СЃРїСЂРµРґРµР»РµРЅ РІ РўРћ' AS DIS_ER
+	FROM dbo.DistrView a WITH(NOEXPAND) INNER JOIN
 		dbo.ClientDistrTable ON DIS_ID = CD_ID_DISTR
 	WHERE NOT EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.TODistrTable
 			WHERE TD_ID_DISTR = DIS_ID
 		)
 		AND EXISTS
 		(
-			SELECT * 
+			SELECT *
 			FROM dbo.ClientDistrTable
 			WHERE CD_ID_DISTR = DIS_ID
 		)
@@ -44,12 +46,12 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		TO_ID, CL_ID, 
-		('Дистрибутив клиента "' + CL_PSEDO + '" разнесен в ТО "' + TO_NAME + '" (' + CONVERT(VARCHAR(20), TO_NUM) + ') не принадлежащую данному клиенту') AS DIS_ER
-	FROM 
-		dbo.DistrView INNER JOIN
+	SELECT
+		DIS_ID, DIS_STR,
+		TO_ID, CL_ID,
+		('Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РєР»РёРµРЅС‚Р° "' + CL_PSEDO + '" СЂР°Р·РЅРµСЃРµРЅ РІ РўРћ "' + TO_NAME + '" (' + CONVERT(VARCHAR(20), TO_NUM) + ') РЅРµ РїСЂРёРЅР°РґР»РµР¶Р°С‰СѓСЋ РґР°РЅРЅРѕРјСѓ РєР»РёРµРЅС‚Сѓ') AS DIS_ER
+	FROM
+		dbo.DistrView WITH(NOEXPAND) INNER JOIN
 		dbo.TODistrTable ON TD_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientDistrTable ON CD_ID_DISTR = DIS_ID INNER JOIN
 		dbo.ClientTable ON CL_ID = CD_ID_CLIENT INNER JOIN
@@ -58,9 +60,9 @@ AS
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		NULL AS TO_ID, CL_ID, 'Признак подхоста на рег.узле и в базе не совпадают' AS DIS_ER
+	SELECT
+		DIS_ID, DIS_STR,
+		NULL AS TO_ID, CL_ID, 'РџСЂРёР·РЅР°Рє РїРѕРґС…РѕСЃС‚Р° РЅР° СЂРµРі.СѓР·Р»Рµ Рё РІ Р±Р°Р·Рµ РЅРµ СЃРѕРІРїР°РґР°СЋС‚' AS DIS_ER
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -72,9 +74,9 @@ AS
 		WHERE rn_subhost != sh_subhost
 
 	UNION ALL
-	SELECT 
-		DIS_ID, DIS_STR, NULL AS TO_ID, CL_ID, 
-		'Названия подхостов на рег.узле и в базе не совпадают' AS DIS_ER
+	SELECT
+		DIS_ID, DIS_STR, NULL AS TO_ID, CL_ID,
+		'РќР°Р·РІР°РЅРёСЏ РїРѕРґС…РѕСЃС‚РѕРІ РЅР° СЂРµРі.СѓР·Р»Рµ Рё РІ Р±Р°Р·Рµ РЅРµ СЃРѕРІРїР°РґР°СЋС‚' AS DIS_ER
 	FROM
 		dbo.ClientDistrView			a
 		INNER JOIN dbo.ClientTable	b	on	a.cd_id_client=b.cl_id
@@ -83,18 +85,18 @@ AS
 		INNER JOIN dbo.RegnodeTable	e	on	a.dis_num=e.rn_distr_num
 									and d.sys_reg_name=e.rn_sys_name
 									and a.dis_comp_num=e.rn_comp_num
-	-- 3.6.09 Денисов А.С. Переправлен щаблон подхоста на РЦ. Вернул на место. Затупил :-)
+	-- 3.6.09 Р”РµРЅРёСЃРѕРІ Рђ.РЎ. РџРµСЂРµРїСЂР°РІР»РµРЅ С‰Р°Р±Р»РѕРЅ РїРѕРґС…РѕСЃС‚Р° РЅР° Р Р¦. Р’РµСЂРЅСѓР» РЅР° РјРµСЃС‚Рѕ. Р—Р°С‚СѓРїРёР» :-)
 	WHERE rn_comment NOT LIKE '%' + sh_lst_name + '%'
 	--WHERE rn_comment NOT LIKE  '(' + sh_lst_name + ')%'
 
 	UNION ALL
 
-	SELECT 
-		DIS_ID, DIS_STR, 
-		TD_ID_TO AS TO_ID, CL_ID, 
-		'Дистрибутив не указан ни в одном действующем договоре' AS DIS_ER
+	SELECT
+		DIS_ID, DIS_STR,
+		TD_ID_TO AS TO_ID, CL_ID,
+		'Р”РёСЃС‚СЂРёР±СѓС‚РёРІ РЅРµ СѓРєР°Р·Р°РЅ РЅРё РІ РѕРґРЅРѕРј РґРµР№СЃС‚РІСѓСЋС‰РµРј РґРѕРіРѕРІРѕСЂРµ' AS DIS_ER
 	FROM
-		dbo.DistrView a LEFT OUTER JOIN
+		dbo.DistrView a WITH(NOEXPAND) LEFT OUTER JOIN
 		dbo.ClientDistrTable b ON CD_ID_DISTR = DIS_ID LEFT OUTER JOIN
 		dbo.DistrServiceStatusTable c ON DSS_ID = CD_ID_SERVICE LEFT OUTER JOIN
 		dbo.ClientTable d ON CL_ID = CD_ID_CLIENT LEFT OUTER JOIN
@@ -103,8 +105,9 @@ AS
 		NOT EXISTS
 			(
 				SELECT *
-				FROM 
+				FROM
 					dbo.ContractTable INNER JOIN
 					dbo.ContractDistrTable ON CO_ID = COD_ID_CONTRACT
 				WHERE CO_ID_CLIENT = CL_ID AND CO_ACTIVE = 1
 			)
+GO

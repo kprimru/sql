@@ -1,14 +1,43 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Subhost].[LETTER_DATA_GET]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Subhost].[LETTER_DATA_GET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Subhost].[LETTER_DATA_GET]  AS SELECT 1')
+GO
+
+ALTER PROCEDURE [Subhost].[LETTER_DATA_GET]
 	@ID	UNIQUEIDENTIFIER
+WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
-	EXEC [PC275-SQL\GAMMA].Letters.dbo.LETTER_DATA_GET @ID
+
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		EXEC [Letters].[dbo.LETTER_DATA_GET] @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Subhost].[LETTER_DATA_GET] TO rl_web_subhost;
+GO

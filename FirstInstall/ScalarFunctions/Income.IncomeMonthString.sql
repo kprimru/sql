@@ -1,10 +1,12 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Income].[IncomeMonthString]
+п»їUSE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[IncomeMonthString]', 'FN') IS NULL EXEC('CREATE FUNCTION [Income].[IncomeMonthString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Income].[IncomeMonthString]
 (
 	@ID	UNIQUEIDENTIFIER
 )
@@ -13,32 +15,32 @@ RETURNS VARCHAR(100)
 AS
 BEGIN
 	DECLARE @PR UNIQUEIDENTIFIER
-	DECLARE @MC TINYINT	
+	DECLARE @MC TINYINT
 
 	SELECT @PR = ID_ID_FIRST_MON, @MC = ID_MON_CNT
 	FROM Income.IncomeDetail
 	WHERE ID_ID = @ID
 
 	DECLARE @RES VARCHAR(100)
-	DECLARE @PR_DATE SMALLDATETIME	
+	DECLARE @PR_DATE SMALLDATETIME
 
-	SELECT 
-		@RES = 
+	SELECT
+		@RES =
 			CASE DATEPART(MONTH, PR_BEGIN_DATE)
-				WHEN 1 THEN 'январь'
-				WHEN 2 THEN 'февраль'
-				WHEN 3 THEN 'март'
-				WHEN 4 THEN 'апрель'
-				WHEN 5 THEN 'май'
-				WHEN 6 THEN 'июнь'
-				WHEN 7 THEN 'июль'
-				WHEN 8 THEN 'август'
-				WHEN 9 THEN 'сентябрь'
-				WHEN 10 THEN 'октябрь'
-				WHEN 11 THEN 'ноябрь'
-				WHEN 12 THEN 'декабрь'
+				WHEN 1 THEN 'СЏРЅРІР°СЂСЊ'
+				WHEN 2 THEN 'С„РµРІСЂР°Р»СЊ'
+				WHEN 3 THEN 'РјР°СЂС‚'
+				WHEN 4 THEN 'Р°РїСЂРµР»СЊ'
+				WHEN 5 THEN 'РјР°Р№'
+				WHEN 6 THEN 'РёСЋРЅСЊ'
+				WHEN 7 THEN 'РёСЋР»СЊ'
+				WHEN 8 THEN 'Р°РІРіСѓСЃС‚'
+				WHEN 9 THEN 'СЃРµРЅС‚СЏР±СЂСЊ'
+				WHEN 10 THEN 'РѕРєС‚СЏР±СЂСЊ'
+				WHEN 11 THEN 'РЅРѕСЏР±СЂСЊ'
+				WHEN 12 THEN 'РґРµРєР°Р±СЂСЊ'
 				ELSE '-'
-			END, 
+			END,
 		@PR_DATE = PR_BEGIN_DATE
 	FROM Common.PeriodDetail
 	WHERE PR_ID_MASTER = @PR
@@ -51,21 +53,22 @@ BEGIN
 			SET @PR_DATE = DATEADD(MONTH, 1, @PR_DATE)
 		END
 		SET @RES = @RES + '-' + CASE DATEPART(MONTH, @PR_DATE)
-				WHEN 1 THEN 'январь'
-				WHEN 2 THEN 'февраль'
-				WHEN 3 THEN 'март'
-				WHEN 4 THEN 'апрель'
-				WHEN 5 THEN 'май'
-				WHEN 6 THEN 'июнь'
-				WHEN 7 THEN 'июль'
-				WHEN 8 THEN 'август'
-				WHEN 9 THEN 'сентябрь'
-				WHEN 10 THEN 'октябрь'
-				WHEN 11 THEN 'ноябрь'
-				WHEN 12 THEN 'декабрь'
+				WHEN 1 THEN 'СЏРЅРІР°СЂСЊ'
+				WHEN 2 THEN 'С„РµРІСЂР°Р»СЊ'
+				WHEN 3 THEN 'РјР°СЂС‚'
+				WHEN 4 THEN 'Р°РїСЂРµР»СЊ'
+				WHEN 5 THEN 'РјР°Р№'
+				WHEN 6 THEN 'РёСЋРЅСЊ'
+				WHEN 7 THEN 'РёСЋР»СЊ'
+				WHEN 8 THEN 'Р°РІРіСѓСЃС‚'
+				WHEN 9 THEN 'СЃРµРЅС‚СЏР±СЂСЊ'
+				WHEN 10 THEN 'РѕРєС‚СЏР±СЂСЊ'
+				WHEN 11 THEN 'РЅРѕСЏР±СЂСЊ'
+				WHEN 12 THEN 'РґРµРєР°Р±СЂСЊ'
 				ELSE '-'
 			END
-	END	
+	END
 
 	RETURN @RES
 END
+GO

@@ -1,13 +1,15 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Income].[IncomeMasterView]
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[IncomeMasterView]', 'V ') IS NULL EXEC('CREATE VIEW [Income].[IncomeMasterView]  AS SELECT 1')
+GO
+ALTER VIEW [Income].[IncomeMasterView]
 WITH SCHEMABINDING
-AS 
-	SELECT 
+AS
+	SELECT
 		IN_ID, IN_DATE, IN_PAY, IN_ID_INCOME,
 		CL_ID, CL_ID_MASTER, CL_NAME,
 		VD_ID, VD_ID_MASTER, VD_NAME
@@ -16,4 +18,7 @@ AS
 		Clients.ClientDetail ON CL_ID_MASTER = IN_ID_CLIENT INNER JOIN
 		Clients.VendorDetail ON VD_ID_MASTER = IN_ID_VENDOR
 	WHERE CL_REF IN (1, 3) AND VD_REF IN (1, 3)
-		
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_Income.IncomeMasterView(IN_ID)] ON [Income].[IncomeMasterView] ([IN_ID] ASC);
+GO

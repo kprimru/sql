@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Poll].[POLL_QUESTION_REPORT]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Poll].[POLL_QUESTION_REPORT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Poll].[POLL_QUESTION_REPORT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Poll].[POLL_QUESTION_REPORT]
 	@BLANK	UNIQUEIDENTIFIER,
 	@BEGIN	SMALLDATETIME,
 	@END	SMALLDATETIME
@@ -12,136 +14,161 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		100 AS TP,
-		QUEST, ANS, CNT, QUEST_ORD, ANS_ORD, 
-		CASE TOTAL_CNT WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, CNT) / TOTAL_CNT, 2) END AS PRC,
-		ID_ANSWER, o_O.ID AS ID_QUESTION
-	FROM 
-		(			
-			SELECT a.ID,
-				a.NAME AS QUEST, b.NAME AS ANS, b.ID AS ID_ANSWER, 
-				(
-					SELECT COUNT(*)
-					FROM 
-						Poll.ClientPollQuestion z
-						INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
-						INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
-					WHERE z.ID_QUESTION = a.ID AND y.ID_ANSWER = b.ID
-						AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-						AND (DATE <= @END OR @END IS NULL)
-				) AS CNT,
-				(
-					SELECT COUNT(*)
-					FROM 
-						Poll.ClientPollQuestion z
-						INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
-						INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
-					WHERE z.ID_QUESTION = a.ID --AND y.ID_ANSWER = b.ID
-						AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-						AND (DATE <= @END OR @END IS NULL)
-				) AS TOTAL_CNT,
-				a.ORD AS QUEST_ORD, b.ORD AS ANS_ORD
-			FROM
-				Poll.Question a
-				INNER JOIN Poll.Answer b ON a.ID = b.ID_QUESTION
-			WHERE ID_BLANK = @BLANK AND TP IN (0, 1)
-		) AS o_O
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UNION ALL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		100 AS TP,
-		QUEST, ANS, CNT, QUEST_ORD, ANS_ORD, 
-		CASE TOTAL_CNT WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, CNT) / TOTAL_CNT, 2) END AS PRC,
-		ID_ANSWER, o_O.ID AS ID_QUESTION
-	FROM 
-		(			
-			SELECT 
-				a.ID,
-				a.NAME AS QUEST, TEXT_ANSWER AS ANS, NULL AS ID_ANSWER, 
-				(
-					SELECT COUNT(*)
-					FROM 
-						Poll.ClientPollQuestion z
-						INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
-						INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
-					WHERE z.ID_QUESTION = a.ID AND y.TEXT_ANSWER = a.TEXT_ANSWER
-						AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-						AND (DATE <= @END OR @END IS NULL)
-				) AS CNT,
-				(
-					SELECT COUNT(*)
-					FROM 
-						Poll.ClientPollQuestion z
-						INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
-						INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
-					WHERE z.ID_QUESTION = a.ID --AND y.ID_ANSWER = b.ID
-						AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-						AND (DATE <= @END OR @END IS NULL)
-				) AS TOTAL_CNT,
-				a.ORD AS QUEST_ORD, ANS_ORD
-			FROM
-				(
-					SELECT DISTINCT a.ID,
-							a.NAME, a.ORD, 0 AS ANS_ORD,
-							TEXT_ANSWER
-					FROM
-						Poll.Question a
-						INNER JOIN Poll.ClientPollQuestion z ON z.ID_QUESTION = a.ID
-						INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
-						INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
-					WHERE a.ID_BLANK = @BLANK AND TP NOT IN (0, 1)
-						AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-						AND (DATE <= @END OR @END IS NULL)
-				) AS a
-		) AS o_O
-		
-	UNION ALL
+	BEGIN TRY
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		1 AS TP,
-		'Êîëè÷åñòâî àíêåò', '',
-		COUNT(*), 0, 1, NULL, NULL, NULL
-	FROM Poll.ClientPoll
-	WHERE ID_BLANK = @BLANK
-		AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-		AND (DATE <= @END OR @END IS NULL)
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			100 AS TP,
+			QUEST, ANS, CNT, QUEST_ORD, ANS_ORD,
+			CASE TOTAL_CNT WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, CNT) / TOTAL_CNT, 2) END AS PRC,
+			ID_ANSWER, o_O.ID AS ID_QUESTION
+		FROM
+			(
+				SELECT a.ID,
+					a.NAME AS QUEST, b.NAME AS ANS, b.ID AS ID_ANSWER,
+					(
+						SELECT COUNT(*)
+						FROM
+							Poll.ClientPollQuestion z
+							INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+							INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+						WHERE z.ID_QUESTION = a.ID AND y.ID_ANSWER = b.ID
+							AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+							AND (DATE <= @END OR @END IS NULL)
+					) AS CNT,
+					(
+						SELECT COUNT(*)
+						FROM
+							Poll.ClientPollQuestion z
+							INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+							INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+						WHERE z.ID_QUESTION = a.ID --AND y.ID_ANSWER = b.ID
+							AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+							AND (DATE <= @END OR @END IS NULL)
+					) AS TOTAL_CNT,
+					a.ORD AS QUEST_ORD, b.ORD AS ANS_ORD
+				FROM
+					Poll.Question a
+					INNER JOIN Poll.Answer b ON a.ID = b.ID_QUESTION
+				WHERE ID_BLANK = @BLANK AND TP IN (0, 1)
+			) AS o_O
 
-	UNION ALL
+		UNION ALL
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		1 AS TP,
-		'Êëèåíòîâ îïðîøåíî', '',
-		COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
-	FROM Poll.ClientPoll
-	WHERE ID_BLANK = @BLANK
-		AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-		AND (DATE <= @END OR @END IS NULL)
-		
-	UNION ALL
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			100 AS TP,
+			QUEST, ANS, CNT, QUEST_ORD, ANS_ORD,
+			CASE TOTAL_CNT WHEN 0 THEN 0 ELSE ROUND(100 * CONVERT(FLOAT, CNT) / TOTAL_CNT, 2) END AS PRC,
+			ID_ANSWER, o_O.ID AS ID_QUESTION
+		FROM
+			(
+				SELECT
+					a.ID,
+					a.NAME AS QUEST, TEXT_ANSWER AS ANS, NULL AS ID_ANSWER,
+					(
+						SELECT COUNT(*)
+						FROM
+							Poll.ClientPollQuestion z
+							INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+							INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+						WHERE z.ID_QUESTION = a.ID AND y.TEXT_ANSWER = a.TEXT_ANSWER
+							AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+							AND (DATE <= @END OR @END IS NULL)
+					) AS CNT,
+					(
+						SELECT COUNT(*)
+						FROM
+							Poll.ClientPollQuestion z
+							INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+							INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+						WHERE z.ID_QUESTION = a.ID --AND y.ID_ANSWER = b.ID
+							AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+							AND (DATE <= @END OR @END IS NULL)
+					) AS TOTAL_CNT,
+					a.ORD AS QUEST_ORD, ANS_ORD
+				FROM
+					(
+						SELECT DISTINCT a.ID,
+								a.NAME, a.ORD, 0 AS ANS_ORD,
+								TEXT_ANSWER
+						FROM
+							Poll.Question a
+							INNER JOIN Poll.ClientPollQuestion z ON z.ID_QUESTION = a.ID
+							INNER JOIN Poll.ClientPollAnswer y ON y.ID_QUESTION = z.ID
+							INNER JOIN Poll.ClientPoll x ON x.ID = z.ID_POLL
+						WHERE a.ID_BLANK = @BLANK AND TP NOT IN (0, 1)
+							AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+							AND (DATE <= @END OR @END IS NULL)
+					) AS a
+			) AS o_O
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		2 AS TP,
-		'Äàòû àíêåò ñ ' + CONVERT(VARCHAR(20), MIN(DATE), 104) + ' ïî ' + CONVERT(VARCHAR(20), MAX(DATE), 104), '',
-		COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
-	FROM Poll.ClientPoll
-	WHERE ID_BLANK = @BLANK
-		AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-		AND (DATE <= @END OR @END IS NULL)
+		UNION ALL
 
-	UNION ALL
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			1 AS TP,
+			'ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð°Ð½ÐºÐµÑ‚', '',
+			COUNT(*), 0, 1, NULL, NULL, NULL
+		FROM Poll.ClientPoll
+		WHERE ID_BLANK = @BLANK
+			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+			AND (DATE <= @END OR @END IS NULL)
 
-	SELECT 
-		CONVERT(BIT, 0) AS CHECKED,
-		3 AS TP,
-		'-------------------------------------------', '',
-		NULL, 0, 3, NULL, NULL, NULL
+		UNION ALL
 
-	ORDER BY QUEST_ORD, ANS_ORD
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			1 AS TP,
+			'ÐšÐ»Ð¸ÐµÐ½Ñ‚Ð¾Ð² Ð¾Ð¿Ñ€Ð¾ÑˆÐµÐ½Ð¾', '',
+			COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
+		FROM Poll.ClientPoll
+		WHERE ID_BLANK = @BLANK
+			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+			AND (DATE <= @END OR @END IS NULL)
+
+		UNION ALL
+
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			2 AS TP,
+			'Ð”Ð°Ñ‚Ñ‹ Ð°Ð½ÐºÐµÑ‚ Ñ ' + CONVERT(VARCHAR(20), MIN(DATE), 104) + ' Ð¿Ð¾ ' + CONVERT(VARCHAR(20), MAX(DATE), 104), '',
+			COUNT(DISTINCT ID_CLIENT), 0, 2, NULL, NULL, NULL
+		FROM Poll.ClientPoll
+		WHERE ID_BLANK = @BLANK
+			AND (DATE >= @BEGIN OR @BEGIN IS NULL)
+			AND (DATE <= @END OR @END IS NULL)
+
+		UNION ALL
+
+		SELECT
+			CONVERT(BIT, 0) AS CHECKED,
+			3 AS TP,
+			'-------------------------------------------', '',
+			NULL, 0, 3, NULL, NULL, NULL
+
+		ORDER BY QUEST_ORD, ANS_ORD
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Poll].[POLL_QUESTION_REPORT] TO rl_blank_report;
+GO

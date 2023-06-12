@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:		  Денисов Алексей
-Дата создания: 20.11.2008
-Описание:	  Изменить данные о типе прейскуранта
-               с указанным кодом
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[PRICE_TYPE_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[PRICE_TYPE_EDIT]  AS SELECT 1')
+GO
+/*
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 20.11.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ С‚РёРїРµ РїСЂРµР№СЃРєСѓСЂР°РЅС‚Р°
+               СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј
 */
-CREATE PROCEDURE [dbo].[PRICE_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[PRICE_TYPE_EDIT]
 	@pricetypeid SMALLINT,
 	@pricetypename VARCHAR(50),
 	@group SMALLINT,
@@ -21,17 +23,40 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.PriceTypeTable 
-	SET PT_NAME = @pricetypename,
-		PT_ID_GROUP = @group,
-		PT_COEF = @coef,
-		PT_ORDER = @order,
-		PT_ACTIVE = @active
-	WHERE PT_ID = @pricetypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	UPDATE dbo.FieldTable
-	SET FL_CAPTION = @pricetypename
-	WHERE FL_NAME = 'PS_PRICE_' + CONVERT(VARCHAR, @pricetypeid)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.PriceTypeTable
+		SET PT_NAME = @pricetypename,
+			PT_ID_GROUP = @group,
+			PT_COEF = @coef,
+			PT_ORDER = @order,
+			PT_ACTIVE = @active
+		WHERE PT_ID = @pricetypeid
+
+		UPDATE dbo.FieldTable
+		SET FL_CAPTION = @pricetypename
+		WHERE FL_NAME = 'PS_PRICE_' + CONVERT(VARCHAR, @pricetypeid)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[PRICE_TYPE_EDIT] TO rl_price_type_w;
+GO

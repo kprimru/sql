@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [SaleDB].[System.Systems] FOR [SaleDB].[System].[Systems];

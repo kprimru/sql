@@ -1,31 +1,33 @@
-USE [BuhDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE dbo.OPEN_DOC_STATUS_SP
-	@docid nvarchar(128), 
+п»їUSE [BuhDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[OPEN_DOC_STATUS_SP]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[OPEN_DOC_STATUS_SP]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[OPEN_DOC_STATUS_SP]
+	@docid nvarchar(128),
 	@action tinyint,
-	@hostname varchar(128) out,             
+	@hostname varchar(128) out,
              @loginame varchar(128) out,
              @tablename varchar(128),
              @ntname varchar(128)  = NULL out
 
---Процедура отслеживания документов, открытых в режиме редактирования
--- Входные параметры:
---  @docid - идентификатор документа
---  @action - 1-документ открывается; 2- документ закрывается, 3 - документ удаляется
--- Выходные параметры:
---   RETURN -1 Уже открыт, 0 Еще не открыт
---  @hostname - рабочая станция
---  @ntname - логин пользователя
---  @loginame - имя пользователя
---  @tablename - название таблицы
+--РџСЂРѕС†РµРґСѓСЂР° РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ РґРѕРєСѓРјРµРЅС‚РѕРІ, РѕС‚РєСЂС‹С‚С‹С… РІ СЂРµР¶РёРјРµ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
+-- Р’С…РѕРґРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹:
+--  @docid - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РґРѕРєСѓРјРµРЅС‚Р°
+--  @action - 1-РґРѕРєСѓРјРµРЅС‚ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ; 2- РґРѕРєСѓРјРµРЅС‚ Р·Р°РєСЂС‹РІР°РµС‚СЃСЏ, 3 - РґРѕРєСѓРјРµРЅС‚ СѓРґР°Р»СЏРµС‚СЃСЏ
+-- Р’С‹С…РѕРґРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹:
+--   RETURN -1 РЈР¶Рµ РѕС‚РєСЂС‹С‚, 0 Р•С‰Рµ РЅРµ РѕС‚РєСЂС‹С‚
+--  @hostname - СЂР°Р±РѕС‡Р°СЏ СЃС‚Р°РЅС†РёСЏ
+--  @ntname - Р»РѕРіРёРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+--  @loginame - РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+--  @tablename - РЅР°Р·РІР°РЅРёРµ С‚Р°Р±Р»РёС†С‹
 
 AS
   SET NOCOUNT ON
- -- Попытка открытия записи. Если она открыта, то возвращаем -1 и станцию с пользователем
+ -- РџРѕРїС‹С‚РєР° РѕС‚РєСЂС‹С‚РёСЏ Р·Р°РїРёСЃРё. Р•СЃР»Рё РѕРЅР° РѕС‚РєСЂС‹С‚Р°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј -1 Рё СЃС‚Р°РЅС†РёСЋ СЃ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
   IF @action = 1 BEGIN
     IF EXISTS(SELECT DOC_EDITING_STATUS.*
               FROM DOC_EDITING_STATUS
@@ -35,17 +37,17 @@ AS
                    DOC_EDITING_STATUS.hostprocess = sysproc.hostprocess AND
                    DOC_EDITING_STATUS.ntname = sysproc.nt_username AND
                    DOC_EDITING_STATUS.loginame = sysproc.loginame AND
-                   DOC_EDITING_STATUS.login_time = sysproc.login_time                   
+                   DOC_EDITING_STATUS.login_time = sysproc.login_time
               WHERE DOC_EDITING_STATUS.docid = @docid AND DOC_EDITING_STATUS.tablename = @tablename) BEGIN
-	      SELECT 
-		@hostname = DOC_EDITING_STATUS.hostname, 
+	      SELECT
+		@hostname = DOC_EDITING_STATUS.hostname,
 		@loginame = DOC_EDITING_STATUS.loginame,
 		@ntname = DOC_EDITING_STATUS.ntname
 	      FROM DOC_EDITING_STATUS
 	      WHERE docid = @docid AND tablename = @tablename
-	      RETURN(-1)  -- запись занята
+	      RETURN(-1)  -- Р·Р°РїРёСЃСЊ Р·Р°РЅСЏС‚Р°
 	END
-    ELSE BEGIN -- Открываем запись и вносим данные о ее открытии в табл. DOC_EDITING_STATUS
+    ELSE BEGIN -- РћС‚РєСЂС‹РІР°РµРј Р·Р°РїРёСЃСЊ Рё РІРЅРѕСЃРёРј РґР°РЅРЅС‹Рµ Рѕ РµРµ РѕС‚РєСЂС‹С‚РёРё РІ С‚Р°Р±Р». DOC_EDITING_STATUS
       DELETE DOC_EDITING_STATUS
       WHERE docid = @docid AND tablename=@tablename
       INSERT INTO DOC_EDITING_STATUS(docid, spid, hostname, hostprocess, loginame, login_time, tablename, ntname)
@@ -59,12 +61,12 @@ AS
              sysproc.nt_username
       FROM master..sysprocesses sysproc
       WHERE sysproc.spid = @@spid
-      RETURN(0)  -- запись свободна для открытия и открывается. данные сохраняются в табл DOC_EDITING_STATUS
+      RETURN(0)  -- Р·Р°РїРёСЃСЊ СЃРІРѕР±РѕРґРЅР° РґР»СЏ РѕС‚РєСЂС‹С‚РёСЏ Рё РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ. РґР°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ С‚Р°Р±Р» DOC_EDITING_STATUS
     END
   END
 
--- запись очищается только тем процессом который ее открыл
-  IF @action = 2 BEGIN -- Закрытие записи и удаление информации о ней
+-- Р·Р°РїРёСЃСЊ РѕС‡РёС‰Р°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ С‚РµРј РїСЂРѕС†РµСЃСЃРѕРј РєРѕС‚РѕСЂС‹Р№ РµРµ РѕС‚РєСЂС‹Р»
+  IF @action = 2 BEGIN -- Р—Р°РєСЂС‹С‚РёРµ Р·Р°РїРёСЃРё Рё СѓРґР°Р»РµРЅРёРµ РёРЅС„РѕСЂРјР°С†РёРё Рѕ РЅРµР№
     DELETE DOC_EDITING_STATUS
     WHERE docid = @docid AND
           spid = @@spid AND
@@ -72,7 +74,7 @@ AS
     RETURN(0)
   END
 
---  -- Попытка удаления записи. Если она открыта, то возвращаем -1 и станцию с пользователем
+--  -- РџРѕРїС‹С‚РєР° СѓРґР°Р»РµРЅРёСЏ Р·Р°РїРёСЃРё. Р•СЃР»Рё РѕРЅР° РѕС‚РєСЂС‹С‚Р°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј -1 Рё СЃС‚Р°РЅС†РёСЋ СЃ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
   IF @action = 3 BEGIN
     IF EXISTS(SELECT DOC_EDITING_STATUS.*
               FROM DOC_EDITING_STATUS
@@ -84,13 +86,13 @@ AS
                    DOC_EDITING_STATUS.loginame = sysproc.loginame AND
                    DOC_EDITING_STATUS.login_time = sysproc.login_time
               WHERE DOC_EDITING_STATUS.docid = @docid AND DOC_EDITING_STATUS.tablename = @tablename) BEGIN
-	      SELECT 
+	      SELECT
 		@hostname = DOC_EDITING_STATUS.hostname,
 		@ntname = DOC_EDITING_STATUS.ntname,
              		@loginame = DOC_EDITING_STATUS.loginame
        	     FROM DOC_EDITING_STATUS
       	     WHERE docid = @docid AND tablename=@tablename
-      	     RETURN(-1) -- запись занята
+      	     RETURN(-1) -- Р·Р°РїРёСЃСЊ Р·Р°РЅСЏС‚Р°
     	END
     ELSE BEGIN
       DELETE DOC_EDITING_STATUS
@@ -100,6 +102,12 @@ AS
       RETURN(0)
     END
   END
-  
+
   SET NOCOUNT OFF
 RETURN(0)
+GO
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBAdministrator;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBCount;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBPrice;
+GRANT EXECUTE ON [dbo].[OPEN_DOC_STATUS_SP] TO DBPriceReader;
+GO

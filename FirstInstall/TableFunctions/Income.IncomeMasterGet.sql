@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Income].[IncomeMasterGet]
-(	
+п»їUSE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[IncomeMasterGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [Income].[IncomeMasterGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Income].[IncomeMasterGet]
+(
 	@ID_ID	UNIQUEIDENTIFIER
 )
-RETURNS 
-@TBL TABLE 
+RETURNS
+@TBL TABLE
 (
 	ID_ID UNIQUEIDENTIFIER
 )
@@ -17,27 +19,27 @@ AS
 BEGIN
 	INSERT INTO @TBL
 		/*
-			Выбирает все Detail-записи платежа, 
-			в который входит текущая запись, и платеж основной
+			Р’С‹Р±РёСЂР°РµС‚ РІСЃРµ Detail-Р·Р°РїРёСЃРё РїР»Р°С‚РµР¶Р°,
+			РІ РєРѕС‚РѕСЂС‹Р№ РІС…РѕРґРёС‚ С‚РµРєСѓС‰Р°СЏ Р·Р°РїРёСЃСЊ, Рё РїР»Р°С‚РµР¶ РѕСЃРЅРѕРІРЅРѕР№
 		*/
 		SELECT ID_ID
-		FROM 
+		FROM
 			Income.IncomeDetail a INNER JOIN
 			Income.Incomes b ON a.ID_ID_INCOME = b.IN_ID
-		WHERE IN_ID = 
+		WHERE IN_ID =
 			(
 				SELECT ID_ID_INCOME
 				FROM Income.IncomeDetail
 				WHERE ID_ID = @ID_ID
 			) AND IN_ID_INCOME IS NULL
 
-		UNION			
+		UNION
 
 		/*
-			Выбирает все основные части для подчиненных
+			Р’С‹Р±РёСЂР°РµС‚ РІСЃРµ РѕСЃРЅРѕРІРЅС‹Рµ С‡Р°СЃС‚Рё РґР»СЏ РїРѕРґС‡РёРЅРµРЅРЅС‹С…
 		*/
 		SELECT d.ID_ID
-		FROM 
+		FROM
 			Income.IncomeDetail a INNER JOIN
 			Income.Incomes b ON a.ID_ID_INCOME = b.IN_ID INNER JOIN
 			Income.Incomes c ON c.IN_ID = b.IN_ID_INCOME INNER JOIN
@@ -47,7 +49,8 @@ BEGIN
 				SELECT ID_ID_INCOME
 				FROM Income.IncomeDetail
 				WHERE ID_ID = @ID_ID
-			)		
-	
-	RETURN 
+			)
+
+	RETURN
 END
+GO

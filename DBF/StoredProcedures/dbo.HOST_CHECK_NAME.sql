@@ -1,26 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[HOST_CHECK_NAME]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[HOST_CHECK_NAME]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 18.11.2008
-Описание:	  Возвращает хоста с указанным 
-                названием. 
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 18.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ С…РѕСЃС‚Р° СЃ СѓРєР°Р·Р°РЅРЅС‹Рј
+                РЅР°Р·РІР°РЅРёРµРј.
 */
 
-CREATE PROCEDURE [dbo].[HOST_CHECK_NAME] 
+ALTER PROCEDURE [dbo].[HOST_CHECK_NAME]
 	@hostname VARCHAR(20)
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT HST_ID
-	FROM dbo.HostTable
-	WHERE HST_NAME = @hostname
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT HST_ID
+		FROM dbo.HostTable
+		WHERE HST_NAME = @hostname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[HOST_CHECK_NAME] TO rl_host_w;
+GO

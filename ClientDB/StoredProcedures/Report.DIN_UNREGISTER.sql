@@ -1,53 +1,85 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[DIN_UNREGISTER]
+ÔªøUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[DIN_UNREGISTER]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[DIN_UNREGISTER]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[DIN_UNREGISTER]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 
-		dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [ƒËÒÚË·ÛÚË‚],
-		NT_SHORT AS [—ÂÚ¸], SST_SHORT AS [“ËÔ], dbo.DateOf(DF_CREATE) AS [œÓÎÛ˜ÂÌ],
-		dbo.DistrWeight(SystemID, DistrTypeID, SystemTypeName, dbo.MonthOf(GETDATE())) AS [¬ÂÒ]
-	FROM
-		(
-			SELECT DISTINCT 
-				--HostID, DF_DISTR, DF_COMP,
-				(
-					SELECT TOP 1 DF_ID
-					FROM 
-						Din.DinFiles z
-						INNER JOIN dbo.SystemTable y ON z.DF_ID_SYS = y.SystemID
-					WHERE y.HostID = b.HostID
-						AND z.DF_DISTR = a.DF_DISTR
-						AND z.DF_COMP = a.DF_COMP
-					ORDER BY DF_CREATE DESC
-				) AS DF_ID
-			FROM 
-				Din.DinFiles a
-				INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
-			WHERE NOT EXISTS
-				(
-					SELECT *
-					FROM 
-						dbo.RegNodeTable z
-						INNER JOIN dbo.SystemTable y ON z.SystemName = y.SystemBaseName
-					WHERE y.HostID = b.HostID
-						AND z.DistrNumber = DF_DISTR
-						AND z.CompNumber = DF_COMP
-				) AND DF_RIC = 20
-		) AS a
-		INNER JOIN Din.DinFiles b ON a.DF_ID = b.DF_ID
-		INNER JOIN dbo.SystemTable c ON c.SystemID = b.DF_ID_SYS
-		INNER JOIN Din.NetType d ON d.NT_ID = b.DF_ID_NET
-		INNER JOIN Din.SystemType e ON e.SST_ID = b.DF_ID_TYPE
-		INNER JOIN dbo.DistrTypeTable f ON f.DistrTypeID = NT_ID_MASTER
-		INNER JOIN dbo.SystemTypeTable g ON g.SystemTypeID = SST_ID_MASTER
-	WHERE /*NT_SHORT <> 'ÏÓ·ËÎ¸Ì‡ˇ' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> 'ƒ—œ'
-	ORDER BY /*SST_SHORT, */SystemOrder, DF_DISTR, DF_COMP
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT
+			dbo.DistrString(SystemShortName, DF_DISTR, DF_COMP) AS [–î–∏—Å—Ç—Ä–∏–±—É—Ç–∏–≤],
+			NT_SHORT AS [–°–µ—Ç—å], SST_SHORT AS [–¢–∏–ø], dbo.DateOf(DF_CREATE) AS [–ü–æ–ª—É—á–µ–Ω],
+			(
+				SELECT TOP 1 WEIGHT
+				FROM dbo.Weight W
+				WHERE W.System_Id = b.DF_ID_SYS
+					AND W.NetType_Id = b.DF_ID_NET
+					AND W.SystemType_Id = b.DF_ID_TYPE
+				ORDER BY W.DATE DESC
+			) AS [–í–µ—Å]
+		FROM
+			(
+				SELECT DISTINCT
+					--HostID, DF_DISTR, DF_COMP,
+					(
+						SELECT TOP 1 DF_ID
+						FROM Din.DinView z WITH(NOEXPAND)
+						WHERE z.HostID = b.HostID
+							AND z.DF_DISTR = a.DF_DISTR
+							AND z.DF_COMP = a.DF_COMP
+						ORDER BY DF_CREATE DESC
+					) AS DF_ID
+				FROM
+					Din.DinFiles a
+					INNER JOIN dbo.SystemTable b ON a.DF_ID_SYS = b.SystemID
+				WHERE NOT EXISTS
+					(
+						SELECT *
+						FROM Reg.RegNodeSearchView z WITH(NOEXPAND)
+						WHERE z.HostID = b.HostID
+							AND z.DistrNumber = DF_DISTR
+							AND z.CompNumber = DF_COMP
+					) AND DF_RIC = 20
+			) AS a
+			INNER JOIN Din.DinFiles b ON a.DF_ID = b.DF_ID
+			INNER JOIN dbo.SystemTable c ON c.SystemID = b.DF_ID_SYS
+			INNER JOIN Din.NetType d ON d.NT_ID = b.DF_ID_NET
+			INNER JOIN Din.SystemType e ON e.SST_ID = b.DF_ID_TYPE
+			INNER JOIN dbo.DistrTypeTable f ON f.DistrTypeID = NT_ID_MASTER
+			INNER JOIN dbo.SystemTypeTable g ON g.SystemTypeID = SST_ID_MASTER
+		WHERE /*NT_SHORT <> '–º–æ–±–∏–ª—å–Ω–∞—è' AND */DATEDIFF(MONTH, DF_CREATE, GETDATE()) <= 6 AND SST_SHORT <> '–î–°–ü'
+		ORDER BY /*SST_SHORT, */SystemOrder, DF_DISTR, DF_COMP
+		-- –±–µ–∑ —ç—Ç–æ–≥–æ –∫—Ä–∏–≤–æ –¥–∂–æ–π–Ω–∏—Ç
+		OPTION(FORCE ORDER)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[DIN_UNREGISTER] TO rl_report;
+GO

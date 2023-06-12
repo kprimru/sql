@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[MonthString]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[MonthString]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[MonthString] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [dbo].[MonthString]
 (
 	@DT	DATETIME
 )
@@ -14,18 +16,19 @@ AS
 BEGIN
 
 	RETURN CASE DATEPART(MONTH, @DT)
-			WHEN 1 THEN 'Январь'
-			WHEN 2 THEN 'Февраль'
-			WHEN 3 THEN 'Март'
-			WHEN 4 THEN 'Апрель'
-			WHEN 5 THEN 'Май'
-			WHEN 6 THEN 'Июнь'
-			WHEN 7 THEN 'Июль'
-			WHEN 8 THEN 'Август'
-			WHEN 9 THEN 'Сентябрь'
-			WHEN 10 THEN 'Октябрь'
-			WHEN 11 THEN 'Ноябрь'
-			WHEN 12 THEN 'Декабрь'
+			WHEN 1 THEN 'РЇРЅРІР°СЂСЊ'
+			WHEN 2 THEN 'Р¤РµРІСЂР°Р»СЊ'
+			WHEN 3 THEN 'РњР°СЂС‚'
+			WHEN 4 THEN 'РђРїСЂРµР»СЊ'
+			WHEN 5 THEN 'РњР°Р№'
+			WHEN 6 THEN 'РСЋРЅСЊ'
+			WHEN 7 THEN 'РСЋР»СЊ'
+			WHEN 8 THEN 'РђРІРіСѓСЃС‚'
+			WHEN 9 THEN 'РЎРµРЅС‚СЏР±СЂСЊ'
+			WHEN 10 THEN 'РћРєС‚СЏР±СЂСЊ'
+			WHEN 11 THEN 'РќРѕСЏР±СЂСЊ'
+			WHEN 12 THEN 'Р”РµРєР°Р±СЂСЊ'
 			ELSE NULL
 		END + ' ' + CONVERT(VARCHAR(20), DATEPART(YEAR, @DT))
 END
+GO

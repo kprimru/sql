@@ -1,13 +1,15 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
-CREATE VIEW [dbo].[InvoiceFullView]
+﻿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[InvoiceFullView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[InvoiceFullView]  AS SELECT 1')
+GO
+
+ALTER VIEW [dbo].[InvoiceFullView]
 AS
-SELECT 
+SELECT
 		INS_ID,
 		INR_ID_INVOICE,
 		INS_ID_CLIENT, INS_ID_ORG, INS_NUM, INS_NUM_YEAR, INS_DATE,
@@ -29,9 +31,10 @@ SELECT
 
 		FROM	dbo.InvoiceSaleTable	A									INNER JOIN
 				dbo.InvoiceRowTable		B	ON	A.INS_ID=B.INR_ID_INVOICE	LEFT JOIN
-				dbo.DistrView			C	ON	B.INR_ID_DISTR=C.DIS_ID		INNER JOIN
+				dbo.DistrView			C WITH(NOEXPAND)	ON	B.INR_ID_DISTR=C.DIS_ID		INNER JOIN
 				dbo.OrganizationView	D	ON	A.INS_ID_ORG=D.ORG_ID		LEFT JOIN
 				dbo.SaleObjectTable		E	ON	C.SYS_ID_SO=E.SO_ID			INNER JOIN
 				dbo.ClientTable			F	ON	A.INS_ID_CLIENT=F.CL_ID
 		/*WHERE	INR_ID_PERIOD=@prid	AND
 				SYS_ID_SO	 =@soid*/
+GO

@@ -1,15 +1,17 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Distr].[DistrTypeDeleted]
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Distr].[DistrTypeDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Distr].[DistrTypeDeleted]  AS SELECT 1')
+GO
+ALTER VIEW [Distr].[DistrTypeDeleted]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		DT_ID_MASTER, DT_ID, DT_NAME, 
+	SELECT
+		DT_ID_MASTER, DT_ID, DT_NAME,
 		DT_SHORT, DT_REG, DT_DATE, DT_END
-	FROM 
+	FROM
 		Distr.DistrTypeAll a
-	WHERE DT_REF = 3
+	WHERE DT_REF = 3GO

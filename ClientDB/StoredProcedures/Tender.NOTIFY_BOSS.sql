@@ -1,34 +1,61 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Tender].[NOTIFY_BOSS]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Tender].[NOTIFY_BOSS]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Tender].[NOTIFY_BOSS]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Tender].[NOTIFY_BOSS]
 	@TENDER	UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT 		
-		'Добрый день!' + CHAR(10) + CLIENT + ' проводит ' + TENDER_TYPE + ' на ' + SUBJECT + '.' + CHAR(10) + CHAR(10) + 
-		'Подача документов до ' + ISNULL(CONVERT(NVARCHAR(32), CLAIM_FINISH, 104) + ' г.', '') + CHAR(10) +
-		'По правилам, указанным в письме исх. № 18150/2011 от 25.08.2011г.' + CHAR(10) +
-		'Уведомления должны быть отправлены не позднее 2-го рабочего дня, т.е. до ' + CONVERT(NVARCHAR(32), DATEADD(DAY, 2, DATE), 104) + ' г. ' + CHAR(10) + 
-		'В связи с этим прошу разрешить отправку Уведомлений в КЦ КонсультантПлюс и в РИЦ 490.'
-				AS MAIL_BODY		
-	FROM
-		(
-			SELECT				
-				b.CLIENT,
-				d.PK_NAME AS [TENDER_TYPE], c.URL,
-				c.SUBJECT,					
-				CLAIM_FINISH,
-				c.DATE
-			FROM 
-				Tender.Tender b
-				INNER JOIN Tender.Placement c ON b.ID = c.ID_TENDER
-				INNER JOIN Purchase.PurchaseKind d ON c.ID_TYPE = d.PK_ID
-			WHERE b.ID = @TENDER
-		) AS o_O	
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT 
+			'Р”РѕР±СЂС‹Р№ РґРµРЅСЊ!' + CHAR(10) + CLIENT + ' РїСЂРѕРІРѕРґРёС‚ ' + TENDER_TYPE + ' РЅР° ' + SUBJECT + '.' + CHAR(10) + CHAR(10) +
+			'РџРѕРґР°С‡Р° РґРѕРєСѓРјРµРЅС‚РѕРІ РґРѕ ' + ISNULL(CONVERT(NVARCHAR(32), CLAIM_FINISH, 104) + ' Рі.', '') + CHAR(10) +
+			'РџРѕ РїСЂР°РІРёР»Р°Рј, СѓРєР°Р·Р°РЅРЅС‹Рј РІ РїРёСЃСЊРјРµ РёСЃС…. в„– 18150/2011 РѕС‚ 25.08.2011Рі.' + CHAR(10) +
+			'РЈРІРµРґРѕРјР»РµРЅРёСЏ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РѕС‚РїСЂР°РІР»РµРЅС‹ РЅРµ РїРѕР·РґРЅРµРµ 2-РіРѕ СЂР°Р±РѕС‡РµРіРѕ РґРЅСЏ, С‚.Рµ. РґРѕ ' + CONVERT(NVARCHAR(32), DATEADD(DAY, 2, DATE), 104) + ' Рі. ' + CHAR(10) +
+			'Р’ СЃРІСЏР·Рё СЃ СЌС‚РёРј РїСЂРѕС€Сѓ СЂР°Р·СЂРµС€РёС‚СЊ РѕС‚РїСЂР°РІРєСѓ РЈРІРµРґРѕРјР»РµРЅРёР№ РІ РљР¦ РљРѕРЅСЃСѓР»СЊС‚Р°РЅС‚РџР»СЋСЃ Рё РІ Р РР¦ 490.'
+					AS MAIL_BODY
+		FROM
+			(
+				SELECT
+					b.CLIENT,
+					d.PK_NAME AS [TENDER_TYPE], c.URL,
+					c.SUBJECT,
+					CLAIM_FINISH,
+					c.DATE
+				FROM
+					Tender.Tender b
+					INNER JOIN Tender.Placement c ON b.ID = c.ID_TENDER
+					INNER JOIN Purchase.PurchaseKind d ON c.ID_TYPE = d.PK_ID
+				WHERE b.ID = @TENDER
+			) AS o_O
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Tender].[NOTIFY_BOSS] TO rl_tender_r;
+GO

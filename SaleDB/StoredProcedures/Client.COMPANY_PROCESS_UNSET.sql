@@ -1,19 +1,31 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PROCESS_UNSET]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PROCESS_UNSET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PROCESS_UNSET]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_UNSET]
 	@ID		UNIQUEIDENTIFIER,
 	@PHONE	BIT,
 	@SALE	BIT,
-	@DATE	SMALLDATETIME	
+	@DATE	SMALLDATETIME
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
 		IF @PHONE = 1
 		BEGIN
 			UPDATE Client.CompanyProcess
@@ -21,11 +33,11 @@ BEGIN
 				RETURN_DATE = GETDATE(),
 				RETURN_USER = ORIGINAL_LOGIN()
 			WHERE ID_COMPANY = @ID
-				AND EDATE IS NULL 
+				AND EDATE IS NULL
 				AND PROCESS_TYPE = N'PHONE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение телефонного агента - Возврат'
+				SELECT @ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
@@ -33,7 +45,7 @@ BEGIN
 					AND b.EDATE IS NULL
 					AND PROCESS_TYPE = N'PHONE'
 		END
-	
+
 		IF @SALE = 1
 		BEGIN
 			UPDATE Client.CompanyProcess
@@ -41,35 +53,31 @@ BEGIN
 				RETURN_DATE = GETDATE(),
 				RETURN_USER = ORIGINAL_LOGIN()
 			WHERE ID_COMPANY = @ID
-				AND EDATE IS NULL 
+				AND EDATE IS NULL
 				AND PROCESS_TYPE = N'SALE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT @ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение торгового представителя - Возврат'
+				SELECT @ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
 				WHERE a.ID = @ID
 					AND b.EDATE IS NULL
 					AND PROCESS_TYPE = N'SALE'
-		END		
+		END
 
 		EXEC Client.COMPANY_REINDEX @ID
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_UNSET] TO rl_company_process_w;
+GO

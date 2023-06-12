@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_CALL_FILTER]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_CALL_FILTER]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_CALL_FILTER]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_CALL_FILTER]
 	@BEGIN		SMALLDATETIME,
 	@END		SMALLDATETIME,
 	@PERSONAL	UNIQUEIDENTIFIER,
@@ -20,6 +22,16 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		SET @END = DATEADD(DAY, 1, @END)
 
@@ -29,7 +41,7 @@ BEGIN
 		CREATE TABLE #words
 				(
 					WRD		VARCHAR(250) PRIMARY KEY
-				)		
+				)
 
 		IF @TEXT IS NOT NULL
 			INSERT INTO #words(WRD)
@@ -38,7 +50,7 @@ BEGIN
 
 		IF OBJECT_ID('tempdb..#call') IS NOT NULL
 			DROP TABLE #call
-			
+
 		CREATE TABLE #call
 			(
 				ID			UNIQUEIDENTIFIER,
@@ -53,9 +65,9 @@ BEGIN
 			)
 
 		INSERT INTO #call(ID, CO_NAME, NUMBER, DATE, CL_PERSONAL, NOTE, PER_SHORT, DATA, MEETING)
-			SELECT 
+			SELECT
 				b.ID AS ID,
-				b.NAME AS CO_NAME, b.NUMBER, DATE, CL_PERSONAL, NOTE, 
+				b.NAME AS CO_NAME, b.NUMBER, DATE, CL_PERSONAL, NOTE,
 				h.SHORT AS PER_SHORT,
 				ISNULL(c.SHORT + ', ', '') + ISNULL(d.SHORT + ', ', '') + ISNULL(e.SHORT, '') AS DATA,
 				CASE
@@ -89,12 +101,12 @@ BEGIN
 			WHERE --a.ID_MASTER IS NULL
 				a.STATUS = 1
 				AND (DATE >= @BEGIN OR @BEGIN IS NULL)
-				AND (DATE < @END OR @END IS NULL)			
+				AND (DATE < @END OR @END IS NULL)
 				AND (a.ID_PERSONAL = @PERSONAL OR @PERSONAL IS NULL)
 				AND (a.ID_PERSONAL IN (SELECT ID FROM Personal.PersonalSlaveGet(@MANAGER)) OR @MANAGER IS NULL)
 				AND (b.ID_REMOTE IN (SELECT ID FROM Common.TableGUIDFromXML(@REMOTE)) OR @REMOTE IS NULL)
 				AND (a.CONTROL = 1 AND @CONTROL = 1 OR @CONTROL = 0 OR @CONTROL IS NULL)
-				AND 
+				AND
 					(
 						@TEXT IS NULL
 						OR
@@ -105,7 +117,7 @@ BEGIN
 								WHERE NOT(NOTE LIKE WRD)
 							)
 					)
-			ORDER BY DATE DESC, CO_NAME, PER_SHORT	
+			ORDER BY DATE DESC, CO_NAME, PER_SHORT
 
 		SELECT @RC = @@ROWCOUNT
 
@@ -113,50 +125,46 @@ BEGIN
 		FROM #call
 		ORDER BY DATE DESC, CO_NAME, PER_SHORT
 
-		SELECT @MEETING = 
+		SELECT @MEETING =
 			(
 				SELECT COUNT(DISTINCT ID)
 				FROM #call a
 				WHERE MEETING <> 0
 			),
-			@ASSIGNED = 
+			@ASSIGNED =
 			(
 				SELECT COUNT(DISTINCT ID)
 				FROM #call a
 				WHERE MEETING = 1
 			),
-			@SPECIFIED = 
+			@SPECIFIED =
 			(
 				SELECT COUNT(DISTINCT ID)
 				FROM #call a
 				WHERE MEETING = 2
 			)
-		
-		SELECT 
+
+		SELECT
 			@MEETING = ISNULL(@MEETING, 0),
 			@ASSIGNED = ISNULL(@ASSIGNED, 0),
 			@SPECIFIED = ISNULL(@SPECIFIED, 0)
-		
+
 		IF OBJECT_ID('tempdb..#call') IS NOT NULL
 			DROP TABLE #call
-		
+
 		IF OBJECT_ID('tempdb..#words') IS NOT NULL
 			DROP TABLE #words
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_CALL_FILTER] TO rl_call_filter;
+GO

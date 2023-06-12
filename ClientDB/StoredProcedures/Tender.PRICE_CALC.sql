@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Tender].[PRICE_CALC]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Tender].[PRICE_CALC]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Tender].[PRICE_CALC]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Tender].[PRICE_CALC]
 	@SYS		INT,
 	@SYS_OLD	INT,
 	@NET		INT,
@@ -18,44 +20,70 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @PRICE		MONEY
-	DECLARE @PRICE_OLD	MONEY
-	
-	DECLARE @MONTH_DATE	SMALLDATETIME
-	
-	SELECT @MONTH_DATE = START
-	FROM Common.Period
-	WHERE ID = @MONTH
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @SYS_OLD IS NULL AND @NET_OLD IS NULL
-		SET @PRICE_OLD = 0
-	ELSE
-		SELECT @PRICE_OLD = ROUND(a.PRICE * dbo.DistrCoef(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE), dbo.DistrCoefRound(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE))
-		FROM Price.SystemPrice a			
-		WHERE a.ID_MONTH = @MONTH AND ID_SYSTEM = ISNULL(@SYS_OLD, @SYS)
-		
-	IF @PRICE_OLD <> 0
-	BEGIN
-		SET @PRICE_OLD = ROUND(@PRICE_OLD * (100 - ISNULL(@DISCOUNT, 0)) / 100, 2)
-		SET @PRICE_OLD = ROUND(@PRICE_OLD * 100 * (1 + ISNULL(@INFLATION, 0)) / 100, 2)
-	END
-	
-	SELECT @PRICE = ROUND(a.PRICE * dbo.DistrCoef(@SYS, @NET, '', @MONTH_DATE), dbo.DistrCoefRound(@SYS, @NET, '', @MONTH_DATE))
-	FROM Price.SystemPrice a
-	WHERE a.ID_MONTH = @MONTH AND ID_SYSTEM = @SYS
-	
-	IF @PRICE <> 0
-	BEGIN
-		SET @PRICE = ROUND(@PRICE * (100 - ISNULL(@DISCOUNT, 0)) / 100, 2)
-		SET @PRICE = ROUND(@PRICE * 100 * (1 + ISNULL(@INFLATION, 0)/100) / 100, 2)
-	END
-	
-	IF @RND = 1
-	BEGIN
-		SET @PRICE = ROUND(@PRICE, 0)
-		SET @PRICE_OLD = ROUND(@PRICE_OLD, 0)
-	END
-		
-	
-	SET @RES = ISNULL(@PRICE, 0) - ISNULL(@PRICE_OLD, 0)
+	DECLARE
+		@PRICE			Money,
+		@PRICE_OLD		Money,
+		@MONTH_DATE		SmallDateTime;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT @MONTH_DATE = START
+		FROM Common.Period
+		WHERE ID = @MONTH
+
+		IF @SYS_OLD IS NULL AND @NET_OLD IS NULL
+			SET @PRICE_OLD = 0
+		ELSE
+			SELECT @PRICE_OLD = ROUND(a.PRICE * dbo.DistrCoef(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE), dbo.DistrCoefRound(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE))
+			FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
+			WHERE [System_Id] = ISNULL(@SYS_OLD, @SYS)
+
+		IF @PRICE_OLD <> 0
+		BEGIN
+			SET @PRICE_OLD = ROUND(@PRICE_OLD * (100 - ISNULL(@DISCOUNT, 0)) / 100, 2)
+			SET @PRICE_OLD = ROUND(@PRICE_OLD * 100 * (1 + ISNULL(@INFLATION, 0)) / 100, 2)
+		END
+
+		SELECT @PRICE = ROUND(a.PRICE * dbo.DistrCoef(@SYS, @NET, '', @MONTH_DATE), dbo.DistrCoefRound(@SYS, @NET, '', @MONTH_DATE))
+		FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
+		WHERE [System_Id] = @SYS;
+
+		IF @PRICE <> 0
+		BEGIN
+			SET @PRICE = ROUND(@PRICE * (100 - ISNULL(@DISCOUNT, 0)) / 100, 2)
+			SET @PRICE = ROUND(@PRICE * 100 * (1 + ISNULL(@INFLATION, 0)/100) / 100, 2)
+		END
+
+		IF @RND = 1
+		BEGIN
+			SET @PRICE = ROUND(@PRICE, 0)
+			SET @PRICE_OLD = ROUND(@PRICE_OLD, 0)
+		END
+
+
+		SET @RES = ISNULL(@PRICE, 0) - ISNULL(@PRICE_OLD, 0)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Tender].[PRICE_CALC] TO rl_tender_r;
+GRANT EXECUTE ON [Tender].[PRICE_CALC] TO rl_tender_u;
+GO

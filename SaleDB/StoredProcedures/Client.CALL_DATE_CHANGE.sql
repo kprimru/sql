@@ -1,19 +1,31 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[CALL_DATE_CHANGE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[CALL_DATE_CHANGE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[CALL_DATE_CHANGE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[CALL_DATE_CHANGE]
 	@ID		UNIQUEIDENTIFIER,
 	@DATE	SMALLDATETIME
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
 		IF @DATE IS NULL
-			DELETE 
+			DELETE
 			FROM Client.CallDate
 			WHERE ID_COMPANY = @ID
 		ELSE
@@ -21,26 +33,22 @@ BEGIN
 			UPDATE Client.CallDate
 			SET DATE = @DATE
 			WHERE ID_COMPANY = @ID
-			
+
 			IF @@ROWCOUNT = 0
 				INSERT INTO Client.CallDate(ID_COMPANY, DATE)
 					VALUES(@ID, @DATE)
 		END
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[CALL_DATE_CHANGE] TO rl_company_call_date;
+GO

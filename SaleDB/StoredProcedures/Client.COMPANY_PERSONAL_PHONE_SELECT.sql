@@ -1,37 +1,47 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_SELECT]
-	@ID			UNIQUEIDENTIFIER
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PERSONAL_PHONE_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PERSONAL_PHONE_SELECT]
+	@ID			UNIQUEIDENTIFIER,
+	@DEL		BIT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		SELECT a.ID, ID_PERSONAL, ID_TYPE, NAME, PHONE, PHONE_S, NOTE
-		FROM 
+		SELECT a.ID, ID_PERSONAL, ID_TYPE, NAME, PHONE, PHONE_S, NOTE, STATUS
+		FROM
 			Client.CompanyPersonalPhone a
 			LEFT OUTER JOIN Client.PhoneType b ON a.ID_TYPE = b.ID
 		WHERE a.ID_PERSONAL = @ID
+			AND(STATUS=1 OR STATUS=3 AND @DEL=1)
 		ORDER BY NAME, PHONE_S
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PERSONAL_PHONE_SELECT] TO rl_company_personal_r;
+GO

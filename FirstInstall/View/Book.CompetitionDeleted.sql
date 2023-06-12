@@ -1,17 +1,19 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [Book].[CompetitionDeleted] 
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Book].[CompetitionDeleted]', 'V ') IS NULL EXEC('CREATE VIEW [Book].[CompetitionDeleted]  AS SELECT 1')
+GO
+ALTER VIEW [Book].[CompetitionDeleted]
 --WITH SCHEMABINDING
 AS
-	SELECT 
-		CP_ID_MASTER, CP_ID, 
+	SELECT
+		CP_ID_MASTER, CP_ID,
 		HLF_ID, HLF_ID_MASTER, HLF_NAME,
-		CP_NAME, CP_COUNT, CP_BONUS, 
+		CP_NAME, CP_COUNT, CP_BONUS,
 		CP_DATE, CP_END
-	FROM 
+	FROM
 		Book.CompetitionAll a
-	WHERE CP_REF = 3
+	WHERE CP_REF = 3GO

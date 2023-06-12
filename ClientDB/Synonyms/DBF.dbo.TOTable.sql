@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.TOTable] FOR [DBF].[dbo].[TOTable];

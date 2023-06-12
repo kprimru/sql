@@ -1,25 +1,50 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[DISTRS_CONTRACT_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:			%authorname%
-Дата создания:	03.02.2009
-Описание:		Исключить дистрибутив
-				из договора
+РђРІС‚РѕСЂ:			%authorname%
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	03.02.2009
+РћРїРёСЃР°РЅРёРµ:		РСЃРєР»СЋС‡РёС‚СЊ РґРёСЃС‚СЂРёР±СѓС‚РёРІ
+				РёР· РґРѕРіРѕРІРѕСЂР°
 */
 
-CREATE PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]
+ALTER PROCEDURE [dbo].[DISTRS_CONTRACT_DELETE]
 	@cd_id INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
 		DELETE	FROM dbo.ContractDistrTable
 		WHERE	COD_ID = @cd_id
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[DISTRS_CONTRACT_DELETE] TO rl_client_contract_w;
+GO

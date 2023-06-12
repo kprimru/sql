@@ -1,36 +1,61 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ACTION_TYPE_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[ACTION_TYPE_TRY_DELETE]
 	@ID SMALLINT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.Action WHERE ACTN_ID_TYPE = @ID)
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный тип акции указан в одной или нескольких акциях. ' + 
-							  'Удаление невозможно, пока выбранный тип акции будет указан хотя ' +
-							  'бы в одной акции.'
-		END
+	BEGIN TRY
 
-	SELECT @res AS RES, @txt AS TXT
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
 
-	SET NOCOUNT OFF
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.Action WHERE ACTN_ID_TYPE = @ID)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ С‚РёРї Р°РєС†РёРё СѓРєР°Р·Р°РЅ РІ РѕРґРЅРѕР№ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… Р°РєС†РёСЏС…. ' +
+								  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ С‚РёРї Р°РєС†РёРё Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+								  'Р±С‹ РІ РѕРґРЅРѕР№ Р°РєС†РёРё.'
+			END
+
+		SELECT @res AS RES, @txt AS TXT
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[ACTION_TYPE_TRY_DELETE] TO rl_action_type_d;
+GO

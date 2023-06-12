@@ -1,179 +1,205 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	-- ====================================================
---	Àâòîð:			Äåíèñîâ Àëåêñåé
---	Äàòà ñîçäàíèÿ:	25.08.2008
---	Äàòà èçìåíåíèÿ:	10.02.2009
---	Îïèñàíèå:		Ñîçäàåò òàáëèöó ñ äàííûìè îò÷åòà. 
---					Ïîëÿ òàáëèöû áóäóò ïðè ôèíàëüíîì 
---					ðåäàêòèðîâàíèè îòäåëÿòüñÿ çàïÿòûìè
---	×òî íîâîãî:		Òåïåðü ðåçóëüòàò âûâîäà çàíîñèòñÿ
---					â ïðåäâàðèòåëüíî î÷èùåííóþ
---					òàáëèöó dbo.VMIReportTable
+ï»¿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[RIC_REPORT_CREATE_NEW]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW]  AS SELECT 1')
+GO
+-- ====================================================
+--	ÐÐ²Ñ‚Ð¾Ñ€:			Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹
+--	Ð”Ð°Ñ‚Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ:	25.08.2008
+--	Ð”Ð°Ñ‚Ð° Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ:	10.02.2009
+--	ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:		Ð¡Ð¾Ð·Ð´Ð°ÐµÑ‚ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ñ Ð´Ð°Ð½Ð½Ñ‹Ð¼Ð¸ Ð¾Ñ‚Ñ‡ÐµÑ‚Ð°.
+--					ÐŸÐ¾Ð»Ñ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð±ÑƒÐ´ÑƒÑ‚ Ð¿Ñ€Ð¸ Ñ„Ð¸Ð½Ð°Ð»ÑŒÐ½Ð¾Ð¼
+--					Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ð¸ Ð¾Ñ‚Ð´ÐµÐ»ÑÑ‚ÑŒÑÑ Ð·Ð°Ð¿ÑÑ‚Ñ‹Ð¼Ð¸
+--	Ð§Ñ‚Ð¾ Ð½Ð¾Ð²Ð¾Ð³Ð¾:		Ð¢ÐµÐ¿ÐµÑ€ÑŒ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚ Ð²Ñ‹Ð²Ð¾Ð´Ð° Ð·Ð°Ð½Ð¾ÑÐ¸Ñ‚ÑÑ
+--					Ð² Ð¿Ñ€ÐµÐ´Ð²Ð°Ñ€Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð¾Ñ‡Ð¸Ñ‰ÐµÐ½Ð½ÑƒÑŽ
+--					Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ dbo.VMIReportTable
 -- ====================================================
 
-CREATE PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW] 
+ALTER PROCEDURE [dbo].[RIC_REPORT_CREATE_NEW]
 	@PR_ID	SMALLINT
 WITH RECOMPILE
 AS
 BEGIN
-
 	SET NOCOUNT ON;
 
-	DECLARE @PR_DATE SMALLDATETIME
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @PR_DATE = PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	DELETE FROM dbo.VMIReportTable
+	BEGIN TRY
 
-	INSERT INTO dbo.VMIReportTable
+		DECLARE @PR_DATE SMALLDATETIME
+
+		SELECT @PR_DATE = PR_DATE FROM dbo.PeriodTable WHERE PR_ID = @PR_ID
+
+		DELETE FROM dbo.VMIReportTable
+
+		INSERT INTO dbo.VMIReportTable
+			SELECT
+				dbo.GET_SETTING('RIC_NUM') AS RIC_NUM,
+				TO_NUM, TO_NAME, ISNULL(TO_INN ,'') AS CL_INN,
+				CT_REGION AS CL_REGION,
+				CT_NAME AS CL_CITY,
+
+				CASE
+					WHEN ISNULL(ST_PREFIX, '') = '' THEN ''
+					ELSE ST_PREFIX + ' '
+				END + ST_NAME +
+				CASE
+					WHEN ISNULL(ST_SUFFIX, '') = '' THEN ''
+					ELSE ' ' + ST_SUFFIX
+				END	+ ',' + TA_HOME AS CL_ADDRESS,
+				ISNULL(CL_DIR_NAME, ''), ISNULL(CL_DIR_POS, ''), ISNULL(CL_DIR_PHONE, ''),
+				ISNULL(CL_BUH_NAME, ''), ISNULL(CL_BUH_POS, ''), ISNULL(CL_BUH_PHONE, ''),
+				ISNULL(CL_RES_NAME, ''), ISNULL(CL_RES_POS, ''), ISNULL(CL_RES_PHONE, ''),
+				ISNULL(CL_PER4_NAME, ''), ISNULL(CL_PER4_POS, ''), ISNULL(CL_PER4_PHONE, ''),
+				ISNULL(CL_PER5_NAME, ''), ISNULL(CL_PER5_POS, ''), ISNULL(CL_PER5_PHONE, ''),
+				(
+					CASE
+						WHEN 
+							NOT EXISTS
+								(
+									SELECT *
+									FROM	dbo.TODistrView		a INNER JOIN
+											dbo.PeriodRegTable	b	ON
+																a.SYS_ID = b.REG_ID_SYSTEM AND
+																a.DIS_NUM = b.REG_DISTR_NUM AND
+																a.DIS_COMP_NUM = b.REG_COMP_NUM INNER JOIN
+											dbo.DistrStatusTable c ON DS_ID = REG_ID_STATUS
+									WHERE TO_ID = TD_ID_TO AND DS_REG = 0 AND REG_ID_PERIOD = @PR_ID
+								) THEN 'ÐÐµÑ‚'
+						ELSE ''
+					END
+				) AS CL_SERVICE,
+				ISNULL(REVERSE(STUFF(REVERSE((
+					SELECT HST_REG_NAME +
+							(CASE DIS_COMP_NUM
+									WHEN 1 THEN CONVERT(varchar, DIS_NUM)
+									ELSE CONVERT(varchar, DIS_NUM) + '/' + CONVERT(varchar, DIS_COMP_NUM)
+							END
+							) +
+							CASE ISNULL(SYS_IB, '')
+								WHEN '' THEN ''
+								ELSE '/' + SYS_IB
+							END + ','
+					FROM
+						(
+							SELECT DISTINCT	HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
+							FROM
+								dbo.TODistrView		a		INNER JOIN
+								dbo.PeriodRegTable	b	ON	a.DIS_NUM =	b.REG_DISTR_NUM AND
+															a.DIS_COMP_NUM = b.REG_COMP_NUM AND
+															a.SYS_ID = b.REG_ID_SYSTEM
+							WHERE TD_ID_TO = TO_ID AND REG_ID_PERIOD = @PR_ID
+								AND (SYS_REPORT = 1 OR REG_MAIN = 1)
+
+							UNION
+
+							SELECT DISTINCT	HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
+							FROM	dbo.TODistrView		a
+									INNER JOIN 	dbo.PeriodRegTable	b	ON	a.DIS_NUM =	b.REG_DISTR_NUM AND
+																	a.DIS_COMP_NUM = b.REG_COMP_NUM AND
+																	a.SYS_ID = b.REG_ID_SYSTEM
+									--INNER JOIN dbo.PeriodTable c ON c.PR_ID = b.REG_ID_PERIOD
+									INNER JOIN dbo.DistrStatusTable d ON d.DS_ID = b.REG_ID_STATUS
+							WHERE TD_ID_TO = TO_ID   AND REG_MAIN = 1 AND d.DS_REG IN (0, 1) AND REG_ID_PERIOD = @PR_ID
+								--AND PR_DATE >= '20120101'
+								--AND PR_DATE <= @PR_DATE
+
+							UNION
+
+							SELECT DISTINCT HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
+							FROM dbo.TODistrView
+							WHERE TD_ID_TO = TO_ID AND TD_FORCED = 1
+						) AS o_O
+					ORDER BY HST_REG_NAME, DIS_NUM, DIS_COMP_NUM FOR XML PATH('')
+				)),1,1,'')), '') AS CL_SYSTEM,
+				TO_VMI_COMMENT AS CL_COMMENT
+		FROM
+				dbo.TOTable				LEFT OUTER JOIN
+				dbo.TOAddressTable		ON TO_ID = TA_ID_TO		LEFT OUTER JOIN
+				dbo.ClientTable			ON TO_ID_CLIENT=CL_ID	LEFT OUTER JOIN 
+				dbo.StreetTable			ON ST_ID = TA_ID_STREET	LEFT OUTER JOIN
+				dbo.CityTable			ON CT_ID = ST_ID_CITY	LEFT OUTER JOIN
+				(
+					SELECT
+						TP_ID_TO,
+						(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_DIR_NAME,
+						POS_NAME AS CL_DIR_POS,
+						TP_PHONE AS CL_DIR_PHONE
+					FROM dbo.TOPersonalView
+					WHERE RP_PSEDO = 'LEAD'
+				) AS DIR ON DIR.TP_ID_TO = TO_ID LEFT OUTER JOIN
+				(
+					SELECT
+						TP_ID_TO,
+						(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_BUH_NAME,
+						POS_NAME AS CL_BUH_POS,
+						TP_PHONE AS CL_BUH_PHONE
+					FROM dbo.TOPersonalView
+					WHERE RP_PSEDO = 'BUH'
+				) AS BUH ON BUH.TP_ID_TO = TO_ID LEFT OUTER JOIN
+				(
+					SELECT
+						TP_ID_TO,
+						(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_RES_NAME,
+						POS_NAME AS CL_RES_POS,
+						TP_PHONE AS CL_RES_PHONE
+					FROM dbo.TOPersonalView
+					WHERE RP_PSEDO = 'RES'
+				) AS RES ON RES.TP_ID_TO = TO_ID LEFT OUTER JOIN
+				(
+					SELECT
+						TP_ID_TO,
+						(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_PER4_NAME,
+						POS_NAME AS CL_PER4_POS,
+						TP_PHONE AS CL_PER4_PHONE
+					FROM dbo.TOPersonalView
+					WHERE RP_PSEDO = 'PER4'
+				) AS PER4 ON PER4.TP_ID_TO = TO_ID LEFT OUTER JOIN
+				(
+					SELECT
+						TP_ID_TO,
+						(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_PER5_NAME,
+						POS_NAME AS CL_PER5_POS,
+						TP_PHONE AS CL_PER5_PHONE
+					FROM dbo.TOPersonalView
+					WHERE RP_PSEDO = 'PER5'
+				) AS PER5 ON PER5.TP_ID_TO = TO_ID
+		WHERE	TO_REPORT = 1 AND TO_DELETED = 0
+		ORDER BY TO_NUM
+
 		SELECT
-			dbo.GET_SETTING('RIC_NUM') AS RIC_NUM,
-			TO_NUM, TO_NAME, ISNULL(TO_INN ,'') AS CL_INN, 
-			CT_REGION AS CL_REGION,
-			CT_NAME AS CL_CITY,
-	 
-			CASE 
-				WHEN ISNULL(ST_PREFIX, '') = '' THEN ''
-				ELSE ST_PREFIX + ' '
-			END + ST_NAME +
-			CASE 
-				WHEN ISNULL(ST_SUFFIX, '') = '' THEN ''
-				ELSE ' ' + ST_SUFFIX
-			END	+ ',' + TA_HOME AS CL_ADDRESS, 
-			ISNULL(CL_DIR_NAME, ''), ISNULL(CL_DIR_POS, ''), ISNULL(CL_DIR_PHONE, ''),
-			ISNULL(CL_BUH_NAME, ''), ISNULL(CL_BUH_POS, ''), ISNULL(CL_BUH_PHONE, ''),
-			ISNULL(CL_RES_NAME, ''), ISNULL(CL_RES_POS, ''), ISNULL(CL_RES_PHONE, ''),
-			ISNULL(CL_PER4_NAME, ''), ISNULL(CL_PER4_POS, ''), ISNULL(CL_PER4_PHONE, ''),
-			ISNULL(CL_PER5_NAME, ''), ISNULL(CL_PER5_POS, ''), ISNULL(CL_PER5_PHONE, ''),			
-			(
-				CASE 
-					WHEN 						
-						NOT EXISTS
-							(
-								SELECT *
-								FROM	dbo.TODistrView		a INNER JOIN
-										dbo.PeriodRegTable	b	ON	
-															a.SYS_ID = b.REG_ID_SYSTEM AND
-															a.DIS_NUM = b.REG_DISTR_NUM AND
-															a.DIS_COMP_NUM = b.REG_COMP_NUM INNER JOIN
-										dbo.DistrStatusTable c ON DS_ID = REG_ID_STATUS
-								WHERE TO_ID = TD_ID_TO AND DS_REG = 0 AND REG_ID_PERIOD = @PR_ID
-							) THEN 'Íåò'
-					ELSE ''
-				END
-			) AS CL_SERVICE,
-			ISNULL(REVERSE(STUFF(REVERSE((
-				SELECT HST_REG_NAME + 
-						(CASE DIS_COMP_NUM 
-								WHEN 1 THEN CONVERT(varchar, DIS_NUM)
-								ELSE CONVERT(varchar, DIS_NUM) + '/' + CONVERT(varchar, DIS_COMP_NUM)
-						END
-						) + 
-						CASE ISNULL(SYS_IB, '') 
-							WHEN '' THEN ''
-							ELSE '/' + SYS_IB
-						END + ','
-				FROM
-					(
-						SELECT DISTINCT	HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
-						FROM
-							dbo.TODistrView		a		INNER JOIN
-							dbo.PeriodRegTable	b	ON	a.DIS_NUM =	b.REG_DISTR_NUM AND 
-														a.DIS_COMP_NUM = b.REG_COMP_NUM AND 
-														a.SYS_ID = b.REG_ID_SYSTEM
-						WHERE TD_ID_TO = TO_ID AND REG_ID_PERIOD = @PR_ID
-							AND (SYS_REPORT = 1 OR REG_MAIN = 1)
-							
-						UNION
-				
-						SELECT DISTINCT	HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
-						FROM	dbo.TODistrView		a		
-								INNER JOIN 	dbo.PeriodRegTable	b	ON	a.DIS_NUM =	b.REG_DISTR_NUM AND 
-																a.DIS_COMP_NUM = b.REG_COMP_NUM AND 
-																a.SYS_ID = b.REG_ID_SYSTEM
-								INNER JOIN dbo.PeriodTable c ON c.PR_ID = b.REG_ID_PERIOD
-								INNER JOIN dbo.DistrStatusTable d ON d.DS_ID = b.REG_ID_STATUS
-						WHERE TD_ID_TO = TO_ID   AND REG_MAIN = 1 AND d.DS_REG = 0
-							AND PR_DATE >= '20120101'
-							AND PR_DATE <= @PR_DATE
+				VMR_RIC_NUM, VMR_TO_NUM, VMR_TO_NAME,
+				VMR_INN, VMR_REGION, VMR_CITY, VMR_ADDR,
+				VMR_FIO_1, VMR_JOB_1, VMR_TELS_1,
+				VMR_FIO_2, VMR_JOB_2, VMR_TELS_2,
+				VMR_FIO_3, VMR_JOB_3, VMR_TELS_3,
+				VMR_FIO_4, VMR_JOB_4, VMR_TELS_4,
+				VMR_FIO_5, VMR_JOB_5, VMR_TELS_5,
+				VMR_SERV, VMR_DISTR, VMR_COMMENT
+		FROM dbo.VMIReportTable
+		ORDER BY VMR_TO_NUM
 
-						UNION 
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-						SELECT DISTINCT HST_REG_NAME, DIS_COMP_NUM, DIS_NUM, SYS_IB
-						FROM dbo.TODistrView
-						WHERE TD_ID_TO = TO_ID AND TD_FORCED = 1			
-					) AS o_O
-				ORDER BY HST_REG_NAME, DIS_NUM, DIS_COMP_NUM FOR XML PATH('')
-			)),1,1,'')), '') AS CL_SYSTEM,			
-			TO_VMI_COMMENT AS CL_COMMENT
-	FROM	
-			dbo.TOTable				LEFT OUTER JOIN
-			dbo.TOAddressTable		ON TO_ID = TA_ID_TO		LEFT OUTER JOIN 
-			dbo.ClientTable			ON TO_ID_CLIENT=CL_ID	LEFT OUTER JOIN 				
-			dbo.StreetTable			ON ST_ID = TA_ID_STREET	LEFT OUTER JOIN
-			dbo.CityTable			ON CT_ID = ST_ID_CITY	LEFT OUTER JOIN
-			(
-				SELECT 
-					TP_ID_TO,
-					(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_DIR_NAME,
-					POS_NAME AS CL_DIR_POS,
-					TP_PHONE AS CL_DIR_PHONE
-				FROM dbo.TOPersonalView
-				WHERE RP_PSEDO = 'LEAD'
-			) AS DIR ON DIR.TP_ID_TO = TO_ID LEFT OUTER JOIN
-			(
-				SELECT 
-					TP_ID_TO,
-					(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_BUH_NAME,
-					POS_NAME AS CL_BUH_POS,
-					TP_PHONE AS CL_BUH_PHONE
-				FROM dbo.TOPersonalView
-				WHERE RP_PSEDO = 'BUH'
-			) AS BUH ON BUH.TP_ID_TO = TO_ID LEFT OUTER JOIN
-			(
-				SELECT 
-					TP_ID_TO,
-					(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_RES_NAME,
-					POS_NAME AS CL_RES_POS,
-					TP_PHONE AS CL_RES_PHONE
-				FROM dbo.TOPersonalView
-				WHERE RP_PSEDO = 'RES'
-			) AS RES ON RES.TP_ID_TO = TO_ID LEFT OUTER JOIN
-			(
-				SELECT 
-					TP_ID_TO,
-					(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_PER4_NAME,
-					POS_NAME AS CL_PER4_POS,
-					TP_PHONE AS CL_PER4_PHONE
-				FROM dbo.TOPersonalView
-				WHERE RP_PSEDO = 'PER4'
-			) AS PER4 ON PER4.TP_ID_TO = TO_ID LEFT OUTER JOIN
-			(
-				SELECT 
-					TP_ID_TO,
-					(TP_SURNAME + ' ' + TP_NAME + ' ' + TP_OTCH) AS CL_PER5_NAME,
-					POS_NAME AS CL_PER5_POS,
-					TP_PHONE AS CL_PER5_PHONE
-				FROM dbo.TOPersonalView
-				WHERE RP_PSEDO = 'PER5'
-			) AS PER5 ON PER5.TP_ID_TO = TO_ID
-	WHERE	TO_REPORT = 1
-	ORDER BY TO_NUM
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
 
-	SELECT 
-			VMR_RIC_NUM, VMR_TO_NUM, VMR_TO_NAME,
-			VMR_INN, VMR_REGION, VMR_CITY, VMR_ADDR,
-			VMR_FIO_1, VMR_JOB_1, VMR_TELS_1,
-			VMR_FIO_2, VMR_JOB_2, VMR_TELS_2,
-			VMR_FIO_3, VMR_JOB_3, VMR_TELS_3,
-			VMR_FIO_4, VMR_JOB_4, VMR_TELS_4,
-			VMR_FIO_5, VMR_JOB_5, VMR_TELS_5,
-			VMR_SERV, VMR_DISTR, VMR_COMMENT
-	FROM dbo.VMIReportTable
-	ORDER BY VMR_TO_NUM
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[RIC_REPORT_CREATE_NEW] TO rl_vmi_report_w;
+GO

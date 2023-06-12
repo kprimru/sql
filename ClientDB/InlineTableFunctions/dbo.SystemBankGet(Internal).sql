@@ -1,17 +1,19 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [dbo].[SystemBankGet(Internal)]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SystemBankGet(Internal)]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[SystemBankGet(Internal)] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
+GO
+CREATE FUNCTION [dbo].[SystemBankGet(Internal)]
 (
-	-- Id системы
+	-- Id СЃРёСЃС‚РµРјС‹
 	@System		Int
 )
 RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT
 		InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, InfoBankOrder, InfoBankPath, InfoBankActive,
@@ -19,3 +21,4 @@ RETURN
 	FROM dbo.SystemBanksView WITH(NOEXPAND)
 	WHERE SystemId = @System
 )
+GO

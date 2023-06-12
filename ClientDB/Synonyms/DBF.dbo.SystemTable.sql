@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF].[dbo.SystemTable] FOR [DBF].[dbo].[SystemTable];

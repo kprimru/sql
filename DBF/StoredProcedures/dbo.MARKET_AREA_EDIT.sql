@@ -1,18 +1,20 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[MARKET_AREA_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[MARKET_AREA_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 05.11.2008
-Описание:	  Изменить данные о сбытовой 
-               территории с указанным кодом
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 05.11.2008
+РћРїРёСЃР°РЅРёРµ:	  РР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ СЃР±С‹С‚РѕРІРѕР№
+               С‚РµСЂСЂРёС‚РѕСЂРёРё СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РєРѕРґРѕРј
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_EDIT] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_EDIT]
 	@marketareaid INT,
 	@marketareaname VARCHAR(100),
 	@marketareashortname VARCHAR(50),
@@ -21,11 +23,34 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.MarketAreaTable 
-	SET MA_NAME = @marketareaname, 
-		MA_SHORT_NAME = @marketareashortname,
-		MA_ACTIVE = @active
-	WHERE MA_ID = @marketareaid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.MarketAreaTable
+		SET MA_NAME = @marketareaname,
+			MA_SHORT_NAME = @marketareashortname,
+			MA_ACTIVE = @active
+		WHERE MA_ID = @marketareaid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[MARKET_AREA_EDIT] TO rl_market_area_w;
+GO

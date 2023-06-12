@@ -1,61 +1,84 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CITY_TRY_DELETE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CITY_TRY_DELETE]  AS SELECT 1')
+GO
+
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если населенный пункт 
---                можно удалить из справочника (ни 
---                одна улица и ни один банк не ссылает 
---                на данный населенный пункт), 
---                -1 в противном случае
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚
+--                РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РёР· СЃРїСЂР°РІРѕС‡РЅРёРєР° (РЅРё
+--                РѕРґРЅР° СѓР»РёС†Р° Рё РЅРё РѕРґРёРЅ Р±Р°РЅРє РЅРµ СЃСЃС‹Р»Р°РµС‚
+--                РЅР° РґР°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚),
+--                -1 РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ
 -- =============================================
 
-CREATE PROCEDURE [dbo].[CITY_TRY_DELETE] 
+ALTER PROCEDURE [dbo].[CITY_TRY_DELETE]
   @cityid int
 
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	DECLARE @res INT
-	DECLARE @txt VARCHAR(MAX)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET @res = 0
-	SET @txt = ''
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	IF EXISTS(SELECT * FROM dbo.StreetTable WHERE ST_ID_CITY = @cityid) 
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный населенный пункт указан у одной или нескольких улиц. ' + 
-							  'Удаление невозможно, пока выбранный населенный пункт будет указан хотя ' +
-							  'бы у одной улицы.' + CHAR(13)
-		END
-	   
-	IF EXISTS(SELECT * FROM dbo.BankTable WHERE BA_ID_CITY = @cityid) 
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Данный населенный пункт указан у одного или нескольких банков. ' + 
-						  'Удаление невозможно, пока выбранный населенный пункт будет указан хотя ' +
-						  'бы у одного банка.' + CHAR(13)
-		END
+	BEGIN TRY
 
-	-- добавлено 4.05.2009
-	IF EXISTS(SELECT * FROM dbo.SubhostCityTable WHERE SC_ID_CITY = @cityid) 
-		BEGIN
-			SET @res = 1
-			SET @txt = @txt + 'Удаление невозможно, так как данный населенный пункт' 
-							+ 'указан в записи городов подхостов.'
-		END
+		DECLARE @res INT
+		DECLARE @txt VARCHAR(MAX)
+
+		SET @res = 0
+		SET @txt = ''
+
+		IF EXISTS(SELECT * FROM dbo.StreetTable WHERE ST_ID_CITY = @cityid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚ СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕР№ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… СѓР»РёС†. ' +
+								  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚ Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+								  'Р±С‹ Сѓ РѕРґРЅРѕР№ СѓР»РёС†С‹.' + CHAR(13)
+			END
+
+		IF EXISTS(SELECT * FROM dbo.BankTable WHERE BA_ID_CITY = @cityid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'Р”Р°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚ СѓРєР°Р·Р°РЅ Сѓ РѕРґРЅРѕРіРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРёС… Р±Р°РЅРєРѕРІ. ' +
+							  'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РїРѕРєР° РІС‹Р±СЂР°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚ Р±СѓРґРµС‚ СѓРєР°Р·Р°РЅ С…РѕС‚СЏ ' +
+							  'Р±С‹ Сѓ РѕРґРЅРѕРіРѕ Р±Р°РЅРєР°.' + CHAR(13)
+			END
+
+		-- РґРѕР±Р°РІР»РµРЅРѕ 4.05.2009
+		IF EXISTS(SELECT * FROM dbo.SubhostCityTable WHERE SC_ID_CITY = @cityid)
+			BEGIN
+				SET @res = 1
+				SET @txt = @txt + 'РЈРґР°Р»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, С‚Р°Рє РєР°Рє РґР°РЅРЅС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚'
+								+ 'СѓРєР°Р·Р°РЅ РІ Р·Р°РїРёСЃРё РіРѕСЂРѕРґРѕРІ РїРѕРґС…РѕСЃС‚РѕРІ.'
+			END
 
 
-	SELECT @res AS RES, @txt AS TXT
+		SELECT @res AS RES, @txt AS TXT
 
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
 
-	SET NOCOUNT OFF
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
+GO
+GRANT EXECUTE ON [dbo].[CITY_TRY_DELETE] TO rl_city_d;
+GO

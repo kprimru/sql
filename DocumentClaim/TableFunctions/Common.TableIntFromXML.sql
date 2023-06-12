@@ -1,0 +1,29 @@
+﻿USE [DocumentClaim]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[TableIntFromXML]', 'TF') IS NULL EXEC('CREATE FUNCTION [Common].[TableIntFromXML] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Common].[TableIntFromXML]
+	(
+		@SOURCE NVARCHAR(MAX)
+	)
+RETURNS @TBL TABLE
+	(
+		ID INT
+	)
+AS
+BEGIN
+	DECLARE @XML XML
+
+	SET @XML = CAST(@SOURCE AS XML)
+
+	INSERT INTO @TBL(ID)
+		SELECT c.value('(@id)', 'INT')
+		FROM @xml.nodes('/root/item') AS a(c)
+
+	RETURN
+END
+GO

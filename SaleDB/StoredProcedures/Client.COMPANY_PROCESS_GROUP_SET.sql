@@ -1,10 +1,12 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PROCESS_GROUP_SET]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PROCESS_GROUP_SET]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PROCESS_GROUP_SET]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_GROUP_SET]
 	@LIST	NVARCHAR(MAX),
 	@PHONE	UNIQUEIDENTIFIER,
 	@SALE	UNIQUEIDENTIFIER,
@@ -14,26 +16,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	BEGIN TRY		
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
+	BEGIN TRY
 		IF @PHONE IS NOT NULL
 		BEGIN
 			UPDATE a
 			SET EDATE = @RETURN,
 				RETURN_DATE = GETDATE(),
 				RETURN_USER = ORIGINAL_LOGIN()
-			FROM 
+			FROM
 				Client.CompanyProcess a
 				INNER JOIN Common.TableGUIDFromXML(@LIST) b ON a.ID_COMPANY = b.ID
-			WHERE EDATE IS NULL 
+			WHERE EDATE IS NULL
 				AND PROCESS_TYPE = N'PHONE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT a.ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение телефонного агента - Возврат'
+				SELECT a.ID, @DATE, 5, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
 					INNER JOIN Common.TableGUIDFromXML(@LIST) c ON a.ID = c.ID
-				WHERE b.EDATE IS NULL 
+				WHERE b.EDATE IS NULL
 					AND PROCESS_TYPE = N'PHONE'
 
 			INSERT INTO Client.CompanyProcess(ID_COMPANY, ID_PERSONAL, PROCESS_TYPE, BDATE)
@@ -41,31 +53,31 @@ BEGIN
 				FROM Common.TableGUIDFromXML(@LIST) b
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT a.ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'Изменение телефонного агента - Выдача'
+				SELECT a.ID, @DATE, 1, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'РР·РјРµРЅРµРЅРёРµ С‚РµР»РµС„РѕРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° - Р’С‹РґР°С‡Р°'
 				FROM
 					Client.Company a
 					INNER JOIN Common.TableGUIDFromXML(@LIST) c ON a.ID = c.ID
 		END
-	
+
 		IF @SALE IS NOT NULL
 		BEGIN
 			UPDATE a
 			SET EDATE = @RETURN,
 				RETURN_DATE = GETDATE(),
 				RETURN_USER = ORIGINAL_LOGIN()
-			FROM 
+			FROM
 				Client.CompanyProcess a
 				INNER JOIN Common.TableGUIDFromXML(@LIST) b ON a.ID_COMPANY = b.ID
-			WHERE EDATE IS NULL 
+			WHERE EDATE IS NULL
 				AND PROCESS_TYPE = N'SALE'
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT a.ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'Изменение торгового представителя - Возврат'
+				SELECT a.ID, @DATE, 6, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’РѕР·РІСЂР°С‚'
 				FROM
 					Client.Company a
 					INNER JOIN Client.CompanyProcess b ON a.ID = b.ID_COMPANY
 					INNER JOIN Common.TableGUIDFromXML(@LIST) c ON a.ID = c.ID
-				WHERE b.EDATE IS NULL 
+				WHERE b.EDATE IS NULL
 					AND PROCESS_TYPE = N'SALE'
 
 			INSERT INTO Client.CompanyProcess(ID_COMPANY, ID_PERSONAL, PROCESS_TYPE, BDATE)
@@ -73,27 +85,23 @@ BEGIN
 				FROM Common.TableGUIDFromXML(@LIST) b
 
 			INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-				SELECT a.ID, @DATE, 2, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'Изменение торгового представителя - Выдача'
+				SELECT a.ID, @DATE, 2, ID_AVAILABILITY, ID_CHARACTER, @PHONE, N'РР·РјРµРЅРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРµРґСЃС‚Р°РІРёС‚РµР»СЏ - Р’С‹РґР°С‡Р°'
 				FROM
 					Client.Company a
 					INNER JOIN Common.TableGUIDFromXML(@LIST) c ON a.ID = c.ID
 		END
-		
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
+
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_GROUP_SET] TO rl_company_group;
+GO

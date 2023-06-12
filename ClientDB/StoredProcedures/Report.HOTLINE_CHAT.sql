@@ -1,30 +1,57 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Report].[HOTLINE_CHAT]
+ï»¿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Report].[HOTLINE_CHAT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Report].[HOTLINE_CHAT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Report].[HOTLINE_CHAT]
 	@PARAM	NVARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SET language russian
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT
-		ClientFullName AS [Êëèåíò], /*ManagerName AS [Ðóê-ëü], */ServiceName AS [ÑÈ], DistrStr AS [Äèñòðèáóòèâ], 
-		FIRST_DATE AS [Äàòà âîïðîñà], /*FINISH AS [Îêîí÷àíèå ñåññèè], */
-		/*EMAIL AS [Email], PHONE AS [Òåëåôîí], */CHAT AS [×àò], 
-		RIC_PERSONAL AS [Ñîòðóäíèê ÐÈÖ], FIRST_ANS AS [Âðåìÿ ïåðâîé ðåàêöèè],
-		DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS [Ñêîðîñòü ïåðâîé ðåàêöèè],
-		DATEDIFF(SECOND, START, FIRST_ANS) AS [Âðåìÿ ìåæäó ïðèíÿòèåì è îòâåòîì],
-		START AS [Íà÷àëî ñåññèè], FIO AS [ÔÈÎ], PROFILE AS [Ïðîôèëü]
-	FROM 
-		dbo.HotlineChatView a
-		INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
-		INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
-	WHERE a.DISTR NOT IN (20, 509880)
-		AND FIRST_DATE >= '20170206'
-	ORDER BY FIRST_DATE DESC
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SET language russian
+
+		SELECT
+			ClientFullName AS [ÐšÐ»Ð¸ÐµÐ½Ñ‚], /*ManagerName AS [Ð ÑƒÐº-Ð»ÑŒ], */ServiceName AS [Ð¡Ð˜], DistrStr AS [Ð”Ð¸ÑÑ‚Ñ€Ð¸Ð±ÑƒÑ‚Ð¸Ð²],
+			FIRST_DATE AS [Ð”Ð°Ñ‚Ð° Ð²Ð¾Ð¿Ñ€Ð¾ÑÐ°], /*FINISH AS [ÐžÐºÐ¾Ð½Ñ‡Ð°Ð½Ð¸Ðµ ÑÐµÑÑÐ¸Ð¸], */
+			/*EMAIL AS [Email], PHONE AS [Ð¢ÐµÐ»ÐµÑ„Ð¾Ð½], */CHAT AS [Ð§Ð°Ñ‚],
+			RIC_PERSONAL AS [Ð¡Ð¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸Ðº Ð Ð˜Ð¦], FIRST_ANS AS [Ð’Ñ€ÐµÐ¼Ñ Ð¿ÐµÑ€Ð²Ð¾Ð¹ Ñ€ÐµÐ°ÐºÑ†Ð¸Ð¸],
+			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS [Ð¡ÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ Ð¿ÐµÑ€Ð²Ð¾Ð¹ Ñ€ÐµÐ°ÐºÑ†Ð¸Ð¸],
+			DATEDIFF(SECOND, START, FIRST_ANS) AS [Ð’Ñ€ÐµÐ¼Ñ Ð¼ÐµÐ¶Ð´Ñƒ Ð¿Ñ€Ð¸Ð½ÑÑ‚Ð¸ÐµÐ¼ Ð¸ Ð¾Ñ‚Ð²ÐµÑ‚Ð¾Ð¼],
+			START AS [ÐÐ°Ñ‡Ð°Ð»Ð¾ ÑÐµÑÑÐ¸Ð¸], FIO AS [Ð¤Ð˜Ðž], PROFILE AS [ÐŸÑ€Ð¾Ñ„Ð¸Ð»ÑŒ]
+		FROM
+			dbo.HotlineChatView a
+			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
+			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
+		WHERE a.DISTR NOT IN (20, 509880)
+			AND FIRST_DATE >= '20170206'
+		ORDER BY FIRST_DATE DESC
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Report].[HOTLINE_CHAT] TO rl_report;
+GO

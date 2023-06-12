@@ -1,17 +1,19 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_FIELD_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_FIELD_ADD]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 25.08.2008
-Описание:	  Добавить данные о поле в отчете
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+РћРїРёСЃР°РЅРёРµ:	  Р”РѕР±Р°РІРёС‚СЊ РґР°РЅРЅС‹Рµ Рѕ РїРѕР»Рµ РІ РѕС‚С‡РµС‚Рµ
 */
 
-CREATE PROCEDURE [dbo].[REPORT_FIELD_ADD]
+ALTER PROCEDURE [dbo].[REPORT_FIELD_ADD]
 	@fieldname VARCHAR(50),
 	@fieldcaption VARCHAR(100),
 	@order INT
@@ -19,8 +21,29 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    INSERT INTO dbo.ReportFieldTable(RF_NAME, RF_CAPTION, RF_ORDER) 
-                          VALUES(@fieldname, @fieldcaption, @order)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ReportFieldTable(RF_NAME, RF_CAPTION, RF_ORDER)
+							  VALUES(@fieldname, @fieldcaption, @order)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
+GO

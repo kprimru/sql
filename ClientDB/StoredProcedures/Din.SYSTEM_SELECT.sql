@@ -1,14 +1,41 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Din].[SYSTEM_SELECT]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Din].[SYSTEM_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[SYSTEM_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Din].[SYSTEM_SELECT]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT SystemID, SystemDin, SystemBaseName
-	FROM dbo.SystemTable
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SystemID, SystemDin, SystemBaseName
+		FROM dbo.SystemTable
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Din].[SYSTEM_SELECT] TO rl_din_import;
+GO

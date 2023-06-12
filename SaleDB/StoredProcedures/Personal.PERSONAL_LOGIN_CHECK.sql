@@ -1,40 +1,48 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Personal].[PERSONAL_LOGIN_CHECK]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Personal].[PERSONAL_LOGIN_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Personal].[PERSONAL_LOGIN_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Personal].[PERSONAL_LOGIN_CHECK]
 	@LOGIN		NVARCHAR(128)
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
 		IF LTRIM(RTRIM(@LOGIN)) = N''
-			SELECT 'Не введен логин' AS ERROR
+			SELECT 'РќРµ РІРІРµРґРµРЅ Р»РѕРіРёРЅ' AS ERROR
 		ELSE IF EXISTS(SELECT * FROM sys.server_principals WHERE name = @LOGIN)
-			SELECT 'Логин "' + @LOGIN + '" уже присутствует на сервере. Выберите другое имя' AS ERROR
+			SELECT 'Р›РѕРіРёРЅ "' + @LOGIN + '" СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РЅР° СЃРµСЂРІРµСЂРµ. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ' AS ERROR
 		ELSE IF EXISTS(SELECT * FROM sys.database_principals WHERE name = @LOGIN)
-			SELECT 'Пользователь "' + @LOGIN + '" уже присутствует в базе данных. Выберите другое имя' AS ERROR
-		ELSE 
+			SELECT 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @LOGIN + '" СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РёРјСЏ' AS ERROR
+		ELSE
 			SELECT '' AS ERROR
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Personal].[PERSONAL_LOGIN_CHECK] TO rl_personal_r;
+GO

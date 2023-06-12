@@ -1,31 +1,57 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[HOST_ADD]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[HOST_ADD]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 18.11.2008
-Описание:	  Добавить хост 
-               в справочник
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 18.11.2008
+РћРїРёСЃР°РЅРёРµ:	  Р”РѕР±Р°РІРёС‚СЊ С…РѕСЃС‚
+               РІ СЃРїСЂР°РІРѕС‡РЅРёРє
 */
 
-CREATE PROCEDURE [dbo].[HOST_ADD]
+ALTER PROCEDURE [dbo].[HOST_ADD]
 	@hostname VARCHAR(250),
-	@hostregname VARCHAR(20), 
-	@active BIT = 1, 
+	@hostregname VARCHAR(20),
+	@HostRegFullName    VarChar(50),
+	@active BIT = 1,
 	@returnvalue BIT = 1
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_ACTIVE) 
-	VALUES (@hostname, @hostregname, @active)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF @returnvalue = 1
-		SELECT SCOPE_IDENTITY() AS NEW_IDEN
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		INSERT INTO dbo.HostTable(HST_NAME, HST_REG_NAME, HST_REG_FULL, HST_ACTIVE)
+		VALUES (@hostname, @hostregname, @HostRegFullName, @active)
+
+		IF @returnvalue = 1
+			SELECT SCOPE_IDENTITY() AS NEW_IDEN
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[HOST_ADD] TO rl_host_w;
+GO

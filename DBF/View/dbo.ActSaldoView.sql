@@ -1,26 +1,28 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[ActSaldoView]
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ActSaldoView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ActSaldoView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[ActSaldoView]
 AS
-	SELECT 
+	SELECT
 		AD_ID, ACT_ID, ACT_DATE, ACT_ID_CLIENT, AD_ID_DISTR, AD_TOTAL_PRICE, SL_ID, SL_REST,
 		/*
-			если сальдо >= 0 - то закрыли и деньшги еще остались - аванс в чистейшем виде. На полную сумму
-			если сальдо < 0 и сумма долга больше или равна оплате (то есть после оплаты сальдо не выйдет в плюс) - то с/ф не формируется
-			если сальдо < 0 и сумма долга меньше оплаты - то с/ф на сумму разницы оплаты и долга
+			РµСЃР»Рё СЃР°Р»СЊРґРѕ >= 0 - С‚Рѕ Р·Р°РєСЂС‹Р»Рё Рё РґРµРЅСЊС€РіРё РµС‰Рµ РѕСЃС‚Р°Р»РёСЃСЊ - Р°РІР°РЅСЃ РІ С‡РёСЃС‚РµР№С€РµРј РІРёРґРµ. РќР° РїРѕР»РЅСѓСЋ СЃСѓРјРјСѓ
+			РµСЃР»Рё СЃР°Р»СЊРґРѕ < 0 Рё СЃСѓРјРјР° РґРѕР»РіР° Р±РѕР»СЊС€Рµ РёР»Рё СЂР°РІРЅР° РѕРїР»Р°С‚Рµ (С‚Рѕ РµСЃС‚СЊ РїРѕСЃР»Рµ РѕРїР»Р°С‚С‹ СЃР°Р»СЊРґРѕ РЅРµ РІС‹Р№РґРµС‚ РІ РїР»СЋСЃ) - С‚Рѕ СЃ/С„ РЅРµ С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ
+			РµСЃР»Рё СЃР°Р»СЊРґРѕ < 0 Рё СЃСѓРјРјР° РґРѕР»РіР° РјРµРЅСЊС€Рµ РѕРїР»Р°С‚С‹ - С‚Рѕ СЃ/С„ РЅР° СЃСѓРјРјСѓ СЂР°Р·РЅРёС†С‹ РѕРїР»Р°С‚С‹ Рё РґРѕР»РіР°
 		*/
-		CASE 
+		CASE
 			WHEN SL_REST >= 0 THEN 0
-			WHEN SL_REST < 0 AND ABS(SL_REST) >= AD_TOTAL_PRICE THEN NULL -- аванса не было - закрыли полностью в долг
-			WHEN SL_REST < 0 AND ABS(SL_REST) <= AD_TOTAL_PRICE THEN AD_TOTAL_PRICE - ABS(SL_REST) -- был аванс на сумму AD_TOTAL_PRICE - ABS(SL_REST)
+			WHEN SL_REST < 0 AND ABS(SL_REST) >= AD_TOTAL_PRICE THEN NULL -- Р°РІР°РЅСЃР° РЅРµ Р±С‹Р»Рѕ - Р·Р°РєСЂС‹Р»Рё РїРѕР»РЅРѕСЃС‚СЊСЋ РІ РґРѕР»Рі
+			WHEN SL_REST < 0 AND ABS(SL_REST) <= AD_TOTAL_PRICE THEN AD_TOTAL_PRICE - ABS(SL_REST) -- Р±С‹Р» Р°РІР°РЅСЃ РЅР° СЃСѓРјРјСѓ AD_TOTAL_PRICE - ABS(SL_REST)
 		END AS DELTA
 	FROM
 		(
-			SELECT 
+			SELECT
 				SL_ID, AD_ID, ACT_ID, ACT_DATE, ACT_ID_CLIENT, AD_ID_DISTR, SUM(AD_TOTAL_PRICE) AS AD_TOTAL_PRICE,
 				/*ISNULL(
         				(
@@ -33,11 +35,11 @@ AS
 						), 0) AS SL_REST
 				*/
 				SL_REST
-			FROM 
+			FROM
 				dbo.ActTable a
 				INNER JOIN dbo.ActDistrTable b ON ACT_ID = AD_ID_ACT
 				INNER JOIN dbo.SaldoTable c ON SL_ID_ACT_DIS = AD_ID
 			GROUP BY ACT_ID, ACT_ID_CLIENT, AD_ID_DISTR, ACT_DATE, AD_ID, SL_ID, SL_REST
 		) AS a
-		
-	
+
+	GO

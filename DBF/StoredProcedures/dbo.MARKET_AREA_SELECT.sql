@@ -1,30 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[MARKET_AREA_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[MARKET_AREA_SELECT]  AS SELECT 1')
+GO
+
 
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[MARKET_AREA_SELECT] 
+ALTER PROCEDURE [dbo].[MARKET_AREA_SELECT]
 	@active BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
-	
-	SELECT MA_ID, MA_NAME, MA_SHORT_NAME 
-	FROM dbo.MarketAreaTable 
-	WHERE MA_ACTIVE = ISNULL(@active, MA_ACTIVE)
-	ORDER BY MA_NAME
 
-	SET NOCOUNT OFF
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT MA_ID, MA_NAME, MA_SHORT_NAME
+		FROM dbo.MarketAreaTable
+		WHERE MA_ACTIVE = ISNULL(@active, MA_ACTIVE)
+		ORDER BY MA_NAME
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[MARKET_AREA_SELECT] TO rl_market_area_r;
+GO

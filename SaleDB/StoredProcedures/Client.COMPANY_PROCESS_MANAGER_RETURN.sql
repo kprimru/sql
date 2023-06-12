@@ -1,28 +1,54 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[COMPANY_PROCESS_MANAGER_RETURN]
-	@COMPANY	NVARCHAR(MAX)
+ï»¿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[COMPANY_PROCESS_MANAGER_RETURN]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[COMPANY_PROCESS_MANAGER_RETURN]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[COMPANY_PROCESS_MANAGER_RETURN]
+	@COMPANY	NVARCHAR(MAX),
+	@COMPANYW   NVARCHAR(MAX)       = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    DECLARE @DATE SMALLDATETIME
+    SET @DATE = Common.DateOf(GETDATE())
+    DECLARE @Companies Table (ID UNIQUEIDENTIFIER NOT NULL PRIMARY KEY CLUSTERED);
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		DECLARE @DATE SMALLDATETIME
-		SET @DATE = Common.DateOf(GETDATE())
-		
-		SET @COMPANY = Client.CompanyFilterWrite(@COMPANY)
-		
+
+		IF @COMPANYW IS NOT NULL
+		    SET @COMPANY = @COMPANYW
+		ELSE
+		    SET @COMPANY = Client.CompanyFilterWrite(@COMPANY);
+
+		INSERT INTO @Companies
+        SELECT ID
+        FROM Common.TableGUIDFromXML(@COMPANY);
+
+        EXEC [Debug].[Execution@Point]
+            @DebugContext   = @DebugContext,
+            @Name           = 'INSERT INTO @Companies';
+
 		INSERT INTO Client.CompanyProcessJournal(ID_COMPANY, DATE, TYPE, ID_AVAILABILITY, ID_CHARACTER, ID_PERSONAL, MESSAGE)
-			SELECT a.ID, @DATE, 10, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'Èçìåíåíèå ìåíåæäåðà - Âîçâðàò'
-			FROM 
+			SELECT a.ID, @DATE, 10, ID_AVAILABILITY, ID_CHARACTER, c.ID_PERSONAL, N'Ð˜Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ Ð¼ÐµÐ½ÐµÐ¶Ð´ÐµÑ€Ð° - Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‚'
+			FROM
 				Client.Company a
-				INNER JOIN Common.TableGUIDFromXML(@COMPANY) b ON a.ID = b.ID
+				INNER JOIN @Companies b ON a.ID = b.ID
 				INNER JOIN Client.CompanyProcessManagerView c WITH(NOEXPAND) ON c.ID = a.ID
-		
+
 		UPDATE Client.CompanyProcess
 		SET EDATE = @DATE,
 			RETURN_DATE = GETDATE(),
@@ -32,10 +58,10 @@ BEGIN
 			AND ID_COMPANY IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
-		DECLARE @WS UNIQUEIDENTIFIER		
+		DECLARE @WS UNIQUEIDENTIFIER
 
 		SELECT @WS = ID
 		FROM Client.WorkState
@@ -47,25 +73,21 @@ BEGIN
 			WHERE ID IN
 				(
 					SELECT ID
-					FROM Common.TableGUIDFromXML(@COMPANY) a
+					FROM @Companies a
 				)
 
 		EXEC Client.COMPANY_REINDEX NULL, @COMPANY
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[COMPANY_PROCESS_MANAGER_RETURN] TO rl_company_process_return_manager;
+GO

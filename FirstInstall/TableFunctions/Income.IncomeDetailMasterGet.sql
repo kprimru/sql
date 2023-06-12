@@ -1,30 +1,33 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Income].[IncomeDetailMasterGet]
-(	
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Income].[IncomeDetailMasterGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [Income].[IncomeDetailMasterGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
+GO
+CREATE FUNCTION [Income].[IncomeDetailMasterGet]
+(
 	@ID_ID	UNIQUEIDENTIFIER
 )
-RETURNS 
-@TBL TABLE 
+RETURNS
+@TBL TABLE
 (
 	ID_ID UNIQUEIDENTIFIER
 )
 AS
 BEGIN
 	INSERT INTO @TBL
-		SELECT @ID_ID		
+		SELECT @ID_ID
 
-		UNION	
-		
+		UNION
+
 		SELECT ID_ID_MASTER
-		FROM 
+		FROM
 			Income.IncomeFullView
-		WHERE ID_ID = @ID_ID	
-		
-	
-	RETURN 
+		WHERE ID_ID = @ID_ID
+
+
+	RETURN
 END
+GO

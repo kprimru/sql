@@ -1,10 +1,12 @@
-USE [FirstInstall]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+﻿USE [FirstInstall]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Salary].[PersonalSalaryCalc]', 'FN') IS NULL EXEC('CREATE FUNCTION [Salary].[PersonalSalaryCalc] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 CREATE FUNCTION [Salary].[PersonalSalaryCalc]
 (
 	@PER_ID	UNIQUEIDENTIFIER,
@@ -13,18 +15,18 @@ CREATE FUNCTION [Salary].[PersonalSalaryCalc]
 )
 RETURNS MONEY
 AS
-BEGIN	
+BEGIN
 	DECLARE @RESULT MONEY
 
 	SET @RESULT = 0
 
 	SELECT TOP 1 @RESULT = SC_VALUE
-	FROM 
+	FROM
 		Salary.SalaryConditionActive
-	WHERE PT_ID_MASTER = 
+	WHERE PT_ID_MASTER =
 		(
 			SELECT PER_ID_TYPE
-			FROM 
+			FROM
 				Personal.PersonalActive
 			WHERE PER_ID_MASTER = @PER_ID
 		) AND
@@ -33,3 +35,4 @@ BEGIN
 
 	RETURN @RESULT
 END
+GO

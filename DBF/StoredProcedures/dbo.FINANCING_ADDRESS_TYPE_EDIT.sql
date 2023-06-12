@@ -1,19 +1,21 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[FINANCING_ADDRESS_TYPE_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_EDIT]  AS SELECT 1')
+GO
+
 
 /*
-Автор:			Денисов Алексей
-Дата создания:	3 July 2009
-Описание:	  
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	3 July 2009
+РћРїРёСЃР°РЅРёРµ:
 
 */
 
-CREATE PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[FINANCING_ADDRESS_TYPE_EDIT]
 	@fatid SMALLINT,
 	@addrtypeid TINYINT,
 	@text VARCHAR(50),
@@ -22,15 +24,35 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.FinancingAddressTypeTable 
-	SET	FAT_ID_ADDR_TYPE = @addrtypeid,
-		FAT_TEXT = @text,
-		FAT_ACTIVE = @active
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	WHERE FAT_ID = @fatid
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	SET NOCOUNT OFF
+	BEGIN TRY
+
+		UPDATE dbo.FinancingAddressTypeTable
+		SET	FAT_ID_ADDR_TYPE = @addrtypeid,
+			FAT_TEXT = @text,
+			FAT_ACTIVE = @active
+
+		WHERE FAT_ID = @fatid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
-
-
-
+GO
+GRANT EXECUTE ON [dbo].[FINANCING_ADDRESS_TYPE_EDIT] TO rl_financing_address_type_w;
+GO

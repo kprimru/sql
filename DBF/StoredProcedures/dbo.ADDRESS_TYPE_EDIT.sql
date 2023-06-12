@@ -1,16 +1,18 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[ADDRESS_TYPE_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ADDRESS_TYPE_EDIT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Описание:	  
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+РћРїРёСЃР°РЅРёРµ:
 */
 
-CREATE PROCEDURE [dbo].[ADDRESS_TYPE_EDIT] 
+ALTER PROCEDURE [dbo].[ADDRESS_TYPE_EDIT]
 	@addresstypeid TINYINT,
 	@addresstypename VARCHAR(100),
 	@active BIT = 1
@@ -18,10 +20,33 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE dbo.AddressTypeTable 
-	SET AT_NAME = @addresstypename, 
-		AT_ACTIVE = @active 
-	WHERE AT_ID = @addresstypeid
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.AddressTypeTable
+		SET AT_NAME = @addresstypename,
+			AT_ACTIVE = @active
+		WHERE AT_ID = @addresstypeid
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[ADDRESS_TYPE_EDIT] TO rl_address_type_w;
+GO

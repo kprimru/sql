@@ -1,12 +1,14 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Common].[PasswordGenerate]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Common].[PasswordGenerate]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[PasswordGenerate] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Common].[PasswordGenerate]
 (
-	-- кол-во симоволов
+	-- РєРѕР»-РІРѕ СЃРёРјРѕРІРѕР»РѕРІ
 	@LN	SMALLINT
 )
 RETURNS NVARCHAR(128)
@@ -16,13 +18,14 @@ BEGIN
 
 	DECLARE @KEY INT
 	SET @RES = ''
-	
+
 	WHILE LEN(@RES) < @LN
 	BEGIN
 		SET @KEY = CAST(Common.Rand_f()*255 AS INT)%127
-		IF PATINDEX('%[a-zA-Z0-9]%',CHAR(@KEY)) > 0 	 
-		SET @RES = @RES + CHAR(@KEY)	
+		IF PATINDEX('%[a-zA-Z0-9]%',CHAR(@KEY)) > 0 
+		SET @RES = @RES + CHAR(@KEY)
 	END
 
 	RETURN @RES
 END
+GO

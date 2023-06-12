@@ -1,19 +1,26 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE VIEW [dbo].[SystemBanksView]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SystemBanksView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[SystemBanksView]  AS SELECT 1')
+GO
+ALTER VIEW [dbo].[SystemBanksView]
 WITH SCHEMABINDING
 AS
-	SELECT 		
-		c.InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName, 
-		InfoBankOrder, InfoBankPath, InfoBankActive, 
+	SELECT 
+		c.InfoBankID, InfoBankName, InfoBankShortName, InfoBankFullName,
+		InfoBankOrder, InfoBankPath, InfoBankActive,
 		a.SystemID, SystemFullName, SystemActive, SystemOrder,
 		SystemShortName, SystemBaseName, [Required], HostID,
 		InfoBankStart
-	FROM 
+	FROM
 		dbo.SystemTable a INNER JOIN
 		dbo.SystemBankTable b ON a.SystemID = b.SystemID INNER JOIN
 		dbo.InfoBankTable c ON c.InfoBankID = b.InfoBankID
+
+GO
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.SystemBanksView(InfoBankID,SystemID)] ON [dbo].[SystemBanksView] ([InfoBankID] ASC, [SystemID] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.SystemBanksView(SystemID,InfoBankID)+(InfoBankFullName,InfoBankName,InfoBankOrder)] ON [dbo].[SystemBanksView] ([SystemID] ASC, [InfoBankID] ASC) INCLUDE ([InfoBankFullName], [InfoBankName], [InfoBankOrder]);
+GO

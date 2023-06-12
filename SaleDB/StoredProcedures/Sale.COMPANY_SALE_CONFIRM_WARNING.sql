@@ -1,18 +1,30 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Sale].[COMPANY_SALE_CONFIRM_WARNING]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Sale].[COMPANY_SALE_CONFIRM_WARNING]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Sale].[COMPANY_SALE_CONFIRM_WARNING]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Sale].[COMPANY_SALE_CONFIRM_WARNING]
 	@RC			INT	= NULL OUTPUT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
-		SELECT 
-			b.ID, b.NAME, a.DATE, 
+		SELECT
+			b.ID, b.NAME, a.DATE,
 			REVERSE(STUFF(REVERSE((
 				SELECT y.SHORT + '(' + x.SHORT + '), '
 				FROM
@@ -26,33 +38,29 @@ BEGIN
 				SELECT y.SHORT + '(' + CONVERT(VARCHAR(20), [VALUE]) + '), '
 				FROM
 					Sale.SalePersonal z
-					INNER JOIN Personal.OfficePersonal y ON z.ID_PERSONAL = y.ID					
+					INNER JOIN Personal.OfficePersonal y ON z.ID_PERSONAL = y.ID
 				WHERE z.ID_SALE = a.ID
 				ORDER BY [VALUE] DESC, y.SHORT FOR XML PATH('')
-			)), 1, 2, '')) AS PERS_STR			
-		FROM 
+			)), 1, 2, '')) AS PERS_STR
+		FROM
 			Sale.SaleCompany a
 			INNER JOIN Client.Company b ON a.ID_COMPANY = b.ID
 		WHERE a.STATUS = 1
-			AND CONFIRMED = 0		
+			AND CONFIRMED = 0
 		ORDER BY a.DATE
 
 		SET @RC = @@ROWCOUNT
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Sale].[COMPANY_SALE_CONFIRM_WARNING] TO rl_warning_sale;
+GO

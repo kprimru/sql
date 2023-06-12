@@ -1,15 +1,17 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[IS_COUNTRY_CORRECT]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+
 -- =============================================
--- Автор:		  Денисов Алексей
--- Дата создания: 25.08.2008
--- Описание:	  Возвращает 0, если название страны 
---                корректно (присутствует в справочнике)
+-- РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+-- Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 25.08.2008
+-- РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ 0, РµСЃР»Рё РЅР°Р·РІР°РЅРёРµ СЃС‚СЂР°РЅС‹
+--                РєРѕСЂСЂРµРєС‚РЅРѕ (РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ)
 -- =============================================
 CREATE FUNCTION [dbo].[IS_COUNTRY_CORRECT]
 (
@@ -27,3 +29,4 @@ BEGIN
 
 END
 
+GO

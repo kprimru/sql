@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[USER_CREATE]
+п»їUSE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[USER_CREATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[USER_CREATE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[USER_CREATE]
 	@NAME	VARCHAR(50),
 	@PASS	VARCHAR(50),
 	@ROLES	VARCHAR(MAX),
@@ -14,89 +16,114 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @ERROR VARCHAR(MAX)		
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	IF (CHARINDEX('''', @NAME) <> 0)
-		OR (CHARINDEX('''', @PASS) <> 0)
-	BEGIN
-		SET @ERROR = 'Имя пользователя или пароль содержат недоспустимые символы (кавычка)'
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-		RAISERROR (@ERROR, 16, 1)
+	BEGIN TRY
 
-		RETURN
-	END
+		DECLARE @ERROR VARCHAR(MAX)
 
-	/*
-	IF EXISTS(
-			SELECT *
-			FROM sys.server_principals
-			WHERE name = @NAME
-		)
-	BEGIN
-		SET @ERROR = 'Пользователь "' + @NAME + '" уже есть на сервере'
-		
-		RAISERROR (@ERROR, 16, 1)
+		IF (CHARINDEX('''', @NAME) <> 0)
+			OR (CHARINDEX('''', @PASS) <> 0)
+		BEGIN
+			SET @ERROR = 'РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ СЃРѕРґРµСЂР¶Р°С‚ РЅРµРґРѕСЃРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ (РєР°РІС‹С‡РєР°)'
 
-		RETURN
-	END
-	*/
-	
+			RAISERROR (@ERROR, 16, 1)
 
-	IF EXISTS(
-			SELECT *
-			FROM sys.database_principals
-			WHERE name = @NAME
-		)
-	BEGIN		
-		SET @ERROR = 'Пользователь или роль "' + @NAME + '" уже существуют в базе данных'
-		
-		RAISERROR (@ERROR, 16, 1)
+			RETURN
+		END
 
-		RETURN
-	END
-
-	IF @AUTH = 0
-	BEGIN
-		IF NOT EXISTS
-			(
+		/*
+		IF EXISTS(
 				SELECT *
 				FROM sys.server_principals
 				WHERE name = @NAME
 			)
-		/* авторизация Windows*/
-			EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')		
-	END
-	ELSE
-	BEGIN
-		IF NOT EXISTS
-			(
+		BEGIN
+			SET @ERROR = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ "' + @NAME + '" СѓР¶Рµ РµСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ'
+
+			RAISERROR (@ERROR, 16, 1)
+
+			RETURN
+		END
+		*/
+
+
+		IF EXISTS(
 				SELECT *
-				FROM sys.server_principals
+				FROM sys.database_principals
 				WHERE name = @NAME
 			)
-		/* авторизация SQL		*/
-			EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')		
-	END
+		BEGIN
+			SET @ERROR = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РёР»Рё СЂРѕР»СЊ "' + @NAME + '" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‚ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…'
 
-	EXEC('CREATE USER [' + @NAME + '] FOR LOGIN [' + @NAME + ']')
+			RAISERROR (@ERROR, 16, 1)
 
-	DECLARE RL CURSOR LOCAL FOR
-		SELECT ID
-		FROM dbo.TableStringFromXML(@ROLES)
+			RETURN
+		END
 
-	OPEN RL
-	
-	DECLARE @RL	VARCHAR(50)
+		IF @AUTH = 0
+		BEGIN
+			IF NOT EXISTS
+				(
+					SELECT *
+					FROM sys.server_principals
+					WHERE name = @NAME
+				)
+			/* Р°РІС‚РѕСЂРёР·Р°С†РёСЏ Windows*/
+				EXEC('CREATE LOGIN [' + @NAME + '] FROM WINDOWS')
+		END
+		ELSE
+		BEGIN
+			IF NOT EXISTS
+				(
+					SELECT *
+					FROM sys.server_principals
+					WHERE name = @NAME
+				)
+			/* Р°РІС‚РѕСЂРёР·Р°С†РёСЏ SQL		*/
+				EXEC('CREATE LOGIN [' + @NAME + '] WITH PASSWORD = ''' + @PASS + ''', CHECK_POLICY = OFF ')
+		END
 
-	FETCH NEXT FROM RL INTO @RL
+		EXEC('CREATE USER [' + @NAME + '] FOR LOGIN [' + @NAME + ']')
 
-	WHILE @@FETCH_STATUS = 0 
-	BEGIN
-		EXEC sp_addrolemember @RL, @NAME
+		DECLARE RL CURSOR LOCAL FOR
+			SELECT ID
+			FROM dbo.TableStringFromXML(@ROLES)
+
+		OPEN RL
+
+		DECLARE @RL	VARCHAR(50)
 
 		FETCH NEXT FROM RL INTO @RL
-	END
 
-	CLOSE RL
-	DEALLOCATE RL
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			EXEC sp_addrolemember @RL, @NAME
+
+			FETCH NEXT FROM RL INTO @RL
+		END
+
+		CLOSE RL
+		DEALLOCATE RL
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[USER_CREATE] TO rl_user_i;
+GO

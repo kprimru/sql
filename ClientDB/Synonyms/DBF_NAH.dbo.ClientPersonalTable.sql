@@ -1,0 +1,1 @@
+﻿CREATE SYNONYM [DBF_NAH].[dbo.ClientPersonalTable] FOR [DBF_NAH].[dbo].[ClientPersonalTable];

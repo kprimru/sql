@@ -1,36 +1,48 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]
+п»їUSE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Price].[COMMERCIAL_OFFER_TEMPLATE_DETAIL_OPTIMIZE_2]
 	@ID	UNIQUEIDENTIFIER
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	IF (
-			SELECT COUNT(*) 
-			FROM Price.CommercialOfferView 
+			SELECT COUNT(*)
+			FROM Price.CommercialOfferView
 			WHERE ID_OFFER = @ID
 				AND VARIANT = 1
 		) <>
 		(
-			SELECT COUNT(*) 
-			FROM Price.CommercialOfferView 
+			SELECT COUNT(*)
+			FROM Price.CommercialOfferView
 			WHERE ID_OFFER = @ID
 				AND VARIANT = 1
 		)
 	BEGIN
-		RAISERROR ('Количество записей в каждом варианте должно быть одинаковое!', 16, 1)
+		RAISERROR ('РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РїРёСЃРµР№ РІ РєР°Р¶РґРѕРј РІР°СЂРёР°РЅС‚Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РѕРґРёРЅР°РєРѕРІРѕРµ!', 16, 1)
 		RETURN
 	END
-	
-	
-	SELECT 		
-		t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,	
+
+
+	SELECT 
+		t.SYS_FULL_STR AS SYSTEM, NET_STR AS NET, SYS_REG,	SYS_ORDER,
 		SYSTEM_NOTE, SYSTEM_NOTE_FULL,
 		Common.MoneyFormat((
 			SELECT DELIVERY_PRICE
@@ -105,7 +117,7 @@ BEGIN
 		OPER, OPER_UNDERLINE, NOTE
 	FROM
 		(
-			SELECT  
+			SELECT
 				MIN(RN) AS RN_MIN,
 				MAX(RN) AS RN_MAX,
 				SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.REG, d.REG) AS SYS_REG,
@@ -114,7 +126,7 @@ BEGIN
 				ISNULL(e.NOTE_WTITLE, f.NOTE_WTITLE) AS SYSTEM_NOTE,
 				ISNULL(e.NOTE, f.NOTE) AS SYSTEM_NOTE_FULL,
 				a.OPER_STRING AS OPER, a.OPER_UNDERLINE, a.FULL_STR AS NOTE
-			FROM 
+			FROM
 				Price.CommercialOfferView a
 				LEFT OUTER JOIN System.Systems b ON a.ID_SYSTEM = b.ID
 				LEFT OUTER JOIN System.Systems c ON a.ID_OLD_SYSTEM = c.ID
@@ -124,7 +136,7 @@ BEGIN
 				LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemNote e ON e.ID_SYSTEM = z.SystemID
 				LEFT OUTER JOIN [PC275-SQL\ALPHA].ClientDB.dbo.SystemNote f ON f.ID_SYSTEM = y.SystemID
 			WHERE a.ID_OFFER = @ID
-			GROUP BY 
+			GROUP BY
 				SYS_STR, SYS_FULL_STR, NET_STR, ISNULL(b.REG, d.REG),
 				ISNULL(b.ORD, d.ORD),
 				b.ORD, c.ORD,
@@ -133,10 +145,11 @@ BEGIN
 				a.OPER_STRING, a.OPER_UNDERLINE, a.FULL_STR
 		) AS t
 	--ORDER BY BORDER, CORDER
-	ORDER BY 
-		CASE 
-			WHEN RN_MIN = 1 THEN 2 
+	ORDER BY
+		CASE
+			WHEN RN_MIN = 1 THEN 2
 			WHEN RN_MAX = (SELECT MAX(RN) FROM Price.CommercialOfferView WHERE ID_OFFER = @ID) THEN 1
 			ELSE RN_MIN + 1
 		END
 END
+GO

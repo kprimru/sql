@@ -1,31 +1,57 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+ï»¿USE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CLIENT_GET_MONTH_NO_BILL]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]  AS SELECT 1')
+GO
+
 /*
-Àâòîð:			Äåíèñîâ Àëåêñåé/Áîãäàí Âëàäèìèð
-Äàòà ñîçäàíèÿ:  	
-Îïèñàíèå:		
+ÐÐ²Ñ‚Ð¾Ñ€:			Ð”ÐµÐ½Ð¸ÑÐ¾Ð² ÐÐ»ÐµÐºÑÐµÐ¹/Ð‘Ð¾Ð³Ð´Ð°Ð½ Ð’Ð»Ð°Ð´Ð¸Ð¼Ð¸Ñ€
+Ð”Ð°Ñ‚Ð° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ:  
+ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ:
 */
 
-CREATE PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]
+ALTER PROCEDURE [dbo].[CLIENT_GET_MONTH_NO_BILL]
 	@clientid INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT PR_ID, PR_DATE, PR_NAME
-	FROM dbo.PeriodTable a
-	WHERE PR_DATE >
-			(
-				SELECT MAX(b.PR_DATE)
-				FROM 
-					dbo.PeriodTable b INNER JOIN
-					dbo.BillTable c ON c.BL_ID_PERIOD = b.PR_ID
-				WHERE BL_ID_CLIENT = @clientid					
-			)	
-END
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT PR_ID, PR_DATE, PR_NAME
+		FROM dbo.PeriodTable a
+		WHERE PR_DATE >
+				(
+					SELECT MAX(b.PR_DATE)
+					FROM
+						dbo.PeriodTable b INNER JOIN
+						dbo.BillTable c ON c.BL_ID_PERIOD = b.PR_ID
+					WHERE BL_ID_CLIENT = @clientid
+				)
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
+END
+GO
+GRANT EXECUTE ON [dbo].[CLIENT_GET_MONTH_NO_BILL] TO rl_bill_r;
+GO

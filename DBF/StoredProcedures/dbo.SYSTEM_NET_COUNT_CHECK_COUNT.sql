@@ -1,26 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SYSTEM_NET_COUNT_CHECK_COUNT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT]  AS SELECT 1')
+GO
+
 /*
-Автор:		  Денисов Алексей
-Дата создания: 23.09.2008
-Описание:	  Возвращает ID типа сети с указанным 
-				  кол-вом станций. 
+РђРІС‚РѕСЂ:		  Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ: 23.09.2008
+РћРїРёСЃР°РЅРёРµ:	  Р’РѕР·РІСЂР°С‰Р°РµС‚ ID С‚РёРїР° СЃРµС‚Рё СЃ СѓРєР°Р·Р°РЅРЅС‹Рј
+				  РєРѕР»-РІРѕРј СЃС‚Р°РЅС†РёР№.
 */
 
-CREATE PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] 
+ALTER PROCEDURE [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT]
 	@netcount INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SNC_ID
-	FROM dbo.SystemNetCountTable
-	WHERE SNC_NET_COUNT = @netcount
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SNC_ID
+		FROM dbo.SystemNetCountTable
+		WHERE SNC_NET_COUNT = @netcount
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SYSTEM_NET_COUNT_CHECK_COUNT] TO rl_system_net_count_w;
+GO

@@ -1,42 +1,52 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Client].[WORK_STATE_UPDATE]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Client].[WORK_STATE_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[WORK_STATE_UPDATE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Client].[WORK_STATE_UPDATE]
 	@ID		UNIQUEIDENTIFIER,
 	@NAME	NVARCHAR(512),
+	@GR     NVARCHAR(512),
 	@SALE	BIT,
 	@PHONE	BIT,
 	@ARCH	BIT
 AS
 BEGIN
-	SET NOCOUNT ON;	
+	SET NOCOUNT ON;
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
 
 	BEGIN TRY
 		UPDATE	Client.WorkState
 		SET		NAME	=	@NAME,
+		        GR      =   @GR,
 				SALE_AUTO	=	@SALE,
 				PHONE_AUTO	=	@PHONE,
 				ARCHIVE_AUTO	=	@ARCH,
 				LAST	=	GETDATE()
 		WHERE	ID		=	@ID
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Client].[WORK_STATE_UPDATE] TO rl_work_state_w;
+GO

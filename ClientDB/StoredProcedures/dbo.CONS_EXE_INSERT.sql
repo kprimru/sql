@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[CONS_EXE_INSERT]	
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[CONS_EXE_INSERT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CONS_EXE_INSERT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[CONS_EXE_INSERT]
 	@NAME	VARCHAR(50),
 	@ACTIVE	BIT,
 	@BEGIN	SMALLDATETIME,
@@ -14,9 +16,34 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.ConsExeVersionTable(ConsExeVersionName, 
-			ConsExeVersionActive, ConsExeVersionBegin, ConsExeVersionEnd)
-		VALUES(@NAME, @ACTIVE, @BEGIN, @END)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @ID = SCOPE_IDENTITY()
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		INSERT INTO dbo.ConsExeVersionTable(ConsExeVersionName,
+				ConsExeVersionActive, ConsExeVersionBegin, ConsExeVersionEnd)
+			VALUES(@NAME, @ACTIVE, @BEGIN, @END)
+
+		SELECT @ID = SCOPE_IDENTITY()
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[CONS_EXE_INSERT] TO rl_cons_exe_i;
+GO

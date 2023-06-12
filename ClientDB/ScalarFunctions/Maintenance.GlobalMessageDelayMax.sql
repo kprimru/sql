@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE FUNCTION [Maintenance].[GlobalMessageDelayMax]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Maintenance].[GlobalMessageDelayMax]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalMessageDelayMax] () RETURNS Int AS BEGIN RETURN NULL END')
+GO
+CREATE FUNCTION [Maintenance].[GlobalMessageDelayMax]
 ()
 RETURNS INT
 AS
@@ -19,8 +21,9 @@ BEGIN
 
 	IF @TMP IS NULL
 		SET @RES = 20
-	ELSE 
+	ELSE
 		SET @RES = CONVERT(INT, @TMP)
-		
+
 	RETURN @RES
 END
+GO

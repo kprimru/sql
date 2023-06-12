@@ -1,22 +1,34 @@
-USE [SaleDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[ROLE_USERS_SELECT]
+﻿USE [SaleDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[ROLE_USERS_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[ROLE_USERS_SELECT]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[ROLE_USERS_SELECT]
 	@ROLE	NVARCHAR(128)
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
+    DECLARE
+        @DebugError     VarChar(512),
+        @DebugContext   Xml,
+        @Params         Xml;
+
+    EXEC [Debug].[Execution@Start]
+        @Proc_Id        = @@ProcId,
+        @Params         = @Params,
+        @DebugContext   = @DebugContext OUT
+
 	BEGIN TRY
-		SELECT 
+		SELECT
 			0 AS TP, CAPTION, NAME,
 			CONVERT(BIT, ISNULL((
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					sys.database_principals a
 					INNER JOIN sys.database_role_members b ON a.principal_id = b.role_principal_id
 					INNER JOIN sys.database_principals c ON c.principal_id = b.member_principal_id
@@ -26,11 +38,11 @@ BEGIN
 
 		UNION ALL
 
-		SELECT 
+		SELECT
 			1 AS TP, NAME, LOGIN,
 			CONVERT(BIT, ISNULL((
 				SELECT COUNT(*)
-				FROM 
+				FROM
 					sys.database_principals a
 					INNER JOIN sys.database_role_members b ON a.principal_id = b.role_principal_id
 					INNER JOIN sys.database_principals c ON c.principal_id = b.member_principal_id
@@ -38,23 +50,19 @@ BEGIN
 			), 0))
 		FROM Security.Users z
 		WHERE z.STATUS = 1
-		
+
 		ORDER BY TP, CAPTION
-	END TRY
-	BEGIN CATCH
-		DECLARE	@SEV	INT
-		DECLARE	@STATE	INT
-		DECLARE	@NUM	INT
-		DECLARE	@PROC	NVARCHAR(128)
-		DECLARE	@MSG	NVARCHAR(2048)
 
-		SELECT 
-			@SEV	=	ERROR_SEVERITY(),
-			@STATE	=	ERROR_STATE(),
-			@NUM	=	ERROR_NUMBER(),
-			@PROC	=	ERROR_PROCEDURE(),
-			@MSG	=	ERROR_MESSAGE()
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+    END TRY
+    BEGIN CATCH
+        SET @DebugError = Error_Message();
 
-		EXEC Security.ERROR_RAISE @SEV, @STATE, @NUM, @PROC, @MSG
-	END CATCH
+        EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+        EXEC [Maintenance].[ReRaise Error];
+    END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[ROLE_USERS_SELECT] TO rl_user_role_r;
+GO

@@ -1,106 +1,133 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	/*
-Автор:			
-Дата создания:  	
-Описание:		
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[REPORT_DEBT_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[REPORT_DEBT_SELECT]  AS SELECT 1')
+GO
+/*
+РђРІС‚РѕСЂ:
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:  
+РћРїРёСЃР°РЅРёРµ:
 */
-CREATE PROCEDURE [dbo].[REPORT_DEBT_SELECT]
+ALTER PROCEDURE [dbo].[REPORT_DEBT_SELECT]
 	@date SMALLDATETIME
 WITH RECOMPILE
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
-	--DECLARE @gavno TABLE (SL_ID_CLIENT INT, SL_ID_DISTR INT, SL_ID BIGINT)
-	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
-		DROP TABLE #distr
 
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	--сформировать последнее сальдо по всем за эту дату?
-	CREATE TABLE #temp
-		(
-			SL_ID_CLIENT INT,
-			SL_ID_DISTR INT,
-			SL_DATE SMALLDATETIME,
-			SL_REST MONEY
-		)
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	CREATE TABLE #distr
-		(
-			SL_ID_DISTR		INT,
-			SL_ID_CLIENT	INT,
-			SL_ID			BIGINT
-		)
+	BEGIN TRY
 
-	INSERT INTO #distr(SL_ID_CLIENT, SL_ID_DISTR, SL_ID)
-		SELECT 
-			SL_ID_CLIENT, SL_ID_DISTR,
+		--DECLARE @gavno TABLE (SL_ID_CLIENT INT, SL_ID_DISTR INT, SL_ID BIGINT)
+		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
+			DROP TABLE #distr
+
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
+
+		--СЃС„РѕСЂРјРёСЂРѕРІР°С‚СЊ РїРѕСЃР»РµРґРЅРµРµ СЃР°Р»СЊРґРѕ РїРѕ РІСЃРµРј Р·Р° СЌС‚Сѓ РґР°С‚Сѓ?
+		CREATE TABLE #temp
 			(
-				SELECT TOP 1 SL_ID
-				FROM dbo.SaldoTable b
-				WHERE a.SL_ID_CLIENT = b.SL_ID_CLIENT
-					AND a.SL_ID_DISTR = b.SL_ID_DISTR
-				ORDER BY SL_DATE DESC, SL_TP, SL_ID DESC
-			) AS SL_ID
-		FROM 
-			(
-				SELECT DISTINCT SL_ID_CLIENT, SL_ID_DISTR
-				FROM dbo.SaldoTable
-			) AS a
+				SL_ID_CLIENT INT,
+				SL_ID_DISTR INT,
+				SL_DATE SMALLDATETIME,
+				SL_REST MONEY
+			)
 
-	/*
-	INSERT INTO @gavno
-		SELECT 
-			DISTINCT SL_ID_CLIENT, SL_ID_DISTR, 
+		CREATE TABLE #distr
 			(
-				SELECT TOP 1 SL_ID
-				FROM dbo.SaldoTable b
-				WHERE a.SL_ID_CLIENT = b.SL_ID_CLIENT
-					AND a.SL_ID_DISTR = b.SL_ID_DISTR
-				ORDER BY SL_DATE DESC, SL_TP, SL_ID DESC
-			) AS SL_ID
-		FROM dbo.SaldoTable a
-		WHERE SL_DATE <= @date			
-	*/
-	
-	INSERT INTO #temp
+				SL_ID_DISTR		INT,
+				SL_ID_CLIENT	INT,
+				SL_ID			BIGINT
+			)
+
+		INSERT INTO #distr(SL_ID_CLIENT, SL_ID_DISTR, SL_ID)
+			SELECT
+				SL_ID_CLIENT, SL_ID_DISTR,
+				(
+					SELECT TOP 1 SL_ID
+					FROM dbo.SaldoTable b
+					WHERE a.SL_ID_CLIENT = b.SL_ID_CLIENT
+						AND a.SL_ID_DISTR = b.SL_ID_DISTR
+					ORDER BY SL_DATE DESC, SL_TP, SL_ID DESC
+				) AS SL_ID
+			FROM
+				(
+					SELECT DISTINCT SL_ID_CLIENT, SL_ID_DISTR
+					FROM dbo.SaldoTable
+				) AS a
+
+		/*
+		INSERT INTO @gavno
+			SELECT
+				DISTINCT SL_ID_CLIENT, SL_ID_DISTR,
+				(
+					SELECT TOP 1 SL_ID
+					FROM dbo.SaldoTable b
+					WHERE a.SL_ID_CLIENT = b.SL_ID_CLIENT
+						AND a.SL_ID_DISTR = b.SL_ID_DISTR
+					ORDER BY SL_DATE DESC, SL_TP, SL_ID DESC
+				) AS SL_ID
+			FROM dbo.SaldoTable a
+			WHERE SL_DATE <= @date
+		*/
+
+		INSERT INTO #temp
+			SELECT
+				a.SL_ID_CLIENT, b.SL_ID_DISTR, SL_DATE, SL_REST
+			FROM
+				#distr a INNER JOIN
+				dbo.SaldoTable b ON a.SL_ID = b.SL_ID
+
+
 		SELECT
-			a.SL_ID_CLIENT, b.SL_ID_DISTR, SL_DATE, SL_REST			
+			CL_ID, DIS_ID, CL_PSEDO, DIS_STR, SYS_ORDER, SN_ID, SN_NAME,
+			SL_REST, SL_DATE AS SAL_DATE,
+			(
+				SELECT TOP 1 COUR_NAME
+				FROM
+					dbo.TOTable INNER JOIN
+					dbo.CourierTable ON TO_ID_COUR = COUR_ID
+				WHERE TO_ID_CLIENT = CL_ID
+				ORDER BY TO_MAIN DESC
+			) AS COUR_NAME
 		FROM 
-			#distr a INNER JOIN
-			dbo.SaldoTable b ON a.SL_ID = b.SL_ID
-	
+			#temp INNER JOIN
+			dbo.ClientTable ON SL_ID_CLIENT = CL_ID INNER JOIN
+    		dbo.DistrView WITH(NOEXPAND) ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
+			dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
+			dbo.SystemNetTable ON SN_ID = DF_ID_NET 
+		WHERE SL_REST < 0        
+		ORDER BY COUR_NAME, CL_PSEDO, CL_ID, SYS_ORDER
 
-	SELECT 
-		CL_ID, DIS_ID, CL_PSEDO, DIS_STR, SYS_ORDER, SN_ID, SN_NAME,
-		SL_REST, SL_DATE AS SAL_DATE,
-		(
-			SELECT TOP 1 COUR_NAME
-			FROM 
-				dbo.TOTable INNER JOIN
-				dbo.CourierTable ON TO_ID_COUR = COUR_ID
-			WHERE TO_ID_CLIENT = CL_ID
-			ORDER BY TO_MAIN DESC
-		) AS COUR_NAME
-	FROM 		
-		#temp INNER JOIN
-	    dbo.ClientTable ON SL_ID_CLIENT = CL_ID INNER JOIN		
-    	dbo.DistrView ON DIS_ID = SL_ID_DISTR LEFT OUTER JOIN
-        dbo.DistrFinancingTable ON DF_ID_DISTR = DIS_ID LEFT OUTER JOIN
-        dbo.SystemNetTable ON SN_ID = DF_ID_NET 	
-	WHERE SL_REST < 0        	
-	ORDER BY COUR_NAME, CL_PSEDO, CL_ID, SYS_ORDER
+		IF OBJECT_ID('tempdb..#temp') IS NOT NULL
+			DROP TABLE #temp
 
-	IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-		DROP TABLE #temp
-	
-	IF OBJECT_ID('tempdb..#distr') IS NOT NULL
-		DROP TABLE #distr
+		IF OBJECT_ID('tempdb..#distr') IS NOT NULL
+			DROP TABLE #distr
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[REPORT_DEBT_SELECT] TO rl_report_debt_r;
+GO

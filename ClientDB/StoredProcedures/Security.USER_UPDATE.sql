@@ -1,10 +1,12 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Security].[USER_UPDATE]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Security].[USER_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[USER_UPDATE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Security].[USER_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@ROLES	VARCHAR(MAX)
@@ -13,74 +15,99 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @OLD_NAME	VARCHAR(50)
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT @OLD_NAME = name
-	FROM sys.database_principals
-	WHERE principal_id = @ID
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	
-	IF @OLD_NAME <> @NAME
-	BEGIN
-		EXEC('ALTER LOGIN [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
-		EXEC('ALTER USER [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
-	END
+	BEGIN TRY
 
-	DECLARE RL_DROP CURSOR LOCAL FOR
-		SELECT RoleName
-		FROM 
-			dbo.RoleTable a
-			INNER JOIN sys.database_principals b ON a.RoleName = b.name
-			INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
-		WHERE c.member_principal_id = @ID
-			AND NOT EXISTS
-				(
-					SELECT *
-					FROM dbo.TableStringFromXML(@ROLES)
-					WHERE ID = a.RoleName
-				)
+		DECLARE @OLD_NAME	VARCHAR(50)
 
-	OPEN RL_DROP
-	
-	DECLARE @RL	VARCHAR(50)
+		SELECT @OLD_NAME = name
+		FROM sys.database_principals
+		WHERE principal_id = @ID
 
-	FETCH NEXT FROM RL_DROP INTO @RL
 
-	WHILE @@FETCH_STATUS = 0 
-	BEGIN
-		EXEC sp_droprolemember @RL, @NAME
+		IF @OLD_NAME <> @NAME
+		BEGIN
+			EXEC('ALTER LOGIN [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
+			EXEC('ALTER USER [' + @OLD_NAME + '] WITH NAME = [' + @NAME + ']')
+		END
+
+		DECLARE RL_DROP CURSOR LOCAL FOR
+			SELECT RoleName
+			FROM
+				dbo.RoleTable a
+				INNER JOIN sys.database_principals b ON a.RoleName = b.name
+				INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
+			WHERE c.member_principal_id = @ID
+				AND NOT EXISTS
+					(
+						SELECT *
+						FROM dbo.TableStringFromXML(@ROLES)
+						WHERE ID = a.RoleName
+					)
+
+		OPEN RL_DROP
+
+		DECLARE @RL	VARCHAR(50)
 
 		FETCH NEXT FROM RL_DROP INTO @RL
-	END
 
-	CLOSE RL_DROP
-	DEALLOCATE RL_DROP
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			EXEC sp_droprolemember @RL, @NAME
 
-	DECLARE RL_ADD CURSOR LOCAL FOR
-		SELECT ID
-		FROM dbo.TableStringFromXML(@ROLES)
-		WHERE 
-			NOT EXISTS
-				(
-					SELECT *
-					FROM 
-						dbo.RoleTable a
-						INNER JOIN sys.database_principals b ON a.RoleName = b.name
-						INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
-					WHERE ID = a.RoleName AND c.member_principal_id = @ID
-				)
+			FETCH NEXT FROM RL_DROP INTO @RL
+		END
 
-	OPEN RL_ADD
-	
-	FETCH NEXT FROM RL_ADD INTO @RL
+		CLOSE RL_DROP
+		DEALLOCATE RL_DROP
 
-	WHILE @@FETCH_STATUS = 0 
-	BEGIN
-		EXEC sp_addrolemember @RL, @NAME
+		DECLARE RL_ADD CURSOR LOCAL FOR
+			SELECT ID
+			FROM dbo.TableStringFromXML(@ROLES)
+			WHERE
+				NOT EXISTS
+					(
+						SELECT *
+						FROM
+							dbo.RoleTable a
+							INNER JOIN sys.database_principals b ON a.RoleName = b.name
+							INNER JOIN sys.database_role_members c ON c.role_principal_id = b.principal_id
+						WHERE ID = a.RoleName AND c.member_principal_id = @ID
+					)
+
+		OPEN RL_ADD
 
 		FETCH NEXT FROM RL_ADD INTO @RL
-	END
 
-	CLOSE RL_ADD
-	DEALLOCATE RL_ADD
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			EXEC sp_addrolemember @RL, @NAME
+
+			FETCH NEXT FROM RL_ADD INTO @RL
+		END
+
+		CLOSE RL_ADD
+		DEALLOCATE RL_ADD
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Security].[USER_UPDATE] TO rl_user_i;
+GO

@@ -1,58 +1,85 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [Salary].[CALC_CHECK]
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[Salary].[CALC_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Salary].[CALC_CHECK]  AS SELECT 1')
+GO
+ALTER PROCEDURE [Salary].[CALC_CHECK]
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	/*
-	проверка корректности:
-	1. Чтобы у СИ стоял признак Резидента
-	2. Чтобы у резидента был заполнен бызовый город
-	3. Чтобы у клиента был указан тип
-	4. Чтобы у населенного пункта всегда был указан базовый (хотя бы для тех, которые расчитываются по резидентам)
-	*/
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SELECT COUR_NAME AS [Значение], 'Не указан тип СИ' AS [Тип проверки]
-	FROM dbo.CourierTable
-	WHERE COUR_ACTIVE = 1
-		AND COUR_ID_TYPE IS NULL
-		
-	UNION ALL
-		
-	SELECT COUR_NAME, 'Не указан базовый город'
-	FROM dbo.CourierTable
-	WHERE COUR_ACTIVE = 1
-		AND COUR_ID_TYPE = 2
-		AND COUR_ID_CITY IS NULL
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
 
-	UNION ALL
-		
-	SELECT CL_PSEDO, 'Не указан тип клиента'
-	FROM 
-		dbo.ClientTable
-		INNER JOIN dbo.TOTable ON TO_ID_CLIENT = CL_ID
-		INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
-	WHERE CL_ID_TYPE IS NULL AND COUR_ID_TYPE = 2
+	BEGIN TRY
 
-	UNION ALL
+		/*
+		РїСЂРѕРІРµСЂРєР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё:
+		1. Р§С‚РѕР±С‹ Сѓ РЎР СЃС‚РѕСЏР» РїСЂРёР·РЅР°Рє Р РµР·РёРґРµРЅС‚Р°
+		2. Р§С‚РѕР±С‹ Сѓ СЂРµР·РёРґРµРЅС‚Р° Р±С‹Р» Р·Р°РїРѕР»РЅРµРЅ Р±С‹Р·РѕРІС‹Р№ РіРѕСЂРѕРґ
+		3. Р§С‚РѕР±С‹ Сѓ РєР»РёРµРЅС‚Р° Р±С‹Р» СѓРєР°Р·Р°РЅ С‚РёРї
+		4. Р§С‚РѕР±С‹ Сѓ РЅР°СЃРµР»РµРЅРЅРѕРіРѕ РїСѓРЅРєС‚Р° РІСЃРµРіРґР° Р±С‹Р» СѓРєР°Р·Р°РЅ Р±Р°Р·РѕРІС‹Р№ (С…РѕС‚СЏ Р±С‹ РґР»СЏ С‚РµС…, РєРѕС‚РѕСЂС‹Рµ СЂР°СЃС‡РёС‚С‹РІР°СЋС‚СЃСЏ РїРѕ СЂРµР·РёРґРµРЅС‚Р°Рј)
+		*/
 
-	SELECT CT_NAME, 'Не указан базовый населенный пункт для населенного пункта'
-	FROM 
-		(
-			SELECT DISTINCT ST_ID_CITY
-			FROM 
-				dbo.TOTable
-				INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
-				INNER JOIN dbo.TOAddressTable ON TA_ID_TO = TO_ID
-				INNER JOIN dbo.StreetTable ON ST_ID = TA_ID_STREET
-			WHERE COUR_ID_TYPE = 2
-		) AS o_O
-		INNER JOIN dbo.CityTable ON ST_ID_CITY = CT_ID
-	WHERE CT_ID_BASE IS NULL
-	ORDER BY 2, 1
+		SELECT COUR_NAME AS [Р—РЅР°С‡РµРЅРёРµ], 'РќРµ СѓРєР°Р·Р°РЅ С‚РёРї РЎР' AS [РўРёРї РїСЂРѕРІРµСЂРєРё]
+		FROM dbo.CourierTable
+		WHERE COUR_ACTIVE = 1
+			AND COUR_ID_TYPE IS NULL
+
+		UNION ALL
+
+		SELECT COUR_NAME, 'РќРµ СѓРєР°Р·Р°РЅ Р±Р°Р·РѕРІС‹Р№ РіРѕСЂРѕРґ'
+		FROM dbo.CourierTable
+		WHERE COUR_ACTIVE = 1
+			AND COUR_ID_TYPE = 2
+			AND COUR_ID_CITY IS NULL
+
+		UNION ALL
+
+		SELECT CL_PSEDO, 'РќРµ СѓРєР°Р·Р°РЅ С‚РёРї РєР»РёРµРЅС‚Р°'
+		FROM
+			dbo.ClientTable
+			INNER JOIN dbo.TOTable ON TO_ID_CLIENT = CL_ID
+			INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
+		WHERE CL_ID_TYPE IS NULL AND COUR_ID_TYPE = 2
+
+		UNION ALL
+
+		SELECT CT_NAME, 'РќРµ СѓРєР°Р·Р°РЅ Р±Р°Р·РѕРІС‹Р№ РЅР°СЃРµР»РµРЅРЅС‹Р№ РїСѓРЅРєС‚ РґР»СЏ РЅР°СЃРµР»РµРЅРЅРѕРіРѕ РїСѓРЅРєС‚Р°'
+		FROM
+			(
+				SELECT DISTINCT ST_ID_CITY
+				FROM
+					dbo.TOTable
+					INNER JOIN dbo.CourierTable ON COUR_ID = TO_ID_COUR
+					INNER JOIN dbo.TOAddressTable ON TA_ID_TO = TO_ID
+					INNER JOIN dbo.StreetTable ON ST_ID = TA_ID_STREET
+				WHERE COUR_ID_TYPE = 2
+			) AS o_O
+			INNER JOIN dbo.CityTable ON ST_ID_CITY = CT_ID
+		WHERE CT_ID_BASE IS NULL
+		ORDER BY 2, 1
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [Salary].[CALC_CHECK] TO rl_courier_pay;
+GO

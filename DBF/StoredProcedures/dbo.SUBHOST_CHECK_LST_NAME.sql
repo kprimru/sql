@@ -1,26 +1,51 @@
-USE [DBF]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	
+п»їUSE [DBF]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SUBHOST_CHECK_LST_NAME]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_CHECK_LST_NAME]  AS SELECT 1')
+GO
+
 /*
-Автор:			Денисов Алексей, Богдан Владимир
-Дата создания:	25.08.2008, 3.06.2009
-Описание:		Возвращает ID подхоста с указанным 
-				названием подхоста на РЦ.
+РђРІС‚РѕСЂ:			Р”РµРЅРёСЃРѕРІ РђР»РµРєСЃРµР№, Р‘РѕРіРґР°РЅ Р’Р»Р°РґРёРјРёСЂ
+Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ:	25.08.2008, 3.06.2009
+РћРїРёСЃР°РЅРёРµ:		Р’РѕР·РІСЂР°С‰Р°РµС‚ ID РїРѕРґС…РѕСЃС‚Р° СЃ СѓРєР°Р·Р°РЅРЅС‹Рј
+				РЅР°Р·РІР°РЅРёРµРј РїРѕРґС…РѕСЃС‚Р° РЅР° Р Р¦.
 */
 
-CREATE PROCEDURE [dbo].[SUBHOST_CHECK_LST_NAME] 
+ALTER PROCEDURE [dbo].[SUBHOST_CHECK_LST_NAME]
 	@subhostlstname VARCHAR(100)
 AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT SH_ID
-	FROM dbo.SubhostTable
-	WHERE SH_LST_NAME = @subhostlstname 
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
 
-	SET NOCOUNT OFF
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		SELECT SH_ID
+		FROM dbo.SubhostTable
+		WHERE SH_LST_NAME = @subhostlstname
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SUBHOST_CHECK_LST_NAME] TO rl_subhost_w;
+GO

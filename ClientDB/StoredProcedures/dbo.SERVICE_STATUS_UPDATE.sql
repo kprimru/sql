@@ -1,26 +1,52 @@
-USE [ClientDB]
-	GO
-	SET ANSI_NULLS ON
-	GO
-	SET QUOTED_IDENTIFIER ON
-	GO
-	CREATE PROCEDURE [dbo].[SERVICE_STATUS_UPDATE]
+﻿USE [ClientDB]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF OBJECT_ID('[dbo].[SERVICE_STATUS_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SERVICE_STATUS_UPDATE]  AS SELECT 1')
+GO
+ALTER PROCEDURE [dbo].[SERVICE_STATUS_UPDATE]
 	@ID	INT,
 	@NAME	VARCHAR(50),
 	@REG	SMALLINT,
+	@Code	VarChar(100),
 	@INDEX	INT,
-	@IMAGE	VARBINARY(MAX),
 	@DEF	INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	UPDATE dbo.ServiceStatusTable
-	SET ServiceStatusName = @NAME,
-		ServiceStatusReg = @REG,
-		ServiceStatusIndex = @INDEX,
-		ServiceImage = @IMAGE,
-		ServiceDefault = @DEF,
-		ServiceStatusLast = GETDATE()
-	WHERE ServiceStatusID = @ID
+	DECLARE
+		@DebugError		VarChar(512),
+		@DebugContext	Xml,
+		@Params			Xml;
+
+	EXEC [Debug].[Execution@Start]
+		@Proc_Id		= @@ProcId,
+		@Params			= @Params,
+		@DebugContext	= @DebugContext OUT
+
+	BEGIN TRY
+
+		UPDATE dbo.ServiceStatusTable
+		SET ServiceStatusName = @NAME,
+			ServiceStatusReg = @REG,
+			ServiceCode	= @Code,
+			ServiceStatusIndex = @INDEX,
+			ServiceDefault = @DEF
+		WHERE ServiceStatusID = @ID
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
+	END TRY
+	BEGIN CATCH
+		SET @DebugError = Error_Message();
+
+		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = @DebugError;
+
+		EXEC [Maintenance].[ReRaise Error];
+	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[SERVICE_STATUS_UPDATE] TO rl_status_u;
+GO
