@@ -9,7 +9,7 @@ CREATE TABLE [Debug].[Executions:Point:Params]
         [Id]          bigint            NOT NULL,
         [Row:Index]   TinyInt           NOT NULL,
         [Name]        VarChar(100)      NOT NULL,
-        [Value]       VarChar(Max)      NOT NULL,
+        [Value]       VarChar(Max)          NULL,
         CONSTRAINT [PK_Debug.Executions:Point:Params] PRIMARY KEY CLUSTERED ([Id],[Row:Index])
 );
 GO
