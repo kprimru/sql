@@ -469,6 +469,16 @@ BEGIN
 		INNER JOIN [Din].[SystemType] AS DT ON DT.[SST_REG] = T.[SST_REG]
 		INNER JOIN [Din].[NetType] AS DN ON DN.[NT_NET] = N.[NT_NET] AND DN.[NT_TECH] = N.[NT_TECH] AND DN.[NT_ODON] = N.[NT_ODON] AND DN.[NT_ODOFF] = N.[NT_ODOFF]
 
+		TRUNCATE TABLE [dbo].[DistrTypeCoef];
+
+		INSERT INTO [dbo].[DistrTypeCoef]([ID_NET], [ID_MONTH], [COEF], [WEIGHT], [RND])
+		SELECT N.[DistrTypeID], P.[ID], AC.[COEF], AC.[WEIGHT], AC.[RND]
+		FROM [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeCoef]			AS AC
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[dbo].[DistrTypeTable]	AS D ON AC.[ID_NET] = D.[DistrTypeID]
+		INNER JOIN [PC275-SQL\ALPHA].[ClientDB].[Common].[Period]		AS AP ON AC.[ID_MONTH] = AP.[ID]
+		INNER JOIN [dbo].[DistrTypeTable]								AS N ON N.[DistrTypeCode] = D.[DistrTypeCode]
+		INNER JOIN [Common].[Period]									AS P ON P.[START] = AP.[START] AND P.[TYPE] = AP.[TYPE];
+
 		TRUNCATE TABLE [Price].[DistrType:Coef];
 
 		INSERT INTO [Price].[DistrType:Coef]([DistrType_Id], [Date], [Coef], [Round])
