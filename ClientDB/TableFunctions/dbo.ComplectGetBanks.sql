@@ -251,7 +251,8 @@ BEGIN
 		OR	(T.InfoBankName = 'AVV' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SVV')))
 		OR	(T.InfoBankName = 'BZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('NZS', 'AZS', 'SZS')))
 		OR	(T.InfoBankName = 'NZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('AZS', 'SZS')))
-		OR	(T.InfoBankName = 'AZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SZS')));
+		OR	(T.InfoBankName = 'AZS' AND EXISTS (SELECT * FROM @t P WHERE P.InfoBankName IN ('SZS')))
+		OR	(T.InfoBankName = 'DOF' AND NOT EXISTS (SELECT * FROM @t P WHERE P.InfoBankName NOT IN ('DOF')));
 
 	RETURN
 END
