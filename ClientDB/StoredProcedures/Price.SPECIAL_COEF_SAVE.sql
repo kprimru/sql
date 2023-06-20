@@ -36,17 +36,30 @@ BEGIN
 		FROM [Common].[Period]
 		WHERE [ID] = @PERIOD;
 
-		UPDATE [Price].[Coef:Special]
-		SET [Coef]	= @Coef,
-			[Round]	= @Round
-		WHERE [System_Id] = @System_Id
-			AND [DistrType_Id] = @DistrType_Id
-			AND [SystemType_Id] = @SystemType_Id
-			AND [Date] = @Date;
+		IF @SystemType_Id IS NOT NULL BEGIN
+			UPDATE [Price].[Coef:Special]
+			SET [Coef]	= @Coef,
+				[Round]	= @Round
+			WHERE [System_Id] = @System_Id
+				AND [DistrType_Id] = @DistrType_Id
+				AND [SystemType_Id] = @SystemType_Id
+				AND [Date] = @Date;
 
-		IF @@RowCount < 1
-			INSERT INTO [Price].[Coef:Special]([System_Id], [DistrType_Id], [SystemType_Id], [Date], [Coef], [Round])
-			SELECT @System_Id, @DistrType_Id, @SystemType_Id, @Date, @Coef, @Round;
+			IF @@RowCount < 1
+				INSERT INTO [Price].[Coef:Special]([System_Id], [DistrType_Id], [SystemType_Id], [Date], [Coef], [Round])
+				SELECT @System_Id, @DistrType_Id, @SystemType_Id, @Date, @Coef, @Round;
+		END ELSE BEGIN
+			UPDATE [Price].[Coef:Special:Common]
+			SET [Coef]	= @Coef,
+				[Round]	= @Round
+			WHERE [System_Id] = @System_Id
+				AND [DistrType_Id] = @DistrType_Id
+				AND [Date] = @Date;
+
+			IF @@RowCount < 1
+				INSERT INTO [Price].[Coef:Special:Common]([System_Id], [DistrType_Id], [Date], [Coef], [Round])
+				SELECT @System_Id, @DistrType_Id, @Date, @Coef, @Round;
+		END;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

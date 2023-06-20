@@ -44,6 +44,16 @@ RETURN
 	OUTER APPLY
 	(
 		SELECT
+			SC.[Date],
+			SC.[Coef],
+			SC.[Round]
+		FROM [Price].[Coef:Special:Common@Get](@Date) AS SC
+		WHERE [System_Id] = @System_Id
+			AND [DistrType_Id] = @DistrType_Id
+	) AS SCC
+	OUTER APPLY
+	(
+		SELECT
 			[Coef]	= D.[Coef] * S.[Coef],
 			[Round]	= [Common].[Min(SmallInt)](D.[Round], S.[Round])
 		FROM [Price].[DistrTypes:Coef@Get](@Date) AS D
@@ -55,8 +65,8 @@ RETURN
 	OUTER APPLY
 	(
 		SELECT
-			[Coef]	= CASE WHEN SC.[Date] IS NOT NULL THEN SC.[Coef] ELSE NC.[Coef] END,
-			[Round]	= CASE WHEN SC.[Date] IS NOT NULL THEN SC.[Round] ELSE NC.[Round] END
+			[Coef]	= CASE WHEN SC.[Date] IS NOT NULL THEN SC.[Coef] ELSE CASE WHEN SCC.[Date] IS NOT NULL THEN SCC.[Coef] ELSE NC.[Coef] END END,
+			[Round]	= CASE WHEN SC.[Date] IS NOT NULL THEN SC.[Round] ELSE CASE WHEN SCC.[Date] IS NOT NULL THEN SCC.[Round] ELSE NC.[Round] END END
 	) AS C
 	OUTER APPLY [Common].[TaxDefaultSelect](@Date) AS T
 	WHERE [Price].[Date@Available](@Date) = 1

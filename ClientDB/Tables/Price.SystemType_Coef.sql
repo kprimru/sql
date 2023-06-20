@@ -8,7 +8,7 @@ CREATE TABLE [Price].[SystemType:Coef]
 (
         [SystemType_Id]   Int                NOT NULL,
         [Date]            SmallDateTime      NOT NULL,
-        [Coef]            decimal            NOT NULL,
+        [Coef]            decimal                NULL,
         [Round]           SmallInt           NOT NULL,
         CONSTRAINT [PK_Price.SystemType:Coef] PRIMARY KEY CLUSTERED ([SystemType_Id],[Date]),
         CONSTRAINT [FK_Price.SystemType:Coef(SystemType_Id)_Price.SystemTypeTable(SystemTypeID)] FOREIGN KEY  ([SystemType_Id]) REFERENCES [dbo].[SystemTypeTable] ([SystemTypeID])

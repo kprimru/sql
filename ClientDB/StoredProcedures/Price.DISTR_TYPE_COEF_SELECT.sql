@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[Price].[DISTR_TYPE_COEF_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[DISTR_TYPE_COEF_SELECT]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Price].[DISTR_TYPE_COEF_SELECT]
-	@NET		Int,
+	@NET		Int = NULL,
 	@PERIOD		UniqueIdentifier = NULL
 AS
 BEGIN
@@ -25,11 +25,18 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT P.[NAME], a.[Coef], a.[Round], a.[Date], A.[DistrType_Id], [Period_Id] = P.[ID]
-		FROM [Price].[DistrType:Coef]		AS a
-		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
-		WHERE (a.[DistrType_Id] = @NET OR @NET IS NULL)
-		ORDER BY a.[Date] DESC;
+		SELECT
+			C.[DistrType_Id],
+			--D.[DistrTypeName],
+			C.[Date],
+			C.[Coef],
+			C.[Round]
+		FROM [Price].[DistrType:Coef]		AS C
+		INNER JOIN [dbo].[DistrTypeTable]	AS D ON D.[DistrTypeID] = C.[DistrType_Id]
+		WHERE (C.[DistrType_Id] = @NET OR @NET IS NULL)
+		ORDER BY
+			D.[DistrTypeOrder],
+			C.[Date] DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

@@ -10,7 +10,7 @@ CREATE TABLE [Price].[Coef:Special]
         [DistrType_Id]    Int                NOT NULL,
         [SystemType_Id]   Int                NOT NULL,
         [Date]            SmallDateTime      NOT NULL,
-        [Coef]            decimal            NOT NULL,
+        [Coef]            decimal                NULL,
         [Round]           SmallInt           NOT NULL,
         CONSTRAINT [PK_Price.Coef:Special] PRIMARY KEY NONCLUSTERED ([System_Id],[DistrType_Id],[SystemType_Id],[Date]),
         CONSTRAINT [FK_Price.Coef:Special(DistrType_Id)_Price.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([DistrType_Id]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),

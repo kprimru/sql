@@ -25,11 +25,11 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT P.[NAME], A.[SystemType_Id], a.[Coef], a.[Round], a.[Date], [Period_Id] = P.[ID]
-		FROM [Price].[SystemType:Coef]		AS a
-		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
-		WHERE (a.[SystemType_Id] = @TYPE OR @TYPE IS NULL)
-		ORDER BY a.[Date] DESC
+		SELECT C.[SystemType_Id], C.[Coef], C.[Round], C.[Date]
+		FROM [Price].[SystemType:Coef]		AS C
+		WHERE (C.[SystemType_Id] = @TYPE OR @TYPE IS NULL)
+		ORDER BY
+			C.[SystemType_Id], C.[Date] DESC
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

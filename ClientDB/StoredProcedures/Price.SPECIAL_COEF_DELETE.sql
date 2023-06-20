@@ -10,7 +10,7 @@ ALTER PROCEDURE [Price].[SPECIAL_COEF_DELETE]
 	@System_Id		Int,
 	@DistrType_Id	Int,
 	@SystemType_Id	Int,
-	@PERIOD			UniqueIdentifier
+	@Date			SmallDateTime
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,9 +20,6 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
-	DECLARE
-		@Date			SmallDateTime;
-
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -30,11 +27,17 @@ BEGIN
 
 	BEGIN TRY
 
-		DELETE [Price].[Coef:Special]
-		WHERE [System_Id] = @System_Id
-			AND [DistrType_Id] = @DistrType_Id
-			AND [SystemType_Id] = @SystemType_Id
-			AND [Date] = @Date;
+		IF @SystemType_Id IS NOT NULL
+			DELETE [Price].[Coef:Special]
+			WHERE [System_Id] = @System_Id
+				AND [DistrType_Id] = @DistrType_Id
+				AND [SystemType_Id] = @SystemType_Id
+				AND [Date] = @Date;
+		ELSE
+			DELETE [Price].[Coef:Special:Common]
+			WHERE [System_Id] = @System_Id
+				AND [DistrType_Id] = @DistrType_Id
+				AND [Date] = @Date;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

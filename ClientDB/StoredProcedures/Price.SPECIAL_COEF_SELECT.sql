@@ -7,9 +7,9 @@ GO
 IF OBJECT_ID('[Price].[SPECIAL_COEF_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[SPECIAL_COEF_SELECT]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Price].[SPECIAL_COEF_SELECT]
-	@System_Id		Int,
-	@DistrType_Id	Int,
-	@SystemType_Id	Int
+	@System_Id		Int = NULL,
+	@DistrType_Id	Int = NULL,
+	@SystemType_Id	Int = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,13 +27,21 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			P.[NAME], C.[Coef], C.[Round], C.[Date],
-			C.[SystemType_Id], C.[System_Id], C.[DistrType_Id], [Period_Id] = P.[ID]
+			C.[Coef], C.[Round], C.[Date],
+			C.[SystemType_Id], C.[System_Id], C.[DistrType_Id]
 		FROM [Price].[Coef:Special]			AS C
-		INNER JOIN [Common].[Period]		AS P ON P.[START] = C.[Date] AND P.[TYPE] = 2
 		WHERE (C.[System_Id] = @System_Id OR @System_Id IS NULL)
 			AND (C.[DistrType_Id] = @DistrType_Id OR @DistrType_Id IS NULL)
 			AND (C.[SystemType_Id] = @SystemType_Id OR @SystemType_Id IS NULL)
+		---
+		UNION ALL
+		---
+		SELECT
+			C.[Coef], C.[Round], C.[Date],
+			NULL, C.[System_Id], C.[DistrType_Id]
+		FROM [Price].[Coef:Special:Common]			AS C
+		WHERE (C.[System_Id] = @System_Id OR @System_Id IS NULL)
+			AND (C.[DistrType_Id] = @DistrType_Id OR @DistrType_Id IS NULL)
 		ORDER BY C.[Date] DESC;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
