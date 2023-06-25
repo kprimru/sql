@@ -8,9 +8,10 @@ IF OBJECT_ID('[dbo].[RISK_REPORT_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE 
 GO
 
 ALTER PROCEDURE [dbo].[RISK_REPORT_SELECT]
-	@CLIENTID	INT,
-	@START		SMALLDATETIME = NULL,
-	@END		SMALLDATETIME = NULL
+	@Client_Id	Int,
+	@Complect	VarChar(100),
+	@DateFrom	SmallDateTime = NULL,
+	@DateTo		SmallDateTime = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -27,26 +28,29 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT	 A.[DutyCount] --AS ''
-				,A.[DutyQuestionCount] --AS ''
-				,A.[DutyHotlineCount] --AS ''
-				,A.[RivalCount] --AS ''
-				,A.[StudyCount] --AS ''
-				,A.[SeminarCount] --AS ''
-				,A.[UpdatesCount] --AS ''
-				,A.[LostCount] --AS ''
-				,A.[DownloadCount] --AS ''
-				,A.[OnlineActivityCount] --AS ''
-				,A.[OfflineEnterCount]-- AS ''
-				,A.[DeliveryCount] --AS ''
-				,B.[DateTime]
-				,A.[Report_Id]
-		FROM [dbo].[RiskReportDetail] A
-		INNER JOIN [ClientDB].[dbo].[RiskReport] B ON B.Id = A.Report_Id
-		WHERE ClientID = @CLIENTID
-			AND COALESCE(@START, B.[DateTime]) <= B.[DateTime]
-			AND COALESCE(@END, B.[DateTime]) >= B.[DateTime]
-		ORDER BY A.[Report_Id]
+		SELECT
+			[Обращений в ДС]		= Sum(D.[DutyCount]),
+			[ЗВЭ]					= Sum(D.[DutyQuestionCount]),
+			[Чаты]					= Sum(D.[DutyHotlineCount]),
+			[Конкуренты]			= Sum(D.[RivalCount]),
+			[Обучение]				= Sum(D.[StudyCount]),
+			[Семинары]				= Sum(D.[SeminarCount]),
+			[Пополнений]			= Sum(D.[UpdatesCount]),
+			[Пополнений пропущено]	= Sum(D.[LostCount]),
+			[Скачанных документов]	= Avg(D.[DownloadCount]),
+			[Онлайн-активность]		= Sum(D.[OnlineActivityCount]),
+			[Оффлайн-входов]		= Sum(D.[OfflineEnterCount]),
+			[Подписки]				= Avg(D.[DeliveryCount]),
+			[DateTime]				= R.[DateTime],
+			[Report_Id]				= D.[Report_Id]
+		FROM [dbo].[RiskReportDetail]				AS D
+		INNER JOIN [ClientDB].[dbo].[RiskReport]	AS R ON R.[Id] = D.[Report_Id]
+		WHERE D.[ClientID] = @Client_Id
+			AND (D.[Complect] = @Complect OR @Complect IS NULL)
+			AND (R.[DateTime] >= @DateFrom OR @DateFrom IS NULL)
+			AND (R.[DateTime] <= @DateTo OR @DateTo IS NULL)
+		GROUP BY R.[DateTime], D.[Report_Id]
+		ORDER BY R.[DateTime]
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -58,4 +62,6 @@ BEGIN
 		EXEC [Maintenance].[ReRaise Error];
 	END CATCH
 END
+GO
+GRANT EXECUTE ON [dbo].[RISK_REPORT_SELECT] TO rl_risk;
 GO
