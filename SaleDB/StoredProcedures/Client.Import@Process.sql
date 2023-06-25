@@ -7,6 +7,8 @@ GO
 IF OBJECT_ID('[Client].[Import@Process]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[Import@Process]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Client].[Import@Process]
+	@File_Id				Int,
+	@Row_Id					Int,
 	@CompanyName			VarChar(256),
 	@LegalForm				VarChar(32),
 	@Inn					VarChar(256),
@@ -34,7 +36,10 @@ BEGIN
 		@Phone			VarChar(128) = '',
 		@Phone_S		VarChar(128),
 		@Office_Id		UniqueIdentifier,
-		@WorkMonth		UniqueIdentifier;
+		@WorkMonth		UniqueIdentifier,
+		@PersonalAdd	Bit = 0,
+		@PhoneAdd		Bit = 0,
+		@InnAdd			Bit = 0;
 
 	DECLARE @PhonesList Table
 	(
@@ -52,6 +57,10 @@ BEGIN
 
 		SET @Phones = Replace(@Phones, '+7', '8');
 
+		INSERT INTO @PhonesList
+		SELECT Ltrim(Rtrim(V.[value])), Replace(Replace(Replace(Replace(V.[value], '(', ''), ')', ''),  '-', ''),  ' ', '')
+		FROM String_Split(@Phones, ',') AS V;
+
 		IF @CheckedForCreate = 1 BEGIN
 			SET @CompanyName = Rtrim(Ltrim(Replace(@CompanyName, @LegalForm, ''))) + CASE WHEN @LegalForm = '' THEN '' ELSE ', ' + @LegalForm END;
 
@@ -61,10 +70,6 @@ BEGIN
 			SELECT @WorkMonth = M.[ID]
 			FROM [Common].[Month] AS M
 			WHERE GetDate() BETWEEN M.[DATE] AND DateAdd(Month, 1, M.[DATE])
-
-			INSERT INTO @PhonesList
-			SELECT Ltrim(Rtrim(V.[value])), Replace(Replace(Replace(Replace(V.[value], '(', ''), ')', ''),  '-', ''),  ' ', '')
-			FROM String_Split(@Phones, ',') AS V;
 
 			EXEC [Client].[COMPANY_INSERT]
 				@SHORT				= @CompanyName,
@@ -103,6 +108,9 @@ BEGIN
 		END;
 
 		IF @CheckedForUpdate = 1 OR @CheckedForCreate = 1 BEGIN
+			IF @Number IS NULL
+				SET @Number = (SELECT C.[NUMBER] FROM [Client].[Company] AS C WHERE C.[ID] = @Company_Id);
+
 			IF NOT EXISTS(SELECT * FROM [Client].[Office] AS O WHERE O.[NAME] = @CompanyName AND O.[ID_COMPANY] = @Company_Id)
 				EXEC [Client].[OFFICE_INSERT]
 					@COMPANY			= @Company_Id,
@@ -117,7 +125,7 @@ BEGIN
 					@NOTE				= @Address,
 					@ID					= @Office_Id OUTPUT;
 
-			IF NOT EXISTS(SELECT * FROM [Client].[CompanyPersonal] AS P WHERE P.[ID_COMPANY] = @Company_Id AND P.[SURNAME] = @Surname AND P.[NAME] = @Name AND P.[PATRON] = @Patron)
+			IF NOT EXISTS(SELECT * FROM [Client].[CompanyPersonal] AS P WHERE P.[ID_COMPANY] = @Company_Id AND P.[SURNAME] = @Surname AND P.[NAME] = @Name AND P.[PATRON] = @Patron) BEGIN
 				EXEC [Client].[COMPANY_PERSONAL_INSERT]
 					@COMPANY	= @Company_Id,
 					@OFFICE		= @Office_Id,
@@ -129,6 +137,9 @@ BEGIN
 					@ID			= NULL,
 					@EMAIL		= NULL,
 					@MAILING	= NULL;
+
+				SET @PersonalAdd = 1;
+			END;
 
 			WHILE (1 = 1) BEGIN
 				SELECT TOP (1)
@@ -142,7 +153,7 @@ BEGIN
 				IF @@RowCount < 1
 					BREAK;
 
-				IF NOT EXISTS (SELECT * FROM [Client].[CompanyPhone] AS P WHERE P.[ID_COMPANY] = @Company_Id AND P.[PHONE_S] = @Phone_S)
+				IF NOT EXISTS (SELECT * FROM [Client].[CompanyPhone] AS P WHERE P.[ID_COMPANY] = @Company_Id AND P.[PHONE_S] = @Phone_S) BEGIN
 					EXEC [Client].[COMPANY_PHONE_INSERT]
 						@COMPANY	= @Company_Id,
 						@OFFICE		= @Office_Id,
@@ -152,15 +163,29 @@ BEGIN
 						@PHONE_S	= @Phone_S,
 						@NOTE		= '',
 						@ID			= NULL;
+
+					SET @PhoneAdd = 1;
+				END;
 			END;
 
-			IF (NOT EXISTS (SELECT * FROM [Client].[CompanyInn] AS P WHERE P.[Company_Id] = @Company_Id AND P.[Inn] = @Inn) AND @Inn != '' AND @Inn IS NOT NULL)
+			IF (NOT EXISTS (SELECT * FROM [Client].[CompanyInn] AS P WHERE P.[Company_Id] = @Company_Id AND P.[Inn] = @Inn) AND @Inn != '' AND @Inn IS NOT NULL) BEGIN
 				EXEC [Client].[COMPANY_INN_INSERT]
 					@COMPANY		= @Company_Id,
 					@INN			= @Inn,
 					@NOTE			= '',
 					@ID				= NULL;
+
+				SET @InnAdd = 1;
+			END;
 		END;
+
+		EXEC [Import].[Client@Upload]
+			@File_Id			= @File_Id,
+			@Row_Id				= @Row_Id,
+			@Company_Id			= @Company_Id,
+			@PersonalAdd		= @PersonalAdd,
+			@PhoneAdd			= @PhoneAdd,
+			@InnAdd				= @InnAdd;
 
 		IF @@TranCount > 0
 			COMMIT TRAN;

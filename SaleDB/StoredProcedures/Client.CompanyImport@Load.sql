@@ -7,7 +7,9 @@ GO
 IF OBJECT_ID('[Client].[CompanyImport@Load]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Client].[CompanyImport@Load]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Client].[CompanyImport@Load]
-	@Data			Xml
+	@Data			Xml,
+	@Binary			VarBinary(Max),
+	@File_Id		Int = NULL OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -42,11 +44,34 @@ BEGIN
 	);
 
 	BEGIN TRY
+		INSERT INTO [Import].[File]([Type_Id], [UploadDateTime], [UploadUser], [Data])
+		SELECT T.[Id], GetDate(), Original_Login(), @Binary
+		FROM [Import].[File->Type] AS T
+		WHERE T.[Code] = 'CLIENT';
+
+		SET @File_Id = Scope_Identity();
+
 		INSERT INTO @ForImport
 		SELECT *
 		FROM [Client].[ImportList@Parse](@Data);
 
+		INSERT INTO [Import].[File:Item]([File_Id], [Row_Id], [Data])
+		SELECT @File_Id, I.[Id], D.[Data]
+		FROM @ForImport AS I
+		OUTER APPLY
+		(
+			SELECT
+				[Data] =
+					(
+						SELECT
+							I.*
+						FOR XML RAW('item'), ROOT('root')
+					)
+		) AS D
+		WHERE I.[CompanyName] != '';
+
 		SELECT
+			[Row_Id] = I.[Id],
 			[CompanyName],
 			[LegalForm],
 			[Inn],
