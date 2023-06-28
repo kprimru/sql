@@ -40,7 +40,8 @@ BEGIN
 			LEFT(CONVERT(NVARCHAR(64), b.TIME, 108), 5) AS START,
 			INVITE_NUM,
 			READER AS LECTOR,
-			c.NOTE AS SEMINAR_QUEST,
+			--c.NOTE AS SEMINAR_QUEST,
+			[Seminar].[SubjectNoteView](C.[NOTE], B.[DATE], B.[TIME], T.[PlaceTemplate]) AS SEMINAR_QUEST,
 			'ООО "Базис"' AS PLACE
 		FROM
 			Seminar.Personal a

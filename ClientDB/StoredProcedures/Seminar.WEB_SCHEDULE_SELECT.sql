@@ -24,14 +24,17 @@ BEGIN
 	BEGIN TRY
 
 		SELECT
-			a.ID, LIMIT, CONVERT(NVARCHAR(32), DATE, 104) + ' ' + LEFT(CONVERT(NVARCHAR(32), TIME, 108), 5) + ' ' + [Seminar].[SubjectNameView](b.NAME, t.Name) AS SUBJ_FULL,
-			DATE, TIME, NOTE, READER, a.QUESTIONS, a.PERSONAL
-		FROM [Seminar].[Schedule] a
-		INNER JOIN [Seminar].[Subject] b ON a.[ID_SUBJECT] = b.[ID]
-		LEFT JOIN [Seminar].[Schedules->Types] AS t ON t.Id = a.[Type_Id]
-		WHERE a.[WEB] = 1
-			AND [DATE] >= GETDATE()
-		ORDER BY a.[DATE]
+			S.[ID], S.[LIMIT], CONVERT(NVarChar(32), S.[DATE], 104) + ' ' + LEFT(Convert(NVarCHar(32), S.[TIME], 108), 5) + ' ' + [Seminar].[SubjectNameView](J.[NAME], T.[Name]) AS SUBJ_FULL,
+			S.[DATE], S.[TIME],
+			--J.[NOTE],
+			[NOTE] = [Seminar].[SubjectNoteView](J.[NOTE], S.[DATE], S.[TIME], T.[PlaceTemplate]),
+			J.[READER], S.[QUESTIONS], S.[PERSONAL]
+		FROM [Seminar].[Schedule]				AS S
+		INNER JOIN [Seminar].[Subject]			AS J ON J.[ID] = S.[ID_SUBJECT]
+		LEFT JOIN [Seminar].[Schedules->Types]	AS T ON T.Id = S.[Type_Id]
+		WHERE S.[WEB] = 1
+			AND S.[DATE] >= GETDATE()
+		ORDER BY S.[DATE]
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
