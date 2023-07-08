@@ -35,15 +35,40 @@ BEGIN
 		FROM [Common].[Period]
 		WHERE [ID] = @PERIOD;
 
-		UPDATE [Price].[DistrType:Coef]
+		UPDATE [dbo].[DistrTypeCoef]
 		SET [Coef]	= @COEF,
-			[Round]	= @RND
-		WHERE [DistrType_Id] = @NET
-			AND [Date] = @Date;
+			[RND]	= @RND
+		WHERE [ID_NET] = @NET
+			AND
+			(
+				[ID_MONTH] = @PERIOD
+				OR
+				@NEXT = 1 AND [ID_MONTH] IN
+					(
+						SELECT P.[ID]
+						FROM [Common].[Period] AS P
+						WHERE P.[TYPE] = 2
+							AND P.[START] > @Date
+					)
+			);
 
-		IF @@RowCount < 1
-			INSERT INTO [Price].[DistrType:Coef]([DistrType_Id], [Date], [Coef], [Round])
-			SELECT @NET, @Date, @COEF, @RND;
+
+		INSERT INTO [dbo].[DistrTypeCoef]([ID_NET], [ID_MONTH], [COEF], [RND])
+		SELECT @NET, P.[ID], @COEF, @RND
+		FROM [Common].[Period] AS P
+		WHERE
+			(
+				P.[ID] = @PERIOD
+				OR
+				@NEXT = 1 AND P.[START] > @Date
+			)
+			AND NOT EXISTS
+			(
+				SELECT *
+				FROM [dbo].[DistrTypeCoef] AS C
+				WHERE C.[ID_NET]  = @NET
+					AND C.[ID_MONTH] = @PERIOD
+			);
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

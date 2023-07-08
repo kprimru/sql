@@ -25,12 +25,12 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT P.[ID], P.[NAME], C.[DistrTypeName], a.[Coef], a.[Round], a.[Date], c.[DistrTypeID]
-		FROM [Price].[DistrType:Coef]		AS a
-		INNER JOIN [dbo].[DistrTypeTable]	AS c ON c.[DistrTypeID] = a.[DistrType_Id]
-		INNER JOIN [Common].[Period]		AS P ON P.[START] = a.[Date] AND P.[TYPE] = 2
-		WHERE (a.[DistrType_Id] = @NET OR @NET IS NULL)
-		ORDER BY a.[Date] DESC, c.[DistrTypeOrder];
+		SELECT P.[ID], P.[NAME], C.[DistrTypeName], a.[Coef], a.RND AS [Round], P.[START] AS [Date], c.[DistrTypeID]
+		FROM [dbo].[DistrTypeCoef]		AS a
+		INNER JOIN [dbo].[DistrTypeTable]	AS c ON c.[DistrTypeID] = a.[ID_NET]
+		INNER JOIN [Common].[Period]		AS P ON P.[ID] = a.[ID_MONTH]
+		WHERE (a.[ID_NET] = @NET OR @NET IS NULL)
+		ORDER BY P.[START] DESC, c.[DistrTypeOrder];
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
