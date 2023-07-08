@@ -20,8 +20,7 @@ BEGIN
 		@Params			Xml;
 
 	DECLARE
-		@XML			Xml,
-		@SERVER_PATH	NVarChar(512)
+		@XML			Xml
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -31,15 +30,6 @@ BEGIN
 	BEGIN TRY
 
 		SET @XML = CAST(@FILES AS XML);
-
-	    IF @SERVER IS NULL
-		    SELECT @SERVER_PATH = ST_VALUE
-		    FROM dbo.Settings
-		    WHERE ST_NAME = N'SERVER_PATH';
-	    ELSE
-		    SELECT @SERVER_PATH = SRV_PATH
-		    FROM dbo.Servers
-		    WHERE SRV_ID = @SERVER;
 
 	    SELECT FILE_PATH
 	    FROM
@@ -55,7 +45,8 @@ BEGIN
 				(
 					SELECT *
 					FROM dbo.Files
-					WHERE FL_NAME = @SERVER_PATH + FILE_PATH
+					WHERE FL_NAME = FILE_PATH
+						AND FL_ID_SERVER = @SERVER
 						AND FL_SIZE = FILE_SIZE
 				);
 

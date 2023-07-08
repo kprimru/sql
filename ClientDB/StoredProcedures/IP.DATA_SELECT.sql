@@ -44,6 +44,7 @@ BEGIN
 			[SERVER_CODE]			= D.[SERVER_CODE],
 			[SERVER_CODE_ERROR]		= D.[SERVER_CODE_ERROR],
 			[STT_SEND]				= D.[STT_SEND],
+			[SRV_ID]				= D.[FL_ID_SERVER],
 			[SRV_NAME]				= D.[SRV_NAME]
 		FROM [IP].[ClientStatDetailView] AS D
 		WHERE	D.[CSD_SYS] = @System
@@ -65,6 +66,7 @@ BEGIN
 			[SERVER_CODE]			= NULL,
 			[SERVER_CODE_ERROR]		= NULL,
 			[STT_SEND]				= NULL,
+			[SRV_ID]				= L.[FL_ID_SERVER],
 			[SRV_NAME]				= L.[SRV_NAME]
 		FROM [IP].[LogFileView] AS L
 		WHERE L.[LF_DATE] >= @MinLogDate

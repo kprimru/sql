@@ -7,7 +7,8 @@ GO
 IF OBJECT_ID('[dbo].[INET_LOG_FILE_OPEN]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[INET_LOG_FILE_OPEN]  AS SELECT 1')
 GO
 ALTER PROCEDURE [dbo].[INET_LOG_FILE_OPEN]
-	@FILENAME	NVARCHAR(256)
+	@FILENAME	NVarChar(256),
+	@SERVER		Int
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,13 +26,14 @@ BEGIN
 	BEGIN TRY
 
 	    SELECT
-		    FL_NAME, FL_SIZE, FL_DATE,
-		    INET_LOG_DATA AS LF_TEXT
-	    FROM
-		    dbo.Files INNER JOIN
-		    dbo.USRFiles ON UF_ID_FILE = FL_ID INNER JOIN
-		    dbo.ConsErr ON UF_ID = ID_USR
-	    WHERE FL_NAME = @FILENAME
+		    S.[SRV_PATH] + F.[FL_NAME] AS [FL_NAME], [FL_SIZE], [FL_DATE],
+		    Cast([INET_LOG_DATA] AS NVarChar(Max)) AS LF_TEXT
+	    FROM [dbo].[Files] AS F
+		INNER JOIN [dbo].[USRFiles] AS U ON U.[UF_ID_FILE] = F.[FL_ID]
+		INNER JOIN [dbo].[ConsErr] AS E ON E.[ID_USR] = U.[UF_ID]
+		INNER JOIN [dbo].[Servers] AS S ON S.[SRV_ID] = F.[FL_ID_SERVER]
+	    WHERE [FL_NAME] = @FILENAME
+			AND [FL_ID_SERVER] = @SERVER;
 
 	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

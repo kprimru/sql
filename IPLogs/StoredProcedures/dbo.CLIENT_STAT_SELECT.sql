@@ -42,6 +42,7 @@ BEGIN
 			    NODE_VALUE NVARCHAR(500),
 			    NODE_LINK NVARCHAR(256),
 			    SRV	NVARCHAR(128),
+				FL_ID_SERVER	INT,
 			    STAT BIGINT DEFAULT 0
 		    )
 
@@ -609,7 +610,7 @@ BEGIN
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -620,18 +621,13 @@ BEGIN
 			    CASE CSD_LOG_FILE
 				    WHEN '-' THEN 'Нет'
 				    ELSE
-					    (
-						    SELECT SRV_PATH
-						    FROM dbo.Servers
-						    WHERE SRV_ID = CSD_ID_SERVER
-					    ) + CSD_LOG_PATH + '\' + CSD_LOG_FILE
-			    END, CASE CSD_LOG_FILE WHEN '-' THEN 0 ELSE 6 END
-    
+					    CSD_LOG_PATH + '\' + CSD_LOG_FILE
+			    END, CSD_ID_SERVER, CASE CSD_LOG_FILE WHEN '-' THEN 0 ELSE 6 END
 		    FROM #client
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -641,17 +637,13 @@ BEGIN
 			    ), CSD_ID, NULL, 'Лог файл результата', 'Открыть',
 			    CASE CSD_LOG_RESULT
 				    WHEN '-' THEN 'Нет'
-				    ELSE (
-						    SELECT SRV_PATH
-						    FROM dbo.Servers
-						    WHERE SRV_ID = CSD_ID_SERVER
-					    ) + CSD_LOG_PATH + '\' + CSD_LOG_RESULT
-			    END, CASE CSD_LOG_RESULT WHEN '-' THEN 0 ELSE 6 END
+				    ELSE CSD_LOG_PATH + '\' + CSD_LOG_RESULT
+			    END, CSD_ID_SERVER, CASE CSD_LOG_RESULT WHEN '-' THEN 0 ELSE 6 END
 		    FROM #client
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -661,12 +653,8 @@ BEGIN
 			    ), CSD_ID, NULL, 'Отчет (письмо)', 'Открыть',
 			    CASE CSD_LOG_LETTER
 				    WHEN '-' THEN 'Нет'
-				    ELSE (
-						    SELECT SRV_PATH
-						    FROM dbo.Servers
-						    WHERE SRV_ID = CSD_ID_SERVER
-					    ) + CSD_LOG_PATH + '\' + CSD_LOG_LETTER
-			    END, CASE CSD_LOG_LETTER WHEN '-' THEN 0 ELSE 6 END
+				    ELSE CSD_LOG_PATH + '\' + CSD_LOG_LETTER
+			    END, CSD_ID_SERVER, CASE CSD_LOG_LETTER WHEN '-' THEN 0 ELSE 6 END
 		    FROM #client
 
 	    INSERT INTO #stat
@@ -712,7 +700,7 @@ BEGIN
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -720,12 +708,12 @@ BEGIN
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @rep
 			    ), CSD_ID, @usr, 'Файл USR',  CASE CSD_USR WHEN '-' THEN 'Нет' ELSE CSD_USR END,
-			    CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 7 END
+			    'Reports\' + CSD_USR, CSD_ID_SERVER, CASE CSD_USR WHEN '-' THEN 0 ELSE 7 END
 		    FROM #client
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -733,16 +721,12 @@ BEGIN
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @usr
 			    ), CSD_ID, NULL, 'Файл cons_err.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
-			    (
-				    SELECT SRV_REPORT
-				    FROM dbo.Servers
-				    WHERE SRV_ID = CSD_ID_SERVER
-			    ) + CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 8 END
+			    'Reports\' + CSD_USR, CSD_ID_SERVER, CASE CSD_USR WHEN '-' THEN 0 ELSE 8 END
 		    FROM #client
 
 	    INSERT INTO #stat
 		    (
-			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, STAT
+			    MASTER_ID, SYS_ID, SYS_NAME, NODE_NAME, NODE_VALUE, NODE_LINK, FL_ID_SERVER, STAT
 		    )
 		    SELECT
 			    (
@@ -750,11 +734,7 @@ BEGIN
 				    FROM #stat
 				    WHERE SYS_ID = CSD_ID AND SYS_NAME = @usr
 			    ), CSD_ID, NULL, 'Файл cons_inet.txt', CASE CSD_USR WHEN '-' THEN 'Нет' ELSE 'Открыть' END,
-			    (
-				    SELECT SRV_REPORT
-				    FROM dbo.Servers
-				    WHERE SRV_ID = CSD_ID_SERVER
-			    ) + CSD_USR, CASE CSD_USR WHEN '-' THEN 0 ELSE 9 END
+			    'Reports\' + CSD_USR, CSD_ID_SERVER, CASE CSD_USR WHEN '-' THEN 0 ELSE 9 END
 		    FROM #client
 	    /*
 	    INSERT INTO #stat
@@ -775,7 +755,7 @@ BEGIN
 		    FROM #client
 	    */
 
-	    SELECT ID, MASTER_ID, NODE_NAME, NODE_VALUE, NODE_LINK, SRV, STAT
+	    SELECT ID, MASTER_ID, NODE_NAME, NODE_VALUE, NODE_LINK, SRV, FL_ID_SERVER, STAT
 	    FROM #stat
 	    ORDER BY ID
     
