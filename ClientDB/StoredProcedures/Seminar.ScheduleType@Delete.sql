@@ -4,10 +4,10 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF OBJECT_ID('[Seminar].[SchedulesTypes@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[SchedulesTypes@Select]  AS SELECT 1')
+IF OBJECT_ID('[Seminar].[ScheduleType@Delete]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[ScheduleType@Delete]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[SchedulesTypes@Select]
-	@Filter	NVarChar(256) = NULL
+ALTER PROCEDURE [Seminar].[ScheduleType@Delete]
+	@Id		SmallInt
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,12 +24,9 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT [Id], [Code], [Name], [PlaceTemplate]
+		DELETE
 		FROM [Seminar].[Schedules->Types]
-		WHERE @Filter IS NULL
-			OR [Name] LIKE @Filter
-			OR [Code] LIKE @Filter
-		ORDER BY [Id];
+		WHERE [Id] = @Id;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -42,6 +39,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [Seminar].[SchedulesTypes@Select] TO rl_seminar_admin;
-GRANT ALTER ON [Seminar].[SchedulesTypes@Select] TO rl_seminar_schedule_type_r;
+GRANT EXECUTE ON [Seminar].[ScheduleType@Delete] TO rl_seminar_schedule_type_d;
 GO

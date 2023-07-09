@@ -4,10 +4,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF OBJECT_ID('[Seminar].[SchedulesTypes@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[SchedulesTypes@Select]  AS SELECT 1')
+IF OBJECT_ID('[Seminar].[ScheduleType@Insert]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[ScheduleType@Insert]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[SchedulesTypes@Select]
-	@Filter	NVarChar(256) = NULL
+ALTER PROCEDURE [Seminar].[ScheduleType@Insert]
+	@Id		SmallInt = NULL OUTPUT,
+	@Code	VarChar(100),
+	@Name	VarChar(256),
+	@Place	VarChar(Max)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,12 +27,10 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT [Id], [Code], [Name], [PlaceTemplate]
-		FROM [Seminar].[Schedules->Types]
-		WHERE @Filter IS NULL
-			OR [Name] LIKE @Filter
-			OR [Code] LIKE @Filter
-		ORDER BY [Id];
+		INSERT INTO [Seminar].[Schedules->Types]([Code], [Name], [PlaceTemplate])
+		VALUES (@Code, @Name, @Place);
+
+		SELECT @Id = Scope_Identity();
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
@@ -42,6 +43,5 @@ BEGIN
 	END CATCH
 END
 GO
-GRANT EXECUTE ON [Seminar].[SchedulesTypes@Select] TO rl_seminar_admin;
-GRANT ALTER ON [Seminar].[SchedulesTypes@Select] TO rl_seminar_schedule_type_r;
+GRANT EXECUTE ON [Seminar].[ScheduleType@Insert] TO rl_seminar_schedule_type_r;
 GO
