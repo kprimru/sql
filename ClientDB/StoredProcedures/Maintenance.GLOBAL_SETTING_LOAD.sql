@@ -74,6 +74,9 @@ BEGIN
 
 			Maintenance.GlobalRepositoryPath() AS REPOSITORY_PATH,
 
+			(SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'PROTOCOL_PATH') AS PROTOCOL_PATH,
+			(SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'CONFIG_PATH') AS CONFIG_PATH,
+
 			Convert(smalldatetime, (SELECT G.[GS_VALUE] FROM [Maintenance].[GlobalSettings] AS G WHERE G.[GS_NAME] = 'CLIENT_DUTY_DATE'), 104) AS CLIENT_DUTY_DATE
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
