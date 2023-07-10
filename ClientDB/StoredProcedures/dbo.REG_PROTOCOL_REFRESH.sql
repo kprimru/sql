@@ -31,7 +31,15 @@ BEGIN
 
 		--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 		--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:\\PC2023-sql\ptl\consreg_client.ptl'
+		DECLARE @ProtocolPath VARCHAR(500)
+
+		SELECT TOP(1) @ProtocolPath = GS_VALUE
+		FROM Maintenance.GlobalSettings
+		WHERE GS_NAME = 'PROTOCOL_PATH'
+
+		SELECT @ProtocolPath AS ProtocolPath
+
+		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:' + @ProtocolPath
 
 		EXEC xp_cmdshell @cmd, no_output
 
@@ -51,10 +59,18 @@ BEGIN
 				PTL_USER	VARCHAR(64)
 		)
 
+		DECLARE @ConfigPath VARCHAR(100)
+
+		SELECT TOP(1) @ConfigPath = GS_VALUE
+		FROM Maintenance.GlobalSettings
+		WHERE GS_NAME = 'CONFIG_PATH'
+
+		SELECT @ConfigPath AS ConfigPath
+
 		EXEC('
 		BULK INSERT #ptl
 		FROM ''\\PC2023-SQL\ptl\consreg_client.ptl''
-		WITH (FIRSTROW = 2, FORMATFILE = ''\\PC2023-SQL\ptl\ProtoFormat.fmt'');');
+		WITH (FIRSTROW = 2, FORMATFILE = ' + @ConfigPath);
 
 		UPDATE #ptl
 		SET PTL_OPER = ISNULL(PTL_OPER, ''),
