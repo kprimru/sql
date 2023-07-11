@@ -29,8 +29,6 @@ BEGIN
 
 		DECLARE @ERROR	VARCHAR(MAX)
 
-		--SET @cmd = '\\BIM\vol2\Vedareg\Vedareg\ConsReg\consreg.exe /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
-		--SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /DATE:01.10.2019 /base* /saveptl:\\PC275-sql\ptl\consreg_client.ptl'
 		DECLARE @ProtocolPath VARCHAR(500)
 
 		SELECT TOP(1) @ProtocolPath = GS_VALUE
@@ -70,7 +68,7 @@ BEGIN
 		EXEC('
 		BULK INSERT #ptl
 		FROM ''\\PC2023-SQL\ptl\consreg_client.ptl''
-		WITH (FIRSTROW = 2, FORMATFILE = ' + @ConfigPath);
+		WITH (FIRSTROW = 2, FORMATFILE = ''' + @ConfigPath + ''');');
 
 		UPDATE #ptl
 		SET PTL_OPER = ISNULL(PTL_OPER, ''),

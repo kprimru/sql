@@ -24,20 +24,7 @@ BEGIN
 
 	BEGIN TRY
 
-		TRUNCATE TABLE IP.ConsErr
-
-		INSERT INTO IP.ConsErr
-		SELECT UF_SYS, UF_DISTR, UF_COMP, MAX(UF_DATE)
-		FROM [IPLogs].[dbo.USRFiles] b
-		INNER JOIN [IPLogs].[dbo.ConsErr] a ON b.UF_ID = a.ID_USR
-		GROUP BY UF_DISTR, UF_COMP, UF_SYS
-
-		TRUNCATE TABLE IP.LogLast
-
-		INSERT INTO IP.LogLast
-		SELECT LF_SYS, LF_DISTR, LF_COMP, MAX(LF_DATE)
-		FROM [IPLogs].[dbo.LogFiles]
-		GROUP BY LF_SYS, LF_DISTR, LF_COMP
+		-- TODO DO NOTHING
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

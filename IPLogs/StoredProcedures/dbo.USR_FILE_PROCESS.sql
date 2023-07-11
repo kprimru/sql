@@ -86,19 +86,6 @@ BEGIN
 				    FROM dbo.USRFiles
 				    WHERE UF_ID_FILE = @FILEID
 		    END
-    
-			-- ToDo MERGE
-		    UPDATE [ClientDB].[IP].[ConsErr]
-		    SET DATE = CONVERT(DATETIME, dbo.USR_PARSE(@FILENAME, 'DATE'), 120)
-		    WHERE SYS = CONVERT(SMALLINT, dbo.USR_PARSE(@FILENAME, 'SYS'))
-			    AND DISTR = CONVERT(INT, dbo.USR_PARSE(@FILENAME, 'DISTR'))
-			    AND COMP = CONVERT(TINYINT, dbo.USR_PARSE(@FILENAME, 'COMP'))
-    
-		    IF @@ROWCOUNT = 0
-			    INSERT INTO [ClientDB].[IP].[ConsErr]
-			    SELECT
-				    CONVERT(SMALLINT, dbo.USR_PARSE(@FILENAME, 'SYS')), CONVERT(INT, dbo.USR_PARSE(@FILENAME, 'DISTR')),
-				    CONVERT(TINYINT, dbo.USR_PARSE(@FILENAME, 'COMP')), CONVERT(DATETIME, dbo.USR_PARSE(@FILENAME, 'DATE'), 120)
 	    END
 
 	    EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

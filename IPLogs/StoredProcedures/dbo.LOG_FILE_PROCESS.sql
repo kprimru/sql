@@ -71,20 +71,6 @@ BEGIN
 			    @LOG_SYS = dbo.LOG_SYS(@FILENAME), @LOG_DISTR = dbo.LOG_DISTR(@FILENAME),
 			    @LOG_COMP = dbo.LOG_COMP(@FILENAME), @LOG_DATE = dbo.LOG_DATE(@FILENAME);
     
-		    /*
-		    обновляем кэш в ДК
-		    */
-			-- ToDo MERGE
-		    UPDATE [ClientDB].[IP].[LogLast]
-		    SET DATE = @LOG_DATE
-		    WHERE SYS = @LOG_SYS
-			    AND DISTR = @LOG_DISTR
-			    AND COMP = @LOG_COMP;
-    
-		    IF @@ROWCOUNT = 0
-			    INSERT INTO [ClientDB].[IP].[LogLast](SYS, DISTR, COMP, DATE)
-			    SELECT @LOG_SYS, @LOG_DISTR, @LOG_COMP, @LOG_DATE
-    
 		    IF @RESULT = 1
 		    BEGIN
 			    UPDATE dbo.LogFiles
