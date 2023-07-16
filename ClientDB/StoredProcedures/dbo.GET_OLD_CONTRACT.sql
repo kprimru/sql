@@ -20,12 +20,17 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_CONTRACT_OLD	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+		SET @Setting_CONTRACT_OLD = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit);
 
 		SELECT b.ClientID, ClientFullName, MAX(ContractBegin) AS ContractbeginStr, MAX(ContractEnd) AS ContrctEndStr
 		FROM dbo.ClientTable b
@@ -50,7 +55,7 @@ BEGIN
 					FROM Contract.ClientContracts CC
 					WHERE CC.Client_Id = b.CLientID
 				)
-				OR [Maintenance].[GlobalContractOld]() = 1
+				OR @Setting_CONTRACT_OLD = 1
 			)
 		GROUP BY b.ClientID, ClientFullName
 
@@ -81,7 +86,7 @@ BEGIN
 			AND (ManagerID = @managerid OR @ManagerId IS NULL)
 			AND (StatusID = @statusid OR @StatusId IS NULL)
 			AND b.STATUS = 1
-			AND [Maintenance].[GlobalContractOld]() = 0
+			AND @Setting_CONTRACT_OLD = 0
 		GROUP BY b.ClientID, ClientFullName
 
 		ORDER BY ClientFullName

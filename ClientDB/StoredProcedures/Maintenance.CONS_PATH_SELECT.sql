@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT Maintenance.GlobalConsPath() AS CONS_PATH
+		SELECT [CONS_PATH] = Cast([Maintenance].[GlobalSetting@Get]('CONS_PATH') AS VarChar(256));
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

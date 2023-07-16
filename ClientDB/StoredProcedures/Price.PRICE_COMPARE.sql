@@ -52,23 +52,22 @@ BEGIN
 				ROUND([dbo].[DistrPrice](np.PRICE, np.[DistrCoef], np.[DistrCoefRound]) * e.TOTAL_RATE, 2) AS NEW_PRICE_NDS
 			FROM
 				dbo.SystemTable a
+				-- TODO отсутствует зависимость от типа системы
 				CROSS APPLY
 				(
 					SELECT
 						[Price]				= op.[Price],
-						[DistrCoef]			= dbo.DistrCoef(a.SystemID, @NET, '', @BEGIN_DATE),
-						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, @NET, '', @BEGIN_DATE)
-					FROM [Price].[Systems:Price@Get](@BEGIN_DATE) AS op
-					WHERE op.[System_Id] = a.[SystemID]
+						[DistrCoef]			= op.[DistrCoef],
+						[DistrCoefRound]	= op.[DistrCoefRound]
+					FROM [Price].[DistrPriceWrapper](a.SystemID, @NET, NULL, NULL, @BEGIN_DATE) AS op
 				) AS op
 				CROSS APPLY
 				(
 					SELECT
 						[Price]				= np.[Price],
-						[DistrCoef]			= dbo.DistrCoef(a.SystemID, @NET, '', @END_DATE),
-						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, @NET, '', @END_DATE)
-					FROM [Price].[Systems:Price@Get](@END_DATE) AS np
-					WHERE np.[System_Id] = a.[SystemID]
+						[DistrCoef]			= np.[DistrCoef],
+						[DistrCoefRound]	= np.[DistrCoefRound]
+					FROM [Price].[DistrPriceWrapper](a.SystemID, @NET, NULL, NULL, @END_DATE) AS np
 				) AS np
 				OUTER APPLY Common.TaxDefaultSelect(@BEGIN_DATE) AS b
 				OUTER APPLY Common.TaxDefaultSelect(@END_DATE)	AS e

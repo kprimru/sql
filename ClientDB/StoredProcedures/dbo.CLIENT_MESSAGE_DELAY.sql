@@ -17,6 +17,11 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@CUR_DELAY			Int,
+		@Setting_DELAY		Int,
+		@Setting_DELAY_MAX	Int;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -24,25 +29,26 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @CUR_DELAY INT
+		SET @Setting_DELAY = Cast([System].[Setting@Get]('MESSAGE_DELAY') AS Int);
+		SET @Setting_DELAY_MAX = Cast([System].[Setting@Get]('MESSAGE_DELAY_MAX') AS Int);
 
-		SELECT @CUR_DELAY = DELAY_MIN
-		FROM dbo.ClientMessage
-		WHERE ID = @ID
+		SELECT @CUR_DELAY = [DELAY_MIN]
+		FROM [dbo].[ClientMessage]
+		WHERE [ID] = @ID;
 
-		IF @CUR_DELAY <= Maintenance.GlobalMessageDelayMax()
+		IF @CUR_DELAY <= @Setting_DELAY_MAX
 		BEGIN
-			INSERT INTO dbo.ClientMessage(ID_MASTER, ID_CLIENT, TP, SENDER, DATE, NOTE, RECEIVE_USER, RECEIVE_DATE, RECEIVE_HOST, HARD_READ, DELAY_MIN, REMIND_DATE, HIDE, STATUS, UPD_DATE, UPD_USER)
-				SELECT ID, ID_CLIENT, TP, SENDER, DATE, NOTE, RECEIVE_USER, RECEIVE_DATE, RECEIVE_HOST, HARD_READ, DELAY_MIN, REMIND_DATE, HIDE, 2, UPD_DATE, UPD_USER
-				FROM dbo.ClientMessage
-				WHERE ID = @ID
+			INSERT INTO [dbo].[ClientMessage]([ID_MASTER], [ID_CLIENT], [TP], [SENDER], [DATE], [NOTE], [RECEIVE_USER], [RECEIVE_DATE], [RECEIVE_HOST], [HARD_READ], [DELAY_MIN], [REMIND_DATE], [HIDE], [STATUS], [UPD_DATE], [UPD_USER])
+				SELECT [ID], [ID_CLIENT], [TP], [SENDER], [DATE], [NOTE], [RECEIVE_USER], [RECEIVE_DATE], [RECEIVE_HOST], [HARD_READ], [DELAY_MIN], [REMIND_DATE], [HIDE], 2, [UPD_DATE], [UPD_USER]
+				FROM [dbo].[ClientMessage]
+				WHERE [ID] = @ID
 
-			UPDATE dbo.ClientMessage
-			SET DELAY_MIN = DELAY_MIN + Maintenance.GlobalMessageDelay(),
-				REMIND_DATE = DATEADD(MINUTE, Maintenance.GlobalMessageDelay(), GETDATE()),
-				UPD_USER = ORIGINAL_LOGIN(),
-				UPD_DATE = GETDATE()
-			WHERE ID = @ID
+			UPDATE [dbo].[ClientMessage] SET
+				[DELAY_MIN] = DELAY_MIN + @Setting_DELAY,
+				[REMIND_DATE] = DateAdd(Minute, @Setting_DELAY, GetDate()),
+				[UPD_USER] = Original_Login(),
+				[UPD_DATE] = GetDate()
+			WHERE [ID] = @ID;
 		END
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

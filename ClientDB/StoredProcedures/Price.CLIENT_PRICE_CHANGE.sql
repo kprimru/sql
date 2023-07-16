@@ -76,19 +76,17 @@ BEGIN
 				(
 					SELECT
 						[Price]				= op.[Price],
-						[DistrCoef]			= dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE),
-						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @BEGIN_DATE)
-					FROM [Price].[Systems:Price@Get](@BEGIN_DATE) AS op
-					WHERE op.[System_Id] = a.[SystemID]
+						[DistrCoef]			= op.[DistrCoef],
+						[DistrCoefRound]	= op.[DistrCoefRound]
+					FROM [Price].[DistrPriceWrapper](a.SystemID, a.DistrTypeID, a.SystemTypeID, a.SystemTypeName, @BEGIN_DATE) AS op
 				) AS op
 				CROSS APPLY
 				(
 					SELECT
 						[Price]				= np.[Price],
-						[DistrCoef]			= dbo.DistrCoef(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE),
-						[DistrCoefRound]	= dbo.DistrCoefRound(a.SystemID, a.DistrTypeID, a.SystemTypeName, @END_DATE)
-					FROM [Price].[Systems:Price@Get](@END_DATE) AS np
-					WHERE np.[System_Id] = a.[SystemID]
+						[DistrCoef]			= np.[DistrCoef],
+						[DistrCoefRound]	= np.[DistrCoefRound]
+					FROM [Price].[DistrPriceWrapper](a.SystemID, a.DistrTypeID, a.SystemTypeID, a.SystemTypeName, @END_DATE) AS np
 				) AS np
 				LEFT JOIN dbo.DBFDistrView ON SystemBaseName = SYS_REG_NAME AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
 				WHERE a.ID_CLIENT = @CLIENT AND DS_REG = 0

@@ -33,7 +33,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT @SH = Maintenance.GlobalSubhostName();
+		SET @SH = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
 
 		SET @RECEIVER =
 				CASE @SH

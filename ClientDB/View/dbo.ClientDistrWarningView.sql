@@ -14,7 +14,7 @@ AS
 		(
 			SELECT ID_CLIENT AS ClientID,
 				CASE
-					WHEN ISNULL(ISNULL(b.SubhostName, c.SubhostName), Maintenance.GlobalSubhostName()) <> Maintenance.GlobalSubhostName() THEN 'Дистрибутив установлен у другого подхоста'
+					WHEN ISNULL(ISNULL(b.SubhostName, c.SubhostName), Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128))) <> Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128)) THEN 'Дистрибутив установлен у другого подхоста'
 					WHEN a.SystemReg = 0 THEN ''
 					WHEN b.ID IS NULL THEN
 						CASE
@@ -63,7 +63,7 @@ AS
 								AND b.CompNumber = a.COMP
 				INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
 			WHERE  c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
-				AND c.SubhostName = Maintenance.GlobalSubhostName()
+				AND c.SubhostName = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128))
 				AND NOT EXISTS
 					(
 						SELECT *

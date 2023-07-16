@@ -24,58 +24,55 @@ BEGIN
     BEGIN TRY
 
         SELECT
-            Maintenance.GlobalUSRJournal() AS USR_JOURNAL,
-            Maintenance.GlobalEventProtocol()	AS EVENT_PROTOCOL,
-            Maintenance.GlobalControlLogin() AS CONTROL_LOGIN,
-            Maintenance.GlobalBcp() AS BCP,
-            Maintenance.GlobalBcpEx() AS BCP_EX,
-            Maintenance.GlobalUinfPath() AS UINF_PATH,
-            Maintenance.GlobalKladrPath() AS KLADR_PATH,
-            Maintenance.GlobalClientPhisicalDelete() AS CLIENT_DEL,
-            Maintenance.GlobalProcedureLog() AS PROC_LOG,
+            [CONTROL_LOGIN] = Cast([Maintenance].[GlobalSetting@Get]('CONTROL_LOGIN') AS Bit),
+			[BCP]	= Cast([Maintenance].[GlobalSetting@Get]('BCP') AS VarChar(256)),
+			[BCP_EX]	= Cast([Maintenance].[GlobalSetting@Get]('BCP_EX') AS VarChar(256)),
+			[UINF_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('UINF_PATH') AS VarChar(256)),
 
-            Maintenance.GlobalOrgName() AS ORG_NAME,
-            Maintenance.GlobalUinf() AS UINF,
-            Maintenance.GlobalTenderPath() AS TENDER_PATH,
+			[ORG_NAME]		= Cast([Maintenance].[GlobalSetting@Get]('ORG_NAME') AS VarChar(256)),
+            [UINF]			= Cast([Maintenance].[GlobalSetting@Get]('UINF') AS VarChar(256)),
+			[TENDER_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('TENDER_PATH') AS VarChar(256)),
 
-            Maintenance.GlobalSttPath() AS STT_PATH,
-            Maintenance.GlobalServiceReportPath() AS SERV_REPORT,
-            Maintenance.GlobalUSRPath() AS USR_PATH,
-            Maintenance.GlobalUSRIPPath() AS USR_IP_PATH,
-            Maintenance.GlobalUSRControlPath() AS USR_CONTROL_PATH,
-            Maintenance.GlobalSubhostName() AS SUBHOST_NAME,
-            Maintenance.GlobalClaimPath() AS CLAIM_PATH,
-            Maintenance.GlobalJurName() AS JUR_NAME,
-            Maintenance.GlobalJurEmail() AS JUR_EMAIL,
-            Maintenance.GlobalRicAddress() AS RIC_ADDRESS,
-            Maintenance.GlobalRicLogin() AS RIC_LOGIN,
-            Maintenance.GlobalRicPassword() AS RIC_PASSWORD,
-            Maintenance.GlobalClientAutoClaim() AS CLIENT_AUTO_CLAIM,
-			[Maintenance].[GlobalClientAutoClaimTypes]() AS CLIENT_AUTO_CLAIM_TYPES,
+			[STT_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('STT_PATH') AS VarChar(256)),
+			[SERV_REPORT]	= Cast([Maintenance].[GlobalSetting@Get]('SERVICE_REPORT_PATH') AS VarChar(256)),
+			[USR_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('USR_PATH') AS VarChar(256)),
+			[USR_IP_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('USR_IP_PATH') AS VarChar(256)),
+			[USR_CONTROL_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('USR_CONTROL_PATH') AS VarChar(256)),
 
-            Maintenance.GlobalContractYear() AS CONTRACT_YEAR,
+            [SUBHOST_NAME]		= Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128)),
 
-            Maintenance.GlobalContractOld() AS CONTRACT_OLD,
+			[CLAIM_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('CLAIM_PATH') AS VarChar(256)),
+			[JUR_NAME]	= Cast([Maintenance].[GlobalSetting@Get]('JUR_NAME') AS VarChar(256)),
+			[JUR_EMAIL]	= Cast([Maintenance].[GlobalSetting@Get]('JUR_EMAIL') AS VarChar(256)),
+			[RIC_ADDRESS]	= Cast([Maintenance].[GlobalSetting@Get]('RIC_ADDRESS') AS VarChar(256)),
+			[RIC_LOGIN]	= Cast([Maintenance].[GlobalSetting@Get]('RIC_LOGIN') AS VarChar(256)),
+			[RIC_PASSWORD]	= Cast([Maintenance].[GlobalSetting@Get]('RIC_PASSWORD') AS VarChar(256)),
+			[CLIENT_AUTO_CLAIM]	= Cast([Maintenance].[GlobalSetting@Get]('CLIENT_AUTO_CLAIM') AS Bit),
+			[CLIENT_AUTO_CLAIM_TYPES]	= Cast([Maintenance].[GlobalSetting@Get]('CLIENT_AUTO_CLAIM_TYPES') AS VarChar(256)),
 
-            Maintenance.GlobalControlDocumentURL() AS CONTROL_DOCUMENT_URL,
-            Maintenance.GlobalControlDocumentUser() AS CONTROL_DOCUMENT_USER,
-            Maintenance.GlobalControlDocumentPass() AS CONTROL_DOCUMENT_PASS,
+            [CONTRACT_YEAR]	= Cast([Maintenance].[GlobalSetting@Get]('CONTRACT_YEAR') AS UniqueIdentifier),
 
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_HOST') AS SEMINAR_MAIL_HOST,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_ADDRESS') AS SEMINAR_MAIL_ADDRESS,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'SEMINAR_MAIL_PASS') AS SEMINAR_MAIL_PASS,
+            [CONTRACT_OLD] = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit),
 
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_HOST') AS ONLINE_SERVICES_MAIL_HOST,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_ADDRESS') AS ONLINE_SERVICES_MAIL_ADDRESS,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_SERVICES_MAIL_PASS') AS ONLINE_SERVICES_MAIL_PASS,
+			[CONTROL_DOCUMENT_URL]	= Cast([Maintenance].[GlobalSetting@Get]('CONTROL_DOCUMENT_URL') AS VarChar(256)),
+			[CONTROL_DOCUMENT_USER]	= Cast([Maintenance].[GlobalSetting@Get]('CONTROL_DOCUMENT_USER') AS VarChar(256)),
+			[CONTROL_DOCUMENT_PASS]	= Cast([Maintenance].[GlobalSetting@Get]('CONTROL_DOCUMENT_PASS') AS VarChar(256)),
 
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PATH') AS ONLINE_PASSWORD_PATH,
-            (SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'ONLINE_PASSWORD_PASS') AS ONLINE_PASSWORD_PASS,
+			[SEMINAR_MAIL_HOST]	= Cast([Maintenance].[GlobalSetting@Get]('SEMINAR_MAIL_HOST') AS VarChar(256)),
+			[SEMINAR_MAIL_ADDRESS]	= Cast([Maintenance].[GlobalSetting@Get]('SEMINAR_MAIL_ADDRESS') AS VarChar(256)),
+			[SEMINAR_MAIL_PASS]	= Cast([Maintenance].[GlobalSetting@Get]('SEMINAR_MAIL_PASS') AS VarChar(256)),
 
-			Maintenance.GlobalRepositoryPath() AS REPOSITORY_PATH,
+			[ONLINE_SERVICES_MAIL_HOST]	= Cast([Maintenance].[GlobalSetting@Get]('ONLINE_SERVICES_MAIL_HOST') AS VarChar(256)),
+			[ONLINE_SERVICES_MAIL_ADDRESS]	= Cast([Maintenance].[GlobalSetting@Get]('ONLINE_SERVICES_MAIL_ADDRESS') AS VarChar(256)),
+			[ONLINE_SERVICES_MAIL_PASS]	= Cast([Maintenance].[GlobalSetting@Get]('ONLINE_SERVICES_MAIL_PASS') AS VarChar(256)),
 
-			(SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'PROTOCOL_PATH') AS PROTOCOL_PATH,
-			(SELECT TOP (1) GS_VALUE FROM Maintenance.GlobalSettings WHERE GS_NAME = 'CONFIG_PATH') AS CONFIG_PATH,
+			[ONLINE_PASSWORD_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('ONLINE_PASSWORD_PATH') AS VarChar(256)),
+			[ONLINE_PASSWORD_PASS]	= Cast([Maintenance].[GlobalSetting@Get]('ONLINE_PASSWORD_PASS') AS VarChar(256)),
+
+			[REPOSITORY_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('REPOSITORY_PATH') AS VarChar(256)),
+
+			[PROTOCOL_PATH] = Cast([Maintenance].[GlobalSetting@Get]('PROTOCOL_PATH') AS VarChar(256)),
+			[CONFIG_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('CONFIG_PATH') AS VarChar(256)),
 
 			Convert(smalldatetime, (SELECT G.[GS_VALUE] FROM [Maintenance].[GlobalSettings] AS G WHERE G.[GS_NAME] = 'CLIENT_DUTY_DATE'), 104) AS CLIENT_DUTY_DATE
 

@@ -15,6 +15,6 @@ CREATE FUNCTION [dbo].[DistrPrice]
 RETURNS MONEY
 AS
 BEGIN
-	RETURN Round(Round(@PRICE * @COEF, @RND) * [Maintenance].[GlobalPriceCoef](), 2);
+	RETURN Round(Round(@PRICE * @COEF, @RND) * Cast([Maintenance].[GlobalSetting@Get]('PRICE_COEF') AS Decimal(8, 2)), 2);
 END
 GO

@@ -18,6 +18,13 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@cmd			NVarChar(512),
+		@ERROR			VarChar(MAX),
+		@ProtocolPath	VarChar(256),
+		@ConsregPath	VarChar(256),
+		@ConfigPath		VarChar(128);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -25,19 +32,11 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @cmd NVARCHAR(512)
+		SET @ProtocolPath = Cast([Maintenance].[GlobalSetting@Get]('PROTOCOL_PATH') AS VarChar(256));
+		SET @ConsregPath = Cast([Maintenance].[GlobalSetting@Get]('CONSREG_PATH') AS VarChar(256));
+		SET @ConfigPath = Cast([Maintenance].[GlobalSetting@Get]('CONFIG_PATH') AS VarChar(256));
 
-		DECLARE @ERROR	VARCHAR(MAX)
-
-		DECLARE @ProtocolPath VARCHAR(500)
-
-		SELECT TOP(1) @ProtocolPath = GS_VALUE
-		FROM Maintenance.GlobalSettings
-		WHERE GS_NAME = 'PROTOCOL_PATH'
-
-		SELECT @ProtocolPath AS ProtocolPath
-
-		SET @cmd = Maintenance.GlobalConsregPath() + ' /T:7 /base* /saveptl:' + @ProtocolPath
+		SET @cmd = @ConsregPath + ' /T:7 /base* /saveptl:' + @ProtocolPath
 
 		EXEC xp_cmdshell @cmd, no_output
 
@@ -55,19 +54,11 @@ BEGIN
 				PTL_TEXT	VARCHAR(512),
 				PTL_COMP	VARCHAR(64),
 				PTL_USER	VARCHAR(64)
-		)
-
-		DECLARE @ConfigPath VARCHAR(100)
-
-		SELECT TOP(1) @ConfigPath = GS_VALUE
-		FROM Maintenance.GlobalSettings
-		WHERE GS_NAME = 'CONFIG_PATH'
-
-		SELECT @ConfigPath AS ConfigPath
+		);
 
 		EXEC('
 		BULK INSERT #ptl
-		FROM ''\\PC2023-SQL\ptl\consreg_client.ptl''
+		FROM ''' + @ProtocolPath + '''
 		WITH (FIRSTROW = 2, FORMATFILE = ''' + @ConfigPath + ''');');
 
 		UPDATE #ptl

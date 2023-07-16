@@ -68,16 +68,23 @@ BEGIN
 				SELECT
 					/*ClientID, ClientFullName, ManagerName, ServiceName,*/ DistrStr,/* SystemTypeName,*/ DF_DISCOUNT, DF_FIXED_PRICE,
 					DF_ID_PRICE,
-					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS COEF,
-					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, @MONTH_DATE) AS RND,
-					PRICE, DEPO_PRICE, DISTR, COMP
+					PC.[DistrCoef] AS COEF,
+					PC.[DistrCoefRound] AS RND,
+					PC.[Price], DEPO_PRICE, DISTR, COMP
 				FROM
 					dbo.ClientView a WITH(NOEXPAND)
 					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
 					INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
 																		AND DIS_NUM = b.DISTR
 																		AND DIS_COMP_NUM = b.COMP
-					INNER JOIN [Price].[Systems:Price@Get](GetDate()) g ON [System_Id] = SystemID
+					OUTER APPLY
+					(
+						SELECT
+							[Price],
+							[DistrCoef],
+							[DistrCoefRound]
+						FROM [Price].[DistrPriceWrapper](SystemID, DistrTypeID, SystemTypeID, SystemTypeName, @MONTH_DATE)
+					) AS PC
 			) AS o_O
 			INNER JOIN Reg.RegNodeSearchView rnsv WITH(NOEXPAND) ON rnsv.DistrNumber = o_O.DISTR AND rnsv.CompNumber=o_O.COMP
 			INNER JOIN Reg.RegProtocolConnectView rpcv WITH(NOEXPAND) ON rnsv.HostID = rpcv.RPR_ID_HOST AND rnsv.DistrNumber = rpcv.RPR_DISTR AND rnsv.CompNumber = rpcv.RPR_COMP

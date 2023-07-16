@@ -24,6 +24,11 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@XML XML,
+		@DefaultTax UNIQUEIDENTIFIER,
+		@Setting_PRICE_COEF	Decimal(8, 2);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -31,14 +36,12 @@ BEGIN
 
 	BEGIN TRY
 
-		DECLARE @XML XML
-
-		SET @XML = CAST(@LIST AS XML)
-
-		DECLARE @DefaultTax UNIQUEIDENTIFIER
+		SET @XML = CAST(@LIST AS XML);
 
 		SELECT @DefaultTax = ID
-		FROM Common.TaxDefaultSelect(@DATE)
+		FROM Common.TaxDefaultSelect(@DATE);
+
+		SET @Setting_PRICE_COEF = Cast([Maintenance].[GlobalSetting@Get]('PRICE_COEF') AS Decimal(8, 2));
 
 		SELECT
 			SystemID, SystemShortName, SystemFullName, SystemOrder,
@@ -54,7 +57,7 @@ BEGIN
 			DELIVERY, NOTE,
 			CONVERT(MONEY, ROUND(DELIVERY * TOTAL_RATE, 2) - DELIVERY) AS DELIVERY_NDS,
 			CONVERT(MONEY, ROUND(DELIVERY * TOTAL_RATE, 2)) AS DELIVERY_TOTAL_NDS,
-			Cast([Maintenance].[GlobalPriceCoef]() AS Decimal(8, 2)) AS PRICE_COEF
+			@Setting_PRICE_COEF AS PRICE_COEF
 		FROM
 		(
 			SELECT
@@ -62,7 +65,7 @@ BEGIN
 				MON_ID, MON_NAME, DISCOUNT, INFLATION, SystemTypeID, SystemTypeName, DISTR,
 				MON_CNT,
 				CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN PRICE ELSE 0 END AS PRICE,
-				CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN CONVERT(MONEY, Round([Maintenance].[GlobalPriceCoef]() * ROUND(ROUND(PRICE * DistrTypeCoef, DistrTypeRound) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 0), 2)) ELSE 0 END AS PRICE_TOTAL,
+				CASE WHEN ISNULL(DELIVERY, 0) = 0 THEN CONVERT(MONEY, Round(@Setting_PRICE_COEF * ROUND(ROUND(PRICE * DistrTypeCoef, DistrTypeRound) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 0), 2)) ELSE 0 END AS PRICE_TOTAL,
 				DELIVERY, NOTE,
 				DP.[DistrPrice],
 				TAX_ID, TAX_NAME, TAX_RATE, TOTAL_RATE,
@@ -71,11 +74,11 @@ BEGIN
 			(
 				SELECT
 					b.SystemID, SystemShortName, b.SystemOrder, DistrTypeID, DistrTypeName,
-					dbo.DistrCoef(b.SystemID, DistrTypeID, f.SystemTypeName, e.START) AS DistrTypeCoef,
-					dbo.DistrCoefRound(b.SystemID, DistrTypeID, f.SystemTypeName, e.START) AS DistrTypeRound,
+					PC.[DistrCoef] AS DistrTypeCoef,
+					PC.[DistrCoefRound] AS DistrTypeRound,
 					e.ID AS MON_ID, e.NAME AS MON_NAME, DISCOUNT, INFLATION,
 					SystemTypeID, SystemTypeName, DISTR,
-					MON_CNT, PRICE,
+					MON_CNT, PC.[Price],
 					t.ID AS TAX_ID, t.NAME AS TAX_NAME, TAX_RATE, TOTAL_RATE,
 
 					DELIVERY, NOTE,
@@ -99,14 +102,16 @@ BEGIN
 					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
 					INNER JOIN Common.Period e ON e.ID = a.MON_ID
-					CROSS APPLY
-					(
-						SELECT [Price]
-						FROM [Price].[Systems:Price@Get](e.[START]) AS D
-						WHERE D.[System_Id] = SYS_ID
-					) AS D
 					LEFT JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
 					LEFT JOIN Common.Tax t ON t.ID = a.TAX_ID
+					OUTER APPLY
+					(
+						SELECT
+							[Price],
+							[DistrCoef],
+							[DistrCoefRound]
+						FROM [Price].[DistrPriceWrapper](b.SystemID, DistrTypeID, f.SystemTypeID, f.SystemTypeName, e.START)
+					) AS PC
 			) AS o_O
 			OUTER APPLY
 			(

@@ -73,16 +73,22 @@ BEGIN
 				SELECT
 					ClientID, ClientFullName, ManagerName, ServiceName, DistrStr, SystemTypeName, DF_DISCOUNT, DF_FIXED_PRICE,
 					DF_ID_PRICE, DSS_REPORT,
-					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS COEF,
-					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, GetDate()) AS RND,
-					PRICE, DEPO_PRICE, SystemOrder, DISTR, COMP
-				FROM
-					dbo.ClientView a WITH(NOEXPAND)
-					INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
-					INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
-																AND DIS_NUM = b.DISTR
-																AND DIS_COMP_NUM = b.COMP
-					INNER JOIN [Price].[Systems:Price@Get](GetDate()) AS G ON G.[System_Id] = B.[SystemID]
+					PC.[DistrCoef] AS COEF,
+					PC.[DistrCoefRound] AS RND,
+					PC.[Price], DEPO_PRICE, SystemOrder, DISTR, COMP
+				FROM dbo.ClientView a WITH(NOEXPAND)
+				INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.ClientID = b.ID_CLIENT
+				INNER JOIN dbo.DBFDistrFinancingView e ON SYS_REG_NAME = b.SystemBaseName
+															AND DIS_NUM = b.DISTR
+															AND DIS_COMP_NUM = b.COMP
+				OUTER APPLY
+				(
+					SELECT
+						[Price],
+						[DistrCoef],
+						[DistrCoefRound]
+					FROM [Price].[DistrPriceWrapper](SystemID, DistrTypeID, SystemTypeID, SystemTypeName, GetDate())
+				) AS PC
 				WHERE b.DS_REG = 0
 					AND (a.ServiceID = @SERVICE OR @SERVICE IS NULL)
 					AND (a.ManagerID = @MANAGER OR @MANAGER IS NULL)

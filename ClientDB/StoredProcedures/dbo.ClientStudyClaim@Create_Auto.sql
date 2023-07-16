@@ -21,6 +21,7 @@ BEGIN
 		@Params			Xml;
 
 	DECLARE
+		@AutoCreate			Bit,
 		@AvailableReasons	VarChar(512);
 
 	EXEC [Debug].[Execution@Start]
@@ -29,10 +30,11 @@ BEGIN
 		@DebugContext	= @DebugContext OUT;
 
 	BEGIN TRY
+		SET @AutoCreate = Cast([Maintenance].[GlobalSetting@Get]('CLIENT_AUTO_CLAIM') AS Bit);
 
-		IF (SELECT [Maintenance].[GlobalClientAutoClaim]()) = 1 BEGIN
+		IF (SELECT @AutoCreate) = 1 BEGIN
 			IF @CreateClaim = 1 BEGIN
-				SELECT @AvailableReasons = [Maintenance].[GlobalClientAutoClaimTypes]();
+				SET @AvailableReasons = Cast([Maintenance].[GlobalSetting@Get]('CLIENT_AUTO_CLAIM_TYPES') AS VarChar(256));
 
 				INSERT INTO [dbo].[ClientStudyClaim]([ID_CLIENT], [DATE], [NOTE], [REPEAT], [UPD_USER])
 				SELECT @Client_Id, [dbo].[DateOf](GetDate()), @Reason, 0, 'Автомат'

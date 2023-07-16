@@ -20,12 +20,17 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_SUBHOST_NAME	VarChar(128);
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+		SET @Setting_SUBHOST_NAME = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
 
 		SELECT
 			HostID, SystemID, DistrStr, DistrNumber, CompNumber, a.SST_SHORT,
@@ -50,7 +55,7 @@ BEGIN
 			INNER JOIN dbo.DistrStatus c ON c.DS_ID = a.DS_ID
 			INNER JOIN Din.SystemType d ON d.SST_ID = a.SST_ID
 			INNER JOIN Din.NetType e ON e.NT_ID = a.NT_ID
-		WHERE (SubhostName = Maintenance.GlobalSubhostName() OR @SH_HIDE = 0)
+		WHERE (SubhostName = @Setting_SUBHOST_NAME OR @SH_HIDE = 0)
 			AND SST_REG NOT IN ('NCT', 'HSS', 'DSP', 'NEK')
 			AND c.DS_REG = 0
 			AND (DistrNumber = @DISTR OR @DISTR IS NULL)

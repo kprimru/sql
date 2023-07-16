@@ -16,15 +16,17 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@ControlDate			SmallDateTime,
+		@Setting_CONTRACT_OLD	Bit;
+
 	DECLARE @Clients Table
 	(
-		Client_Id		Int,
-		ClientFullName	VarChar(512),
-		ManagerName		VarChar(100)
-		PRIMARY KEY CLUSTERED(Client_Id)
+		[Client_Id]			Int,
+		[ClientFullName]	VarChar(512),
+		[ManagerName]		VarChar(100)
+		PRIMARY KEY CLUSTERED([Client_Id])
 	);
-
-	DECLARE @CONTROL_DATE SMALLDATETIME
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -32,58 +34,64 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		SET @CONTROL_DATE = dbo.DateOf(DATEADD(MONTH, 1, GETDATE()))
+		SET @ControlDate = dbo.DateOf(DateAdd(Month, 1, GetDate()));
+		SET @Setting_CONTRACT_OLD = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit);
 
 		INSERT INTO @Clients
-		SELECT WCL_ID, ClientFullname, ManagerName
-		FROM [dbo].[ClientList@Get?Write]()
-		INNER JOIN dbo.ClientView b WITH(NOEXPAND) ON WCL_ID = b.ClientID
-		INNER JOIN [dbo].[ServiceStatusConnected]() s ON b.ServiceStatusId = s.ServiceStatusId
+		SELECT W.[WCL_ID], C.[ClientFullname], C.[ManagerName]
+		FROM [dbo].[ClientList@Get?Write]()			AS W
+		INNER JOIN [dbo].[ClientView]				AS C WITH(NOEXPAND) ON W.[WCL_ID] = C.[ClientID]
+		INNER JOIN [dbo].[ServiceStatusConnected]() AS S ON C.[ServiceStatusId] = S.[ServiceStatusId]
 
 		SELECT
-			ClientID = B.[Client_Id], ClientFullName, ManagerName, ExpireDate AS ContractEnd
-		FROM @Clients B
-		INNER JOIN Contract.ClientContracts CC ON CC.Client_Id = b.Client_Id
-		INNER JOIN Contract.Contract C ON C.ID = CC.Contract_Id
+			[ClientID]			= C.[Client_Id],
+			[ClientFullName]	= C.[ClientFullName],
+			[ManagerName]		= C.[ManagerName],
+			[ContractEnd]		= D.[ExpireDate]
+		FROM @Clients							AS C
+		INNER JOIN [Contract].[ClientContracts] AS CC ON CC.[Client_Id] = C.[Client_Id]
+		INNER JOIN [Contract].[Contract]		AS CO ON CO.[ID] = CC.[Contract_Id]
 		CROSS APPLY
 		(
-			SELECT TOP (1) ExpireDate
-			FROM Contract.ClientContractsDetails D
-			WHERE D.Contract_Id = C.ID
-			ORDER BY DATE DESC
+			SELECT TOP (1) D.[ExpireDate]
+			FROM [Contract].[ClientContractsDetails] D
+			WHERE D.[Contract_Id] = CO.[ID]
+			ORDER BY D.[DATE] DESC
 		) D
-		WHERE
-			C.DateTo IS NULL
-			AND D.ExpireDate <= @CONTROL_DATE
-			AND [Maintenance].[GlobalContractOld]() = 0
+		WHERE	CO.[DateTo] IS NULL
+			AND D.[ExpireDate] <= @ControlDate
+			AND @Setting_CONTRACT_OLD = 0
 
 		UNION ALL
 
 		SELECT
-			ClientID = B.[Client_Id], ClientFullName, ManagerName, MAX(ContractEnd) AS ContractEnd
-		FROM @Clients B
-		INNER JOIN dbo.ContractTable a ON a.ClientID = b.Client_Id
-		WHERE ContractEnd <= @CONTROL_DATE
+			[ClientID]			= C.[Client_Id],
+			[ClientFullName]	= C.[ClientFullName],
+			[ManagerName]		= C.[ManagerName],
+			[ContractEnd]		= MAX(CO.[ContractEnd])
+		FROM @Clients						AS C
+		INNER JOIN [dbo].[ContractTable]	AS CO ON CO.[ClientID] = C.[Client_Id]
+		WHERE CO.[ContractEnd] <= @ControlDate
 			AND NOT EXISTS
 				(
 					SELECT *
-					FROM dbo.ContractTable e
-					WHERE e.ClientID = a.ClientID
-						AND e.ContractEnd >= @CONTROL_DATE
+					FROM [dbo].[ContractTable] AS E
+					WHERE E.[ClientID] = CO.[ClientID]
+						AND E.[ContractEnd] >= @ControlDate
 				)
 			AND
 			(
 			    NOT EXISTS
 				(
 					SELECT *
-					FROM Contract.ClientContracts CC
-					WHERE CC.Client_Id = b.Client_Id
+					FROM [Contract].[ClientContracts] AS CC
+					WHERE CC.[Client_Id] = C.[Client_Id]
 				)
-				OR [Maintenance].[GlobalContractOld]() = 1
+				OR @Setting_CONTRACT_OLD = 1
 			)
-		GROUP BY b.Client_Id, ClientFullName, ManagerName
+		GROUP BY C.[Client_Id], C.[ClientFullName], C.[ManagerName]
 
-		ORDER BY ClientFullName
+		ORDER BY [ClientFullName]
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

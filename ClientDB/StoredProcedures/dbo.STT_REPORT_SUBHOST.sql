@@ -30,10 +30,10 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
-		SET @SH = Maintenance.GlobalSubhostName()
+		SET @SH = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
 
 		--Получаем полное название подхоста
-		SET @SH_NAME = (SELECT [SH_NAME] FROM [ClientDB].[dbo].[Subhost] WHERE [SH_REG] = @SH)
+		SET @SH_NAME = (SELECT [SH_NAME] FROM [dbo].[Subhost] WHERE [SH_REG] = @SH)
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 

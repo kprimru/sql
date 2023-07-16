@@ -21,8 +21,8 @@ BEGIN
 		@Params			Xml;
 
 	DECLARE
-		@SH_NAME		VarChar(20),
-		@SH_CHECK		Bit;
+		@Setting_SUBHOST_NAME	VarChar(128),
+		@Setting_SUBHOST_CHECK	Bit;
 
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
@@ -31,8 +31,8 @@ BEGIN
 
 	BEGIN TRY
 
-		SET @SH_NAME = Maintenance.GlobalSubhostName();
-		SET @SH_CHECK = Maintenance.GlobalSubhostCheck();
+		SET @Setting_SUBHOST_NAME = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
+		SET @Setting_SUBHOST_CHECK = Cast([System].[Setting@Get]('SUBHOST_CHECK') AS Bit);
 
 		SET @SYS_LIST = '';
 
@@ -89,9 +89,9 @@ BEGIN
 				o_O.DistrTypeName, DS_NAME, DistrType, o_O.DistrTypeID, DS_REG, DS_INDEX, SystemBegin, SystemEnd, REG_ERROR, ERROR_TYPE, o_O.STATUS,
 				TransferLeft, SystemShortName, DF_ID_PRICE, DF_FIXED_PRICE, DF_DISCOUNT, DEPO_PRICE,
 				w.NOTE, w.STATUS AS DISCONNECT_STATUS,
-				c.PRICE,
-				dbo.DistrCoef(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS COEF,
-				dbo.DistrCoefRound(SystemID, o_O.DistrTypeID, SystemTypeName, GetDate()) AS RND,
+				PC.[Price],
+				PC.[DistrCoef] AS COEF,
+				PC.[DistrCoefRound] AS RND,
 				SST_ID,
 				NT_ID,
 				O.[MainQuantity], O.[AdditionalQuantity], DE.[Email]
@@ -119,7 +119,7 @@ BEGIN
 						ORDER BY DATE DESC
 					) AS SystemEnd,
 					CASE
-						WHEN (@SH_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @SH_NAME) <> @SH_NAME) THEN 'Дистрибутив установлен у другого подхоста'
+						WHEN (@Setting_SUBHOST_CHECK = 1) AND (ISNULL(ISNULL(b.SubhostName, c.SubhostName), @Setting_SUBHOST_NAME) <> @Setting_SUBHOST_NAME) THEN 'Дистрибутив установлен у другого подхоста'
 						WHEN a.SystemReg = 0 THEN ''
 						WHEN b.ID IS NULL  THEN
 							CASE
@@ -201,7 +201,7 @@ BEGIN
 									AND b.CompNumber = a.COMP
 					INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.Complect = b.Complect
 				WHERE  ID_CLIENT = @CLIENTID AND c.DS_REG = 0 AND c.DistrType NOT IN ('NEK')
-					AND c.SubhostName = Maintenance.GlobalSubhostName()
+					AND c.SubhostName = @Setting_SUBHOST_NAME
 					AND NOT EXISTS
 						(
 							SELECT *
@@ -228,10 +228,17 @@ BEGIN
 				WHERE @HISTORY = 1 AND ID_CLIENT = @CLIENTID AND STATUS IN (3, 4)
 			) AS o_O
 			LEFT JOIN dbo.DBFDistrView ON SYS_REG_NAME = SystemBaseName AND DIS_NUM = DISTR AND DIS_COMP_NUM = COMP
-			LEFT JOIN [Price].[Systems:Price@Get](GetDate()) AS C ON C.[System_Id] = o_O.[SystemID]
 			LEFT JOIN dbo.DistrTypeTable b ON o_O.DistrTypeID = b.DistrTypeID
 			LEFT JOIN dbo.DistrDisconnect w ON w.ID_DISTR = o_O.ID AND w.STATUS = 1
 			OUTER APPLY [Reg].[Complect@Online Count]([Complect]) AS O
+			OUTER APPLY
+			(
+				SELECT
+					[Price],
+					[DistrCoef],
+					[DistrCoefRound]
+				FROM [Price].[DistrPriceWrapper](SystemID, o_O.DistrTypeID, SystemTypeID, SystemTypeName, GetDate())
+			) AS PC
 			OUTER APPLY
 			(
 				SELECT TOP (1) DE.[Email]
@@ -244,7 +251,7 @@ BEGIN
 		) AS ds
 		OUTER APPLY
 		(
-			SELECT [DistrPrice] = [dbo].[DistrPrice](PRICE, COEF, RND)
+			SELECT [DistrPrice] = [dbo].[DistrPrice]([Price], COEF, RND)
 		) AS DP
 		ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 

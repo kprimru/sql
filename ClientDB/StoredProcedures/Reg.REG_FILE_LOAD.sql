@@ -40,8 +40,7 @@ BEGIN
 
 			DECLARE @CMD NVARCHAR(1024)
 
-			--SET @CMD = Maintenance.GlobalConsregPath() + ' /outcsvex:' + @SAVE + ' /BASE* /ALL'
-			SET @CMD = Maintenance.GlobalConsregPath() + ' /outcsvex1:' + @SAVE + ' /BASE* /ALL'
+			SET @CMD = Cast([Maintenance].[GlobalSetting@Get]('CONSREG_PATH') AS VarChar(256)) + ' /outcsvex1:' + @SAVE + ' /BASE* /ALL'
 
 
 			DECLARE @RESULT INT

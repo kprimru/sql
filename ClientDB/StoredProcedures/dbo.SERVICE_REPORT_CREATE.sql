@@ -21,12 +21,17 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_CONTRACT_OLD	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+		SET @Setting_CONTRACT_OLD = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit);
 
 		IF OBJECT_ID('tempdb..#cstatus') IS NOT NULL
 			DROP TABLE #cstatus
@@ -140,7 +145,7 @@ BEGIN
 					INNER JOIN dbo.ContractPayTable P ON D.PayType_Id = P.ContractPayID
 					WHERE CC.Client_Id = a.ClientID
 						AND C.DateTo IS NULL
-						AND [Maintenance].[GlobalContractOld]() = 0
+						AND @Setting_CONTRACT_OLD = 0
 
 				    UNION ALL
 
@@ -150,7 +155,7 @@ BEGIN
 				    INNER JOIN dbo.ContractPayTable x ON z.ContractPayID = x.ContractPayID
 				    WHERE z.ClientID = a.ClientID
 				    	AND ContractBegin < GETDATE()
-				    	AND [Maintenance].[GlobalContractOld]() = 1
+				    	AND @Setting_CONTRACT_OLD = 1
 				    ORDER BY ContractBegin DESC
 				) D
 

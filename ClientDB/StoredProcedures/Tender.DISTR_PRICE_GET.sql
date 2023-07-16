@@ -45,7 +45,7 @@ BEGIN
 				(
 					SELECT
 						a.ID,
-						CONVERT(MONEY, ROUND(PRICE * dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @Date) * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
+						CONVERT(MONEY, ROUND(PRICE * PC.[DistrCoef] * (100 - @DISCOUNT) / 100 * (1 + @INFLATION / 100.0), 0)) AS PRICE
 					FROM
 						(
 							SELECT
@@ -55,7 +55,15 @@ BEGIN
 							FROM @xml.nodes('/root/item') AS a(c)
 						) AS a
 						INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
-						INNER JOIN [Price].[Systems:Price@Get](@Date) d ON System_Id = SYS_ID
+						-- TODO: не учитывается тип системы
+						OUTER APPLY
+						(
+							SELECT
+								[Price],
+								[DistrCoef],
+								[DistrCoefRound]
+							FROM [Price].[DistrPriceWrapper](a.SYS_ID, a.NET_ID, NULL, NULL, @Date)
+						) AS PC
 				) AS o_O
 		ELSE
 			SELECT ID, PRICE

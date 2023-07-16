@@ -17,6 +17,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_CONTROL_LOGIN	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -24,7 +27,9 @@ BEGIN
 
 	BEGIN TRY
 
-		IF (SELECT Maintenance.GlobalControlLogin()) = '1'
+		SET @Setting_CONTROL_LOGIN = Cast([System].[Setting@Get]('CONTROL_LOGIN') AS Bit);
+
+		IF @Setting_CONTROL_LOGIN = 1
 		BEGIN
 			UPDATE dbo.ClientControl
 			SET CC_REMOVE_DATE = GETDATE(),

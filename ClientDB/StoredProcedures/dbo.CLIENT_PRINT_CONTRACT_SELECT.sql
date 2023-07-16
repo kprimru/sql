@@ -17,6 +17,14 @@ BEGIN
         @DebugContext   Xml,
         @Params         Xml;
 
+	DECLARE
+		@Setting_CONTRACT_OLD	Bit;
+
+	DECLARE @Clients Table
+    (
+        [CL_ID] Int Primary Key Clustered
+    );
+
     EXEC [Debug].[Execution@Start]
         @Proc_Id        = @@ProcId,
         @Params         = @Params,
@@ -24,10 +32,7 @@ BEGIN
 
     BEGIN TRY
 
-        DECLARE @Clients Table
-        (
-            CL_ID Int Primary Key Clustered
-        );
+        SET @Setting_CONTRACT_OLD = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit);
 
         INSERT INTO @Clients
         SELECT [ID]
@@ -70,7 +75,7 @@ BEGIN
             WHERE   CC.[Client_Id] = CL.[CL_ID]
                 AND C.[DateFrom] <= GetDate() AND (C.[DateTo] >= GetDate() OR C.[DateTo] IS NULL)
         ) AS D
-        WHERE [Maintenance].[GlobalContractOld]() = 0
+        WHERE @Setting_CONTRACT_OLD = 0
 
         UNION ALL
 
@@ -119,7 +124,7 @@ BEGIN
                 WHERE   CC.[Client_Id] = CL.[CL_ID]
                     AND C.[DateFrom] <= GetDate() AND (C.[DateTo] >= GetDate() OR C.[DateTo] IS NULL)
             )
-            AND [Maintenance].[GlobalContractOld]() = 0
+            AND @Setting_CONTRACT_OLD = 0
 
         UNION ALL
 
@@ -147,7 +152,7 @@ BEGIN
                 INNER JOIN Contract.Contract C ON CC.Contract_Id = C.ID
                 WHERE   CC.Client_Id = CL.CL_ID
             )
-            OR [Maintenance].[GlobalContractOld]() = 1
+            OR @Setting_CONTRACT_OLD = 1
 
         ORDER BY CL_ID, ContractBegin
 

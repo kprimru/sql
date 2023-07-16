@@ -64,7 +64,7 @@ RETURN
                 CASE WHEN C.[DateTo] IS NULL THEN 1 ELSE 2 END,
                 C.[DateTo] DESC
         ) AS C
-        WHERE [Maintenance].[GlobalContractOld]() = 0
+        WHERE Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit) = 0
     ) AS C
     ORDER BY
         C.[Ord]

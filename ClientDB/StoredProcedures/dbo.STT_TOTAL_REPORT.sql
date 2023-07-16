@@ -21,6 +21,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_SUBHOST_NAME	VarChar(128);
+
     DECLARE
         @RestrictionType_Id_STT SmallInt;
 
@@ -47,6 +50,8 @@ BEGIN
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+
+		SET @Setting_SUBHOST_NAME = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
         SET @RestrictionType_Id_STT = (SELECT [Id] FROM [dbo].[Clients:Restrictions->Types] WHERE [Code] = 'STT');
 
         INSERT INTO @ExcludedSystemsTypes
@@ -95,9 +100,6 @@ BEGIN
 			FROM dbo.IPSTTView
 			WHERE CSD_START >= @BEGIN AND CSD_START < @END
 
-		DECLARE @SH	NVARCHAR(16)
-		SET @SH = ISNULL(Maintenance.GlobalSubhostName(), '')
-
 		IF OBJECT_ID('tempdb..#cl') IS NOT NULL
 			DROP TABLE #cl
 
@@ -116,7 +118,7 @@ BEGIN
 		SELECT
 			c.ClientID,
 			ISNULL(
-				CASE @SH
+				CASE @Setting_SUBHOST_NAME
 					WHEN '' THEN
 						CASE SubhostName
 							WHEN '' THEN ServiceName
@@ -126,7 +128,7 @@ BEGIN
 						ServiceName
 				END, ''),
 			ISNULL(
-				CASE @SH
+				CASE @Setting_SUBHOST_NAME
 					WHEN '' THEN
 						CASE SubhostName
 							WHEN '' THEN ManagerName

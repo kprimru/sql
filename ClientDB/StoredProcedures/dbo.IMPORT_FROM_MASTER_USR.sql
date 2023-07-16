@@ -20,7 +20,7 @@ BEGIN
     DECLARE @Init       Int;
     DECLARE @UF_DATA    VarBinary(Max);
 
-    SET @SH_ID = Maintenance.GlobalSubhostName();
+    SET @SH_ID = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
 
     DELETE FROM USR.USRFromMaster;
 

@@ -59,11 +59,11 @@ BEGIN
 		SELECT
 			CL_ID, CL_NUM, DISTR, COMP,
 			b.SystemID, SystemShortName, b.SystemOrder,
-			DistrTypeID, DistrTypeName, dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @DATE) AS Coef, DistrTypeOrder,
+			DistrTypeID, DistrTypeName, PC.[DistrCoef] AS Coef, DistrTypeOrder,
 			SystemTypeID, SystemTypeName,
 			DISCOUNT, INFLATION,
 			PRICE,
-			CONVERT(MONEY, ROUND(PRICE * dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @DATE) * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 0)) AS PRICE_TOTAL
+			CONVERT(MONEY, ROUND(PRICE * PC.[DistrCoef] * (100 - DISCOUNT) / 100 * (1 + INFLATION / 100.0), 0)) AS PRICE_TOTAL
 		FROM
 			(
 				SELECT
@@ -80,8 +80,15 @@ BEGIN
 			) AS a
 			INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 			INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-			INNER JOIN [Price].[Systems:Price@Get](@DATE) d ON d.[System_Id] = a.[SYS_ID]
 			LEFT JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
+			OUTER APPLY
+			(
+				SELECT
+					[Price],
+					[DistrCoef],
+					[DistrCoefRound]
+				FROM [Price].[DistrPriceWrapper](a.SYS_ID, a.NET_ID, f.SystemTypeID, f.SystemTypeName, @DATE)
+			) AS PC
 	) AS o_O
 	GROUP BY SystemID, DistrTypeID, PRICE_TOTAL;
 

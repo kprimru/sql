@@ -47,7 +47,7 @@ BEGIN
 				SELECT
 					b.SystemID,
 					DistrTypeID,
-					CONVERT(MONEY, ROUND(PRICE * dbo.DistrCoef(a.SYS_ID, a.NET_ID, NULL, @DATE), 0)) AS PRICE_TOTAL
+					CONVERT(MONEY, ROUND(PC.[Price] * PC.[DistrCoef], 0)) AS PRICE_TOTAL
 				FROM
 					(
 						SELECT
@@ -57,7 +57,15 @@ BEGIN
 					) AS a
 					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
-					INNER JOIN [Price].[Systems:Price@Get](@Date) AS D ON D.[System_Id] = [SYS_ID]
+					-- TODO: не учитываетя тип системы
+					OUTER APPLY
+					(
+						SELECT
+							[Price],
+							[DistrCoef],
+							[DistrCoefRound]
+						FROM [Price].[DistrPriceWrapper](a.SYS_ID, a.NET_ID, NULL, NULL, @DATE)
+					) AS PC
 			) AS o_O
 		GROUP BY SystemID, DistrTypeID, PRICE_TOTAL
 

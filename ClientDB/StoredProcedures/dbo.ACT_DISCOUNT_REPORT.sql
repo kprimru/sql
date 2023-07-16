@@ -65,16 +65,23 @@ BEGIN
 		WHERE PR_DATE = @DATE;
 
 		UPDATE a SET
-			PRICE	= ROUND([dbo].[DistrPrice](c.PRICE, dbo.DistrCoef(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE), dbo.DistrCoefRound(a.ID_SYSTEM, NT_ID_MASTER, SystemTypeName, @DATE)) * @TaxRate, 2),
+			PRICE	= ROUND([dbo].[DistrPrice](PC.[Price], PC.[DistrCoef], PC.[DistrCoefRound]) * @TaxRate, 2),
 			NET		= NT_SHORT,
 			ID_NET	= NT_ID,
 			ID_TYPE = SST_ID
 		FROM #distr						AS A
 		INNER JOIN dbo.DBFPeriodRegView AS B ON A.SYS_REG = B.SYS_REG_NAME AND A.DISTR = B.REG_DISTR_NUM AND A.COMP = B.REG_COMP_NUM AND B.PR_DATE = @DATE
-		INNER JOIN [Price].[Systems:Price@Get](@DATE) AS C ON C.System_Id = A.ID_SYSTEM
 		INNER JOIN Din.SystemType ON SST_REG = b.SST_NAME
 		INNER JOIN dbo.SystemTypeTable ON SystemTypeID = SST_ID_MASTER
-		INNER JOIN Din.NetType ON NT_TECH = SNC_TECH AND NT_NET = SNC_NET_COUNT;
+		INNER JOIN Din.NetType ON NT_TECH = SNC_TECH AND NT_NET = SNC_NET_COUNT
+		OUTER APPLY
+		(
+			SELECT
+				[Price],
+				[DistrCoef],
+				[DistrCoefRound]
+			FROM [Price].[DistrPriceWrapper](a.ID_SYSTEM, NT_ID_MASTER, SystemTypeID, SystemTypeName, @DATE)
+		) AS PC;
 
 		UPDATE #distr
 		SET DISCOUNT = ROUND((PRICE - ACT) / PRICE * 100, 2)

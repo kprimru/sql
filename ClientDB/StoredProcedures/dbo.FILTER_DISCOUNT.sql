@@ -21,6 +21,9 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_CONTRACT_OLD	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
@@ -28,7 +31,9 @@ BEGIN
 
 	BEGIN TRY
 
-        IF [Maintenance].[GlobalContractOld]() = 1
+		SET @Setting_CONTRACT_OLD = Cast([System].[Setting@Get]('CONTRACT_OLD') AS Bit);
+
+        IF @Setting_CONTRACT_OLD = 1
             SELECT
 		        a.ClientID, ClientFullName, ContractNumber,
 		        ContractBegin, ContractTypeName, DiscountValue

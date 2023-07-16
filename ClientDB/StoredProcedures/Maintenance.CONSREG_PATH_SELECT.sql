@@ -23,7 +23,7 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT Maintenance.GlobalConsregPath() AS CONSREG_PATH
+		SELECT [CONSREG_PATH] = Cast([Maintenance].[GlobalSetting@Get]('CONSREG_PATH') AS VarChar(256));
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

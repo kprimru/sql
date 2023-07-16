@@ -57,9 +57,9 @@ BEGIN
 					END AS NET_STR,
 					SystemTypeID, SystemTypeName,
 					MON_ID, e.NAME AS MON_NAME, DISCOUNT, INFLATION,
-					d.PRICE AS LOC_PRICE,
-					dbo.DistrCoef(SYS_ID, NET_ID, f.SystemTypeName, e.START) AS NET_COEF,
-					dbo.DistrCoefRound(SYS_ID, NET_ID, f.SystemTypeName, e.START) AS NET_RND,
+					PC.PRICE AS LOC_PRICE,
+					PC.[DistrCoef] AS NET_COEF,
+					PC.[DistrCoefRound] AS NET_RND,
 					a.PRICE, MON_CNT,
 					b.SystemOrder, t.TAX_RATE, TAX_ID
 				FROM
@@ -83,13 +83,14 @@ BEGIN
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
 					INNER JOIN Common.Period e ON e.ID = a.MON_ID
 					INNER JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
-					CROSS APPLY
+					OUTER APPLY
 					(
-						SELECT TOP (1)
-							[Price]
-						FROM [Price].[Systems:Price@Get](e.[START]) AS D
-						WHERE d.[System_Id] = a.[SYS_ID]
-					) AS D
+						SELECT
+							[Price],
+							[DistrCoef],
+							[DistrCoefRound]
+						FROM [Price].[DistrPriceWrapper](SYS_ID, NET_ID, f.SystemTypeID, f.SystemTypeName, e.START)
+					) AS PC
 					INNER JOIN Common.Tax t ON t.ID = a.TAX_ID
 					LEFT OUTER JOIN dbo.SystemTable z ON z.SystemID = a.SYS_OLD_ID
 					LEFT OUTER JOIN dbo.DistrTypeTable y ON y.DistrTypeID = a.NET_OLD_ID

@@ -40,8 +40,7 @@ BEGIN
 
 			DECLARE @CMD NVARCHAR(1024)
 
-			--SET @CMD = '\\BIM\vol2\vedareg\vedareg\consreg\consreg.exe /outcsv:' + @SAVE + ' /BASE* /ALL'
-			SET @CMD = Maintenance.GlobalConsregPath() + ' /outcsv:' + @SAVE + ' /BASE* /ALL'
+			SET @CMD = Cast([Maintenance].[GlobalSetting@Get]('CONSREG_PATH') AS VarChar(256)) + ' /outcsv:' + @SAVE + ' /BASE* /ALL'
 
 			EXEC @result = master..xp_cmdshell @CMD, NO_OUTPUT
 

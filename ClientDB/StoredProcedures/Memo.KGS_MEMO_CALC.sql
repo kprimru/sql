@@ -100,7 +100,7 @@ BEGIN
 				DistrTypeID, DistrTypeName, DistrTypeCoef, DistrTypeOrder,
 				SystemTypeID, SystemTypeName,
 				DISCOUNT, INFLATION,
-				PRICE,
+				[Price],
 
 				CONVERT(MONEY,
 					DP.[DistrPrice] *
@@ -112,12 +112,12 @@ BEGIN
 					CL_ID, CL_NUM, DISTR, COMP,
 					b.SystemID, SystemShortName, b.SystemOrder,
 					DistrTypeID, DistrTypeName,
-					dbo.DistrCoef(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeCoef,
-					dbo.DistrCoefRound(SystemID, DistrTypeID, SystemTypeName, START) AS DistrTypeRound,
+					PC.[DistrCoef] AS DistrTypeCoef,
+					PC.[DistrCoefRound] AS DistrTypeRound,
 					DistrTypeOrder,
 					SystemTypeID, SystemTypeName,
 					DISCOUNT, INFLATION,
-					PRICE
+					PC.[Price]
 				FROM
 					(
 						SELECT
@@ -135,14 +135,15 @@ BEGIN
 					INNER JOIN dbo.SystemTable b ON a.SYS_ID = b.SystemID
 					INNER JOIN dbo.DistrTypeTable c ON a.NET_ID = c.DistrTypeID
 					INNER JOIN Common.Period e ON e.ID = @MONTH
-					CROSS APPLY
-					(
-						SELECT TOP (1)
-							[Price]
-						FROM [Price].[Systems:Price@Get](e.[START]) AS D
-						WHERE D.[System_Id] = a.[SYS_ID]
-					) AS D
 					LEFT JOIN dbo.SystemTypeTable f ON f.SystemTypeID = a.TP_ID
+					OUTER APPLY
+					(
+						SELECT
+							[Price],
+							[DistrCoef],
+							[DistrCoefRound]
+						FROM [Price].[DistrPriceWrapper](SystemID, DistrTypeID, SystemTypeID, SystemTypeName, START)
+					) AS PC
 			) AS o_O
 			OUTER APPLY
 			(

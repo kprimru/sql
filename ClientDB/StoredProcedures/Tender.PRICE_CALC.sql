@@ -41,12 +41,12 @@ BEGIN
 		FROM Common.Period
 		WHERE ID = @MONTH
 
+		-- TODO: не учитываяется тип системы
 		IF @SYS_OLD IS NULL AND @NET_OLD IS NULL
 			SET @PRICE_OLD = 0
 		ELSE
-			SELECT @PRICE_OLD = ROUND(a.PRICE * dbo.DistrCoef(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE), dbo.DistrCoefRound(ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), '', @MONTH_DATE))
-			FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
-			WHERE [System_Id] = ISNULL(@SYS_OLD, @SYS)
+			SELECT @PRICE_OLD = ROUND(PRICE * DistrCoef, DistrCoefRound)
+			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS_OLD, @SYS), ISNULL(@NET_OLD, @NET), NULL, '', @MONTH_DATE);
 
 		IF @PRICE_OLD <> 0
 		BEGIN
@@ -54,9 +54,8 @@ BEGIN
 			SET @PRICE_OLD = ROUND(@PRICE_OLD * 100 * (1 + ISNULL(@INFLATION, 0)) / 100, 2)
 		END
 
-		SELECT @PRICE = ROUND(a.PRICE * dbo.DistrCoef(@SYS, @NET, '', @MONTH_DATE), dbo.DistrCoefRound(@SYS, @NET, '', @MONTH_DATE))
-		FROM [Price].[Systems:Price@Get] (@MONTH_DATE) a
-		WHERE [System_Id] = @SYS;
+		SELECT @PRICE = ROUND(PRICE * DistrCoef, DistrCoefRound)
+		FROM [Price].[DistrPriceWrapper](@SYS, @NET, NULL, '', @MONTH_DATE);
 
 		IF @PRICE <> 0
 		BEGIN

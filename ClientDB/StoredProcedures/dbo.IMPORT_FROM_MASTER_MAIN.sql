@@ -36,7 +36,7 @@ BEGIN
 			RETURN
 		END
 
-        SET @SubhostName = Maintenance.GlobalSubhostName();
+        SET @SubhostName = Cast([System].[Setting@Get]('SUBHOST_NAME') AS VarChar(128));
 
 
         SET @Query = 'SELECT HostID, HostReg, DistrNumber, CompNumber FROM OPENQUERY([PC275-SQL\ALPHA], ''SELECT * FROM ClientDB.dbo.SubhostDistrs@Get(NULL, ''''' + @SubhostName + ''''');'');';

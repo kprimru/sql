@@ -56,33 +56,37 @@ BEGIN
 		IF @OLD_DISC IS NULL AND @NEW_DISC IS NOT NULL
 			SET @OLD_DISC = @NEW_DISC
 
+		-- TODO: не проверяется SystemType в расчете цены
 		IF @SYS IS NOT NULL
-			SELECT @PRICE = PRICE
-			FROM [Price].[Systems:Price@Get](@Date)
-			WHERE [System_Id] = @SYS
+			SELECT @PRICE = Price
+			FROM [Price].[DistrPriceWrapper](@SYS, NULL, NULL, NULL, @Date)
 		ELSE
 		BEGIN
-			SELECT @OLD_PRICE = PRICE
-			FROM [Price].[Systems:Price@Get](@Date)
-			WHERE [System_Id] = @SYS_OLD;
+			SELECT @OLD_PRICE = Price
+			FROM [Price].[DistrPriceWrapper](@SYS_OLD, NULL, NULL, NULL, @Date);
 
-			SELECT @NEW_PRICE = PRICE
-			FROM [Price].[Systems:Price@Get](@Date)
-			WHERE [System_Id] = @SYS_NEW;
+			SELECT @NEW_PRICE = Price
+			FROM [Price].[DistrPriceWrapper](@SYS_NEW, NULL, NULL, NULL, @Date);
 		END
 
 		IF @NET IS NOT NULL
 		BEGIN
-			SET @COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET, '', @Date)
-			SET @RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET, '', @Date)
+			SELECT
+				@COEF = [DistrCoef],
+				@RND = [DistrCoefRound]
+			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS, @SYS_NEW), @NET, NULL, '', @Date);
 		END
 		ELSE
 		BEGIN
-			SET @OLD_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @Date)
-			SET @OLD_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_OLD), @NET_OLD, '', @Date)
+			SELECT
+				@OLD_COEF = [DistrCoef],
+				@OLD_RND = [DistrCoefRound]
+			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS, @SYS_OLD), @NET_OLD, NULL, '', @Date);
 
-			SET @NEW_COEF = dbo.DistrCoef(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @Date)
-			SET @NEW_RND = dbo.DistrCoefRound(ISNULL(@SYS, @SYS_NEW), @NET_NEW, '', @Date)
+			SELECT
+				@NEW_COEF = [DistrCoef],
+				@NEW_RND = [DistrCoefRound]
+			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS, @SYS_NEW), @NET_OLD, NULL, '', @Date);
 		END
 
 		IF @PRICE IS NOT NULL

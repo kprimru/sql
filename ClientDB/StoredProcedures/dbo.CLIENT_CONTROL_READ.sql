@@ -17,14 +17,18 @@ BEGIN
 		@DebugContext	Xml,
 		@Params			Xml;
 
+	DECLARE
+		@Setting_CONTROL_LOGIN	Bit;
+
 	EXEC [Debug].[Execution@Start]
 		@Proc_Id		= @@ProcId,
 		@Params			= @Params,
 		@DebugContext	= @DebugContext OUT
 
 	BEGIN TRY
+		SET @Setting_CONTROL_LOGIN = Cast([System].[Setting@Get]('CONTROL_LOGIN') AS Bit);
 
-		IF (SELECT Maintenance.GlobalControlLogin()) = '0'
+		IF @Setting_CONTROL_LOGIN = 0
 		BEGIN
 			UPDATE dbo.ClientControl
 			SET CC_READER = ORIGINAL_LOGIN(),
