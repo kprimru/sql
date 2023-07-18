@@ -12,3 +12,6 @@ CREATE TABLE [dbo].[Demand->Type]
         [SortIndex]   SmallInt                           NULL,
 );
 GO
+CREATE UNIQUE NONCLUSTERED INDEX [UQ__Demand->__737584F62701A966] ON [dbo].[Demand->Type] ([Name] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ__Demand->__A25C5AA7E642CE4F] ON [dbo].[Demand->Type] ([Code] ASC);
+GO

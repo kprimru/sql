@@ -42,3 +42,5 @@ BEGIN
 	END CATCH
 END
 GO
+GRANT EXECUTE ON [dbo].[DEMAND_TYPE_GET] TO rl_demand_type_r;
+GO
