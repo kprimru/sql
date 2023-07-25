@@ -86,7 +86,7 @@ BEGIN
 			SELECT
 				@NEW_COEF = [DistrCoef],
 				@NEW_RND = [DistrCoefRound]
-			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS, @SYS_NEW), @NET_OLD, NULL, '', @Date);
+			FROM [Price].[DistrPriceWrapper](ISNULL(@SYS, @SYS_NEW), @NET_NEW, NULL, '', @Date);
 		END
 
 		IF @PRICE IS NOT NULL

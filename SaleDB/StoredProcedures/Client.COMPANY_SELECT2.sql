@@ -166,6 +166,12 @@ BEGIN
         IF @HISTORY IS NULL
             SET @HISTORY = 0;
 
+		IF @RowCount IS NULL
+			SET @RowCount = 100;
+
+		IF @RowCount < 1
+			SET @RowCount = 1
+
         IF @HOME IS NOT NULL
         BEGIN
             SET @HOME = REPLACE(@HOME, '%', ' ');
