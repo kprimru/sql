@@ -24,9 +24,15 @@ BEGIN
 
 	BEGIN TRY
 
-		SELECT NAME, NOTE, READER
-		FROM Seminar.Subject
-		WHERE ID = @ID
+		SELECT S.[NAME], S.[NOTE], S.[READER], D.[Demand_IDs]
+		FROM [Seminar].[Subject] AS S
+		OUTER APPLY
+		(
+			SELECT [Demand_IDs] = String_Agg(Cast(D.[Demand_Id] AS VarChar(100)), ',')
+			FROM [Seminar].[SubjectDemand] AS D
+			WHERE D.[Subject_Id] = S.[ID]
+		) AS D
+		WHERE S.[ID] = @ID;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY

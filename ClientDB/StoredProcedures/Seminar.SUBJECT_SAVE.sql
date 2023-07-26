@@ -7,10 +7,11 @@ GO
 IF OBJECT_ID('[Seminar].[SUBJECT_SAVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[SUBJECT_SAVE]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Seminar].[SUBJECT_SAVE]
-	@ID		UNIQUEIDENTIFIER OUTPUT,
-	@NAME	NVARCHAR(512),
-	@READER	NVARCHAR(1024),
-	@NOTE	NVARCHAR(MAX)
+	@ID			UniqueIdentifier OUTPUT,
+	@NAME		NVarChar(512),
+	@READER		NVarChar(1024),
+	@NOTE		NVarChar(MAX),
+	@DEMANDS	VarChar(Max) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,6 +29,7 @@ BEGIN
 	BEGIN TRY
 
 		SET @NAME = Replace(Replace(@Name, Char(10), ''), Char(13), '');
+		SET @DEMANDS = NullIf(@DEMANDS, '');
 
 		IF @ID IS NULL
 		BEGIN
@@ -45,8 +47,15 @@ BEGIN
 			SET NAME	=	@NAME,
 				NOTE	=	@NOTE,
 				READER	=	@READER
-			WHERE ID = @ID
-		END
+			WHERE ID = @ID;
+
+			DELETE FROM [Seminar].[SubjectDemand] WHERE [Subject_Id] = @Id;
+		END;
+
+		INSERT INTO [Seminar].[SubjectDemand]([Subject_Id], [Demand_Id])
+		SELECT @ID, Cast(D.[value] AS SmallInt)
+		FROM String_Split(@DEMANDS, ',') AS D
+		WHERE @DEMANDS IS NOT NULL;
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
 	END TRY
