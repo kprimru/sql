@@ -41,7 +41,7 @@ BEGIN
 				AND P.DIS_COMP_NUM = D.COMP
 		) AS P
 		WHERE	D.ID_CLIENT = @ID
-			AND D.DS_REG = 0
+			--AND D.DS_REG = 0
 		ORDER BY D.SystemOrder, D.DISTR, D.COMP
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

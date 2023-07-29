@@ -25,7 +25,7 @@ BEGIN
 
         SELECT
             [CONTROL_LOGIN] = Cast([Maintenance].[GlobalSetting@Get]('CONTROL_LOGIN') AS Bit),
-			[BCP]	= Cast([Maintenance].[GlobalSetting@Get]('BCP') AS VarChar(256)),
+			[BCP]		= Cast([Maintenance].[GlobalSetting@Get]('BCP') AS VarChar(256)),
 			[BCP_EX]	= Cast([Maintenance].[GlobalSetting@Get]('BCP_EX') AS VarChar(256)),
 			[UINF_PATH]	= Cast([Maintenance].[GlobalSetting@Get]('UINF_PATH') AS VarChar(256)),
 

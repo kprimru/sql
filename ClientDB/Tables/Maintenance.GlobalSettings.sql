@@ -11,6 +11,9 @@ CREATE TABLE [Maintenance].[GlobalSettings]
         [GS_VALUE]   VarChar(500)              NULL,
         [GS_NOTE]    VarChar(Max)              NULL,
         [GS_LAST]    DateTime              NOT NULL,
+        [Name]       VarChar(128)              NULL,
+        [Value]      sql_variant               NULL,
+        [Last]       DateTime                  NULL,
         CONSTRAINT [PK_Maintenance.GlobalSettings] PRIMARY KEY NONCLUSTERED ([GS_ID])
 );
 GO

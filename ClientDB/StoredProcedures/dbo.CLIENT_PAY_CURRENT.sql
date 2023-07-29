@@ -50,7 +50,7 @@ BEGIN
 
 			FROM
 				dbo.ClientDistrView WITH(NOEXPAND)
-			WHERE ID_CLIENT = @CLIENT AND DS_REG = 0
+			WHERE ID_CLIENT = @CLIENT --AND DS_REG = 0
 
 		UPDATE #distr
 		SET BILL =
