@@ -7,11 +7,12 @@ GO
 IF OBJECT_ID('[Common].[MAIL_SEND]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Common].[MAIL_SEND]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Common].[MAIL_SEND]
-    @Recipients             VarChar(Max),
-    @blind_copy_recipients  VarChar(Max)    = NULL,
-    @Subject                VarChar(255),
+    @Recipients             NVarChar(Max),
+    @blind_copy_recipients  NVarChar(Max)   = NULL,
+    @Subject                NVarChar(255),
     @Body                   NVarChar(Max),
-    @Body_Format            VarChar(20)     = 'TEXT'
+    @Body_Format            VarChar(20)     = 'TEXT',
+	@FromAddress			NVarChar(256)	= NULL
 WITH EXECUTE AS OWNER
 AS
 BEGIN
@@ -36,7 +37,8 @@ BEGIN
             @body                   =   @Body,
             @body_format            =   @Body_Format,
             @subject                =   @Subject,
-            @query_result_header    =   0
+            @query_result_header    =   0,
+			@from_address			=	@FromAddress;
 
         EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;
     END TRY
