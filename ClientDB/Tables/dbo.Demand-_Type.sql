@@ -9,9 +9,7 @@ CREATE TABLE [dbo].[Demand->Type]
         [Id]          SmallInt       Identity(1,1)   NOT NULL,
         [Name]        VarChar(200)                   NOT NULL,
         [Code]        VarChar(200)                   NOT NULL,
-        [SortIndex]   SmallInt                           NULL,
+        [SortIndex]   SmallInt                       NOT NULL,
+        CONSTRAINT [PK_Demand->Type] PRIMARY KEY CLUSTERED ([Id])
 );
-GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ__Demand->__737584F62701A966] ON [dbo].[Demand->Type] ([Name] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UQ__Demand->__A25C5AA7E642CE4F] ON [dbo].[Demand->Type] ([Code] ASC);
 GO

@@ -16,5 +16,5 @@ CREATE TABLE [dbo].[DistrEmail]
         CONSTRAINT [PK__DistrEma__3214EC0683860D9D] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO
-CREATE CLUSTERED INDEX [ClusteredIndex-20230513-132759] ON [dbo].[DistrEmail] ([HostId] ASC, [Distr] ASC, [Comp] ASC, [Date] ASC);
+CREATE CLUSTERED INDEX [IC_dbo.DistrEmail(HostId,Distr,Comp,Date)] ON [dbo].[DistrEmail] ([HostId] ASC, [Distr] ASC, [Comp] ASC, [Date] ASC);
 GO

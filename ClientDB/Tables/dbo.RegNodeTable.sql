@@ -34,7 +34,7 @@ GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.RegNodeTable(DistrNumber,SystemName,CompNumber)] ON [dbo].[RegNodeTable] ([DistrNumber] ASC, [SystemName] ASC, [CompNumber] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.RegNodeTable(Complect)] ON [dbo].[RegNodeTable] ([Complect] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.RegNodeTable(Service)+(Complect)] ON [dbo].[RegNodeTable] ([Service] ASC) INCLUDE ([Complect]);
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20230416-012411] ON [dbo].[RegNodeTable] ([Comment] ASC) INCLUDE ([Complect]);
+CREATE NONCLUSTERED INDEX [IX_F_dbo.RegNodeTable(Comment)+(Complect)] ON [dbo].[RegNodeTable] ([Comment] ASC) INCLUDE ([Complect]);
 GO
 GRANT SELECT ON [dbo].[RegNodeTable] TO BL_READER;
 GRANT SELECT ON [dbo].[RegNodeTable] TO claim_view;

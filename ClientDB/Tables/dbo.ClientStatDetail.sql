@@ -31,6 +31,6 @@ CREATE TABLE [dbo].[ClientStatDetail]
         CONSTRAINT [FK_dbo.ClientStatDetail(WeekId)_dbo.Period(ID)] FOREIGN KEY  ([WeekId]) REFERENCES [Common].[Period] ([ID])
 );
 GO
-CREATE NONCLUSTERED INDEX [IX_dbo.ClientStatDetail(Distr,HostId,Comp)+INCL] ON [dbo].[ClientStatDetail] ([Distr] ASC, [HostId] ASC, [Comp] ASC) INCLUDE ([WeekId], [Net], [UserCount], [EnterSum], [0Enter], [1Enter], [2Enter], [3Enter], [SessionTimeSum], [SessionTimeAVG], [UpDate]);
-CREATE UNIQUE NONCLUSTERED INDEX [NonClusteredIndex-20220927-114306] ON [dbo].[ClientStatDetail] ([Distr] ASC, [WeekId] ASC, [HostId] ASC, [Comp] ASC);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientStatDetail(Distr,HostId,Comp)+(WeekId,Net,UserCount,EnterSum,0Enter,1Enter,2Enter,3Enter,SessionTimeSum,SessionTime] ON [dbo].[ClientStatDetail] ([Distr] ASC, [HostId] ASC, [Comp] ASC) INCLUDE ([WeekId], [Net], [UserCount], [EnterSum], [0Enter], [1Enter], [2Enter], [3Enter], [SessionTimeSum], [SessionTimeAVG], [UpDate]);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.ClientStatDetail(Distr,WeekId,HostId,Comp)] ON [dbo].[ClientStatDetail] ([Distr] ASC, [WeekId] ASC, [HostId] ASC, [Comp] ASC);
 GO

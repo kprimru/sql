@@ -37,5 +37,5 @@ CREATE TABLE [dbo].[RiskReportDetail]
         CONSTRAINT [PK__RiskRepo__3214EC06F9D2086B] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE CLUSTERED INDEX [ClusteredIndex-20230416-204028] ON [dbo].[RiskReportDetail] ([Report_Id] ASC, [RN] ASC, [ClientID] ASC);
+CREATE UNIQUE CLUSTERED INDEX [UC_dbo.RiskReportDetail(Report_Id,RN,ClientID)] ON [dbo].[RiskReportDetail] ([Report_Id] ASC, [RN] ASC, [ClientID] ASC);
 GO

@@ -66,13 +66,13 @@ CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(ClientLast,ID_MASTER)] ON [dbo].[C
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(ClientServiceID,STATUS)] ON [dbo].[ClientTable] ([ClientServiceID] ASC, [STATUS] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(ID_MASTER)+(ClientFullName,ClientINN,ClientLast,UPD_USER,ClientShortName,STATUS)] ON [dbo].[ClientTable] ([ID_MASTER] ASC) INCLUDE ([ClientFullName], [ClientINN], [ClientLast], [UPD_USER], [ClientShortName], [STATUS]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(OriClient,STATUS)] ON [dbo].[ClientTable] ([OriClient] ASC, [STATUS] ASC);
-CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS)+INCL] ON [dbo].[ClientTable] ([STATUS] ASC) INCLUDE ([ClientID], [ClientServiceID], [StatusID], [ServiceTypeID], [OriClient], [IsLarge], [ClientTypeId], [ClientKind_Id]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS)+(ClientID,ClientServiceID,StatusID,ServiceTypeID,OriClient,IsLarge,ClientTypeId,ClientKind_Id)] ON [dbo].[ClientTable] ([STATUS] ASC) INCLUDE ([ClientID], [ClientServiceID], [StatusID], [ServiceTypeID], [OriClient], [IsLarge], [ClientTypeId], [ClientKind_Id]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS,ClientFullName)+(ClientShortName,ID_MASTER)] ON [dbo].[ClientTable] ([STATUS] ASC, [ClientFullName] ASC) INCLUDE ([ClientShortName], [ID_MASTER]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS,ClientOfficial)] ON [dbo].[ClientTable] ([STATUS] ASC, [ClientOfficial] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS,ClientShortName)] ON [dbo].[ClientTable] ([STATUS] ASC, [ClientShortName] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(STATUS,ID_HEAD)] ON [dbo].[ClientTable] ([STATUS] ASC, [ID_HEAD] ASC);
-CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(StatusID,STATUS)+INCL] ON [dbo].[ClientTable] ([StatusID] ASC, [STATUS] ASC) INCLUDE ([ClientServiceID], [ClientFullName], [DayID], [ServiceStart], [ServiceTypeID]);
-CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(StatusID,STATUS,ServiceStart,ServiceTime)+INCL] ON [dbo].[ClientTable] ([StatusID] ASC, [STATUS] ASC, [ServiceStart] ASC, [ServiceTime] ASC) INCLUDE ([ClientShortName], [ClientFullName], [ClientServiceID], [DayID]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(StatusID,STATUS)+(ClientServiceID,ClientFullName,DayID,ServiceStart,ServiceTypeID)] ON [dbo].[ClientTable] ([StatusID] ASC, [STATUS] ASC) INCLUDE ([ClientServiceID], [ClientFullName], [DayID], [ServiceStart], [ServiceTypeID]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientTable(StatusID,STATUS,ServiceStart,ServiceTime)+(ClientShortName,ClientFullName,ClientServiceID,DayID)] ON [dbo].[ClientTable] ([StatusID] ASC, [STATUS] ASC, [ServiceStart] ASC, [ServiceTime] ASC) INCLUDE ([ClientShortName], [ClientFullName], [ClientServiceID], [DayID]);
 GO
 GRANT SELECT ON [dbo].[ClientTable] TO BL_READER;
 GRANT SELECT ON [dbo].[ClientTable] TO claim_view;

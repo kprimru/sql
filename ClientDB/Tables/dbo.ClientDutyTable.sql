@@ -54,6 +54,6 @@ CREATE TABLE [dbo].[ClientDutyTable]
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientDutyTable(ClientID,ClientDutyID)] ON [dbo].[ClientDutyTable] ([ClientID] ASC, [ClientDutyID] ASC);
-CREATE NONCLUSTERED INDEX [IX_dbo.ClientDutyTable(ClientDutyComplete,STATUS)+INCL] ON [dbo].[ClientDutyTable] ([ClientDutyComplete] ASC, [STATUS] ASC) INCLUDE ([ClientDutyDateTime], [DutyID], [CallTypeID], [ClientDutyNPO], [ClientDutyComment], [ID_DIRECTION]);
+CREATE NONCLUSTERED INDEX [IX_dbo.ClientDutyTable(ClientDutyComplete,STATUS)+(ClientDutyDateTime,DutyID,CallTypeID,ClientDutyNPO,ClientDutyComment,ID_DIREC] ON [dbo].[ClientDutyTable] ([ClientDutyComplete] ASC, [STATUS] ASC) INCLUDE ([ClientDutyDateTime], [DutyID], [CallTypeID], [ClientDutyNPO], [ClientDutyComment], [ID_DIRECTION]);
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientDutyTable(ClientDutyDateTime,STATUS)+(ClientDutyID)] ON [dbo].[ClientDutyTable] ([ClientDutyDateTime] ASC, [STATUS] ASC) INCLUDE ([ClientDutyID]);
 GO

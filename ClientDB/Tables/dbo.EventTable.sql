@@ -25,6 +25,6 @@ GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.EventTable(ClientID,EventID)] ON [dbo].[EventTable] ([ClientID] ASC, [EventID] ASC);
 CREATE NONCLUSTERED INDEX [IX_dbo.EventTable(ClientID,EventActive,EventDate,EventID,EventCreateUser,EventTypeID)+(EventComment)] ON [dbo].[EventTable] ([ClientID] ASC, [EventActive] ASC, [EventDate] ASC, [EventID] ASC, [EventCreateUser] ASC, [EventTypeID] ASC) INCLUDE ([EventComment]);
 CREATE NONCLUSTERED INDEX [IX_dbo.EventTable(EventCreateUser)+(EventID,MasterID)] ON [dbo].[EventTable] ([EventCreateUser] ASC) INCLUDE ([EventID], [MasterID]);
-CREATE NONCLUSTERED INDEX [IX_dbo.EventTable(EventDate)+INCL] ON [dbo].[EventTable] ([EventDate] ASC) INCLUDE ([EventID], [MasterID], [ClientID], [EventComment], [EventTypeID], [EventCreate], [EventLastUpdate], [EventCreateUser], [EventLastUpdateUser], [EventActive]);
+CREATE NONCLUSTERED INDEX [IX_dbo.EventTable(EventDate)+(EventID,MasterID,ClientID,EventComment,EventTypeID,EventCreate,EventLastUpdate,EventCreateUser,Eve] ON [dbo].[EventTable] ([EventDate] ASC) INCLUDE ([EventID], [MasterID], [ClientID], [EventComment], [EventTypeID], [EventCreate], [EventLastUpdate], [EventCreateUser], [EventLastUpdateUser], [EventActive]);
 CREATE NONCLUSTERED INDEX [IX_dbo.EventTable(MasterID)] ON [dbo].[EventTable] ([MasterID] ASC);
 GO
