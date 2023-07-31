@@ -19,7 +19,7 @@ CREATE TABLE [Din].[DinFiles]
         [DF_CREATE]    DateTime                       NOT NULL,
         [DF_DATE]       AS ([dbo].[DateOf]([DF_CREATE])) PERSISTED,
         CONSTRAINT [PK_Din.DinFiles] PRIMARY KEY CLUSTERED ([DF_ID]),
-        CONSTRAINT [FK_Din.DinFiles(DF_ID_SYS)_Din.SystemTable(SystemID)] FOREIGN KEY  ([DF_ID_SYS]) REFERENCES [dbo].[SystemTable] ([SystemID]),
+        CONSTRAINT [FK_Din.DinFiles(DF_ID_SYS)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([DF_ID_SYS]) REFERENCES [dbo].[SystemTable] ([SystemID]),
         CONSTRAINT [FK_Din.DinFiles(DF_ID_NET)_Din.NetType(NT_ID)] FOREIGN KEY  ([DF_ID_NET]) REFERENCES [Din].[NetType] ([NT_ID]),
         CONSTRAINT [FK_Din.DinFiles(DF_ID_TYPE)_Din.SystemType(SST_ID)] FOREIGN KEY  ([DF_ID_TYPE]) REFERENCES [Din].[SystemType] ([SST_ID])
 );

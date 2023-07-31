@@ -58,7 +58,7 @@ CREATE TABLE [dbo].[ClientTable]
         CONSTRAINT [FK_dbo.ClientTable(RangeID)_dbo.RangeTable(RangeID)] FOREIGN KEY  ([RangeID]) REFERENCES [dbo].[RangeTable] ([RangeID]),
         CONSTRAINT [FK_dbo.ClientTable(ServiceTypeID)_dbo.ServiceTypeTable(ServiceTypeID)] FOREIGN KEY  ([ServiceTypeID]) REFERENCES [dbo].[ServiceTypeTable] ([ServiceTypeID]),
         CONSTRAINT [FK_dbo.ClientTable(ClientVisitCountID)_dbo.ClientVisitCount(ID)] FOREIGN KEY  ([ClientVisitCountID]) REFERENCES [dbo].[ClientVisitCount] ([ID]),
-        CONSTRAINT [FK_dbo.ClientTable(PurchaseTypeID)_dbo.PurchaseType(PT_ID)] FOREIGN KEY  ([PurchaseTypeID]) REFERENCES [Purchase].[PurchaseType] ([PT_ID])
+        CONSTRAINT [FK_dbo.ClientTable(PurchaseTypeID)_Purchase.PurchaseType(PT_ID)] FOREIGN KEY  ([PurchaseTypeID]) REFERENCES [Purchase].[PurchaseType] ([PT_ID])
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.ClientTable(ClientID)] ON [dbo].[ClientTable] ([ClientID] ASC);

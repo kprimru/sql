@@ -8,6 +8,6 @@ CREATE TABLE [dbo].[RiskReport]
 (
         [Id]         Int        Identity(1,1)   NOT NULL,
         [DateTime]   DateTime                       NULL,
-        CONSTRAINT [PK__RiskRepo__3214EC0746F00C52] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_dbo.RiskReport] PRIMARY KEY CLUSTERED ([Id])
 );
 GO

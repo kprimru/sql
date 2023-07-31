@@ -36,7 +36,7 @@ CREATE TABLE [Seminar].[Personal]
         [PROFILE_DATE]      DateTime                  NULL,
         CONSTRAINT [PK_Seminar.Personal] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Seminar.Personal(ID_SCHEDULE)_Seminar.Schedule(ID)] FOREIGN KEY  ([ID_SCHEDULE]) REFERENCES [Seminar].[Schedule] ([ID]),
-        CONSTRAINT [FK_Seminar.Personal(ID_CLIENT)_Seminar.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Seminar.Personal(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Seminar.Personal(ID_CLIENT,STATUS)+(ID,ID_SCHEDULE,PSEDO,SURNAME,NAME,PATRON,POSITION,PHONE,NOTE,ID_STATUS,UPD_DATE,UPD_USER)] ON [Seminar].[Personal] ([ID_CLIENT] ASC, [STATUS] ASC) INCLUDE ([ID], [ID_SCHEDULE], [PSEDO], [SURNAME], [NAME], [PATRON], [POSITION], [PHONE], [NOTE], [ID_STATUS], [UPD_DATE], [UPD_USER]);

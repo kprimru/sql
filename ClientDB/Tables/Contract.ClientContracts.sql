@@ -10,7 +10,7 @@ CREATE TABLE [Contract].[ClientContracts]
         [Contract_Id]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Contract.ClientContracts] PRIMARY KEY CLUSTERED ([Client_Id],[Contract_Id]),
         CONSTRAINT [FK_Contract.ClientContracts(Contract_Id)_Contract.Contract(ID)] FOREIGN KEY  ([Contract_Id]) REFERENCES [Contract].[Contract] ([ID]),
-        CONSTRAINT [FK_Contract.ClientContracts(Client_Id)_Contract.ClientTable(ClientID)] FOREIGN KEY  ([Client_Id]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Contract.ClientContracts(Client_Id)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([Client_Id]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UX_Contract.ClientContracts(Contract_Id,Client_Id)] ON [Contract].[ClientContracts] ([Contract_Id] ASC, [Client_Id] ASC);

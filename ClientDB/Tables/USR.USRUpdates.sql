@@ -15,6 +15,6 @@ CREATE TABLE [USR].[USRUpdates]
         [UIU_DATE_S]     AS (CONVERT([smalldatetime],CONVERT([varchar](8),[UIU_DATE],(112)),(112))) ,
         CONSTRAINT [PK_USR.USRUpdates] PRIMARY KEY CLUSTERED ([UIU_ID_IB],[UIU_INDX]),
         CONSTRAINT [FK_USR.USRUpdates(UIU_ID_IB)_USR.USRIB(UI_ID)] FOREIGN KEY  ([UIU_ID_IB]) REFERENCES [USR].[USRIB] ([UI_ID]),
-        CONSTRAINT [FK_USR.USRUpdates(UIU_ID_KIND)_USR.USRFileKindTable(USRFileKindID)] FOREIGN KEY  ([UIU_ID_KIND]) REFERENCES [dbo].[USRFileKindTable] ([USRFileKindID])
+        CONSTRAINT [FK_USR.USRUpdates(UIU_ID_KIND)_dbo.USRFileKindTable(USRFileKindID)] FOREIGN KEY  ([UIU_ID_KIND]) REFERENCES [dbo].[USRFileKindTable] ([USRFileKindID])
 );
 GO

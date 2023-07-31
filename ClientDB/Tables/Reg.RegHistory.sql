@@ -22,11 +22,11 @@ CREATE TABLE [Reg].[RegHistory]
         [COMMENT]      VarChar(150)              NULL,
         [OFFLINE]      VarChar(50)               NULL,
         CONSTRAINT [PK_Reg.RegHistory] PRIMARY KEY NONCLUSTERED ([ID]),
-        CONSTRAINT [FK_Reg.RegHistory(ID_TYPE)_Reg.SystemType(SST_ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Din].[SystemType] ([SST_ID]),
-        CONSTRAINT [FK_Reg.RegHistory(ID_SYSTEM)_Reg.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
-        CONSTRAINT [FK_Reg.RegHistory(ID_STATUS)_Reg.DistrStatus(DS_ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [dbo].[DistrStatus] ([DS_ID]),
+        CONSTRAINT [FK_Reg.RegHistory(ID_TYPE)_Din.SystemType(SST_ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Din].[SystemType] ([SST_ID]),
+        CONSTRAINT [FK_Reg.RegHistory(ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
+        CONSTRAINT [FK_Reg.RegHistory(ID_STATUS)_dbo.DistrStatus(DS_ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [dbo].[DistrStatus] ([DS_ID]),
         CONSTRAINT [FK_Reg.RegHistory(ID_DISTR)_Reg.RegDistr(ID)] FOREIGN KEY  ([ID_DISTR]) REFERENCES [Reg].[RegDistr] ([ID]),
-        CONSTRAINT [FK_Reg.RegHistory(ID_NET)_Reg.NetType(NT_ID)] FOREIGN KEY  ([ID_NET]) REFERENCES [Din].[NetType] ([NT_ID])
+        CONSTRAINT [FK_Reg.RegHistory(ID_NET)_Din.NetType(NT_ID)] FOREIGN KEY  ([ID_NET]) REFERENCES [Din].[NetType] ([NT_ID])
 );
 GO
 CREATE CLUSTERED INDEX [IC_Reg.RegHistory(ID_DISTR)] ON [Reg].[RegHistory] ([ID_DISTR] ASC);

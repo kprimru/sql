@@ -68,9 +68,9 @@ CREATE TABLE [USR].[USRFileTech]
         CONSTRAINT [PK_USR.USRFileTech] PRIMARY KEY CLUSTERED ([UF_ID]),
         CONSTRAINT [FK_USR.USRFileTech(UF_ID_OS)_USR.Os(OS_ID)] FOREIGN KEY  ([UF_ID_OS]) REFERENCES [USR].[Os] ([OS_ID]),
         CONSTRAINT [FK_USR.USRFileTech(UF_ID_PROC)_USR.Processor(PRC_ID)] FOREIGN KEY  ([UF_ID_PROC]) REFERENCES [USR].[Processor] ([PRC_ID]),
-        CONSTRAINT [FK_USR.USRFileTech(UF_ID_CONS)_USR.ConsExeVersionTable(ConsExeVersionID)] FOREIGN KEY  ([UF_ID_CONS]) REFERENCES [dbo].[ConsExeVersionTable] ([ConsExeVersionID]),
-        CONSTRAINT [FK_USR.USRFileTech(UF_ID_RES)_USR.ResVersionTable(ResVersionID)] FOREIGN KEY  ([UF_ID_RES]) REFERENCES [dbo].[ResVersionTable] ([ResVersionID]),
-        CONSTRAINT [FK_USR.USRFileTech(UF_ID_KDVERSION)_USR.KDVersion(ID)] FOREIGN KEY  ([UF_ID_KDVERSION]) REFERENCES [dbo].[KDVersion] ([ID]),
+        CONSTRAINT [FK_USR.USRFileTech(UF_ID_CONS)_dbo.ConsExeVersionTable(ConsExeVersionID)] FOREIGN KEY  ([UF_ID_CONS]) REFERENCES [dbo].[ConsExeVersionTable] ([ConsExeVersionID]),
+        CONSTRAINT [FK_USR.USRFileTech(UF_ID_RES)_dbo.ResVersionTable(ResVersionID)] FOREIGN KEY  ([UF_ID_RES]) REFERENCES [dbo].[ResVersionTable] ([ResVersionID]),
+        CONSTRAINT [FK_USR.USRFileTech(UF_ID_KDVERSION)_dbo.KDVersion(ID)] FOREIGN KEY  ([UF_ID_KDVERSION]) REFERENCES [dbo].[KDVersion] ([ID]),
         CONSTRAINT [FK_USR.USRFileTech(UF_ID)_USR.USRFile(UF_ID)] FOREIGN KEY  ([UF_ID]) REFERENCES [USR].[USRFile] ([UF_ID])
 );
 GO

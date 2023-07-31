@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[DistrTypeCoef]
         [RND]        SmallInt              NOT NULL,
         CONSTRAINT [PK_dbo.DistrTypeCoef] PRIMARY KEY NONCLUSTERED ([ID]),
         CONSTRAINT [FK_dbo.DistrTypeCoef(ID_NET)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([ID_NET]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID]),
-        CONSTRAINT [FK_dbo.DistrTypeCoef(ID_MONTH)_dbo.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID])
+        CONSTRAINT [FK_dbo.DistrTypeCoef(ID_MONTH)_Common.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID])
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_dbo.DistrTypeCoef(ID_NET,ID_MONTH)] ON [dbo].[DistrTypeCoef] ([ID_NET] ASC, [ID_MONTH] ASC);

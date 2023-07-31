@@ -28,9 +28,9 @@ CREATE TABLE [Price].[CommercialOffer]
         [CREATE_USER]    NVarChar(256)         NOT NULL,
         [OTHER]          Bit                   NOT NULL,
         CONSTRAINT [PK_Price.CommercialOffer] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Price.CommercialOffer(ID_CLIENT)_Price.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Price.CommercialOffer(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_Price.CommercialOffer(ID_MASTER)_Price.CommercialOffer(ID)] FOREIGN KEY  ([ID_MASTER]) REFERENCES [Price].[CommercialOffer] ([ID]),
-        CONSTRAINT [FK_Price.CommercialOffer(ID_VENDOR)_Price.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID])
+        CONSTRAINT [FK_Price.CommercialOffer(ID_VENDOR)_dbo.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Price.CommercialOffer(ID_CLIENT,STATUS)] ON [Price].[CommercialOffer] ([ID_CLIENT] ASC, [STATUS] ASC);

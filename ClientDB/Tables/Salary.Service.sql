@@ -13,9 +13,9 @@ CREATE TABLE [Salary].[Service]
         [MANAGER_RATE]   Int                   NOT NULL,
         [INSURANCE]      Int                       NULL,
         CONSTRAINT [PK_Salary.Service] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Salary.Service(ID_MONTH)_Salary.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID]),
-        CONSTRAINT [FK_Salary.Service(ID_SERVICE)_Salary.ServiceTable(ServiceID)] FOREIGN KEY  ([ID_SERVICE]) REFERENCES [dbo].[ServiceTable] ([ServiceID]),
-        CONSTRAINT [FK_Salary.Service(ID_POSITION)_Salary.ServicePositionTable(ServicePositionID)] FOREIGN KEY  ([ID_POSITION]) REFERENCES [dbo].[ServicePositionTable] ([ServicePositionID])
+        CONSTRAINT [FK_Salary.Service(ID_MONTH)_Common.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID]),
+        CONSTRAINT [FK_Salary.Service(ID_SERVICE)_dbo.ServiceTable(ServiceID)] FOREIGN KEY  ([ID_SERVICE]) REFERENCES [dbo].[ServiceTable] ([ServiceID]),
+        CONSTRAINT [FK_Salary.Service(ID_POSITION)_dbo.ServicePositionTable(ServicePositionID)] FOREIGN KEY  ([ID_POSITION]) REFERENCES [dbo].[ServicePositionTable] ([ServicePositionID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UX_Salary.Service(ID_SERVICE,ID_MONTH)] ON [Salary].[Service] ([ID_SERVICE] ASC, [ID_MONTH] ASC);

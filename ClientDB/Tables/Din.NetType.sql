@@ -20,6 +20,6 @@ CREATE TABLE [Din].[NetType]
         [NT_ODON]        SmallInt                           NULL,
         [NT_ODOFF]       SmallInt                           NULL,
         CONSTRAINT [PK_Din.NetType] PRIMARY KEY CLUSTERED ([NT_ID]),
-        CONSTRAINT [FK_Din.NetType(NT_ID_MASTER)_Din.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([NT_ID_MASTER]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID])
+        CONSTRAINT [FK_Din.NetType(NT_ID_MASTER)_dbo.DistrTypeTable(DistrTypeID)] FOREIGN KEY  ([NT_ID_MASTER]) REFERENCES [dbo].[DistrTypeTable] ([DistrTypeID])
 );
 GO

@@ -30,7 +30,7 @@ CREATE TABLE [KGS].[MemoClaim]
         [UPD_DATE]       DateTime              NOT NULL,
         [UPD_USER]       NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_KGS.MemoClaim] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_KGS.MemoClaim(ID_CLIENT)_KGS.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
-        CONSTRAINT [FK_KGS.MemoClaim(ID_VENDOR)_KGS.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID])
+        CONSTRAINT [FK_KGS.MemoClaim(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_KGS.MemoClaim(ID_VENDOR)_dbo.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID])
 );
 GO

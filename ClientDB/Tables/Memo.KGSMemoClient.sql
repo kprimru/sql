@@ -14,7 +14,7 @@ CREATE TABLE [Memo].[KGSMemoClient]
         [NUM]         SmallInt              NOT NULL,
         CONSTRAINT [PK_Memo.KGSMemoClient] PRIMARY KEY NONCLUSTERED ([ID]),
         CONSTRAINT [FK_Memo.KGSMemoClient(ID_MEMO)_Memo.KGSMemo(ID)] FOREIGN KEY  ([ID_MEMO]) REFERENCES [Memo].[KGSMemo] ([ID]),
-        CONSTRAINT [FK_Memo.KGSMemoClient(ID_CLIENT)_Memo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Memo.KGSMemoClient(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE CLUSTERED INDEX [IC_Memo.KGSMemoClient(ID_MEMO,ID)] ON [Memo].[KGSMemoClient] ([ID_MEMO] ASC, [ID] ASC);

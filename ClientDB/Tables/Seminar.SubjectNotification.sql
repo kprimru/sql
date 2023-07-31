@@ -10,7 +10,7 @@ CREATE TABLE [Seminar].[SubjectNotification]
         [Subject_Id]   UniqueIdentifier                       NULL,
         [EMail]        VarChar(128)                           NULL,
         [Date]         date                                   NULL,
-        CONSTRAINT [PK__SubjectN__3214EC07BA683B4D] PRIMARY KEY CLUSTERED ([Id]),
-        CONSTRAINT [FK__SubjectNo__Subje__7C67B279] FOREIGN KEY  ([Subject_Id]) REFERENCES [Seminar].[Subject] ([ID])
+        CONSTRAINT [PK_Seminar.SubjectNotification] PRIMARY KEY CLUSTERED ([Id]),
+        CONSTRAINT [FK_Seminar.SubjectNotification(Subject_Id)_Seminar.Subject(ID)] FOREIGN KEY  ([Subject_Id]) REFERENCES [Seminar].[Subject] ([ID])
 );
 GO

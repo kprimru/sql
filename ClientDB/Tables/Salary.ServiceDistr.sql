@@ -21,7 +21,7 @@ CREATE TABLE [Salary].[ServiceDistr]
         [WEIGHT_NEW]   decimal               NOT NULL,
         CONSTRAINT [PK_Salary.ServiceDistr] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Salary.ServiceDistr(ID_SALARY)_Salary.Service(ID)] FOREIGN KEY  ([ID_SALARY]) REFERENCES [Salary].[Service] ([ID]),
-        CONSTRAINT [FK_Salary.ServiceDistr(ID_HOST)_Salary.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
+        CONSTRAINT [FK_Salary.ServiceDistr(ID_HOST)_dbo.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Salary.ServiceDistr(ID_SALARY)+(PRICE_OLD,PRICE_NEW,WEIGHT_OLD,WEIGHT_NEW)] ON [Salary].[ServiceDistr] ([ID_SALARY] ASC) INCLUDE ([PRICE_OLD], [PRICE_NEW], [WEIGHT_OLD], [WEIGHT_NEW]);

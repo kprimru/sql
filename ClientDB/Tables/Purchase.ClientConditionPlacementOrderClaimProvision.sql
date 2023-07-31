@@ -11,7 +11,7 @@ CREATE TABLE [Purchase].[ClientConditionPlacementOrderClaimProvision]
         [ID_CP]    UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionPlacementOrderClaimProvision] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderClaimProvision(ID_CP)_Purchase.ClaimProvision(CP_ID)] FOREIGN KEY  ([ID_CP]) REFERENCES [Purchase].[ClaimProvision] ([CP_ID]),
-        CONSTRAINT [Purchase.ClientConditionPlacementOrder1] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderClaimProvision(ID_CPO)_Purchase.ClientConditionPlacementOrder(CPO_ID)] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Purchase.ClientConditionPlacementOrderClaimProvision(ID_CP)] ON [Purchase].[ClientConditionPlacementOrderClaimProvision] ([ID_CP] ASC);

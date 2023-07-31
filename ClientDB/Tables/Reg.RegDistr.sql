@@ -13,7 +13,7 @@ CREATE TABLE [Reg].[RegDistr]
         [STATUS]        TinyInt               NOT NULL,
         [CREATE_DATE]   DateTime              NOT NULL,
         CONSTRAINT [PK_Reg.RegDistr] PRIMARY KEY NONCLUSTERED ([ID]),
-        CONSTRAINT [FK_Reg.RegDistr(ID_HOST)_Reg.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
+        CONSTRAINT [FK_Reg.RegDistr(ID_HOST)_dbo.Hosts(HostID)] FOREIGN KEY  ([ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Reg.RegDistr(DISTR,ID_HOST,COMP)] ON [Reg].[RegDistr] ([DISTR] ASC, [ID_HOST] ASC, [COMP] ASC);

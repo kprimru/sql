@@ -8,6 +8,6 @@ CREATE TABLE [Price].[Periods=Available]
 (
         [Period_Id]     UniqueIdentifier      NOT NULL,
         [IsAvailable]   Bit                   NOT NULL,
-        CONSTRAINT [PK__Periods=__A00CB40D5DC98562] PRIMARY KEY CLUSTERED ([Period_Id])
+        CONSTRAINT [PK_Price.Periods=Available] PRIMARY KEY CLUSTERED ([Period_Id])
 );
 GO

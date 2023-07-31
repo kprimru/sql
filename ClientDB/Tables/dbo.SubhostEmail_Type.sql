@@ -12,6 +12,6 @@ CREATE TABLE [dbo].[SubhostEmail_Type]
         CONSTRAINT [PK_dbo.SubhostEmail_Type] PRIMARY KEY CLUSTERED ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.SubhostEmail_Type(Code)] ON [dbo].[SubhostEmail_Type] ([Code] ASC);
-CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.SubhostEmail_Type(Name)] ON [dbo].[SubhostEmail_Type] ([Name] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SubhostEmail_Type(Code)] ON [dbo].[SubhostEmail_Type] ([Code] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_dbo.SubhostEmail_Type(Name)] ON [dbo].[SubhostEmail_Type] ([Name] ASC);
 GO

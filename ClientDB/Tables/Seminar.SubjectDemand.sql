@@ -8,10 +8,10 @@ CREATE TABLE [Seminar].[SubjectDemand]
 (
         [Subject_Id]   UniqueIdentifier      NOT NULL,
         [Demand_Id]    SmallInt              NOT NULL,
-        CONSTRAINT [PK__SubjectD__4B8AB8F4D6D037A9] PRIMARY KEY CLUSTERED ([Subject_Id],[Demand_Id]),
-        CONSTRAINT [FK_Subject] FOREIGN KEY  ([Subject_Id]) REFERENCES [Seminar].[Subject] ([ID]),
-        CONSTRAINT [FK_Demand] FOREIGN KEY  ([Demand_Id]) REFERENCES [dbo].[Demand->Type] ([Id])
+        CONSTRAINT [PK_Seminar.SubjectDemand] PRIMARY KEY CLUSTERED ([Subject_Id],[Demand_Id]),
+        CONSTRAINT [FK_Seminar.SubjectDemand(Subject_Id)_Seminar.Subject(ID)] FOREIGN KEY  ([Subject_Id]) REFERENCES [Seminar].[Subject] ([ID]),
+        CONSTRAINT [FK_Seminar.SubjectDemand(Demand_Id)_dbo.Demand->Type(Id)] FOREIGN KEY  ([Demand_Id]) REFERENCES [dbo].[Demand->Type] ([Id])
 );
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [UQ__SubjectD__5DC631623FAE10DE] ON [Seminar].[SubjectDemand] ([Demand_Id] ASC, [Subject_Id] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UQ_Seminar.SubjectDemand(Demand_Id,Subject_Id)] ON [Seminar].[SubjectDemand] ([Demand_Id] ASC, [Subject_Id] ASC);
 GO

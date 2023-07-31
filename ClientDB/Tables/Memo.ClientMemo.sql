@@ -29,12 +29,12 @@ CREATE TABLE [Memo].[ClientMemo]
         [SYSTEMS]                NVarChar(Max)             NULL,
         [Contract_Id]            UniqueIdentifier          NULL,
         CONSTRAINT [PK_Memo.ClientMemo] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Memo.ClientMemo(ID_CLIENT)_Memo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
-        CONSTRAINT [FK_Memo.ClientMemo(Contract_Id)_Memo.Contract(ID)] FOREIGN KEY  ([Contract_Id]) REFERENCES [Contract].[Contract] ([ID]),
+        CONSTRAINT [FK_Memo.ClientMemo(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Memo.ClientMemo(Contract_Id)_Contract.Contract(ID)] FOREIGN KEY  ([Contract_Id]) REFERENCES [Contract].[Contract] ([ID]),
         CONSTRAINT [FK_Memo.ClientMemo(ID_DOC_TYPE)_Memo.Document(ID)] FOREIGN KEY  ([ID_DOC_TYPE]) REFERENCES [Memo].[Document] ([ID]),
         CONSTRAINT [FK_Memo.ClientMemo(ID_SERVICE)_Memo.Service(ID)] FOREIGN KEY  ([ID_SERVICE]) REFERENCES [Memo].[Service] ([ID]),
-        CONSTRAINT [FK_Memo.ClientMemo(ID_VENDOR)_Memo.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID]),
-        CONSTRAINT [FK_Memo.ClientMemo(ID_CONTRACT_PAY_TYPE)_Memo.ContractPayTable(ContractPayID)] FOREIGN KEY  ([ID_CONTRACT_PAY_TYPE]) REFERENCES [dbo].[ContractPayTable] ([ContractPayID])
+        CONSTRAINT [FK_Memo.ClientMemo(ID_VENDOR)_dbo.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID]),
+        CONSTRAINT [FK_Memo.ClientMemo(ID_CONTRACT_PAY_TYPE)_dbo.ContractPayTable(ContractPayID)] FOREIGN KEY  ([ID_CONTRACT_PAY_TYPE]) REFERENCES [dbo].[ContractPayTable] ([ContractPayID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Memo.ClientMemo(ID_CLIENT)] ON [Memo].[ClientMemo] ([ID_CLIENT] ASC);

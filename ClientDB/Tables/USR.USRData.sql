@@ -14,8 +14,8 @@ CREATE TABLE [USR].[USRData]
         [UD_DISTR]       Int                               NULL,
         [UD_COMP]        TinyInt                           NULL,
         CONSTRAINT [PK_USR.USRData] PRIMARY KEY NONCLUSTERED ([UD_ID]),
-        CONSTRAINT [FK_USR.USRData(UD_ID_CLIENT)_USR.ClientTable(ClientID)] FOREIGN KEY  ([UD_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
-        CONSTRAINT [FK_USR.USRData(UD_ID_HOST)_USR.Hosts(HostID)] FOREIGN KEY  ([UD_ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
+        CONSTRAINT [FK_USR.USRData(UD_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([UD_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_USR.USRData(UD_ID_HOST)_dbo.Hosts(HostID)] FOREIGN KEY  ([UD_ID_HOST]) REFERENCES [dbo].[Hosts] ([HostID])
 );
 GO
 CREATE CLUSTERED INDEX [IC_USR.USRData(UD_ID_CLIENT,UD_ACTIVE)] ON [USR].[USRData] ([UD_ID_CLIENT] ASC, [UD_ACTIVE] ASC);

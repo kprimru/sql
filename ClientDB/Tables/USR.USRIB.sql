@@ -21,8 +21,8 @@ CREATE TABLE [USR].[USRIB]
         [UI_LAST]      SmallDateTime                       NULL,
         CONSTRAINT [PK_USR.USRIB] PRIMARY KEY NONCLUSTERED ([UI_ID]),
         CONSTRAINT [FK_USR.USRIB(UI_ID_USR)_USR.USRFile(UF_ID)] FOREIGN KEY  ([UI_ID_USR]) REFERENCES [USR].[USRFile] ([UF_ID]),
-        CONSTRAINT [FK_USR.USRIB(UI_ID_BASE)_USR.InfoBankTable(InfoBankID)] FOREIGN KEY  ([UI_ID_BASE]) REFERENCES [dbo].[InfoBankTable] ([InfoBankID]),
-        CONSTRAINT [FK_USR.USRIB(UI_ID_COMP)_USR.ComplianceTypeTable(ComplianceTypeID)] FOREIGN KEY  ([UI_ID_COMP]) REFERENCES [dbo].[ComplianceTypeTable] ([ComplianceTypeID])
+        CONSTRAINT [FK_USR.USRIB(UI_ID_BASE)_dbo.InfoBankTable(InfoBankID)] FOREIGN KEY  ([UI_ID_BASE]) REFERENCES [dbo].[InfoBankTable] ([InfoBankID]),
+        CONSTRAINT [FK_USR.USRIB(UI_ID_COMP)_dbo.ComplianceTypeTable(ComplianceTypeID)] FOREIGN KEY  ([UI_ID_COMP]) REFERENCES [dbo].[ComplianceTypeTable] ([ComplianceTypeID])
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_USR.USRIB(UI_ID_USR,UI_ID_BASE)] ON [USR].[USRIB] ([UI_ID_USR] ASC, [UI_ID_BASE] ASC);

@@ -10,8 +10,8 @@ CREATE TABLE [Purchase].[ClientConditionPlacementOrderContractExecutionProvision
         [ID_CPO]   UniqueIdentifier      NOT NULL,
         [ID_CEP]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionPlacementOrderContractExecutionProvision] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [Purchase.ContractExecutionProvision] FOREIGN KEY  ([ID_CEP]) REFERENCES [Purchase].[ContractExecutionProvision] ([CEP_ID]),
-        CONSTRAINT [Purchase.ClientConditionPlacementOrder2] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderContractExecutionProvision(ID_CEP)_Purchase.ContractExecutionProvision(CEP_ID)] FOREIGN KEY  ([ID_CEP]) REFERENCES [Purchase].[ContractExecutionProvision] ([CEP_ID]),
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderContractExecutionProvision(ID_CPO)_Purchase.ClientConditionPlacementOrder(CPO_ID)] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Purchase.ClientConditionPlacementOrderContractExecutionProvision(ID_CEP)] ON [Purchase].[ClientConditionPlacementOrderContractExecutionProvision] ([ID_CEP] ASC);

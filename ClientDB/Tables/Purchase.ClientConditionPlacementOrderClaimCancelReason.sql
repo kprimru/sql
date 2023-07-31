@@ -10,8 +10,8 @@ CREATE TABLE [Purchase].[ClientConditionPlacementOrderClaimCancelReason]
         [ID_CPO]   UniqueIdentifier      NOT NULL,
         [ID_CCR]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionPlacementOrderClaimCancelReason] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderClaimCancelReason(ID_CCR)_Purchase.ClaimCancelReason] FOREIGN KEY  ([ID_CCR]) REFERENCES [Purchase].[ClaimCancelReason] ([CCR_ID]),
-        CONSTRAINT [Purchase.ClientConditionPlacementOrder] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderClaimCancelReason(ID_CCR)_Purchase.ClaimCancelReason(CCR_ID)] FOREIGN KEY  ([ID_CCR]) REFERENCES [Purchase].[ClaimCancelReason] ([CCR_ID]),
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderClaimCancelReason(ID_CPO)_Purchase.ClientConditionPlacementOrder(CPO_ID)] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Purchase.ClientConditionPlacementOrderClaimCancelReason(ID_CCR)] ON [Purchase].[ClientConditionPlacementOrderClaimCancelReason] ([ID_CCR] ASC);

@@ -12,7 +12,7 @@ CREATE TABLE [dbo].[SystemWeight]
         [WEIGHT2]     decimal                   NULL,
         [ID_PERIOD]   UniqueIdentifier          NULL,
         CONSTRAINT [PK_dbo.SystemWeight] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_dbo.SystemWeight(ID_PERIOD)_dbo.Period(ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [Common].[Period] ([ID]),
+        CONSTRAINT [FK_dbo.SystemWeight(ID_PERIOD)_Common.Period(ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [Common].[Period] ([ID]),
         CONSTRAINT [FK_dbo.SystemWeight(ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID])
 );
 GO

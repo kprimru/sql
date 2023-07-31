@@ -29,8 +29,8 @@ CREATE TABLE [Contract].[Contract]
         CONSTRAINT [PK_Contract.Contract] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Contract.Contract(ID_STATUS)_Contract.Status(ID)] FOREIGN KEY  ([ID_STATUS]) REFERENCES [Contract].[Status] ([ID]),
         CONSTRAINT [FK_Contract.Contract(ID_TYPE)_Contract.Type(ID)] FOREIGN KEY  ([ID_TYPE]) REFERENCES [Contract].[Type] ([ID]),
-        CONSTRAINT [FK_Contract.Contract(ID_VENDOR)_Contract.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID]),
-        CONSTRAINT [FK_Contract.Contract(ID_YEAR)_Contract.Period(ID)] FOREIGN KEY  ([ID_YEAR]) REFERENCES [Common].[Period] ([ID])
+        CONSTRAINT [FK_Contract.Contract(ID_VENDOR)_dbo.Vendor(ID)] FOREIGN KEY  ([ID_VENDOR]) REFERENCES [dbo].[Vendor] ([ID]),
+        CONSTRAINT [FK_Contract.Contract(ID_YEAR)_Common.Period(ID)] FOREIGN KEY  ([ID_YEAR]) REFERENCES [Common].[Period] ([ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Contract.Contract(DateTo)] ON [Contract].[Contract] ([DateTo] ASC);

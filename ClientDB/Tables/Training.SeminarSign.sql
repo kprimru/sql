@@ -10,7 +10,7 @@ CREATE TABLE [Training].[SeminarSign]
         [SP_ID_SEMINAR]   UniqueIdentifier      NOT NULL,
         [SP_ID_CLIENT]    Int                   NOT NULL,
         CONSTRAINT [PK_Training.SeminarSign] PRIMARY KEY NONCLUSTERED ([SP_ID]),
-        CONSTRAINT [FK_Training.SeminarSign(SP_ID_CLIENT)_Training.ClientTable(ClientID)] FOREIGN KEY  ([SP_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Training.SeminarSign(SP_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([SP_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_Training.SeminarSign(SP_ID_SEMINAR)_Training.TrainingSchedule(TSC_ID)] FOREIGN KEY  ([SP_ID_SEMINAR]) REFERENCES [Training].[TrainingSchedule] ([TSC_ID])
 );
 GO

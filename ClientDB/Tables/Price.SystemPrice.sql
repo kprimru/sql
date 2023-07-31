@@ -13,8 +13,8 @@ CREATE TABLE [Price].[SystemPrice]
         [UPD_USER]    NVarChar(256)         NOT NULL,
         [UPD_DATE]    DateTime              NOT NULL,
         CONSTRAINT [PK_Price.SystemPrice] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Price.SystemPrice(ID_MONTH)_Price.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID]),
-        CONSTRAINT [FK_Price.SystemPrice(ID_SYSTEM)_Price.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID])
+        CONSTRAINT [FK_Price.SystemPrice(ID_MONTH)_Common.Period(ID)] FOREIGN KEY  ([ID_MONTH]) REFERENCES [Common].[Period] ([ID]),
+        CONSTRAINT [FK_Price.SystemPrice(ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Price.SystemPrice(ID_MONTH,ID_SYSTEM)+(PRICE)] ON [Price].[SystemPrice] ([ID_MONTH] ASC, [ID_SYSTEM] ASC) INCLUDE ([PRICE]);

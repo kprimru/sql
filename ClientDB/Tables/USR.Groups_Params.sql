@@ -13,7 +13,7 @@ CREATE TABLE [USR].[Groups_Params]
         [SortIndex]   TinyInt                        NOT NULL,
         [FieldName]   VarChar(100)                   NOT NULL,
         [ErrorCode]   VarChar(20)                        NULL,
-        CONSTRAINT [PK_Groups_Params] PRIMARY KEY CLUSTERED ([Id]),
-        CONSTRAINT [FK_Groups_Params_Groups] FOREIGN KEY  ([Group_Id]) REFERENCES [USR].[Groups] ([Id])
+        CONSTRAINT [PK_USR.Groups_Params] PRIMARY KEY CLUSTERED ([Id]),
+        CONSTRAINT [FK_USR.Groups_Params(Group_Id)_USR.Groups(Id)] FOREIGN KEY  ([Group_Id]) REFERENCES [USR].[Groups] ([Id])
 );
 GO

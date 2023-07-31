@@ -10,6 +10,6 @@ CREATE TABLE [dbo].[Demand->Type]
         [Name]        VarChar(200)                   NOT NULL,
         [Code]        VarChar(200)                   NOT NULL,
         [SortIndex]   SmallInt                       NOT NULL,
-        CONSTRAINT [PK_Demand->Type] PRIMARY KEY CLUSTERED ([Id])
+        CONSTRAINT [PK_dbo.Demand->Type] PRIMARY KEY CLUSTERED ([Id])
 );
 GO

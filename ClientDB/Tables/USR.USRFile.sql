@@ -29,9 +29,9 @@ CREATE TABLE [USR].[USRFile]
         [UF_COMP]          TinyInt                             NULL,
         [UF_HASH]          VarChar(100)                        NULL,
         CONSTRAINT [PK_USR.USRFile] PRIMARY KEY NONCLUSTERED ([UF_ID]),
-        CONSTRAINT [FK_USR.USRFile(UF_ID_CLIENT)_USR.ClientTable(ClientID)] FOREIGN KEY  ([UF_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
-        CONSTRAINT [FK_USR.USRFile(UF_ID_SYSTEM)_USR.SystemTable(SystemID)] FOREIGN KEY  ([UF_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
-        CONSTRAINT [FK_USR.USRFile(UF_ID_KIND)_USR.USRFileKindTable(USRFileKindID)] FOREIGN KEY  ([UF_ID_KIND]) REFERENCES [dbo].[USRFileKindTable] ([USRFileKindID])
+        CONSTRAINT [FK_USR.USRFile(UF_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([UF_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_USR.USRFile(UF_ID_SYSTEM)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([UF_ID_SYSTEM]) REFERENCES [dbo].[SystemTable] ([SystemID]),
+        CONSTRAINT [FK_USR.USRFile(UF_ID_KIND)_dbo.USRFileKindTable(USRFileKindID)] FOREIGN KEY  ([UF_ID_KIND]) REFERENCES [dbo].[USRFileKindTable] ([USRFileKindID])
 );
 GO
 CREATE CLUSTERED INDEX [IC_USR.USRFile(UF_ID_COMPLECT,UF_DATE)] ON [USR].[USRFile] ([UF_ID_COMPLECT] ASC, [UF_DATE] ASC);

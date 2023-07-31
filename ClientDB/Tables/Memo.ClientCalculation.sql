@@ -13,7 +13,7 @@ CREATE TABLE [Memo].[ClientCalculation]
         [NOTE]        NVarChar(Max)         NOT NULL,
         [SYSTEMS]     NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Memo.ClientCalculation] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Memo.ClientCalculation(ID_CLIENT)_Memo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Memo.ClientCalculation(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Memo.ClientCalculation(ID_CLIENT)] ON [Memo].[ClientCalculation] ([ID_CLIENT] ASC);

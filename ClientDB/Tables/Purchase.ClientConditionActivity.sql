@@ -10,7 +10,7 @@ CREATE TABLE [Purchase].[ClientConditionActivity]
         [CCA_ID_CC]   UniqueIdentifier      NOT NULL,
         [CCA_ID_AC]   UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionActivity] PRIMARY KEY CLUSTERED ([CCA_ID]),
-        CONSTRAINT [FK_Purchase.ClientConditionActivity(CCA_ID_AC)_Purchase.Activity(AC_ID)] FOREIGN KEY  ([CCA_ID_AC]) REFERENCES [dbo].[Activity] ([AC_ID]),
+        CONSTRAINT [FK_Purchase.ClientConditionActivity(CCA_ID_AC)_dbo.Activity(AC_ID)] FOREIGN KEY  ([CCA_ID_AC]) REFERENCES [dbo].[Activity] ([AC_ID]),
         CONSTRAINT [FK_Purchase.ClientConditionActivity(CCA_ID_CC)_Purchase.ClientConditionCard(CC_ID)] FOREIGN KEY  ([CCA_ID_CC]) REFERENCES [Purchase].[ClientConditionCard] ([CC_ID])
 );
 GO

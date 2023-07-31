@@ -18,7 +18,7 @@ CREATE TABLE [Seminar].[Questions]
         [UPD_DATE]      DateTime              NOT NULL,
         [UPD_USER]      NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Seminar.Questions] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Seminar.Questions(ID_CLIENT)_Seminar.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Seminar.Questions(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_Seminar.Questions(ID_SCHEDULE)_Seminar.Schedule(ID)] FOREIGN KEY  ([ID_SCHEDULE]) REFERENCES [Seminar].[Schedule] ([ID])
 );
 GO

@@ -12,6 +12,6 @@ CREATE TABLE [Price].[System:Price]
         [UPD_USER]    NVarChar(512)      NOT NULL,
         [UPD_DATE]    DateTime           NOT NULL,
         CONSTRAINT [PK_Price.System:Price] PRIMARY KEY CLUSTERED ([System_Id],[Date]),
-        CONSTRAINT [FK_Price.System:Price(System_Id)_Price.SystemTable(SystemID)] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID])
+        CONSTRAINT [FK_Price.System:Price(System_Id)_dbo.SystemTable(SystemID)] FOREIGN KEY  ([System_Id]) REFERENCES [dbo].[SystemTable] ([SystemID])
 );
 GO

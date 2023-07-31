@@ -19,7 +19,7 @@ CREATE TABLE [Training].[SeminarReserve]
         [SR_CREATE_DATE]   DateTime                  NULL,
         CONSTRAINT [PK_Training.SeminarReserve] PRIMARY KEY NONCLUSTERED ([SR_ID]),
         CONSTRAINT [FK_Training.SeminarReserve(SR_ID_SUBJECT)_Training.TrainingSubject(TS_ID)] FOREIGN KEY  ([SR_ID_SUBJECT]) REFERENCES [Training].[TrainingSubject] ([TS_ID]),
-        CONSTRAINT [FK_Training.SeminarReserve(SR_ID_CLIENT)_Training.ClientTable(ClientID)] FOREIGN KEY  ([SR_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Training.SeminarReserve(SR_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([SR_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE UNIQUE CLUSTERED INDEX [UC_Training.SeminarReserve(SR_ID_SUBJECT,SR_ID)] ON [Training].[SeminarReserve] ([SR_ID_SUBJECT] ASC, [SR_ID] ASC);

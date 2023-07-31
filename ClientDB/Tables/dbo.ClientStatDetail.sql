@@ -28,7 +28,7 @@ CREATE TABLE [dbo].[ClientStatDetail]
         [FreeSpaceAvailable]   VarChar(100)                           NULL,
         CONSTRAINT [PK_dbo.ClientStatDetail] PRIMARY KEY CLUSTERED ([id]),
         CONSTRAINT [FK_dbo.ClientStatDetail(HostId)_dbo.Hosts(HostID)] FOREIGN KEY  ([HostId]) REFERENCES [dbo].[Hosts] ([HostID]),
-        CONSTRAINT [FK_dbo.ClientStatDetail(WeekId)_dbo.Period(ID)] FOREIGN KEY  ([WeekId]) REFERENCES [Common].[Period] ([ID])
+        CONSTRAINT [FK_dbo.ClientStatDetail(WeekId)_Common.Period(ID)] FOREIGN KEY  ([WeekId]) REFERENCES [Common].[Period] ([ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_dbo.ClientStatDetail(Distr,HostId,Comp)+(WeekId,Net,UserCount,EnterSum,0Enter,1Enter,2Enter,3Enter,SessionTimeSum,SessionTime] ON [dbo].[ClientStatDetail] ([Distr] ASC, [HostId] ASC, [Comp] ASC) INCLUDE ([WeekId], [Net], [UserCount], [EnterSum], [0Enter], [1Enter], [2Enter], [3Enter], [SessionTimeSum], [SessionTimeAVG], [UpDate]);

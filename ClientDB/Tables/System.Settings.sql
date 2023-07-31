@@ -10,6 +10,6 @@ CREATE TABLE [System].[Settings]
         [Value]   sql_variant       NOT NULL,
         [Note]    VarChar(Max)      NOT NULL,
         [Last]    DateTime          NOT NULL,
-        CONSTRAINT [PK__Settings__737584F7D593D709] PRIMARY KEY CLUSTERED ([Name])
+        CONSTRAINT [PK_System.Settings] PRIMARY KEY CLUSTERED ([Name])
 );
 GO

@@ -9,6 +9,6 @@ CREATE TABLE [dbo].[SubhostEmail]
         [Subhost_Id]   UniqueIdentifier      NOT NULL,
         [Type_Id]      TinyInt               NOT NULL,
         [Email]        VarChar(512)              NULL,
-        CONSTRAINT [PC_dbo.SubhostEmail] PRIMARY KEY CLUSTERED ([Subhost_Id],[Type_Id])
+        CONSTRAINT [PK_dbo.SubhostEmail] PRIMARY KEY CLUSTERED ([Subhost_Id],[Type_Id])
 );
 GO

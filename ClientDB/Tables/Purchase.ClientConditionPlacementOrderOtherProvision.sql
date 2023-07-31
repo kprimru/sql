@@ -10,7 +10,7 @@ CREATE TABLE [Purchase].[ClientConditionPlacementOrderOtherProvision]
         [ID_CPO]   UniqueIdentifier      NOT NULL,
         [ID_OP]    UniqueIdentifier      NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionPlacementOrderOtherProvision] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [Purchase.ClientConditionPlacementOrder3] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID]),
+        CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderOtherProvision(ID_CPO)_Purchase.ClientConditionPlacementOrder(CPO_ID)] FOREIGN KEY  ([ID_CPO]) REFERENCES [Purchase].[ClientConditionPlacementOrder] ([CPO_ID]),
         CONSTRAINT [FK_Purchase.ClientConditionPlacementOrderOtherProvision(ID_OP)_Purchase.OtherProvision(OP_ID)] FOREIGN KEY  ([ID_OP]) REFERENCES [Purchase].[OtherProvision] ([OP_ID])
 );
 GO

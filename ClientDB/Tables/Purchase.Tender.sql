@@ -19,7 +19,7 @@ CREATE TABLE [Purchase].[Tender]
         [TD_UPDATE_USER]   VarChar(128)          NOT NULL,
         CONSTRAINT [PK_Purchase.Tender] PRIMARY KEY CLUSTERED ([TD_ID]),
         CONSTRAINT [FK_Purchase.Tender(TD_ID_MASTER)_Purchase.Tender(TD_ID)] FOREIGN KEY  ([TD_ID_MASTER]) REFERENCES [Purchase].[Tender] ([TD_ID]),
-        CONSTRAINT [FK_Purchase.Tender(TD_ID_CLIENT)_Purchase.ClientTable(ClientID)] FOREIGN KEY  ([TD_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Purchase.Tender(TD_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([TD_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_Purchase.Tender(TD_ID_NAME)_Purchase.TenderName(TN_ID)] FOREIGN KEY  ([TD_ID_NAME]) REFERENCES [Purchase].[TenderName] ([TN_ID])
 );
 GO

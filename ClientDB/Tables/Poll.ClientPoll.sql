@@ -14,7 +14,7 @@ CREATE TABLE [Poll].[ClientPoll]
         [NOTE]        NVarChar(Max)         NOT NULL,
         CONSTRAINT [PK_Poll.ClientPoll] PRIMARY KEY CLUSTERED ([ID]),
         CONSTRAINT [FK_Poll.ClientPoll(ID_BLANK)_Poll.Blank(ID)] FOREIGN KEY  ([ID_BLANK]) REFERENCES [Poll].[Blank] ([ID]),
-        CONSTRAINT [FK_Poll.ClientPoll(ID_CLIENT)_Poll.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Poll.ClientPoll(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_Poll.ClientPoll(ID_CALL)] ON [Poll].[ClientPoll] ([ID_CALL] ASC);

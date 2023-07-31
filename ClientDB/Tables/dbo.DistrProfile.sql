@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[DistrProfile]
         [ERR_COUNT]     SmallInt              NOT NULL,
         [PROBLEM_PRC]   decimal               NOT NULL,
         CONSTRAINT [PK_dbo.DistrProfile] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_dbo.DistrProfile(ID_PERIOD)_dbo.Period(ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [Common].[Period] ([ID])
+        CONSTRAINT [FK_dbo.DistrProfile(ID_PERIOD)_Common.Period(ID)] FOREIGN KEY  ([ID_PERIOD]) REFERENCES [Common].[Period] ([ID])
 );
 GO
 CREATE NONCLUSTERED INDEX [IX_dbo.DistrProfile(DISTR,SYS_NAME,COMP)+(ID_PERIOD,NET,USR_COUNT,ERR_COUNT,PROBLEM_PRC,ID)] ON [dbo].[DistrProfile] ([DISTR] ASC, [SYS_NAME] ASC, [COMP] ASC) INCLUDE ([ID_PERIOD], [NET], [USR_COUNT], [ERR_COUNT], [PROBLEM_PRC], [ID]);

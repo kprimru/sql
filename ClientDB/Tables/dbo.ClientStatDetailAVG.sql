@@ -26,7 +26,7 @@ CREATE TABLE [dbo].[ClientStatDetailAVG]
         [AVGWorkUserEntCount]   float                              NOT NULL,
         [AVGSessionTime]        float                              NOT NULL,
         CONSTRAINT [PK_dbo.ClientStatDetailAVG] PRIMARY KEY CLUSTERED ([id]),
-        CONSTRAINT [FK_dbo.ClientStatDetailAVG(WeekID)_dbo.Period(ID)] FOREIGN KEY  ([WeekID]) REFERENCES [Common].[Period] ([ID])
+        CONSTRAINT [FK_dbo.ClientStatDetailAVG(WeekID)_Common.Period(ID)] FOREIGN KEY  ([WeekID]) REFERENCES [Common].[Period] ([ID])
 );
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [UX_dbo.ClientStatDetailAVG(WeekID,Net)+(ComplNoEnt,ComplCount,ComplWithEnt,EntCount,UserCount,0Enter,1Enter,2Enter,3Enter,AVGUse] ON [dbo].[ClientStatDetailAVG] ([WeekID] ASC, [Net] ASC) INCLUDE ([ComplNoEnt], [ComplCount], [ComplWithEnt], [EntCount], [UserCount], [0Enter], [1Enter], [2Enter], [3Enter], [AVGUserCount], [AVGWorkUserCount], [AVGNWorkUserCount], [AVGEntCount], [AVGWorkUserEntCount], [AVGSessionTime]);

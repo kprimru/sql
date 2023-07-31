@@ -18,6 +18,6 @@ CREATE TABLE [Purchase].[TalkHistory]
         [TH_USER]        NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Purchase.TalkHistory] PRIMARY KEY CLUSTERED ([TH_ID]),
         CONSTRAINT [FK_Purchase.TalkHistory(TH_ID_MASTER)_Purchase.TalkHistory(TH_ID)] FOREIGN KEY  ([TH_ID_MASTER]) REFERENCES [Purchase].[TalkHistory] ([TH_ID]),
-        CONSTRAINT [FK_Purchase.TalkHistory(TH_ID_CLIENT)_Purchase.ClientTable(ClientID)] FOREIGN KEY  ([TH_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
+        CONSTRAINT [FK_Purchase.TalkHistory(TH_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([TH_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID])
 );
 GO

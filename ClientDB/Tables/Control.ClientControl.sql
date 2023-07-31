@@ -20,7 +20,7 @@ CREATE TABLE [Control].[ClientControl]
         [REMOVE_AUTHOR]   Bit                   NOT NULL,
         [REMOVE_NOTE]     NVarChar(Max)             NULL,
         CONSTRAINT [PK_Control.ClientControl] PRIMARY KEY CLUSTERED ([ID]),
-        CONSTRAINT [FK_Control.ClientControl(ID_CLIENT)_Control.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Control.ClientControl(ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
         CONSTRAINT [FK_Control.ClientControl(ID_GROUP)_Control.ControlGroup(ID)] FOREIGN KEY  ([ID_GROUP]) REFERENCES [Control].[ControlGroup] ([ID])
 );
 GO

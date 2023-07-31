@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[DistrEmail]
         [Date]      SmallDateTime                       NULL,
         [Email]     VarChar(128)                        NULL,
         [UpdUser]   NVarChar(256)                       NULL,
-        CONSTRAINT [PK__DistrEma__3214EC0683860D9D] PRIMARY KEY NONCLUSTERED ([Id])
+        CONSTRAINT [PK_dbo.DistrEmail] PRIMARY KEY NONCLUSTERED ([Id])
 );
 GO
 CREATE CLUSTERED INDEX [IC_dbo.DistrEmail(HostId,Distr,Comp,Date)] ON [dbo].[DistrEmail] ([HostId] ASC, [Distr] ASC, [Comp] ASC, [Date] ASC);

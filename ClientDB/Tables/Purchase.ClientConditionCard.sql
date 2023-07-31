@@ -26,8 +26,8 @@ CREATE TABLE [Purchase].[ClientConditionCard]
         [CC_LAST_UPDATE]          DateTime              NOT NULL,
         [CC_LAST_UPDATE_USER]     NVarChar(256)         NOT NULL,
         CONSTRAINT [PK_Purchase.ClientConditionCard] PRIMARY KEY CLUSTERED ([CC_ID]),
-        CONSTRAINT [FK_Purchase.ClientConditionCard(CC_ID_CLIENT)_Purchase.ClientTable(ClientID)] FOREIGN KEY  ([CC_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
-        CONSTRAINT [FK_Purchase.ClientConditionCard(CC_ID_LAWYER)_Purchase.Lawyer(LW_ID)] FOREIGN KEY  ([CC_ID_LAWYER]) REFERENCES [dbo].[Lawyer] ([LW_ID]),
+        CONSTRAINT [FK_Purchase.ClientConditionCard(CC_ID_CLIENT)_dbo.ClientTable(ClientID)] FOREIGN KEY  ([CC_ID_CLIENT]) REFERENCES [dbo].[ClientTable] ([ClientID]),
+        CONSTRAINT [FK_Purchase.ClientConditionCard(CC_ID_LAWYER)_dbo.Lawyer(LW_ID)] FOREIGN KEY  ([CC_ID_LAWYER]) REFERENCES [dbo].[Lawyer] ([LW_ID]),
         CONSTRAINT [FK_Purchase.ClientConditionCard(CC_ID_MASTER)_Purchase.ClientConditionCard(CC_ID)] FOREIGN KEY  ([CC_ID_MASTER]) REFERENCES [Purchase].[ClientConditionCard] ([CC_ID])
 );
 GO
