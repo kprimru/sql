@@ -31,17 +31,20 @@ BEGIN
     BEGIN TRY
 
         DECLARE
+			@UseSubhostQuotes	Bit,
             @HOST           Int,
             @DISTR          Int,
             @COMP           TinyInt,
             @CLIENT         Int,
             @SubhostName    VarChar(20);
 
+		SET @UseSubhostQuotes = IsNull((SELECT TOP (1) [UseSubhostQuotes] FROM [Seminar].[Schedule] WHERE [ID] = @SCHEDULE), 0);
+
         EXEC Seminar.WEB_DISTR_CHECK @SCHEDULE, @DISTR_S, @MSG OUTPUT, @STATUS OUTPUT, @HOST OUTPUT, @DISTR	OUTPUT, @COMP OUTPUT, @CLIENT OUTPUT, @SubhostName OUTPUT;
 
         IF @STATUS = 0
         BEGIN
-            IF @SubhostName = '' BEGIN
+            IF @SubhostName = '' OR @UseSubhostQuotes = 0 BEGIN
                 -- клиент Базиса
                 IF (SELECT LIMIT FROM Seminar.Schedule WHERE ID = @SCHEDULE) <=
                                 (

@@ -28,6 +28,7 @@ BEGIN
         @MSG            VarChar(1000),
         @Status         SmallInt,
 
+		@UseSubhostQuotes	Bit,
         @Subhost_Id     UniqueIdentifier,
         @Current        SmallInt;
 
@@ -40,11 +41,13 @@ BEGIN
 
         SET @DISTR_S = NullIf(@DISTR_S, '');
 
+		SET @UseSubhostQuotes = IsNull((SELECT TOP (1) [UseSubhostQuotes] FROM [Seminar].[Schedule] WHERE [ID] = @ID), 0);
+
         IF @DISTR_S IS NOT NULL
             EXEC Seminar.WEB_DISTR_CHECK @ID, @DISTR_S, @MSG OUTPUT, @STATUS OUTPUT, @HOST OUTPUT, @DISTR	OUTPUT, @COMP OUTPUT, @CLIENT OUTPUT, @SubhostName OUTPUT;
 
         -- это РИЦ или номер неизвестен
-        IF @STATUS IS NULL OR @STATUS != 0 OR IsNull(@SubhostName, '') = '' BEGIN
+        IF @STATUS IS NULL OR @STATUS != 0 OR IsNull(@SubhostName, '') = '' OR @UseSubhostQuotes = 0 BEGIN
             SET @LIMIT = (SELECT TOP (1) LIMIT FROM Seminar.Schedule WHERE ID = @ID);
 
             SET @Current =

@@ -7,20 +7,21 @@ GO
 IF OBJECT_ID('[Seminar].[SCHEDULE_SAVE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[SCHEDULE_SAVE]  AS SELECT 1')
 GO
 ALTER PROCEDURE [Seminar].[SCHEDULE_SAVE]
-    @ID         UniqueIdentifier OUT,
-    @SUBJECT    UniqueIdentifier,
-    @DATE       SmallDateTime,
-    @TIME       SmallDateTime,
-    @LIMIT      SmallInt,
-    @WEB        Bit,
-    @PERSONAL   Bit,
-    @QUESTIONS  Bit,
-    @INVITE     SmallDateTime,
-    @RESERVE    SmallDateTime,
-    @PROFILE    SmallDateTime,
-    @Type_Id    SmallInt,
-    @Link       VarChar(Max),
-    @Subhosts   Xml
+    @ID					UniqueIdentifier OUT,
+    @SUBJECT			UniqueIdentifier,
+    @DATE				SmallDateTime,
+    @TIME				SmallDateTime,
+    @LIMIT				SmallInt,
+    @WEB				Bit,
+    @PERSONAL			Bit,
+    @QUESTIONS			Bit,
+    @INVITE				SmallDateTime,
+    @RESERVE			SmallDateTime,
+    @PROFILE			SmallDateTime,
+    @Type_Id			SmallInt,
+    @Link				VarChar(Max),
+    @Subhosts			Xml,
+	@UseSubhostQuotes	Bit = 1
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -46,9 +47,9 @@ BEGIN
 		BEGIN
 			DECLARE @TBL TABLE(ID UNIQUEIDENTIFIER)
 
-			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE, [Type_Id], [Link], [Status_Id])
+			INSERT INTO Seminar.Schedule(ID_SUBJECT, DATE, TIME, LIMIT, WEB, PERSONAL, QUESTIONS, INVITE_DATE, RESERVE_DATE, PROFILE_DATE, [Type_Id], [Link], [Status_Id], [UseSubhostQuotes])
 			OUTPUT inserted.ID INTO @TBL
-			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE, @Type_Id, @Link, @Status_Id_ACTIVE)
+			VALUES(@SUBJECT, @DATE, @TIME, @LIMIT, @WEB, @PERSONAL, @QUESTIONS, @INVITE, @RESERVE, @PROFILE, @Type_Id, @Link, @Status_Id_ACTIVE, @UseSubhostQuotes)
 
 			SELECT @ID = ID
 			FROM @TBL
@@ -56,18 +57,19 @@ BEGIN
 		ELSE
 		BEGIN
 			UPDATE Seminar.Schedule
-			SET ID_SUBJECT	    =   @SUBJECT,
-			    [Type_Id]       =   @Type_Id,
-				DATE		    =   @DATE,
-				TIME		    =   @TIME,
-				LIMIT		    =   @LIMIT,
-				WEB			    =   @WEB,
-				PERSONAL	    =   @PERSONAL,
-				QUESTIONS	    =   @QUESTIONS,
-				INVITE_DATE	    =   @INVITE,
-				RESERVE_DATE    =   @RESERVE,
-				PROFILE_DATE    =   @PROFILE,
-				[Link]          =   @Link,
+			SET ID_SUBJECT			=   @SUBJECT,
+			    [Type_Id]			=   @Type_Id,
+				DATE				=   @DATE,
+				TIME				=   @TIME,
+				LIMIT				=   @LIMIT,
+				WEB					=   @WEB,
+				PERSONAL			=   @PERSONAL,
+				QUESTIONS			=   @QUESTIONS,
+				INVITE_DATE			=   @INVITE,
+				RESERVE_DATE		=   @RESERVE,
+				PROFILE_DATE		=   @PROFILE,
+				[Link]				=   @Link,
+				[UseSubhostQuotes]	=	@UseSubhostQuotes,
 				LAST		=	GETDATE()
 			WHERE ID = @ID
 		END
