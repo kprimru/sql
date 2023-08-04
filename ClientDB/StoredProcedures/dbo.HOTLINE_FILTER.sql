@@ -13,7 +13,8 @@ ALTER PROCEDURE [dbo].[HOTLINE_FILTER]
 	@SERVICE	INT,
 	@MANAGER	NVARCHAR(MAX),
 	@TEXT		NVARCHAR(256),
-	@PERSONAL	NVARCHAR(MAX) = NULL
+	@PERSONAL	NVARCHAR(MAX) = NULL,
+	@RAW		BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -32,8 +33,9 @@ BEGIN
 
 		SET @FINISH = DATEADD(DAY, 1, @FINISH)
 
+
 		SELECT ServiceStatusIndex, ManagerName, ServiceName, ClientFullName, DistrStr,
-			FIRST_DATE, CHAT,
+			FIRST_DATE, A.[ID] AS CHAT_ID, CHAT, [Demands_Name],
 			RIC_PERSONAL, FIRST_ANS,
 			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS REACTION,
 			DATEDIFF(SECOND, START, FIRST_ANS) AS ANSWER_TIME,
@@ -42,6 +44,17 @@ BEGIN
 			dbo.HotlineChatView a WITH(NOEXPAND)
 			INNER JOIN dbo.ClientDistrView b WITH(NOEXPAND) ON a.HostID = b.HostID AND a.DISTR = b.DISTR AND a.COMP = b.COMP
 			INNER JOIN dbo.ClientView c WITH(NOEXPAND) ON c.ClientID = b.ID_CLIENT
+			LEFT JOIN (
+                SELECT
+                    HD.[HotlineChat_Id],
+                    STRING_AGG(DT.[Name], ', ') AS [Demands_Name]
+                FROM
+                    [dbo].[HotlineChat:Demand] HD
+                INNER JOIN
+                    [dbo].[Demand->Type] DT ON HD.[Demand_Id] = DT.[Id]
+                GROUP BY
+                    HD.[HotlineChat_Id]
+            ) HCM ON a.[ID] = HCM.[HotlineChat_Id]
 		WHERE (FIRST_DATE >= @START OR @START IS NULL)
 			AND (FIRST_DATE < @FINISH OR @FINISH IS NULL)
 			AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
@@ -57,6 +70,19 @@ BEGIN
 							FROM dbo.TableStringFromXML(@PERSONAL) z
 							WHERE a.RIC_PERSONAL LIKE '%' + z.ID + '%'
 						)
+				)
+            AND (
+					@RAW IS NULL
+					OR
+					@RAW = 0 AND EXISTS (
+											SELECT * FROM [dbo].[HotlineChat=Process]
+											WHERE [Hotline_Id] = a.[ID]
+										)
+					OR
+					@RAW = 1 AND NOT EXISTS (
+												SELECT * FROM [dbo].[HotlineChat=Process]
+												WHERE [Hotline_Id] = a.[ID]
+											)
 				)
 		ORDER BY FIRST_DATE DESC
 
