@@ -14,7 +14,7 @@ ALTER PROCEDURE [dbo].[HOTLINE_FILTER]
 	@MANAGER	NVARCHAR(MAX),
 	@TEXT		NVARCHAR(256),
 	@PERSONAL	NVARCHAR(MAX) = NULL,
-	@RAW		BIT = NULL
+	@RAW		SmallInt = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -35,7 +35,7 @@ BEGIN
 
 
 		SELECT ServiceStatusIndex, ManagerName, ServiceName, ClientFullName, DistrStr,
-			FIRST_DATE, A.[ID] AS CHAT_ID, CHAT, [Demands_Name],
+			FIRST_DATE, A.[ID] AS CHAT_ID, CHAT, [Demands_Name],  [Demands_IDs],
 			RIC_PERSONAL, FIRST_ANS,
 			DATEDIFF(SECOND, FIRST_DATE, FIRST_ANS) AS REACTION,
 			DATEDIFF(SECOND, START, FIRST_ANS) AS ANSWER_TIME,
@@ -47,11 +47,10 @@ BEGIN
 			LEFT JOIN (
                 SELECT
                     HD.[HotlineChat_Id],
-                    STRING_AGG(DT.[Name], ', ') AS [Demands_Name]
-                FROM
-                    [dbo].[HotlineChat:Demand] HD
-                INNER JOIN
-                    [dbo].[Demand->Type] DT ON HD.[Demand_Id] = DT.[Id]
+                    STRING_AGG(DT.[Name], ',') AS [Demands_Name],
+					'<LIST>' + STRING_AGG('<ITEM>' + Cast(DT.[Id] AS VarChar(100)) + '</ITEM>', '') AS [Demands_IDs]
+                FROM [dbo].[HotlineChat:Demand] AS HD
+                INNER JOIN [dbo].[Demand->Type] AS DT ON HD.[Demand_Id] = DT.[Id]
                 GROUP BY
                     HD.[HotlineChat_Id]
             ) HCM ON a.[ID] = HCM.[HotlineChat_Id]
@@ -73,6 +72,8 @@ BEGIN
 				)
             AND (
 					@RAW IS NULL
+					OR
+					@RAW = 2
 					OR
 					@RAW = 0 AND EXISTS (
 											SELECT * FROM [dbo].[HotlineChat=Process]
