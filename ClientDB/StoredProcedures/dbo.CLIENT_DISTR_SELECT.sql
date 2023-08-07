@@ -81,7 +81,8 @@ BEGIN
 				ORDER BY Date DESC
 			) AS Weight,
 			[OnlineQuantity] = [MainQuantity] + IsNull([AdditionalQuantity], 0),
-			[Email], DISTR, COMP, HostID
+			[Email], DISTR, COMP, HostID,
+			Q.[Quantity]
 		FROM
 		(
 			SELECT
@@ -253,6 +254,14 @@ BEGIN
 		(
 			SELECT [DistrPrice] = [dbo].[DistrPrice]([Price], COEF, RND)
 		) AS DP
+		OUTER APPLY
+		(
+			SELECT O.[Quantity]
+			FROM [dbo].[OnlineRules] AS O
+			WHERE O.[System_Id] = ds.[SystemID]
+				AND O.[DistrType_Id] = ds.[DistrTypeId]
+				AND ds.[DS_REG] = 0
+		) AS Q
 		ORDER BY STATUS, DS_REG, SystemOrder, DistrStr
 
 		EXEC [Debug].[Execution@Finish] @DebugContext = @DebugContext, @Error = NULL;

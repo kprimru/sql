@@ -17,3 +17,6 @@ CREATE TABLE [USR].[Groups_Params]
         CONSTRAINT [FK_USR.Groups_Params(Group_Id)_USR.Groups(Id)] FOREIGN KEY  ([Group_Id]) REFERENCES [USR].[Groups] ([Id])
 );
 GO
+CREATE UNIQUE NONCLUSTERED INDEX [UX_USR.Groups_Params(Code)] ON [USR].[Groups_Params] ([Code] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [UX_USR.Groups_Params(FieldName)] ON [USR].[Groups_Params] ([FieldName] ASC);
+GO
