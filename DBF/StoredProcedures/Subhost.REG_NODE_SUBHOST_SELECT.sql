@@ -35,7 +35,7 @@ BEGIN
 			RNS_ID, SH_SHORT_NAME,
 			PR_DATE,
 			SYS_SHORT_NAME,
-			SST_CAPTION, 
+			SST_CAPTION,
 			SN_NAME,
 			/*RNS_DISTR, RNS_COMP, */RNS_COMMENT,
 			DIS_STR,
@@ -43,10 +43,10 @@ BEGIN
 			CASE
 				WHEN SYS_OLD_NAME IS NULL AND SYS_NEW_NAME IS NULL AND SN_OLD_NAME IS NULL AND SN_NEW_NAME IS NULL THEN 'Новая система'
 				/*
-				WHEN ISNULL(TT_OLD_ID, 0) < ISNULL(TT_NEW_ID, 0) THEN 
+				WHEN ISNULL(TT_OLD_ID, 0) < ISNULL(TT_NEW_ID, 0) THEN
 					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(ISNULL(SN_OLD_NAME, SN_NAME) + ' ', '') +
 					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(TT_NEW_NAME, '')
-				WHEN ISNULL(TT_OLD_ID, 0) > ISNULL(TT_NEW_ID, 0) THEN 
+				WHEN ISNULL(TT_OLD_ID, 0) > ISNULL(TT_NEW_ID, 0) THEN
 					ISNULL('c ' + SYS_OLD_NAME + ' ', 'с ') + ISNULL(TT_OLD_NAME, '') + ' ' +
 					ISNULL('на ' + SYS_NEW_NAME + ' ', 'на ') + ISNULL(ISNULL(SN_NEW_NAME, SN_NAME), '')
 				*/
@@ -311,7 +311,7 @@ BEGIN
 									AND PTS_ID_ST = SST_ID
 							) AS o_O
 						WHERE PS_PRICE IS NOT NULL
-					) * 
+					) *
 					CASE
 						WHEN (SELECT SST_COEF FROM dbo.SystemTypeTable z WHERE z.SST_ID = a.SST_ID) = 0 THEN 1
 						WHEN (

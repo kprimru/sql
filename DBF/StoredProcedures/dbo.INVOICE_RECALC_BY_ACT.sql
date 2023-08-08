@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[INVOICE_RECALC_BY_ACT]', 'P ') IS NULL EXEC('CREATE PROCEDU
 GO
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_RECALC_BY_ACT]

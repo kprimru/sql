@@ -6,15 +6,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SUBHOST_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_EDIT]  AS SELECT 1')
 GO
-
-
 /*
 Автор:		  Денисов Алексей
 Дата создания: 15.10.2008
 Описание:	  Изменить данные о подхосте с
                 указанным кодом
 */
-
 ALTER PROCEDURE [dbo].[SUBHOST_EDIT]
 	@subhostid SMALLINT,
 	@subhostfullname VARCHAR(250),

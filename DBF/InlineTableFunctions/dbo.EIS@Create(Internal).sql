@@ -56,4 +56,5 @@ RETURN
             [FileName]  = @ApplyContent.value('(/ФайлУПДПрод/@ИдПрилож)[1]', 'VarChar(256)') + '.xml',
             [Data]      = Cast(@ApplyContent AS VarChar(Max))
     )AS F
-)GO
+)
+GO

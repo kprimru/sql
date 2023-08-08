@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[ActFactDetailTable]
         [AD_PAYED_PRICE]   Money                           NOT NULL,
         [TO_NUM]           Int                                 NULL,
         [TO_NAME]          VarChar(255)                        NULL,
+        [SYS_ADD]          VarChar(512)                        NULL,
         CONSTRAINT [PK_dbo.ActFactDetailTable] PRIMARY KEY CLUSTERED ([AFD_ID]),
         CONSTRAINT [FK_dbo.ActFactDetailTable(AFD_ID_AFM)_dbo.ActFactMasterTable(AFM_ID)] FOREIGN KEY  ([AFD_ID_AFM]) REFERENCES [dbo].[ActFactMasterTable] ([AFM_ID])
 );

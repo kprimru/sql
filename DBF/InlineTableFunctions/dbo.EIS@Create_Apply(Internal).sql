@@ -192,4 +192,5 @@ RETURN
             OUTER APPLY [dbo].[EISData@Parse](F.[EIS_DATA], MD.[Date], MD.[TotalSum], U.[IsActual], @StageGuid, @ProductGuid) AS ED
             FOR XML RAW('ФайлУПДПрод'), TYPE
         )
-)GO
+)
+GO

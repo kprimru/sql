@@ -6,14 +6,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[BILL_CREATE_CHECK]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[BILL_CREATE_CHECK]  AS SELECT 1')
 GO
-
-
 /*
 Автор:
 Дата создания:
 Описание:
 */
-
 ALTER PROCEDURE [dbo].[BILL_CREATE_CHECK]
 	@clientid INT,
 	@periodid SMALLINT,

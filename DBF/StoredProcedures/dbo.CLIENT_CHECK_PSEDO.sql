@@ -6,12 +6,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[CLIENT_CHECK_PSEDO]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[CLIENT_CHECK_PSEDO]  AS SELECT 1')
 GO
-
 /*
 Автор:		  Денисов Алексей
 Описание:
 */
-
 ALTER PROCEDURE [dbo].[CLIENT_CHECK_PSEDO]
 	@psedo VARCHAR(100),
 	@clientid INT

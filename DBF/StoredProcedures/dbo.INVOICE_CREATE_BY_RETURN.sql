@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[INVOICE_CREATE_BY_RETURN]', 'P ') IS NULL EXEC('CREATE PROC
 GO
 /*
 Автор:
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[INVOICE_CREATE_BY_RETURN]
@@ -186,7 +186,7 @@ BEGIN
 							CO_ID_CLIENT = CL_ID
 						ORDER BY CO_ACTIVE DESC, CO_END_DATE DESC
 					) AS INS_IDENT
-			FROM 
+			FROM
 				dbo.ClientTable z
 				INNER JOIN dbo.IncomeTable ON IN_ID_CLIENT = CL_ID
 			WHERE IN_ID = @inid
@@ -247,7 +247,7 @@ BEGIN
 					(ID_PRICE - DELTA),
 					NULL, UN_NAME,
 					ID_ID_PERIOD
-				FROM 
+				FROM
 					(
 						SELECT ID_ID_DISTR, GD_NAME, SYS_PREFIX, SYS_NAME, ID_PRICE, TX_PERCENT, UN_NAME, ID_ID_PERIOD,	TX_ID,
 							0 AS DELTA

@@ -6,12 +6,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[TO_SELECT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[TO_SELECT]  AS SELECT 1')
 GO
-
 /*
 Автор:			Денисов Алексей
 Описание:		Выбор всех точек обслуживания указанного клиента
 */
-
 ALTER PROCEDURE [dbo].[TO_SELECT]
 	@clientid INT,
 	@distr INT = NULL

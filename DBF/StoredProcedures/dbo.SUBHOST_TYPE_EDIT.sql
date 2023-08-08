@@ -6,14 +6,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SUBHOST_TYPE_EDIT]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_TYPE_EDIT]  AS SELECT 1')
 GO
-
-
-
 /*
 Автор:		  Проценко Сергей
 Описание:
 */
-
 ALTER PROCEDURE [dbo].[SUBHOST_TYPE_EDIT]
 	@subhostId TinyInt,
 	@subhosCode VARCHAR(50),

@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[CONSIGNMENT_CALC]', 'P ') IS NULL EXEC('CREATE PROCEDURE [d
 GO
 /*
 Автор:			Денисов Алексей/Богдан Владимир
-Дата создания:  
+Дата создания:
 Описание:
 */
 ALTER PROCEDURE [dbo].[CONSIGNMENT_CALC]
