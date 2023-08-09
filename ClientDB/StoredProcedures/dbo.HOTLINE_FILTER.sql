@@ -14,7 +14,7 @@ ALTER PROCEDURE [dbo].[HOTLINE_FILTER]
 	@MANAGER	NVARCHAR(MAX),
 	@TEXT		NVARCHAR(256),
 	@PERSONAL	NVARCHAR(MAX) = NULL,
-	@RAW		SmallInt = NULL
+	@PROCESS	SmallInt = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -53,7 +53,7 @@ BEGIN
                 INNER JOIN [dbo].[Demand->Type] AS DT ON HD.[Demand_Id] = DT.[Id]
                 GROUP BY
                     HD.[HotlineChat_Id]
-            ) HCM ON a.[ID] = HCM.[HotlineChat_Id]
+            )  AS HCM ON a.[ID] = HCM.[HotlineChat_Id]
 		WHERE (FIRST_DATE >= @START OR @START IS NULL)
 			AND (FIRST_DATE < @FINISH OR @FINISH IS NULL)
 			AND (ClientFullName LIKE @CLIENT OR @CLIENT IS NULL)
@@ -71,19 +71,19 @@ BEGIN
 						)
 				)
             AND (
-					@RAW IS NULL
+					@PROCESS IS NULL
 					OR
-					@RAW = 2
+					@PROCESS = 2
 					OR
-					@RAW = 0 AND EXISTS (
-											SELECT * FROM [dbo].[HotlineChat=Process]
-											WHERE [Hotline_Id] = a.[ID]
-										)
-					OR
-					@RAW = 1 AND NOT EXISTS (
+					@PROCESS = 0 AND EXISTS (
 												SELECT * FROM [dbo].[HotlineChat=Process]
 												WHERE [Hotline_Id] = a.[ID]
 											)
+					OR
+					@PROCESS = 1 AND NOT EXISTS (
+													SELECT * FROM [dbo].[HotlineChat=Process]
+													WHERE [Hotline_Id] = a.[ID]
+												)
 				)
 		ORDER BY FIRST_DATE DESC
 

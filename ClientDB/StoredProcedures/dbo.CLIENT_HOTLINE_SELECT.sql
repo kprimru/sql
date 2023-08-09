@@ -28,6 +28,7 @@ BEGIN
 		IF @CLIENT = 3103
 			SELECT
 				a.ID,
+				HCM.[Demands_Name],
 				dbo.DistrString(b.SystemShortName, a.DISTR, a.COMP) AS COMPLECT,
 				a.FIRST_DATE, a.START, a.FINISH, a.PROFILE, a.FIO, a.EMAIL, a.PHONE, a.CHAT, a.LGN, a.RIC_PERSONAL, a.LINKS,
 				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = 'ЧАТ') AS DIRECTION
@@ -35,11 +36,21 @@ BEGIN
 				dbo.HotlineChat a
 				INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
 				INNER JOIN Reg.RegNodeSearchView c WITH(NOEXPAND) ON c.HostID = b.HostID AND a.DISTR = c.DistrNumber AND a.COMP = c.CompNumber
+				LEFT JOIN (
+					SELECT
+						HD.[HotlineChat_Id],
+						STRING_AGG(DT.[Name], ',') AS [Demands_Name]
+					FROM [dbo].[HotlineChat:Demand] AS HD
+					INNER JOIN [dbo].[Demand->Type] AS DT ON HD.[Demand_Id] = DT.[Id]
+					GROUP BY
+						HD.[HotlineChat_Id]
+				) AS HCM ON a.[ID] = HCM.[HotlineChat_Id]
 			WHERE c.SubhostName = 'Л1'
 			ORDER BY FIRST_DATE DESC
 		ELSE
 			SELECT
 				a.ID,
+				HCM.[Demands_Name],
 				dbo.DistrString(b.SystemShortName, a.DISTR, a.COMP) AS COMPLECT,
 				a.FIRST_DATE, a.START, a.FINISH, a.PROFILE, a.FIO, a.EMAIL, a.PHONE, a.CHAT, a.LGN, a.RIC_PERSONAL, a.LINKS,
 				(SELECT TOP 1 ID FROM dbo.CallDirection WHERE NAME = 'ЧАТ') AS DIRECTION
@@ -47,6 +58,15 @@ BEGIN
 				dbo.HotlineChat a
 				INNER JOIN dbo.SystemTable b ON a.SYS = b.SystemNumber
 				INNER JOIN dbo.ClientDistrView c WITH(NOEXPAND) ON c.HostID = b.HostID AND a.DISTR = c.DISTR AND a.COMP = c.COMP
+				LEFT JOIN (
+					SELECT
+						HD.[HotlineChat_Id],
+						STRING_AGG(DT.[Name], ',') AS [Demands_Name]
+					FROM [dbo].[HotlineChat:Demand] AS HD
+					INNER JOIN [dbo].[Demand->Type] AS DT ON HD.[Demand_Id] = DT.[Id]
+					GROUP BY
+						HD.[HotlineChat_Id]
+				) HCM ON a.[ID] = HCM.[HotlineChat_Id]
 			WHERE c.ID_CLIENT = @CLIENT
 			ORDER BY FIRST_DATE DESC
 
