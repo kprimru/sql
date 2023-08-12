@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Web@Get?Limit]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Web@Get?Limit]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Web@Get?Limit]
+CREATE OR ALTER PROCEDURE [Seminar].[Web@Get?Limit]
     @ID         UniqueIdentifier,
     @DISTR_S    VarChar(256)        = NULL
 AS

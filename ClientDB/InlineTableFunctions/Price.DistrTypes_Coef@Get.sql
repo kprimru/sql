@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[DistrTypes:Coef@Get]', 'IF') IS NULL EXEC('CREATE FUNCTION [Price].[DistrTypes:Coef@Get] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Price].[DistrTypes:Coef@Get]
+CREATE OR ALTER FUNCTION [Price].[DistrTypes:Coef@Get]
 (
 	@Date	SmallDateTime
 )

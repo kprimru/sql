@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[Complect@Periodic]', 'IF') IS NULL EXEC('CREATE FUNCTION [Reg].[Complect@Periodic] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Reg].[Complect@Periodic]
+CREATE OR ALTER FUNCTION [Reg].[Complect@Periodic]
 (
 	@Complect	VarChar(100),
 	@Date		DateTime

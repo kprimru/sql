@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientWriteList]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientWriteList] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-CREATE FUNCTION [dbo].[ClientWriteList]()
+CREATE OR ALTER FUNCTION [dbo].[ClientWriteList]()
 RETURNS @TBL TABLE
 	(
 		WCL_ID INT

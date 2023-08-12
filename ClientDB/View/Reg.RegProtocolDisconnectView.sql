@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegProtocolDisconnectView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegProtocolDisconnectView]  AS SELECT 1')
 GO
-ALTER VIEW [Reg].[RegProtocolDisconnectView]
+CREATE OR ALTER VIEW [Reg].[RegProtocolDisconnectView]
 WITH SCHEMABINDING
 AS
 	SELECT RPR_ID_HOST, RPR_DISTR, RPR_COMP, dbo.DateOf(RPR_DATE) AS DATE, COUNT_BIG(*) AS CNT

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Security].[RoleTreeView]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[RoleTreeView]  AS SELECT 1')
 GO
-ALTER VIEW [Security].[RoleTreeView]
+CREATE OR ALTER VIEW [Security].[RoleTreeView]
 AS
 	WITH CTE AS
 	(

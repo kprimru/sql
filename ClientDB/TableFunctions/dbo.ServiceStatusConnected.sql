@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ServiceStatusConnected]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[ServiceStatusConnected] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-CREATE FUNCTION [dbo].[ServiceStatusConnected]()
+CREATE OR ALTER FUNCTION [dbo].[ServiceStatusConnected]()
 RETURNS @Result TABLE
 (
 	ServiceStatusId SmallInt PRIMARY KEY CLUSTERED

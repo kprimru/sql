@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientWorkView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientWorkView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientWorkView]
+CREATE OR ALTER VIEW [dbo].[ClientWorkView]
 AS
 	SELECT ClientID, 'История посещений' AS TP, EventDate AS DT, EventComment AS NOTE, EventCreateUser AS AUTHOR
 	FROM dbo.EventTable

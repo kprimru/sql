@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[Complect@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[Complect@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [dbo].[Complect@Parse]
+CREATE OR ALTER FUNCTION [dbo].[Complect@Parse]
 (
 	@Complect	VarChar(100)
 )

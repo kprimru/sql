@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[RegNodeComplectClientView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[RegNodeComplectClientView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[RegNodeComplectClientView]
+CREATE OR ALTER VIEW [dbo].[RegNodeComplectClientView]
 AS
 	SELECT
 		ClientID, ISNULL(ClientFullName, Comment) AS ClientName,

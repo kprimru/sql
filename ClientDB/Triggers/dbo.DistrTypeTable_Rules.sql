@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DistrTypeTable_Rules]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[DistrTypeTable_Rules]  ON [dbo].[DistrTypeTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[DistrTypeTable_Rules] ON [dbo].[DistrTypeTable]
+CREATE OR ALTER TRIGGER [dbo].[DistrTypeTable_Rules] ON [dbo].[DistrTypeTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

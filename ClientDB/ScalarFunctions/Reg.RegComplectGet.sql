@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegComplectGet]', 'FN') IS NULL EXEC('CREATE FUNCTION [Reg].[RegComplectGet] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Reg].[RegComplectGet]
+CREATE OR ALTER FUNCTION [Reg].[RegComplectGet]
 (
 	@HOST	SmallInt,
 	@DISTR	Int,

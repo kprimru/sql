@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[Is Equal(Int)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Is Equal(Int)] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Common].[Is Equal(Int)]
+CREATE OR ALTER FUNCTION [Common].[Is Equal(Int)]
 (
 	@V1	Int,
 	@V2	Int

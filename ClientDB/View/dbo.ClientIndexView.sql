@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientIndexView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientIndexView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientIndexView]
+CREATE OR ALTER VIEW [dbo].[ClientIndexView]
 AS
 	SELECT
 		a.ClientID,

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Debug].[Executions@Clear]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Debug].[Executions@Clear]  AS SELECT 1')
 GO
-CREATE   PROCEDURE [Debug].[Executions@Clear]
+CREATE OR ALTER PROCEDURE [Debug].[Executions@Clear]
     @Mode       VarChar(100) = 'AUTO'
     -- AUTO
     -- FULL

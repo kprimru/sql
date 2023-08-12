@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[USR].[USRComplectCurrentStatusView]', 'V ') IS NULL EXEC('CREATE VIEW [USR].[USRComplectCurrentStatusView]  AS SELECT 1')
 GO
-ALTER VIEW [USR].[USRComplectCurrentStatusView]
+CREATE OR ALTER VIEW [USR].[USRComplectCurrentStatusView]
 WITH SCHEMABINDING
 AS
 	SELECT

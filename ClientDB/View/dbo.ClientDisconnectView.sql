@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientDisconnectView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientDisconnectView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientDisconnectView]
+CREATE OR ALTER VIEW [dbo].[ClientDisconnectView]
 WITH SCHEMABINDING
 AS
 	SELECT a.ClientID, dbo.DateOf(RPR_DATE) AS DisconnectDate, COUNT_BIG(*) AS CNT

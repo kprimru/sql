@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Purchase].[ApplyReason_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Purchase].[ApplyReason_LAST_UPDATE]  ON [Purchase].[ApplyReason] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Purchase].[ApplyReason_LAST_UPDATE] ON [Purchase].[ApplyReason]
+CREATE OR ALTER TRIGGER [Purchase].[ApplyReason_LAST_UPDATE] ON [Purchase].[ApplyReason]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

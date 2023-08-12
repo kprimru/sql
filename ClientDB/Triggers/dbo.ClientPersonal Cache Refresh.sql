@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientPersonal Cache Refresh]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ClientPersonal Cache Refresh]  ON [dbo].[ClientPersonal] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ClientPersonal Cache Refresh]
+CREATE OR ALTER TRIGGER [dbo].[ClientPersonal Cache Refresh]
    ON  [dbo].[ClientPersonal]
    AFTER INSERT,DELETE,UPDATE
 AS

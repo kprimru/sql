@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[Client=Tech@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[Client=Tech@Save]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[Client=Tech@Save]
+CREATE OR ALTER PROCEDURE [dbo].[Client=Tech@Save]
 	@Client_Id	Int,
 	@Note		VarChar(Max)
 AS

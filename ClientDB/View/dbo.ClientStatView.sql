@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientStatView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientStatView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientStatView]
+CREATE OR ALTER VIEW [dbo].[ClientStatView]
 WITH SCHEMABINDING
 AS
 	SELECT c.ID_CLIENT AS ClientID, dbo.DateOf(DATE) AS DATE_S, COUNT_BIG(*) AS CNT

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DistrCoefRound]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[DistrCoefRound] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[DistrCoefRound]
+CREATE OR ALTER FUNCTION [dbo].[DistrCoefRound]
 (
 	@SYS	INT,
 	@NET	INT,

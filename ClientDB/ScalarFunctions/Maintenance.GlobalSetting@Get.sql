@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSetting@Get]', 'FN') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalSetting@Get] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Maintenance].[GlobalSetting@Get]
+CREATE OR ALTER FUNCTION [Maintenance].[GlobalSetting@Get]
 (
     @Name   VarChar(128)
 )

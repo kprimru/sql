@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[TableNumber]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[TableNumber] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-CREATE FUNCTION [dbo].[TableNumber]
+CREATE OR ALTER FUNCTION [dbo].[TableNumber]
 (
 	@N INT
 )

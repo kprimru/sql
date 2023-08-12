@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[RandView]', 'V ') IS NULL EXEC('CREATE VIEW [Common].[RandView]  AS SELECT 1')
 GO
-ALTER VIEW [Common].[RandView]
+CREATE OR ALTER VIEW [Common].[RandView]
 AS
 	SELECT RAND() AS V
 GO

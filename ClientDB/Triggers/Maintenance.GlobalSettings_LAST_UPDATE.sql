@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSettings_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Maintenance].[GlobalSettings_LAST_UPDATE]  ON [Maintenance].[GlobalSettings] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Maintenance].[GlobalSettings_LAST_UPDATE] ON [Maintenance].[GlobalSettings]
+CREATE OR ALTER TRIGGER [Maintenance].[GlobalSettings_LAST_UPDATE] ON [Maintenance].[GlobalSettings]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

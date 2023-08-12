@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ServiceView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ServiceView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ServiceView]
+CREATE OR ALTER VIEW [dbo].[ServiceView]
 WITH SCHEMABINDING
 AS
 	SELECT ServiceID, ServiceName, ServiceLogin

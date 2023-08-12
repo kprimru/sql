@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DistrPriceWeightGet]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[DistrPriceWeightGet] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-CREATE FUNCTION [dbo].[DistrPriceWeightGet]
+CREATE OR ALTER FUNCTION [dbo].[DistrPriceWeightGet]
 (
 	@HOST	INT,
 	@DISTR	INT,

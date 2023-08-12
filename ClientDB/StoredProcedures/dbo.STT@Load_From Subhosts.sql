@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[STT@Load?From Subhosts]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[STT@Load?From Subhosts]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[STT@Load?From Subhosts]
+CREATE OR ALTER PROCEDURE [dbo].[STT@Load?From Subhosts]
 AS
 BEGIN
 	SET NOCOUNT ON;

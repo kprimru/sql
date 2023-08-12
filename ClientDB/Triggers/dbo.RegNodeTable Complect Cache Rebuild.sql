@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[RegNodeTable Complect Cache Rebuild]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[RegNodeTable Complect Cache Rebuild]  ON [dbo].[RegNodeTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[RegNodeTable Complect Cache Rebuild]
+CREATE OR ALTER TRIGGER [dbo].[RegNodeTable Complect Cache Rebuild]
    ON  [dbo].[RegNodeTable]
    AFTER INSERT,DELETE,UPDATE
 AS

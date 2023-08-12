@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[Period@SetAvailable]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Price].[Period@SetAvailable]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Price].[Period@SetAvailable]
+CREATE OR ALTER PROCEDURE [Price].[Period@SetAvailable]
 	@Period_Id		UniqueIdentifier,
 	@IsAvailable	Bit
 AS

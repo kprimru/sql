@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DistrRequiredDofView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[DistrRequiredDofView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[DistrRequiredDofView]
+CREATE OR ALTER VIEW [dbo].[DistrRequiredDofView]
 WITH SCHEMABINDING
 AS
 	SELECT

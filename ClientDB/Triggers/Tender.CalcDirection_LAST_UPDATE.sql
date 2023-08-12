@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Tender].[CalcDirection_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Tender].[CalcDirection_LAST_UPDATE]  ON [Tender].[CalcDirection] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Tender].[CalcDirection_LAST_UPDATE] ON [Tender].[CalcDirection]
+CREATE OR ALTER TRIGGER [Tender].[CalcDirection_LAST_UPDATE] ON [Tender].[CalcDirection]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[Complect@Online Count]', 'IF') IS NULL EXEC('CREATE FUNCTION [Reg].[Complect@Online Count] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Reg].[Complect@Online Count]
+CREATE OR ALTER FUNCTION [Reg].[Complect@Online Count]
 (
 	@Complect	VarChar(100)
 )

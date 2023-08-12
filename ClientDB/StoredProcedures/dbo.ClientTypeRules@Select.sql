@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientTypeRules@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ClientTypeRules@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[ClientTypeRules@SELECT]
+CREATE OR ALTER PROCEDURE [dbo].[ClientTypeRules@SELECT]
 	@SystemsIDs     VarChar(Max) = NULL,
 	@DistrTypesIDs  VarChar(Max) = NULL,
 	@ClientTypesIDs VarChar(Max) = NULL

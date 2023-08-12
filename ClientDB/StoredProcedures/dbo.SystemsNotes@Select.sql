@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemsNotes@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SystemsNotes@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[SystemsNotes@Select]
+CREATE OR ALTER PROCEDURE [dbo].[SystemsNotes@Select]
     @Filter  VarChar(256)    =    NULL
 AS
 BEGIN

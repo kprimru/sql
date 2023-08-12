@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ConsExeVersionTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ConsExeVersionTable_LAST_UPDATE]  ON [dbo].[ConsExeVersionTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ConsExeVersionTable_LAST_UPDATE] ON [dbo].[ConsExeVersionTable]
+CREATE OR ALTER TRIGGER [dbo].[ConsExeVersionTable_LAST_UPDATE] ON [dbo].[ConsExeVersionTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

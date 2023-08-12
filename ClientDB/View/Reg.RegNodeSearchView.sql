@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegNodeSearchView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegNodeSearchView]  AS SELECT 1')
 GO
-ALTER VIEW [Reg].[RegNodeSearchView]
+CREATE OR ALTER VIEW [Reg].[RegNodeSearchView]
 WITH SCHEMABINDING
 AS
 	SELECT

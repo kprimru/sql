@@ -16,7 +16,7 @@ EXEC [dbo].[MAILING_LOG_SELECT]
 EXEC [dbo].[MAILING_LOG_SELECT]
 	@Address = 'marina.zdor@mail.ru'
 */
-ALTER PROCEDURE [dbo].[MAILING_LOG_SELECT]
+CREATE OR ALTER PROCEDURE [dbo].[MAILING_LOG_SELECT]
 	@DateFrom	DateTime		= NULL,
 	@DateTo		DateTime		= NULL,
 	@Type		SmallInt		= NULL,

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSettings@Load]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Maintenance].[GlobalSettings@Load]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Maintenance].[GlobalSettings@Load]
+CREATE OR ALTER PROCEDURE [Maintenance].[GlobalSettings@Load]
 AS
 BEGIN
     SET NOCOUNT ON;

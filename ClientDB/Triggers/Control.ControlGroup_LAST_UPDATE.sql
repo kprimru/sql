@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Control].[ControlGroup_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Control].[ControlGroup_LAST_UPDATE]  ON [Control].[ControlGroup] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Control].[ControlGroup_LAST_UPDATE] ON [Control].[ControlGroup]
+CREATE OR ALTER TRIGGER [Control].[ControlGroup_LAST_UPDATE] ON [Control].[ControlGroup]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

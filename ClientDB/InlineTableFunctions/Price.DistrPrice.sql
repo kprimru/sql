@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[DistrPrice]', 'IF') IS NULL EXEC('CREATE FUNCTION [Price].[DistrPrice] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Price].[DistrPrice]
+CREATE OR ALTER FUNCTION [Price].[DistrPrice]
 (
 	@System_Id			Int,
 	@DistrType_Id		Int,

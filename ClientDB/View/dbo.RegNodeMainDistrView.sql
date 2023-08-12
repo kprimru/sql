@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[RegNodeMainDistrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[RegNodeMainDistrView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[RegNodeMainDistrView]
+CREATE OR ALTER VIEW [dbo].[RegNodeMainDistrView]
 WITH SCHEMABINDING
 AS
 	SELECT

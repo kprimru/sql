@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemDocsView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[SystemDocsView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[SystemDocsView]
+CREATE OR ALTER VIEW [dbo].[SystemDocsView]
 AS
 	SELECT a.SystemID, a.SystemBaseName, SUM(Docs) AS Docs
 	FROM dbo.SystemTable a

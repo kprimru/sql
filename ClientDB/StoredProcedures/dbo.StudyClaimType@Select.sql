@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[StudyClaimType@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[StudyClaimType@Select]  AS SELECT 1')
 GO
-CREATE   PROCEDURE [dbo].[StudyClaimType@Select]
+CREATE OR ALTER PROCEDURE [dbo].[StudyClaimType@Select]
 AS
 BEGIN
 	SET NOCOUNT ON;

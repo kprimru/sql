@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[ReRaise Error]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Maintenance].[ReRaise Error]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Maintenance].[ReRaise Error]
+CREATE OR ALTER PROCEDURE [Maintenance].[ReRaise Error]
 AS
 BEGIN
 	SET NOCOUNT ON;

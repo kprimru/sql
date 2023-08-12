@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[HotlineChat@Demand]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[HotlineChat@Demand]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[HotlineChat@Demand]
+CREATE OR ALTER PROCEDURE [dbo].[HotlineChat@Demand]
 	@Hotline_Id		UniqueIdentifier,
 	@Demands		NVarChar(Max)
 AS

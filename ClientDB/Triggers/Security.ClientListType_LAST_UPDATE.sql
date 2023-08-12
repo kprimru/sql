@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Security].[ClientListType_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Security].[ClientListType_LAST_UPDATE]  ON [Security].[ClientListType] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Security].[ClientListType_LAST_UPDATE] ON [Security].[ClientListType]
+CREATE OR ALTER TRIGGER [Security].[ClientListType_LAST_UPDATE] ON [Security].[ClientListType]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

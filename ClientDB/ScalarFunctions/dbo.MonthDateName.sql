@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[MonthDateName]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[MonthDateName] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[MonthDateName]
+CREATE OR ALTER FUNCTION [dbo].[MonthDateName]
 (
 	@Value	DateTime
 )

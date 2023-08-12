@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientStudyClaim@Create?Auto]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[ClientStudyClaim@Create?Auto]  AS SELECT 1')
 GO
-CREATE   PROCEDURE [dbo].[ClientStudyClaim@Create?Auto]
+CREATE OR ALTER PROCEDURE [dbo].[ClientStudyClaim@Create?Auto]
 	@Client_Id		Int,
 	@Reason			VarChar(256),
 	@CreateClaim	Bit = 1,

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Contract].[Contracts->Act Sign Periods_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Contract].[Contracts->Act Sign Periods_LAST_UPDATE]  ON [Contract].[Contracts->Act Sign Periods] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Contract].[Contracts->Act Sign Periods_LAST_UPDATE] ON [Contract].[Contracts->Act Sign Periods]
+CREATE OR ALTER TRIGGER [Contract].[Contracts->Act Sign Periods_LAST_UPDATE] ON [Contract].[Contracts->Act Sign Periods]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

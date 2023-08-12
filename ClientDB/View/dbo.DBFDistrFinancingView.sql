@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[DBFDistrFinancingView]', 'V ') IS NULL EXEC('CREATE VIEW [d
 GO
 
 
-ALTER VIEW [dbo].[DBFDistrFinancingView]
+CREATE OR ALTER VIEW [dbo].[DBFDistrFinancingView]
 AS
 	SELECT
 		SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM, DSS_REPORT, DF_DISCOUNT, DF_FIXED_PRICE,

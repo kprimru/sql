@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[StudyQualityType_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[StudyQualityType_LAST_UPDATE]  ON [dbo].[StudyQualityType] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[StudyQualityType_LAST_UPDATE] ON [dbo].[StudyQualityType]
+CREATE OR ALTER TRIGGER [dbo].[StudyQualityType_LAST_UPDATE] ON [dbo].[StudyQualityType]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

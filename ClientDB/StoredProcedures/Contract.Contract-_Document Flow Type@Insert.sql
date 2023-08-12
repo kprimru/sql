@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Contract].[Contract->Document Flow Type@Insert]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contract->Document Flow Type@Insert]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Contract].[Contract->Document Flow Type@Insert]
+CREATE OR ALTER PROCEDURE [Contract].[Contract->Document Flow Type@Insert]
 	@Id		TinyInt,
 	@Code	VarChar(50),
 	@Name	VarChar(100)

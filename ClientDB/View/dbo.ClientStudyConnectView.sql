@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientStudyConnectView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientStudyConnectView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientStudyConnectView]
+CREATE OR ALTER VIEW [dbo].[ClientStudyConnectView]
 AS
 	SELECT
 		ClientID, DATE, HostID, DISTR, COMP,

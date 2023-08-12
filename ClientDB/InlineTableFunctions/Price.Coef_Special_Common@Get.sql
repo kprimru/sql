@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[Coef:Special:Common@Get]', 'IF') IS NULL EXEC('CREATE FUNCTION [Price].[Coef:Special:Common@Get] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Price].[Coef:Special:Common@Get]
+CREATE OR ALTER FUNCTION [Price].[Coef:Special:Common@Get]
 (
 	@Date	SmallDateTime
 )

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[CallDirection_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[CallDirection_LAST_UPDATE]  ON [dbo].[CallDirection] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[CallDirection_LAST_UPDATE] ON [dbo].[CallDirection]
+CREATE OR ALTER TRIGGER [dbo].[CallDirection_LAST_UPDATE] ON [dbo].[CallDirection]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Web@Check?Distr]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Web@Check?Distr]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Web@Check?Distr]
+CREATE OR ALTER PROCEDURE [Seminar].[Web@Check?Distr]
     @Id             UniqueIdentifier,
 	@DistrStr		NVarChar(64)
 AS

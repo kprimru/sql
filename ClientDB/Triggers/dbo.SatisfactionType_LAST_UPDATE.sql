@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SatisfactionType_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[SatisfactionType_LAST_UPDATE]  ON [dbo].[SatisfactionType] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[SatisfactionType_LAST_UPDATE] ON [dbo].[SatisfactionType]
+CREATE OR ALTER TRIGGER [dbo].[SatisfactionType_LAST_UPDATE] ON [dbo].[SatisfactionType]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

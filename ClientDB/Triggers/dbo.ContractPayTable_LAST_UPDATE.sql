@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ContractPayTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ContractPayTable_LAST_UPDATE]  ON [dbo].[ContractPayTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ContractPayTable_LAST_UPDATE] ON [dbo].[ContractPayTable]
+CREATE OR ALTER TRIGGER [dbo].[ContractPayTable_LAST_UPDATE] ON [dbo].[ContractPayTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

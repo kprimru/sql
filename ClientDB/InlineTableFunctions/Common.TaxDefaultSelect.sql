@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[TaxDefaultSelect]', 'IF') IS NULL EXEC('CREATE FUNCTION [Common].[TaxDefaultSelect] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Common].[TaxDefaultSelect]
+CREATE OR ALTER FUNCTION [Common].[TaxDefaultSelect]
 (
 	@Date SMALLDATETIME
 )

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Debug].[Execution:Params@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [Debug].[Execution:Params@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE   FUNCTION [Debug].[Execution:Params@Parse]
+CREATE OR ALTER FUNCTION [Debug].[Execution:Params@Parse]
 (
 	@Params Xml
 )

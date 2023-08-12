@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DiscountTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[DiscountTable_LAST_UPDATE]  ON [dbo].[DiscountTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[DiscountTable_LAST_UPDATE] ON [dbo].[DiscountTable]
+CREATE OR ALTER TRIGGER [dbo].[DiscountTable_LAST_UPDATE] ON [dbo].[DiscountTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

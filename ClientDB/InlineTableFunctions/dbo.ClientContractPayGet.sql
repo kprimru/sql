@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientContractPayGet]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientContractPayGet] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [dbo].[ClientContractPayGet]
+CREATE OR ALTER FUNCTION [dbo].[ClientContractPayGet]
 (
     @ClientId       Int,
     @Date           SmallDateTime

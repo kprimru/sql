@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ContractTypeTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ContractTypeTable_LAST_UPDATE]  ON [dbo].[ContractTypeTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ContractTypeTable_LAST_UPDATE] ON [dbo].[ContractTypeTable]
+CREATE OR ALTER TRIGGER [dbo].[ContractTypeTable_LAST_UPDATE] ON [dbo].[ContractTypeTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

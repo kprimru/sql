@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemNote@Delete]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SystemNote@Delete]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[SystemNote@Delete]
+CREATE OR ALTER PROCEDURE [dbo].[SystemNote@Delete]
     @System_Id      SmallInt,
     @DistrType_Id   SmallInt
 AS

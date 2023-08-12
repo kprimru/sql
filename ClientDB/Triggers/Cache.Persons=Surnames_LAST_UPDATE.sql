@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Cache].[Persons=Surnames_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Cache].[Persons=Surnames_LAST_UPDATE]  ON [Cache].[Persons=Surnames] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Cache].[Persons=Surnames_LAST_UPDATE] ON [Cache].[Persons=Surnames]
+CREATE OR ALTER TRIGGER [Cache].[Persons=Surnames_LAST_UPDATE] ON [Cache].[Persons=Surnames]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

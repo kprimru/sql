@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[GET_CONTRACT_OUT_DATE]', 'P ') IS NULL EXEC('CREATE PROCEDU
 GO
 -- получение просроченных договоров
 
-ALTER PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE]
+CREATE OR ALTER PROCEDURE [dbo].[GET_CONTRACT_OUT_DATE]
 	@curdate VARCHAR(20),
 	@managerid INT = NULL,
 	@statusid INT = 2

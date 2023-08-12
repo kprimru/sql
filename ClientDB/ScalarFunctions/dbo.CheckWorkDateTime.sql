@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[CheckWorkDateTime]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[CheckWorkDateTime] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[CheckWorkDateTime]
+CREATE OR ALTER FUNCTION [dbo].[CheckWorkDateTime]
 (
 	@DT	DATETIME
 )

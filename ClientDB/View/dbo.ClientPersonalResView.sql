@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientPersonalResView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientPersonalResView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientPersonalResView]
+CREATE OR ALTER VIEW [dbo].[ClientPersonalResView]
 WITH SCHEMABINDING
 AS
 	SELECT

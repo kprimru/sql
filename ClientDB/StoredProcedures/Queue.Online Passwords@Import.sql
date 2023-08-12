@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Queue].[Online Passwords@Import]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Queue].[Online Passwords@Import]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Queue].[Online Passwords@Import]
+CREATE OR ALTER PROCEDURE [Queue].[Online Passwords@Import]
     @Files  VarChar(Max)
 AS
 BEGIN

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[OnlineRules@Get]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[OnlineRules@Get]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[OnlineRules@Get]
+CREATE OR ALTER PROCEDURE [dbo].[OnlineRules@Get]
 	@System_Id		Int,
 	@DistrType_Id	Int
 AS

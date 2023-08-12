@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemTable_Rules]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[SystemTable_Rules]  ON [dbo].[SystemTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[SystemTable_Rules] ON [dbo].[SystemTable]
+CREATE OR ALTER TRIGGER [dbo].[SystemTable_Rules] ON [dbo].[SystemTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

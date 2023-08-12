@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Security].[Password@Change?Self]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Security].[Password@Change?Self]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Security].[Password@Change?Self]
+CREATE OR ALTER PROCEDURE [Security].[Password@Change?Self]
 	@OldPass	NVarChar(128),
 	@NewPass	NVarChar(128)
 WITH EXECUTE AS OWNER

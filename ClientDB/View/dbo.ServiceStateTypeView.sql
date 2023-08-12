@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ServiceStateTypeView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ServiceStateTypeView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ServiceStateTypeView]
+CREATE OR ALTER VIEW [dbo].[ServiceStateTypeView]
 AS
 	SELECT 'COMPLIANCE' AS TP_NAME, 'Не соответствуют эталону (клиентов)' AS TP_NOTE, 1 AS TP_ORD
 				UNION ALL

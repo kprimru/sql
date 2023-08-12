@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientClaimServiceView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientClaimServiceView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientClaimServiceView]
+CREATE OR ALTER VIEW [dbo].[ClientClaimServiceView]
 AS
 	SELECT
 		CLM_ID, CLM_DATE,

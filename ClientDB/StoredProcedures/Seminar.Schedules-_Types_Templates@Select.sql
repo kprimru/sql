@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Schedules->Types_Templates@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Schedules->Types_Templates@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Schedules->Types_Templates@Select]
+CREATE OR ALTER PROCEDURE [Seminar].[Schedules->Types_Templates@Select]
     @FILTER     VarChar(512) = NULL
 AS
 BEGIN

@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[Contract].[Contracts->Act Sign Periods@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contracts->Act Sign Periods@Select]  AS SELECT 1')
 GO
 
-ALTER PROCEDURE [Contract].[Contracts->Act Sign Periods@Select]
+CREATE OR ALTER PROCEDURE [Contract].[Contracts->Act Sign Periods@Select]
 	@Filter		VarChar(500) = NULL
 AS
 BEGIN

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ServiceTypeTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ServiceTypeTable_LAST_UPDATE]  ON [dbo].[ServiceTypeTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ServiceTypeTable_LAST_UPDATE] ON [dbo].[ServiceTypeTable]
+CREATE OR ALTER TRIGGER [dbo].[ServiceTypeTable_LAST_UPDATE] ON [dbo].[ServiceTypeTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

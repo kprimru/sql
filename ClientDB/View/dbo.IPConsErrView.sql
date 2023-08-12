@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[IPConsErrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[IPC
 GO
 
 
-ALTER VIEW [dbo].[IPConsErrView]
+CREATE OR ALTER VIEW [dbo].[IPConsErrView]
 AS
 	SELECT ERROR_DATA, UF_DATE, UF_DISTR, UF_COMP, UF_SYS
 	FROM [IPLogs].[dbo.USRFiles] b

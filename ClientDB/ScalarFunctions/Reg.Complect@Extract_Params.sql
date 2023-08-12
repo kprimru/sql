@@ -13,7 +13,7 @@ SELECT
 	[Reg].[Complect@Extract?Params]('RLAW020#123456_02', 'DISTR'),
 	[Reg].[Complect@Extract?Params]('RLAW020#123456_02', 'LOG')
 */
-CREATE FUNCTION [Reg].[Complect@Extract?Params]
+CREATE OR ALTER FUNCTION [Reg].[Complect@Extract?Params]
 (
 	@Complect	VarChar(100),
 	-- параметр, который вернуть: SYSTEM, DISTR, COMP

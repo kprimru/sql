@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[System].[Setting@Set]', 'P ') IS NULL EXEC('CREATE PROCEDURE [System].[Setting@Set]  AS SELECT 1')
 GO
-ALTER PROCEDURE [System].[Setting@Set]
+CREATE OR ALTER PROCEDURE [System].[Setting@Set]
 	@Name	VarChar(128),
 	@Value	Sql_Variant
 AS

@@ -13,7 +13,7 @@ FROM [dbo].[SubhostDistrs@Get](NULL, 'Л1')
 SELECT *
 FROM [dbo].[SubhostDistrs@Get]('BE1CE068-519A-E111-8DAE-000C2986905F', NULL)
 */
-CREATE FUNCTION [dbo].[SubhostDistrs@Get]
+CREATE OR ALTER FUNCTION [dbo].[SubhostDistrs@Get]
 (
 	@Subhost_Id		UniqueIdentifier	= NULL,
 	@SubhostName	VarChar(100)		= NULL

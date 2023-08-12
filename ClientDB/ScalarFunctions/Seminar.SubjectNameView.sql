@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[SubjectNameView]', 'FN') IS NULL EXEC('CREATE FUNCTION [Seminar].[SubjectNameView] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Seminar].[SubjectNameView]
+CREATE OR ALTER FUNCTION [Seminar].[SubjectNameView]
 (
     @SubjectName		VarChar(512),
 	@ScheduleTypeName	VarChar(128)

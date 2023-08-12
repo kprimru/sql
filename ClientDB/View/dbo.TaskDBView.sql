@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[dbo].[TaskDBView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[TaskDBView]  AS SELECT 1')
 GO
 
-ALTER VIEW [dbo].[TaskDBView]
+CREATE OR ALTER VIEW [dbo].[TaskDBView]
 AS
 	SELECT EXECUTE_DATE_S, DETAIL_DATA, EXECUTOR_NOTE
 	FROM Knowledge.Task.Tasks

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DistrString]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[DistrString] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[DistrString]
+CREATE OR ALTER FUNCTION [dbo].[DistrString]
 (
 	@SysShort	VarChar(20),
 	@Distr		Int,

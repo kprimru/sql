@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ResVersionTable_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ResVersionTable_LAST_UPDATE]  ON [dbo].[ResVersionTable] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ResVersionTable_LAST_UPDATE] ON [dbo].[ResVersionTable]
+CREATE OR ALTER TRIGGER [dbo].[ResVersionTable_LAST_UPDATE] ON [dbo].[ResVersionTable]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

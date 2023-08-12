@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Contract].[Contracts->Documents Flow Types_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Contract].[Contracts->Documents Flow Types_LAST_UPDATE]  ON [Contract].[Contracts->Documents Flow Types] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Contract].[Contracts->Documents Flow Types_LAST_UPDATE] ON [Contract].[Contracts->Documents Flow Types]
+CREATE OR ALTER TRIGGER [Contract].[Contracts->Documents Flow Types_LAST_UPDATE] ON [Contract].[Contracts->Documents Flow Types]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

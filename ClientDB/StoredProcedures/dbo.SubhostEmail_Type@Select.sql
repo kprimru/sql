@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SubhostEmail_Type@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SubhostEmail_Type@Select]  AS SELECT 1')
 GO
-CREATE   PROCEDURE [dbo].[SubhostEmail_Type@Select]
+CREATE OR ALTER PROCEDURE [dbo].[SubhostEmail_Type@Select]
 	@Filter	VarChar(256) = NULL
 AS
 BEGIN

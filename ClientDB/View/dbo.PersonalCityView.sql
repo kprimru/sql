@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[PersonalCityView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[PersonalCityView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[PersonalCityView]
+CREATE OR ALTER VIEW [dbo].[PersonalCityView]
 WITH SCHEMABINDING
 AS
 	SELECT ServiceID, ServiceName, b.ManagerID, ManagerName, CT_ID, CT_NAME

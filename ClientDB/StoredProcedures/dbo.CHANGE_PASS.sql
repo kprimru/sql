@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[CHANGE_PASS]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[
 GO
 
 
-ALTER PROCEDURE [dbo].[CHANGE_PASS]
+CREATE OR ALTER PROCEDURE [dbo].[CHANGE_PASS]
 	@login varchar(50),
     @password varchar(50)
 AS

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Web@Select?Schedule]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Web@Select?Schedule]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Web@Select?Schedule]
+CREATE OR ALTER PROCEDURE [Seminar].[Web@Select?Schedule]
 AS
 BEGIN
 	SET NOCOUNT ON;

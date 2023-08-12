@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[Date@Available]', 'FN') IS NULL EXEC('CREATE FUNCTION [Price].[Date@Available] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Price].[Date@Available]
+CREATE OR ALTER FUNCTION [Price].[Date@Available]
 (
 	@Date	SmallDateTime
 )

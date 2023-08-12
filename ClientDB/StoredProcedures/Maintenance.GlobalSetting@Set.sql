@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSetting@Set]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Maintenance].[GlobalSetting@Set]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Maintenance].[GlobalSetting@Set]
+CREATE OR ALTER PROCEDURE [Maintenance].[GlobalSetting@Set]
 	@Name	VarChar(128),
 	@Value	Sql_Variant
 AS

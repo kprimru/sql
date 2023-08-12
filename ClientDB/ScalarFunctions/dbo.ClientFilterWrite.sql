@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientFilterWrite]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientFilterWrite] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[ClientFilterWrite]
+CREATE OR ALTER FUNCTION [dbo].[ClientFilterWrite]
 (
 	@SRC	NVARCHAR(MAX)
 )

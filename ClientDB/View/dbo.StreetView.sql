@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[StreetView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[StreetView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[StreetView]
+CREATE OR ALTER VIEW [dbo].[StreetView]
 AS
 	SELECT
 		ST_ID, ST_NAME, b.CT_ID, b.CT_NAME, ST_PREFIX, ST_SUFFIX,

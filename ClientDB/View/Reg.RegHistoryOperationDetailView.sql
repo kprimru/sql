@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[Reg].[RegHistoryOperationDetailView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegHistoryOperationDetailView]  AS SELECT 1')
 GO
 
-ALTER VIEW [Reg].[RegHistoryOperationDetailView]
+CREATE OR ALTER VIEW [Reg].[RegHistoryOperationDetailView]
 AS
 	SELECT
 		src.ID_DISTR, src.DATE, dst.ID,

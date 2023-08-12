@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[WeekDateName]', 'FN') IS NULL EXEC('CREATE FUNCTION [dbo].[WeekDateName] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [dbo].[WeekDateName]
+CREATE OR ALTER FUNCTION [dbo].[WeekDateName]
 (
 	@Value	DateTime
 )

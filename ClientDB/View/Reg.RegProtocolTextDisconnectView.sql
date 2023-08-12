@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegProtocolTextDisconnectView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegProtocolTextDisconnectView]  AS SELECT 1')
 GO
-ALTER VIEW [Reg].[RegProtocolTextDisconnectView]
+CREATE OR ALTER VIEW [Reg].[RegProtocolTextDisconnectView]
 WITH SCHEMABINDING
 AS
 	SELECT ID_HOST, DISTR, COMP, DATE, COUNT_BIG(*) AS CNT

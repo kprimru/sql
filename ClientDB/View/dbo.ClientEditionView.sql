@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientEditionView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientEditionView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientEditionView]
+CREATE OR ALTER VIEW [dbo].[ClientEditionView]
 AS
 	SELECT
 		ClientID, ID_MASTER, ClientFullName, ServiceName, ManagerName, ClientLast, UPD_USER,

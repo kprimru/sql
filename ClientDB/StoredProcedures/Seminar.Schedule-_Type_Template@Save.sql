@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Schedule->Type_Template@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Schedule->Type_Template@Save]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Schedule->Type_Template@Save]
+CREATE OR ALTER PROCEDURE [Seminar].[Schedule->Type_Template@Save]
     @Type_Id        SmallInt,
     @Template_Id    SmallInt,
     @Date           SmallDateTime,

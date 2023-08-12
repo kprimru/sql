@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SystemSlaveView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[SystemSlaveView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[SystemSlaveView]
+CREATE OR ALTER VIEW [dbo].[SystemSlaveView]
 AS
 	SELECT
 		a.ID_MASTER, b.SystemBaseName AS MASTER_REG, b.SystemShortName AS MASTER_SHORT,

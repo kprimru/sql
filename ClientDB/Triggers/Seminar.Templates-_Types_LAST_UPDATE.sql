@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Templates->Types_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [Seminar].[Templates->Types_LAST_UPDATE]  ON [Seminar].[Templates->Types] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [Seminar].[Templates->Types_LAST_UPDATE] ON [Seminar].[Templates->Types]
+CREATE OR ALTER TRIGGER [Seminar].[Templates->Types_LAST_UPDATE] ON [Seminar].[Templates->Types]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

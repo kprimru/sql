@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[GlobalSettings@Parse]', 'IF') IS NULL EXEC('CREATE FUNCTION [Maintenance].[GlobalSettings@Parse] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Maintenance].[GlobalSettings@Parse]
+CREATE OR ALTER FUNCTION [Maintenance].[GlobalSettings@Parse]
 (
     @Data Xml
 )

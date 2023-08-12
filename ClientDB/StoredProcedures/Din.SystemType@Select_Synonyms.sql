@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Din].[SystemType@Select?Synonyms]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[SystemType@Select?Synonyms]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Din].[SystemType@Select?Synonyms]
+CREATE OR ALTER PROCEDURE [Din].[SystemType@Select?Synonyms]
 AS
 BEGIN
 	SET NOCOUNT ON;

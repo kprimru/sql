@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[OnlineActivity@Parse?Login]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[OnlineActivity@Parse?Login] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [dbo].[OnlineActivity@Parse?Login]
+CREATE OR ALTER FUNCTION [dbo].[OnlineActivity@Parse?Login]
 (
     @Login  VarChar(256)
 )

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Security].[RoleUserView]', 'V ') IS NULL EXEC('CREATE VIEW [Security].[RoleUserView]  AS SELECT 1')
 GO
-ALTER VIEW [Security].[RoleUserView]
+CREATE OR ALTER VIEW [Security].[RoleUserView]
 AS
 	SELECT a.name AS RL_NAME, c.name AS US_NAME, 1 AS RL_DIRECT
 	FROM

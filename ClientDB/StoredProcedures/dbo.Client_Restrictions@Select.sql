@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[Client:Restrictions@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[Client:Restrictions@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[Client:Restrictions@Select]
+CREATE OR ALTER PROCEDURE [dbo].[Client:Restrictions@Select]
     @Client_Id  Int
 AS
 BEGIN

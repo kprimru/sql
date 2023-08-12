@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[ScheduleType@Get]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[ScheduleType@Get]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[ScheduleType@Get]
+CREATE OR ALTER PROCEDURE [Seminar].[ScheduleType@Get]
 	@Id		SmallInt
 AS
 BEGIN

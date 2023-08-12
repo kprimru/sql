@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[Is Equal(Bit)]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[Is Equal(Bit)] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Common].[Is Equal(Bit)]
+CREATE OR ALTER FUNCTION [Common].[Is Equal(Bit)]
 (
 	@V1	Bit,
 	@V2	Bit

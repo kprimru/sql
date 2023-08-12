@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Din].[NetType:Synonyms@Save]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Din].[NetType:Synonyms@Save]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Din].[NetType:Synonyms@Save]
+CREATE OR ALTER PROCEDURE [Din].[NetType:Synonyms@Save]
 	@Net_Id     Int,
 	@Synonyms   Xml
 AS

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientList@Get?Write]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientList@Get?Write] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [dbo].[ClientList@Get?Write]()
+CREATE OR ALTER FUNCTION [dbo].[ClientList@Get?Write]()
 RETURNS TABLE
 AS
 RETURN

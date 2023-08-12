@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[HotlineChat@Send Notifications]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[HotlineChat@Send Notifications]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[HotlineChat@Send Notifications]
+CREATE OR ALTER PROCEDURE [dbo].[HotlineChat@Send Notifications]
 AS
 BEGIN
 	SET NOCOUNT ON;

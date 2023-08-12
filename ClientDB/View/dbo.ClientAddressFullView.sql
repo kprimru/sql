@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientAddressFullView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientAddressFullView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientAddressFullView]
+CREATE OR ALTER VIEW [dbo].[ClientAddressFullView]
 AS
 	SELECT
 		CA_ID, CA_ID_CLIENT, AT_REQUIRED,

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientSystemErrorView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientSystemErrorView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientSystemErrorView]
+CREATE OR ALTER VIEW [dbo].[ClientSystemErrorView]
 WITH SCHEMABINDING
 AS
 	SELECT

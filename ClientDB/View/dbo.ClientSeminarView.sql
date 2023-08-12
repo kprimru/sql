@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientSeminarView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientSeminarView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientSeminarView]
+CREATE OR ALTER VIEW [dbo].[ClientSeminarView]
 WITH SCHEMABINDING
 AS
 	SELECT

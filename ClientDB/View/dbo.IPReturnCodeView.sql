@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[IPReturnCodeView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[
 GO
 
 
-ALTER VIEW [dbo].[IPReturnCodeView]
+CREATE OR ALTER VIEW [dbo].[IPReturnCodeView]
 AS
 	SELECT RC_ID, RC_NUM, RC_TEXT, RC_TYPE, RC_ERROR, RC_WARNING
 	FROM [IPLogs].[dbo.ReturnCode]

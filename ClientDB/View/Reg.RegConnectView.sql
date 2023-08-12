@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegConnectView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegConnectView]  AS SELECT 1')
 GO
-ALTER VIEW [Reg].[RegConnectView]
+CREATE OR ALTER VIEW [Reg].[RegConnectView]
 AS
 	SELECT RPR_ID_HOST, RPR_DISTR, RPR_COMP, DATE
 	FROM Reg.RegProtocolConnectView WITH(NOEXPAND)

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[PeriodCurrent]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[PeriodCurrent] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Common].[PeriodCurrent]
+CREATE OR ALTER FUNCTION [Common].[PeriodCurrent]
 (
 	@TYPE TINYINT
 )

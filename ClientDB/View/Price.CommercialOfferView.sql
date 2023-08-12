@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Price].[CommercialOfferView]', 'V ') IS NULL EXEC('CREATE VIEW [Price].[CommercialOfferView]  AS SELECT 1')
 GO
-ALTER VIEW [Price].[CommercialOfferView]
+CREATE OR ALTER VIEW [Price].[CommercialOfferView]
 AS
 	SELECT 
 		a.ID, a.ID_OFFER, VARIANT, ID_OPERATION, b.NAME AS OPER_NAME,

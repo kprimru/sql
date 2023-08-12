@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Reg].[RegHistoryOperationView]', 'V ') IS NULL EXEC('CREATE VIEW [Reg].[RegHistoryOperationView]  AS SELECT 1')
 GO
-ALTER VIEW [Reg].[RegHistoryOperationView]
+CREATE OR ALTER VIEW [Reg].[RegHistoryOperationView]
 AS
 	SELECT
 		src.ID_DISTR, dst.ID, dst.DATE,

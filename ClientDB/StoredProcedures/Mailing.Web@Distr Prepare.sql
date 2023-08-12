@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Mailing].[Web@Distr Prepare]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Mailing].[Web@Distr Prepare]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Mailing].[Web@Distr Prepare]
+CREATE OR ALTER PROCEDURE [Mailing].[Web@Distr Prepare]
 AS
 BEGIN
 	SET NOCOUNT ON;

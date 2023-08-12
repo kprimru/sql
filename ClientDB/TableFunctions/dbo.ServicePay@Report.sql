@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ServicePay@Report]', 'TF') IS NULL EXEC('CREATE FUNCTION [dbo].[ServicePay@Report] () RETURNS @output TABLE(Id Int) AS BEGIN RETURN END')
 GO
-CREATE FUNCTION [dbo].[ServicePay@Report]
+CREATE OR ALTER FUNCTION [dbo].[ServicePay@Report]
 (
 	@MANAGER		INT,
 	@SERVICE		INT,

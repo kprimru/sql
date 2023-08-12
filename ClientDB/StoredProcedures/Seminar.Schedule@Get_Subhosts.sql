@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Seminar].[Schedule@Get?Subhosts]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Seminar].[Schedule@Get?Subhosts]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Seminar].[Schedule@Get?Subhosts]
+CREATE OR ALTER PROCEDURE [Seminar].[Schedule@Get?Subhosts]
     @Id     UniqueIdentifier
 AS
 BEGIN

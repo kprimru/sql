@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[MoneyToString]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[MoneyToString] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Common].[MoneyToString]
+CREATE OR ALTER FUNCTION [Common].[MoneyToString]
 (
 	@VALUE MONEY
 )

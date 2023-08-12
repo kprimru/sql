@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientDistr Insert/Update/Delete]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[ClientDistr Insert/Update/Delete]  ON [dbo].[ClientDistr] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[ClientDistr Insert/Update/Delete] ON  [dbo].[ClientDistr]
+CREATE OR ALTER TRIGGER [dbo].[ClientDistr Insert/Update/Delete] ON  [dbo].[ClientDistr]
    AFTER INSERT,DELETE,UPDATE
 AS
 BEGIN

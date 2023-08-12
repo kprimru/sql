@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Subhost].[RolesView]', 'V ') IS NULL EXEC('CREATE VIEW [Subhost].[RolesView]  AS SELECT 1')
 GO
-ALTER VIEW [Subhost].[RolesView]
+CREATE OR ALTER VIEW [Subhost].[RolesView]
 AS
 	SELECT 10 AS ORD, 'rl_user_admin' AS RL_NAME, 'Управление пользователями (создание/удаление/смена пароля)' AS RL_CAPTION
 	UNION ALL

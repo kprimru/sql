@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SubhostEmail_Type_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[SubhostEmail_Type_LAST_UPDATE]  ON [dbo].[SubhostEmail_Type] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-CREATE   TRIGGER [dbo].[SubhostEmail_Type_LAST_UPDATE] ON [SubhostEmail_Type]
+CREATE OR ALTER TRIGGER [dbo].[SubhostEmail_Type_LAST_UPDATE] ON [SubhostEmail_Type]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

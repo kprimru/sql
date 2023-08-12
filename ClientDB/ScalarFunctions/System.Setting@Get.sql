@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[System].[Setting@Get]', 'FN') IS NULL EXEC('CREATE FUNCTION [System].[Setting@Get] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [System].[Setting@Get]
+CREATE OR ALTER FUNCTION [System].[Setting@Get]
 (
     @Name   VarChar(128)
 )

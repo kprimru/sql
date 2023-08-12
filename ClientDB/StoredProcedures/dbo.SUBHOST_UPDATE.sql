@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[SUBHOST_UPDATE]', 'P ') IS NULL EXEC('CREATE PROCEDURE [dbo].[SUBHOST_UPDATE]  AS SELECT 1')
 GO
-ALTER PROCEDURE [dbo].[SUBHOST_UPDATE]
+CREATE OR ALTER PROCEDURE [dbo].[SUBHOST_UPDATE]
     @Id             UniqueIdentifier,
     @Name           VarChar(100),
     @Reg            VarChar(20),

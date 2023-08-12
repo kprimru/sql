@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientMainDistrSelect]', 'IF') IS NULL EXEC('CREATE FUNCTION [dbo].[ClientMainDistrSelect] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [dbo].[ClientMainDistrSelect]()
+CREATE OR ALTER FUNCTION [dbo].[ClientMainDistrSelect]()
 RETURNS TABLE AS RETURN
 (
 	SELECT C.ClientId, D.DistrStr

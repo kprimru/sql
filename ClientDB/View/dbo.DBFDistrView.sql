@@ -7,7 +7,7 @@ GO
 IF OBJECT_ID('[dbo].[DBFDistrView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[DBFDistrView]  AS SELECT 1')
 GO
 
-ALTER VIEW [dbo].[DBFDistrView]
+CREATE OR ALTER VIEW [dbo].[DBFDistrView]
 AS
 	SELECT
 		SYS_REG_NAME, DIS_NUM, DIS_COMP_NUM,

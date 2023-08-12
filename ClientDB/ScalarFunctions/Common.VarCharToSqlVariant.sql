@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[VarCharToSqlVariant]', 'FN') IS NULL EXEC('CREATE FUNCTION [Common].[VarCharToSqlVariant] () RETURNS Int AS BEGIN RETURN NULL END')
 GO
-CREATE FUNCTION [Common].[VarCharToSqlVariant]
+CREATE OR ALTER FUNCTION [Common].[VarCharToSqlVariant]
 (
 	@Value			VarChar(256),
 	@DataType		VarChar(128)

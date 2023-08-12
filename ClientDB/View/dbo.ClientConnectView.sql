@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientConnectView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientConnectView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientConnectView]
+CREATE OR ALTER VIEW [dbo].[ClientConnectView]
 WITH SCHEMABINDING
 AS
 	SELECT a.ClientID, dbo.DateOf(RPR_DATE) AS ConnectDate, COUNT_BIG(*) AS CNT

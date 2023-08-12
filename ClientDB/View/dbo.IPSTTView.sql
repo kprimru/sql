@@ -9,7 +9,7 @@ GO
 
 
 
-ALTER VIEW [dbo].[IPSTTView]
+CREATE OR ALTER VIEW [dbo].[IPSTTView]
 AS
 	SELECT CSD_SYS, CSD_DISTR, CSD_COMP, CSD_START, CSD_END
 	FROM [IPLogs].[dbo.ClientStatDetail]

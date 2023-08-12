@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[DisconnectReason_LAST_UPDATE]', 'TR') IS NULL EXEC('CREATE TRIGGER [dbo].[DisconnectReason_LAST_UPDATE]  ON [dbo].[DisconnectReason] AFTER INSERT,UPDATE,DELETE  AS SELECT 1')
 GO
-ALTER TRIGGER [dbo].[DisconnectReason_LAST_UPDATE] ON [dbo].[DisconnectReason]
+CREATE OR ALTER TRIGGER [dbo].[DisconnectReason_LAST_UPDATE] ON [dbo].[DisconnectReason]
 AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN

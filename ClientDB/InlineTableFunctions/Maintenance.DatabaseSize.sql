@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Maintenance].[DatabaseSize]', 'IF') IS NULL EXEC('CREATE FUNCTION [Maintenance].[DatabaseSize] () RETURNS TABLE AS RETURN (SELECT [NULL] = NULL)')
 GO
-CREATE FUNCTION [Maintenance].[DatabaseSize]()
+CREATE OR ALTER FUNCTION [Maintenance].[DatabaseSize]()
 RETURNS TABLE
 AS
 RETURN

@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Common].[MAIL_SEND]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Common].[MAIL_SEND]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Common].[MAIL_SEND]
+CREATE OR ALTER PROCEDURE [Common].[MAIL_SEND]
     @Recipients             NVarChar(Max),
     @blind_copy_recipients  NVarChar(Max)   = NULL,
     @Subject                NVarChar(255),

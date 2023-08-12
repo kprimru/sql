@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[Contract].[Contracts->Documents Flow Types@Select]', 'P ') IS NULL EXEC('CREATE PROCEDURE [Contract].[Contracts->Documents Flow Types@Select]  AS SELECT 1')
 GO
-ALTER PROCEDURE [Contract].[Contracts->Documents Flow Types@Select]
+CREATE OR ALTER PROCEDURE [Contract].[Contracts->Documents Flow Types@Select]
 	@Filter		VarChar(500) = NULL
 AS
 BEGIN

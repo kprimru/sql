@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 IF OBJECT_ID('[dbo].[ClientServiceView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[ClientServiceView]  AS SELECT 1')
 GO
-ALTER VIEW [dbo].[ClientServiceView]
+CREATE OR ALTER VIEW [dbo].[ClientServiceView]
 AS
 	SELECT ID_CLIENT, ID_SERVICE, DATE AS START, DATEADD(YEAR, 10, dbo.DateOf(GETDATE())) AS FINISH
 	FROM dbo.ClientService

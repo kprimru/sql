@@ -8,7 +8,7 @@ IF OBJECT_ID('[dbo].[SystemBuhView]', 'V ') IS NULL EXEC('CREATE VIEW [dbo].[Sys
 GO
 
 
-ALTER VIEW [dbo].[SystemBuhView]
+CREATE OR ALTER VIEW [dbo].[SystemBuhView]
 AS
 	SELECT SystemID, SystemName, SystemPrefix, SystemOrder, SystemPostfix, SystemReg
 	FROM [BuhDB].[dbo.SystemTable];
